@@ -8,7 +8,7 @@ _This page is kept for the record. [A cleaner version of this specification](htt
 
 _This is a technical description of the mechanisms behind the reconciliation system in OpenRefine. For usage instructions, see [Reconciliation](/manual/reconciling)._
 
-## Introduction
+## Introduction {#introduction}
 
 A reconciliation service is a web service that, given some text which is a name or label for something, and optionally some additional details, returns a ranked list of potential entities matching the criteria. The candidate text does not have to match each entity's official name perfectly, and that's the whole point of reconciliation--to get from ambiguous text name to precisely identified entities. For instance, given the text "apple", a reconciliation service probably should return the fruit apple, the Apple Inc. company, and New York city (also known as the Big Apple).
 
@@ -31,7 +31,7 @@ A standard reconciliation service is a HTTP-based RESTful JSON-formatted API. It
 
 The specification of each of these endpoints is given in the following sections.
 
-## Workflow overview
+## Workflow overview {#workflow-overview}
 
 OpenRefine communicates with reconciliation services in the following way.
 
@@ -41,7 +41,7 @@ OpenRefine communicates with reconciliation services in the following way.
 * When reconciliation starts, OpenRefine queries the service in [batch mode](reconciliation-api#multiple-query-mode) for small batches of rows and stores the responses of the service.
 * Once reconciliation is complete, the results are displayed. The user makes reconciliation decisions based on the choices provided. If a [suggest service](reconciliation-api#suggest-apis) is available, it will be used to input custom reconciliation decisions. If a [preview service](reconciliation-api#preview-api) is available, the user will be able to preview the reconciliation candidates without leaving OpenRefine.
 
-## Main reconciliation service
+## Main reconciliation service {#main-reconciliation-service}
 
 The root URL has two functions:
 
@@ -50,7 +50,7 @@ The root URL has two functions:
 
 There is a deprecated "single query" mode which is used if the `query` parameter is given. This mode is no longer supported or used by OpenRefine and other API consumers should not rely on it.
 
-### Service metadata
+### Service metadata {#service-metadata}
 
 When a service is called with just a JSONP `callback` parameter and no other parameters, it must return its _service metadata_ as a JSON object literal with the following fields:
 
@@ -87,9 +87,9 @@ Here are two live examples:
 }
 ```
 
-## Query Request
+## Query Request {#query-request}
 
-### Multiple Query Mode
+### Multiple Query Mode {#multiple-query-mode}
 
 A call to a standard reconciliation service API for multiple queries looks like this:
 
@@ -109,7 +109,7 @@ curl -X POST -d 'queries={ "q0" : { "query" : "foo" }, "q1" : { "query" : "bar" 
 
 OpenRefine uses POST for all requests, so make sure your service supports the format above.
 
-### **DEPRECATED** Single Query Mode
+### **DEPRECATED** Single Query Mode {#deprecated-single-query-mode}
 
 A call to a reconciliation service API for a single query looks like either of these:
 
@@ -121,7 +121,7 @@ If the query parameter is a string, then it's an abbreviation of `query={"query"
 1. [https://tools.wmflabs.org/openrefine-wikidata/en/api?query=boston](https://tools.wmflabs.org/openrefine-wikidata/en/api?query=boston)
 2. [https://tools.wmflabs.org/openrefine-wikidata/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22}](https://tools.wmflabs.org/openrefine-wikidata/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22})
 
-### Query JSON Object
+### Query JSON Object {#query-json-object}
 
 The query json object literal has a few fields
 
@@ -160,7 +160,7 @@ Here is an example of a full query parameter:
   }
 ```
 
-## Query Response
+## Query Response {#query-response}
 For multiple queries, the response is a JSON literal object with the same keys as in the request
 
 ```json
@@ -195,11 +195,11 @@ Each result consists of a JSON literal object with the structure
 The results should be sorted by decreasing score.
 The service must also support JSONP through a callback parameter ie &callback=foo.
 
-## Preview API
+## Preview API {#preview-api}
 
 The preview service API (complementary to the reconciliation service API) is quite simple. Pass it an identifier and it renders information about the corresponding entity in an HTML page, which will be shown in an iframe inside OpenRefine. The given width and height dimensions tell OpenRefine how to size that iframe.
 
-## Suggest APIs
+## Suggest APIs {#suggest-apis}
 
 In the "Start Reconciling" dialog box in OpenRefine, you can specify which type of entities the column in question contains. For instance, the column might contains titles of scientific journals. But you don't know the identifier corresponding to the "scientific journal" type. So we need a suggest API that translates "scientific journal" to something like, say, "[Q5633421](https://www.wikidata.org/wiki/Q5633421)" if we're reconciling against Wikidata.
 
@@ -231,11 +231,11 @@ The `service_url` field is required and it should look like this: `http://foo.co
 
 Refer to [the Suggest API documentation](suggest-api) for further details.
 
-## Data Extension
+## Data Extension {#data-extension}
 
 From OpenRefine 2.8 it is possible to fetch values from reconcilied sources natively. This is only possible for the reconciliation endpoints that support this additional feature, described in the [Data Extension API documentation](Data-Extension-API).
 
-## Examples
+## Examples {#examples}
 
 We've cloned a number of the Refine reconciliation services as a way of providing them visibility. They can be found at [https://github.com/OpenRefine](https://github.com/OpenRefine)
 

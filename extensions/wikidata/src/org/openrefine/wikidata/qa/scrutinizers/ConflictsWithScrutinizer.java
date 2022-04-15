@@ -1,19 +1,22 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 public class ConflictsWithScrutinizer extends EditScrutinizer {
 
@@ -32,11 +35,11 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(conflictsWithPropertyPid)){
-                        pid = (PropertyIdValue) snak.getValue();
+                    if (group.getProperty().getId().equals(conflictsWithPropertyPid) && snak instanceof ValueSnak) {
+                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
                     }
-                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(snak.getValue());
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid) && snak instanceof ValueSnak) {
+                        this.itemList.add(((ValueSnak)snak).getValue());
                     }
                 }
             }
@@ -53,13 +56,26 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         return _fetcher != null && conflictsWithConstraintQid != null
                 && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
-
+    
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
-        for (Statement statement : update.getAddedStatements()){
+        for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
+            Value value = null;
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            if (mainSnak instanceof ValueSnak) {
+                value = ((ValueSnak)mainSnak).getValue();
+            }
             Set<Value> values;
             if (value != null) {
                 if (propertyIdValueValueMap.containsKey(pid)) {
@@ -83,7 +99,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(type, propertyId.getId()+conflictingPid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", conflictingPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
@@ -38,13 +39,14 @@ import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.util.TestUtils;
 
 public class ToStringTests extends RefineTest {
+
     @Test
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
         assertEquals(invoke("toString", (Object) null), "");
         assertEquals(invoke("toString", Long.valueOf(100)), "100");
         assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
-        assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"), "100");
+        assertEquals(invoke("toString", Double.valueOf(100.0), "%.0f"), "100");
 
         String inputDate = "2013-06-01";
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");
@@ -60,4 +62,3 @@ public class ToStringTests extends RefineTest {
     }
 
 }
-

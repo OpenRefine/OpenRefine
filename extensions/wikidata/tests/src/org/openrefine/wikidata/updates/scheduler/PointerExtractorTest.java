@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.mockito.Mockito.mock;
@@ -30,7 +31,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -73,7 +74,7 @@ public class PointerExtractorTest {
         assertEmpty(Datamodel.makeMonolingualTextValue("srtu", "en"));
         assertEmpty(Datamodel.makeWikidataPropertyIdValue("P78"));
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("898")));
-        assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), "http://www.wikidata.org/entity/Q34"));
+        assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), Datamodel.makeWikidataItemIdValue("Q34")));
         assertEmpty(Datamodel.makeTimeValue(1898, (byte) 2, (byte) 3, TimeValue.CM_GREGORIAN_PRO));
         assertEmpty(mock(UnsupportedValue.class));
     }
@@ -108,7 +109,7 @@ public class PointerExtractorTest {
         assertEmpty(e.extractPointers(v));
     }
 
-    private static void assertEmpty(Set<ReconItemIdValue> pointers) {
+    private static void assertEmpty(Set<ReconEntityIdValue> pointers) {
         assertEquals(Collections.emptySet(), pointers);
     }
 }

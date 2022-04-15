@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.testng.Assert.assertEquals;
@@ -28,8 +29,11 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.testng.annotations.Test;
 
 public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
@@ -37,31 +41,43 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testOrderPreserved()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
-        ItemUpdate updateB = new ItemUpdateBuilder(existingIdB).addStatement(sBtoA).build();
-        List<ItemUpdate> scheduled = schedule(updateA, updateB);
-        assertEquals(Arrays.asList(updateA, updateB), scheduled);
+        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
+        ItemEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).build();
+        List<EntityEdit> scheduled = schedule(updateA, updateB);
+        assertEquals(scheduled, Arrays.asList(updateA, updateB));
     }
 
     @Test
     public void testUpdateIsNotSplit()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
-        ItemUpdate newUpdateA = new ItemUpdateBuilder(newIdA).build();
-        ItemUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
-        List<ItemUpdate> scheduled = schedule(updateA);
-        assertSetEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
+        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
+                .addStatement(sAtoNewB).build();
+        ItemEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        ItemEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+        List<EntityEdit> scheduled = schedule(updateA);
+        assertSetEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
     }
 
     @Test
     public void testMixedUpdate()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB)
+        EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
+                .addStatement(sAtoNewB)
                 .addStatement(sAtoB).build();
-        ItemUpdate newUpdateA = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
-        ItemUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
-        List<ItemUpdate> scheduled = schedule(updateA, newUpdateA);
-        assertEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).build();
+        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+        List<EntityEdit> scheduled = schedule(updateA, newUpdateA);
+        assertEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
+    }
+
+    @Test
+    public void testMediaInfoReferringToNewItem() throws ImpossibleSchedulingException {
+        EntityEdit updateMediaInfo = new MediaInfoEditBuilder(existingMediaInfoId)
+                .addStatement(TestingData.generateStatementAddition(existingMediaInfoId, newIdA))
+                .build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        List<EntityEdit> scheduled = schedule(updateMediaInfo);
+        assertEquals(scheduled, Arrays.asList(newUpdateA, updateMediaInfo));
     }
 
     @Override

@@ -5,7 +5,7 @@
         <td width="1%"><button bind="startOverButton" class="button">&laquo; Start Over</button></td>
         <td width="98%" bind="database_conf_pars"></td>
         <td style="text-align: right;" bind="database_proj_name"></td>
-        <td width="1%"><input class="inline" type="text" size="30" bind="projectNameInput" /></td>
+        <td width="1%"><input spellcheck="false" class="inline" type="text" size="30" bind="projectNameInput" /></td>
         <td width="1%"><button bind="createProjectButton" class="button button-primary"></button></td>
       </tr>	
     </table>	
@@ -24,17 +24,22 @@
           <td><button class="button" bind="previewButton"></button></td>
         </tr>
         <tr>
+            <td style="text-align: right;">&nbsp;</td>
+            <td width="1%"><input type="checkbox" bind="disableAutoPreviewCheckbox" id="$disable" />
+                <label for="$disable" bind="database_disable_auto_preview"></label></td>
+        </tr>
+        <tr>
           <td>
               <div class="grid-layout layout-tightest">
                <table>
                   <tr><td width="1%"><input type="checkbox" bind="skipCheckbox" id="$skip"/></td>
                     <td><label for="$skip" bind="database_discard_next"></label></td>
-                    <td><input bind="skipInput" type="text" class="lightweight" size="2" value="0" />
+                    <td><input spellcheck="false" bind="skipInput" type="text" class="lightweight" size="2" value="0" />
                       <label for="$skip" bind="database_discard"></label></td>
                   </tr>
                   <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
                     <td><label for="$limit" bind="database_limit_next"></label></td>
-                    <td><input bind="limitInput" type="text" class="lightweight" size="10" value="0" />
+                    <td><input spellcheck="false" bind="limitInput" type="text" class="lightweight" size="10" value="0" />
                       <label for="$limit" bind="database_limit"></label></td>
                   </tr>
                   <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>

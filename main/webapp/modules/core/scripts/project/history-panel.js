@@ -198,7 +198,8 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   elmts.dialogHeader.html($.i18n('core-project/extract-history'));
   elmts.or_proj_extractSave.html($.i18n('core-project/extract-save'));
   elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
-  elmts.unselectAllButton.html($.i18n('core-buttons/unselect-all'));
+  elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
+  elmts.saveJsonAsFileButton.html($.i18n('core-buttons/export'))
   elmts.closeButton.html($.i18n('core-buttons/close'));
 
   var entryTable = elmts.entryTable[0];
@@ -246,7 +247,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     frame.find('input[type="checkbox"]').prop('checked', true);
     updateJson();
   });
-  elmts.unselectAllButton.click(function() {
+  elmts.deselectAllButton.click(function() {
     for (var i = 0; i < json.entries.length; i++) {
       json.entries[i].selected = false;
     }
@@ -254,6 +255,25 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     frame.find('input[type="checkbox"]').prop('checked', false);
     updateJson();
   });
+  elmts.saveJsonAsFileButton.click(function() {
+    var historyJson = elmts.textarea[0].value;
+
+    downloadFile('history.json', historyJson);
+  });
+
+  // Function originally created by Matěj Pokorný at StackOverflow:
+  // https://stackoverflow.com/a/18197341/5564816
+  var downloadFile = function(filename, content) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+    document.body.removeChild(element);
+  }
 
   var level = DialogSystem.showDialog(frame);
 

@@ -1,18 +1,12 @@
 describe('Add entity identifiers', () => {
   it('Add a new column that contains the reconciliation id', () => {
-    const fixture = [
-      ['record_id', 'date', 'location', 'species'],
-      ['1', '2017-06-23', 'Maryland', 'Hypsibius dujardini'],
-      ['2', '2018-06-09', 'South Carolina', 'Protula bispiralis'],
-      ['3', '2018-06-09', 'West Virginia', 'Monstera deliciosa'],
-      ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
-      ['16', '2017-10-05', 'Maryland', 'Amandinea devilliersiana'],
-      ['24', '2015-05-01', 'West Virginia', 'Faciolela oxyrynca'],
-    ];
+    cy.visitOpenRefine();
+    cy.navigateTo('Import project');
+    cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
 
-    cy.loadAndVisitProject(fixture);
-    cy.reconcileColumn('species');
-    cy.assertColumnIsReconciled('species');
+    //we're using here the "automatched" project, so we can test that the facet contains choice for matched and non-matched judgments
+    cy.get('#project-tar-file-input').attachFile('reconciled-project-automatch.zip')
+    cy.get('#import-project-button').click();
 
     cy.columnActionClick('species', [
       'Reconcile',

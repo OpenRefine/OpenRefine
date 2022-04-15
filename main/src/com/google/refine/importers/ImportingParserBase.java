@@ -224,7 +224,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         return addColumn(project, fileNameColumnName, columnId);
     }
 
-    private static int addArchiveColumn(Project project) {
+    protected static int addArchiveColumn(Project project) {
         String columnName = "Archive"; // TODO: Localize?
         return addColumn(project, columnName, 0);
     }

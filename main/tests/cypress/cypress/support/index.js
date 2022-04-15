@@ -33,7 +33,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  cy.cleanupProjects();
+  // DISABLE_PROJECT_CLEANUP is used to disable projects deletion
+  // Mostly used in CI/CD for performances
+  if(parseInt(Cypress.env('DISABLE_PROJECT_CLEANUP')) != 1){
+    cy.cleanupProjects();
+  }
 });
 
 before(() => {
@@ -44,3 +48,18 @@ before(() => {
     token = response.body.token;
   });
 });
+
+
+// See https://docs.cypress.io/api/events/catalog-of-events#Uncaught-Exceptions
+// We want to catch some Javascript exception that we consider harmless
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // This message occasionally appears with edge
+  // Doesn't seems like a blocket, and the test should not fail 
+  if (err.message.includes("Cannot read property 'offsetTop' of undefined")
+      || err.message.includes("Cannot read properties of undefined (reading 'offsetTop')")
+    ) {
+    return false
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+})

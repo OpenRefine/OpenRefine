@@ -1,0 +1,26 @@
+
+name: Copy labels from issue to pull request
+
+on:
+  pull_request_target:
+    types: [opened, edited]
+
+jobs:
+  transfer_tags:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install -r .github/workflows/label_transfer/requirements.txt
+        pip freeze
+    - name: Run Python label transfer script
+      run: python .github/workflows/label_transfer/script.py ${{ github.event.number }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPO: ${{ github.repository }}

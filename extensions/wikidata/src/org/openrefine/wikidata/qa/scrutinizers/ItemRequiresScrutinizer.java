@@ -1,19 +1,22 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 public class ItemRequiresScrutinizer extends EditScrutinizer {
 
@@ -35,11 +38,14 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
+                    if (! (snak instanceof ValueSnak)) {
+                        continue;
+                    }
                     if (group.getProperty().getId().equals(itemRequiresPropertyPid)){
-                        pid = (PropertyIdValue) snak.getValue();
+                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
                     }
                     if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(snak.getValue());
+                        this.itemList.add(((ValueSnak)snak).getValue());
                     }
                 }
             }
@@ -55,15 +61,25 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         return _fetcher != null && itemRequiresConstraintQid != null
                 && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
-
+    
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            PropertyIdValue pid = mainSnak.getPropertyId();
             Set<Value> values;
-            if (value != null) {
+            if (mainSnak instanceof ValueSnak) {
+                Value value = ((ValueSnak)mainSnak).getValue();
                 if (propertyIdValueValueMap.containsKey(pid)) {
                     values = propertyIdValueValueMap.get(pid);
                 } else {
@@ -84,13 +100,13 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
                     QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

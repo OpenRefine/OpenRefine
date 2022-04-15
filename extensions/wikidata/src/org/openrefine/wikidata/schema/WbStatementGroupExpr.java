@@ -29,11 +29,10 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -55,10 +54,10 @@ public class WbStatementGroupExpr {
         this.statementExprs = claimExprs;
     }
 
-    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject)
+    public StatementGroupEdit evaluate(ExpressionContext ctxt, EntityIdValue subject)
             throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
-        List<Statement> statements = new ArrayList<Statement>(statementExprs.size());
+        List<StatementEdit> statements = new ArrayList<>(statementExprs.size());
         for (WbStatementExpr expr : statementExprs) {
             try {
                 statements.add(expr.evaluate(ctxt, subject, propertyId));
@@ -67,7 +66,7 @@ public class WbStatementGroupExpr {
             }
         }
         if (!statements.isEmpty()) {
-            return Datamodel.makeStatementGroup(statements);
+            return new StatementGroupEdit(statements);
         } else {
             throw new SkipSchemaExpressionException();
         }

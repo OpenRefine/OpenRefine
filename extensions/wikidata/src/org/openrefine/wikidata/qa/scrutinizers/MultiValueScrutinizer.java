@@ -1,13 +1,15 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 public class MultiValueScrutinizer extends EditScrutinizer {
 
@@ -20,9 +22,18 @@ public class MultiValueScrutinizer extends EditScrutinizer {
         multiValueConstraintQid = getConstraintsRelatedId("multi_value_constraint_qid");
         return _fetcher != null && multiValueConstraintQid != null;
     }
-
+    
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Map<PropertyIdValue, Integer> propertyCount = new HashMap<>();
 
         for (Statement statement : update.getAddedStatements()) {
@@ -40,7 +51,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(new_type, pid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }
@@ -49,7 +60,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(existing_type, pid.getId(), QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

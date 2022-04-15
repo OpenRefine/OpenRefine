@@ -1,9 +1,10 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -44,7 +45,9 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         Statement statement = new StatementImpl("P157", mainSnak, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, requiredValue);
@@ -66,7 +69,10 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         Snak requiredPropertySnak = Datamodel.makeValueSnak(propertyParameterValue, itemValue);
         Statement requiredStatement = new StatementImpl("P1196", requiredPropertySnak, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).addStatement(requiredStatement).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
+                .addStatement(add(statement))
+                .addStatement(add(requiredStatement))
+                .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, requiredValue);
@@ -88,7 +94,10 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         Snak requiredPropertySnak = Datamodel.makeValueSnak(propertyParameterValue, requiredValue);
         Statement requiredStatement = new StatementImpl("P1196", requiredPropertySnak, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).addStatement(requiredStatement).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
+                .addStatement(add(statement))
+                .addStatement(add(requiredStatement))
+                .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, requiredValue);
@@ -108,7 +117,9 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.newIdA;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         Statement statement = new StatementImpl("P157", mainSnak, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, requiredValue);
@@ -128,9 +139,12 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         ValueSnak mainSnak1 = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         ValueSnak mainSnak2 = Datamodel.makeValueSnak(propertyParameterValue, requiredValue);
-        Statement statement1 = new StatementImpl("P157", mainSnak1,id);
-        Statement statement2 = new StatementImpl("P1196", mainSnak2,id);
-        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement1).addStatement(statement2).build();
+        Statement statement1 = new StatementImpl("P157", mainSnak1, id);
+        Statement statement2 = new StatementImpl("P1196", mainSnak2, id);
+        TermedStatementEntityEdit update = new ItemEditBuilder(id)
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
+                .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, requiredValue);

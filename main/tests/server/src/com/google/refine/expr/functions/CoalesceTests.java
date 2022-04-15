@@ -46,17 +46,16 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
-
 public class CoalesceTests extends RefineTest {
 
-    private static final Integer[] ZERO_TO_TWO = new Integer[] {0, 1, 2};
+    private static final Integer[] ZERO_TO_TWO = new Integer[] { 0, 1, 2 };
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeMethod
     public void setUp() {
         bindings = new Properties();
@@ -66,20 +65,20 @@ public class CoalesceTests extends RefineTest {
     public void tearDown() {
         bindings = null;
     }
-    
+
     @Test
-    public void testCoalesceInvalidParams() {        
+    public void testCoalesceInvalidParams() {
         Assert.assertTrue(invoke("coalesce") instanceof EvalError);
         Assert.assertTrue(invoke("coalesce", 1) instanceof EvalError);
     }
-    
+
     @Test
     public void testCoalesce() {
         Assert.assertNull(invoke("coalesce", (Object) null, (Object) null));
-        Assert.assertEquals(invoke("coalesce", (Object) null, "string"),"string");
-        Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"),"string");
-        Assert.assertEquals(invoke("coalesce", (Object) null, 1),1);
-        Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO),ZERO_TO_TWO);
+        Assert.assertEquals(invoke("coalesce", (Object) null, "string"), "string");
+        Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"), "string");
+        Assert.assertEquals(invoke("coalesce", (Object) null, 1), 1);
+        Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO), ZERO_TO_TWO);
     }
-    
+
 }

@@ -1,3 +1,29 @@
+/*******************************************************************************
+ * Copyright (C) 2018, OpenRefine contributors
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package com.google.refine.util;
 
 import java.io.IOException;
@@ -37,11 +63,15 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.util.TimeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.RefineServlet;
 
 
 public class HttpClient {
+    final static Logger logger = LoggerFactory.getLogger("http-client");
+    
     final private RequestConfig defaultRequestConfig;
     private HttpClientBuilder httpClientBuilder;
     private CloseableHttpClient httpClient;
@@ -62,13 +92,13 @@ public class HttpClient {
         // Create a connection manager with a custom socket timeout
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
         final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(10, TimeUnit.SECONDS)
+            .setSoTimeout(60, TimeUnit.SECONDS)
             .build();
         connManager.setDefaultSocketConfig(socketConfig);
 
         defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30, TimeUnit.SECONDS)
-                .setConnectionRequestTimeout(30, TimeUnit.SECONDS) // TODO: 60 seconds in some places in old code
+                .setConnectTimeout(60, TimeUnit.SECONDS)
+                .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
                 .build();
 
         httpClientBuilder = HttpClients.custom()
@@ -206,8 +236,10 @@ public class HttpClient {
             if (interval.compareTo(defaultInterval) == 0) {
                 interval = TimeValue.of(((Double) (Math.pow(2, execCount - 1) * defaultInterval.getDuration())).longValue(),
                        defaultInterval.getTimeUnit() );
+                logger.warn("Retrying HTTP request after "+interval.toString());
                 return interval;
             }
+            logger.warn("Retrying HTTP request after "+interval.toString());
             return interval;
         }
         

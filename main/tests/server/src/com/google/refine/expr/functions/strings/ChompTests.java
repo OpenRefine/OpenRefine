@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -34,6 +35,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
 public class ChompTests extends RefineTest {
+
     @Test
     public void testChomp() {
         // FIXME: These return null instead of an EvalError
@@ -45,4 +47,3 @@ public class ChompTests extends RefineTest {
     }
 
 }
-

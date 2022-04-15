@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertEquals;
@@ -44,11 +45,10 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
-
 public class DataExtensionChangeTest extends RefineTest {
 
     Project project;
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -59,10 +59,10 @@ public class DataExtensionChangeTest extends RefineTest {
     public void SetUp()
             throws IOException, ModelException {
         project = createCSVProject(
-                "reconciled\n"+
-                "some item");
+                "reconciled\n" +
+                        "some item");
     }
-    
+
     @Test
     public void testApplyOldChange() throws Exception {
         Pool pool = new Pool();
@@ -76,7 +76,7 @@ public class DataExtensionChangeTest extends RefineTest {
         change.apply(project);
         assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
     }
-    
+
     @Test
     public void testApplyNewChange() throws Exception {
         Pool pool = new Pool();

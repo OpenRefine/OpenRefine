@@ -23,25 +23,46 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import org.openrefine.wikidata.manifests.Manifest;
-import org.openrefine.wikidata.qa.scrutinizers.*;
-import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
-import org.openrefine.wikidata.utils.EntityCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
-
 import java.util.HashMap;
 import java.util.List;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import org.openrefine.wikidata.manifests.Manifest;
+import org.openrefine.wikidata.qa.scrutinizers.CalendarScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.CommonDescriptionScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.EnglishDescriptionScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.ItemRequiresScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.MultiValueScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.NewEntityScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.NoEditsMadeScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.UseAsQualifierScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
+import org.openrefine.wikidata.utils.EntityCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.
@@ -70,7 +91,7 @@ public class EditInspector {
         }
 
         // Register all known scrutinizers here
-        register(new NewItemScrutinizer());
+        register(new NewEntityScrutinizer());
         register(new FormatScrutinizer());
         register(new InverseConstraintScrutinizer());
         register(new SelfReferentialScrutinizer());
@@ -110,7 +131,7 @@ public class EditInspector {
             scrutinizers.put(key, scrutinizer);
         } else {
             logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
-                    "due to missing of necessary constraint configurations in the Wikibase manifest");
+                    "due to missing necessary constraint configurations in the Wikibase manifest");
         }
     }
 
@@ -119,7 +140,7 @@ public class EditInspector {
      * 
      * @param editBatch
      */
-    public void inspect(List<ItemUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
+    public void inspect(List<EntityEdit> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
         SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
@@ -129,16 +150,20 @@ public class EditInspector {
             entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
         }
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-        editBatch = scheduler.schedule(editBatch);
+        try {
+			editBatch = scheduler.schedule(editBatch);
+		} catch (ImpossibleSchedulingException e) {
+			throw new ExecutionException(e);
+		}
 
-        Map<EntityIdValue, ItemUpdate> updates = ItemUpdate.groupBySubject(editBatch);
-        List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+        Map<EntityIdValue, EntityEdit> updates = EntityEdit.groupBySubject(editBatch);
+        List<EntityEdit> mergedUpdates = updates.values().stream().collect(Collectors.toList());
         
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsBeginning();
         }
         
-        for(ItemUpdate update : mergedUpdates) {
+        for(EntityEdit update : mergedUpdates) {
             if(!update.isNull()) {
                 for (EditScrutinizer scrutinizer : scrutinizers.values()) {
                     scrutinizer.scrutinize(update);

@@ -21,26 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.Manifest;
-import org.openrefine.wikidata.manifests.ManifestException;
-import org.openrefine.wikidata.manifests.ManifestParser;
-import org.openrefine.wikidata.qa.ConstraintFetcher;
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.testng.annotations.BeforeMethod;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,8 +37,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import org.openrefine.wikidata.manifests.Manifest;
+import org.openrefine.wikidata.manifests.ManifestException;
+import org.openrefine.wikidata.manifests.ManifestParser;
+import org.openrefine.wikidata.qa.ConstraintFetcher;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.testng.annotations.BeforeMethod;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public abstract class ScrutinizerTest {
 
@@ -82,10 +86,10 @@ public abstract class ScrutinizerTest {
         scrutinizer.prepareDependencies();
     }
 
-    public void scrutinize(ItemUpdate... updates) {
+    public void scrutinize(EntityEdit... updates) {
         scrutinizer.batchIsBeginning();
-        for(ItemUpdate update : Arrays.asList(updates)) {
-            if(!update.isNull()) {
+        for (EntityEdit update : Arrays.asList(updates)) {
+            if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
         }
@@ -114,14 +118,15 @@ public abstract class ScrutinizerTest {
 
     public List<Statement> constraintParameterStatementList(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue, itemIdValue);
 
         Claim claim = Datamodel.makeClaim(itemIdValue, snakValue, listSnakGroup);
 
         Reference reference = Datamodel.makeReference(listSnakGroup);
         List<Reference> referenceList = Collections.singletonList(reference);
 
-        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
+        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL,
+                "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
         List<Statement> statements = Collections.singletonList(statement);
 
         return statements;
@@ -147,6 +152,14 @@ public abstract class ScrutinizerTest {
         }
 
         return snakGroupList;
+    }
+
+    public StatementEdit add(Statement statement) {
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
+    }
+
+    public StatementEdit delete(Statement statement) {
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
     }
 
 }

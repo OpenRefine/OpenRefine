@@ -41,6 +41,8 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+var reconMatchSilimilarCellsByDefault = true;
+
 DataTableCellUI.previewMatchedCells = true;
 
 (function() {
@@ -149,7 +151,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
-        a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
+        a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(match.id)));
       }
 
       if (DataTableCellUI.previewMatchedCells) {
@@ -196,7 +198,7 @@ DataTableCellUI.prototype._render = function() {
             .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
+              a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(candidate.id)));
             }
 
             self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
@@ -360,9 +362,16 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.newButton.html($.i18n('core-buttons/new-topic'));
   elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  
+	if (!reconMatchSilimilarCellsByDefault) {
+		elmts.radioSimilar[0].setAttribute("checked", false);
+		elmts.radioOne[0].setAttribute("checked", true);
+	}
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
+	reconMatchSilimilarCellsByDefault = elmts.radioSimilar[0].checked;
+	  
     DialogSystem.dismissUntil(level - 1);
   };
 
@@ -485,7 +494,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   }
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = encodeURI(preview.url.replace("{{id}}", id));
+    var url = preview.url.replace("{{id}}", encodeURIComponent(id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)

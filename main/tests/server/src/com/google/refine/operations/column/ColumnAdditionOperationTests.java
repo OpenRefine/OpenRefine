@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.column;
 
 import org.testng.annotations.BeforeSuite;
@@ -35,12 +36,12 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ColumnAdditionOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
     }
-    
+
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String json = "{"

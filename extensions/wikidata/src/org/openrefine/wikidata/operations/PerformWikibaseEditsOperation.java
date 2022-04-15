@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -37,9 +38,11 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
-import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.editing.NewEntityLibrary;
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -77,6 +80,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonProperty("editGroupsUrlSchema")
     private String editGroupsUrlSchema;
+    
+    @JsonProperty("maxEditsPerMinute")
+    private int maxEditsPerMinute;
+    
+    @JsonProperty("tag")
+    private String tagTemplate;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
@@ -87,7 +96,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             @JsonProperty("maxlag")
             Integer maxlag,
             @JsonProperty("editGroupsUrlSchema")
-            String editGroupsUrlSchema) {
+            String editGroupsUrlSchema,
+            @JsonProperty("maxEditsPerMinute")
+    		Integer maxEditsPerMinute,
+    		@JsonProperty("tag")
+    		String tag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -98,6 +111,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             maxlag = 5;
         }
         this.maxlag = maxlag;
+        this.maxEditsPerMinute = maxEditsPerMinute == null ? Manifest.DEFAULT_MAX_EDITS_PER_MINUTE : maxEditsPerMinute;
+        this.tagTemplate = tag == null ? Manifest.DEFAULT_TAG_TEMPLATE : tag;
         // a fallback to Wikidata for backwards compatibility is done later on
         this.editGroupsUrlSchema = editGroupsUrlSchema;
     }
@@ -120,39 +135,39 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static public class PerformWikibaseEditsChange implements Change {
 
-        private NewItemLibrary newItemLibrary;
+        private NewEntityLibrary newEntityLibrary;
 
-        public PerformWikibaseEditsChange(NewItemLibrary library) {
-            newItemLibrary = library;
+        public PerformWikibaseEditsChange(NewEntityLibrary library) {
+            newEntityLibrary = library;
         }
 
         @Override
         public void apply(Project project) {
             // we don't re-run changes on Wikidata
-            newItemLibrary.updateReconciledCells(project, false);
+            newEntityLibrary.updateReconciledCells(project, false);
         }
 
         @Override
         public void revert(Project project) {
             // this does not do anything on Wikibase side -
             // (we don't revert changes on Wikidata either)
-            newItemLibrary.updateReconciledCells(project, true);
+            newEntityLibrary.updateReconciledCells(project, true);
         }
 
         @Override
         public void save(Writer writer, Properties options)
                 throws IOException {
-            if (newItemLibrary != null) {
+            if (newEntityLibrary != null) {
                 writer.write("newItems=");
                 ObjectMapper mapper = new ObjectMapper();
-                writer.write(mapper.writeValueAsString(newItemLibrary) + "\n");
+                writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
             writer.write("/ec/\n"); // end of change
         }
 
         static public Change load(LineNumberReader reader, Pool pool)
                 throws Exception {
-            NewItemLibrary library = new NewItemLibrary();
+            NewEntityLibrary library = new NewEntityLibrary();
             String line = null;
             while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
                 int equal = line.indexOf('=');
@@ -161,7 +176,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
                 if ("newItems".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
-                    library = mapper.readValue(value, NewItemLibrary.class);
+                    library = mapper.readValue(value, NewEntityLibrary.class);
                 }
             }
             return new PerformWikibaseEditsChange(library);
@@ -185,13 +200,15 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
-            String tag = "openrefine";
-            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-            if (matcher.matches()) {
-                tag += "-"+matcher.group(1);
+            String tag = tagTemplate;
+            if (tag.contains("${version}")) {
+	            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+	            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+	            if (matcher.matches()) {
+	                tag = tag.replace("${version}", matcher.group(1));
+	            }
             }
-            this._tags = Arrays.asList(tag);
+            this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
             if (editGroupsUrlSchema == null &&
                     ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
@@ -231,12 +248,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
 
             // Evaluate the schema
-            List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
+            List<EntityEdit> entityDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
-            NewItemLibrary newItemLibrary = new NewItemLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    maxlag, _tags, 50);
+            NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
+            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
+                    maxlag, _tags, 50, maxEditsPerMinute);
 
             // Perform edits
             logger.info("Performing edits");
@@ -255,7 +272,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             _progress = 100;
 
             if (!_canceled) {
-                Change change = new PerformWikibaseEditsChange(newItemLibrary);
+                Change change = new PerformWikibaseEditsChange(newEntityLibrary);
 
                 HistoryEntry historyEntry = new HistoryEntry(_historyEntryID, _project, _description,
                         PerformWikibaseEditsOperation.this, change);

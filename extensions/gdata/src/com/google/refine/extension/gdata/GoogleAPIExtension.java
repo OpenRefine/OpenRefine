@@ -21,7 +21,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
@@ -46,7 +46,7 @@ abstract public class GoogleAPIExtension {
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
     /** Global instance of the JSON factory. */
-    protected static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    protected static final JsonFactory JSON_FACTORY = new GsonFactory();
 
     private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS};
     
@@ -59,6 +59,10 @@ abstract public class GoogleAPIExtension {
     
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
+        String host = request.getHeader("Host");
+        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
+	    return "https://github.com/OpenRefine/OpenRefine/wiki/Google-Extension#missing-credentials";
+        }
         String authorizedUrl = makeRedirectUrl(module, request);
         String state = makeState(module, request);
         
@@ -163,7 +167,7 @@ abstract public class GoogleAPIExtension {
     public static Sheets getSheetsService(String token) throws IOException {
         final Credential credential;
         if (token != null) {
-            credential =  new Credential.Builder(null).build().setAccessToken(token);
+            credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
         } else {
             credential = null;
         }

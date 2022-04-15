@@ -172,7 +172,7 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f, silent) {
 
 ReconciliationManager.ensureDefaultServicePresent = function() {
    var lang = $.i18n('core-recon/wd-recon-lang');
-   var url = "https://wdreconcile.toolforge.org/"+lang+"/api";
+   var url = "https://wikidata.reconci.link/"+lang+"/api";
    ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { }, true);
    return url;
 };

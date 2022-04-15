@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.expr;
 
 import java.io.IOException;
@@ -34,55 +35,56 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase {
-    
+
     @BeforeMethod
     public void setUp() {
         command = new GetExpressionHistoryCommand();
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
-        initWorkspace("{\n" + 
-                "        \"class\": \"com.google.refine.preference.TopList\",\n" + 
-                "        \"top\": 100,\n" + 
-                "        \"list\": [\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" + 
+        initWorkspace("{\n" +
+                "        \"class\": \"com.google.refine.preference.TopList\",\n" +
+                "        \"top\": 100,\n" +
+                "        \"list\": [\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" +
                 "          \"grel:cell.recon.match.id\"" +
-                "]}", "{\n" + 
-                        "        \"class\": \"com.google.refine.preference.TopList\",\n" + 
-                        "        \"top\": 100,\n" + 
-                        "        \"list\": [\n" + 
-                        "          \"grel:cell.recon.match.id\"\n" + 
+                "]}",
+                "{\n" +
+                        "        \"class\": \"com.google.refine.preference.TopList\",\n" +
+                        "        \"top\": 100,\n" +
+                        "        \"list\": [\n" +
+                        "          \"grel:cell.recon.match.id\"\n" +
                         "]}");
-        
-        String json = "{\n" + 
-                "       \"expressions\" : [ {\n" + 
-                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 1')\",\n" + 
-                "         \"global\" : false,\n" + 
-                "         \"starred\" : false\n" + 
-                "       }, {\n" + 
-                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 3')\",\n" + 
-                "         \"global\" : false,\n" + 
-                "         \"starred\" : false\n" + 
-                "       }, {\n" + 
-                "         \"code\" : \"grel:cell.recon.match.id\",\n" + 
-                "         \"global\" : false,\n" + 
-                "         \"starred\" : true\n" + 
-                "       } ]\n" + 
+
+        String json = "{\n" +
+                "       \"expressions\" : [ {\n" +
+                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 1')\",\n" +
+                "         \"global\" : false,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 3')\",\n" +
+                "         \"global\" : false,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"code\" : \"grel:cell.recon.match.id\",\n" +
+                "         \"global\" : false,\n" +
+                "         \"starred\" : true\n" +
+                "       } ]\n" +
                 "     }";
         command.doGet(request, response);
         assertResponseJsonIs(json);
     }
-    
+
     @Test
     public void testUninitialized() throws ServletException, IOException {
 
         initWorkspace("{}");
-        
-        String json = "{\n" + 
-                "       \"expressions\" : []\n" + 
+
+        String json = "{\n" +
+                "       \"expressions\" : []\n" +
                 "     }";
         command.doGet(request, response);
         assertResponseJsonIs(json);

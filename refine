@@ -47,14 +47,16 @@ where [options] include:
      default: OS dependent
 
   -m <memory> max memory heap size to use
-     default: 1024M
-     Values less than 256M not allowed
+     default: 1400M
 
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
   -x <name=value> additional configuration parameters to pass to OpenRefine
      default: [none]
+
+  -c <path> path to refine.ini file
+     default: ./refine.ini
   
   --debug enable JVM debugging (on port 8000)
        
@@ -67,9 +69,9 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
-
+   ui_tests ............................ Run only the UI tests
+   
    broker .............................. Run OpenRefine Broker
    
    broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
@@ -289,6 +291,7 @@ build_prepare() {
     if [ ! -d $REFINE_BUILD_DIR ] ; then 
         mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
+    ( cd main/webapp && npm install )
 }
 
 dist_prepare() {
@@ -306,8 +309,8 @@ tools_prepare() {
 mvn_prepare() {
     tools_prepare
 
-    MVN_VERSION="3.6.3"
-    MVN_URL="https://www-us.apache.org/dist/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_VERSION="3.8.5"
+    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
     MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
@@ -386,6 +389,7 @@ mvn() {
 
 dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package
@@ -393,6 +397,7 @@ dist() {
 
 windows_dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package -P windows
@@ -400,6 +405,7 @@ windows_dist() {
 
 linux_dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package -P linux
@@ -409,6 +415,7 @@ linux_dist() {
 # but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
     check_macosx
+    build_prepare
     dist_prepare
     get_version $1
     get_revision
@@ -482,24 +489,20 @@ test() {
     $MVN test
 }
 
-ui_test() {
+
+ui_tests() {
     download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
     RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
     echo "Starting reconcile-csv-0.1.2 ..."
     $RECONCILE_SERVER_CMD 2>&1 &
     RECONCILE_SERVER_PID="$!"
     
-
-
     get_revision
 
-    BROWSER="$1"
-    CYPRESS_PROJECT_ID="$2"
-    CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
 
-    if [ -z "$BROWSER" ] ; then
-        BROWSER="electron"
+    if [ -z "$CYPRESS_BROWSER" ] ; then
+        CYPRESS_BROWSER="electron"
     fi
     
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
@@ -527,11 +530,14 @@ ui_test() {
     echo ""
 
     echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    # Cypress needs a unique group id
+    # We're hashing the list of files to generate such Group Id
+    CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER"
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
@@ -560,6 +566,7 @@ ui_test() {
     fi
 }
 
+
 server_test() {
     mvn_prepare
     $MVN test -f main
@@ -583,6 +590,7 @@ run() {
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
+            build_prepare
             $MVN process-resources
             $MVN compile test-compile
             echo ""
@@ -624,9 +632,7 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
-    echo "${RUN_CMD[@]}"
 
-    echo "Starting OpenRefine at 'http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -774,8 +780,8 @@ checkJavaMajorVersion() {
   if (( ${major} < 8 )); then
     error "OpenRefine requires Java version 8 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
   fi
-  if (( ${major} > 12 )); then
-    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 12."
+  if (( ${major} > 17 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17."
   fi
 }
 
@@ -805,15 +811,6 @@ if [ "$OS" = "windows" ] ; then
     SEP=";" 
 fi
 
-# ----- Load configurations -------------------------------------
-
-if [ -f "refine-dev.ini" ]; then
-  echo "Using refine-dev.ini for configuration"
-  load_configs refine-dev.ini
-else
-  echo "Using refine.ini for configuration"
-  load_configs refine.ini
-fi
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
@@ -847,18 +844,11 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) 
-      shift;
-      if [ $1 -le 256 ]
-      then
-        fail "Value of -m less than 256 not allowed";
-      else
-        REFINE_MEMORY="$1";
-        shift;
-        continue;
-      fi;;
+    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
+    -c) shift; REFINE_INI_PATH="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -873,6 +863,15 @@ fi
 if [ -z "$ACTION" ] ; then
     ACTION="run"
 fi
+
+# ----- Load configurations -------------------------------------
+
+if [ -z $REFINE_INI_PATH ]; then
+  REFINE_INI_PATH=refine.ini
+fi
+
+echo "Using ${REFINE_INI_PATH} for configuration"
+load_configs $REFINE_INI_PATH
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
@@ -896,10 +895,12 @@ elif [ "$OS" = "linux" ] ; then
     freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
+echo "-------------------------------------------------------------------------------------------------"
 echo You have "$freeRam"M of free memory. 
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Allocate-More-Memory
+echo https://docs.openrefine.org/manual/installing\#increasing-memory-allocation
+echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
@@ -991,8 +992,7 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1 $2 $3;;  
-  ui_tests) ui_test $1 $2 $3;;  
+  ui_tests) ui_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;

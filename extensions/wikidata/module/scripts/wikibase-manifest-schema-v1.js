@@ -1,6 +1,6 @@
 const WikibaseManifestSchemaV1 = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "TBD",
+  "$id": "https://openrefine.org/schemas/wikibase-manifest-v1.json",
   "type": "object",
   "description": "The schema validates Wikibase manifests with version 1.x. The manifest contains configurations of basic information (e.g. URL of the main page), extensions (e.g. OAuth extension) or external services (e.g. Reconciliation service) of a Wikibase",
   "properties": {
@@ -49,6 +49,14 @@ const WikibaseManifestSchemaV1 = {
         "maxlag": {
           "type": "integer",
           "description": "The default maxlag of this Wikibase. For Wikidata, the default value is 5 (seconds)"
+        },
+        "tag": {
+          "type": "string",
+          "description": "The tag to apply to edits made to the Wikibase instance. If the ${version} string is included, it will be replaced by the major.minor version of OpenRefine used to make the edit"
+        },
+        "max_edits_per_minute": {
+          "type": "integer",
+          "description": "The maximum number of edits to do per minute, on this Wikibase instance. By default, 60."
         },
         "properties": {
           "type": "object",
@@ -104,7 +112,7 @@ const WikibaseManifestSchemaV1 = {
           "type": "string",
           "format": "url",
           "pattern": "^.*\\${lang}.*$",
-          "description": "The default reconciliation API endpoint of the Wikibase, the endpoint should include the language variable '${lang}', such as 'https://wdreconcile.toolforge.org/${lang}/api'"
+          "description": "The default reconciliation API endpoint of the Wikibase, the endpoint should include the language variable '${lang}', such as 'https://wikidata.reconci.link/${lang}/api'"
         }
       },
       "required": ["endpoint"]

@@ -1,12 +1,21 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
@@ -50,12 +59,24 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }    
+    
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()){
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
-            propertyIdValueValueMap.put(pid, value);
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            if (mainSnak instanceof ValueSnak) {
+                PropertyIdValue pid = mainSnak.getPropertyId();
+                Value value = ((ValueSnak)mainSnak).getValue();
+                propertyIdValueValueMap.put(pid, value);
+            }
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
@@ -89,7 +110,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                             } else {
                                 issue.setProperty("max_value", null);
                             }
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
 
@@ -103,7 +124,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                                 issue.setProperty("min_value", null);
                             }
                             issue.setProperty("max_value", maxRangeValue.getNumericValue());
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
                     }

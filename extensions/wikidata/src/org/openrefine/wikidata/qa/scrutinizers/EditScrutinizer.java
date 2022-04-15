@@ -23,18 +23,21 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * Inspects an edit batch and emits warnings.
@@ -83,12 +86,36 @@ public abstract class EditScrutinizer {
     }
 
     /**
-     * Reads the candidate edits and emits warnings in the store
+     * Reads the candidate edit and emits warnings in the store
      * 
      * @param edit:
-     *            the list of ItemUpdates to scrutinize
+     *            the {@link EntityEdit} to scrutinize
      */
-    public abstract void scrutinize(ItemUpdate edit);
+    public void scrutinize(EntityEdit edit) {
+    	if (edit instanceof ItemEdit) {
+    		scrutinize((ItemEdit) edit);
+    	} else if (edit instanceof MediaInfoEdit) {
+    		scrutinize((MediaInfoEdit) edit);
+    	} else {
+    		throw new IllegalArgumentException("Scrutinizing this type of entity edit is not supported yet");
+    	}
+    }
+    
+    /**
+     * Reads the candidate edit and emits warnings in the store
+     * 
+     * @param edit:
+     *            the {@link ItemEdit} to scrutinize
+     */
+    public abstract void scrutinize(ItemEdit edit);
+    
+    /**
+     * Reads the candidate edit and emits warnings in the store
+     * 
+     * @param edit:
+     *            the {@link ItemEdit} to scrutinize
+     */
+    public abstract void scrutinize(MediaInfoEdit edit);
     
     /**
      * Method called once the edit batch has been read entirely
@@ -155,7 +182,9 @@ public abstract class EditScrutinizer {
         for (SnakGroup group : groups) {
             if (group.getProperty().getId().equals(pid)) {
                 for (Snak snak : group.getSnaks())
-                    results.add(snak.getValue());
+                    if (snak instanceof ValueSnak) {
+                        results.add(((ValueSnak)snak).getValue());
+                    }
             }
         }
         return results;

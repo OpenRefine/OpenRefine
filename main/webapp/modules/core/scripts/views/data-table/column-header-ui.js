@@ -127,7 +127,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
           id: "core/sort",
-          "label": $.i18n('core-views/sort')+"...",
+          "label": $.i18n('core-views/sort'),
           "click": function() {
             self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0);
           }
@@ -177,6 +177,45 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
           click: function() {
             for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
               self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
+            }
+            self._dataTableView.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/expand-all'),
+          /**
+           * This function expands all the columns in the project
+           */
+          // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
+          click: function() {
+            self._dataTableView._collapsedColumnNames = [];
+            self._dataTableView.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/expand-left'),
+          /**
+           * This function expands the columns to the left of the selected column
+           */
+          // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
+          click: function() {
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
+            for (var i = 0; i < self._columnIndex; i++) {
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
+            }
+            self._dataTableView.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/expand-right'),
+          /**
+           * This function expands the columns to the right of the selected column
+           */
+          // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
+          click: function() {
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
+            for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
             }
             self._dataTableView.render();
           }

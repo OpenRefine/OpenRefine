@@ -81,7 +81,6 @@ public class MarcImporterTests extends XmlImporterTests {
         super.tearDown();
     }
 
-    
     @Test
     public void readMarcFileWithUnicode() throws FileNotFoundException, IOException {
         final String FILE = "scriblio.mrc";
@@ -94,7 +93,7 @@ public class MarcImporterTests extends XmlImporterTests {
         // NOTE: This has the side effect of creating scriblio.mrc.xml
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, fileRecords, "binary/marc");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
         JSONUtilities.append(path, "marc:record");
@@ -116,8 +115,7 @@ public class MarcImporterTests extends XmlImporterTests {
         Row r2 = project.rows.get(2);
         assertEquals(r2.getCellValue(1), "005");
         assertEquals(r2.getCellValue(5), "£4.99");
-        assertEquals(project.rows.get(29).getCellValue(3),"700");
+        assertEquals(project.rows.get(29).getCellValue(3), "700");
     }
-
 
 }

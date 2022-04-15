@@ -276,6 +276,8 @@ public abstract class Command {
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();

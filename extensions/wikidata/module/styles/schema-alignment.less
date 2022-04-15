@@ -156,6 +156,14 @@
     text-decoration: underline;
 }
 
+.wbs-configure .wbs-icon {
+     background-image:url("data:image/svg+xml,%3Csvg%20width=%2224%22%20height=%2224%22%20xml:space=%22preserve%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d=%22m11.254%205.522-.24%201.443a4.83%204.83%200%200%200-1.24.516L8.58%206.629%207.182%208.027l.853%201.194a4.84%204.84%200%200%200-.515%201.24l-1.445.24v1.977l1.445.242c.113.434.286.85.515%201.24l-.853%201.194%201.398%201.398%201.194-.853c.39.23.806.402%201.24.515l.24%201.445h1.979l.24-1.445a4.83%204.83%200%200%200%201.24-.515l1.194.853%201.398-1.398-.852-1.194c.23-.39.403-.806.516-1.24l1.443-.242V10.7l-1.443-.24a4.839%204.839%200%200%200-.516-1.24l.852-1.194-1.398-1.398-1.194.852a4.83%204.83%200%200%200-1.24-.516l-.24-1.443h-1.979zm1.004%203.183a3.05%203.05%200%200%201%203.049%203.051%203.05%203.05%200%200%201-3.049%203.049%203.05%203.05%200%200%201-3.05-3.049%203.05%203.05%200%200%201%203.05-3.05z%22%20stroke=%22%23000%22%20stroke-width=%22.097%22/%3E%3C/svg%3E%0A");
+}
+
+.wbs-configure span:last-child:hover {
+     text-decoration: underline;
+}
+
 .wbs-rank-selector-icon {
    background-position: -36px;
    width: 8px;
@@ -165,7 +173,7 @@
    background-image:linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20xmlns:xlink=%22http://www.w3.org/1999/xlink%22%20width=%22107%22%20height=%2220%22%3E%20%3Cdefs%3E%20%3Cpath%20d=%22M3.1%2C0%200%2C3.8%200%2C6%208%2C6%208%2C3.8%204.9%2C0zm8.2%2C7%20-2.3%2C2%200%2C2%202.3%2C2%203.4%2C0%202.3%2C-2%200%2C-2%20-2.3%2C-2zm6.7%2C7%200%2C2.2%203.1%2C3.8%201.8%2C0%203.1%2C-3.8%200%2C-2.2z%22%20id=%22a%22/%3E%20%3Cpath%20d=%22m18.5%2C10.75%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0zm0%2C-6.75%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-12%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-5.25%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0z%22%20id=%22b%22%20fill=%22none%22/%3E%20%3C/defs%3E%20%3Cuse%20fill=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3C/svg%3E");
 }
 
-.wbs-item-input, .wbs-prop-input, .wbs-target-input {
+.wbs-entity-input, .wbs-prop-input, .wbs-target-input {
     width: 250px;
     min-height: 20px;
     display: inline-block;
@@ -193,7 +201,7 @@
 /* Fix input rendering for Firefox */
 
 
-.wbs-item-input input, .wbs-prop-input input, .wbs-target-input input,
+.wbs-entity-input input, .wbs-prop-input input, .wbs-target-input input,
 .wbs-monolingual-container input {
     width: 100%;
     border: solid #b5b5b5 1px;
@@ -214,8 +222,8 @@
     cursor: pointer;
 }
 
-.wbs-remove,
-.wbs-add-item, .wbs-add-statement-group, .wbs-add-statement,
+.wbs-remove, .wbs-configure,
+.wbs-add-entity, .wbs-add-statement-group, .wbs-add-statement,
 .wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc,
 .wbs-copy-reference-button, .wbs-paste-reference-button {
     color: #0645ad !important;
@@ -223,12 +231,12 @@
     cursor: pointer;
 }
 
-.wbs-add-item:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
+.wbs-add-entity:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
 .wbs-add-qualifier:hover, .wbs-add-reference:hover, .wbs-add-namedesc:hover {
     text-decoration: none;
 }
 
-.wbs-add-item span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
+.wbs-add-entity span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
 .wbs-add-qualifier span:hover, .wbs-add-reference span:hover, .wbs-add-namedesc span:hover {
     text-decoration: underline;
 }
@@ -237,13 +245,13 @@
     display: inline-block;
 }
 
-.wbs-item-contents {
+.wbs-entity-contents {
     padding-left: 10px;
     margin-left: 20px;
     border-left: 3px solid gray;
 }
 
-.wbs-add-item b, .wbs-add-statement-group b, .wbs-add-statement b,
+.wbs-add-entity b, .wbs-add-statement-group b, .wbs-add-statement b,
 .wbs-add-qualifier b, .wbs-add-reference b, .wbs-add-namedesc b {
     font-size: 1em;
     color: grey;
@@ -273,12 +281,12 @@
     overflow: auto;
 }
 
-.wbs-item, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
+.wbs-entity, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
     display: block;
     overflow: auto;
 }
 
-.wbs-item {
+.wbs-entity {
     margin-bottom: 5px;
     padding-right: 5px;
 }
@@ -292,6 +300,29 @@
 .wbs-statement {
     background: white;
     border-bottom: 1px solid #eaecf0;
+}
+
+.wbs-statement-mode-delete {
+    background: #cecece;
+}
+
+// Hide unrelevant sections of statements in delete mode
+.wbs-statement-mode-delete .wbs-references-section {
+    display: none;
+}
+
+.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-qualifiers-section,
+.wbs-statement-mode-delete.wbs-statement-strategy-snak .wbs-qualifiers-section,
+.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-mainsnak-input {
+    display: none;
+}
+
+.wbs-statement .wbs-value-placeholder {
+   display: none;
+}
+
+.wbs-statement.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-value-placeholder {
+    display: initial;
 }
 
 .wbs-statement:last-child {
@@ -462,6 +493,11 @@
 
 .wbs-namedesc-override input {
    vertical-align: middle;
+}
+
+// do not let users pick a term type for mediainfo entities as only labels are supported
+#schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
+	display: none;
 }
 
 .wbs-language-input {

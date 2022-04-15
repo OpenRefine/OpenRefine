@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.recon;
+
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -35,11 +37,12 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
-    
+
     @Test
     public void serializeReconMatchBestCandidatesOperation() throws Exception {
         String json = "{"

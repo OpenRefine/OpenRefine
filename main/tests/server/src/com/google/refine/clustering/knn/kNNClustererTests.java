@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.clustering.knn;
 
 import static org.testng.Assert.assertTrue;
@@ -43,7 +44,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class kNNClustererTests extends RefineTest {
-    
+
     public static String configJson = "{"
             + "\"type\":\"knn\","
             + "\"function\":\"PPM\","
@@ -53,13 +54,13 @@ public class kNNClustererTests extends RefineTest {
     public static String clustererJson = "["
             + "   [{\"v\":\"ab\",\"c\":1},{\"v\":\"abc\",\"c\":1}]"
             + "]";
-    
+
     @Test
     public void serializekNNClustererConfig() throws JsonParseException, JsonMappingException, IOException {
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
-    
+
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("column\n"
@@ -67,23 +68,23 @@ public class kNNClustererTests extends RefineTest {
                 + "abc\n"
                 + "c\n"
                 + "ĉ\n");
-        
+
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
-        
+
         TestUtils.isSerializedTo(clusterer, clustererJson);
     }
-    
+
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-    	Project project = createCSVProject("column\n"
+        Project project = createCSVProject("column\n"
                 + "foo\n"
                 + "bar\n");
-    	kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
-    	kNNClusterer clusterer = config.apply(project);
-    	clusterer.computeClusters(new Engine(project));
-    	
-    	assertTrue(clusterer.getJsonRepresentation().isEmpty());
+        kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
+        kNNClusterer clusterer = config.apply(project);
+        clusterer.computeClusters(new Engine(project));
+
+        assertTrue(clusterer.getJsonRepresentation().isEmpty());
     }
 }

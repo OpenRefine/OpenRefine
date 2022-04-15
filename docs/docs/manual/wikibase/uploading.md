@@ -6,7 +6,7 @@ sidebar_label: Uploading edits
 
 This page explains how to upload your edits to the target Wikibase. It assumes you already have a created a Wikibase schema in your OpenRefine project.
 
-## Uploading with OpenRefine
+## Uploading with OpenRefine {#uploading-with-openrefine}
 
 * Click <span class="menuItems">Wikidata</span> → <span class="menuItems">Upload edits to Wikidata</span>.
 * Log in with your personal account or your bot account depending on which account you want to use to make the edits. It is a good practice to use a [bot password](https://www.mediawiki.org/wiki/Manual:Bot_passwords). 
@@ -15,7 +15,7 @@ This page explains how to upload your edits to the target Wikibase. It assumes y
 
 Because performing edits in OpenRefine counts as an operation, you can extract this operation and reapply it to other projects. If you do so, you should also include the operation that saves the schema (only the last one is required), and make sure that the column names in the schema match those of the OpenRefine project where you are applying the operation.
 
-## Uploading with QuickStatements
+## Uploading with QuickStatements {#uploading-with-quickstatements}
 
 This requires that the Wikibase site has an associated [QuickStatements](https://meta.wikimedia.org/wiki/QuickStatements) tool.
 
@@ -25,22 +25,20 @@ This requires that the Wikibase site has an associated [QuickStatements](https:/
 * Paste the generated changes in the text area;
 * Perform the edits with <span class="buttonLabels">Run</span> or <span class="buttonLabels">Run in background</span>.
 
-## Notable differences between the two methods
+## Notable differences between the two methods {#notable-differences-between-the-two-methods}
 
-### Merging strategy for statements
+### Merging strategy for terms and statements {#merging-strategy-for-terms-and-statements}
 
-OpenRefine checks for existing statements which match not only the property and the target value, but also the qualifiers. On the other hand, QuickStatements ignores qualifiers when matching statements.
-Both merging strategies can be useful depending on the properties. It is forecast to let the user configure the matching method in OpenRefine.
+OpenRefine offers various merging strategies for terms and statements. QuickStatements only supports one non-configurable merging strategy. Therefore, the merging strategies specified by the user in the schema are ignored when exporting to QuickStatements,
+which can result in unintended changes.
 
-If references are provided, both tools merge references in matching statements.
-
-### New item creation
+### New item creation {#new-item-creation}
 
 OpenRefine supports creating new items with arbitrary relations between them.
 
 QuickStatements supports creating new items with the <code>CREATE</code> instruction, and subsequent instructions can use the <code>LAST</code> placeholder to use the Qid of the last created item. When generating QuickStatements instructions, OpenRefine reorders your edits so that this syntax can be used. In rare cases, such as when a statement links two newly-created items, it is impossible to use QuickStatements to perform the edit. In this case, no QuickStatements script will be generated.
 
-### Speed and number of edits
+### Speed and number of edits {#speed-and-number-of-edits}
 
 OpenRefine generally performs one edit per item touched by an edit batch and at most two in general (in the case where new items contain links between them). This was chosen to minimize server load, speed up the upload and keep item histories compact. The downside is that the edit summaries can be less meaningful - it is therefore important that users supply informative summaries when uploading their batches. OpenRefine asymptotically edits at the rate of 60 edits per minute (so, usually 60 items per minute). The first edits are made more quickly, which is convenient for small batches.
 

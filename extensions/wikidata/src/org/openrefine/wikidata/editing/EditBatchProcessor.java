@@ -30,23 +30,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 
 /**
- * Schedules and performs a list of updates to items via the API.
+ * Schedules and performs a list of updates to entities via the API.
  * 
  * @author Antonin Delpeuch
  *
@@ -57,13 +62,13 @@ public class EditBatchProcessor {
 
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
-    private NewItemLibrary library;
-    private List<ItemUpdate> scheduled;
+    private NewEntityLibrary library;
+    private List<EntityEdit> scheduled;
     private String summary;
     private List<String> tags;
 
-    private List<ItemUpdate> remainingUpdates;
-    private List<ItemUpdate> currentBatch;
+    private List<EntityEdit> remainingUpdates;
+    private List<EntityEdit> currentBatch;
     private int batchCursor;
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
@@ -75,31 +80,33 @@ public class EditBatchProcessor {
      * {@link performOneEdit}.
      * 
      * @param fetcher
-     *            the fetcher to use to retrieve the current state of items
+     *            the fetcher to use to retrieve the current state of entities
      * @param editor
      *            the object to use to perform the edits
-     * @param updates
-     *            the list of item updates to perform
+     * @param entityDocuments
+     *            the list of entity updates to perform
      * @param library
-     *            the library to use to keep track of new item creation
+     *            the library to use to keep track of new entity creation
      * @param summary
      *            the summary to append to all edits
      * @param tags
      *            the list of tags to apply to all edits
      * @param batchSize
-     *            the number of items that should be retrieved in one go from the
+     *            the number of entities that should be retrieved in one go from the
      *            API
+     * @param maxEditsPerMinute
+     *            the maximum number of edits per minute to do
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
-            NewItemLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<EntityEdit> entityDocuments,
+            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
 
-        // edit at 60 edits/min by default. If Wikidata is overloaded
+        // edit at 60 edits/min by default. If the Wikibase is overloaded
         // it will slow us down via the maxlag mechanism.
-        editor.setAverageTimePerEdit(1000);
+        editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int)(1000*(maxEditsPerMinute/60.)));
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
 
@@ -110,7 +117,11 @@ public class EditBatchProcessor {
 
         // Schedule the edit batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-        this.scheduled = scheduler.schedule(updates);
+        try {
+			this.scheduled = scheduler.schedule(entityDocuments);
+		} catch (ImpossibleSchedulingException e) {
+			throw new IllegalArgumentException(e);
+		}
         this.globalCursor = 0;
 
         this.batchCursor = 0;
@@ -132,49 +143,35 @@ public class EditBatchProcessor {
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
         }
-        ItemUpdate update = currentBatch.get(batchCursor);
+        EntityEdit update = currentBatch.get(batchCursor);
 
-        // Rewrite mentions to new items
-        ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getItemId());
+        // Rewrite mentions to new entities
+        ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
         try {
         	update = rewriter.rewrite(update);
-        } catch (NewItemNotCreatedYetException e) {
-        	logger.warn("Failed to rewrite update on entity "+update.getItemId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
+        } catch (NewEntityNotCreatedYetException e) {
+            logger.warn("Failed to rewrite update on entity "+update.getEntityId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
         	batchCursor++;
         	return;
         }
 
         try {
-            // New item
+            // New entities
             if (update.isNew()) {
-                ReconEntityIdValue newCell = (ReconEntityIdValue) update.getItemId();
-                update = update.normalizeLabelsAndAliases();
+                ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
+                // TODO Antonin, 2022-02-11: remove this casting once we have https://github.com/Wikidata/Wikidata-Toolkit/issues/651
+                if (newCell instanceof ItemIdValue) {
+	                ItemDocument itemDocument = (ItemDocument) update.toNewEntity();
 
-                ItemDocument itemDocument = Datamodel.makeItemDocument(update.getItemId(),
-                        update.getLabels().stream().collect(Collectors.toList()),
-                        update.getDescriptions().stream().collect(Collectors.toList()),
-                        update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
-                        Collections.emptyMap());
-
-                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
-                library.setQid(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
+	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
+	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
+                } else if (newCell instanceof MediaInfoIdValue) {
+                    throw new NotImplementedException();
+                }
             } else {
-                // Existing item
-                ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
-                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
-                labels.addAll(update.getLabelsIfNew().stream()
-                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
-                List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
-                descriptions.addAll(update.getDescriptionsIfNew().stream()
-                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
-                editor.updateTermsStatements(currentDocument,
-                		labels,
-                        descriptions,
-                        update.getAliases().stream().collect(Collectors.toList()),
-                        new ArrayList<MonolingualTextValue>(),
-                        update.getAddedStatements().stream().collect(Collectors.toList()),
-                        update.getDeletedStatements().stream().collect(Collectors.toList()),
-                        summary, tags);
+                // Existing entities
+                EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                editor.editEntityDocument(entityUpdate, false, summary, tags);
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way
@@ -213,7 +210,7 @@ public class EditBatchProcessor {
         } else {
             currentBatch = remainingUpdates.subList(0, batchSize);
         }
-        List<String> qidsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getItemId().getId())
+        List<String> idsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getEntityId().getId())
                 .collect(Collectors.toList());
 
         // Get the current documents for this batch of updates
@@ -223,9 +220,9 @@ public class EditBatchProcessor {
         int backoff = 2;
         int sleepTime = 5000;
         // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
-        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
+        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
             try {
-                currentDocs = fetcher.getEntityDocuments(qidsToFetch);
+                currentDocs = fetcher.getEntityDocuments(idsToFetch);
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
                                                 + "]: " + e.getErrorMessage());
@@ -234,12 +231,12 @@ public class EditBatchProcessor {
 			}
             retries--;
             sleepTime *= backoff;
-            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
+            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
                 logger.warn("Retrying in " + sleepTime + " ms");
                 Thread.sleep(sleepTime);
             }
         }
-        if (currentDocs == null) {
+        if (currentDocs == null && !idsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
             globalCursor = scheduled.size();
         }

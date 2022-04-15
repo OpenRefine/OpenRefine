@@ -8,7 +8,7 @@
     "gdata-exporter/upload-google-drive-success": "Se cargó el proyecto en Google Drive ",
     "gdata-exporter/upload-error": "Error de carga: ",
     "gdata-exporter/uploading": "Cargando…",
-    "gdata-exporter/google-sheets": "Google Sheets",
+    "gdata-exporter/google-sheets": "Google Sheets…",
     "gdata-exporter/export-to-google-drive": "Archivador de proyecto de OpenRefine a Google Drive…",
     "gdata-source/updated": "Actualización el",
     "gdata-source/authors": "Autores",

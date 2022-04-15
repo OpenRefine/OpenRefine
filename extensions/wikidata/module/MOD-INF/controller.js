@@ -58,18 +58,21 @@ function init() {
         "scripts/ajv.min.js",
         "scripts/wikidata-manifest-v1.0.js",
         "scripts/wikibase-manifest-schema-v1.js",
+        "scripts/wikibase-manifest-schema-v2.js",
         "scripts/wikibase-manager.js",
         "scripts/menu-bar-extension.js",
         "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",
         "scripts/previewrenderer.js",
+        "scripts/wikibase-suggest.js",
         "scripts/schema-alignment.js",
         "scripts/wikidata-extension-manager.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
+        "scripts/dialogs/statement-configuration-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 
@@ -83,7 +86,8 @@ function init() {
         "styles/dialogs/import-schema-dialog.less",
         "styles/dialogs/perform-edits.less",
         "styles/dialogs/wikibase-dialog.less",
-        "styles/dialogs/add-wikibase-dialog.less"
+        "styles/dialogs/add-wikibase-dialog.less",
+        "styles/dialogs/statement-configuration-dialog.less"
       ]);
    
 }

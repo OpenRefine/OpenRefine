@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
  * Helper class to store a list of updates where each subject appears at most
@@ -43,11 +43,11 @@ public class UpdateSequence {
     /**
      * The list of updates stored by this container
      */
-    private List<ItemUpdate> updates = new ArrayList<>();
+    private List<EntityEdit> updates = new ArrayList<>();
     /**
-     * An index to keep track of where each item is touched in the sequence
+     * An index to keep track of where each entity is touched in the sequence
      */
-    private Map<ItemIdValue, Integer> index = new HashMap<>();
+    private Map<EntityIdValue, Integer> index = new HashMap<>();
 
     /**
      * Adds a new update to the list, merging it with any existing one with the same
@@ -55,11 +55,11 @@ public class UpdateSequence {
      * 
      * @param update
      */
-    public void add(ItemUpdate update) {
-        ItemIdValue subject = update.getItemId();
+    public void add(EntityEdit update) {
+        EntityIdValue subject = update.getEntityId();
         if (index.containsKey(subject)) {
             int i = index.get(subject);
-            ItemUpdate oldUpdate = updates.get(i);
+            EntityEdit oldUpdate = updates.get(i);
             updates.set(i, oldUpdate.merge(update));
         } else {
             index.put(subject, updates.size());
@@ -70,14 +70,14 @@ public class UpdateSequence {
     /**
      * @return the list of merged updates
      */
-    public List<ItemUpdate> getUpdates() {
+    public List<EntityEdit> getUpdates() {
         return updates;
     }
 
     /**
      * @return the set of touched subjects
      */
-    public Set<ItemIdValue> getSubjects() {
+    public Set<EntityIdValue> getSubjects() {
         return index.keySet();
     }
 }

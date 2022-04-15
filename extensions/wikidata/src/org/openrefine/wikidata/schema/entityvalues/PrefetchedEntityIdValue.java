@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * An entity id value that also comes with a label and possibly types.
  * 
  * The rationale behind this classes is that OpenRefine already stores labels
- * and types for the Wikidata items it knows about (in the reconciliation data),
+ * and types for the Wikidata entities it knows about (in the reconciliation data),
  * so it is worth keeping this data to avoid re-fetching it when we need it.
  * 
  * @author Antonin Delpeuch
@@ -53,9 +53,9 @@ public interface PrefetchedEntityIdValue extends EntityIdValue {
     public String getLabel();
 
     /**
-     * Returns a list of types for this item. Again these are the types as they were
+     * Returns a list of types for this entity. Again these are the types as they were
      * originally fetched from the reconciliation interface: they can diverge from
-     * what is currently on the item.
+     * what is currently on the entity.
      * 
      * Empty lists should be returned for
      */

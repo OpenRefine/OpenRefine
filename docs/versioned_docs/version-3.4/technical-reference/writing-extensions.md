@@ -4,7 +4,7 @@ title: Writing Extensions
 sidebar_label: Writing Extensions
 ---
 
-## Introduction
+## Introduction {#introduction}
 
 This is a very brief overview of the structure of OpenRefine extensions. For more detailed documentation and step-by-step guides please see the following external documentation/tutorials:
 
@@ -20,7 +20,7 @@ Extensions that come with the code base are located under [the extensions subdir
 
 Please note that you should bundle any dependencies yourself, so you are insulated from OpenRefine packaging changes over time.
 
-### Directory Layout
+### Directory Layout {#directory-layout}
 
 A OpenRefine extension sits in a file directory that contains the following files and sub-directories:
 
@@ -62,11 +62,11 @@ The `pom.xml` file is an [Apache Maven](http://maven.apache.org/) build file. Yo
 
 Note that your extension's Java code would need to reference some libraries used in OpenRefine and OpenRefine's Java classes themselves. These dependencies are reflected in the Maven configuration for the extension.
 
-## Sample extension
+## Sample extension {#sample-extension}
 
 The sample extension is included in the code base so that you can copy it and get started on writing your own extension. After you copy it, make sure you change its name inside its `module/MOD-INF/controller.js` file.
 
-### Basic Structure
+### Basic Structure {#basic-structure}
 
 The sample extension's code is in `refine/extensions/sample/`. In that directory, Java source code is contained under the `src` sub-directory, and webapp code is under the `module` sub-directory. Here is the full directory layout:
 
@@ -99,15 +99,15 @@ Client-side code is in the inner `module` sub-directory. They can be plain old .
 
 The `init()` function in `controller.js` allows the extension to register various client-side handlers for augmenting pages served by Refine's core. These handlers are feature-specific. For example, [this is where the jython extension adds its parser](https://github.com/OpenRefine/OpenRefine/blob/master/extensions/jython/module/MOD-INF/controller.js#L46). As for the sample extension, it adds its script `project-injection.js` and style `project-injection.less` into the `/project` page. If you [view the source of the /project page](http://127.0.0.1:3333/project), you will see references to those two files.
 
-### Wiring Up the Extension
+### Wiring Up the Extension {#wiring-up-the-extension}
 
 The Extensions are loaded by the Butterfly framework. Butterfly refers to these as 'modules'. [The location of modules is set in the `main/webapp/butterfly.properties` file](https://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/WEB-INF/butterfly.properties#L27). Butterfly simply descends into each of those paths and looks for any `MOD-INF` directories.
 
 For more information, see [Extension Points](https://github.com/OpenRefine/OpenRefine/wiki/Extension-Points).
 
-## Extension points
+## Extension points {#extension-points}
 
-### Client-side: Javascript and CSS
+### Client-side: Javascript and CSS {#client-side-javascript-and-css}
 
 The UI in OpenRefine for working with a project is coded in [the /main/webapp/modules/core/project.vt file](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/project.vt). The file is quite small, and that's because almost all of its content is to be expanded dynamically through the Velocity variables $scriptInjection and $styleInjection. So that your own Javascript and CSS files get loaded, you need to register them with the ClientSideResourceManager, which is done in the /module/MOD-INF/controller.js file. See [the controller.js file in this sample extension code](http://github.com/OpenRefine/OpenRefine/blob/master/extensions/sample/module/MOD-INF/controller.js) for an example.
 
@@ -128,7 +128,7 @@ You can specify one or more files for registration, and their paths are relative
 
 Javascript Bundling: Note that `project.vt` belongs to the core module and is thus under the control of the core module's [controller.js file](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/MOD-INF/controller.js). The Javascript files to be included in `project.vt` are by default bundled together for performance. When debugging, you can prevent this bundling behavior by setting `bundle` to `false` near the top of that `controller.js` file. (If you have commit access to this code base, be sure not to check that change in.)
 
-### Client-side: Images
+### Client-side: Images {#client-side-images}
 
 We recommend that you always refer to images through your CSS files rather than in your Javascript code. URLs to images will thus be relative to your CSS files, e.g.,
 
@@ -144,7 +144,7 @@ If you really really absolutely need to refer to your images in your Javascript 
 ModuleWirings["my-extension"] + "images/x.png"
 ```
 
-### Client-side: HTML Templates
+### Client-side: HTML Templates {#client-side-html-templates}
 
 Beside Javascript, CSS, and images, your extension might also include HTML templates that get loaded on the fly by your Javascript code and injected into the page's DOM. For example, here is [the Cluster edit dialog template](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/scripts/dialogs/clustering-dialog.html), which gets loaded by code in [the equivalent javascript file 'clustering-dialog.js'](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/scripts/dialogs/clustering-dialog.js):
 
@@ -154,11 +154,11 @@ var dialog = $(DOM.loadHTML("core", "scripts/dialogs/clustering-dialog.html"));
 
 `DOM.loadHTML` returns the content of the file as a string, and `$(...)` turns it into a DOM fragment. Where `"core"` is, you would want your extension's name. The path of the HTML file is relative to your extension's `module` subdirectory.
 
-### Client-side: Project UI Extension Points
+### Client-side: Project UI Extension Points {#client-side-project-ui-extension-points}
 
 Getting your extension's Javascript code included in `project.vt` doesn't accomplish much by itself unless your code also registers hooks into the UI. For example, you can surely implement an exporter in Javascript, but unless you add a corresponding menu command in the UI, your user can't use your exporter.
 
-#### Main Menu
+#### Main Menu {#main-menu}
 
 The main menu can be extended by calling any one of the methods `MenuBar.appendTo`, `MenuBar.insertBefore`, and `MenuBar.insertAfter`. Each method takes 2 arguments: an array of strings that identify a particular existing menu item or submenu, and one new single menu item or submenu or an array of menu items and submenus. For example, to insert 2 menu items and a menu separator before the menu item Project > Export Filtered Rows > Templating..., write this Javascript code wherever that would execute when your Javascript files get loaded:
 
@@ -183,7 +183,7 @@ The array `["core/project", "core/export", "core/export-templating"]` pinpoints 
 
 See the beginning of [/main/webapp/modules/core/scripts/project/menu-bar.js](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/scripts/project/menu-bar.js) for IDs of menu items and submenus.
 
-#### Column Header Menu
+#### Column Header Menu {#column-header-menu}
 
 The drop-down menu of each column can also be extended, but the mechanism is slightly different compared to the main menu. Because the drop-down menu for a particular column is constructed on the fly when the user actually clicks the drop-down menu button, extending the column header menu can't really be done once at start-up time, but must be done every time a column header menu gets created. So, registration in this case involves providing a function that gets called each such time:
 
@@ -207,7 +207,7 @@ MenuSystem.appendTo(menu, ["core/facet"], [
 
 In addition to `MenuSystem.appendTo`, you can also call `MenuSystem.insertBefore` and `MenuSystem.insertAfter` which the same 3 arguments. To see what IDs you can use, see the function `DataTableColumnHeaderUI.prototype._createMenuForColumnHeader` in [/main/webapp/modules/core/scripts/views/data-table/column-header-ui.js](http://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/modules/core/scripts/views/data-table/column-header-ui.js).
 
-### Server-side: Ajax Commands
+### Server-side: Ajax Commands {#server-side-ajax-commands}
 
 The client-side of OpenRefine gets things done by calling AJAX commands on the server-side. These commands must be registered with the OpenRefine servlet, so that the servlet knows how to route AJAX calls from the client-side. This can be done inside the `init` function in your extension's `controller.js` file, e.g.,
 
@@ -220,7 +220,7 @@ function init() {
 
 Your command will then be accessible at [http://127.0.0.1:3333/command/my-extension/my-command](http://127.0.0.1:3333/command/my-extension/my-command).
 
-### Server-side: Operations
+### Server-side: Operations {#server-side-operations}
 
 Most commands change the project's data. Most of them do so by creating abstract operations. See the Changes, History, Processes, and Operations section of the [Server Side Architecture](https://github.com/OpenRefine/OpenRefine/wiki/Server-Side-Architecture) document.
 
@@ -242,7 +242,7 @@ static public AbstractOperation reconstruct(Project project, JSONObject obj) thr
   }
 ```
 
-### Server-side: GREL
+### Server-side: GREL {#server-side-grel}
 
 GREL can be extended with new functions. This is also done in the `init` function in `controller.js`, e.g.,
 
@@ -258,7 +258,7 @@ Packages.com.google.refine.expr.ExpressionUtils.registerBinder(
         new Packages.com.foo.bar.MyBinder());
 ```
 
-### Server-side: Importers
+### Server-side: Importers {#server-side-importers}
 
 You can register an importer as follows:
 
@@ -269,7 +269,7 @@ Packages.com.google.refine.importers.ImporterRegistry.registerImporter(
 
 The string `"importer-name"` isn't important at all. It's not really related to file extension or mime-type. Just use something unique. Your importer will be explicitly called to test if it can import something.
 
-### Server-side: Exporters
+### Server-side: Exporters {#server-side-exporters}
 
 You can register an exporter as follows:
 
@@ -280,7 +280,7 @@ Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
 
 The string `"exporter-name"` isn't important at all. It's only used by the client-side to tell the server-side which exporter to use. Just use something unique and, of course, relevant.
 
-### Server-side: Overlay Models
+### Server-side: Overlay Models {#server-side-overlay-models}
 
 Overlay models are objects attached onto a core Project object to store and manage additional data for that project. For example, the schema alignment skeleton is managed by the Protograph overlay model. An overlay model implements the interface `com.google.refine.model.OverlayModel` and can be registered like so:
 
@@ -306,7 +306,7 @@ public void write(JSONWriter writer, Properties options) throws JSONException {
   }
 ```
 
-### Server-side: Scripting Languages
+### Server-side: Scripting Languages {#server-side-scripting-languages}
 
 A scripting language (such as Jython) can be registered as follows:
 

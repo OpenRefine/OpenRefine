@@ -23,13 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.List;
+
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.List;
 
 /**
  * A scrutinizer checking for unsourced statements
@@ -44,7 +46,16 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
     public static final String constraintItemType = "no-references-provided";
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, citationNeededConstraintQid);
@@ -54,7 +65,7 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
                 if (!constraintDefinitions.isEmpty()) {
                     QAWarning issue = new QAWarning(constraintItemType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 } else {
                     warning(generalType);

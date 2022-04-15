@@ -1,8 +1,25 @@
 {
-    "gdata-import/next->": "পরবর্তী&raquo;",
+    "gdata-import/next->": "পরবর্তী &raquo;",
     "gdata-exporter/uploading": "আপলোড চলছে…",
     "gdata-exporter/upload-error": "আপলোড ত্রুটি: ",
     "gdata-exporter/upload-success": "প্রকল্প সফলভাবে গুগল ড্রাইভে আপলোড করা হয়েছে ",
     "gdata-exporter/new-spreadsheet": "একটি নতুন গুগল স্প্রেডশীট",
-    "gdata-exporter/enter-spreadsheet": "নতুন গুগল স্প্রেডশীটের নাম দিন"
+    "gdata-exporter/enter-spreadsheet": "নতুন গুগল স্প্রেডশীটের নাম দিন",
+    "gdata-parsing/option": "অপশনস",
+    "gdata-parsing/worksheet": "ওয়ার্কশিটসমূহ",
+    "gdata-parsing/updating-preview": "প্রিভিউ হালনাগাদ করা হচ্ছে …",
+    "gdata-import/import-by-url": "একটি <em>পাবলিক </em>গুগল স্প্রেডশিট  ইম্পোর্ট করুন ইউ আর এল :",
+    "gdata-parsing/create-proj": "প্রজেক্ট তৈরি করুন &raquo;",
+    "gdata-parsing/proj-name": "প্রজেক্ট&nbsp;নাম",
+    "gdata-parsing/conf-pars": "পার্সিং অপশন কনফিগার করুন",
+    "gdata-parsing/start-over": "&laquo; নতুন করে শুরু করুন",
+    "gdata-import/re-sign-in-another": "অন্য অ্যাকাউন্ট দিয়ে সাইন ইন করুন",
+    "gdata-import/retrieving": "গুগল ডকুমেন্টস পুনরুদ্ধার করা হচ্ছে …",
+    "gdata-import/sign-out": "সাইন আউট",
+    "gdata-import/sign-in": "সাইন ইন",
+    "gdata-import/please-signin": "দয়া করে সাইন ইন করুন এবং অথরাইজ করুন আপনার গুগল ডেটা অ্যাক্সেস দেয়ার জন্য",
+    "gdata-import/auth-doc": "অনুমোদিত ডকুমেন্টস",
+    "gdata-import/title": "পাবলিক ডকুমেন্টস",
+    "gdata-import/creating": "প্রজেক্ট তৈরি করা হচ্ছে …",
+    "gdata-import/preparing": "প্রস্তুত করা হচ্ছে …"
 }
