@@ -205,12 +205,11 @@ Refine.setTitle = function(status) {
   $("#project-name-button").text(theProject.metadata.name);
 };
 
-Refine.showHideBrowsingFacetSplash = function() {
+Refine.showHideBrowsingFacetSplash = function(clicked) {
   ui = DOM.bind($("#body"));
-  console.log('Hello 2')
   var browsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.browsingFacetSplash", false));
   this._div = ui.facetPanelDiv;
-  if(browsingFacetSplash == true) {
+  if(browsingFacetSplash === true || clicked === true) {
     this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
   }
   else {
@@ -218,9 +217,8 @@ Refine.showHideBrowsingFacetSplash = function() {
   }
 };
 
-Refine.setBrowsingFacetSplash = function () {
+Refine.setBrowsingFacetSplash = function (clicked) {
   ui = DOM.bind($("#body"));
-  console.log('HELOO')
   this._div = ui.facetPanelDiv;
   var checkbox = this._div.find('#side-panel-checkbox');
 
@@ -228,11 +226,24 @@ Refine.setBrowsingFacetSplash = function () {
       Refine.setPreference('ui.browsing.browsingFacetSplash', true);
   }
   else {
-      this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
+      Refine.setPreference('ui.browsing.browsingFacetSplash', false);
   }
 
-  Refine.showHideBrowsingFacetSplash();
+  Refine.showHideBrowsingFacetSplash(clicked);
 };
+
+//Refine.showHideBrowsingFacetSplash = function() {
+//  ui = DOM.bind($("#body"));
+//  console.log('Hello 2')
+//  var browsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.browsingFacetSplash", false));
+//  this._div = ui.facetPanelDiv;
+//  if(browsingFacetSplash == true) {
+//    this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
+//  }
+//  else {
+//    this._div.find('.browsing-panel-help').removeClass('hideFacetSplash');
+//  }
+//};
 
 Refine.reinitializeProjectData = function(f, fError) {
   $.getJSON(
