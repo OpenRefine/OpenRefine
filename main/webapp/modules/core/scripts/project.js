@@ -171,7 +171,8 @@ function initializeUI(uiState) {
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 
   Refine.showHideBrowsingFacetSplash();
-  Refine.setBrowsingFacetSplash();
+  Refine.showHideHistoryFacetSplash();
+
 
   ui.leftPanelTabs.bind('tabsactivate', function(event, tabs) {
     tabs.newPanel.resize();
@@ -205,11 +206,13 @@ Refine.setTitle = function(status) {
   $("#project-name-button").text(theProject.metadata.name);
 };
 
-Refine.showHideBrowsingFacetSplash = function(clicked) {
+Refine.showHideBrowsingFacetSplash = function() {
+    console.log("browser 1")
   ui = DOM.bind($("#body"));
-  var browsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.browsingFacetSplash", false));
+  var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideBrowsingFacetSplash", false));
   this._div = ui.facetPanelDiv;
-  if(browsingFacetSplash === true || clicked === true) {
+
+  if(hideBrowsingFacetSplash === true) {
     this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
   }
   else {
@@ -217,33 +220,46 @@ Refine.showHideBrowsingFacetSplash = function(clicked) {
   }
 };
 
-Refine.setBrowsingFacetSplash = function (clicked) {
+Refine.setBrowsingFacetSplash = function () {
   ui = DOM.bind($("#body"));
   this._div = ui.facetPanelDiv;
-  var checkbox = this._div.find('#side-panel-checkbox');
+  var checkbox = this._div.find('#browsing-panel-checkbox');
 
   if(checkbox.prop('checked')) {
-      Refine.setPreference('ui.browsing.browsingFacetSplash', true);
+      Refine.setPreference('ui.browsing.hideBrowsingFacetSplash', true);
   }
   else {
-      Refine.setPreference('ui.browsing.browsingFacetSplash', false);
+      this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
   }
-
-  Refine.showHideBrowsingFacetSplash(clicked);
+  Refine.showHideBrowsingFacetSplash();
 };
 
-//Refine.showHideBrowsingFacetSplash = function() {
-//  ui = DOM.bind($("#body"));
-//  console.log('Hello 2')
-//  var browsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.browsingFacetSplash", false));
-//  this._div = ui.facetPanelDiv;
-//  if(browsingFacetSplash == true) {
-//    this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
-//  }
-//  else {
-//    this._div.find('.browsing-panel-help').removeClass('hideFacetSplash');
-//  }
-//};
+Refine.showHideHistoryFacetSplash = function() {
+  ui = DOM.bind($("#body"));
+  var hideHistoryFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideHistoryFacetSplash", false));
+  this._div = ui.historyPanelDiv;
+
+  if(hideHistoryFacetSplash === true) {
+    this._div.find('.history-panel-help').addClass('hideFacetSplash');
+  }
+  else {
+    this._div.find('.history-panel-help').removeClass('hideFacetSplash');
+  }
+};
+
+Refine.setHistoryFacetSplash = function () {
+  ui = DOM.bind($("#body"));
+  this._div = ui.historyPanelDiv;
+  var checkbox = this._div.find('#history-panel-checkbox');
+
+  if(checkbox.prop('checked')) {
+      Refine.setPreference('ui.browsing.hideHistoryFacetSplash', true);
+  }
+  else {
+      this._div.find('.history-panel-help').addClass('hideFacetSplash');
+  }
+  Refine.showHideHistoryFacetSplash();
+};
 
 Refine.reinitializeProjectData = function(f, fError) {
   $.getJSON(

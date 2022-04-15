@@ -100,7 +100,7 @@ BrowsingEngine.prototype._initializeUI = function() {
     '<p>'+$.i18n('core-project/use-to-select')+'</p>' +
     '<p>'+$.i18n('core-project/not-sure')+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n('core-project/watch-cast')+'</b></a></p>' +
     '<div class="close-side-panel-options">'+
-                '<label for="side-panel-checkbox" class="checkbox"><input id="side-panel-checkbox" type="checkbox">'+$.i18n('core-project/hide-panel')+'</label>'+
+                '<label for="side-panel-checkbox" class="checkbox"><input id="browsing-panel-checkbox" type="checkbox">'+$.i18n('core-project/hide-panel')+'</label>'+
                 '<button class="close-btn" bind="close">'+$.i18n('core-index/delete')+'</button>'+
             '</div>'+
         '</div>' +
@@ -131,7 +131,7 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.refreshLink.click(function() { self.update(); });
   this._elmts.resetLink.click(function() { self.reset(); });
   this._elmts.removeLink.click(function() { self.remove(); });
-  this._elmts.close.click(function(){ Refine.setBrowsingFacetSplash(true); });
+  this._elmts.close.click(function(){ Refine.setBrowsingFacetSplash(); });
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
