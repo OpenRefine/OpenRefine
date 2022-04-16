@@ -24,23 +24,58 @@ WikibaseDialog.launch = function () {
 };
 
 WikibaseDialog.populateDialog = function () {
-  let wikibases = WikibaseManager.getAllWikibases();
+  let wikibases = WikibaseManager.getAllWikibaseManifests();
+  let selectedWikibase =  WikibaseManager.getSelectedWikibaseName().toLowerCase();
+
+  wikibases.sort((a, b) => {
+    let ret;
+    let aName = a.mediawiki.name;
+    let bName = b.mediawiki.name;
+    let aSelected = aName.toLowerCase() === selectedWikibase;
+    let bSelected = bName.toLowerCase() === selectedWikibase;
+    // ascending order
+    // compare selected, then by name
+    if (aSelected) {
+      ret = -1;
+    } else if (bSelected) {
+      ret = 1;
+    } else {
+      if (aName < bName) {
+        ret = -1;
+      } else if (aName > bName) {
+        ret = 1;
+      } else {
+        ret = 0;
+      }
+    }
+    return ret;
+  });
 
   WikibaseDialog.elmts.wikibaseList.empty();
-  for (let wikibaseName in wikibases) {
+  for (let manifest of wikibases) {
+    let wikibaseName = manifest.mediawiki.name;
+
+    let rootURL = manifest.mediawiki.root;
+
+    const wikibase = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-item.html"));
+    let _elmts = DOM.bind(wikibase);
+    if (wikibaseName.toLowerCase() === selectedWikibase) {
+      _elmts.wikibaseItem.addClass("selected");
+    }
+    _elmts.wikibaseItem.click(function(event) {
+      WikibaseDialog.selectWikibase(wikibaseName )
+    });
+    _elmts.wikibaseImage.attr("alt",$.i18n('wikibase-account/logo-alt-text', wikibaseName));
+    _elmts.wikibaseName.text(wikibaseName);
+    _elmts.wikibaseUrl.text(rootURL);
+    _elmts.deleteWikibase.click(function(event) {
+      WikibaseDialog.removeWikibase(event, wikibaseName);
+    });
+
+    WikibaseDialog.elmts.wikibaseList.append(wikibase);
+
     WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
-      if (wikibases.hasOwnProperty(wikibaseName)) {
-        let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
-        item += "<td class=\"wikibase-dialog-wikibase-logo\">" + "<img src=\""+ data + "\" alt=\"" + $.i18n('wikibase-account/logo-alt-text', wikibaseName) + "\"/>" + "</td>";
-        item += "<td>" + wikibaseName + "</td>";
-        if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
-          item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
-        } else {
-          item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
-        }
-        item += "</tr>";
-        WikibaseDialog.elmts.wikibaseList.append(item);
-      }
+      _elmts.wikibaseImage.attr("src",data);
     }, wikibaseName);
   }
 };

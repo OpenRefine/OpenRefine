@@ -156,6 +156,16 @@ WikibaseManager.getAllWikibases = function () {
   return WikibaseManager.wikibases;
 };
 
+WikibaseManager.getAllWikibaseManifests = function () {
+  let manifests = [];
+  for (let wikibaseName in WikibaseManager.wikibases) {
+    if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
+      manifests.push(WikibaseManager.wikibases[wikibaseName])
+    }
+  }
+  return manifests;
+};
+
 WikibaseManager.addWikibase = function (manifest) {
   WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
   WikibaseManager.saveWikibases();
@@ -167,12 +177,7 @@ WikibaseManager.removeWikibase = function (wikibaseName) {
 };
 
 WikibaseManager.saveWikibases = function () {
-  let manifests = [];
-  for (let wikibaseName in WikibaseManager.wikibases) {
-    if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
-      manifests.push(WikibaseManager.wikibases[wikibaseName])
-    }
-  }
+  let manifests = WikibaseManager.getAllWikibaseManifests();
 
   Refine.wrapCSRF(function (token) {
     $.ajax({
