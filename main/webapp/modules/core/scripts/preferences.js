@@ -136,8 +136,6 @@ Languages.setDefaultLanguage = function() {
 	$.i18n().locale = Languages.lang;
 }
 
-// Languages.setLanguage = function() {}
-
 var preferenceUIs = [];
 
 Languages.setDefaultLanguage();
@@ -175,22 +173,6 @@ function PreferenceUI(tr, key, initialValue) {
 		Preferences.setValue(key, newValue);
 
 		$(td1).text(newValue);
-		
-/*		
-		Refine.postCSRF(
-			"command/core/set-preference",
-			{
-				name : key,
-				value : JSON.stringify(newValue)
-			},
-			function(o) {
-				if (o.code == "error") {
-					Core.alertDialog(o.message);
-				}
-			},
-			"json"
-		);
-*/
   });
 
   $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).click(function() {
@@ -204,30 +186,6 @@ function PreferenceUI(tr, key, initialValue) {
 					break;
 				}
 			}
-
-/*
-      Refine.postCSRF(
-        "command/core/set-preference",
-        {
-          name : key
-        },
-        function(o) {
-          if (o.code == "ok") {
-            $(tr).remove();
-
-            for (var i = 0; i < preferenceUIs.length; i++) {
-              if (preferenceUIs[i] === self) {
-                preferenceUIs.splice(i, 1);
-                break;
-              }
-            }
-          } else if (o.code == "error") {
-            Core.alertDialog(o.message);
-          }
-        },
-        "json"
-      );
-*/
     }
   });
 }
@@ -266,21 +224,6 @@ function populatePreferences() {
 		value = key === "userMetadata" ? deDupUserMetaData(value) : value;        
 		
 		Preferences.setValue(key, value);
-/*
-		Refine.postCSRF(
-			"command/core/set-preference",
-			{
-				name : key,
-				value : JSON.stringify(value)
-			},
-			function(o) {
-				if (o.code == "error") {
-					Core.alertDialog(o.message);
-				}
-			},
-			"json"
-		);
-*/
   });
 }
 
