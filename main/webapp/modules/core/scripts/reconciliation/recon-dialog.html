@@ -14,9 +14,6 @@
 					bind="servicePanelContainer">
 					<div class="recon-dialog-service-panel-message"
 						bind="servicePanelMessage"></div>
-					<div class="recon-dialog-service-panel-discover-services-link"
-						bind="servicesLink">
-					</div>
 				</div>
 			</div>
 		</div>
@@ -26,6 +23,7 @@
 			<tr>
 				<td align="left">
 					<button class="button" bind="addStandardServiceButton"></button>
+					<button class="button" bind="discoverServicesButton" onClick = "window.open('https://reconciliation-api.github.io/testbench', '_blank')" ></button>
 				</td>
 				<td align="right">
 					<button class="button" bind="reconcileButton"></button>

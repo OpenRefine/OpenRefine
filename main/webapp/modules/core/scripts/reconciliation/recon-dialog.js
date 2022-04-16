@@ -47,14 +47,11 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
   
   this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'));
-  this._elmts.servicesLink.html($('<a>')
-                                 .attr("href", "https://reconciliation-api.github.io/testbench")
-                                 .attr("target", "_blank")
-                                 .text($.i18n('core-recon/discover-services')));
   this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'));
   this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
   this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  this._elmts.discoverServicesButton.html($.i18n('core-buttons/discover-services'));
 
   this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
 
