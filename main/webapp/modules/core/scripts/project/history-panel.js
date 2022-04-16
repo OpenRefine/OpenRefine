@@ -84,7 +84,7 @@ HistoryPanel.prototype._render = function() {
   elmts.or_proj_filter.html($.i18n('core-project/filter'));
   $("#close-history-panel").text($.i18n('core-index/delete'));
   $("#side-panel-checkbox-label").html('<input id="history-panel-checkbox" type="checkbox">' + $.i18n('core-project/hide-panel'))
-  $("#close-history-panel").click(function(){ Refine.setHistoryFacetSplash(); });
+  $("#close-history-panel").click(function(){ Refine.setHistoryFacetSplash(true); });
 
   var renderEntry = function(container, index, entry, lastDoneID, past) {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);

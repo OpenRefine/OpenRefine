@@ -206,13 +206,12 @@ Refine.setTitle = function(status) {
   $("#project-name-button").text(theProject.metadata.name);
 };
 
-Refine.showHideBrowsingFacetSplash = function() {
-    console.log("browser 1")
+Refine.showHideBrowsingFacetSplash = function(clicked) {
   ui = DOM.bind($("#body"));
   var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideBrowsingFacetSplash", false));
   this._div = ui.facetPanelDiv;
 
-  if(hideBrowsingFacetSplash === true) {
+  if(hideBrowsingFacetSplash === true || clicked === true) {
     this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
   }
   else {
@@ -220,26 +219,24 @@ Refine.showHideBrowsingFacetSplash = function() {
   }
 };
 
-Refine.setBrowsingFacetSplash = function () {
+Refine.setBrowsingFacetSplash = function (clicked) {
   ui = DOM.bind($("#body"));
   this._div = ui.facetPanelDiv;
+  var clicked = clicked;
   var checkbox = this._div.find('#browsing-panel-checkbox');
 
   if(checkbox.prop('checked')) {
       Refine.setPreference('ui.browsing.hideBrowsingFacetSplash', true);
   }
-  else {
-      this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
-  }
-  Refine.showHideBrowsingFacetSplash();
+  Refine.showHideBrowsingFacetSplash(clicked);
 };
 
-Refine.showHideHistoryFacetSplash = function() {
+Refine.showHideHistoryFacetSplash = function(clicked) {
   ui = DOM.bind($("#body"));
   var hideHistoryFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideHistoryFacetSplash", false));
   this._div = ui.historyPanelDiv;
 
-  if(hideHistoryFacetSplash === true) {
+  if(hideHistoryFacetSplash === true || clicked === true) {
     this._div.find('.history-panel-help').addClass('hideFacetSplash');
   }
   else {
@@ -247,18 +244,16 @@ Refine.showHideHistoryFacetSplash = function() {
   }
 };
 
-Refine.setHistoryFacetSplash = function () {
+Refine.setHistoryFacetSplash = function (clicked) {
   ui = DOM.bind($("#body"));
   this._div = ui.historyPanelDiv;
   var checkbox = this._div.find('#history-panel-checkbox');
+  var clicked = clicked;
 
   if(checkbox.prop('checked')) {
       Refine.setPreference('ui.browsing.hideHistoryFacetSplash', true);
   }
-  else {
-      this._div.find('.history-panel-help').addClass('hideFacetSplash');
-  }
-  Refine.showHideHistoryFacetSplash();
+  Refine.showHideHistoryFacetSplash(clicked);
 };
 
 Refine.reinitializeProjectData = function(f, fError) {
