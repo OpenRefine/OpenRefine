@@ -76,12 +76,15 @@ API.POST = function(url, queryData, postData) {
     $.post(url, postData, function( response, textStatus, jqXHR ) { resolve( jqXHR ) }, "json" )
 			.fail(function( jqXHR, textStatus, errorThrown ) {
 				if(typeof errorThrown != "object") { errorThrown = new Error(errorThrown); }
-		
+		    
 				errorThrown.jqXHR = jqXHR; 
 				errorThrown.textStatus = textStatus;          
 				reject(errorThrown);
-			});
-	});
+			}).ajaxError(function( event, jqxhr, settings, thrownError ) {
+        console.log({ event, jqxhr, settings, thrownError } );
+        reject(thrownError);
+      });
+  });
 }
 
 API.CORE.PostCommand = function(command, queryData, postData) {
