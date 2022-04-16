@@ -33,7 +33,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +63,12 @@ public class EditBatchProcessor {
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
     private NewEntityLibrary library;
-    private List<TermedStatementEntityEdit> scheduled;
+    private List<EntityEdit> scheduled;
     private String summary;
     private List<String> tags;
 
-    private List<TermedStatementEntityEdit> remainingUpdates;
-    private List<TermedStatementEntityEdit> currentBatch;
+    private List<EntityEdit> remainingUpdates;
+    private List<EntityEdit> currentBatch;
     private int batchCursor;
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
@@ -80,7 +83,7 @@ public class EditBatchProcessor {
      *            the fetcher to use to retrieve the current state of entities
      * @param editor
      *            the object to use to perform the edits
-     * @param updates
+     * @param entityDocuments
      *            the list of entity updates to perform
      * @param library
      *            the library to use to keep track of new entity creation
@@ -94,7 +97,7 @@ public class EditBatchProcessor {
      * @param maxEditsPerMinute
      *            the maximum number of edits per minute to do
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityEdit> updates,
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<EntityEdit> entityDocuments,
             NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
@@ -114,7 +117,11 @@ public class EditBatchProcessor {
 
         // Schedule the edit batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-        this.scheduled = scheduler.schedule(updates);
+        try {
+			this.scheduled = scheduler.schedule(entityDocuments);
+		} catch (ImpossibleSchedulingException e) {
+			throw new IllegalArgumentException(e);
+		}
         this.globalCursor = 0;
 
         this.batchCursor = 0;
@@ -136,7 +143,7 @@ public class EditBatchProcessor {
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
         }
-        TermedStatementEntityEdit update = currentBatch.get(batchCursor);
+        EntityEdit update = currentBatch.get(batchCursor);
 
         // Rewrite mentions to new entities
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
@@ -154,13 +161,11 @@ public class EditBatchProcessor {
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
                 // TODO Antonin, 2022-02-11: remove this casting once we have https://github.com/Wikidata/Wikidata-Toolkit/issues/651
                 if (newCell instanceof ItemIdValue) {
-                    update = update.normalizeLabelsAndAliases();
 	                ItemDocument itemDocument = (ItemDocument) update.toNewEntity();
 
 	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
 	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
                 } else if (newCell instanceof MediaInfoIdValue) {
-                    update = update.normalizeLabelsAndAliases();
                     throw new NotImplementedException();
                 }
             } else {

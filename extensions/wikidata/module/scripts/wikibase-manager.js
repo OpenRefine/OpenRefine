@@ -130,19 +130,20 @@ WikibaseManager.getSelectedWikibaseAvailableEntityTypes = function () {
  * - for Wikidata it returns 'item'
  * - for Commons it returns 'mediainfo'
  */
-WikibaseManager.getSelectedWikibaseDefaultEntityType = function () {
+WikibaseManager.getSelectedWikibaseEditableEntityTypes = function () {
   let manifest = WikibaseManager.getSelectedWikibase();
   // version 1
   if (manifest.version.split('.')[0] === '1') {
-    return 'item';
+    return ['item'];
   } else { // version 2 or above
-    for (let entityType of ['item', 'property', 'mediainfo']) {
+    let editable = [];
+    for (let entityType of ['item', 'mediainfo']) {
       if (manifest.entity_types[entityType] !== undefined &&
           manifest.entity_types[entityType].site_iri === manifest.wikibase.site_iri) {
-        return entityType;
+        editable.push(entityType);
       }
     }
-    return 'item'; // by default, as a fallback
+    return editable;
   }
 };
 
