@@ -243,7 +243,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 };
 
 BrowsingEngine.prototype.hideShowBrowsingFacetSplash = function(clicked) {
-  var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideBrowsingFacetSplash", false));
+  var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideFacetSplash", false));
   var checkbox = $('#browsing-panel-checkbox');
 
   if(checkbox.prop('checked')) {
