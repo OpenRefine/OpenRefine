@@ -131,9 +131,9 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.refreshLink.click(function() { self.update(); });
   this._elmts.resetLink.click(function() { self.reset(); });
   this._elmts.removeLink.click(function() { self.remove(); });
-  this._elmts.close.click(function(){ BrowsingEngine.hideShowFacetSplash(true); });
+  this._elmts.close.click(function(){ BrowsingEngine.prototype.hideShowFacetSplash(true); });
 
-  BrowsingEngine.hideShowFacetSplash();
+  BrowsingEngine.prototype.hideShowFacetSplash();
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
