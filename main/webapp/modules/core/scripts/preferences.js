@@ -31,7 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-var Refine = {};
 var Core = {};
 var Languages = {};
 var Preferences = {};
@@ -71,9 +70,9 @@ API.CORE.GetCsrfToken = function() {
 
 API.POST = function(url, queryData, postData) {
   return new Promise((resolve, reject) => {
-    fullUrl = queryData ? url +"?"+ API.EncodeQueryData(queryData) : url;
+    var fullUrl = queryData ? url +"?"+ API.EncodeQueryData(queryData) : url;
     
-    $.post(url, postData, function( response, textStatus, jqXHR ) { resolve( jqXHR ) }, "json" )
+    $.post(fullUrl, postData, function( response, textStatus, jqXHR ) { resolve( jqXHR ) }, "json" )
 			.fail(function( jqXHR, textStatus, errorThrown ) {
 				if(typeof errorThrown != "object") { errorThrown = new Error(errorThrown); }
 		    
