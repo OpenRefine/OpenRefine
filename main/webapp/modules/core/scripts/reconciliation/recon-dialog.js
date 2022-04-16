@@ -50,7 +50,6 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.servicesLink.html($('<a>')
                                  .attr("href", "https://reconciliation-api.github.io/testbench")
                                  .attr("target", "_blank")
-                                 .addClass("recon-dialog-service-panel-discover-services-link")
                                  .text($.i18n('core-recon/discover-services')));
   this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'));
   this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
