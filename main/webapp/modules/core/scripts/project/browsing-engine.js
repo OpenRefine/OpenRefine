@@ -131,9 +131,9 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.refreshLink.click(function() { self.update(); });
   this._elmts.resetLink.click(function() { self.reset(); });
   this._elmts.removeLink.click(function() { self.remove(); });
-  this._elmts.close.click(function(){ BrowsingEngine.prototype.hideShowBrowsingFacetSplash(true); });
+  this._elmts.close.click(function(){ BrowsingEngine.prototype.hideShowFacetSplash(true); });
 
-  BrowsingEngine.prototype.hideShowBrowsingFacetSplash();
+  BrowsingEngine.prototype.hideShowFacetSplash();
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
@@ -247,7 +247,7 @@ BrowsingEngine.prototype.hideShowFacetSplash = function(clicked) {
   var checkbox = $('#browsing-panel-checkbox');
 
   if(checkbox.prop('checked')) {
-    Refine.setPreference('ui.browsing.hideBrowsingFacetSplash', true);
+    Refine.setPreference('ui.browsing.hideFacetSplash', true);
   }
 
   if(hideBrowsingFacetSplash === true || clicked === true) {
