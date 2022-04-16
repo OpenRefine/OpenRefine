@@ -99,9 +99,9 @@ BrowsingEngine.prototype._initializeUI = function() {
     '<h1>'+$.i18n('core-project/use-facets')+'</h1>' +
     '<p>'+$.i18n('core-project/use-to-select')+'</p>' +
     '<p>'+$.i18n('core-project/not-sure')+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n('core-project/watch-cast')+'</b></a></p>' +
-    '<div class="close-side-panel-options">'+
-                '<label for="side-panel-checkbox" class="checkbox"><input id="browsing-panel-checkbox" type="checkbox">'+$.i18n('core-project/hide-panel')+'</label>'+
-                '<button class="close-btn" bind="close">'+$.i18n('core-index/delete')+'</button>'+
+    '<div class="panel-splash-close">'+
+                '<label for="browsing-panel-checkbox" class="checkbox"><input id="browsing-panel-checkbox" type="checkbox">'+$.i18n('core-project/hide-panel')+'</label>'+
+                '<button class="panel-splash-close-btn" bind="close">'+$.i18n('core-index/delete')+'</button>'+
             '</div>'+
         '</div>' +
     '</div>' +
