@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -73,7 +73,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(disallowedQualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -96,7 +96,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(mandatoryPropertyIdValue);
         Statement statement = makeStatement(mainSnak);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -120,7 +120,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(qualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
