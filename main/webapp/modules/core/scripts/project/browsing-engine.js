@@ -131,7 +131,9 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.refreshLink.click(function() { self.update(); });
   this._elmts.resetLink.click(function() { self.reset(); });
   this._elmts.removeLink.click(function() { self.remove(); });
-  this._elmts.close.click(function(){ Refine.setBrowsingFacetSplash(true); });
+  this._elmts.close.click(function(){ BrowsingEngine.prototype.hideShowBrowsingFacetSplash(true); });
+
+  BrowsingEngine.prototype.hideShowBrowsingFacetSplash();
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
@@ -238,6 +240,22 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
     this._elmts.help.show();
     this._elmts.header.hide();
   }
+};
+
+BrowsingEngine.prototype.hideShowBrowsingFacetSplash = function(clicked) {
+  var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideBrowsingFacetSplash", false));
+  var checkbox = $('#browsing-panel-checkbox');
+
+  if(checkbox.prop('checked')) {
+    Refine.setPreference('ui.browsing.hideBrowsingFacetSplash', true);
+  }
+
+  if(hideBrowsingFacetSplash === true || clicked === true) {
+    $('.browsing-panel-help').addClass('hideFacetSplash');
+  }
+  else {
+    $('.browsing-panel-help').removeClass('hideFacetSplash');
+   }
 };
 
 BrowsingEngine.prototype.update = function(onDone) {

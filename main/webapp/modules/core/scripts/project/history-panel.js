@@ -74,6 +74,8 @@ HistoryPanel.prototype._render = function() {
   this._div.empty().unbind().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
 
   var elmts = DOM.bind(this._div);
+
+  HistoryPanel.prototype.showHideHistoryFacetSplash();
   
   elmts.or_proj_undo.html($.i18n('core-project/undo-history'));
   elmts.or_proj_mistakes.html($.i18n('core-project/mistakes'));
@@ -84,7 +86,7 @@ HistoryPanel.prototype._render = function() {
   elmts.or_proj_filter.html($.i18n('core-project/filter'));
   $("#close-history-panel").text($.i18n('core-index/delete'));
   $("#side-panel-checkbox-label").html('<input id="history-panel-checkbox" type="checkbox">' + $.i18n('core-project/hide-panel'))
-  $("#close-history-panel").click(function(){ Refine.setHistoryFacetSplash(true); });
+  $("#close-history-panel").click(function(){ HistoryPanel.prototype.showHideHistoryFacetSplash(true); });
 
   var renderEntry = function(container, index, entry, lastDoneID, past) {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
@@ -166,6 +168,22 @@ HistoryPanel.prototype._render = function() {
   elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
 
   this.resize();
+};
+
+HistoryPanel.prototype.showHideHistoryFacetSplash = function(clicked) {
+  var hideHistoryFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideHistoryFacetSplash", false));
+  var checkbox = $('#history-panel-checkbox');
+
+  if(checkbox.prop('checked')) {
+      Refine.setPreference('ui.browsing.hideHistoryFacetSplash', true);
+   }
+
+  if(hideHistoryFacetSplash === true || clicked === true) {
+    $('.history-panel-help').addClass('hideFacetSplash');
+  }
+  else {
+    $('.history-panel-help').removeClass('hideFacetSplash');
+  }
 };
 
 HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
