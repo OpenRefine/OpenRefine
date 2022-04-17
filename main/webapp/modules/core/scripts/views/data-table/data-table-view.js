@@ -43,6 +43,7 @@ function DataTableView(div) {
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
   this._shownulls = false;
+  this._showControlChars = false;
 
   this._currentPageNumber = 1;
   this._showRows(0);
@@ -145,6 +146,9 @@ DataTableView.prototype.render = function() {
 
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
+
+// show/ hide control characters
+ $(".data-table-controlChars").toggle(self._showControlChars);
 
   this.resize();
   
@@ -964,6 +968,15 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           click: function() {
             $(".data-table-null").toggle();
             self._shownulls = !(self._shownulls);
+          }
+        },
+        {
+          label: $.i18n('Show/Hide control characters'),
+          id: "core/display-control-chars",
+          click: function() {
+          nonPrintableToggle();
+            $(".unprintableCharacters").toggle();
+            $(".originalCharacters").toggle();
           }
         }
       ]
