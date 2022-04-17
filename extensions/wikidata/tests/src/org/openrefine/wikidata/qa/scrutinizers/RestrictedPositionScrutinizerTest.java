@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -68,7 +68,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -88,7 +88,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -108,7 +108,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -129,7 +129,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Statement statement = Datamodel.makeStatement(
                 TestingData.generateStatement(idA, propertyIdValue, idA).getClaim(),
                 Collections.singletonList(Datamodel.makeReference(snakGroups)), StatementRank.NORMAL, "");
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 

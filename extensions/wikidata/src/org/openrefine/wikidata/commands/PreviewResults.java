@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,7 +17,7 @@ public class PreviewResults {
     protected Severity maxSeverity;
     protected int nbWarnings;
     protected int editCount;
-    protected List<TermedStatementEntityEdit> editsPreview;
+    protected List<EntityEdit> editsPreview;
     
     @JsonProperty("warnings")
     public List<QAWarning> getWarnings() {
@@ -39,7 +40,7 @@ public class PreviewResults {
     }
     
     @JsonProperty("edits_preview")
-    public List<TermedStatementEntityEdit> getEditsPreview() {
+    public List<EntityEdit> getEditsPreview() {
     	return editsPreview;
     }
     
@@ -48,12 +49,12 @@ public class PreviewResults {
             Severity maxSeverity,
             int nbWarnings,
             int editCount,
-            List<TermedStatementEntityEdit> editsPreview) {
+            List<EntityEdit> firstEdits) {
         this.warnings = warnings;
         this.maxSeverity = maxSeverity;
         this.nbWarnings = nbWarnings;
         this.editCount = editCount;
-        this.editsPreview = editsPreview;
+        this.editsPreview = firstEdits;
     }
     
     @Override
