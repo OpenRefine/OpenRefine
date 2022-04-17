@@ -291,7 +291,7 @@ Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.prefe
 JAVA_OPTIONS=-Drefine.autosave=2
 JAVA_OPTIONS=-Drefine.port=3334
 JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
-JAVA_OPTIONS=--Dhttp.proxyHost=yourproxyhost
+JAVA_OPTIONS=-Dhttp.proxyHost=yourproxyhost
 JAVA_OPTIONS=-Dhttp.proxyPort=8080
 ```
 
