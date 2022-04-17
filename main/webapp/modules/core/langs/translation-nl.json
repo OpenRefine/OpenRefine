@@ -484,5 +484,14 @@
     "core-dialogs/idling": "Stationair aan het draaien…",
     "core-dialogs/scatterplot-matrix": "Scatterplot-matrix",
     "core-dialogs/linear-plot": "Lineaire plot",
-    "core-dialogs/logarithmic-plot": "Logaritmische plot"
+    "core-dialogs/logarithmic-plot": "Logaritmische plot",
+    "core-dialogs/error": "Fout",
+    "core-dialogs/no-syntax-err": "Geen syntaxfout",
+    "core-dialogs/sql-exporter": "SQL-exporter",
+    "core-dialogs/sel-and-ord": "Selecteer en rangschik kolommen om te exporteren",
+    "core-dialogs/match-ent-id": "ID van de overeenkomstige entiteit",
+    "core-dialogs/link-match": "Link naar de pagina van de overeenkomende entiteit",
+    "core-dialogs/date-format": "Voor datum/tijdwaarden, gebruik het formaat",
+    "core-dialogs/line-based": "Op regels gebaseerde tekstformaten",
+    "core-dialogs/columnType": "SQL-type"
 }
