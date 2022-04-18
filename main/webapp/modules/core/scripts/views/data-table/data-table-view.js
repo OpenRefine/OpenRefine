@@ -971,8 +971,8 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n('Show/Hide control characters'),
-          id: "core/display-control-chars",
+          label: $.i18n('core-views/display-control-chars'),
+          id: "core-views/display-control-chars",
           click: function() {
           nonPrintableToggle();
             $(".unprintableCharacters").toggle();
