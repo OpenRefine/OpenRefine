@@ -376,7 +376,7 @@ Tag.Create = function(tag, attributes, parent) {
 
 Tag.tagsName = ["body", "div", "h1", "h2", "h3", "table", "tbody", "th", "tr", "td", "form", "input", "textarea", "button"];
 Tag.tags     = Tag.tagsName.map((tagName) => { Tag.Create( {}, tagName, {} ); }); // { Tag.Create(arguments[0], tagName, arguments[2]); });
-// DEBUG arguments[0] : do kossŽ ?!
+// DEBUG arguments[0] : do kossÂŽ ?!
 // Tag.body    = function(attributes, parent) return Tag.New(Tag.Attr(attributes, "body", parent));
 
 /*
@@ -392,7 +392,7 @@ Tag.New = function(attributes) {
   if(this !== undefined)
   if(arguments.length > 1) { attributes.map((newTag) => { Tag.New(newTag); }); return; }
   
-  var tagParent   = parent | attributes.parent | null;
+  var tagParent   = parent | attributes.parent || null;
   
   if(tagParent) { parent.children.push(newTag); }
 
@@ -401,8 +401,8 @@ Tag.New = function(attributes) {
     newTag.name   = attributes.tag;
   newTag.parent   = tagParent;
   newTag.children = [];
-   newTag.class   = attributes.class  | null;
-      newTag.id   = attributes.id     | null;
+   newTag.class   = attributes.class  || null;
+      newTag.id   = attributes.id     || null;
 
   return newTag;
 }
@@ -412,7 +412,7 @@ Tag.Attr = function(attributes, name, parent) {
     if(name === undefined) { Core.Debug(); }
     attributes.name = name;
   }
-  if(attributes.parent === undefined) { attributes.parent = parent | null };
+  if(attributes.parent === undefined) { attributes.parent = parent || null };
 
   return attributes;
 }
@@ -506,7 +506,7 @@ function populatePreferences() {
     preferenceUIs.push(new PreferenceUI(tr, k, Preferences.values[k]));
   }
 */
-  // Est-ce possible de faire un map sur un JSONÊ? ;-) Est une Array ?
+  // Est-ce possible de faire un map sur un JSONÃŠ? ;-) Est une Array ?
   Preferences.values.map((currentPreference) => { 
     var newRow = prefTable.tr;
     preferenceUIs.push(new PreferenceUI(newRow, currentPreference, Preferences.values[currentPreference]));
