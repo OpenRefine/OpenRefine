@@ -38,20 +38,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.refine.model.*;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
-import com.google.refine.model.Column;
 
 public class ImporterUtilitiesTests extends RefineTest {
 
@@ -176,5 +177,42 @@ public class ImporterUtilitiesTests extends RefineTest {
         Assert.assertEquals(c0.getName(), "Column 1");
         Assert.assertEquals(c1.getName(), "Column 2");
         Assert.assertEquals(newColumnNames.size(), 2);
+    }
+
+    @Test
+    public void testDeleteEmptyColumns(){
+        Project project = new Project();
+        // Set up column names in project
+        List<String> columnNames = new ArrayList<String>();
+        List<Boolean> columnsHasData = new ArrayList<>();
+        columnNames.add("Column 1");
+        columnsHasData.add(true);
+
+        columnNames.add("Column 2");
+        columnsHasData.add(false);
+
+        columnNames.add("Column 3");
+        columnsHasData.add(true);
+
+        columnNames.add("Column 4");
+        columnsHasData.add(false);
+
+        columnNames.add("Column 5");
+        columnsHasData.add(true);
+
+        ImporterUtilities.setupColumns(project, columnNames);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
+
+        // This will mock the situation of deleting empty columns(col2&col4)
+        try {
+            ImporterUtilities.deleteEmptyColumns(columnsHasData,project);
+        } catch (ModelException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 3");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 5");
     }
 }
