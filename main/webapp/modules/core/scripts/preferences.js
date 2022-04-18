@@ -392,7 +392,7 @@ Tag.New = function(attributes) {
   if(this !== undefined)
   if(arguments.length > 1) { attributes.map((newTag) => { Tag.New(newTag); }); return; }
   
-  var tagParent   = parent | attributes.parent | null;
+  var tagParent   = parent | attributes.parent || null;
   
   if(tagParent) { parent.children.push(newTag); }
 
@@ -401,8 +401,8 @@ Tag.New = function(attributes) {
     newTag.name   = attributes.tag;
   newTag.parent   = tagParent;
   newTag.children = [];
-   newTag.class   = attributes.class  | null;
-      newTag.id   = attributes.id     | null;
+   newTag.class   = attributes.class  || null;
+      newTag.id   = attributes.id     || null;
 
   return newTag;
 }
@@ -412,7 +412,7 @@ Tag.Attr = function(attributes, name, parent) {
     if(name === undefined) { Core.Debug(); }
     attributes.name = name;
   }
-  if(attributes.parent === undefined) { attributes.parent = parent | null };
+  if(attributes.parent === undefined) { attributes.parent = parent || null };
 
   return attributes;
 }
