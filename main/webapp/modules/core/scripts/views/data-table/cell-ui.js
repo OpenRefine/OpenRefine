@@ -261,7 +261,7 @@ DataTableCellUI.prototype._render = function() {
       }
     }
   }
-//  nonPrintable();
+
   this._td.appendChild(divContent);
 };
 
