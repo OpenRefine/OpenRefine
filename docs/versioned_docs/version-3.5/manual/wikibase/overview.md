@@ -98,6 +98,8 @@ You can store your unencrypted username and password in OpenRefine, saved locall
 
 #### MediaWiki Bot Passwords
 
+> Bot passwords allow applications or bots to log in with a simple username-password combination even if the wiki employs some extra authorization steps that the bot framework could not handle; they also allow limiting the permissions given to the bot (e.g. the bot might be allowed to edit articles but not to create new ones). Clients using bot passwords can only access the API, not the normal web interface.
+
 Official manual of [bot passwords](https://www.mediawiki.org/wiki/Manual:Bot_passwords)
 
 For a given Wikibase instance, you can create bot passwords at `https://${Wikibase site}/wiki/Special:BotPasswords`.
