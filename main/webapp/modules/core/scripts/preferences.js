@@ -50,6 +50,18 @@ Core.i18n = function(key, defaultValue) {
   
   return translatedMessage;
 }
+
+Core.alertDialog = function(alertText) {
+  window.alert(alertText);
+  if(Core.Debugging) { debugger; }
+}
+
+
+/* * * * * * * * * *      TESTS       * * * * * * * * * */
+
+//* * *   CORE   * * *
+// Core.alertDialog("Test of a dialog.");
+
 keyTest = "core-index/prefs-loading-failed"; resultTest = Core.i18n(keyTest, "UnhandledValue");
 if(resultTest != "" && resultTest ) 
    console.log("Core.i18n translated "+ keyTest +".");
@@ -57,15 +69,7 @@ else
   console.log("Error when assigning ValAB to variable test-preference");
 
 
-Core.alertDialog = function(alertText) {
-  window.alert(alertText);
-  if(Core.Debugging) { debugger; }
-}
-// Core.alertDialog("Test of a dialog.");
-
-
-/* * * * * * * * * *      TESTS       * * * * * * * * * *
-
+//* * *   API   * * *
 API.GET(true, "command/core/load-language")
   .then((language) => { console.log("Language: "+ language); } )
   .catch((err)     => { console.log("Error API.GET() can't read load-language"); });
@@ -74,10 +78,42 @@ API.GET(true, "command/core/load-language")
 
 // API.POST(true, "command/core/load-language").then((data) => { console.log(data); } );
 
-
 API.Core.GetCsrfToken(true)
   .then((token) => { console.log("Token: "+ token); })
   .catch((err)  => { console.log("Error API.CORE.GetCsrfToken() can't get token"); });
+
+API.Core.GetCommand(true, "load-language")
+  .then((data) => { console.log("Data: "+ data); } )
+  .catch((err) => { console.log("Error API.CORE.GetCommand() can't read load-language"); });
+
+//API.Core.PostCommand(true, "load-language").then((data) => { console.log(data); } );
+
+//API.Core.PostCommandCsrf("load-language").then((data) => { console.log(data); } );
+
+API.Core.GetAllPreferences()
+  .then((prefs) => { console.log("Preferences: "+ prefs); })
+  .catch((err)  => { console.log("Error API.CORE.GetAllPreferences() can't get preferences"); });
+
+API.Core.SetPreferences("test-preference", "ValAB")
+  .then(() => { console.log("test-preference a maintenant la valeur ValAB"); } )
+  .catch(() => { console.log("Error when assigning ValAB to variable test-preference"); });
+
+//* * *   PREFS   * * *
+Preferences.Load()
+  .then(() => { console.log("The preferences were loaded."); } )
+  .catch(() => { console.log("Error while loading the preferences."); });
+
+//* * *   LANGS   * * *
+Languages.Load()
+  .then(() => { console.log("The language were loaded."); } )
+  .catch(() => { console.log("Error while loading the language."); });
+
+keyTest = "core-index/prefs-loading-failed"; resultTest = Core.i18n(keyTest, "UnhandledValue");
+if(resultTest != "" && resultTest ) 
+   console.log("Languages.i18n translated "+ keyTest +".");
+else 
+  console.log("Error of Languages.i18n: when assigning ValAB to variable test-preference");
+
 
 /* * * * * * * * * *       API       * * * * * * * * * */
 
@@ -146,15 +182,11 @@ API.POST = function(isAsync, url, queryData, postData) {
 API.Core.GetCommand = function(isAsync, command, queryData) {
   return API.GET("command/core/"+ command, queryData);
 }
-API.Core.GetCommand(true, "load-language")
-  .then((data) => { console.log("Data: "+ data); } )
-  .catch((err) => { console.log("Error API.CORE.GetCommand() can't read load-language"); });
 
 API.Core.PostCommand = function(isAsync, command, queryData, postData) {
   if(isAsync) return API.AsyncPOST("command/core/"+ command, queryData, postData);
   API.SyncPOST("command/core/"+ command, queryData, postData);
 }
-//API.Core.GetCommand(true, "load-language").then((data) => { console.log(data); } );
 
 API.Core.GetCsrfToken = function(isAsync) {
   const apiCommand = "get-csrf-token";
@@ -183,7 +215,6 @@ API.Core.PostCommandCsrf = function(command, queryData, postData) {
       .catch(  (err) => { reject(err); } );
   });
 }
-//API.Core.GetCommand("load-language").then((data) => { console.log(data); } );
 
 API.Core.GetAllPreferences = function() {
   const apiCommand = "get-csrf-token";
@@ -194,9 +225,6 @@ API.Core.GetAllPreferences = function() {
       .catch( (err) => { reject(err); } );
   })
 }
-API.Core.GetAllPreferences()
-  .then((prefs) => { console.log("Preferences: "+ prefs); })
-  .catch((err)  => { console.log("Error API.CORE.GetAllPreferences() can't get preferences"); });
 
 API.Core.SetPreferences = function(key, newValue) {
   return new Promise((resolve, reject) => {
@@ -205,9 +233,6 @@ API.Core.SetPreferences = function(key, newValue) {
       .catch( (err) => { reject(err); } );
   });
 }
-API.Core.SetPreferences("test-preference", "ValAB")
-  .then(() => { console.log("test-preference a maintenant la valeur ValAB"); } )
-  .catch(() => { console.log("Error when assigning ValAB to variable test-preference"); });
 
 API.Core.LoadLanguage = function(lang) {
   return new Promise((resolve, reject) => {
@@ -237,9 +262,6 @@ Preferences.Load = function() {
 			});
   });
 }
-Preferences.Load()
-  .then(() => { console.log("The preferences were loaded."); } )
-  .catch(() => { console.log("Error while loading the preferences."); });
 
 Preferences.getValue = function(key, defaultValue) { 
   if(!Preferences.values.hasOwnProperty(key)) { return defaultValue; }
@@ -254,9 +276,6 @@ Preferences.setValue = function(key, newValue) {
 			.catch( (err) => { Core.alertDialog("Can save value."); reject(err); } );
 	});
 }
-API.Core.SetPreferences("test-preference", "ValAB")
-  .then(() => { console.log("test-preference a maintenant la valeur ValAB"); } )
-  .catch(() => { console.log("Error when assigning ValAB to variable test-preference"); });
 
 
 /* * * * * * * * * *   Languages   * * * * * * * * * */
@@ -276,11 +295,6 @@ Languages.i18n = function(key, defaultValue) {
   
   return translatedMessage;
 }
-keyTest = "core-index/prefs-loading-failed"; resultTest = Core.i18n(keyTest, "UnhandledValue");
-if(resultTest != "" && resultTest ) 
-   console.log("Languages.i18n translated "+ keyTest +".");
-else 
-  console.log("Error of Languages.i18n: when assigning ValAB to variable test-preference");
 
 Languages.Load = function() {
   return new Promise((resolve, reject) => {
@@ -297,10 +311,6 @@ Languages.Load = function() {
     });
   });
 }
-Languages.Load()
-  .then(() => { console.log("The language were loaded."); } )
-  .catch(() => { console.log("Error while loading the language."); });
-
 
 Languages.setDefaultLanguage = function() {
   Languages.lang = (navigator.language || navigator.userLanguage).split("-")[0];
@@ -310,22 +320,20 @@ Languages.setDefaultLanguage = function() {
   $.i18n().locale = Languages.lang;
 }
 
-
-/* * * * * * * * * *       UI       * * * * * * * * * */
-
-var preferenceUIs = [];
-Languages.setDefaultLanguage();
-Languages.Load();
-
-Core.alertDialog = function(alertText) { window.alert(alertText); }
-
-function deDupUserMetaData(arrObj)  {
+Languages.deDupUserMetaData = function(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
     
     return JSON.stringify(result).replace(/"/g, '\"');
 }
+
+Languages.setDefaultLanguage();
+Languages.Load();
+
+/* * * * * * * * * *       UI       * * * * * * * * * */
+
+var preferenceUIs = [];
 
 function PreferenceUI(tr, key, initialValue) {
   var self = this;
@@ -342,7 +350,7 @@ function PreferenceUI(tr, key, initialValue) {
     var newValue = window.prompt(Core.i18n('core-index/change-value')+" " + key, $(td1).text());
     if (newValue == null) { return; } // @todo old behavior kept, but should be handled.
     
-	newValue = (key === "userMetadata") ? deDupUserMetaData(newValue) : newValue;        
+	newValue = (key === "userMetadata") ? Languages.deDupUserMetaData(newValue) : newValue;        
 
 	Preferences.setValue(key, newValue);
 
@@ -395,7 +403,7 @@ function populatePreferences() {
 	var tr = table.insertRow(table.rows.length - 1);
 	preferenceUIs.push(new PreferenceUI(tr, key, value));
 		
-	value = (key === "userMetadata") ? deDupUserMetaData(value) : value;        
+	value = (key === "userMetadata") ? Languages.deDupUserMetaData(value) : value;        
 		
 	Preferences.setValue(key, value);
   });
