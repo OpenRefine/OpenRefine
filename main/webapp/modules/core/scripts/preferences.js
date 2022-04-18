@@ -31,110 +31,293 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-var preferenceUIs = [];
-var thePreferences;
 
-var Refine = {
-};
+/* * * * * * * * * *       Core       * * * * * * * * * */
 
-// Requests a CSRF token and calls the supplied callback
-// with the token
-Core.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
-};
+var Core = {};
+Core.Debugging = true;
 
-// Performs a POST request where an additional CSRF token
-// is supplied in the POST data. The arguments match those
-// of $.post().
-Core.postCSRF = function(url, data, success, dataType, failCallback) {
-   return Core.wrapCSRF(function(token) {
-      var fullData = data || {};
-      if (typeof fullData == 'string') {
-         fullData = fullData + "&" + $.param({csrf_token: token});
-      } else {
-         fullData['csrf_token'] = token;
-      }
-      var req = $.post(url, fullData, success, dataType);
-      if (failCallback !== undefined) {
-         req.fail(failCallback);
-      }
-   });
-};
+Core.i18n = function(key, defaultValue) {
+  if(!key && Core.Debugging) { console.log("Error: Core.i18n() failed. No key."); }
 
+  var translatedMessage = $.i18n(key);
+  
+  if(translatedMessage == "" || translatedMessage == key) {
+    if(Core.Debugging) { console.log("Error: $.i18n() failed. No key: "+ key); }
+    
+    translatedMessage = defaultValue ? defaultValue : key;
+  }
+  
+  return translatedMessage;
+}
+keyTest = "core-index/prefs-loading-failed"; resultTest = Core.i18n(keyTest, "UnhandledValue");
+if(resultTest != "" && resultTest ) 
+   console.log("Core.i18n translated "+ keyTest +".");
+else 
+  console.log("Error when assigning ValAB to variable test-preference");
 
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
-var dictionary = getAllLanguages();
-
-$.i18n().load(dictionary, lang);
-$.i18n().locale = lang;
-//End internationalization
 
 Core.alertDialog = function(alertText) {
   window.alert(alertText);
+  if(Core.Debugging) { debugger; }
+}
+// Core.alertDialog("Test of a dialog.");
+
+
+/* * * * * * * * * *      TESTS       * * * * * * * * * *
+
+API.GET(true, "command/core/load-language")
+  .then((language) => { console.log("Language: "+ language); } )
+  .catch((err)     => { console.log("Error API.GET() can't read load-language"); });
+
+// API.GET(false, "command/core/load-language")
+
+// API.POST(true, "command/core/load-language").then((data) => { console.log(data); } );
+
+
+API.Core.GetCsrfToken(true)
+  .then((token) => { console.log("Token: "+ token); })
+  .catch((err)  => { console.log("Error API.CORE.GetCsrfToken() can't get token"); });
+
+/* * * * * * * * * *       API       * * * * * * * * * */
+
+var API = { Core: {} }; 
+
+API.NewError = function(err) {
+  if(Core.Degugging) console.log("An error has occured.");
+  return new Error(err);
 }
 
-Core.getAllLanguages = function() { 
-  $.ajax({
-    url : "command/core/load-language?",
-    type : "POST",
-    async : false,
-    data : {
-      module : "core",
-      //lang : queryLang
-    },
-    success : function(data) {
-      dictionary = data['dictionary'];
-      lang = data['lang'];
-    }
-  }).fail(function( jqXhr, textStatus, errorThrown ) {
-    var errorMessage = $.i18n('core-index/prefs-loading-failed');   // @todo This is a failure of languages loading, not Prefs!
-    if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-      Core.alertDialog(errorMessage); 
-    } else {
-      Core.alertDialog( textStatus + ':' + errorThrown );
-    }
+API.NewPromise = function(apiCommand, promiseDef) {
+  apiPromise = new Promise(promiseDef);
+  apiPromise.command = apiCommand;
+  
+  return apiPromise;
+}
+
+API.Reject = function(reject, data) {
+  if(Core.Degugging) console.log("An error has occured.");
+  reject(data);
+}
+
+API.fail = function(reject, jqXHR, textStatus, errorThrown) {
+  if(typeof errorThrown != "object") { errorThrown = API.NewError(errorThrown); }
+        
+  errorThrown.jqXHR = jqXHR; 
+  errorThrown.textStatus = textStatus;          
+  API.Reject(reject, errorThrown);
+}
+
+API.error = function(reject, event, jqxhr, settings, thrownError) {
+  console.log({ event, jqxhr, settings, thrownError } );
+  API.Reject(reject, thrownError);
+}
+
+API.GET = function(isAsync, url, queryData) { 
+  if(isAsync) return new Promise((resolve, reject) => {
+    $.get(url, queryData, ( response, textStatus, jqXHR ) => { resolve( jqXHR ) }, "json" )
+      .fail(  ( jqXHR, textStatus, errorThrown )      => API.fail(reject, jqXHR, textStatus, errorThrown) )
+      .error( ( event, jqxhr, settings, thrownError ) => API.error(reject, event, jqxhr, settings, thrownError) )
+  });
+  
+  ajaxResult = $.ajax({
+    async: true,
+	 url: url,
+	 method: "get",
+	 data: queryData,
+	 dataType: "json"
+  });
+  
+  
+}
+
+API.POST = function(isAsync, url, queryData, postData) {
+  if(isAsync) return new Promise((resolve, reject) => {
+    var fullUrl = queryData ? url +"?"+ $.param(queryData) : url;
+    
+    $.post(fullUrl, postData, function( response, textStatus, jqXHR ) { resolve( jqXHR ) }, "json" )
+      .fail(  ( jqXHR, textStatus, errorThrown )      => API.fail(reject, jqXHR, textStatus, errorThrown) )
+      .error( ( event, jqxhr, settings, thrownError ) => API.error(reject, event, jqxhr, settings, thrownError) )
+  });
+  
+  return 
+}
+
+API.Core.GetCommand = function(isAsync, command, queryData) {
+  return API.GET("command/core/"+ command, queryData);
+}
+API.Core.GetCommand(true, "load-language")
+  .then((data) => { console.log("Data: "+ data); } )
+  .catch((err) => { console.log("Error API.CORE.GetCommand() can't read load-language"); });
+
+API.Core.PostCommand = function(isAsync, command, queryData, postData) {
+  if(isAsync) return API.AsyncPOST("command/core/"+ command, queryData, postData);
+  API.SyncPOST("command/core/"+ command, queryData, postData);
+}
+//API.Core.GetCommand(true, "load-language").then((data) => { console.log(data); } );
+
+API.Core.GetCsrfToken = function(isAsync) {
+  const apiCommand = "get-csrf-token";
+  
+  if(isAsync) return API.NewPromise(apiCommand, (resolve, reject) => {
+    API.Core.GetCommand( , {} )
+      .then( (data) => { resolve( data['token'] ); } )
+      .catch( (err) => { reject(err); } );
   });
 }
 
-Core.getAllPreferences = function(key, defaultValue) { 
-  $.post(
-      "command/core/get-all-preferences",
-      null,
-      function(data) { thePreferences = data; populatePreferences(); },
-      "json"
-  );
+API.Core.PostCommandCsrf = function(command, queryData, postData) {
+  return new Promise((resolve, reject) => {
+    API.Core.GetCsrfToken()
+      .then( (token) => {
+        if (typeof postData == 'string') {
+          postData += "&" + $.param({csrf_token: token});
+        } else {
+          postData['csrf_token'] = token;
+        }
+
+        API.PostCommand(command, queryData, postData)
+          .then( (resultPostData) => { resolve(resultPostData); } )
+          .catch( (err) => { reject(err); } ); 
+      }) 
+      .catch(  (err) => { reject(err); } );
+  });
+}
+//API.Core.GetCommand("load-language").then((data) => { console.log(data); } );
+
+API.Core.GetAllPreferences = function() {
+  const apiCommand = "get-csrf-token";
+
+  return new Promise((resolve, reject) => {
+    API.Core.PostCommand( "get-all-preferences", {} )
+      .then( (jqXHR) => { resolve(jqXHR.response); } )
+      .catch( (err) => { reject(err); } );
+  })
+}
+API.Core.GetAllPreferences()
+  .then((prefs) => { console.log("Preferences: "+ prefs); })
+  .catch((err)  => { console.log("Error API.CORE.GetAllPreferences() can't get preferences"); });
+
+API.Core.SetPreferences = function(key, newValue) {
+  return new Promise((resolve, reject) => {
+    API.Core.PostCommandCsrf( "set-preference", $.param({ name: key }), { value: JSON.stringify(newValue) } )
+      .then( (jqXHR) => { resolve(); } )
+      .catch( (err) => { reject(err); } );
+  });
+}
+API.Core.SetPreferences("test-preference", "ValAB")
+  .then(() => { console.log("test-preference a maintenant la valeur ValAB"); } )
+  .catch(() => { console.log("Error when assigning ValAB to variable test-preference"); });
+
+API.Core.LoadLanguage = function(lang) {
+  return new Promise((resolve, reject) => {
+    API.Core.PostCommand( "load-language", {}, { module : "core", lang } )
+      .then( (data) => { resolve(data); } )
+      .catch( (err) => { reject(err); } );
+  })
 }
 
-Core.getPreference = function(key, defaultValue) { 
-  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
 
-  return thePreferences[key];
+/* * * * * * * * * *   Preferences   * * * * * * * * * */
+
+var Preferences = {};
+
+Preferences.Load = function() {
+  return new Promise((resolve, reject) => {
+    API.Core.GetAllPreferences()
+      .then( (data) => { 
+        Preferences.values = data; 
+        resolve(data); 
+      })
+			.catch( (err) => {
+			  console.log(err);
+				var errorMessage = Core.i18n('core-index/prefs-loading-failed', err.textStatus +':'+ err.errorThrown);
+				Core.alertDialog(errorMessage);
+				reject(err);
+			});
+  });
 }
+Preferences.Load()
+  .then(() => { console.log("The preferences were loaded."); } )
+  .catch(() => { console.log("Error while loading the preferences."); });
 
-Core.setPreference = function(key, newValue) { 
-  thePreferences[key] = newValue;
+Preferences.getValue = function(key, defaultValue) { 
+  if(!Preferences.values.hasOwnProperty(key)) { return defaultValue; }
 
-  Refine.wrapCSRF(function(token) {
-    $.ajax({
-      async: false,
-      type: "POST",
-      url: "command/core/set-preference?" + $.param({ name: key }),
-      data: {
-        "value" : JSON.stringify(newValue), 
-        csrf_token: token
-      },
-      success: function(data) { },
-      dataType: "json"
+  return Preferences.values[key];
+}
+ 
+Preferences.setValue = function(key, newValue) { 
+	return new Promise((resolve, reject) => {
+		API.Core.SetPreferences(key, newValue)
+			.then( () => { Preferences.values[key] = newValue; resolve(); } )
+			.catch( (err) => { Core.alertDialog("Can save value."); reject(err); } );
+	});
+}
+API.Core.SetPreferences("test-preference", "ValAB")
+  .then(() => { console.log("test-preference a maintenant la valeur ValAB"); } )
+  .catch(() => { console.log("Error when assigning ValAB to variable test-preference"); });
+
+
+/* * * * * * * * * *   Languages   * * * * * * * * * */
+
+var Languages = {};
+
+Languages.i18n = function(key, defaultValue) {
+  if(!key && Core.Debugging) { console.log("Error: Core.i18n() failed. No key."); }
+
+  var translatedMessage = $.i18n(key);
+  
+  if(translatedMessage == "" || translatedMessage == key) {
+    if(Core.Debugging) { console.log("Error: $.i18n() failed. No key: "+ key); }
+    
+    translatedMessage = defaultValue ? defaultValue : key;
+  }
+  
+  return translatedMessage;
+}
+keyTest = "core-index/prefs-loading-failed"; resultTest = Core.i18n(keyTest, "UnhandledValue");
+if(resultTest != "" && resultTest ) 
+   console.log("Languages.i18n translated "+ keyTest +".");
+else 
+  console.log("Error of Languages.i18n: when assigning ValAB to variable test-preference");
+
+Languages.Load = function() {
+  return new Promise((resolve, reject) => {
+    API.Core.LoadLanguage()
+    .then( (data) => { 
+			Languages.dictionary = data['dictionary'];
+			Languages.lang = data['lang'];
+			resolve();
+		})
+    .catch( (err) => {
+      var errorMessage = Core.i18n('core-index/langs-loading-failed', err.textStatus +':'+ err.errorThrown);
+      Core.alertDialog(errorMessage);
+      reject(err);
     });
   });
 }
+Languages.Load()
+  .then(() => { console.log("The language were loaded."); } )
+  .catch(() => { console.log("Error while loading the language."); });
+
+
+Languages.setDefaultLanguage = function() {
+  Languages.lang = (navigator.language || navigator.userLanguage).split("-")[0];
+  // Languages.Load();
+  
+  $.i18n().load(Languages.dictionary, Languages.lang);
+  $.i18n().locale = Languages.lang;
+}
+
+
+/* * * * * * * * * *       UI       * * * * * * * * * */
+
+var preferenceUIs = [];
+Languages.setDefaultLanguage();
+Languages.Load();
+
+Core.alertDialog = function(alertText) { window.alert(alertText); }
 
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
@@ -155,118 +338,69 @@ function PreferenceUI(tr, key, initialValue) {
 
   var td2 = tr.insertCell(2);
 
-  $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
-    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, $(td1).text());
-    if (newValue !== null) {
-      if (key === "userMetadata")  {
-          newValue = deDupUserMetaData(newValue);
-      }
-      $(td1).text(newValue);
-      thePreferences[key] = newValue;
-      
-      Refine.postCSRF(
-        "command/core/set-preference",
-        {
-          name : key,
-          value : JSON.stringify(newValue)
-        },
-        function(o) {
-          if (o.code == "error") {
-            alert(o.message);
-          }
-        },
-        "json"
-      );
-    }
+  $('<button class="button">').text(Core.i18n('core-index/edit')).appendTo(td2).click(function() {
+    var newValue = window.prompt(Core.i18n('core-index/change-value')+" " + key, $(td1).text());
+    if (newValue == null) { return; } // @todo old behavior kept, but should be handled.
+    
+	newValue = (key === "userMetadata") ? deDupUserMetaData(newValue) : newValue;        
+
+	Preferences.setValue(key, newValue);
+
+	$(td1).text(newValue);
   });
 
-  $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).click(function() {
-    if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      Refine.postCSRF(
-        "command/core/set-preference",
-        {
-          name : key
-        },
-        function(o) {
-          if (o.code == "ok") {
-            $(tr).remove();
-
-            for (var i = 0; i < preferenceUIs.length; i++) {
-              if (preferenceUIs[i] === self) {
-                preferenceUIs.splice(i, 1);
-                break;
-              }
-            }
-          } else if (o.code == "error") {
-            alert(o.message);
-          }
-        },
-        "json"
-      );
+  $('<button class="button">').text(Core.i18n('core-index/delete')).appendTo(td2).click(function() {
+    if (!window.confirm(Core.i18n('core-index/delete-key')+" " + key + "?")) { return }
+    Preferences.setValue(key);
+      
+    $(tr).remove();
+	for (var i = 0; i < preferenceUIs.length; i++) {
+      if (preferenceUIs[i] !== self) { continue; }
+        
+      preferenceUIs.splice(i, 1);
+      break;
     }
   });
 }
 
-function populatePreferences(prefs) {
+function populatePreferences() {
   var body = $("#body-info").empty();
 
-  if (prefs != null) { thePreferences = prefs; }
-
-  $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
-  $('<h1>').text($.i18n('core-index/preferences')).appendTo(body);
+  $("#or-proj-starting").text(Core.i18n('core-project/starting')+"...");
+  $('<h1>').text(Core.i18n('core-index/preferences')).appendTo(body);
 
   var table = $('<table>')
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
+  .html('<tr><th>'+Core.i18n('core-index/key')+'</th><th>'+Core.i18n('core-index/value')+'</th><th></th></tr>')
   .appendTo(body)[0];
 
-  for (var k in prefs) {
+  for (var k in Preferences.values) {
     var tr = table.insertRow(table.rows.length);
-    preferenceUIs.push(new PreferenceUI(tr, k, prefs[k]));
+    preferenceUIs.push(new PreferenceUI(tr, k, Preferences.values[k]));
   }
 
   var trLast = table.insertRow(table.rows.length);
   var tdLast0 = trLast.insertCell(0);
   trLast.insertCell(1);
   trLast.insertCell(2);
-  $('<button class="button">').text($.i18n('core-index/add-pref')).appendTo(tdLast0).click(function() {
-    var key = window.prompt($.i18n('core-index/add-pref'));
-    if (key) {
-      var value = window.prompt($.i18n('core-index/pref-key'));
-      if (value !== null) {
-        var tr = table.insertRow(table.rows.length - 1);
-        preferenceUIs.push(new PreferenceUI(tr, key, value));
-        
-        if (key === "userMetadata")  {
-            value = deDupUserMetaData(value);
-        }
-        
-        Refine.postCSRF(
-          "command/core/set-preference",
-          {
-            name : key,
-            value : JSON.stringify(value)
-          },
-          function(o) {
-            if (o.code == "error") {
-              alert(o.message);
-            }
-          },
-          "json"
-        );
-      }
-    }
+    
+  $('<button class="button">').text(Core.i18n('core-index/add-pref')).appendTo(tdLast0).click(function() {
+    var key = window.prompt(Core.i18n('core-index/add-pref'));
+    if (!key) { return; }  // @todo old behavior kept, but should be handled.
+    
+	var value = window.prompt(Core.i18n('core-index/pref-key'));
+	if (!value === null) { return; }  // @todo old behavior kept, but should be handled.
+		
+	var tr = table.insertRow(table.rows.length - 1);
+	preferenceUIs.push(new PreferenceUI(tr, key, value));
+		
+	value = (key === "userMetadata") ? deDupUserMetaData(value) : value;        
+		
+	Preferences.setValue(key, value);
   });
 }
 
-function onLoad() {
-  $.post(
-      "command/core/get-all-preferences",
-      null,
-      populatePreferences,
-      "json"
-  );
-}
+function onLoad() { Preferences.Load().then( (data) => { populatePreferences(); }); }
 
 $(onLoad);
