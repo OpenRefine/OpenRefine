@@ -19,7 +19,6 @@
     "core-index/add-pref": "Add preference",
     "core-index/pref-key": "Preference key value:",
     "core-index/prefs-loading-failed": "Failed to load the preferences.",
-    "core-index/langs-loading-failed": "Failed to load the languages.",
     "core-index/edit": "Edit",
     "core-index/delete": "Delete",
     "core-index/new-proj-name": "New project name:",
