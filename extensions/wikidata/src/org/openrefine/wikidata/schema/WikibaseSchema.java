@@ -31,7 +31,7 @@ import java.util.Map;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -59,8 +59,8 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
-    @JsonProperty("itemDocuments")
-    protected List<WbEntityDocumentExpr> entityDocumentExprs = new ArrayList<>();
+    @JsonProperty("entityEdits")
+    protected List<WbExpression<? extends EntityEdit>> entityEditExprs = new ArrayList<>();
 
     @JsonProperty("siteIri")
     protected String siteIri;
@@ -83,11 +83,18 @@ public class WikibaseSchema implements OverlayModel {
      * Constructor for deserialization via Jackson
      */
     @JsonCreator
-    public WikibaseSchema(@JsonProperty("itemDocuments") List<WbEntityDocumentExpr> exprs,
+    public WikibaseSchema(@JsonProperty("entityEdits") List<WbExpression<? extends EntityEdit>> exprs,
+    					  @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
                           @JsonProperty("siteIri") String siteIri,
                           @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
                           @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
-        this.entityDocumentExprs = exprs;
+        this.entityEditExprs = new ArrayList<>();
+        if (exprs != null) {
+        	entityEditExprs.addAll(exprs);
+        }
+        if (legacyItemExprs != null) {
+        	entityEditExprs.addAll(legacyItemExprs);
+        }
         this.siteIri = siteIri;
         this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
@@ -112,9 +119,9 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the list of document expressions for this schema
      */
-    @JsonProperty("itemDocuments")
-    public List<WbEntityDocumentExpr> getEntityDocumentExpressions() {
-        return Collections.unmodifiableList(entityDocumentExprs);
+    @JsonProperty("entityEdits")
+    public List<WbExpression<? extends EntityEdit>> getEntityDocumentExpressions() {
+        return Collections.unmodifiableList(entityEditExprs);
     }
 
     @JsonProperty("mediaWikiApiEndpoint")
@@ -131,9 +138,9 @@ public class WikibaseSchema implements OverlayModel {
      *            the context in which the schema should be evaluated.
      * @return
      */
-    public List<TermedStatementEntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
-        List<TermedStatementEntityEdit> result = new ArrayList<>();
-        for (WbEntityDocumentExpr expr : entityDocumentExprs) {
+    public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
+        List<EntityEdit> result = new ArrayList<>();
+        for (WbExpression<? extends EntityEdit> expr : entityEditExprs) {
 
             try {
                 result.add(expr.evaluate(ctxt));
@@ -161,8 +168,8 @@ public class WikibaseSchema implements OverlayModel {
      *            a store in which issues will be emitted
      * @return entity updates are stored in their generating order (not merged yet).
      */
-    public List<TermedStatementEntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
-        List<TermedStatementEntityEdit> result = new ArrayList<>();
+    public List<EntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
+        List<EntityEdit> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
         return result;
@@ -171,16 +178,16 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * Same as above, ignoring any warnings.
      */
-    public List<TermedStatementEntityEdit> evaluate(Project project, Engine engine) {
+    public List<EntityEdit> evaluate(Project project, Engine engine) {
         return evaluate(project, engine, null);
     }
 
     protected class EvaluatingRowVisitor implements RowVisitor {
 
-        private List<TermedStatementEntityEdit> result;
+        private List<EntityEdit> result;
         private QAWarningStore warningStore;
 
-        public EvaluatingRowVisitor(List<TermedStatementEntityEdit> result, QAWarningStore warningStore) {
+        public EvaluatingRowVisitor(List<EntityEdit> result, QAWarningStore warningStore) {
             this.result = result;
             this.warningStore = warningStore;
         }
@@ -231,6 +238,6 @@ public class WikibaseSchema implements OverlayModel {
             return false;
         }
         WikibaseSchema otherSchema = (WikibaseSchema) other;
-        return entityDocumentExprs.equals(otherSchema.getEntityDocumentExpressions());
+        return entityEditExprs.equals(otherSchema.getEntityDocumentExpressions());
     }
 }

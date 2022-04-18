@@ -35,6 +35,7 @@ module.exports = {
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',
+      'technical-reference/clustering-in-depth',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
       'technical-reference/contributing',
