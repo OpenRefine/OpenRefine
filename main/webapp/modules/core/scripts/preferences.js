@@ -395,14 +395,16 @@ Tag.New = function(attributes) {
   var tagParent   = parent | attributes.parent || null;
   
   if(tagParent) { parent.children.push(newTag); }
-
-         newTag   = new Tag;
-   newTag.isNew   = true;
-    newTag.name   = attributes.tag;
-  newTag.parent   = tagParent;
+    /***  BEGIN NO ESLINT  ***/
+       var newTag = new Tag;
+       
+     newTag.isNew = true;
+      newTag.name = attributes.tag;
+    newTag.parent = tagParent;
   newTag.children = [];
-   newTag.class   = attributes.class  || null;
-      newTag.id   = attributes.id     || null;
+     newTag.class = attributes.class  || null;
+        newTag.id = attributes.id     || null;
+    /***  END NO ESLINT  ***/
 
   return newTag;
 }
