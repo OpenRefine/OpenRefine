@@ -128,6 +128,7 @@
     "core-dialogs/no-cluster-found": "选中的操作并没有生成簇",
     "core-dialogs/try-another-method": "请尝试上面的其他操作或者修改操作的参数",
     "core-dialogs/clustering": "簇集中…",
+    "core-dialogs/sqlExportEscapeCharacter": "转义字符",
     "core-dialogs/warning-check-boxes": "为你的应用变更你必须检查你的一些编辑复选框.",
     "core-dialogs/choices-in-cluster": "# 簇中的可选择数",
     "core-dialogs/rows-in-cluster": "# 簇中的行数",

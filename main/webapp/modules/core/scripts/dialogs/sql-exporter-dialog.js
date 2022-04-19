@@ -72,7 +72,7 @@ function SqlExporterDialog(options) {
     this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n('core-dialogs/sqlExporterIgnoreFacets'));
     this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n('core-dialogs/sqlExporterTrimColumns'));
     this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n('core-dialogs/sqlExporterOutputEmptyRows'));
-  
+      this._elmts.sqlExportEscapeCharacterLabel.html($.i18n('core-dialogs/sqlExportEscapeCharacter'));
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");
     $("#sql-exporter-tabs-download label").css("padding-right", ".25em");
@@ -429,7 +429,7 @@ function SqlExporterDialog(options) {
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
     options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
     options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;
-    
+    options.EscapeCharacter = $.trim(this._elmts.sqlExportEscapeCharacterTextBox.val());
     options.convertNulltoEmptyString = this._elmts.nullCellValueToEmptyStringCheckbox[0].checked;
     options.includeIfExistWithDropStatement = this._elmts.includeIfExistDropStatementCheckbox[0].checked;
      

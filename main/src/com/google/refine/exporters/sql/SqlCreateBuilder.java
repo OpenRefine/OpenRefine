@@ -62,13 +62,14 @@ public class SqlCreateBuilder {
 
         List<JsonNode> columnOptionArray = options == null ? Collections.emptyList() : JSONUtilities.getArray(options, "columns");
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-
+        String EscapeCharacter=JSONUtilities.getString(options, "EscapeCharacter", null);
         int count = columnOptionArray.size();
 
         for (int i = 0; i < count; i++) {
             JsonNode columnOptions = columnOptionArray.get(i);
             if (columnOptions != null) {
                 String name = JSONUtilities.getString(columnOptions, "name", null);
+
                 String type = JSONUtilities.getString(columnOptions, "type", SqlData.SQL_TYPE_VARCHAR);
                 String size = JSONUtilities.getString(columnOptions, "size", "");
                 boolean allowNull = JSONUtilities.getBoolean(columnOptions, "allowNull", true);
@@ -83,11 +84,12 @@ public class SqlCreateBuilder {
                 
                 if (name != null) {
                     if(trimColNames) {
-                        String trimmedCol = name.replaceAll("[^a-zA-Z0-9_]", "_");
-                        createSB.append( trimmedCol + " ");
-                    }else{
-                        createSB.append(name + " ");
+                        name = name.replaceAll("[^a-zA-Z0-9_]", "_");
+
+                    }if (EscapeCharacter!=null){
+                        name=EscapeCharacter+name+EscapeCharacter;
                     }
+                    createSB.append( name + " ");
                    
                     if (type.equals(SqlData.SQL_TYPE_VARCHAR)) {
                         if (size.isEmpty()) {
@@ -160,7 +162,7 @@ public class SqlCreateBuilder {
         sql.append(")").append(";" + "\n");
         
         String createSQL = sql.toString();
-        if(logger.isDebugEnabled()){
+        if(logger.isDebugEnabled()) {
             logger.debug("Create SQL Generated Successfully...{}", createSQL);
         }
         return createSQL;
