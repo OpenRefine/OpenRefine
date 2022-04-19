@@ -85,7 +85,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20220322-1.32.1</version>
+      <version>v4-rev20220411-1.32.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
