@@ -712,6 +712,7 @@
     "core-views/facet-null": "Facetta nullérték alapján",
     "core-views/facet-empty-string": "Facetta üres szöveg alapján",
     "core-views/display-null": "Nullértékek elrejtése/mutatása a cellákban",
+    "core-views/display-control-chars": "Vezérlőkarakterek megjelenítése/elrejtése",
     "core-views/replace-smartquotes": "Nyomdai idézőjelek cserélése ASCII kódra…",
     "core-views/replace-smartquotes/header": "Nyomdai idézőjelek cserélése ASCII kódra",
     "core-views/replace-smartquotes/single": "Nyomdai idézőjelek cserélése ASCII kódra",

@@ -696,6 +696,7 @@
     "core-views/clear-recon2": "Limpa dados de reconciliação nesta coluna para todas as linhas atualmente filtradas",
     "core-index-open/warning-rename": "Falha ao renomear o projeto:",
     "core-views/display-null": "Mostrar/Esconder variáveis com valores nulos",
+    "core-views/display-control-chars": "Mostrar/ocultar caracteres de controle",
     "core-dialogs/warning-check-boxes": "Deve selecionar ao menos um checkbox Editar? para que suas alterações sejam aplicadas.",
     "core-views/by-sep": "por separador",
     "core-views/move-to-right": "Mover coluna para a direita",

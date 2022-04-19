@@ -621,6 +621,7 @@
     "core-views/facet": "Faccetta",
     "core-views/key-col": "Colonna Chiave",
     "core-views/display-null": "Mostra/nascondi 'null' nelle celle",
+    "core-views/display-control-chars": "Mostra/nascondi i caratteri di controllo",
     "core-views/on-error": "In caso di errore",
     "core-views/match-this-cell": "Abbina questo elemento con questa cella",
     "core-views/not-valid-date": "Data non valida.",

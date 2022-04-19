@@ -621,6 +621,7 @@
     "core-views/facet": "Facette",
     "core-views/facet-error": "Facette par erreur",
     "core-views/display-null": "Afficher/masquer les valeurs nulles dans les cellules",
+    "core-views/display-control-chars": "Afficher/masquer les caractères de contrôle",
     "core-views/on-error": "En cas d’erreur",
     "core-views/match-this-cell": "Apparier cet élément et cette cellule",
     "core-views/not-valid-date": "Date invalide.",

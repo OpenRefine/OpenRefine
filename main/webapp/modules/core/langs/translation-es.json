@@ -676,6 +676,7 @@
     "core-views/how-split-cells": "Cómo dividir celdas de varios valores",
     "core-views/table-schema-validate": "Validar",
     "core-views/display-null": "Mostrar/ocultar valores «null» en celdas",
+    "core-views/display-control-chars" : "Mostrar/ocultar caracteres de control",
     "core-views/blank-out-empty": "A la cadena vacia…",
     "core-views/blank-out-empty/header": "A la cadena vacia",
     "core-views/blank-out-empty/single": "A la cadena vacia",

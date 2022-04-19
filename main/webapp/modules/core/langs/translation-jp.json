@@ -621,6 +621,7 @@
     "core-views/facet": "ファセット",
     "core-views/key-col": "キーカラム名",
     "core-views/display-null": "null値を表示/非表示",
+    "core-views/display-control-chars": "制御文字の表示/非表示",
     "core-views/on-error": "エラー",
     "core-views/match-this-cell": "この項目をこのセルだけにマッチ",
     "core-views/not-valid-date": "有効な日付でない.",

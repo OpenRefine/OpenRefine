@@ -707,6 +707,7 @@
     "core-index-parser/column-names-label": "שמות העמודות (עם פסיקים להפרדה)",
     "core-project/percent-complete": "$1% הושלמו",
     "core-views/display-null": "להציג/להסתיר ערכי ‚null’ (ריק) בתאים",
+    "core-views/display-control-chars" : "הצג/הסתר תווי בקרה",
     "core-views/non-blank-records": "רשומות שאינן ריקות לפי עמודה",
     "core-views/non-blank-values": "ערכים שאינם ריקים לפי עמודה",
     "core-views/blank-records": "רשומות ריקות לפי עמודה",

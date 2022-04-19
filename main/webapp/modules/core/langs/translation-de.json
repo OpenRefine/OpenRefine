@@ -659,6 +659,7 @@
     "core-views/facet": "Facette",
     "core-views/key-col": "Schlüsselspalte",
     "core-views/display-null": "Nullwerte in Zellen ein-/ausblenden",
+    "core-views/display-control-chars": "Steuerzeichen ein-/ausblenden",
     "core-views/on-error": "Bei Fehler",
     "core-views/match-this-cell": "Dieses Element dieser Zelle zuordnen",
     "core-views/new-recon": "neue Aufklärungsbeurteilungen",

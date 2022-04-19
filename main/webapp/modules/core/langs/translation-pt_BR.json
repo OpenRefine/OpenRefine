@@ -608,6 +608,7 @@
     "core-views/facet": "Faceta",
     "core-views/key-col": "Coluna chave",
     "core-views/display-null": "Mostrar/Esconder variáveis com valores nulos",
+    "core-views/display-control-chars": "Mostrar/ocultar caracteres de controle",
     "core-views/on-error": "Em caso de erro",
     "core-views/match-this-cell": "Corresponder este item nesta célula",
     "core-views/not-valid-date": "Não é uma data válida.",
