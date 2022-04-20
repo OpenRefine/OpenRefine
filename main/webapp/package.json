@@ -12,7 +12,7 @@
     "js-cookie": "2.2.1",
     "moment": "2.19.2",
     "select2": "3.5.2-browserify",
-    "tablesorter": "2.29.0",
+    "tablesorter": "2.31.3",
     "underscore": "1.13.2"
   },
   "devDependencies": {}
