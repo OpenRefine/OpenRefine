@@ -93,7 +93,7 @@ OpenRefine will do a number of cleanup operations behind the scenes in order to 
 
 You can start the process in two ways: using the dropdown menu on your column, select <span class="menuItems">Edit cells</span> → <span class="menuItems">Cluster and edit…</span>; or create a text facet and then press the “Cluster” button that appears in the facet box. 
 
-![A screenshot of the Clustering window.](/img/cluster.png)
+![A screenshot of the Clustering window.](/img/new_cluster.jpg)
 
 The clustering pop-up window will take a small amount of time to analyze your column, and then make some suggestions based on the clustering method currently active. 
 
