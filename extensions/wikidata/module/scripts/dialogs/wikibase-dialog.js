@@ -5,8 +5,6 @@ WikibaseDialog.launch = function () {
   const elmts = this.elmts = DOM.bind(frame);
   elmts.dialogHeader.text($.i18n("wikibase-management/dialog-header"));
   elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
-  elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
-      WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
   elmts.closeButton.text($.i18n("wikibase-management/close"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
 
@@ -83,8 +81,6 @@ WikibaseDialog.populateDialog = function () {
 WikibaseDialog.selectWikibase = function (wikibaseName) {
   if (wikibaseName !== WikibaseManager.getSelectedWikibaseName()) {
     WikibaseManager.selectWikibase(wikibaseName);
-    WikibaseDialog.elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
-        WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
     WikibaseDialog.populateDialog();
     SchemaAlignment.onWikibaseChange();
   }
