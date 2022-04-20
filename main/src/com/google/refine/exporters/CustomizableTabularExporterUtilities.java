@@ -122,11 +122,12 @@ abstract public class CustomizableTabularExporterUtilities {
                     String name = JSONUtilities.getString(columnOptions, "name", null);
                     if (name != null) {
                         columnNames.add(name);
-                        try {
-							columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
-						} catch (JsonProcessingException e) {
-							e.printStackTrace();
-						}
+                        JsonNode reconSettingsNode = columnOptions.get("reconSettings");
+                        JsonNode dateSettingsNode = columnOptions.get("dateSettings");
+                        ReconSettings reconSettings = new ReconSettings(reconSettingsNode);
+                        DateSettings dateSettings = new DateSettings(dateSettingsNode);
+                        CellFormatter cellFormatter = new CellFormatter(reconSettings,dateSettings,true);
+                        columnNameToFormatter.put(name,cellFormatter);
                     }
                 }
             }
@@ -242,6 +243,21 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean blankUnmatchedCells = false;
         @JsonProperty("linkToEntityPages")
         boolean linkToEntityPages = true;
+
+        ReconSettings(){}
+
+        ReconSettings(JsonNode objectNode){
+            String mode = objectNode.get("output").asText();
+            if(mode.equals("entity-name")){
+                outputMode = ReconOutputMode.ENTITY_NAME;
+            }else if(mode.equals("entity-id")){
+                outputMode = ReconOutputMode.ENTITY_ID;
+            }else if(mode.equals("cell-content")){
+                outputMode = ReconOutputMode.CELL_CONTENT;
+            }
+            blankUnmatchedCells = objectNode.get("blankUnmatchedCells").asBoolean();
+            linkToEntityPages = objectNode.get("linkToEntityPages").asBoolean();
+        }
     }
     
     static private class DateSettings {
@@ -253,11 +269,37 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean useLocalTimeZone = false;
         @JsonProperty("omitTime")
         boolean omitTime = false;
+
+        DateSettings(){}
+
+        DateSettings(JsonNode dateSettingsObject){
+            String format = dateSettingsObject.get("format").asText();
+            if(format.equals("iso-8601")){
+                formatMode = DateFormatMode.ISO_8601;
+            }else if(format.equals("locale-short")){
+                formatMode = DateFormatMode.SHORT_LOCALE;
+            }else if(format.equals("locale-medium")){
+                formatMode = DateFormatMode.MEDIUM_LOCALE;
+            }else if(format.equals("locale-long")){
+                formatMode = DateFormatMode.LONG_LOCALE;
+            }else if(format.equals("locale-full")){
+                formatMode = DateFormatMode.FULL_LOCALE;
+            }else if(format.equals("custom")){
+                formatMode = DateFormatMode.CUSTOM;
+            }
+
+            useLocalTimeZone = dateSettingsObject.get("useLocalTimeZone").asBoolean();
+            omitTime = dateSettingsObject.get("omitTime").asBoolean();
+        }
     }
     
     static public class ColumnOptions extends CellFormatter {
         @JsonProperty("name")
         String columnName;
+
+        ColumnOptions(ReconSettings reconSettings, DateSettings dateSettings, boolean includeNullFieldValue) {
+            super(reconSettings, dateSettings, includeNullFieldValue);
+        }
     }
     
     static public class CellFormatter {
