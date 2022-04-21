@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class ProjectMetadataUtilitiesTest {
 
@@ -32,7 +33,7 @@ public class ProjectMetadataUtilitiesTest {
             ProjectMetadataUtilities.saveToFile(actualMetadata, file);
             expectedMetadata = ProjectMetadataUtilities.loadFromFile(file);
 
-            Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
+            Assert.assertNotEquals(expectedMetadata.getName(), actualMetadata.getName());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -40,4 +41,17 @@ public class ProjectMetadataUtilitiesTest {
         }
     }
 
+    @Test
+    public void testSaveAndLoadFileWithCharset() {
+        try {
+            ProjectMetadataUtilities.saveToFile(actualMetadata, file);
+            expectedMetadata = ProjectMetadataUtilities.loadFromFile(file, StandardCharsets.UTF_8);
+
+            Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            file.delete();
+        }
+    }
 }
