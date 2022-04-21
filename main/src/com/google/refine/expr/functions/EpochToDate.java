@@ -26,33 +26,32 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
 
-public class EpochToDate implements Function{
+public class EpochToDate implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if(args.length >= 1 && args[0] instanceof Number) {
+        if (args.length >= 1 && args[0] instanceof Number) {
             long epoch = (long) args[0];
             ZoneId zoneId = ZoneId.of("UTC");
-            //ZoneId zoneId = ZoneId.systemDefault();
             Instant instant = null;
             OffsetDateTime date = null;
-            if(args.length == 1){
-                instant = Instant.ofEpochSecond ( epoch );
+            if (args.length == 1) {
+                instant = Instant.ofEpochSecond(epoch);
                 date = OffsetDateTime.ofInstant(instant, zoneId);
                 return date;
-            } else if(args.length == 2 && args[1] instanceof String){
+            } else if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
-                String type = ((String ) o2).toLowerCase();
-                if(type.equals("second")){
-                    instant = Instant.ofEpochSecond ( epoch );
+                String type = ((String) o2).toLowerCase();
+                if (type.equals("second")) {
+                    instant = Instant.ofEpochSecond(epoch);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
-                } else if (type.equals("millisecond")){
-                    instant = Instant.ofEpochSecond ( epoch/1000 );
+                } else if (type.equals("millisecond")) {
+                    instant = Instant.ofEpochSecond(epoch / 1000);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
-                } else if (type.equals("microsecond")){
-                    instant = Instant.ofEpochSecond ( epoch/1000000 );
+                } else if (type.equals("microsecond")) {
+                    instant = Instant.ofEpochSecond(epoch / 1000000);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
                 }
@@ -64,10 +63,11 @@ public class EpochToDate implements Function{
                 "is the type");
     }
 
-   @Override
+    @Override
     public String getDescription() {
-        return "Returns a number converted to a date. Can parse one parameter or two parameters. When parsing one parameter, the number is the epoch second." + 
-           "When parsing two parameters, the first is the number, the second is the numbers type, such as second, millisecond, microsecond.";
+        return "Returns a number converted to a date. Can parse one parameter or two parameters. When parsing one parameter, the number is the epoch second."
+                +
+                "When parsing two parameters, the first is the number, the second is the numbers type, such as second, millisecond, microsecond.";
     }
 
     @Override
