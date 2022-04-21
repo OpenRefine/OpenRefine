@@ -277,5 +277,11 @@
     "wikibase-statement-settings/discriminating-qualifiers-label": "区別用の修飾子: ",
     "wikibase-statement-settings/discriminating-qualifiers-description": "文の比較時に考慮される修飾子のプロパティIDのカンマ区切り一覧.他の識別子での差異は無視されます.一覧が空の場合はすべての修飾子が考慮されます.",
     "wikibase-statement-settings/strategy-options/snak/description": "メインのプロパティとメインの値だけで文を比較.",
-    "wikibase-statement-settings/strategy-options/property/description": "メインのプロパティだけで文を比較."
+    "wikibase-statement-settings/strategy-options/property/description": "メインのプロパティだけで文を比較.",
+    "wikibase-schema/add-mediainfo-button": "メディアを追加",
+    "wikibase-schema/add-caption": "キャプション追加",
+    "wikibase-schema/caption": "キャプション",
+    "wikibase-schema/caption-override": "キャプション（上書き）",
+    "wikibase-schema/captions-header": "キャプション",
+    "wikibase-schema/caption-if-new": "キャプション（上書きしない）"
 }

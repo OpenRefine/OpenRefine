@@ -30,16 +30,15 @@ import java.util.Set;
 
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 /**
- * Constructs a {@link ItemUpdate} incrementally.
+ * Constructs a {@link ItemEdit} incrementally.
  * 
  * @author Antonin Delpeuch
  *
  */
-public class TermedStatementEntityEditBuilder {
+public class ItemEditBuilder {
 
     private EntityIdValue id;
     private List<StatementEdit> statements;
@@ -57,7 +56,7 @@ public class TermedStatementEntityEditBuilder {
      *            the subject of the document. It can be a reconciled entity value for
      *            new entities.
      */
-    public TermedStatementEntityEditBuilder(EntityIdValue id) {
+    public ItemEditBuilder(EntityIdValue id) {
         Validate.notNull(id);
         this.id = id;
         this.statements = new ArrayList<>();
@@ -75,7 +74,7 @@ public class TermedStatementEntityEditBuilder {
      * @param statement
      *            the statement to add or update
      */
-    public TermedStatementEntityEditBuilder addStatement(StatementEdit statement) {
+    public ItemEditBuilder addStatement(StatementEdit statement) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         statements.add(statement);
         return this;
@@ -87,7 +86,7 @@ public class TermedStatementEntityEditBuilder {
      * @param statements
      *            the statements to add
      */
-    public TermedStatementEntityEditBuilder addStatements(List<StatementEdit> statements) {
+    public ItemEditBuilder addStatements(List<StatementEdit> statements) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         statements.addAll(statements);
         return this;
@@ -101,7 +100,7 @@ public class TermedStatementEntityEditBuilder {
      * @param override
      *            whether the label should be added even if there is already a label in that language
      */
-    public TermedStatementEntityEditBuilder addLabel(MonolingualTextValue label, boolean override) {
+    public ItemEditBuilder addLabel(MonolingualTextValue label, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	labels.add(label);
@@ -119,7 +118,7 @@ public class TermedStatementEntityEditBuilder {
      * @param override
      *            whether the label should be added even if there is already a label in that language
      */
-    public TermedStatementEntityEditBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
+    public ItemEditBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	this.labels.addAll(labels);
@@ -137,7 +136,7 @@ public class TermedStatementEntityEditBuilder {
      * @param override
      *            whether the description should be added even if there is already a description in that language
      */
-    public TermedStatementEntityEditBuilder addDescription(MonolingualTextValue description, boolean override) {
+    public ItemEditBuilder addDescription(MonolingualTextValue description, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	descriptions.add(description);
@@ -155,7 +154,7 @@ public class TermedStatementEntityEditBuilder {
      * @param override
      *            whether the description should be added even if there is already a description in that language
      */
-    public TermedStatementEntityEditBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
+    public ItemEditBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	this.descriptions.addAll(descriptions);
@@ -172,7 +171,7 @@ public class TermedStatementEntityEditBuilder {
      * @param alias
      *            the alias to add
      */
-    public TermedStatementEntityEditBuilder addAlias(MonolingualTextValue alias) {
+    public ItemEditBuilder addAlias(MonolingualTextValue alias) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         aliases.add(alias);
         return this;
@@ -185,20 +184,20 @@ public class TermedStatementEntityEditBuilder {
      * @param aliases
      *            the aliases to add
      */
-    public TermedStatementEntityEditBuilder addAliases(Set<MonolingualTextValue> aliases) {
+    public ItemEditBuilder addAliases(Set<MonolingualTextValue> aliases) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         this.aliases.addAll(aliases);
         return this;
     }
 
     /**
-     * Constructs the {@link ItemUpdate}.
+     * Constructs the {@link ItemEdit}.
      * 
      * @return
      */
-    public TermedStatementEntityEdit build() {
+    public ItemEdit build() {
         built = true;
-        return new TermedStatementEntityEdit(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+        return new ItemEdit(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
     }
 
 }

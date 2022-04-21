@@ -51,7 +51,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = WbRankConstant.class, name = "wbrankconstant"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
-        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"), })
+        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"),
+        @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
+        @Type(value = WbMediaInfoEditExpr.class, name = "wbmediainfoeditexpr"),})
 public interface WbExpression<T> {
 
     /**

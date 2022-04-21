@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -66,7 +66,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", mainSnak, idA);
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();
@@ -89,7 +89,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", mainSnak, idA);
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(delete(statement1))
                 .addStatement(delete(statement2))
                 .build();
@@ -113,7 +113,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", snak1, idA);
         Statement statement2 = new StatementImpl("P163", snak2, idA);
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();

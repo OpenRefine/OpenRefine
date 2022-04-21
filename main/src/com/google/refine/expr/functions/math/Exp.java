@@ -35,6 +35,8 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class Exp implements Function {
@@ -44,7 +46,7 @@ public class Exp implements Function {
         if (args.length == 1 && args[0] instanceof Number) {
             return Math.exp(((Number) args[0]).doubleValue());
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
     @Override

@@ -218,6 +218,7 @@
 
 
 .wbs-item-input, .wbs-prop-input, .wbs-target-input {
+.wbs-entity-input, .wbs-prop-input, .wbs-target-input {
     width: 250px;
     min-height: 20px;
     display: inline-block;
@@ -245,7 +246,7 @@
 /* Fix input rendering for Firefox */
 
 
-.wbs-item-input input, .wbs-prop-input input, .wbs-target-input input,
+.wbs-entity-input input, .wbs-prop-input input, .wbs-target-input input,
 .wbs-monolingual-container input {
     width: 100%;
     border: solid #b5b5b5 1px;
@@ -267,7 +268,7 @@
 }
 
 .wbs-remove, .wbs-configure,
-.wbs-add-item, .wbs-add-statement-group, .wbs-add-statement,
+.wbs-add-entity, .wbs-add-statement-group, .wbs-add-statement,
 .wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc,
 .wbs-copy-reference-button, .wbs-paste-reference-button {
     color: #0645ad !important;
@@ -275,12 +276,12 @@
     cursor: pointer;
 }
 
-.wbs-add-item:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
+.wbs-add-entity:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
 .wbs-add-qualifier:hover, .wbs-add-reference:hover, .wbs-add-namedesc:hover {
     text-decoration: none;
 }
 
-.wbs-add-item span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
+.wbs-add-entity span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
 .wbs-add-qualifier span:hover, .wbs-add-reference span:hover, .wbs-add-namedesc span:hover {
     text-decoration: underline;
 }
@@ -289,13 +290,13 @@
     display: inline-block;
 }
 
-.wbs-item-contents {
+.wbs-entity-contents {
     padding-left: 10px;
     margin-left: 20px;
     border-left: 3px solid gray;
 }
 
-.wbs-add-item b, .wbs-add-statement-group b, .wbs-add-statement b,
+.wbs-add-entity b, .wbs-add-statement-group b, .wbs-add-statement b,
 .wbs-add-qualifier b, .wbs-add-reference b, .wbs-add-namedesc b {
     font-size: 1em;
     color: grey;
@@ -325,12 +326,12 @@
     overflow: auto;
 }
 
-.wbs-item, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
+.wbs-entity, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
     display: block;
     overflow: auto;
 }
 
-.wbs-item {
+.wbs-entity {
     margin-bottom: 5px;
     padding-right: 5px;
 }
@@ -537,6 +538,11 @@
 
 .wbs-namedesc-override input {
    vertical-align: middle;
+}
+
+// do not let users pick a term type for mediainfo entities as only labels are supported
+#schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
+	display: none;
 }
 
 .wbs-language-input {

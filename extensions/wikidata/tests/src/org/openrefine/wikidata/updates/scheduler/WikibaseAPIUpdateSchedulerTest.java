@@ -29,8 +29,11 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.testng.annotations.Test;
 
 public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
@@ -38,33 +41,43 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testOrderPreserved()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoB).build();
-        TermedStatementEntityEdit updateB = new TermedStatementEntityEditBuilder(existingIdB).addStatement(sBtoA).build();
-        List<TermedStatementEntityEdit> scheduled = schedule(updateA, updateB);
-        assertEquals(Arrays.asList(updateA, updateB), scheduled);
+        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
+        ItemEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).build();
+        List<EntityEdit> scheduled = schedule(updateA, updateB);
+        assertEquals(scheduled, Arrays.asList(updateA, updateB));
     }
 
     @Test
     public void testUpdateIsNotSplit()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoNewA)
+        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
                 .addStatement(sAtoNewB).build();
-        TermedStatementEntityEdit newUpdateA = new TermedStatementEntityEditBuilder(newIdA).build();
-        TermedStatementEntityEdit newUpdateB = new TermedStatementEntityEditBuilder(newIdB).build();
-        List<TermedStatementEntityEdit> scheduled = schedule(updateA);
-        assertSetEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
+        ItemEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        ItemEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+        List<EntityEdit> scheduled = schedule(updateA);
+        assertSetEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
     }
 
     @Test
     public void testMixedUpdate()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoNewA)
+        EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
                 .addStatement(sAtoNewB)
                 .addStatement(sAtoB).build();
-        TermedStatementEntityEdit newUpdateA = new TermedStatementEntityEditBuilder(newIdA).addStatement(sNewAtoB).build();
-        TermedStatementEntityEdit newUpdateB = new TermedStatementEntityEditBuilder(newIdB).build();
-        List<TermedStatementEntityEdit> scheduled = schedule(updateA, newUpdateA);
-        assertEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).build();
+        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+        List<EntityEdit> scheduled = schedule(updateA, newUpdateA);
+        assertEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
+    }
+
+    @Test
+    public void testMediaInfoReferringToNewItem() throws ImpossibleSchedulingException {
+        EntityEdit updateMediaInfo = new MediaInfoEditBuilder(existingMediaInfoId)
+                .addStatement(TestingData.generateStatementAddition(existingMediaInfoId, newIdA))
+                .build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        List<EntityEdit> scheduled = schedule(updateMediaInfo);
+        assertEquals(scheduled, Arrays.asList(newUpdateA, updateMediaInfo));
     }
 
     @Override
