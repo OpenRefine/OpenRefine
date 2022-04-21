@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var preferenceUIs = [];
-var thePreferences;
 
 var Refine = {
 };
@@ -86,7 +85,7 @@ $.ajax({
 }).fail(function( jqXhr, textStatus, errorThrown ) {
   var errorMessage = $.i18n('core-index/prefs-loading-failed');
   if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-    alert(errorMessage); 
+    alert(errorMessage);
   } else {
     alert( textStatus + ':' + errorThrown );
   }
@@ -100,7 +99,7 @@ function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
-    
+
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
@@ -122,8 +121,7 @@ function PreferenceUI(tr, key, initialValue) {
           newValue = deDupUserMetaData(newValue);
       }
       $(td1).text(newValue);
-      thePreferences[key] = newValue;
-      
+
       Refine.postCSRF(
         "command/core/set-preference",
         {
@@ -170,8 +168,6 @@ function PreferenceUI(tr, key, initialValue) {
 function populatePreferences(prefs) {
   var body = $("#body-info").empty();
 
-  if (prefs != null) { thePreferences = prefs; }
-
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $('<h1>').text($.i18n('core-index/preferences')).appendTo(body);
 
@@ -197,11 +193,11 @@ function populatePreferences(prefs) {
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));
-        
+
         if (key === "userMetadata")  {
             value = deDupUserMetaData(value);
         }
-        
+
         Refine.postCSRF(
           "command/core/set-preference",
           {
