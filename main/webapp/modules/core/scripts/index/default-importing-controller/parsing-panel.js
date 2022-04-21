@@ -219,9 +219,12 @@ if(executed = false{
   var stringIncNonPrintable = "";
   for (var character = 0; character < content.length; character++) {
     var unprintableChar = "";
+    var originalChar = "";
     var charCode = content.charAt(character).charCodeAt(0);
     if (charCode <= 32) {
       unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+      unprintableChar = "<span class='originalCharacters'>" + controlCharacters[charCode] + "</span>";
+      stringIncNonPrintable += originalChar;
       stringIncNonPrintable += unprintableChar;
     }else{
     stringIncNonPrintable += content.charAt(character);
@@ -245,5 +248,6 @@ function nonPrintableCheckBox() {
         }
       }
     }
+    $(".originalCharacters").hide();
 }
 
