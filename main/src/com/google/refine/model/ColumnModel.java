@@ -305,16 +305,16 @@ public class ColumnModel {
         }
     }
 
-    public void removeColumn(int index)  {
-        //if index = cellindex, then remove ColumnName.
-        if (index<=_nameToColumn.size() ){
+    public void removeColumn(int index) {
+        // if index = cellindex, then remove ColumnName.
+        if (index <= _nameToColumn.size()) {
             Iterator<Map.Entry<String, Column>> iterator = _nameToColumn.entrySet().iterator();
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 Map.Entry<String, Column> next = iterator.next();
                 String key = next.getKey();
                 Column column = _nameToColumn.get(key);
                 int cellIndex = column.getCellIndex();
-                if(cellIndex == index){
+                if (cellIndex == index) {
                     columns.remove(column);
                 }
             }

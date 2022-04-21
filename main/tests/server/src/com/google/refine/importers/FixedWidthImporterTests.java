@@ -159,7 +159,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns(){
+    public void testDeleteEmptyColumns() {
         StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
 
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
