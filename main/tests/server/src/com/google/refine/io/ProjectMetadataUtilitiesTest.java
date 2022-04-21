@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class ProjectMetadataUtilitiesTest {
 
@@ -28,12 +27,12 @@ public class ProjectMetadataUtilitiesTest {
     }
 
     @Test
-    public void testSaveAndLoadFileDefault() {
+    public void testSaveAndLoadFile() {
         try {
             ProjectMetadataUtilities.saveToFile(actualMetadata, file);
             expectedMetadata = ProjectMetadataUtilities.loadFromFile(file);
 
-            Assert.assertNotEquals(expectedMetadata.getName(), actualMetadata.getName());
+            Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
