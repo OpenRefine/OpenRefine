@@ -179,10 +179,10 @@ HistoryPanel.prototype.showHideFacetSplash = function(clicked) {
    }
 
   if(hideHistoryFacetSplash === true || clicked === true) {
-    $('.history-panel-help').addClass('hideFacetSplash');
+    $('.history-panel-help').addClass('hide-splash');
   }
   else {
-    $('.history-panel-help').removeClass('hideFacetSplash');
+    $('.history-panel-help').removeClass('hide-splash');
   }
 };
 

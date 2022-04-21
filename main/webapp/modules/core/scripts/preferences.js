@@ -96,30 +96,6 @@ $.i18n().load(dictionary, lang);
 $.i18n().locale = lang;
 //End internationalization
 
-Refine.getPreference = function(key, defaultValue) { 
-  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
-
-  return thePreferences[key];
-}
-
-Refine.setPreference = function(key, newValue) { 
-  thePreferences[key] = newValue;
-
-  Refine.wrapCSRF(function(token) {
-    $.ajax({
-      async: false,
-      type: "POST",
-      url: "command/core/set-preference?" + $.param({ name: key }),
-      data: {
-        "value" : JSON.stringify(newValue), 
-        csrf_token: token
-      },
-      success: function(data) { },
-      dataType: "json"
-    });
-  });
-}
-
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;

@@ -251,9 +251,9 @@ BrowsingEngine.prototype.hideShowFacetSplash = function(clicked) {
   }
 
   if(hideBrowsingFacetSplash === true || clicked === true) {
-    $('.browsing-panel-help').addClass('hideFacetSplash');
+    $('.browsing-panel-help').addClass('hide-splash');
   } else {
-    $('.browsing-panel-help').removeClass('hideFacetSplash');
+    $('.browsing-panel-help').removeClass('hide-splash');
   }
 };
 
