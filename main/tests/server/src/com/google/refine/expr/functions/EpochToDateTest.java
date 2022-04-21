@@ -2,18 +2,9 @@
 package com.google.refine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import java.util.Properties;
-import java.text.ParseException;
-
 import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.grel.Function;
-import com.google.refine.util.TestUtils;
-import com.google.refine.expr.functions.*;
 
 public class EpochToDateTest extends RefineTest {
 
