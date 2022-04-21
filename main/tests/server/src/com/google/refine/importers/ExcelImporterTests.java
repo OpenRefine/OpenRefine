@@ -78,7 +78,6 @@ public class ExcelImporterTests extends ImporterTest {
 
     private static final int SHEETS = 3;
     private static final int ROWS = 4;
-
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String LEADING_ZERO_FORMAT = "0000";

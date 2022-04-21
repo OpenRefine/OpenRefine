@@ -599,11 +599,12 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void testDeleteEmptyColumns(String sep){
+    public void testDeleteEmptyColumns(String sep) {
         // Set up blank column in project
         String inputSeparator = sep == null ? "\t" : sep;
-        String input = "data1" +inputSeparator +inputSeparator + "data2\"" + inputSeparator +inputSeparator + "data3" + inputSeparator +"\n"+
-                "data4" +inputSeparator +inputSeparator + "data5\"" + inputSeparator +inputSeparator + "data6" ;
+        String input = "data1" + inputSeparator + inputSeparator + "data2\"" + inputSeparator + inputSeparator + "data3" + inputSeparator
+                + "\n" +
+                "data4" + inputSeparator + inputSeparator + "data5\"" + inputSeparator + inputSeparator + "data6";
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("Col 1");
         columnNames.add("Col 2");

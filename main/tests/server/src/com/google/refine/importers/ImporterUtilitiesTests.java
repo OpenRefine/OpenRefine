@@ -38,12 +38,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.google.refine.model.*;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -51,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.messages.OpenRefineMessage;
+import com.google.refine.model.*;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -182,7 +181,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns(){
+    public void testDeleteEmptyColumns() {
         Project project = new Project();
         // Set up column names in project
         List<String> columnNames = new ArrayList<String>();
@@ -209,7 +208,7 @@ public class ImporterUtilitiesTests extends RefineTest {
 
         // This will mock the situation of deleting empty columns(col2&col4)
         try {
-            ImporterUtilities.deleteEmptyColumns(columnsHasData,project);
+            ImporterUtilities.deleteEmptyColumns(columnsHasData, project);
         } catch (ModelException e) {
             e.printStackTrace();
         }

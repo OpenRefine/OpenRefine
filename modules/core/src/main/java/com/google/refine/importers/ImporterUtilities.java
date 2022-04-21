@@ -258,23 +258,29 @@ public class ImporterUtilities {
             }
         };
     }
+
     /**
      * Ensure this ArrayList(determine if this column is blank) is larger than row size.
-     * @param columnsHasData Record if there is data in each column( false:null;true:has data)
+     * 
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
      */
     static public void ensureColumnsHasDataExpands(List<Boolean> columnsHasData, int rowSize) {
         while (rowSize > columnsHasData.size()) {
             columnsHasData.add(false);
         }
     }
+
     /**
      * If "storeBlankColumns" == false, delete blank columns.
-     * @param columnsHasData Record if there is data in each column( false:null;true:has data)
+     * 
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
      */
     static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
         for (int c = 0; c < columnsHasData.size(); c++) {
             if (columnsHasData.get(c) == false) {
-                //remove column from columns
+                // remove column from columns
                 project.columnModel.removeColumn(c);
             }
         }

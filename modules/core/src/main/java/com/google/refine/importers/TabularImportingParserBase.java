@@ -46,6 +46,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
@@ -135,7 +136,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
 
-        List<Boolean> columnsHasData = new ArrayList<>();//Determine if there is data in each column,def = false
+        List<Boolean> columnsHasData = new ArrayList<>();// Determine if there is data in each column,def = false
 
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -219,7 +220,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 }
             }
-            if(!storeBlankColumns) {//if user don't choose storeBlankColumns, delete all empty columns.
+            if (!storeBlankColumns) {// if user don't choose storeBlankColumns, delete all empty columns.
                 ImporterUtilities.deleteEmptyColumns(columnsHasData, project);
             }
         } catch (IOException e) {
