@@ -13,6 +13,10 @@ public class EpochToDate implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
+        long timeStampMilliSecond = 1650547184707L;
+        long timeStampSecond = timeStampMilliSecond / 1000;
+        long timeStampMicroSecond = timeStampMilliSecond * 1000;
+        System.out.println("Seconds timeStamp: " + timeStampSecond + " Microseconds timeStamp: " + timeStampMicroSecond);
         if (args.length >= 1 && args[0] instanceof Number) {
             long epoch = (long) args[0];
             ZoneId zoneId = ZoneId.of("UTC");
