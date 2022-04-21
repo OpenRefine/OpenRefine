@@ -34,15 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.io;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -62,7 +58,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException {
+    public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
         if (tempFile.length() == 0) {
@@ -118,7 +114,7 @@ public class ProjectMetadataUtilities {
         File file = new File(projectDir, fileName);
         if (file.exists()) {
             try {
-               pm = loadFromFile(file, StandardCharsets.UTF_8);
+               pm = loadFromFile(file);
             } catch (Exception e) {
                 logger.warn("load metadata failed: " + file.getAbsolutePath());
                 logger.error(ExceptionUtils.getStackTrace(e));
@@ -170,12 +166,7 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        Reader reader = new FileReader(metadataFile);
-        return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
-    }
-
-    static protected ProjectMetadata loadFromFile(File metadataFile, Charset charset) throws Exception {
-        Reader reader = new InputStreamReader(new FileInputStream(metadataFile), charset);
+        FileReader reader = new FileReader(metadataFile);
         return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
     }
 }

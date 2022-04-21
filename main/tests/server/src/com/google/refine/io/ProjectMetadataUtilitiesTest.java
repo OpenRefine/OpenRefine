@@ -41,17 +41,4 @@ public class ProjectMetadataUtilitiesTest {
         }
     }
 
-    @Test
-    public void testSaveAndLoadFileWithCharset() {
-        try {
-            ProjectMetadataUtilities.saveToFile(actualMetadata, file);
-            expectedMetadata = ProjectMetadataUtilities.loadFromFile(file, StandardCharsets.UTF_8);
-
-            Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            file.delete();
-        }
-    }
 }
