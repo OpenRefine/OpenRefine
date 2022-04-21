@@ -2,9 +2,9 @@
 package com.google.refine.io;
 
 import com.google.refine.ProjectMetadata;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class ProjectMetadataUtilitiesTest {
     ProjectMetadata expectedMetadata = new ProjectMetadata();
     File file = null;
 
-    @Before
+    @BeforeTest
     public void setUp() {
         actualMetadata.setName("Velmi dobře, použijeme vícejazyčný neurální stroj, abychom to vyřešili. ÜÜÖÖÄÄ");
 
