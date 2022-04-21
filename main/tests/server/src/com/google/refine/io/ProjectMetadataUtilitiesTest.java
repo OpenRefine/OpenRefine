@@ -20,13 +20,10 @@ public class ProjectMetadataUtilitiesTest {
     public void setUp() {
         actualMetadata.setName("Velmi dobře, použijeme vícejazyčný neurální stroj, abychom to vyřešili. ÜÜÖÖÄÄ");
 
-        file = new File("tests/server/src/com/google/refine/io/example_project_metadata_charset_test.json");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            file = File.createTempFile("example_project_metadata_charset_test", ".json");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -39,6 +36,8 @@ public class ProjectMetadataUtilitiesTest {
             Assert.assertNotEquals(expectedMetadata.getName(), actualMetadata.getName());
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            file.delete();
         }
     }
 
@@ -51,6 +50,8 @@ public class ProjectMetadataUtilitiesTest {
             Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            file.delete();
         }
     }
 }
