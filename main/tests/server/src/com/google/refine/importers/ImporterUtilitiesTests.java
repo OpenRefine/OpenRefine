@@ -180,7 +180,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns(){
+    public void testDeleteEmptyColumns() {
         Project project = new Project();
         // Set up column names in project
         List<String> columnNames = new ArrayList<String>();
@@ -207,7 +207,7 @@ public class ImporterUtilitiesTests extends RefineTest {
 
         // This will mock the situation of deleting empty columns(col2&col4)
         try {
-            ImporterUtilities.deleteEmptyColumns(columnsHasData,project);
+            ImporterUtilities.deleteEmptyColumns(columnsHasData, project);
         } catch (ModelException e) {
             e.printStackTrace();
         }

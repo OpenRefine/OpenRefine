@@ -71,7 +71,7 @@ public class ExcelImporterTests extends ImporterTest {
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 5;
-    private static final int COLUMNS = 6;
+    private static final int COLUMNS = 7;
 
     // private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
@@ -343,6 +343,44 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
 
+    @Test
+    public void testDeleteEmptyColumns() throws FileNotFoundException, IOException {
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        {
+            whenGetArrayOption("sheets", options, sheets);
+            whenGetIntegerOption("ignoreLines", options, 0);
+            whenGetIntegerOption("headerLines", options, 0);
+            whenGetIntegerOption("skipDataLines", options, 1);
+            whenGetIntegerOption("limit", options, -1);
+        }
+        // This will mock the situation of deleting empty columns(col6)
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
+        whenGetBooleanOption("storeBlankColumns", options, false);
+
+        InputStream stream = new FileInputStream(xlsxFile);
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+        System.out.println(project.rows.get(1).getCellValue(0));
+        System.out.println(project.rows.get(1).getCellValue(5));
+        System.out.println("***");
+        Assert.assertEquals(project.columnModel.columns.size(), 7);
+
+        // Assert.assertEquals(project.columnModel.columns.size(), 5);
+        {
+            verify(options, times(1)).get("ignoreLines");
+            verify(options, times(1)).get("headerLines");
+            verify(options, times(1)).get("skipDataLines");
+            verify(options, times(1)).get("limit");
+            verify(options, times(1)).get("storeBlankCellsAsNulls");
+            verify(options, times(1)).get("storeBlankColumns");
+        }
+    }
+
     private static File createSpreadsheet(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
@@ -427,6 +465,9 @@ public class ExcelImporterTests extends ImporterTest {
 
         c = r.createCell(col++);
         c.setCellValue(""); // string
+
+        c = r.createCell(col++);
+        c.setCellValue(" Row " + row + " Col " + col); // string
 
 //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
 //    hl.setLabel(cellData.text);
