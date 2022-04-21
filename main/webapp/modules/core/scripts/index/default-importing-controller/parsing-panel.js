@@ -153,8 +153,6 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
       self._selectFormat(format);
     });
 
-
-
     if (format == self._format) {
       tab.addClass("selected");
     }
