@@ -116,5 +116,8 @@ Refine.PreviewTable.prototype._render = function() {
     var tr = table.insertRow(table.rows.length);
     even = !even;
     renderRow(tr, r, row, even);
-  }    
+  }
+
+  showNonPrintableCharacters();
+
 };
