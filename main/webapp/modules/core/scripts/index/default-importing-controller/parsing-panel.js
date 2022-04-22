@@ -233,35 +233,33 @@ function checkNonPrintable(content) {
   }
   return stringIncNonPrintable;
 }
-
-function nonPrintableCheckBox() {
-  if ($('#toggle-display-characters').prop('checked')) {
-  if(executed == false){
-    var rows = $('.data-table tbody > tr');
-    var columns;
-    for (var i = 0; i < rows.length; i++) {
-      columns = $(rows[i]).find('td>div>span');
-      for (var j = 0; j < columns.length; j++) {
-        var originalContent = $(columns[j]).text();
-//        console.log("originalContent");
-//        console.log(originalContent);
-        if (originalContent != "") {
-          var updatedContent = checkNonPrintable(originalContent);
-          $(columns[j]).html(updatedContent);
-        }
-      }
-    }
-    }
-      $(".unprintableCharacters").show();
-        $(".originalCharacters").hide();
-  }
-  else {
-    $(".unprintableCharacters").hide();
-    $(".originalCharacters").show();
-  }
-}
-
-$(document).on('change', '#toggle-display-characters', function () {
-  nonPrintableCheckBox();
-  executed = true;
-});
+//
+//function nonPrintableCheckBox() {
+//  if ($('#toggle-display-characters').prop('checked')) {
+//  if(executed == false){
+//    var rows = $('.data-table tbody > tr');
+//    var columns;
+//    for (var i = 0; i < rows.length; i++) {
+//      columns = $(rows[i]).find('td>div>span');
+//      for (var j = 0; j < columns.length; j++) {
+//        var originalContent = $(columns[j]).text();
+//        if (originalContent != "") {
+//          var updatedContent = checkNonPrintable(originalContent);
+//          $(columns[j]).html(updatedContent);
+//        }
+//      }
+//    }
+//    }
+//      $(".unprintableCharacters").show();
+//        $(".originalCharacters").hide();
+//  }
+//  else {
+//    $(".unprintableCharacters").hide();
+//    $(".originalCharacters").show();
+//  }
+//}
+//
+//$(document).on('change', '#toggle-display-characters', function () {
+//  nonPrintableCheckBox();
+//  executed = true;
+//});
