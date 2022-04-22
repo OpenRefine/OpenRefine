@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,7 +44,7 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
     this._formatParserUI.dispose();
     delete this._formatParserUI;
   }
-  
+
   this._prepareParsingPanel();
   this._parsingPanelElmts.nextButton.click(function() {
     self._createProject();
@@ -104,13 +104,13 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   $('#or-import-projtags').html($.i18n('core-index-import/project-tags'));
   $('#or-import-updating').text($.i18n('core-index-import/updating-preview'));
   $('#or-import-parseas').text($.i18n('core-index-import/parse-as'));
-  
+
   //tags dropdown
   $("#tagsInput").select2({
           tags: Refine.TagsManager._getAllProjectTags() ,
           tokenSeparators: [",", " "]
   });
-  
+
   this._parsingPanelResizer = function() {
     var elmts = self._parsingPanelElmts;
     var width = self._parsingPanel.width();
