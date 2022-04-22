@@ -279,7 +279,7 @@
                 <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
                 <mkdir dir="${project.build.directory}/windows_jre"/>
                 <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
-                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to=""/>
+                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
                 </unzip>
               </target>
             </configuration>
