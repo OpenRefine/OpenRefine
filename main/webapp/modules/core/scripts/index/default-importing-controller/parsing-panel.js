@@ -257,6 +257,7 @@ function nonPrintableCheckBox() {
     $(".originalCharacters").show();
   }
 }
+
 $(document).on('change', '#toggle-display-characters', function () {
   nonPrintableCheckBox();
   executed = true;
