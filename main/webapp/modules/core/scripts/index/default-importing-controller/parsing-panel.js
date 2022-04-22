@@ -242,8 +242,6 @@ function nonPrintableCheckBox() {
       columns = $(rows[i]).find('td>div>span');
       for (var j = 0; j < columns.length; j++) {
         var originalContent = $(columns[j]).text();
-//        console.log("originalContent");
-//        console.log(originalContent);
         if (originalContent != "") {
           var updatedContent = checkNonPrintable(originalContent);
           $(columns[j]).html(updatedContent);
