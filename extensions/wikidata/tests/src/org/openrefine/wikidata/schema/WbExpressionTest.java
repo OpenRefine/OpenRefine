@@ -106,8 +106,8 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
         } catch (SkipSchemaExpressionException e) {
             Assert.fail("Value was skipped by evaluator");
         } catch (QAWarningException e) {
-			Assert.fail("The evaluator threw a QA warning instead");
-		}
+            Assert.fail("The evaluator threw a QA warning instead");
+        }
     }
 
     /**
@@ -123,23 +123,22 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
         } catch (SkipSchemaExpressionException e) {
             return;
         } catch (QAWarningException e) {
-			Assert.fail("The evaluator threw a QA warning instead");
-		}
+            Assert.fail("The evaluator threw a QA warning instead");
+        }
     }
-    
+
     /**
-     * Test that a particular expression raises a QA warning
-     * at evaluation time (therefore not yielding any result).
+     * Test that a particular expression raises a QA warning at evaluation time (therefore not yielding any result).
      */
     public void evaluatesToWarning(QAWarning warning, WbExpression<T> expression) {
         try {
             expression.evaluate(ctxt);
             Assert.fail("The evaluator returned a value, not a warning");
         } catch (SkipSchemaExpressionException e) {
-			Assert.fail("The value was skipped by the evaluator");
+            Assert.fail("The value was skipped by the evaluator");
         } catch (QAWarningException e) {
-        	Assert.assertEquals(e.getWarning(), warning);
-		}
+            Assert.assertEquals(e.getWarning(), warning);
+        }
     }
 
     /**

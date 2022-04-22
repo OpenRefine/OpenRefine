@@ -75,7 +75,7 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
         row.setCell(0, cell);
         evaluatesTo(expected, variable);
     }
-    
+
     /**
      * Test that a particular cell evaluates to some warning
      * 

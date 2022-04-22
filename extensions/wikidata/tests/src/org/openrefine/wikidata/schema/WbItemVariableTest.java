@@ -52,7 +52,7 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
-    
+
     @Test
     public void testReconciledCellWithInvalidFormat() {
         Recon recon = Recon.makeWikidataRecon(3782378L);
@@ -61,9 +61,9 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         Cell cell = new Cell("some value", recon);
         QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
         warning.setProperty("example", "invalid_id");
-		evaluatesToWarning(warning, cell);
+        evaluatesToWarning(warning, cell);
     }
-    
+
     @Test
     public void testReconciledCellWithInvalidEntityType() {
         Recon recon = Recon.makeWikidataRecon(3782378L);
@@ -72,7 +72,7 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         Cell cell = new Cell("some value", recon);
         QAWarning warning = new QAWarning(WbItemVariable.INVALID_ITEM_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
         warning.setProperty("example", "P344");
-		evaluatesToWarning(warning, cell);
+        evaluatesToWarning(warning, cell);
     }
 
     @Test

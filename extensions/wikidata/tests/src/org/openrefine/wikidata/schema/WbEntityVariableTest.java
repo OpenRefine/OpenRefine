@@ -90,7 +90,7 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
-    
+
     @Test
     public void testReconciledCellWithInvalidFormat() {
         Recon recon = Recon.makeWikidataRecon(3782378L);
@@ -99,7 +99,7 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
         Cell cell = new Cell("some value", recon);
         QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
         warning.setProperty("example", "invalid_id");
-		evaluatesToWarning(warning, cell);
+        evaluatesToWarning(warning, cell);
     }
 
     @Test

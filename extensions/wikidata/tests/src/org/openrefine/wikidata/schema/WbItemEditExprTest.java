@@ -69,7 +69,7 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
                 .build();
         evaluatesTo(result, expr);
     }
-    
+
     @Test
     public void testEvaluateInvalidSubjectType() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("M23"));

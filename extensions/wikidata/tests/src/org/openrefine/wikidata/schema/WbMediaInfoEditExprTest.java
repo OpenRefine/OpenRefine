@@ -66,7 +66,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
                 .build();
         evaluatesTo(result, expr);
     }
-    
+
     @Test
     public void testEvaluateWrongSubjectType() {
         setRow("", "", "3.898,4.389", "my label", matchedCellWrongType);
@@ -74,7 +74,6 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         warning.setProperty("example", "Q23");
         evaluatesToWarning(warning, expr);
     }
-
 
     @Test
     public void testSubjectSkipped() {
