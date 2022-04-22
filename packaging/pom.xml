@@ -155,7 +155,7 @@
       <plugin> <!-- necessary for Appbundle -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>prepare-package</phase>
@@ -279,7 +279,7 @@
                 <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
                 <mkdir dir="${project.build.directory}/windows_jre"/>
                 <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
-                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
+                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to=""/>
                 </unzip>
               </target>
             </configuration>
