@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,7 +44,7 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
     this._formatParserUI.dispose();
     delete this._formatParserUI;
   }
-  
+
   this._prepareParsingPanel();
   this._parsingPanelElmts.nextButton.click(function() {
     self._createProject();
@@ -104,13 +104,13 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   $('#or-import-projtags').html($.i18n('core-index-import/project-tags'));
   $('#or-import-updating').text($.i18n('core-index-import/updating-preview'));
   $('#or-import-parseas').text($.i18n('core-index-import/parse-as'));
-  
+
   //tags dropdown
   $("#tagsInput").select2({
           tags: Refine.TagsManager._getAllProjectTags() ,
           tokenSeparators: [",", " "]
   });
-  
+
   this._parsingPanelResizer = function() {
     var elmts = self._parsingPanelElmts;
     var width = self._parsingPanel.width();
@@ -152,8 +152,6 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
     .click(function() {
       self._selectFormat(format);
     });
-
-
 
     if (format == self._format) {
       tab.addClass("selected");
@@ -216,6 +214,7 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
 
 var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
 var executed = false;
+
 function checkNonPrintable(content) {
   var stringIncNonPrintable = "";
   for (var character = 0; character < content.length; character++) {
@@ -233,33 +232,34 @@ function checkNonPrintable(content) {
   }
   return stringIncNonPrintable;
 }
-//
-//function nonPrintableCheckBox() {
-//  if ($('#toggle-display-characters').prop('checked')) {
-//  if(executed == false){
-//    var rows = $('.data-table tbody > tr');
-//    var columns;
-//    for (var i = 0; i < rows.length; i++) {
-//      columns = $(rows[i]).find('td>div>span');
-//      for (var j = 0; j < columns.length; j++) {
-//        var originalContent = $(columns[j]).text();
-//        if (originalContent != "") {
-//          var updatedContent = checkNonPrintable(originalContent);
-//          $(columns[j]).html(updatedContent);
-//        }
-//      }
-//    }
-//    }
-//      $(".unprintableCharacters").show();
-//        $(".originalCharacters").hide();
-//  }
-//  else {
-//    $(".unprintableCharacters").hide();
-//    $(".originalCharacters").show();
-//  }
-//}
-//
-//$(document).on('change', '#toggle-display-characters', function () {
-//  nonPrintableCheckBox();
-//  executed = true;
-//});
+
+function nonPrintableCheckBox() {
+  if ($('#toggle-display-characters').prop('checked')) {
+  if(executed == false){
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+//        console.log("originalContent");
+//        console.log(originalContent);
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+      }
+    }
+    }
+      $(".unprintableCharacters").show();
+        $(".originalCharacters").hide();
+  }
+  else {
+    $(".unprintableCharacters").hide();
+    $(".originalCharacters").show();
+  }
+}
+$(document).on('change', '#toggle-display-characters', function () {
+  nonPrintableCheckBox();
+  executed = true;
+});
