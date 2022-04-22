@@ -42,15 +42,28 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class RandomNumber implements Function {
-    
+
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] instanceof Number
-                && args[1] instanceof Number && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
-            int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue()+1);
-            return randomNum;
+        if (args.length == 0) {
+            // Return a double in the interval 0.0 <= x < 1.0
+            return ThreadLocalRandom.current().nextDouble();
+        } else if (args.length == 2) {
+            // Return a double in the interval lowerBound <= x < upperBound
+            if (args[0] instanceof Number && args[1] instanceof Number
+                    && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
+
+                // check if arguments are long
+                if (args[0] instanceof Long && args[1] instanceof Long) {
+                    // return a long
+                    return ThreadLocalRandom.current().nextLong(((Number) args[0]).longValue(), ((Number) args[1]).longValue()+1);
+                } else {
+                    // return a double
+                    return ThreadLocalRandom.current().nextDouble(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
+                }
+            }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers, the first must be less than the second");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects no arguments or two numbers, the first must be less than the second");
     }
 
     @Override

@@ -199,14 +199,17 @@ REFINE_MIN_MEMORY=1400M
 Further modifications can be performed by using JVM preferences. These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. 
 
 Some of the most common keys (with their defaults) are:
-*   The project [autosave](starting#autosaving) frequency: `-Drefine.autosave` (5 [minutes])
-*   The workspace director: `-Drefine.data_dir` (/)
-*   Development mode: `-Drefine.development` (false)
-*   Headless mode: `-Drefine.headless` (false)
-*   IP: `-Drefine.host` (127.0.0.1)
-*   Port: `-Drefine.port` (3333)
-*   The application folder: `-Drefine.webapp` (main/webapp)
-*   New version notice: `-Drefine.display.new.version.notice` (true)
+|Description|Argument|Syntax example|
+|---|---|---|
+|The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]
+|The workspace director|`-Drefine.data_dir`|/
+|Development mode|`-Drefine.development`|false
+|Headless mode|`-Drefine.headless`|false
+|IP|`-Drefine.host`|127.0.0.1
+|Port|`-Drefine.port`|3333
+|The application folder|`-Drefine.webapp`|main/webapp
+|New version notice|`-Drefine.display.new.version.notice`|true
+
 
 The syntax is as follows:
 
@@ -228,6 +231,8 @@ Locate the `refine.l4j.ini` file, and insert lines in this way:
 -Drefine.port=3334 
 -Drefine.host=127.0.0.2
 -Drefine.webapp=broker/core
+-Dhttp.proxyHost=yourproxyhost
+-Dhttp.proxyPort=8080
 ```
 
 In `refine.ini`, use a similar syntax, but set multiple parameters within a single line starting with `JAVA_OPTIONS=`:
@@ -269,6 +274,9 @@ Add in values such as:
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
 <string>-Drefine.autosave=2</string>
 <string>-Drefine.port=3334</string>
+<string>-Dhttp.proxyHost=yourproxyhost</string>
+<string>-Dhttp.proxyPort=8080</string>
+
 </array>
 
 ```
@@ -283,13 +291,15 @@ Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.prefe
 JAVA_OPTIONS=-Drefine.autosave=2
 JAVA_OPTIONS=-Drefine.port=3334
 JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
+JAVA_OPTIONS=-Dhttp.proxyHost=yourproxyhost
+JAVA_OPTIONS=-Dhttp.proxyPort=8080
 ```
 
 </TabItem>
 
 </Tabs>
 
-
+  
 ---
 
 Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
@@ -337,7 +347,7 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
 |Maximum lag for Wikibase edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
 |Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
-|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
+|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100, 500, 1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
