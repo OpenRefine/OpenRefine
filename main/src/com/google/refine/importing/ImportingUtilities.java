@@ -77,6 +77,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.FileSystem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -456,18 +457,27 @@ public class ImportingUtilities {
         return (location.startsWith(File.separator)) ? location.substring(1) : location;
     }
 
-    private static String normalizeFileName(String fileName){
+    /**
+     * Replace the illegal character with '-' in the path in Windows
+     * @param path: file path
+     * @return the replaced path or original path if the OS is not Windows
+     */
+    public static String normalizePath(String path){
         FileSystem currentFileSystem = FileSystem.getCurrent();
-        if (currentFileSystem != FileSystem.WINDOWS) return fileName;
-        String normalizedLocalName = new String();
+        if (currentFileSystem != FileSystem.WINDOWS) {
+            return path;
+        }
         // normalize the file name if the current system is windows
-        String[] path = fileName.split("/");
-        for(String f : path){
-            if (f.equals("")){
+        String normalizedLocalName = "";
+        String pathWithWSeparator = FilenameUtils.separatorsToWindows(path);
+        String separator = String.format("\\%c",File.separatorChar);
+        String[] paths = pathWithWSeparator.split(separator);
+        for(String p : paths){
+            if (p.equals("")){
                 continue;
             }
-            f = currentFileSystem.toLegalFileName(f,'-');
-            normalizedLocalName += String.format("/%s",f);
+            p = currentFileSystem.toLegalFileName(p,'-');
+            normalizedLocalName += String.format("%c%s",File.separatorChar, p);
         }
         return normalizedLocalName;
     }
@@ -477,8 +487,7 @@ public class ImportingUtilities {
         if (q > 0) {
             name = name.substring(0, q);
         }
-
-        name = normalizeFileName(name);
+        name = normalizePath(name);
         File file = new File(dir, name);
         Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
