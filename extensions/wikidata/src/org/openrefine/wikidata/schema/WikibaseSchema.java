@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.slf4j.Logger;
@@ -137,8 +138,9 @@ public class WikibaseSchema implements OverlayModel {
      * @param ctxt
      *            the context in which the schema should be evaluated.
      * @return
+     * @throws QAWarningException 
      */
-    public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
+    public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) throws QAWarningException {
         List<EntityEdit> result = new ArrayList<>();
         for (WbExpression<? extends EntityEdit> expr : entityEditExprs) {
 
@@ -200,7 +202,11 @@ public class WikibaseSchema implements OverlayModel {
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             ExpressionContext ctxt = new ExpressionContext(siteIri, entityTypeSiteIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
-            result.addAll(evaluateEntityDocuments(ctxt));
+            try {
+				result.addAll(evaluateEntityDocuments(ctxt));
+			} catch (QAWarningException e) {
+				warningStore.addWarning(e.getWarning());
+			}
             return false;
         }
 
