@@ -118,7 +118,7 @@ public class ProjectMetadataUtilities {
         File file = new File(projectDir, fileName);
         if (file.exists()) {
             try {
-               pm = loadFromFile(file, StandardCharsets.UTF_8);
+               pm = loadFromFile(file);
             } catch (Exception e) {
                 logger.warn("load metadata failed: " + file.getAbsolutePath());
                 logger.error(ExceptionUtils.getStackTrace(e));
@@ -170,12 +170,7 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        Reader reader = new FileReader(metadataFile);
-        return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
-    }
-
-    static protected ProjectMetadata loadFromFile(File metadataFile, Charset charset) throws Exception {
-        Reader reader = new InputStreamReader(new FileInputStream(metadataFile), charset);
+        Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
         return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
     }
 }
