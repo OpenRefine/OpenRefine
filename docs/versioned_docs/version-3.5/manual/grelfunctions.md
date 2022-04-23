@@ -174,11 +174,11 @@ Returns a string converted to a number. Will attempt to convert other formats in
 
 Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth", " air" ]. Note that the space characters are retained but the separator is removed. If you include “true” for the preserveTokens boolean, empty segments are preserved.
 
-###### splitByLengths(s, n1, n2, ...) [(optional) i1, i2] {#splitbylengthss-n1-n2-}
+###### splitByLengths(s, n1, n2, ...){#splitbylengthss-n1-n2}
 
 Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ "inter", "nation", "ali" ]. Excess characters are discarded from the output array.
 
-Optionally, it also allows array slicing on the returned array. In this case it returns the array consisting of a subset of elements between i1 and (i2 – 1)
+Like other functions that return an array, it also allows array slicing on the returned array. In that case, it returns the array consisting of a subset of elements between i1 and (i2 – 1).
 For example,
 
 |Expression|Result|
