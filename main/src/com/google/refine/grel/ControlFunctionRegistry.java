@@ -113,6 +113,7 @@ import com.google.refine.expr.functions.strings.Match;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
 import com.google.refine.expr.functions.strings.ParseJson;
+import com.google.refine.expr.functions.strings.ParseUri;
 import com.google.refine.expr.functions.strings.Partition;
 import com.google.refine.expr.functions.strings.Phonetic;
 import com.google.refine.expr.functions.strings.RPartition;
@@ -247,6 +248,8 @@ public class ControlFunctionRegistry {
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
         registerFunction("find", new Find());
+
+        registerFunction("parseUri", new ParseUri());
 
         // XML and HTML functions from JSoup
         registerFunction("parseXml", new ParseXml());
