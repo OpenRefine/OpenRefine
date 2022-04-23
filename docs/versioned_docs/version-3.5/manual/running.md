@@ -340,6 +340,8 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
 |Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100, 500, 1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
+|Hide facet splash|ui.browsing.hideFacetSplash|Boolean|false|true|—|
+|Hide history splash|ui.history.hideFacetSplash|Boolean|false|true|—|
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
