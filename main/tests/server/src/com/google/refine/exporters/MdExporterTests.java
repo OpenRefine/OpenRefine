@@ -110,10 +110,11 @@ public class MdExporterTests extends RefineTest {
             Assert.fail();
         }
         String MarkdownString = stream.toString();
-        Assert.assertEquals(MarkdownString, "| column0   | column1   |\n" +
+        String newLine = System.getProperty("line.separator");
+        Assert.assertEquals(MarkdownString.split(newLine), ("| column0   | column1   |\n" +
                 "| --------- | --------- |\n" +
                 "| row0cell0 | row0cell1 |\n" +
-                "| row1cell0 | row1cell1 |");
+                "| row1cell0 | row1cell1 |").split("\n"));
     }
 
     @Test
@@ -126,14 +127,15 @@ public class MdExporterTests extends RefineTest {
             Assert.fail();
         }
         String MarkdownString = stream.toString();
-        Assert.assertEquals(MarkdownString, "| Field   | Data                  |\n" +
+        String newLine = System.getProperty("line.separator");
+        Assert.assertEquals(MarkdownString.split(newLine), ("| Field   | Data                  |\n" +
                 "| ------- | --------------------- |\n" +
                 "| Name    | Galanthus nivalis     |\n" +
                 "| Color   | White                 |\n" +
                 "| IUCN ID | 162168                |\n" +
                 "| Name    | Narcissus cyclamineus |\n" +
                 "| Color   | Yellow                |\n" +
-                "| IUCN ID | 161899                |");
+                "| IUCN ID | 161899                |").split("\n"));
     }
 
     protected void CreateColumns(int noOfColumns) {
