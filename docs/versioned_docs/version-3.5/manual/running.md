@@ -341,7 +341,7 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100, 500, 1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
 |Keep the facet's splash hidden|ui.browsing.hideFacetSplash|Boolean|false|true|—|
-|Keep the history's splash hidden|ui.history.hideFacetSplash|Boolean|false|true|—|
+|Keep the history's splash hidden|ui.history.hideHistorySplash|Boolean|false|true|—|
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
