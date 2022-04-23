@@ -35,7 +35,7 @@ Refine.PreviewTable = function(projectData, elmt) {
   this._projectData = projectData;
   this._elmt = elmt;
   this._render();
-  showNonPrintableCharacters();
+//  showNonPrintableCharacters();
 };
 
 Refine.PreviewTable.prototype._render = function() {
