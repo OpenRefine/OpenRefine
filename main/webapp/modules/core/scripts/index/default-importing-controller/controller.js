@@ -265,7 +265,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-		  function(data) {
+		function(data) {
 			  if (data["rows"].length == 0) {
 				alert($.i18n('core-index-import/load-xml-rows-error'));
 			  }
