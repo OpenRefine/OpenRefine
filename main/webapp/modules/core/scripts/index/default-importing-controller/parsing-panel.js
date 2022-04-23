@@ -229,7 +229,7 @@ function checkNonPrintable(content) {
   return stringIncNonPrintable;
 }
 
-function nonPrintableCharacters() {
+function showNonPrintableCharacters() {
     var rows = $('.data-table tbody > tr');
     var columns;
     for (var i = 0; i < rows.length; i++) {
@@ -241,6 +241,6 @@ function nonPrintableCharacters() {
           $(columns[j]).html(updatedContent);
         }
     }
-        $(".originalCharacters").hide();
   }
+  $(".originalCharacters").hide();
 }

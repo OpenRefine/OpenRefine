@@ -35,6 +35,7 @@ Refine.PreviewTable = function(projectData, elmt) {
   this._projectData = projectData;
   this._elmt = elmt;
   this._render();
+  showNonPrintableCharacters();
 };
 
 Refine.PreviewTable.prototype._render = function() {
@@ -109,7 +110,6 @@ Refine.PreviewTable.prototype._render = function() {
       }
     }
   };
-
   var even = true;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
