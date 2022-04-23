@@ -35,7 +35,7 @@ Refine.PreviewTable = function(projectData, elmt) {
   this._projectData = projectData;
   this._elmt = elmt;
   this._render();
-//  showNonPrintableCharacters();
+  this._showNonPrintableCharacters();
 };
 
 Refine.PreviewTable.prototype._render = function() {
@@ -117,4 +117,38 @@ Refine.PreviewTable.prototype._render = function() {
     even = !even;
     renderRow(tr, r, row, even);
   }
+};
+Refine.PreviewTable.prototype._showNonPrintableCharacters = function() {
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
+
+var checkNonPrintable = function(content) {
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var unprintableChar = "";
+    var originalChar = "";
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32) {
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
+      stringIncNonPrintable += unprintableChar+ originalChar;
+
+    }else{
+    stringIncNonPrintable += content.charAt(character);
+    }
+  }
+  return stringIncNonPrintable;
+}
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+    }
+  }
+  $(".originalCharacters").hide();
 };
