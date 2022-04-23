@@ -42,7 +42,6 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
-  this._shownulls = false;
 
   this._currentPageNumber = 1;
   this._showRows(0);
@@ -142,9 +141,6 @@ DataTableView.prototype.render = function() {
   }
 
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
-
-  // show/hide null values in cells
-  $(".data-table-null").toggle(self._shownulls);
 
   this.resize();
   
@@ -959,11 +955,9 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n('core-views/display-null'),
-          id: "core/display-null",
+          label: $.i18n('core-views/display-settings'),
+          id: "core/display-settings",
           click: function() {
-            $(".data-table-null").toggle();
-            self._shownulls = !(self._shownulls);
           }
         }
       ]
