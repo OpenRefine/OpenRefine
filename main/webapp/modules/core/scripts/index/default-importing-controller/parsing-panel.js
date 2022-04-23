@@ -161,7 +161,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
     createFormatTab(formats[i]);
   }
   this._selectFormat(this._format);
-  nonPrintableCheckBox();
+
 };
 
 Refine.DefaultImportingController.prototype._disposeParserUI = function() {
@@ -212,53 +212,39 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
   }
 };
 
-//var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
-//var executed = false;
-//
-//function checkNonPrintable(content) {
-//  var stringIncNonPrintable = "";
-//  for (var character = 0; character < content.length; character++) {
-//    var unprintableChar = "";
-//    var originalChar = "";
-//    var charCode = content.charAt(character).charCodeAt(0);
-//    if (charCode <= 32) {
-//      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-//      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
-//      stringIncNonPrintable += unprintableChar+ originalChar;
-//
-//    }else{
-//    stringIncNonPrintable += content.charAt(character);
-//    }
-//  }
-//  return stringIncNonPrintable;
-//}
-//
-//function nonPrintableCheckBox() {
-//  if ($('#toggle-display-characters').prop('checked')) {
-//  if(executed == false){
-//    var rows = $('.data-table tbody > tr');
-//    var columns;
-//    for (var i = 0; i < rows.length; i++) {
-//      columns = $(rows[i]).find('td>div>span');
-//      for (var j = 0; j < columns.length; j++) {
-//        var originalContent = $(columns[j]).text();
-//        if (originalContent != "") {
-//          var updatedContent = checkNonPrintable(originalContent);
-//          $(columns[j]).html(updatedContent);
-//        }
-//      }
-//    }
-//    }
-//      $(".unprintableCharacters").show();
-//        $(".originalCharacters").hide();
-//  }
-//  else {
-//    $(".unprintableCharacters").hide();
-//    $(".originalCharacters").show();
-//  }
-//}
-//
-//$(document).on('change', '#toggle-display-characters', function () {
-//  nonPrintableCheckBox();
-//  executed = true;
-//});
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
+
+function checkNonPrintable(content) {
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var unprintableChar = "";
+    var originalChar = "";
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32) {
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
+      stringIncNonPrintable += unprintableChar+ originalChar;
+
+    }else{
+    stringIncNonPrintable += content.charAt(character);
+    }
+  }
+  return stringIncNonPrintable;
+}
+
+function nonPrintableCharacters() {
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+    }
+        $(".originalCharacters").hide();
+
+  }
+}
