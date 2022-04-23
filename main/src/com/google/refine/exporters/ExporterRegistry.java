@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -45,23 +45,25 @@ abstract public class ExporterRegistry {
         s_formatToExporter.put("csv", new CsvExporter());
         s_formatToExporter.put("tsv", new CsvExporter('\t'));
         s_formatToExporter.put("*sv", new CsvExporter());
-        
+
         s_formatToExporter.put("xls", new XlsExporter(false));
         s_formatToExporter.put("xlsx", new XlsExporter(true));
-        
+
         s_formatToExporter.put("ods", new OdsExporter());
-        
+
         s_formatToExporter.put("html", new HtmlTableExporter());
-        
+
+        s_formatToExporter.put("md", new MdExporter());
+
         s_formatToExporter.put("template", new TemplatingExporter());
-        
+
         s_formatToExporter.put("sql", new SqlExporter());
     }
-    
+
     static public void registerExporter(String format, Exporter exporter) {
         s_formatToExporter.put(format.toLowerCase(), exporter);
     }
-    
+
     static public Exporter getExporter(String format) {
         return s_formatToExporter.get(format.toLowerCase());
     }
