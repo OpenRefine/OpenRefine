@@ -179,7 +179,6 @@ function initializeUI(uiState) {
   if (uiState.facets) {
     Refine.update({ engineChanged: true });
   }
-
 }
 
 Refine._showHideLeftPanel = function() {
