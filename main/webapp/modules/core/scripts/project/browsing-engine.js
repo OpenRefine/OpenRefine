@@ -243,14 +243,14 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 };
 
 BrowsingEngine.prototype.hideShowFacetSplash = function(clicked) {
-  var hideBrowsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.hideFacetSplash", false));
+  var hideFacetSplash = Refine.getPreference("ui.browsing.hideFacetSplash", false);
   var checkbox = $('#browsing-panel-checkbox');
 
   if(checkbox.prop('checked')) {
     Refine.setPreference('ui.browsing.hideFacetSplash', true);
   }
 
-  if(hideBrowsingFacetSplash === true || clicked === true) {
+  if(hideFacetSplash === true || clicked === true) {
     $('.browsing-panel-help').addClass('hide-splash');
   } else {
     $('.browsing-panel-help').removeClass('hide-splash');

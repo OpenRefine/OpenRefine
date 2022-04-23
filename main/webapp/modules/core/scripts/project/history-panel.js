@@ -75,7 +75,7 @@ HistoryPanel.prototype._render = function() {
 
   var elmts = DOM.bind(this._div);
 
-  HistoryPanel.prototype.showHideFacetSplash();
+  HistoryPanel.prototype.showHideHistorySplash();
   
   elmts.or_proj_undo.html($.i18n('core-project/undo-history'));
   elmts.or_proj_mistakes.html($.i18n('core-project/mistakes'));
@@ -86,7 +86,7 @@ HistoryPanel.prototype._render = function() {
   elmts.or_proj_filter.html($.i18n('core-project/filter'));
   $("#history-panel-close").text($.i18n('core-index/delete'));
   $("#history-panel-checkbox-label").html('<input id="history-panel-checkbox" type="checkbox">' + $.i18n('core-project/hide-panel'))
-  $("#history-panel-close").click(function(){ HistoryPanel.prototype.showHideFacetSplash(true); });
+  $("#history-panel-close").click(function(){ HistoryPanel.prototype.showHideHistorySplash(true); });
 
   var renderEntry = function(container, index, entry, lastDoneID, past) {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
@@ -170,15 +170,15 @@ HistoryPanel.prototype._render = function() {
   this.resize();
 };
 
-HistoryPanel.prototype.showHideFacetSplash = function(clicked) {
-  var hideHistoryFacetSplash = JSON.parse(Refine.getPreference("ui.history.hideFacetSplash", false));
+HistoryPanel.prototype.showHideHistorySplash = function(clicked) {
+  var hideHistorySplash = Refine.getPreference("ui.history.hideHistorySplash", false);
   var checkbox = $('#history-panel-checkbox');
 
   if(checkbox.prop('checked')) {
-      Refine.setPreference('ui.history.hideFacetSplash', true);
+      Refine.setPreference('ui.history.hideHistorySplash', true);
    }
 
-  if(hideHistoryFacetSplash === true || clicked === true) {
+  if(hideHistorySplash === true || clicked === true) {
     $('.history-panel-help').addClass('hide-splash');
   }
   else {
