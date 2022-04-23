@@ -334,6 +334,20 @@ Returns the inner XML elements of an XML element. Does not return the text direc
 ###### ownText(element) {#owntextelement}
 Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.
 
+### URI parsing {#uri-parsing}
+
+###### parseUri(s) {#parseUris}
+Given a valid URI string (for example: https://www.openrefine.org:80/documentation#download?format=xml&os=mac), parseUri() returns a JSON object with the following properties:
+ - `scheme`: The scheme of the URI, e.g. `http`
+ - `host`: the host of the URI (e.g. `www.openrefine.org`)
+ - `port`: the port of the URI (e.g. `80`)
+ - `path`: the path of the URI (e.g. `/documentation`)
+ - `query`: the query of the URI (e.g. `format=xml&os=mac`)
+ - `authority`: the authority of the URI (e.g. `www.openrefine.org:80`)
+ - `fragment`: the fragment of the URI (e.g. `download`)
+ - `query_params`: the query of the URI as an object (e.g. `{format: "xml", os: "mac"}`)
+
+
 ## Array functions {#array-functions}
 
 ###### length(a) {#lengtha}
