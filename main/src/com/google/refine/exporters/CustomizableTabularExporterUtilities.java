@@ -40,6 +40,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,13 +72,13 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class CustomizableTabularExporterUtilities {
-	final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     static public void exportRows(
-        final Project project,
-        final Engine engine,
-        Properties params,
-        final TabularSerializer serializer) {
+            final Project project,
+            final Engine engine,
+            Properties params,
+            final TabularSerializer serializer) {
 
         String optionsString = (params != null) ? params.getProperty("options") : null;
         JsonNode optionsTemp = null;
@@ -91,18 +92,18 @@ abstract public class CustomizableTabularExporterUtilities {
         final JsonNode options = optionsTemp;
 
         final boolean outputColumnHeaders = options == null ? true :
-            JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
+                JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
         final boolean outputEmptyRows = options == null ? false :
-            JSONUtilities.getBoolean(options, "outputBlankRows", true);
+                JSONUtilities.getBoolean(options, "outputBlankRows", true);
         final int limit = options == null ? -1 :
-            JSONUtilities.getInt(options, "limit", -1);
+                JSONUtilities.getInt(options, "limit", -1);
 
         final List<String> columnNames;
         final Map<String, CellFormatter> columnNameToFormatter =
-            new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
+                new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
 
         List<JsonNode> columnOptionArray = options == null ? null :
-            JSONUtilities.getArray(options, "columns");
+                JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
             List<Column> columns = project.columnModel.columns;
 
@@ -122,17 +123,11 @@ abstract public class CustomizableTabularExporterUtilities {
                     String name = JSONUtilities.getString(columnOptions, "name", null);
                     if (name != null) {
                         columnNames.add(name);
-                        JsonNode reconSettingsNode = columnOptions.get("reconSettings");
-                        JsonNode dateSettingsNode = columnOptions.get("dateSettings");
-                        if (reconSettingsNode != null && dateSettingsNode != null) {
-                            ReconSettings reconSettings = new ReconSettings(reconSettingsNode);
-                            DateSettings dateSettings = new DateSettings(dateSettingsNode);
-                            CellFormatter cellFormatter = new CellFormatter(reconSettings, dateSettings, true);
-                            columnNameToFormatter.put(name, cellFormatter);
-                        } else {
-                            columnNameToFormatter.put(name, new CellFormatter());
+                        try {
+                            columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
                         }
-
                     }
                 }
             }
@@ -162,9 +157,9 @@ abstract public class CustomizableTabularExporterUtilities {
                     Column column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
-                        project,
-                        column,
-                        row.getCell(column.getCellIndex()));
+                            project,
+                            column,
+                            row.getCell(column.getCellIndex()));
 
                     cells.add(cellData);
                     if (cellData != null) {
@@ -248,21 +243,6 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean blankUnmatchedCells = false;
         @JsonProperty("linkToEntityPages")
         boolean linkToEntityPages = true;
-
-        ReconSettings(){}
-
-        ReconSettings(JsonNode objectNode){
-            String mode = objectNode.get("output").asText();
-            if(mode.equals("entity-name")){
-                outputMode = ReconOutputMode.ENTITY_NAME;
-            }else if(mode.equals("entity-id")){
-                outputMode = ReconOutputMode.ENTITY_ID;
-            }else if(mode.equals("cell-content")){
-                outputMode = ReconOutputMode.CELL_CONTENT;
-            }
-            blankUnmatchedCells = objectNode.get("blankUnmatchedCells").asBoolean();
-            linkToEntityPages = objectNode.get("linkToEntityPages").asBoolean();
-        }
     }
 
     static private class DateSettings {
@@ -274,37 +254,11 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean useLocalTimeZone = false;
         @JsonProperty("omitTime")
         boolean omitTime = false;
-
-        DateSettings(){}
-
-        DateSettings(JsonNode dateSettingsObject){
-            String format = dateSettingsObject.get("format").asText();
-            if(format.equals("iso-8601")){
-                formatMode = DateFormatMode.ISO_8601;
-            }else if(format.equals("locale-short")){
-                formatMode = DateFormatMode.SHORT_LOCALE;
-            }else if(format.equals("locale-medium")){
-                formatMode = DateFormatMode.MEDIUM_LOCALE;
-            }else if(format.equals("locale-long")){
-                formatMode = DateFormatMode.LONG_LOCALE;
-            }else if(format.equals("locale-full")){
-                formatMode = DateFormatMode.FULL_LOCALE;
-            }else if(format.equals("custom")){
-                formatMode = DateFormatMode.CUSTOM;
-            }
-
-            useLocalTimeZone = dateSettingsObject.get("useLocalTimeZone").asBoolean();
-            omitTime = dateSettingsObject.get("omitTime").asBoolean();
-        }
     }
 
     static public class ColumnOptions extends CellFormatter {
         @JsonProperty("name")
         String columnName;
-
-        ColumnOptions(ReconSettings reconSettings, DateSettings dateSettings, boolean includeNullFieldValue) {
-            super(reconSettings, dateSettings, includeNullFieldValue);
-        }
     }
 
     static public class CellFormatter {
@@ -346,39 +300,39 @@ abstract public class CustomizableTabularExporterUtilities {
 
         private void setup() {
             if (date.formatMode == DateFormatMode.CUSTOM &&
-                (date.custom == null || date.custom.isEmpty())) {
+                    (date.custom == null || date.custom.isEmpty())) {
                 date.formatMode = DateFormatMode.ISO_8601;
             }
 
             switch (date.formatMode) {
-            case SHORT_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
-                break;
-            case MEDIUM_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
-                break;
-            case LONG_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.LONG, SimpleDateFormat.LONG);
-                break;
-            case FULL_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.FULL);
-                break;
-            case CUSTOM:
-                dateFormatter = new SimpleDateFormat(date.custom);
-                break;
+                case SHORT_LOCALE:
+                    dateFormatter = date.omitTime ?
+                            SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT) :
+                            SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
+                    break;
+                case MEDIUM_LOCALE:
+                    dateFormatter = date.omitTime ?
+                            SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM) :
+                            SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
+                    break;
+                case LONG_LOCALE:
+                    dateFormatter = date.omitTime ?
+                            SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG) :
+                            SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.LONG, SimpleDateFormat.LONG);
+                    break;
+                case FULL_LOCALE:
+                    dateFormatter = date.omitTime ?
+                            SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL) :
+                            SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.FULL);
+                    break;
+                case CUSTOM:
+                    dateFormatter = new SimpleDateFormat(date.custom);
+                    break;
 
-            default:
-                dateFormatter = date.omitTime ?
-                    new SimpleDateFormat("yyyy-MM-dd") :
-                    new SimpleDateFormat(fullIso8601);
+                default:
+                    dateFormatter = date.omitTime ?
+                            new SimpleDateFormat("yyyy-MM-dd") :
+                            new SimpleDateFormat(fullIso8601);
             }
 
             if (!date.useLocalTimeZone) {
@@ -421,15 +375,25 @@ abstract public class CustomizableTabularExporterUtilities {
                             text = (String) value;
 
                             if(text.contains(":") && urlValidator.isValid(text)) {
-                            	// Extra check for https://github.com/OpenRefine/OpenRefine/issues/2213
-                            	try {
-                            		link = new URI(text).toString();
-                            	} catch(URISyntaxException e) {
-                            		;
-                            	}
+                                // Extra check for https://github.com/OpenRefine/OpenRefine/issues/2213
+                                try {
+                                    link = new URI(text).toString();
+                                } catch(URISyntaxException e) {
+                                    ;
+                                }
                             }
                         } else if (value instanceof OffsetDateTime) {
-                            text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
+                            if(this.date.formatMode == DateFormatMode.FULL_LOCALE){
+                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL));
+                            }else if(this.date.formatMode == DateFormatMode.MEDIUM_LOCALE){
+                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+                            }else if(this.date.formatMode == DateFormatMode.SHORT_LOCALE){
+                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+                            }else if(this.date.formatMode == DateFormatMode.LONG_LOCALE){
+                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+                            }else {
+                                text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
+                            }
                         } else {
                             text = value.toString();
                         }
