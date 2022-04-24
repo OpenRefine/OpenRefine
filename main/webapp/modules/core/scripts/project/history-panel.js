@@ -171,11 +171,11 @@ HistoryPanel.prototype._render = function() {
 };
 
 HistoryPanel.prototype.showHideHistorySplash = function(clicked) {
-  var hideHistorySplash = Refine.getPreference("ui.history.hideHistorySplash", false);
+  var hideHistorySplash = Refine.getPreference("ui.browsing.hideHistorySplash", false);
   var checkbox = $('#history-panel-checkbox');
 
   if(checkbox.prop('checked')) {
-      Refine.setPreference('ui.history.hideHistorySplash', true);
+      Refine.setPreference('ui.browsing.hideHistorySplash', true);
    }
 
   if(hideHistorySplash === true || clicked === true) {
