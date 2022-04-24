@@ -33,13 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -56,6 +55,8 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import static org.mockito.Mockito.*;
 
 public class CsvExporterTests extends RefineTest {
 
@@ -153,6 +154,47 @@ public class CsvExporterTests extends RefineTest {
         Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
                 "\"row0cell0\",\"row0cell1\"\n" +
                 "\"row1cell0\",\"row1cell1\"\n");
+    }
+
+    @Test
+    public void exportCsvDataFormatTransfer() throws IOException, ModelException {
+
+        project.columnModel.addColumn(0, new Column(0, "Short"), true);
+        project.columnModel.addColumn(0, new Column(0, "Medium"), true);
+        project.columnModel.addColumn(0, new Column(0, "Long"), true);
+        project.columnModel.addColumn(0, new Column(0, "Full"), true);
+        project.columnModel.addColumn(0, new Column(0, "ISO"), true);
+        Row row1 = new Row(5);
+        OffsetDateTime time1 = OffsetDateTime.of(2020, 9, 16, 13, 15, 31, 0, ZoneOffset.UTC);
+        OffsetDateTime time2 = OffsetDateTime.of(2020, 9, 15, 13, 15, 0, 0, ZoneOffset.UTC);
+        for (int i = 0; i < 5; i++) {
+            row1.cells.add(new Cell(time1, null));
+        }
+        Row row2 = new Row(5);
+        for (int i = 0; i < 5; i++) {
+            row2.cells.add(new Cell(time2, null));
+        }
+        project.rows.add(row1);
+        project.rows.add(row2);
+        options = new Properties();
+        options.put("options", "{\"separator\":\",\",\"lineSeparator\":\"\\n\",\"quoteAll\":false,\"outputColumnHeaders\":true,\"outputBlankRows\":false,\"columns\":[{\"name\":\"Short\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-short\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Medium\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-medium\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Long\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-long\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Full\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-full\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"ISO\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"iso-8601\",\"useLocalTimeZone\":false,\"omitTime\":false}}]}");
+        SUT.export(project, options, engine, writer);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Short,Medium,Long,Full,ISO\n");
+        stringBuilder.append(time1.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + ",");
+        stringBuilder.append(time1.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)) + ",");
+        stringBuilder.append(time1.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + ",");
+        stringBuilder.append(time1.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)) + ",");
+        stringBuilder.append(time1.format(DateTimeFormatter.ISO_INSTANT) + "\n");
+        stringBuilder.append(time2.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + ",");
+        stringBuilder.append(time2.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)) + ",");
+        stringBuilder.append(time2.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + ",");
+        stringBuilder.append(time2.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)) + ",");
+        stringBuilder.append(time2.format(DateTimeFormatter.ISO_INSTANT) + "\n");
+
+        Assert.assertEquals(writer.toString(), stringBuilder.toString());
+
     }
 
     @Test
