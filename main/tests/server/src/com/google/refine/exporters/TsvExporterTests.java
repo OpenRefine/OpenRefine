@@ -145,7 +145,7 @@ public class TsvExporterTests extends RefineTest {
     public void exportTsvWithComma() {
         CreateGrid(3, 3);
 
-        project.rows.get(1).cells.set(1, new Cell("with\t tab", null));
+        project.rows.get(1).cells.set(1, new Cell("with , Comma", null));
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
@@ -154,7 +154,7 @@ public class TsvExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"with\t tab\"\trow1cell2\n" +
+                "row1cell0\twith , Comma\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
@@ -176,26 +176,6 @@ public class TsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportTsvWithEnclosedQuote() {
-        CreateGrid(3, 3);
-   
-        project.rows.get(1).cells.set(1, new Cell("\"cell enclosed by (\") quote character\"", null));
-     
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
-                "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"\"cell enclosed by (\") quote character\"\"\trow1cell2\n" +
-                "row2cell0\trow2cell1\trow2cell2\n");
-    }
-
-
-
-    @Test
     public void exportTsvWithEmptyCells() {
         CreateGrid(3, 3);
 
@@ -211,6 +191,468 @@ public class TsvExporterTests extends RefineTest {
                 "row0cell0\trow0cell1\trow0cell2\n" +
                 "row1cell0\t\trow1cell2\n" +
                 "\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithEnclosedQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\"cell enclosed by (\") quote character\"", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"\"cell enclosed by (\") quote character\"\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithDQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (\") double quote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (\") double quote character\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithStartQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\"cell starting with a double quote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"\"cell starting with a double quote character\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithEndQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell ending with a double quote character\"", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell ending with a double quote character\"\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithQuoteNTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (\") double quote and (\t) tab character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (\") double quote and (\t) tab character\"\trow1cell2\n"
+                + "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithQuoteNStartingTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\tcell containing (\") double quote and starting with (\t) tab character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"\tcell containing (\") double quote and starting with (\t) tab character\"\trow1cell2\n"
+                + "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithEnclosedTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\tcell enclosed by (\t) tab character\t", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"\tcell enclosed by (\t) tab character\t\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (\t) tab character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (\t) tab character\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithStartTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\tcell starting with a tab character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"\tcell starting with a tab character\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithEndTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell ending with a tab character\t", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell ending with a tab character\t\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithNewlineNTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (\n) new line and (\t) tab character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (\n) new line and (\t) tab character\"\trow1cell2\n"
+                + "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithTabEndingNewLine() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (\t) tab character and ending with new line (\n) character\n", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (\t) tab character and ending with new line (\n) character\n\"\trow1cell2\n"
+                + "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithEnclosedSingleQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("‘cell enclosed by (') single quote character’", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t‘cell enclosed by (') single quote character’\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithSingleQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (') single quote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell containing (') single quote character\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithStartSingleQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("‘cell starting with a single quote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t‘cell starting with a single quote character\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithEndSingleQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell ending with a single quote character’", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell ending with a single quote character’\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithSQuoteNBQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (‘) single quote and (`) backquote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell containing (‘) single quote and (`) backquote character\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithSingleQuoteNStartingTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (‘) single quote and ending with (\t) tab character\t", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (‘) single quote and ending with (\t) tab character\t\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithEnclosedBackQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("`cell enclosed by (`) back quote character`", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t`cell enclosed by (`) back quote character`\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithBackQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (`) backquote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell containing (`) backquote character\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithStartBackQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("`cell starting with a back quote character", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t`cell starting with a back quote character\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithEndBackQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell ending with a back quote character`", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell ending with a back quote character`\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithBackQuoteNTab() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (`) back quote and ending with (\t) tab character\t", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (`) back quote and ending with (\t) tab character\t\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+
+    }
+
+    @Test
+    public void exportTsvWithBackQuoteNDoubleQuote() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (`) back quote and ending with (\") double quote character\"", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t\"cell containing (`) back quote and ending with (\") double quote character\"\"\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithBackQuoteNComma() {
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("cell containing (`) back quote and ending with (,) comma,", null));
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\tcell containing (`) back quote and ending with (,) comma,\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
     }
 
     // helper methods
