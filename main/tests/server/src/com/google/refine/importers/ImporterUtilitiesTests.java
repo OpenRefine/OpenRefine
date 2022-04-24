@@ -91,6 +91,24 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
+    public void trimNbspColumnName() {//Test trim edge Nbsp
+        List<String> columnNames = new ArrayList<String>();
+
+        ImporterUtilities.appendColumnName(columnNames, 0, "\u00a0foo");
+        ImporterUtilities.appendColumnName(columnNames, 1, "bar\u00a0");
+        Assert.assertEquals(columnNames.get(0), "foo");
+        Assert.assertEquals(columnNames.get(1), "bar");
+    }
+
+    @Test
+    public void keepNbspInsideColumnName() {//Test keeping inside Nbsp
+        List<String> columnNames = new ArrayList<String>();
+
+        ImporterUtilities.appendColumnName(columnNames, 0, "foo\u00a0bar");
+        Assert.assertEquals(columnNames.get(0), "foo\u00a0bar");
+    }
+
+    @Test
     public void appendColumnName() {
         List<String> columnNames = new ArrayList<String>();
 

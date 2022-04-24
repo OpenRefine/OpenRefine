@@ -100,8 +100,26 @@ public class ImporterUtilities {
         return value;
     }
 
+    /**
+     * show Deleting Non-Breaking Space in the edge
+     * @param s:name
+     * @return name after Trim Non-Breaking Space
+     */
+    static public String TrimNbsp(String s) {
+        int start=0,end=s.length()-1;
+
+        while(start<=end && s.charAt(start)=='\u00a0') {
+            start++;
+        }
+        while(start<=end && s.charAt(end)=='\u00a0') {
+            end--;
+        }
+        return s.substring(start,end+1);
+    }
+
     static public void appendColumnName(List<String> columnNames, int index, String name) {
         name = name.trim();
+        name = TrimNbsp(name);//Delete Non-Breaking Space in the edge
 
         while (columnNames.size() <= index) {
             columnNames.add("");
