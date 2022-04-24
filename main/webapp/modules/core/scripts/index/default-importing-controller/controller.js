@@ -266,9 +266,6 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
         }),
         null,
 		function(data) {
-			  if (data["rows"].length == 0) {
-				alert($.i18n('core-index-import/load-xml-rows-error'));
-			  }
 			  result.rowModel = data;
 			  callback(result);
 		  },
