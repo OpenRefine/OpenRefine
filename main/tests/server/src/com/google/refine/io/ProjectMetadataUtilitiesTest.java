@@ -42,25 +42,19 @@ public class ProjectMetadataUtilitiesTest {
     File file = null;
 
     @BeforeTest
-    public void setUp() {
+    public void setUp() throws IOException {
         actualMetadata.setName("Velmi dobře, použijeme vícejazyčný neurální stroj, abychom to vyřešili. ÜÜÖÖÄÄ");
 
-        try {
-            file = File.createTempFile("example_project_metadata_charset_test", ".json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        file = File.createTempFile("example_project_metadata_charset_test", ".json");
     }
 
     @Test
-    public void testSaveAndLoadFile() {
+    public void testSaveAndLoadFile() throws Exception {
         try {
             ProjectMetadataUtilities.saveToFile(actualMetadata, file);
             expectedMetadata = ProjectMetadataUtilities.loadFromFile(file);
 
             Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             file.delete();
         }
