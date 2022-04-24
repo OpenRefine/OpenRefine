@@ -85,8 +85,8 @@ public class SqlCreateBuilder {
                 if (name != null) {
                     if(trimColNames) {
                         name = name.replaceAll("[^a-zA-Z0-9_]", "_");
-
-                    }if (EscapeCharacter!=null){
+                    }
+                    if (EscapeCharacter!=null){
                         name=EscapeCharacter+name+EscapeCharacter;
                     }
                     createSB.append( name + " ");
