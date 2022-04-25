@@ -281,7 +281,7 @@ Refine.JsonParserUI.prototype._setRecordPath = function(path) {
 Refine.JsonParserUI.prototype._updatePreview = function() {
   var self = this;
 
-  this._progressContainer.show();
+  //this._progressContainer.show();
 
   var options = this.getOptions();
   // for preview, we need exact text, so it's easier to show where the columns are split
@@ -294,6 +294,8 @@ Refine.JsonParserUI.prototype._updatePreview = function() {
 
         new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
       }, 100);
-    }
+	} else {
+		self._progressContainer.hide();
+	}
   });
 };
