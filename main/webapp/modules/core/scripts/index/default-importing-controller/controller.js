@@ -235,9 +235,9 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             if(finallyCallBack){
               finallyCallBack();
             }
-        } else {
+        } 
             callback(o);
-        }
+        
         },
         "json"
     );
