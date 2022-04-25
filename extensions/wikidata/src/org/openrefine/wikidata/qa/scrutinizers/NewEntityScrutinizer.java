@@ -24,15 +24,18 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
- * A scrutinizer that inspects new items.
+ * A scrutinizer that inspects new entities.
  * 
  * @author Antonin Delpeuch
  */
-public class NewItemScrutinizer extends EditScrutinizer {
+public class NewEntityScrutinizer extends EditScrutinizer {
 
     public static final String noLabelType = "new-item-without-labels-or-aliases";
     public static final String noDescType = "new-item-without-descriptions";
@@ -44,9 +47,14 @@ public class NewItemScrutinizer extends EditScrutinizer {
     public boolean prepareDependencies() {
         return true;
     }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	// TODO add checks for new MediaInfoEntities
+    }
 
     @Override
-    public void scrutinize(TermedStatementEntityEdit update) {
+    public void scrutinize(ItemEdit update) {
         if (update.isNew()) {
             info(newItemType);
 

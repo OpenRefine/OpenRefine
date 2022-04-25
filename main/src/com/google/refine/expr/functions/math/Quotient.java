@@ -43,8 +43,8 @@ public class Quotient implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number) {
             return Math.floor((((Number) args[0]).doubleValue() / ((Number) args[1]).doubleValue()));
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");

@@ -126,8 +126,11 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
             return "Q" + getReconInternalId();
         } else if (ET_PROPERTY.equals(getEntityType())) {
             return "P" + getReconInternalId();
+        } else if (ET_MEDIA_INFO.equals(getEntityType())) {
+        	return "M" + getReconInternalId();
+        } else {
+        	throw new IllegalStateException("Unsupported entity type: "+getEntityType());
         }
-        return null;
     }
 
     @Override

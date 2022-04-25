@@ -19,7 +19,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.0.0
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: '12'
       - id: set-matrix
@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set up Java 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 11
@@ -60,7 +60,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.0.0
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: '12'
 
@@ -143,7 +143,7 @@ jobs:
             ${{ runner.os }}-maven-
 
     - name: Set up Java 11
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'adopt'
         java-version: 11
@@ -167,12 +167,18 @@ jobs:
       env:
         PGPASSWORD: postgres
 
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
       run: |
         mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
+
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
 
     - name: Generate dist files
       run: mvn package -DskipTests=true
@@ -192,7 +198,7 @@ jobs:
             ${{ runner.os }}-maven-
 
     - name: Set up Java 17
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'adopt'
         java-version: 17
@@ -210,6 +216,9 @@ jobs:
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
     - name: Build, test and package
       run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:

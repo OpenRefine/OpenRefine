@@ -147,7 +147,10 @@ public class UploadCommand extends Command {
 
     protected byte[] getIconImage() throws IOException {
         InputStream is = getClass().getResourceAsStream(METADATA_ICON_FILE);
-        return IOUtils.toByteArray(is);
+        byte[] iconImage = IOUtils.toByteArray(is);
+        is.close();
+
+        return iconImage;
     }
 
     private String uploadOpenRefineProject(Project project, String token,

@@ -340,6 +340,20 @@ Returns the inner XML elements of an XML element. Does not return the text direc
 ###### ownText(element) {#owntextelement}
 Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.
 
+### URI parsing {#uri-parsing}
+
+###### parseUri(s) {#parseUris}
+Given a valid URI string (for example: https://www.openrefine.org:80/documentation#download?format=xml&os=mac), parseUri() returns a JSON object with the following properties:
+ - `scheme`: The scheme of the URI, e.g. `http`
+ - `host`: the host of the URI (e.g. `www.openrefine.org`)
+ - `port`: the port of the URI (e.g. `80`)
+ - `path`: the path of the URI (e.g. `/documentation`)
+ - `query`: the query of the URI (e.g. `format=xml&os=mac`)
+ - `authority`: the authority of the URI (e.g. `www.openrefine.org:80`)
+ - `fragment`: the fragment of the URI (e.g. `download`)
+ - `query_params`: the query of the URI as an object (e.g. `{format: "xml", os: "mac"}`)
+
+
 ## Array functions {#array-functions}
 
 ###### length(a) {#lengtha}
@@ -495,7 +509,7 @@ Some of these math functions don't recognize integers when supplied as the first
 |`pow(n1, n2)`|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
 |`quotient(n1, n2)`|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
 |`radians(n)`|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
-|`randomNumber(n lowerBound, n upperBound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
+|`random(n lowerBound, n upperBound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column. If no arguments are provided, returns a number in the range 0.0 <= x < 1.0|
 |`round(n)`|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
 |`sin(n)`|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
 |`sinh(n)`|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|

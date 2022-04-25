@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -71,7 +71,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, noMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -89,7 +89,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, completeMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -107,7 +107,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -125,7 +125,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
