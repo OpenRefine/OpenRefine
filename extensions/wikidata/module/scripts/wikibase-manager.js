@@ -310,7 +310,7 @@ WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikib
     url: url,
     data: params,
     dataType: "jsonp",
-    timeout: 1000,
+    timeout: 5000,
     cache: true,
     beforeSend: function () {
       if (wikibaseLogoURLCache.exist(url)) {
@@ -320,7 +320,9 @@ WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikib
       return true;
     },
     complete: function (jqXHR, textStatus) {
-      wikibaseLogoURLCache.set(url, jqXHR);
+      if (textStatus === 'success') {
+        wikibaseLogoURLCache.set(url, jqXHR);
+      }
     },
     success: function(response) {
       onSuccess(response.query.general.logo);
