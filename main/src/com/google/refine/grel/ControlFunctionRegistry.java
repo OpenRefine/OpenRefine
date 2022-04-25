@@ -101,6 +101,7 @@ import com.google.refine.expr.functions.math.Tan;
 import com.google.refine.expr.functions.math.Tanh;
 import com.google.refine.expr.functions.strings.Chomp;
 import com.google.refine.expr.functions.strings.Contains;
+import com.google.refine.expr.functions.strings.DetectLanguage;
 import com.google.refine.expr.functions.strings.Diff;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
@@ -213,6 +214,8 @@ public class ControlFunctionRegistry {
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
+
+        registerFunction("detectLanguage", new DetectLanguage());
 
         registerFunction("hasField", new HasField());
         registerFunction("get", new Get());
