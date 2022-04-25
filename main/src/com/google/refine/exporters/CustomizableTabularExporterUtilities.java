@@ -383,15 +383,15 @@ abstract public class CustomizableTabularExporterUtilities {
                                 }
                             }
                         } else if (value instanceof OffsetDateTime) {
-                            if(this.date.formatMode == DateFormatMode.FULL_LOCALE){
-                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL));
-                            }else if(this.date.formatMode == DateFormatMode.MEDIUM_LOCALE){
-                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-                            }else if(this.date.formatMode == DateFormatMode.SHORT_LOCALE){
-                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
-                            }else if(this.date.formatMode == DateFormatMode.LONG_LOCALE){
-                                text = ((OffsetDateTime)value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-                            }else {
+                            if (this.date.formatMode == DateFormatMode.FULL_LOCALE) {
+                                text = ((OffsetDateTime) value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL));
+                            } else if (this.date.formatMode == DateFormatMode.MEDIUM_LOCALE) {
+                                text = ((OffsetDateTime) value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+                            } else if (this.date.formatMode == DateFormatMode.SHORT_LOCALE) {
+                                text = ((OffsetDateTime) value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+                            } else if (this.date.formatMode == DateFormatMode.LONG_LOCALE) {
+                                text = ((OffsetDateTime) value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+                            } else {
                                 text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
                             }
                         } else {

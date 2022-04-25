@@ -113,7 +113,7 @@ public class TsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportTsvDataFormatTransfer()throws IOException,ModelException{
+    public void exportTsvDataFormatTransfer() throws IOException, ModelException {
         project.columnModel.addColumn(0, new Column(0, "Short"), true);
         project.columnModel.addColumn(0, new Column(0, "Medium"), true);
         project.columnModel.addColumn(0, new Column(0, "Long"), true);
@@ -133,7 +133,8 @@ public class TsvExporterTests extends RefineTest {
         project.rows.add(row2);
         options = new Properties();
 
-        options.put("options", "{\"separator\":\"\\t\",\"lineSeparator\":\"\\n\",\"quoteAll\":false,\"outputColumnHeaders\":true,\"outputBlankRows\":false,\"columns\":[{\"name\":\"Short\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-short\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Medium\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-medium\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Long\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-long\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Full\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-full\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"ISO\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"iso-8601\",\"useLocalTimeZone\":false,\"omitTime\":false}}]}");
+        options.put("options",
+                "{\"separator\":\"\\t\",\"lineSeparator\":\"\\n\",\"quoteAll\":false,\"outputColumnHeaders\":true,\"outputBlankRows\":false,\"columns\":[{\"name\":\"Short\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-short\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Medium\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-medium\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Long\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-long\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"Full\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"locale-full\",\"useLocalTimeZone\":false,\"omitTime\":false}},{\"name\":\"ISO\",\"reconSettings\":{\"output\":\"entity-name\",\"blankUnmatchedCells\":false,\"linkToEntityPages\":true},\"dateSettings\":{\"format\":\"iso-8601\",\"useLocalTimeZone\":false,\"omitTime\":false}}]}");
         SUT.export(project, options, engine, writer);
 
         StringBuilder stringBuilder = new StringBuilder();
