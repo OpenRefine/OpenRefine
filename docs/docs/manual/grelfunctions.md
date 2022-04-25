@@ -214,6 +214,14 @@ Escapes s in the given escaping mode. The mode can be one of: "html", "xml", "cs
 
 Unescapes s in the given escaping mode. The mode can be one of: "html", "xml", "csv", "url", "javascript". Note that quotes are required around your mode. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for examples of escaping and unescaping. 
 
+###### encode(s, s encoding) {#encodes-s-encoding}
+
+Encodes the string, s in the specified encoding. The encoding can be one of: "base16", "base32", "base32hex", "base64", "base64url". For example, `encode("abc", "base64")` returns "YWJj".
+
+###### decode(s, s encoding) {#decodes-s-encoding}
+
+Decodes the string, s in the specified encoding. The encoding can be one of: "base16", "base32", "base32hex", "base64", "base64url". For example, `decode("YWJj", "base64")` returns "abc".
+
 ###### md5(o) {#md5o}
 
 Returns the [MD5 hash](https://en.wikipedia.org/wiki/MD5) of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string. For example, `"internationalization".md5()` will return 2c55a1626e31b4e373ceedaa9adc12a3.
