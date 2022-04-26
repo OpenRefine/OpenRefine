@@ -189,7 +189,7 @@ public class UploadCommand extends Command {
         return null;
     }
 
-    static private String uploadSpreadsheet(
+    private static String uploadSpreadsheet(
             final Project project, final Engine engine, final Properties params,
             String token, String name, List<Exception> exceptions) {
         

@@ -57,7 +57,7 @@ abstract public class GoogleAPIExtension {
     private static final int CONNECT_TIME_OUT_DEFAULT = 3 * 60000;      // 3 minutes connect timeout
     private static final int READ_TIME_OUT_DEFAULT = 3 * 60000;         // 3 minutes read timeout
     
-    static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
+    public static String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
         String host = request.getHeader("Host");
         if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
@@ -95,7 +95,7 @@ abstract public class GoogleAPIExtension {
         return authorizedUrl.toExternalForm();
     }
 
-    static public String getTokenFromCode(ButterflyModule module, HttpServletRequest request) 
+    public static String getTokenFromCode(ButterflyModule module, HttpServletRequest request) 
             throws IOException {
         String redirectUrl = makeRedirectUrl(module, request);
         StringBuffer fullUrlBuf = request.getRequestURL();
@@ -118,7 +118,7 @@ abstract public class GoogleAPIExtension {
         return null;
       }
     
-    static public Drive getDriveService(String token) {
+    public static Drive getDriveService(String token) {
         Credential credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
 
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
@@ -144,7 +144,7 @@ abstract public class GoogleAPIExtension {
         return getParamValue(url,"key");
     }
     
-    static private String getParamValue(URL url, String key) {
+    private static String getParamValue(URL url, String key) {
         String query = url.getQuery();
         if (query != null) {
             String[] parts = query.split("&");

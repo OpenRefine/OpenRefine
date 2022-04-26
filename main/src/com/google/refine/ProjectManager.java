@@ -68,13 +68,13 @@ import com.google.refine.util.ParsingUtilities;
  */
 public abstract class ProjectManager {
     // last n expressions used across all projects
-    static public final int EXPRESSION_HISTORY_MAX = 100;
+    public static final int EXPRESSION_HISTORY_MAX = 100;
 
     // If a project has been idle this long, flush it from memory
-    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
+    protected  static final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
     
     // Don't spend more than this much time saving projects if doing a quick save
-    static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+    protected static final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
 
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
@@ -244,7 +244,7 @@ public abstract class ProjectManager {
      * A utility class to prioritize projects for saving, depending on how long ago
      * they have been changed but have not been saved.
      */
-    static protected class SaveRecord {
+    protected static class SaveRecord {
         final Project project;
         final long overdue;
 
@@ -608,7 +608,7 @@ public abstract class ProjectManager {
     *
     * @param ps
     */
-   static protected void preparePreferenceStore(PreferenceStore ps) {
+   protected static void preparePreferenceStore(PreferenceStore ps) {
        ps.put("scripting.expressions", new TopList(EXPRESSION_HISTORY_MAX));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }

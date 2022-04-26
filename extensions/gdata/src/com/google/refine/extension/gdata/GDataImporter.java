@@ -53,7 +53,7 @@ import com.google.refine.util.JSONUtilities;
 public class GDataImporter {
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");
     
-    static public void parse(
+    public static void parse(
         String token,
         Project project,
         ProjectMetadata metadata,
@@ -77,7 +77,7 @@ public class GDataImporter {
         }
     }
     
-    static public void parse(
+    public static void parse(
         Sheets service,
         Project project,
         ProjectMetadata metadata,
@@ -111,7 +111,7 @@ public class GDataImporter {
         }
     }
     
-    static public void parseOneWorkSheet(
+    public  static void parseOneWorkSheet(
         Sheets service,
         Project project,
         ProjectMetadata metadata,
@@ -153,11 +153,11 @@ public class GDataImporter {
         }
     }
     
-    static private void setProgress(ImportingJob job, String fileSource, int percent) {
+    private  static void setProgress(ImportingJob job, String fileSource, int percent) {
         job.setProgress(percent, "Reading " + fileSource);
     }
     
-    static private class WorksheetBatchRowReader implements TableDataReader {
+    private static class WorksheetBatchRowReader implements TableDataReader {
         final ImportingJob job;
         final String fileSource;
         

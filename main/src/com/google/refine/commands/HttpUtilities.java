@@ -45,9 +45,9 @@ import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class HttpUtilities {
-    final static protected Logger logger = LoggerFactory.getLogger("command");
+    protected final static Logger logger = LoggerFactory.getLogger("command");
 
-    static public void respond(HttpServletResponse response, String content)
+    public static void respond(HttpServletResponse response, String content)
         throws IOException, ServletException {
     
         response.setCharacterEncoding("UTF-8");

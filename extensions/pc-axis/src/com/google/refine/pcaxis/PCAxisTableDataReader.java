@@ -266,7 +266,7 @@ public class PCAxisTableDataReader implements TableDataReader {
         return cells;
     }
     
-    static private int customIndexOf(String s, char c, int start) {
+    private static int customIndexOf(String s, char c, int start) {
         int i = s.indexOf(c, start);
         return i < 0 ? s.length() : i;
     }

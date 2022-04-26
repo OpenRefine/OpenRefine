@@ -55,15 +55,15 @@ public class ClientSideResourceManager {
         public String           path;
         public String           fullPath;
     }
-    static public class ClientSideResourceBundle {
+    public static class ClientSideResourceBundle {
         final protected Set<String>     _pathSet = new HashSet<String>();
         final protected List<QualifiedPath>      _pathList = new ArrayList<QualifiedPath>();
     }
     
-    final static protected Map<String, ClientSideResourceBundle> s_bundles
+    protected static final Map<String, ClientSideResourceBundle> s_bundles
         = new HashMap<String, ClientSideResourceBundle>();
     
-    static public void addPaths(
+    public static void addPaths(
         String bundleName, 
         ButterflyModule module, 
         String[] paths) {
@@ -103,7 +103,7 @@ public class ClientSideResourceManager {
         }
     }
     
-    static protected String resolve(ButterflyModule module, String path) {
+    protected static String resolve(ButterflyModule module, String path) {
         MountPoint mountPoint = module.getMountPoint();
         if (mountPoint != null) {
             String mountPointPath = mountPoint.getMountPoint();

@@ -142,7 +142,7 @@ public class ProjectMetadata {
         return written == null || _modified.isAfter(written);
     }
 
-    static protected void preparePreferenceStore(PreferenceStore ps) {
+    protected  static void preparePreferenceStore(PreferenceStore ps) {
         ProjectManager.preparePreferenceStore(ps);
         // Any project specific preferences?
     }

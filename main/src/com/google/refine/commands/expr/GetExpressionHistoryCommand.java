@@ -74,7 +74,7 @@ public class GetExpressionHistoryCommand extends Command {
         }
     }
 
-    static protected List<String> toExpressionList(Object o) {
+    protected static List<String> toExpressionList(Object o) {
         return o == null ? new ArrayList<String>() : ((TopList) o).getList();
     }
 

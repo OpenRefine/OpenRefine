@@ -64,29 +64,29 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "3.6-SNAPSHOT";
+    private static String ASSIGNED_VERSION = "3.6-SNAPSHOT";
     
-    static public String VERSION = "";
-    static public String REVISION = "";
-    static public String FULL_VERSION = "";
-    static public String FULLNAME = "OpenRefine ";
+    public static String VERSION = "";
+    public static String REVISION = "";
+    public static String FULL_VERSION = "";
+    public static String FULLNAME = "OpenRefine ";
 
     static final long serialVersionUID = 2386057901503517403L;
 
-    static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
     private File tempDir = null;
 
-    static private RefineServlet s_singleton;
-    static private File s_dataDir;
+    private static RefineServlet s_singleton;
+    private static File s_dataDir;
     
-    static final private Map<String, Command> commands = new HashMap<String, Command>();
+    private static final  Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
-    static private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+    private static ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     static final Logger logger = LoggerFactory.getLogger("refine");
 
-    static protected class AutoSaveTimerTask implements Runnable {
+    protected static class AutoSaveTimerTask implements Runnable {
         @Override
         public void run() {
             try {
@@ -304,7 +304,7 @@ public class RefineServlet extends Butterfly {
         return s_singleton.registerOneCommand(module, commandName, commandObject);
     }
     
-    static private class ClassMapping {
+    private static class ClassMapping {
         final String from;
         final String to;
         
@@ -314,7 +314,7 @@ public class RefineServlet extends Butterfly {
         }
     }
     
-    static final private List<ClassMapping> classMappings = new ArrayList<ClassMapping>();
+    private static final List<ClassMapping> classMappings = new ArrayList<ClassMapping>();
     
     /**
      * Add a mapping that determines how old class names can be updated to newer
@@ -325,7 +325,7 @@ public class RefineServlet extends Butterfly {
      * @param from
      * @param to
      */
-    static public void registerClassMapping(String from, String to) {
+    public static void registerClassMapping(String from, String to) {
         classMappings.add(new ClassMapping(from, to.endsWith("*") ? to.substring(0, to.length() - 1) : to));
     }
     
@@ -334,16 +334,16 @@ public class RefineServlet extends Butterfly {
         registerClassMapping("com.google.gridworks.*", "com.google.refine.*");
     }
     
-    static final private Map<String, String> classMappingsCache  = new HashMap<String, String>();
-    static final private Map<String, Class<?>> classCache  = new HashMap<String, Class<?>>();
+    private static final Map<String, String> classMappingsCache  = new HashMap<String, String>();
+    private static final Map<String, Class<?>> classCache  = new HashMap<String, Class<?>>();
     
     // TODO(dfhuynh): Temporary solution until we figure out why cross butterfly module class resolution
     // doesn't entirely work
-    static public void cacheClass(Class<?> klass) {
+    public static void cacheClass(Class<?> klass) {
         classCache.put(klass.getName(), klass);
     }
     
-    static public Class<?> getClass(String className) throws ClassNotFoundException {
+    public static Class<?> getClass(String className) throws ClassNotFoundException {
         String toClassName = classMappingsCache.get(className);
         if (toClassName == null) {
             toClassName = className;
@@ -377,7 +377,7 @@ public class RefineServlet extends Butterfly {
      * Use {@link RefineServlet.getUserAgent()} instead.
      */
     @Deprecated
-    static public void setUserAgent(URLConnection urlConnection) {
+    public static void setUserAgent(URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {
             setUserAgent((HttpURLConnection) urlConnection);
         }
@@ -389,11 +389,11 @@ public class RefineServlet extends Butterfly {
      * Use {@link RefineServlet.getUserAgent()} instead.
      */
     @Deprecated
-    static public void setUserAgent(HttpURLConnection httpConnection) {
+    public static void setUserAgent(HttpURLConnection httpConnection) {
         httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }
 
-    static public String getUserAgent() {
+    public static String getUserAgent() {
         return "OpenRefine/" + FULL_VERSION;
     }
 }

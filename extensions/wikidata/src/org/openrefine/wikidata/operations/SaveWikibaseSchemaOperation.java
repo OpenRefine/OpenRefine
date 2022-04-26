@@ -70,7 +70,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         return new HistoryEntry(historyEntryID, project, description, SaveWikibaseSchemaOperation.this, change);
     }
 
-    static public class WikibaseSchemaChange implements Change {
+    public  static class WikibaseSchemaChange implements Change {
 
         final protected WikibaseSchema _newSchema;
         protected WikibaseSchema _oldSchema = null;
@@ -108,7 +108,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
             writer.write("/ec/\n"); // end of change marker
         }
 
-        static public Change load(LineNumberReader reader, Pool pool)
+        public static Change load(LineNumberReader reader, Pool pool)
                 throws Exception {
             WikibaseSchema oldSchema = null;
             WikibaseSchema newSchema = null;
@@ -132,7 +132,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
             return change;
         }
 
-        static protected void writeWikibaseSchema(WikibaseSchema s, Writer writer)
+        protected static void writeWikibaseSchema(WikibaseSchema s, Writer writer)
                 throws IOException {
             if (s != null) {
                 ParsingUtilities.defaultWriter.writeValue(writer, s);

@@ -67,9 +67,9 @@ import com.google.refine.util.ParsingUtilities;
  */
 public abstract class Command {
 
-    final static protected Logger logger = LoggerFactory.getLogger("command");
+    protected final static Logger logger = LoggerFactory.getLogger("command");
     
-    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
+    public final static CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
 
     protected RefineServlet servlet;
     
@@ -118,7 +118,7 @@ public abstract class Command {
      * @return
      * @throws JSONException
      */
-    static protected EngineConfig getEngineConfig(HttpServletRequest request) {
+    protected static EngineConfig getEngineConfig(HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
@@ -137,7 +137,7 @@ public abstract class Command {
      * @return
      * @throws Exception
      */
-    static protected Engine getEngine(HttpServletRequest request, Project project)
+    protected static Engine getEngine(HttpServletRequest request, Project project)
     throws Exception {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
@@ -207,7 +207,7 @@ public abstract class Command {
         throw new ServletException("Can't find project metadata: missing or bad URL parameter");
     }
     
-    static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
+    protected static int getIntegerParameter(HttpServletRequest request, String name, int def) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
@@ -265,7 +265,7 @@ public abstract class Command {
         }
     }
 
-    static protected void performProcessAndRespond(
+    protected static void performProcessAndRespond(
         HttpServletRequest request,
         HttpServletResponse response,
         Project project,
@@ -289,7 +289,7 @@ public abstract class Command {
         }
     }
 
-    static protected void respond(HttpServletResponse response, String content)
+    protected static void respond(HttpServletResponse response, String content)
         throws IOException, ServletException {
 
         response.setCharacterEncoding("UTF-8");
@@ -304,7 +304,7 @@ public abstract class Command {
         }
     }
 
-    static protected void respond(HttpServletResponse response, String status, String message)
+    protected static void respond(HttpServletResponse response, String status, String message)
         throws IOException {
 
         Writer w = response.getWriter();
@@ -325,7 +325,7 @@ public abstract class Command {
         respondJSON(response, o, new Properties());
     }
 
-    static protected void respondJSON(
+    protected static void respondJSON(
             HttpServletResponse response, Object o, Properties options)
             throws IOException {
 
@@ -340,14 +340,14 @@ public abstract class Command {
         w.close();
     }
     
-    static protected void respondCSRFError(HttpServletResponse response) throws IOException {
+    protected static void respondCSRFError(HttpServletResponse response) throws IOException {
     	Map<String, String> responseJSON = new HashMap<>();
     	responseJSON.put("code", "error");
     	responseJSON.put("message", "Missing or invalid csrf_token parameter");
     	respondJSON(response, responseJSON);
     }
 
-    static protected void respondException(HttpServletResponse response, Exception e)
+    protected static void respondException(HttpServletResponse response, Exception e)
         throws IOException, ServletException {
 
         logger.warn("Exception caught", e);
@@ -407,7 +407,7 @@ public abstract class Command {
         }
     }
 
-    static protected void redirect(HttpServletResponse response, String url) throws IOException {
+    protected static void redirect(HttpServletResponse response, String url) throws IOException {
         response.sendRedirect(url);
     }
 
