@@ -72,6 +72,7 @@ public class IndentingLayout extends AbstractStringLayout {
 
 	@Override
 	public String toSerializable(LogEvent event) {
+
         String message = event.getMessage().getFormattedMessage();
         if (message == null) {
             return "";
@@ -98,12 +99,6 @@ public class IndentingLayout extends AbstractStringLayout {
             delta = now - previousTime;
         }
         previousTime = now;
-
-//        if ((previousTime == 0) || (delta > MAX_DELTA)) {
-//            buf.append('\n');
-//            indentation = 0; // reset indentation after a while, as we might
-//            // have runaway/unmatched log entries
-//        }
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if (hour < 10) {
