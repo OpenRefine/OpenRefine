@@ -69,7 +69,7 @@ public class SplitByLengths implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, \"internationalization\".splitByLengths(5, 6, 3) returns an array of 3 strings: [ \"inter\", \"nation\", \"ali\" ]. Excess characters are discarded.";
+        return "Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, \"internationalization\".splitByLengths(5, 6, 3) returns an array of 3 strings: [ \"inter\", \"nation\", \"ali\" ]. Excess characters are discarded from the output array.";
     }
     
     @Override
