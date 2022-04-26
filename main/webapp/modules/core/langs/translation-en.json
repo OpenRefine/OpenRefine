@@ -650,6 +650,7 @@
     "core-views/transform": "Transform…",
     "core-views/transform/header": "Transform",
     "core-views/common-transform": "Common transforms",
+    "core-views/settings/header": "Settings",
     "core-views/trim-all": "Trim leading and trailing whitespace…",
     "core-views/trim-all/header": "Trim leading and trailing whitespace",
     "core-views/trim-all/single": "Trim leading and trailing whitespace",

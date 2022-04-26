@@ -594,6 +594,38 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
   this.update();
 };
 
+var showSettings = function(){
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/settings-dialog.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/settings/header'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.cancelButton.click(dismiss);
+//    elmts.okButton.click(function() {
+////        new ExpressionColumnDialog(
+//////                previewWidget.getExpression(true),
+//                elmts.checkboxControlCharacters[0].checked,
+//                elmts.checkboxNulls[0].value
+//        );
+//    });
+
+//    var previewWidget = new Dialog.Widget(
+//      elmts,
+//      -1,
+//      [],
+//      [],
+//      null
+//    );
+//    previewWidget._prepareUpdate = function(params) {
+//      params.checkboxNulls = elmts.checkboxNulls[0].checked;
+//      params.checkboxControlCharacters = elmts.checkboxControlCharacters[0].checked;
+//    };
+  };
 /** below can be move to seperate file **/
   var doTextTransformPrompt = function() {
     var frame = $(
@@ -958,6 +990,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/display-settings'),
           id: "core/display-settings",
           click: function() {
+          showSettings();
           }
         }
       ]
