@@ -202,7 +202,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 if (src2) {
                     img.attr("src", src2);
                     img.removeAttr("src2");
-                    img.load(function() {
+                    img.on("load", function() {
                         data.batch++;
                         if (data.batch == data.batch_size) {
                             load_images(data);
