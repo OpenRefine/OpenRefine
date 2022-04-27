@@ -239,7 +239,7 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
           callback(o);
         },
         "json"
-    );
+    ).fail(() => { alert($.i18n('core-index-parser/update-format-failed')); });
   });
 };
 
