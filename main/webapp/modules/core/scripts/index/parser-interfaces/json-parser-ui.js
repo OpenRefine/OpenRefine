@@ -294,8 +294,8 @@ Refine.JsonParserUI.prototype._updatePreview = function() {
 
         new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
       }, 100);
-	} else {
-		self._progressContainer.hide();
+      } else {
+	    self._progressContainer.hide();
 	}
   });
 };
