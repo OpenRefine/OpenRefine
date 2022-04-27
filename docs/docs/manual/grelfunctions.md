@@ -174,9 +174,19 @@ Returns a string converted to a number. Will attempt to convert other formats in
 
 Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth", " air" ]. Note that the space characters are retained but the separator is removed. If you include “true” for the preserveTokens boolean, empty segments are preserved.
 
-###### splitByLengths(s, n1, n2, ...) {#splitbylengthss-n1-n2-}
+###### splitByLengths(s, n1, n2, ...) {#splitbylengthss-n1-n2}
 
-Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ "inter", "nation", "ali" ]. Excess characters are discarded.
+Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ "inter", "nation", "ali" ]. Excess characters are discarded from the output array.
+
+Like other functions that return an array, it also allows array slicing on the returned array. In that case, it returns the array consisting of a subset of elements between i1 and (i2 – 1).
+For example,
+
+|Expression|Result|
+|-|-|
+|`"internationalization".splitByLengths(5, 6, 3)[0,3]` |Returns an array of 3 strings: [ "inter", "nation", “ali” .|
+|`"internationalization".splitByLengths(5, 6, 3)[0,2]` |Returns an array of 2 strings: [ "inter", "nation" ]|
+|`"internationalization".splitByLengths(5, 6, 3)[1,3]` |Returns an array of 2 string: [ "nation", “ali” ]|
+|`"internationalization".splitByLengths(5, 6, 3)[1]` |Returns string at position 1: "nation" |
 
 ###### smartSplit(s, s or p sep (optional)) {#smartsplits-s-or-p-sep-optional}
 
@@ -213,6 +223,14 @@ Escapes s in the given escaping mode. The mode can be one of: "html", "xml", "cs
 ###### unescape(s, s mode) {#unescapes-s-mode}
 
 Unescapes s in the given escaping mode. The mode can be one of: "html", "xml", "csv", "url", "javascript". Note that quotes are required around your mode. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for examples of escaping and unescaping. 
+
+###### encode(s, s encoding) {#encodes-s-encoding}
+
+Encodes the string, s in the specified encoding. The encoding can be one of: "base16", "base32", "base32hex", "base64", "base64url". For example, `encode("abc", "base64")` returns "YWJj".
+
+###### decode(s, s encoding) {#decodes-s-encoding}
+
+Decodes the string, s in the specified encoding. The encoding can be one of: "base16", "base32", "base32hex", "base64", "base64url". For example, `decode("YWJj", "base64")` returns "abc".
 
 ###### md5(o) {#md5o}
 
@@ -251,6 +269,12 @@ Returns an array of strings describing each character of s in their full unicode
 ###### unicodeType(s) {#unicodetypes}
 
 Returns an array of strings describing each character of s by their unicode type. For example, `"Bernice Rubens".unicodeType()` outputs [ "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "space separator", "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter" ].
+
+### Translating
+
+###### detectLanguage(s) {#detectlanguages}
+
+Returns a string locale describing the language of s, with support for 71 languages as stated [here](https://github.com/optimaize/language-detector#71-built-in-language-profiles). For example, `"Hello, world!".detectLanguage()` outputs "en".
 
 ## Format-based functions (JSON, HTML, XML) {#format-based-functions-json-html-xml}
 
