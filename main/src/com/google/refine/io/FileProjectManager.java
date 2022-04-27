@@ -290,6 +290,10 @@ public class FileProjectManager extends ProjectManager  {
                 file.renameTo(oldFile);
             }
 
+            if (oldFile.exists() && _projects.isEmpty()) {
+                oldFile.delete();
+            }
+
             tempFile.renameTo(file);
             projectRemoved = false;
             logger.info("Saved workspace");
