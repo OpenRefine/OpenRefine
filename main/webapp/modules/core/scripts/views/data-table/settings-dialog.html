@@ -1,9 +1,9 @@
 <div class="dialog-frame-settings" style="min-width: 350px; width: 350px; height: 140px;
 display: grid; overflow: auto;border-top: none;background: rgb(221, 221, 221); visibility: visible; margin: auto; ;
 vertical-align: middle"  >
-    <div class="dialog-border">
-        <div class="dialog-header"></div>
-        <div class="dialog-body" >
+    <div class="dialog-border" >
+        <div class="dialog-header" bind="dialogHeader"></div>
+        <div class="dialog-body" bind="dialogBody">
                 <table>
                 <tr>
                    <td width="50%" style="text-align: center"> <input type="checkbox" class="inline" id="toggling-nulls">
@@ -13,9 +13,9 @@ vertical-align: middle"  >
                 </tr>
                 </table>
         </div>
-        <div class="settings-dialog-container dialog-footer">
-            <button class="button">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
-            <button class="button">Cancel</button>
+        <div class="dialog-footer"  bind="dialogFooter">
+            <button class="button" bind="okButton"></button>
+            <button class="button" bind="cancelButton"></button>
         </div>
     </div>
 </div>
