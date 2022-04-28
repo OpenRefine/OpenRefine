@@ -396,7 +396,9 @@ function init() {
       "scripts/index/parser-interfaces/wikitext-parser-ui.js",
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
-      "scripts/index/edit-metadata-dialog.js"
+      "scripts/index/edit-metadata-dialog.js",
+
+        "scripts/index/system-info.js",
     ])
   );
 
