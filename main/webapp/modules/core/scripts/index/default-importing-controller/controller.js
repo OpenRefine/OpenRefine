@@ -270,9 +270,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
 			  callback(result);
 		  },
         "jsonp"
-	   ).fail(function(jqXhr, textStatus, errorThrown) {
-		  alert($.i18n('core-index/rows-loading-failed'));
-	  });
+	   ).fail(() => { alert($.i18n('core-index/rows-loading-failed')); });
     },
     "json"
   );
