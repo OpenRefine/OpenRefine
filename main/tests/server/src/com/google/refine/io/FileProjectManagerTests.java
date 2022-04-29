@@ -31,25 +31,28 @@ import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
+import com.google.refine.importing.ImportingParser;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
-
     protected File workspaceDir;
     protected File workspaceFile;
-    protected Project project = mock(Project.class);
+    protected long projectID;
+    protected List<Exception> exceptions = new ArrayList<Exception>();
+
 
     @BeforeMethod
     public void createDirectory() throws IOException {
@@ -59,10 +62,20 @@ public class FileProjectManagerTests {
 
     protected class FileProjectManagerStub extends FileProjectManager {
 
+        protected Project project;
+        protected ImportingJob importingJob;
+        protected ObjectNode optionObj;
+
+
         protected FileProjectManagerStub(File dir) {
             super(dir);
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
-            _projects.put(project.id, (project));
+            ImportingManager.registerFormat("text/json", "", false, "", mock(ImportingParser.class));
+            importingJob = mock(ImportingJob.class);
+            optionObj = mock(ObjectNode.class);
+            projectID = ImportingUtilities.createProject(importingJob, "text/json", optionObj, exceptions, false);
+            _projects.put(projectID, this.getProject(projectID));
+
         }
     }
 
@@ -105,36 +118,6 @@ public class FileProjectManagerTests {
     
     @Test
     public void deleteProjectAndSaveWorkSpace() throws IOException {
-        FileProjectManager manager = new FileProjectManagerStub(workspaceFile);
 
-        String json = "{\n" +
-                "       \"preferences\" : {\n" +
-                "         \"entries\" : {\n" +
-                "           \"scripting.expressions\" : {\n" +
-                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
-                "             \"list\" : [ ],\n" +
-                "             \"top\" : 100\n" +
-                "           },\n" +
-                "           \"scripting.starred-expressions\" : {\n" +
-                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
-                "             \"list\" : [ ],\n" +
-                "             \"top\" : 2147483647\n" +
-                "           }\n" +
-                "         }\n" +
-                "       },\n" +
-                "       \"projectIDs\" : [ 5555 ]\n" +
-                "     }";
-
-        OutputStream stream = new FileOutputStream(workspaceFile);
-        InputStream f = new FileInputStream(workspaceFile);
-        ParsingUtilities.defaultWriter.writeValue(stream, json);
-        manager.saveWorkspace();
-        System.out.println(workspaceFile.getPath());
-        System.out.println(ParsingUtilities.inputStreamToString(f));
-
-        manager = new FileProjectManagerStub(workspaceFile);
-        manager.deleteProject(5555);
-        System.out.println(workspaceFile.getPath());
-        System.out.println(ParsingUtilities.inputStreamToString(f));
     }
 }
