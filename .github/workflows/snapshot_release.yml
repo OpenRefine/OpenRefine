@@ -7,6 +7,8 @@ on:
       - '4.0'
     paths-ignore:
       - 'docs/**'
+  release:
+    types: [published]
 
 jobs:
   prepare_ui_test_matrix:
