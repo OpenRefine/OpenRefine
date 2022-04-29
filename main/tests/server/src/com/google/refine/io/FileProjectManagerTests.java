@@ -31,21 +31,30 @@ import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.util.TestUtils;
 import com.google.refine.ProjectMetadata;
+import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
 
     protected File workspaceDir;
+    protected File workspaceFile;
+    protected Project project = mock(Project.class);
 
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -53,6 +62,7 @@ public class FileProjectManagerTests {
         protected FileProjectManagerStub(File dir) {
             super(dir);
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
+            _projects.put(project.id, (project));
         }
     }
 
@@ -91,5 +101,29 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
         manager = new FileProjectManagerStub(workspaceDir);
         assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
+    }
+    
+    @Test
+    public void deleteProjectAndSaveWorkSpace() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceFile);
+        /**
+         * String json = "{\n" + " \"preferences\" : {\n" + " \"entries\" : {\n" + " \"scripting.expressions\" : {\n" +
+         * " \"class\" : \"com.google.refine.preference.TopList\",\n" + " \"list\" : [ ],\n" + " \"top\" : 100\n" + "
+         * },\n" + " \"scripting.starred-expressions\" : {\n" + " \"class\" :
+         * \"com.google.refine.preference.TopList\",\n" + " \"list\" : [ ],\n" + " \"top\" : 2147483647\n" + " }\n" + "
+         * }\n" + " },\n" + " \"projectIDs\" : [ 5555 ]\n" + " }";
+         */
+
+        OutputStream stream = new FileOutputStream(workspaceFile);
+        InputStream f = new FileInputStream(workspaceFile);
+        ParsingUtilities.defaultWriter.writeValue(stream, json);
+        manager.saveWorkspace();
+        System.out.println(workspaceFile.getPath());
+        System.out.println(ParsingUtilities.inputStreamToString(f));
+
+        manager = new FileProjectManagerStub(workspaceFile);
+        manager.deleteProject(5555);
+        System.out.println(workspaceFile.getPath());
+        System.out.println(ParsingUtilities.inputStreamToString(f));
     }
 }
