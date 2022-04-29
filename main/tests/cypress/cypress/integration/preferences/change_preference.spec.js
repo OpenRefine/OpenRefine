@@ -13,7 +13,7 @@ describe(__filename, function () {
       cy.stub($win, 'prompt').returns(testPreferenceValue + '_Edited');
       cy.get('table.preferences tr')
         .contains(testPreferenceName)
-        .parentsUntil('tbody')
+        .parent()
         .find('td:last-child button:first-child')
         .click();
     });
