@@ -106,13 +106,24 @@ public class FileProjectManagerTests {
     @Test
     public void deleteProjectAndSaveWorkSpace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceFile);
-        /**
-         * String json = "{\n" + " \"preferences\" : {\n" + " \"entries\" : {\n" + " \"scripting.expressions\" : {\n" +
-         * " \"class\" : \"com.google.refine.preference.TopList\",\n" + " \"list\" : [ ],\n" + " \"top\" : 100\n" + "
-         * },\n" + " \"scripting.starred-expressions\" : {\n" + " \"class\" :
-         * \"com.google.refine.preference.TopList\",\n" + " \"list\" : [ ],\n" + " \"top\" : 2147483647\n" + " }\n" + "
-         * }\n" + " },\n" + " \"projectIDs\" : [ 5555 ]\n" + " }";
-         */
+
+        String json = "{\n" +
+                "       \"preferences\" : {\n" +
+                "         \"entries\" : {\n" +
+                "           \"scripting.expressions\" : {\n" +
+                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 100\n" +
+                "           },\n" +
+                "           \"scripting.starred-expressions\" : {\n" +
+                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 2147483647\n" +
+                "           }\n" +
+                "         }\n" +
+                "       },\n" +
+                "       \"projectIDs\" : [ 5555 ]\n" +
+                "     }";
 
         OutputStream stream = new FileOutputStream(workspaceFile);
         InputStream f = new FileInputStream(workspaceFile);
