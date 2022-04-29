@@ -218,8 +218,8 @@ jobs:
 
     - name: Apply patch to insert Google API credentials
       run: |
-        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt packaging/apple_certs/gdata.patch.asc
-        git am packaging/apple_certs/gdata.patch
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt .github/workflows/release/gdata.patch.asc
+        git am .github/workflows/release/gdata.patch
         git reset HEAD^
 
     - name: Install webapp dependencies
