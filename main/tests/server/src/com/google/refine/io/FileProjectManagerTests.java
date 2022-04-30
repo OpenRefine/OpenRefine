@@ -48,11 +48,11 @@ import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
+
     protected File workspaceDir;
     protected File workspaceFile;
     protected long projectID;
     protected List<Exception> exceptions = new ArrayList<Exception>();
-
 
     @BeforeMethod
     public void createDirectory() throws IOException {
@@ -65,7 +65,6 @@ public class FileProjectManagerTests {
         protected Project project;
         protected ImportingJob importingJob;
         protected ObjectNode optionObj;
-
 
         protected FileProjectManagerStub(File dir) {
             super(dir);
@@ -115,7 +114,7 @@ public class FileProjectManagerTests {
         manager = new FileProjectManagerStub(workspaceDir);
         assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
     }
-    
+
     @Test
     public void deleteProjectAndSaveWorkSpace() throws IOException {
 
