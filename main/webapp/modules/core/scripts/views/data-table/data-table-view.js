@@ -42,7 +42,8 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
-  this._shownulls = false;
+  this._showNulls = false;
+  this._showControlChars = false;
 
   this._currentPageNumber = 1;
   this._showRows(0);
@@ -478,10 +479,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
     renderRow(tr, r, row, even);
   }
+  $(document).on('change', '#toggling-nulls', function () {
+  $(".data-table-null").toggle();
+  });
       var executed = false;
       $(document).on('change', '#toggling-control-characters', function () {
-      (".unprintableCharacters").toggle();
-      (".originalCharacters").toggle();
+      nonPrintableToggle();
       });
 };
 
@@ -605,7 +608,6 @@ var showSettings = function(){
 
     var elmts = DOM.bind(frame);
        elmts.settingsDialogHeader.text($.i18n('core-views/settings/header'));
-        elmts.settingsOkButton.html($.i18n('core-buttons/settings-ok'));
         elmts.settingsCancelButton.text($.i18n('core-buttons/settings-cancel'));
          elmts.show_nulls.html($.i18n('core-buttons/display/show_nulls'));
          elmts.show_control_chars.text($.i18n('core-buttons/display_control_chars'));
@@ -1177,40 +1179,3 @@ DataTableView.prototype._createPendingSortWarningDialog = function(func) {
   });
 
 };
-var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
-
-function checkNonPrintable(content) {
-  var stringIncNonPrintable = "";
-  for (var character = 0; character < content.length; character++) {
-    var unprintableChar = "";
-    var originalChar = "";
-    var charCode = content.charAt(character).charCodeAt(0);
-    if (charCode <= 32) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
-      stringIncNonPrintable += unprintableChar+ originalChar;
-
-    }else{
-    stringIncNonPrintable += content.charAt(character);
-    }
-  }
-  return stringIncNonPrintable;
-}
-
-function nonPrintableToggle() {
-  if(executed == false){
-    var rows = $('.data-table tbody > tr');
-    var columns;
-    for (var i = 0; i < rows.length; i++) {
-      columns = $(rows[i]).find('td>div>span');
-      for (var j = 0; j < columns.length; j++) {
-        var originalContent = $(columns[j]).text();
-        if (originalContent != "") {
-          var updatedContent = checkNonPrintable(originalContent);
-          $(columns[j]).html(updatedContent);
-        }
-      }
-    }
-    $(".unprintableCharacters").toggle();
-    }
-  }
