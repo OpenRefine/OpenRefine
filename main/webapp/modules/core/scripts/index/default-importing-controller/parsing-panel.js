@@ -71,7 +71,6 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   }
 
   this._createProjectUI.showCustomPanel(this._parsingPanel);
-  showNonPrintableChars();
 };
 
 Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = function() {
