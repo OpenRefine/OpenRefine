@@ -71,6 +71,7 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   }
 
   this._createProjectUI.showCustomPanel(this._parsingPanel);
+  showNonPrintableChars();
 };
 
 Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = function() {
@@ -209,42 +210,42 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
   }
 };
 
-//var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
-//
-//function checkNonPrintable(content) {
-//  var stringIncNonPrintable = "";
-//  for (var character = 0; character < content.length; character++) {
-//    var unprintableChar = "";
-//    var originalChar = "";
-//    var charCode = content.charAt(character).charCodeAt(0);
-//    if (charCode <= 32) {
-//      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-//      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
-//      stringIncNonPrintable += unprintableChar+ originalChar;
-//
-//    }else{
-//    stringIncNonPrintable += content.charAt(character);
-//    }
-//  }
-//  return stringIncNonPrintable;
-//}
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
 
-//function showNonPrintableChars(){
-//    var rows = $('.data-table tbody > tr');
-//    var columns;
-//    for (var i = 0; i < rows.length; i++) {
-//      columns = $(rows[i]).find('td>div>span');
-//      for (var j = 0; j < columns.length; j++) {
-//        var originalContent = $(columns[j]).text();
-//        if (originalContent != "") {
-//          var updatedContent = checkNonPrintable(originalContent);
-//          $(columns[j]).html(updatedContent);
-//        }
-//    }
-//  }
-//  $(".originalCharacters").hide();
-//  $(".unprintableCharacters").show();
-//}
+function checkNonPrintable(content) {
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var unprintableChar = "";
+    var originalChar = "";
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32) {
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
+      stringIncNonPrintable += unprintableChar+ originalChar;
+
+    }else{
+    stringIncNonPrintable += content.charAt(character);
+    }
+  }
+  return stringIncNonPrintable;
+}
+
+function showNonPrintableChars(){
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+    }
+  }
+  $(".originalCharacters").hide();
+  $(".unprintableCharacters").show();
+}
 
 
 
