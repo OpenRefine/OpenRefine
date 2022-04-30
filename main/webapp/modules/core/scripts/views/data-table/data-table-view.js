@@ -42,8 +42,8 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
-//  this._showNulls = false;
-//  this._showControlChars = false;
+  this._showNulls = false;
+  this._showControlChars = false;
 
   this._currentPageNumber = 1;
   this._showRows(0);
@@ -143,6 +143,13 @@ DataTableView.prototype.render = function() {
   }
 
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
+
+  // show/hide null values in cells
+  $(".data-table-null").toggle(self._showNulls);
+
+//    show/hide unprintable characters in cells
+$(".unprintableCharacters").toggle(self._showControlChars);
+$(".originalCharacters").toggle(self._showControlChars);
 
   this.resize();
 
@@ -479,13 +486,13 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
     renderRow(tr, r, row, even);
   }
-  $(document).on('change', '#toggling-nulls', function () {
-  $(".data-table-null").toggle();
-  });
+       $(document).on('change', '#toggling-nulls', function () {
+         $(".data-table-null").toggle();
+         });
+          $(document).on('change', '#toggling-control-characters', function () {
+          nonPrintableToggle();
+                });
 
-     $(document).on('change', '#toggling-control-characters', function () {
-      nonPrintableToggle();
-    });
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
@@ -615,17 +622,26 @@ var showSettings = function(){
          var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-//    $(".myCheckBox").checked(true);  $(".myCheckBox").selected(true);
     elmts.settingsOkButton.click(function() {
+    if($('#toggling-nulls')[0].checked){
+    self._showNulls = true;
+    }else{
+      self._showNulls = false;
+    }
+        if($('#toggling-control-characters')[0].checked){
+        self._showControlChars = true;
+        }else{
+          self._showControlChars = false;
+        }
      dismiss();
     });
         elmts.settingsCancelButton.click(function() {
-        if(nullCheck){
+        if(self._showNulls){
         $('.data-table-null').show();
         }else{
        $('.data-table-null').hide();
         }
-       if(controlCharsCheck){
+       if(self._showControlChars){
          $(".unprintableCharacters").show();
          $(".originalCharacters").hide();
         }else{
@@ -634,7 +650,6 @@ var showSettings = function(){
         }
          dismiss();
         });
-
   };
 /** below can be move to seperate file **/
   var doTextTransformPrompt = function() {
@@ -1000,8 +1015,6 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/display-settings'),
           id: "core/display-settings",
           click: function() {
-          nullCheck = $('#toggling-nulls').is(':checked');
-          controlCharsCheck = $('#toggling-control-characters').is(':checked');
           showSettings();
           }
         }
@@ -1197,5 +1210,3 @@ DataTableView.prototype._createPendingSortWarningDialog = function(func) {
   });
 
 };
- var nullCheck = $('#toggling-nulls').is(':checked');
- var controlCharsCheck = $('#toggling-control-characters').is(':checked');
