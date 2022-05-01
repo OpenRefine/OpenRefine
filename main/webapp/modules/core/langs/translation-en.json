@@ -654,7 +654,7 @@
     "core-buttons/settings-ok" : "OK",
     "core-buttons/settings-cancel" : "Cancel",
     "core-buttons/display/show_nulls" : "Show nulls",
-    "core-buttons/display_control_chars" : "Show control characters",
+    "core-buttons/display/show_control_chars" : "Show control characters",
     "core-views/trim-all": "Trim leading and trailing whitespace…",
     "core-views/trim-all/header": "Trim leading and trailing whitespace",
     "core-views/trim-all/single": "Trim leading and trailing whitespace",

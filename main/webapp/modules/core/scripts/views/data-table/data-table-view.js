@@ -144,13 +144,6 @@ DataTableView.prototype.render = function() {
 
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
 
-  // show/hide null values in cells
-  $(".data-table-null").toggle(self._showNulls);
-
-//    show/hide unprintable characters in cells
-$(".unprintableCharacters").toggle(self._showControlChars);
-$(".originalCharacters").toggle(self._showControlChars);
-
   this.resize();
 
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
@@ -617,7 +610,7 @@ var showSettings = function(){
         elmts.settingsCancelButton.text($.i18n('core-buttons/settings-cancel'));
          elmts.settingsOkButton.html($.i18n('core-buttons/settings-ok'));
          elmts.show_nulls.html($.i18n('core-buttons/display/show_nulls'));
-         elmts.show_control_chars.text($.i18n('core-buttons/display_control_chars'));
+         elmts.show_control_chars.text($.i18n('core-buttons/display/show_control_chars'));
 
          var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
