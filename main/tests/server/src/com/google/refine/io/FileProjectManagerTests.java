@@ -27,32 +27,28 @@
 
 package com.google.refine.io;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
+import org.apache.jena.atlas.json.JSON;
+import org.apache.jena.atlas.json.JsonObject;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingManager;
-import com.google.refine.importing.ImportingParser;
-import com.google.refine.importing.ImportingUtilities;
-import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
 
     protected File workspaceDir;
     protected File workspaceFile;
-    protected long projectID;
-    protected List<Exception> exceptions = new ArrayList<Exception>();
 
     @BeforeMethod
     public void createDirectory() throws IOException {
@@ -62,18 +58,9 @@ public class FileProjectManagerTests {
 
     protected class FileProjectManagerStub extends FileProjectManager {
 
-        protected Project project;
-        protected ImportingJob importingJob;
-        protected ObjectNode optionObj;
-
         protected FileProjectManagerStub(File dir) {
             super(dir);
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
-            ImportingManager.registerFormat("text/json", "", false, "", mock(ImportingParser.class));
-            importingJob = mock(ImportingJob.class);
-            optionObj = mock(ObjectNode.class);
-            projectID = ImportingUtilities.createProject(importingJob, "text/json", optionObj, exceptions, false);
-            _projects.put(projectID, this.getProject(projectID));
 
         }
     }
@@ -115,8 +102,34 @@ public class FileProjectManagerTests {
         assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
     }
 
+    /**
+     * Issue #1418 Issue #3719 Issue #3277 deleting the only existing project without saving the workspace will not
+     * remove the projectID from workspace.json
+     */
     @Test
-    public void deleteProjectAndSaveWorkSpace() throws IOException {
+    public void deleteProjectWithoutSavingWorkspace() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+        manager.saveToFile(workspaceFile);
+        manager.deleteProject(5555);
 
+        InputStream inputStream = new FileInputStream(workspaceFile);
+        JsonObject json = JSON.parse(inputStream);
+        assertFalse(json.get("projectIDs").getAsArray().isEmpty());
+    }
+
+    /**
+     * Issue fix Issue #1418 Issue #3719 Issue #3277 deleting the only existing project and saving the workspace should
+     * remove the projectID from workspace.json
+     */
+    @Test
+    public void deleteProjectAndSaveWorkspace() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+        manager.saveToFile(workspaceFile);
+        manager.deleteProject(5555);
+        manager.saveToFile(workspaceFile);
+
+        InputStream inputStream = new FileInputStream(workspaceFile);
+        JsonObject json = JSON.parse(inputStream);
+        assertTrue(json.get("projectIDs").getAsArray().isEmpty());
     }
 }
