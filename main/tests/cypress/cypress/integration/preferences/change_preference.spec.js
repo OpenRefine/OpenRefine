@@ -1,6 +1,6 @@
 describe(__filename, function () {
-  const testPreferenceName = `PreferenceName_${Date.now()}`;
-  const testPreferenceValue = `"PreferenceValue_${Date.now()}"`;
+  const testPreferenceName = `PreferenceName_Test`;
+  const testPreferenceValue = `"PreferenceValue_Test"`;
   
   afterEach(function () {
     cy.deletePreference(testPreferenceName);
