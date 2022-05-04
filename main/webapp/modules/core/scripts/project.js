@@ -138,7 +138,7 @@ function initializeUI(uiState) {
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
   $("#or-proj-ext").text($.i18n('core-project/extensions'));
 
-  $('#project-name-button').on('click',(Refine._renameProject));
+  $('#project-name-button').on('click',Refine._renameProject);
   $('#project-permalink-button').on('mouseenter',function() {
     this.href = Refine.getPermanentLink();
   });
