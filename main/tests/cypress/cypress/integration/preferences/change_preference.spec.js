@@ -1,8 +1,13 @@
 describe(__filename, function () {
+  const testPreferenceName = `PreferenceName_${Date.now()}`;
+  const testPreferenceValue = `"PreferenceValue_${Date.now()}"`;
+  
+  afterEach(function () {
+    cy.deletePreference(testPreferenceName);
+  });
+  
   it('Edit a preference', function () {
     cy.visitOpenRefine();
-    const testPreferenceName = `PreferenceName_${Date.now()}`;
-    const testPreferenceValue = `"PreferenceValue_${Date.now()}"`;
 
     cy.setPreference(testPreferenceName, testPreferenceValue);
 
@@ -24,8 +29,6 @@ describe(__filename, function () {
   it('Add a new preference', function () {
     cy.visitOpenRefine();
     cy.get('#project-links a').contains('Preferences').click();
-
-    const testPreferenceName = Date.now();
 
     cy.window().then(($win) => {
       cy.stub($win, 'prompt').returns(testPreferenceName);

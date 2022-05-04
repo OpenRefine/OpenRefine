@@ -26,6 +26,29 @@ Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
     });
 });
 
+Cypress.Commands.add('deletePreference', (preferenceName) => {
+  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  return cy
+      .request(openRefineUrl + '/command/core/get-csrf-token')
+      .then((response) => {
+        return cy
+            .request({
+              method: 'POST',
+              url: `${openRefineUrl}/command/core/set-preference`,
+              body: `name=${preferenceName}&csrf_token=${response.body.token}`,
+              form: false,
+              headers: {
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              },
+            })
+            .then((resp) => {
+              cy.log(
+                  'Delete preference ' +
+                  preferenceName 
+              );
+            });
+      });
+});
 
 Cypress.Commands.add('importProject', (projectTarFile, projectName) => {
   const openRefineUrl = Cypress.env('OPENREFINE_URL');
