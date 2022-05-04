@@ -190,7 +190,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_store_cell.html($.i18n('gdata-parsing/store-cell'));
   
   if (this._parsingPanelResizer) {
-    $(window).unbind('resize', this._parsingPanelResizer);
+    $(window).off('resize', this._parsingPanelResizer);
   }
   
   this._parsingPanelResizer = function() {
@@ -217,10 +217,10 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     .css("width", (width - DOM.getHPaddings(elmts.controlPanel)) + "px")
     .css("height", (controlPanelHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
   };
-  $(window).resize(this._parsingPanelResizer);
+  $(window).on('resize',this._parsingPanelResizer);
   this._parsingPanelResizer();
   
-  this._parsingPanelElmts.startOverButton.click(function() {
+  this._parsingPanelElmts.startOverButton.on('click',function() {
     // explicitly cancel the import job
     Refine.CreateProjectUI.cancelImportingJob(self._jobID);
     

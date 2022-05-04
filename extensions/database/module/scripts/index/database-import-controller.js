@@ -160,7 +160,7 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
     this._parsingPanelElmts.database_disable_auto_preview.text($.i18n('database-parsing/disable-auto-preview'));
 
     if (this._parsingPanelResizer) {
-      $(window).unbind('resize', this._parsingPanelResizer);
+      $(window).off('resize', this._parsingPanelResizer);
     }
 
     this._parsingPanelResizer = function() {
@@ -188,10 +188,10 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
       .css("height", (controlPanelHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
     };
 
-    $(window).resize(this._parsingPanelResizer);
+    $(window).on('resize',this._parsingPanelResizer);
     this._parsingPanelResizer();
 
-    this._parsingPanelElmts.startOverButton.click(function() {
+    this._parsingPanelElmts.startOverButton.on('click',function() {
       // explicitly cancel the import job
       Refine.CreateProjectUI.cancelImportingJob(self._jobID);
 

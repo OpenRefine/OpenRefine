@@ -207,47 +207,47 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
           .attr('width', '100%'));
     }
     
-    this._elmts.uploadButton.click(function() { self._upload(); });
+    this._elmts.uploadButton.on('click',function() { self._upload(); });
   }
   
   /*
    * Hook up event handlers.
    */
-  this._elmts.encodingInput.click(function(evt) {
+  this._elmts.encodingInput.on('click',function(evt) {
     Encoding.selectEncoding($(this), function() {
       self._updateOptionCode();
     });
   });
   
-  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').click(function() {
+  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').on('click',function() {
     self._elmts.columnList.find('.custom-tabular-exporter-dialog-column').removeClass('selected');
     $(this).addClass('selected');
     self._selectColumn(this.getAttribute('column'));
     self._updateOptionCode();
   });
-  this._elmts.selectAllButton.click(function() {
+  this._elmts.selectAllButton.on('click',function() {
     self._elmts.columnList.find('input[type="checkbox"]').prop('checked', true);
     self._updateOptionCode();
   });
-  this._elmts.deselectAllButton.click(function() {
+  this._elmts.deselectAllButton.on('click',function() {
     self._elmts.columnList.find('input[type="checkbox"]').prop('checked', false);
     self._updateOptionCode();
   });
   
-  this._elmts.columnOptionPane.find('input').bind('change', function() {
+  this._elmts.columnOptionPane.find('input').on('change', function() {
     self._updateCurrentColumnOptions();
   });
-  $('#custom-tabular-exporter-tabs-content').find('input').bind('change', function() {
+  $('#custom-tabular-exporter-tabs-content').find('input').on('change', function() {
     self._updateOptionCode();
   });
-  $('#custom-tabular-exporter-tabs-download').find('input').bind('change', function() {
+  $('#custom-tabular-exporter-tabs-download').find('input').on('change', function() {
     self._updateOptionCode();
   });
   
-  this._elmts.applyOptionCodeButton.click(function(evt) { self._applyOptionCode(); });
-  this._elmts.cancelButton.click(function() { self._dismiss(); });
-  this._elmts.downloadButton.click(function() { self._download(); });
-  this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
+  this._elmts.applyOptionCodeButton.on('click',function(evt) { self._applyOptionCode(); });
+  this._elmts.cancelButton.on('click',function() { self._dismiss(); });
+  this._elmts.downloadButton.on('click',function() { self._download(); });
+  this._elmts.downloadPreviewButton.on('click',function(evt) { self._previewDownload(); });
   
   this._configureUIFromOptionCode(options);
   this._updateOptionCode();
