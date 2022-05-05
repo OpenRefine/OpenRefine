@@ -1,5 +1,5 @@
 describe(__filename, function () {
-  const testPreferenceName = '"PreferenceName_Test"';
+  const testPreferenceName = 'PreferenceName_Test';
   const testPreferenceValue = '"PreferenceValue_Test"';
   
   afterEach(function () {
