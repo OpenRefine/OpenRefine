@@ -219,8 +219,7 @@ function checkNonPrintable(content) {
     var charCode = content.charAt(character).charCodeAt(0);
     if (charCode <= 32) {
       unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-      originalChar = "<span class='originalCharacters'>" + content.charAt(character) + "</span>";
-      stringIncNonPrintable += unprintableChar+ originalChar;
+      stringIncNonPrintable += unprintableChar;
 
     }else{
     stringIncNonPrintable += content.charAt(character);
@@ -231,8 +230,6 @@ function checkNonPrintable(content) {
 
 function showNonPrintableChars(cell){
           var cellValue = checkNonPrintable(cell);
-  $(".originalCharacters").hide();
-  $(".unprintableCharacters").show();
   return cellValue;
 }
 
