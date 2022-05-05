@@ -264,7 +264,7 @@ var beforeUnload = function(e) {
   }
 };
 
-$(window).bind('beforeunload', beforeUnload);
+$(window).on('beforeunload', beforeUnload);
 
 SchemaAlignment._reset = function(schema) {
   if (!schema) {

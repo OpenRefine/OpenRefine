@@ -64,7 +64,7 @@ ExpressionColumnDialog.prototype._createDialog = function() {
    * Hook up event handlers.
    */
   
-  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').click(function() {
+  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').on('click',function() {
     self._elmts.columnList.find('.custom-tabular-exporter-dialog-column').removeClass('selected');
     $(this).addClass('selected');
   });

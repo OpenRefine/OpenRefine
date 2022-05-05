@@ -118,18 +118,18 @@ class TextSearchFacet extends Facet {
       this._elmts.regexCheckbox.prop('checked', true);
     }
 
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
-    this._elmts.resetButton.click(function() { self._reset(); });
-    this._elmts.invertButton.click(function() { self._invert(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
+    this._elmts.resetButton.on('click',function() { self._reset(); });
+    this._elmts.invertButton.on('click',function() { self._invert(); });
 
-    this._elmts.caseSensitiveCheckbox.bind("change", function() {
+    this._elmts.caseSensitiveCheckbox.on("change", function() {
       self._config.caseSensitive = this.checked;
       if (self._query !== null && self._query.length > 0) {
         self._scheduleUpdate();
       }
     });
-    this._elmts.regexCheckbox.bind("change", function() {
+    this._elmts.regexCheckbox.on("change", function() {
       self._config.mode = this.checked ? "regex" : "text";
       if (self._query !== null && self._query.length > 0) {
         self._scheduleUpdate();
@@ -140,14 +140,14 @@ class TextSearchFacet extends Facet {
       this._elmts.input[0].value = this._query;
     }
     
-    this._elmts.input.bind("keyup change input",function(evt) {
+    this._elmts.input.on("keyup change input",function(evt) {
       // Ignore events which don't change our input value
       if(this.value === self._query || this.value === '' && !self._query) {
         return;
       }
       self._query = this.value;
       self._scheduleUpdate();
-    }).focus();
+    }).trigger('focus');
 
   };
 

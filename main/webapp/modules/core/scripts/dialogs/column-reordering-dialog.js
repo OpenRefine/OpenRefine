@@ -40,10 +40,10 @@ ColumnReorderingDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/column-reordering-dialog.html"));
     this._elmts = DOM.bind(dialog);
 
-    this._elmts.removeAllButton.click(function() { self._removeAll(); });
-    this._elmts.addAllButton.click(function() { self._addAll() });
-    this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.okButton.click(function() { self._commit(); });
+    this._elmts.removeAllButton.on('click',function() { self._removeAll(); });
+    this._elmts.addAllButton.on('click',function() { self._addAll() });
+    this._elmts.cancelButton.on('click',function() { self._dismiss(); });
+    this._elmts.okButton.on('click',function() { self._commit(); });
     
     this._elmts.dialogHeader.html($.i18n('core-dialogs/reorder-column'));
     this._elmts.or_dialog_dragCol.html($.i18n('core-dialogs/drag-column'));
