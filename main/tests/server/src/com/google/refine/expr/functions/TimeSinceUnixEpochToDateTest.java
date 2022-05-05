@@ -10,24 +10,24 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
-public class EpochToDateTest extends RefineTest {
+public class TimeSinceUnixEpochToDateTest extends RefineTest {
 
     long epoch = 1650547184707L; // 2022-04-21T13:19:44Z
     static Properties bindings = new Properties();
 
     @Test
-    public void testEpoch2DateOneParam() {
+    public void testTimeSinceUnixEpochToDateOneParam() {
         long epoch1 = epoch / 1000;
-        EpochToDate etd = new EpochToDate();
+        TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
         assertEquals(etd.call(bindings, new Object[] { epoch1 }).toString(), "2022-04-21T13:19:44Z");
     }
 
     @Test
-    public void testEpoch2DateTwoParam() {
+    public void testTimeSinceUnixEpochToDateTwoParam() {
         long epochSecond = epoch / 1000;
         long epochMilliSecond = epoch;
         long epochMicroSecond = epoch * 1000;
-        EpochToDate etd = new EpochToDate();
+        TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
         assertEquals(etd.call(bindings, new Object[] { epochSecond, "second" }).toString(), "2022-04-21T13:19:44Z");
         assertEquals(etd.call(bindings, new Object[] { epochMilliSecond, "millisecond" }).toString(), "2022-04-21T13:19:44Z");
         assertEquals(etd.call(bindings, new Object[] { epochMicroSecond, "microsecond" }).toString(), "2022-04-21T13:19:44Z");
@@ -36,24 +36,21 @@ public class EpochToDateTest extends RefineTest {
     @Test
     public void testDescriptionParamsReturns() {
         long epochMilliSecond = epoch;
-        EpochToDate etd = new EpochToDate();
+        TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
         assertEquals(etd.getDescription(),
-                "Returns a number converted to a date. Can parse one parameter or two parameters. When parsing one parameter, the number is the epoch second."
-                        + "When parsing two parameters, the first is the number, the second is the numbers type, such as second, millisecond, microsecond.");
+                "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'decode'.");
         assertEquals(etd.getParams(),
-                "A number of epoch second, millisecond, microsecond. The second parameter is not necessary, is the input number's type");
+                "number n, string unit (optional, defaults to 'seconds')");
         assertEquals(etd.getReturns(), "date(OffsetDateTime)");
-        assertTrue(etd.call(bindings, new Object[] { "millisecond", epochMilliSecond }) instanceof EvalError); // wrong
-                                                                                                               // // in
+        assertTrue(etd.call(bindings, new Object[] { "millisecond", epochMilliSecond }) instanceof EvalError);
     }
 
     @Test
-    public void testEpoch2DateEvalError() {
+    public void testTimeSinceUnixEpochToDateEvalError() {
         long epochMilliSecond = epoch;
-        EpochToDate etd = new EpochToDate();
+        TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
 
-        assertTrue(etd.call(bindings, new Object[] { "millisecond", epochMilliSecond }) instanceof EvalError); // wrong
-                                                                                                               // // in
+        assertTrue(etd.call(bindings, new Object[] { "millisecond", epochMilliSecond }) instanceof EvalError);
     }
 
 }

@@ -9,7 +9,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class EpochToDate implements Function {
+public class TimeSinceUnixEpochToDate implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -24,38 +24,33 @@ public class EpochToDate implements Function {
                 return date;
             } else if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
-                String type = ((String) o2).toLowerCase();
-                if (type.equals("second")) {
+                String unit = ((String) o2).toLowerCase();
+                if (unit.equals("second")) {
                     instant = Instant.ofEpochSecond(epoch);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
-                } else if (type.equals("millisecond")) {
+                } else if (unit.equals("millisecond")) {
                     instant = Instant.ofEpochSecond(epoch / 1000);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
-                } else if (type.equals("microsecond")) {
+                } else if (unit.equals("microsecond")) {
                     instant = Instant.ofEpochSecond(epoch / 1000000);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expect one argument, " +
-                "which is a number of epoch time\n" +
-                "expect two argument, the first is a epoch time(second, millisecond, microsecond), the second " +
-                "is the type");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +  " accepts a number and an optional second argument containing a string specifying the units");
     }
 
     @Override
     public String getDescription() {
-        return "Returns a number converted to a date. Can parse one parameter or two parameters. When parsing one parameter, the number is the epoch second."
-                +
-                "When parsing two parameters, the first is the number, the second is the numbers type, such as second, millisecond, microsecond.";
+        return "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'decode'.";
     }
 
     @Override
     public String getParams() {
-        return "A number of epoch second, millisecond, microsecond. The second parameter is not necessary, is the input number's type";
+        return "number n, string unit (optional, defaults to 'seconds')";
     }
 
     @Override
