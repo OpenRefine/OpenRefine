@@ -104,7 +104,8 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          $('<span>').text(cell.v).appendTo(divContent);
+        cell.v = showNonPrintableChars(cell.v);
+          $('<span>').html(cell.v).appendTo(divContent);
         }
       }
     }
@@ -116,6 +117,5 @@ Refine.PreviewTable.prototype._render = function() {
     even = !even;
     renderRow(tr, r, row, even);
   }
-  showNonPrintableChars();
 };
 

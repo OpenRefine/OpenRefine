@@ -229,21 +229,11 @@ function checkNonPrintable(content) {
   return stringIncNonPrintable;
 }
 
-function showNonPrintableChars(){
-    var rows = $('.data-table tbody > tr');
-    var columns;
-    for (var i = 0; i < rows.length; i++) {
-      columns = $(rows[i]).find('td>div>span');
-      for (var j = 0; j < columns.length; j++) {
-        var originalContent = $(columns[j]).text();
-        if (originalContent != "") {
-          var updatedContent = checkNonPrintable(originalContent);
-          $(columns[j]).html(updatedContent);
-        }
-    }
-  }
+function showNonPrintableChars(cell){
+          var cellValue = checkNonPrintable(cell);
   $(".originalCharacters").hide();
   $(".unprintableCharacters").show();
+  return cellValue;
 }
 
 
