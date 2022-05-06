@@ -104,7 +104,8 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          $('<span>').html(showNonPrintableChars(cell.v)).appendTo(divContent);
+//          $('<span>').html(showNonPrintableChars(cell.v)).appendTo(divContent);
+         $('<span>').html(cell.v).appendTo(divContent);
         }
       }
     }
