@@ -40,7 +40,8 @@ public class TimeSinceUnixEpochToDate implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +  " accepts a number and an optional second argument containing a string specifying the units");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + " accepts a number and an optional second argument containing a string specifying the units");
     }
 
     @Override

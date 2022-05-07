@@ -8,7 +8,6 @@ import java.util.Properties;
 import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
 
 public class TimeSinceUnixEpochToDateTest extends RefineTest {
 
