@@ -98,7 +98,7 @@ Refine.JsonParserUI.prototype.getOptions = function() {
   options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;
-
+  options.ignoreComments = this._optionContainerElmts.ignoreCommentsCheckbox[0].checked;
   return options;
 };
 
@@ -121,6 +121,7 @@ Refine.JsonParserUI.prototype._initialize = function() {
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
   $('#or-import-jsonParser').text($.i18n('core-index-parser/json-parser'));
+  $('#or-ignore-comments').text($.i18n('core-index-parser/ignore-comments'));
   
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
@@ -140,6 +141,9 @@ Refine.JsonParserUI.prototype._initialize = function() {
   }
   if (this._config.includeArchiveFileName) {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
+  }
+  if (this._config.ignoreComments) {
+    this._optionContainerElmts.ignoreCommentsCheckbox.prop("checked", false);
   }
   this._optionContainerElmts.pickRecordElementsButton.on('click',function() {
     self._showPickRecordNodesUI();

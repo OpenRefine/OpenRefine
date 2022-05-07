@@ -153,6 +153,7 @@
     "core-index-parser/store-source": "Store file source",
     "core-index-parser/store-archive": "Store archive file",
     "core-index-parser/preserve-empty": "Preserve empty strings",
+    "core-index-parser/ignore-comments": "Skip comments",
     "core-index-parser/trim": "Trim leading &amp; trailing whitespace from strings",
     "core-index-parser/json-parser": "Click on the first JSON { } node corresponding to the first record to load.",
     "core-index-parser/parse-every": "Parse every",
