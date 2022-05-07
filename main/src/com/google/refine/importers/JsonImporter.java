@@ -89,8 +89,19 @@ public class JsonImporter extends TreeImportingParserBase {
             try {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                JsonFactory factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS).enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();//new JsonFactory();
+                
+                boolean ignoreComments = JSONUtilities.getBoolean(options, "ignoreComments", false);
+                
+                JsonFactory factory = null;
+                
+                if(ignoreComments) {
+                	 factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS).enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
+    
+                } else {
+                	factory = new JsonFactory();
+                }
                 JsonParser parser = factory.createParser(file);
+                
                 parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
 
                 PreviewParsingState state = new PreviewParsingState();
@@ -205,8 +216,16 @@ public class JsonImporter extends TreeImportingParserBase {
             ImportingJob job, String fileSource, InputStream is,
             ImportColumnGroup rootColumnGroup, int limit, ObjectNode options, List<Exception> exceptions) {
         
+    	// In case JSON contains comments at C/C++ and YAML style, we skip them
+    	boolean ignoreComments = JSONUtilities.getBoolean(options, "ignoreComments", false);
+    	JSONTreeReader jsonTreeReader = new JSONTreeReader(is);
+    	if(ignoreComments) {
+    		jsonTreeReader.parser.enable(JsonParser.Feature.ALLOW_COMMENTS);
+    		jsonTreeReader.parser.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
+    	}
+    	
         parseOneFile(project, metadata, job, fileSource,
-            new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
+        		jsonTreeReader, rootColumnGroup, limit, options, exceptions);
     }
     
     static public class JSONTreeReader implements TreeReader {
