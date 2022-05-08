@@ -356,16 +356,25 @@ Cypress.Commands.add('visitProject', (projectId) => {
  *   * a file referenced in fixtures.js (food.mini | food.small)
  */
 Cypress.Commands.add(
-  'loadAndVisitProject',
-  (fixture, projectName = Date.now()) => {
-    cy.loadProject(fixture, projectName).then((projectId) => {
-      cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
-
-      cy.get('#left-panel', { log: false }).should('be.visible');
-      cy.get('#right-panel', { log: false }).should('be.visible');
-    });
-  }
+    'loadAndVisitProject',
+    (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
+      cy.loadProject(fixture, projectName).then((projectId) => {
+        cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+        cy.waitForProjectTable();
+      });
+    }
 );
+
+Cypress.Commands.add('waitForProjectTable', (numRows) => {
+  cy.url().should('contain', '/project?project=')
+  cy.get('#left-panel', { log: false }).should('be.visible');
+  cy.get('#right-panel', { log: false }).should('be.visible');
+  cy.get('#project-title').should('exist');
+  cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
+  if (arguments.length == 1) {
+    cy.get('#summary-bar').should('to.contain', numRows+' rows');
+  }
+});
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
   cy.get('#notification-container').should('be.visible');
