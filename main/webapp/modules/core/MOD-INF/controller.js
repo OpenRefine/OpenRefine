@@ -397,8 +397,6 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js",
-
-        "scripts/index/system-info.js",
     ])
   );
 
