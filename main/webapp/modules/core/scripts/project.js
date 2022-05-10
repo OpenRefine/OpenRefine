@@ -591,6 +591,45 @@ Refine.getPermanentLink = function() {
   return "project?" + params.join("&");
 };
 
+(function() {
+  const systemInfo = {
+    osVersion: "",
+    availableMemory: 0,
+    totalMemory: 0,
+  };
+
+  systemInfo.byteToMB = function (bytes) {
+    return (bytes / 1024 / 1024).toFixed(2);
+  };
+
+  systemInfo.memoryWarn = function() {
+    return (this.availableMemory/this.totalMemory) * 100 < 5;
+  }
+
+  let intervalId;
+  intervalId = setInterval(function() {
+    $.ajax({
+      url: "command/core/get-system-info?",
+      type: "GET",
+      async: false,
+      data: {
+      },
+      success: function(data) {
+        systemInfo.osVersion = data["os_version"];
+        systemInfo.availableMemory = data["available_memory"];
+        systemInfo.totalMemory = data["total_memory"];
+      }
+    }).fail(function(jqXhr, textStatus, errorThrown ) {
+      alert( textStatus + ':' + errorThrown );
+      clearInterval(intervalId);
+    });
+
+    if(systemInfo.memoryWarn()) {
+      alert(`Your memory is running out\n`)
+    }
+  }, 1000)
+})();
+
 /*
  * Loader
  */
