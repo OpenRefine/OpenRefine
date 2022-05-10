@@ -372,7 +372,7 @@
                  * current handler
                  */
                 if ($.imgAreaSelect.onKeyPress != docKeyPress)
-                    $(document).unbind($.imgAreaSelect.keyPress,
+                    $(document).off($.imgAreaSelect.keyPress,
                         $.imgAreaSelect.onKeyPress);
 
                 if (options.keys)
@@ -906,7 +906,7 @@
                      * The font-size property needs to be set to zero, otherwise
                      * Internet Explorer makes the handles too large
                      */
-                    fontSize: 0,
+                    fontSize: '0',
                     zIndex: zIndex + 1 || 1
                 });
 
@@ -985,24 +985,24 @@
             /* Calculate the aspect ratio factor */
             aspectRatio = (d = (options.aspectRatio || '').split(/:/))[0] / d[1];
 
-            $img.add($outer).unbind('mousedown', imgMouseDown);
+            $img.add($outer).off('mousedown', imgMouseDown);
 
             if (options.disable || options.enable === false) {
                 /* Disable the plugin */
-                $box.unbind('mousemove', areaMouseMove).unbind('mousedown', areaMouseDown);
-                $(window).unbind('resize', windowResize);
+                $box.off('mousemove', areaMouseMove).off('mousedown', areaMouseDown);
+                $(window).off('resize', windowResize);
             }
             else {
                 if (options.enable || options.disable === false) {
                     /* Enable the plugin */
                     if (options.resizable || options.movable)
-                        $box.mousemove(areaMouseMove).mousedown(areaMouseDown);
+                        $box.on('mousemove',areaMouseMove).on('mousedown',areaMouseDown);
 
-                    $(window).resize(windowResize);
+                    $(window).on('resize',windowResize);
                 }
 
                 if (!options.persistent)
-                    $img.add($outer).mousedown(imgMouseDown);
+                    $img.add($outer).on('mousedown',imgMouseDown);
             }
 
             options.enable = options.disable = undefined;
@@ -1135,7 +1135,7 @@
         $box.add($outer).css({ visibility: 'hidden', position: position,
             overflow: 'hidden', zIndex: zIndex || '0' });
         $box.css({ zIndex: zIndex + 2 || 2 });
-        $area.add($border).css({ position: 'absolute', fontSize: 0 });
+        $area.add($border).css({ position: 'absolute', fontSize: '0' });
 
         /*
          * If the image has been fully loaded, or if it is not really an image (eg.

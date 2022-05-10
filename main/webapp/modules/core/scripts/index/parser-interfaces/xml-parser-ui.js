@@ -103,7 +103,7 @@ Refine.XmlParserUI.prototype.getOptions = function() {
 Refine.XmlParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/xml-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });

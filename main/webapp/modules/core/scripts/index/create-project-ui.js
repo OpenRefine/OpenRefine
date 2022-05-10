@@ -178,7 +178,7 @@ Refine.CreateProjectUI.prototype.showImportProgressPanel = function(progressMess
   $('#create-project-progress-message-right').empty();
   $('#create-project-progress-timing').empty();
 
-  $('#create-project-progress-cancel-button').unbind().on('click',onCancel);
+  $('#create-project-progress-cancel-button').off().on('click',onCancel);
 };
 
 Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID, checkDone, callback, onError) {
