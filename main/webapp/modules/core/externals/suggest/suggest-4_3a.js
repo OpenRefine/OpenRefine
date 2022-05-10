@@ -76,7 +76,7 @@
         };
       }
     }, 1);
-    div.bind("remove", function() {
+    div.on("remove", function() {
       clearTimeout(t);
     });
     div.remove();

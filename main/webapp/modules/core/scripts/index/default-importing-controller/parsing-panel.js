@@ -80,14 +80,14 @@ Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = functio
     $(window).off("resize", this._parsingPanelResizer);
   }
 
-  this._parsingPanel.unbind().empty();
+  this._parsingPanel.off().empty();
   delete this._parsingPanelElmts;
 };
 
 Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   var self = this;
 
-  this._parsingPanel.unbind().empty().html(
+  this._parsingPanel.off().empty().html(
       DOM.loadHTML("core", "scripts/index/default-importing-controller/parsing-panel.html"));
 
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);

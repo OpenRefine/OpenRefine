@@ -118,14 +118,14 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
 Refine.ExcelParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/excel-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });  
+  this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });  
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
-  this._optionContainerElmts.selectAllButton.click(function() { self._selectAll(); }); 
+  this._optionContainerElmts.selectAllButton.on('click',function() { self._selectAll(); }); 
   this._optionContainerElmts.selectAllButton.html($.i18n('core-buttons/select-all'));
-  this._optionContainerElmts.deselectAllButton.click(function() { self._deselectAll(); }); 
+  this._optionContainerElmts.deselectAllButton.on('click',function() { self._deselectAll(); }); 
   this._optionContainerElmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
   $('#or-import-worksheet').text($.i18n('core-index-import/import-worksheet'));

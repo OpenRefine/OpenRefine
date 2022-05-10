@@ -120,10 +120,10 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
 Refine.FixedWidthParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/fixed-width-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self.updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click',function() { self.updatePreview(); });
 
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));

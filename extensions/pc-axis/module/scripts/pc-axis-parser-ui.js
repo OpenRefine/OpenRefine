@@ -117,7 +117,7 @@ Refine.PCAxisParserUI.prototype.getOptions = function() {
 Refine.PCAxisParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("pc-axis", "scripts/pc-axis-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });
