@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
-import oshi.hardware.HardwareAbstractionLayer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 public class GetSystemInfoCommand extends Command {
     private static final SystemInfo systemInfo = new SystemInfo();
@@ -27,20 +25,15 @@ public class GetSystemInfoCommand extends Command {
         @JsonProperty("total_memory")
         protected Long totalMemory = systemMemory.getTotal();
 
-        @JsonProperty("date")
-        protected String date = new Date().toString();
-
-        @JsonProperty("hostname")
-        protected String hostname;
-
-        public SysInfo(String hostname) {
-            this.hostname = hostname;
-        }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        respondJSON(response, new SysInfo());
+    }
 
-        respondJSON(response, new SysInfo(request.getServerName()));
+    @Override
+    public boolean logRequests() {
+        return false;
     }
 }
