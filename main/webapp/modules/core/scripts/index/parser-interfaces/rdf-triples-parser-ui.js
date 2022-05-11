@@ -102,8 +102,8 @@ Refine.RdfTriplesParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.RdfTriplesParserUI.prototype._scheduleUpdatePreview = function() {

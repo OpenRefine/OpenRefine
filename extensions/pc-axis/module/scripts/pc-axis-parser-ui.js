@@ -155,8 +155,8 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
       self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.PCAxisParserUI.prototype._scheduleUpdatePreview = function() {
@@ -182,7 +182,7 @@ Refine.PCAxisParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       });
     }
   });

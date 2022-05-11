@@ -156,15 +156,15 @@ Refine.JsonParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
   var ANONYMOUS_NODE_NAME = '_';
   var self = this;
 
-  this._dataContainer.unbind().empty().html(
+  this._dataContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/json-parser-select-ui.html"));
 
   var elmts = DOM.bind(this._dataContainer);
@@ -183,7 +183,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     return a.length > 0 && a[0] == elmt[0];
   };
   var registerEvents = function(elmt, path) {
-    elmt.bind('mouseover', function(evt) {
+    elmt.on('mouseover', function(evt) {
       if (hittest(evt, elmt)) {
         elmts.domContainer.find('.highlight').removeClass('highlight');
         elmt.addClass('highlight');
@@ -292,7 +292,7 @@ Refine.JsonParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       }, 100);
     }
   });
