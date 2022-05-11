@@ -206,8 +206,8 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
@@ -271,7 +271,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   var scrollTop = this._elmt[0].scrollTop;
   var scrollLeft = this._elmt[0].scrollLeft;
 
-  this._elmt.unbind().empty();
+  this._elmt.off().empty();
 
   var self = this;
   var container = $('<div>')
@@ -424,13 +424,13 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
 
     positionColumnSeparator(outer, charIndex);
 
-    outer.mouseover(function() {
+    outer.on('mouseover',function() {
       newSeparator.hide();
     })
-    .mouseout(function() {
+    .on('mouseout',function() {
       newSeparator.show();
     })
-    .mousedown(function() {
+    .on('mousedown',function() {
       var mouseMove = function(evt) {
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -457,7 +457,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
       container.bind('mouseup', mouseUp);
     });
 
-    close.click(function() {
+    close.on('click',function() {
       columnCharIndexes[index] = index > 0 ? columnCharIndexes[index - 1] : 0;
       updatePreview();
     });
@@ -471,15 +471,15 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   }
 
   container
-  .mouseout(function(evt) {
+  .on('mouseout',function(evt) {
     newSeparator.hide();
   })
-  .mousemove(function(evt) {
+  .on('mousemove',function(evt) {
     var offset = evt.pageX - container.offset().left;
     var newCharIndex = Math.round((offset - pixelOffset) / pixelsPerChar);
     positionColumnSeparator(newSeparator.show(), newCharIndex);
   });
-  newSeparator.mousedown(function(evt) {
+  newSeparator.on('mousedown',function(evt) {
     var newCharIndex = computeCharIndex(evt);
     columnCharIndexes.push(newCharIndex);
     updatePreview();

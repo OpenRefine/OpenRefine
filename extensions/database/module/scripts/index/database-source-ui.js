@@ -524,5 +524,5 @@ Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
 
   $( "#editConnectionControlDiv" ).hide();
   $( "#newConnectionControlDiv" ).show();
-  $('#connectionName').removeAttr('readonly');
+  $('#connectionName').prop('readonly',false);
 };

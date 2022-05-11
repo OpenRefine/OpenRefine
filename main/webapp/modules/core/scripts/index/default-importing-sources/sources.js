@@ -111,7 +111,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
     let trashButton = $('<a href="javascript:{}"><span class="ui-icon ui-icon-trash"></span></a>');
     trashButton.attr("title",$.i18n("core-index-import/remove-row"));
     newRow.find('td').append(trashButton);
-    trashButton.click(function (e) {
+    trashButton.on('click',function (e) {
       e.preventDefault();
       $(this).parent().parent().remove();
     })
@@ -120,7 +120,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 UrlImportingSourceUI.prototype.focus = function() {
-  this._elmts.urlInput.focus();
+  this._elmts.urlInput.trigger('focus');
 };
 
 function ClipboardImportingSourceUI(controller) {
