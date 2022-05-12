@@ -73,8 +73,8 @@ import com.google.refine.Configurations;
  */
 public class Refine {
     
-    static private final String DEFAULT_IFACE = "127.0.0.1";
-    static private final int DEFAULT_PORT = 3333;
+    private static final String DEFAULT_IFACE = "127.0.0.1";
+    private static final int DEFAULT_PORT = 3333;
         
     static private int port;
     static private String host;

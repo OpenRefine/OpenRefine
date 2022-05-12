@@ -73,7 +73,7 @@ public class RefineServlet extends Butterfly {
 
     static final long serialVersionUID = 2386057901503517403L;
 
-    static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
     private File tempDir = null;
 
     static private RefineServlet s_singleton;
