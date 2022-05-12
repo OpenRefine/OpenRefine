@@ -12,6 +12,7 @@ logs
 build/
 dist/
 server/classes/
+main/webapp/package-lock.json
 main/webapp/WEB-INF/classes/
 main/tests/server/classes/
 main/test-output/
