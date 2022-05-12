@@ -27,8 +27,9 @@ To work with OpenRefine, your Wikibase instance needs an associated reconciliati
 Here is the manifest of Wikimedia Commons:
 
 ```json
+
 {
-  "version": "2.0",
+  "version": "2.1",
   "mediawiki": {
     "name": "Wikimedia Commons",
     "root": "https://commons.wikimedia.org/wiki/",
@@ -38,8 +39,6 @@ Here is the manifest of Wikimedia Commons:
   "wikibase": {
     "site_iri": "https://commons.wikimedia.org/entity/",
     "maxlag": 5,
-    "max_edits_per_minute": 60,
-    "tag": "openrefine-${version}",
     "properties": {
       "instance_of": "P31",
       "subclass_of": "P279"
@@ -73,6 +72,9 @@ Here is the manifest of Wikimedia Commons:
   },
   "editgroups": {
     "url_schema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])"
+  },
+    "reconciliation": {
+    "endpoint": "https://commonsreconcile.toolforge.org/${lang}/api"
   }
 }
 ```
