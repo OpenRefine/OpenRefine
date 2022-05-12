@@ -203,7 +203,7 @@ Some of the most common keys (with their defaults) are:
 |Description|Argument|Syntax example|
 |---|---|---|
 |The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]|
-|The workspace director|`-Drefine.data_dir`|/folder/another/|
+|The workspace directory|`-Drefine.data_dir`|/where/you/want/the/workspace/|
 |Development mode|`-Drefine.development`|false|
 |Headless mode|`-Drefine.headless`|false|
 |IP|`-Drefine.host`|127.0.0.1|
