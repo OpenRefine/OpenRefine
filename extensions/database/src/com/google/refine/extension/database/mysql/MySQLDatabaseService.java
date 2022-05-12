@@ -115,6 +115,8 @@ public class MySQLDatabaseService extends DatabaseService {
                 DatabaseInfo dbInfo = new DatabaseInfo();
                 dbInfo.setColumns(columns);
                 dbInfo.setRows(rows);
+                queryResult.close();
+                statement.close();
                 return dbInfo;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
