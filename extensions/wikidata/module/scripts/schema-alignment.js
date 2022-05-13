@@ -264,7 +264,7 @@ var beforeUnload = function(e) {
   }
 };
 
-$(window).bind('beforeunload', beforeUnload);
+$(window).on('beforeunload', beforeUnload);
 
 SchemaAlignment._reset = function(schema) {
   if (!schema) {
@@ -427,7 +427,7 @@ SchemaAlignment._addItem = function(json) {
 
   var item = $('<div></div>')
 	.addClass('wbs-entity')
-	.addClass('wbs-mediainfo');
+	.addClass('wbs-item');
   $('#schema-alignment-entity-edits-container').append(item);
   var deleteToolbar = $('<div></div>').addClass('wbs-toolbar')
         .attr('style', 'margin-top: 10px')

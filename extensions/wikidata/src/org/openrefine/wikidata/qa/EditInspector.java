@@ -130,7 +130,7 @@ public class EditInspector {
             String key = scrutinizer.getClass().getName();
             scrutinizers.put(key, scrutinizer);
         } else {
-            logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
+            logger.debug("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
                     "due to missing necessary constraint configurations in the Wikibase manifest");
         }
     }

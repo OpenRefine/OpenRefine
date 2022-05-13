@@ -46,7 +46,7 @@ Refine.DefaultImportingController.prototype._showFileSelectionPanel = function()
 
 Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = function() {
   if (this._fileSelectionPanelResizer) {
-    $(window).unbind("resize", this._fileSelectionPanelResizer);
+    $(window).off("resize", this._fileSelectionPanelResizer);
   }
   this._fileSelectionPanel.unbind().empty();
 };
@@ -96,7 +96,7 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
     .css("height", (height - headerHeight - DOM.getVPaddings(elmts.filePanel)) + "px");
   };
 
-  $(window).resize(this._fileSelectionPanelResizer);
+  $(window).on('resize',this._fileSelectionPanelResizer);
   this._fileSelectionPanelResizer();
 };
 
