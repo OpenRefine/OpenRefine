@@ -35,7 +35,7 @@ We are aware of some minor rendering and performance issues on other browsers su
 
 ### Release versions {#release-versions}
 
-OpenRefine always has a [latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest), as well as some more recent developments available in beta, release candidate, or [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases/releases). If you are installing for the first time, we recommend [the latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest).
+OpenRefine always has a [latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest), as well as some more recent developments available in beta, release candidate, or [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases). If you are installing for the first time, we recommend [the latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest).
 
 If you wish to use an extension that is only compatible with an earlier version of OpenRefine, and do not require the latest features, you may find that [an older stable version is best for you](https://github.com/OpenRefine/OpenRefine/releases) in our list of releases. Look at later releases to see which security vulnerabilities are being fixed, in order to assess your own risk tolerance for using earlier versions. Look for “final release” versions instead of “beta” or “release candidate” versions.
 
@@ -45,7 +45,7 @@ If you need a recently developed function, and are willing to risk some untested
 
 “Beta” and “release candidate” versions may both have unreported bugs and are most suitable for people who are willing to help us troubleshoot these versions by [creating bug reports](https://github.com/OpenRefine/OpenRefine/issues).  
 
-For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases/releases). These are created with every commit.
+For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases). These are created with every commit.
 
 #### What’s changed {#whats-changed}
 

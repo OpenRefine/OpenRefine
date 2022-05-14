@@ -75,9 +75,9 @@ DataTableCellUI.prototype._render = function() {
   editLink.addEventListener('click', function() { self._startEdit(this); });
 
   $(this._td).empty()
-  .unbind()
-  .mouseenter(function() { editLink.style.visibility = "visible" })
-  .mouseleave(function() { editLink.style.visibility = "hidden" });
+  .off()
+  .on('mouseenter',function() { editLink.style.visibility = "visible" })
+  .on('mouseleave',function() { editLink.style.visibility = "hidden" });
 
   if (!cell || ("v" in cell && cell.v === null)) {
     var nullSpan = document.createElement('span');
@@ -140,7 +140,7 @@ DataTableCellUI.prototype._render = function() {
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContentRecon).click(function(evt) {
+      .appendTo(divContentRecon).on('click',function(evt) {
         self._doRematch();
       });
     } else if (r.j == "matched" && "m" in r && r.m !== null) {
@@ -163,7 +163,7 @@ DataTableCellUI.prototype._render = function() {
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContentRecon)
-      .click(function(evt) {
+      .on('click',function(evt) {
         self._doRematch();
       });
     } else {
@@ -180,14 +180,14 @@ DataTableCellUI.prototype._render = function() {
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
             .attr("title", $.i18n('core-views/match-all-cells'))
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click',function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
             .attr("title", $.i18n('core-views/match-this-cell') )
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click',function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
 
@@ -221,14 +221,14 @@ DataTableCellUI.prototype._render = function() {
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match-similar")
         .attr("title", $.i18n('core-views/create-topic-cells'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click',function(evt) {
           self._doMatchNewTopicToSimilarCells();
         });
 
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match")
         .attr("title", $.i18n('core-views/create-topic-cell'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click',function(evt) {
           self._doMatchNewTopicToOneCell();
         });
 
@@ -546,12 +546,12 @@ DataTableCellUI.prototype._previewOnHover = function(service, candidate, hoverEl
 
     if (preview) {
         var dismissCallback = null;
-        hoverElement.hover(function(evt) {
+        hoverElement.on('mouseenter',function(evt) {
         if (!evt.metaKey && !evt.ctrlKey) {
             dismissCallback = self._previewCandidateTopic(candidate, coreElement, preview, showActions);
             evt.preventDefault();
         }
-        }, function(evt) {
+        }).on('mouseleave',function(evt) {
         if(dismissCallback !== null) {
             dismissCallback();
         }
@@ -661,11 +661,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     }
   };
 
-  elmts.okButton.click(commit);
-  elmts.okallButton.click(commit);
+  elmts.okButton.on('click',commit);
+  elmts.okallButton.on('click',commit);
   elmts.textarea
   .text(originalContent)
-  .keydown(function(evt) {
+  .on('keydown',function(evt) {
     if (!evt.shiftKey) {
       if (evt.keyCode == 13) {
         if (evt.ctrlKey) {
@@ -678,10 +678,10 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       }
     }
   })
-  .select()
-  .focus();
+  .trigger('select')
+  .trigger('focus');
 
-  elmts.cancelButton.click(function() {
+  elmts.cancelButton.on('click',function() {
     MenuSystem.dismissAll();
   });
 };

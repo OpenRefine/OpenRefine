@@ -101,7 +101,10 @@ import com.google.refine.expr.functions.math.Tan;
 import com.google.refine.expr.functions.math.Tanh;
 import com.google.refine.expr.functions.strings.Chomp;
 import com.google.refine.expr.functions.strings.Contains;
+import com.google.refine.expr.functions.strings.Decode;
+import com.google.refine.expr.functions.strings.DetectLanguage;
 import com.google.refine.expr.functions.strings.Diff;
+import com.google.refine.expr.functions.strings.Encode;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
 import com.google.refine.expr.functions.strings.Find;
@@ -214,6 +217,8 @@ public class ControlFunctionRegistry {
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
 
+        registerFunction("detectLanguage", new DetectLanguage());
+
         registerFunction("hasField", new HasField());
         registerFunction("get", new Get());
         registerFunction("slice", new Slice());
@@ -232,6 +237,8 @@ public class ControlFunctionRegistry {
         registerFunction("contains", new Contains());
         registerFunction("escape", new Escape());
         registerFunction("unescape", new Unescape());
+        registerFunction("encode", new Encode());
+        registerFunction("decode", new Decode());
         registerFunction("length", new Length());
         registerFunction("sha1", new SHA1());
         registerFunction("md5", new MD5());
