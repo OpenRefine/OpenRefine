@@ -625,7 +625,7 @@ Refine.getPermanentLink = function() {
     });
 
     if(systemInfo.memoryWarn()) {
-      alert(`Your memory is running out\n`)
+      alert(`Your memory is running out. ${systemInfo.byteToMB(systemInfo.availableMemory)}MB is left.\n`)
     }
   }, 1000)
 })();
