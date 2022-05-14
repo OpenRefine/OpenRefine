@@ -14,11 +14,11 @@ WikibaseDialog.launch = function () {
 
   let level = DialogSystem.showDialog(frame);
 
-  elmts.closeButton.click(function () {
+  elmts.closeButton.on('click',function () {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.addButton.click(function () {
+  elmts.addButton.on('click',function () {
     WikibaseDialog.addWikibaseManifest();
   });
 };
@@ -75,11 +75,11 @@ WikibaseDialog.addWikibaseManifest = function () {
 
   let level = DialogSystem.showDialog(frame);
 
-  elmts.cancelButton.click(function () {
+  elmts.cancelButton.on('click',function () {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.addButton.click(function () {
+  elmts.addButton.on('click',function () {
     let addManifest = function (manifest) {
       if (!WikibaseDialog.validateManifest(manifest)) {
         return;

@@ -169,9 +169,9 @@ ProcessPanel.prototype._render = function(newData) {
       this._elmts.countSpan.empty();
     }
     this._elmts.cancelLink
-      .unbind()
+      .off()
       .text($.i18n('core-project/cancel-all', processes.length))
-      .click(function() {
+      .on('click',function() {
         self._cancelAll();
         $(this).text($.i18n('core-project/canceling')).unbind();
       });

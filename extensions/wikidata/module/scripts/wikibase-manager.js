@@ -265,10 +265,10 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   $.ajax(manifestURL, {
     "dataType": "json",
     "timeout": 5000
-  }).success(function (data) {
+  }).done(function (data) {
     dismissBusy();
     _onSuccess(data);
-  }).error(function (jqXHR, textStatus, errorThrown) {
+  }).fail(function (jqXHR, textStatus, errorThrown) {
     dismissBusy();
     if (!silent) {
       alert($.i18n("wikibase-management/error-contact")+": " + textStatus + " : " + errorThrown + " - " + manifestURL);
