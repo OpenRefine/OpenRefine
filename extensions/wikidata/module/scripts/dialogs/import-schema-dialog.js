@@ -18,7 +18,7 @@ ImportSchemaDialog.launch = function() {
   };
 
 
-  frame.find('.cancel-button').click(function() {
+  frame.find('.cancel-button').on('click',function() {
      dismiss();
   });
 
@@ -33,7 +33,7 @@ ImportSchemaDialog.launch = function() {
      freader.readAsText(file);
   });
 
-  elmts.importButton.click(function() {
+  elmts.importButton.on('click',function() {
     var schema = null;
     try {
        schema = JSON.parse(elmts.schemaTextarea.val());
