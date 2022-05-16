@@ -46,7 +46,7 @@ public class TimeSinceUnixEpochToDate implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'decode'.";
+        return "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'second'.";
     }
 
     @Override
