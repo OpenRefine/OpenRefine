@@ -362,8 +362,13 @@ public class FileProjectManager extends ProjectManager  {
         if (loadFromFile(new File(_workspaceDir, "workspace.json"))) {
             return;
         }
-
-        logger.error("Failed to load workspace");
+        if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) {
+            return;
+        }
+        if (loadFromFile(new File(_workspaceDir, "workspace.old.json"))) {
+            return;
+        }
+        logger.error("Failed to load workspace from any attempted alternatives.");
     }
     
     protected boolean loadFromFile(File file) {
