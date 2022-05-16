@@ -490,6 +490,10 @@ OpenRefine supports the following values for timeUnit:
 | nanos | Nanoseconds | Number | value.datePart("n") → 789000 |
 | time | Milliseconds between input and the [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time) | Number | value.datePart("time") → 1394775004000 |
 
+###### timeSinceUnixEpochToDate(duration, scale)
+
+Converts a time as measured by the duration since the Unix Epoch (1970-01-01) to a date object. The second parameter indicates the unit of the duration, and can be `"second"`, `"millisecond"` or `"microsecond"`. If the unit is not provided, it is assumed to be `"second"`.
+
 ## Math functions {#math-functions}
 
 For integer division and precision, you can use simple evaluations such as `1 / 2`, which is equivalent to `floor(1/2)` - that is, it returns only whole number results. If either operand is a floating point number, they both get promoted to floating point and a floating point result is returned. You can use `1 / 2.0` or `1.0 / 2` or `1.0 * x / y` (if you're working with variables of unknown contents).
