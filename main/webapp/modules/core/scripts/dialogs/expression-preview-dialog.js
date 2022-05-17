@@ -295,7 +295,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                             renderEntry(self,tr,entry);
                             self._renderStarredExpressionsTab();
                         },
-                        "json"
+                        ""
                     );
                 });
         
@@ -332,7 +332,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function
         function(data) {
             self._renderStarredExpressions(data);
         },
-        "json"
+        ""
     );
 };
 
