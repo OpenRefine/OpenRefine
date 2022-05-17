@@ -251,7 +251,7 @@ DataTableCellUI.prototype._render = function() {
         var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
         if (addSuggest) {
           $('<a href="javascript:{}"></a>')
-          .click(function(evt) {
+          .on('click',function(evt) {
             self._searchForMatch(suggestOptions);
             return false;
           })
@@ -425,10 +425,10 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     dismiss();
   };
 
-  elmts.okButton.click(commit);
-  elmts.newButton.click(commitNew);
-  elmts.clearButton.click(commitClear);
-  elmts.cancelButton.click(dismiss);
+  elmts.okButton.on('click',commit);
+  elmts.newButton.on('click',commitNew);
+  elmts.clearButton.on('click',commitClear);
+  elmts.cancelButton.on('click',dismiss);
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
@@ -441,11 +441,11 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.input
   .val(this._cell.v)
   .suggest(suggestOptions2)
-  .bind("fb-select", function(e, data) {
+  .on("fb-select", function(e, data) {
     match = data;
     commit();
   })
-  .focus()
+  .trigger('focus')
   .data("suggest").textchange();
 };
 
@@ -509,7 +509,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
   var dismissMenu = function() {
      fakeMenu.remove();
-     fakeMenu.unbind();  
+     fakeMenu.off();  
   };
 
   if (showActions) {
