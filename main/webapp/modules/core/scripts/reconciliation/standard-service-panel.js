@@ -84,7 +84,9 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 };
 
 ReconStandardServicePanel.prototype._constructUI = function() {
+  console.log("passa para aqui")
   var self = this;
+  console.log(self._service)
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   
@@ -97,6 +99,37 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_max_candidates.html($.i18n('core-recon/max-candidates'));
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
+  console.log(this._service.url)
+  $.ajax({
+      async: false,
+      type: "POST",
+      url: this._service.url,
+      body: { "dataType" : "json",
+        "timeout":5000
+      }}
+  )
+      .success(function(data, textStatus, jqXHR) {
+        //registerService(data, "json");
+        console.log("deu certo")
+        console.log(data)
+      })
+      .error(function(jqXHR, textStatus, errorThrown) {
+        console.log("deu merda")
+      });
+
+  $.ajax({
+    async: false,
+    url: "command/core/get-preference?" + $.param({
+      name: "reconciliation.standardServices"
+    }),
+    success: function(data) {
+      console.log("get preference")
+      console.log(data.value)
+    },
+    dataType: "json"
+  });
+
+
 
   this._guessTypes(function() {
     self._populatePanel();

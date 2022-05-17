@@ -174,7 +174,7 @@ ReconDialog.prototype._selectService = function(record) {
             oldRecord.handler.deactivate();
           }
         }
-
+        console.log("buenos dias")
         this._elmts.servicePanelMessage.hide();
 
         record.selector.addClass("selected");
