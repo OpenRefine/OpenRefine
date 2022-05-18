@@ -99,6 +99,7 @@
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>4.5.1</mockito.version>
+    <markdowngenerator.version>1.3.1.1</markdowngenerator.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -120,7 +121,7 @@
   <build>
     <!-- It is nice for "mvn" with no arguments to do a reasonable default. -->
     <defaultGoal>install</defaultGoal>
-    
+
     <finalName>openrefine</finalName>
     <resources>
     </resources>
@@ -216,7 +217,7 @@
                                 <include>*.exec</include>
                             </includes>
                         </fileSet>
-                     </fileSets> 
+                     </fileSets>
                 </configuration>
              </execution>
         </executions>
@@ -290,7 +291,7 @@
                     </artifacts>
                 </configuration>
             </execution>
-            
+
             <!-- Attach the zip file for windows, without embedded JRE -->
             <execution>
                 <id>attach-win-without-jre</id>
@@ -309,7 +310,7 @@
                     </artifacts>
                 </configuration>
             </execution>
-            
+
             <!-- Attach the zip file for windows, with embedded JRE -->
             <execution>
                 <id>attach-win-with-jre</id>
@@ -379,5 +380,5 @@
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </snapshotRepository>
   </distributionManagement>
- 
+
 </project>

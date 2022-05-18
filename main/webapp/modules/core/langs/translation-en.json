@@ -373,6 +373,7 @@
     "core-project/excel": "Excel (.xls)",
     "core-project/excel-xml": "Excel 2007+ (.xlsx)",
     "core-project/odf": "ODF spreadsheet",
+    "core-project/md": "Markdown",
     "core-project/custom-tabular": "Custom tabular exporter…",
     "core-project/sql-export": "SQL Exporter…",
     "core-project/templating": "Templating…",
