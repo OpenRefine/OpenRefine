@@ -32,7 +32,10 @@ import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
@@ -102,6 +105,8 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
             Assert.assertEquals(expected, result);
         } catch (SkipSchemaExpressionException e) {
             Assert.fail("Value was skipped by evaluator");
+        } catch (QAWarningException e) {
+            Assert.fail("The evaluator threw a QA warning instead");
         }
     }
 
@@ -117,6 +122,22 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
             Assert.fail("Value was not skipped by evaluator");
         } catch (SkipSchemaExpressionException e) {
             return;
+        } catch (QAWarningException e) {
+            Assert.fail("The evaluator threw a QA warning instead");
+        }
+    }
+
+    /**
+     * Test that a particular expression raises a QA warning at evaluation time (therefore not yielding any result).
+     */
+    public void evaluatesToWarning(QAWarning warning, WbExpression<T> expression) {
+        try {
+            expression.evaluate(ctxt);
+            Assert.fail("The evaluator returned a value, not a warning");
+        } catch (SkipSchemaExpressionException e) {
+            Assert.fail("The value was skipped by the evaluator");
+        } catch (QAWarningException e) {
+            Assert.assertEquals(e.getWarning(), warning);
         }
     }
 

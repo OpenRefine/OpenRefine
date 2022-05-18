@@ -4,13 +4,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.WbNameDescExpr.NameDescType;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,6 +31,8 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
+    
+    public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-mediainfo-subject";
     
     @JsonCreator
     public WbMediaInfoEditExpr(
@@ -49,8 +55,13 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
 
 
 	@Override
-	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
+	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
+        if (!(subjectId instanceof MediaInfoIdValue)) {
+        	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        	warning.setProperty("example", subjectId.getId());
+        	throw new QAWarningException(warning);
+        }
 		MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {

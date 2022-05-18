@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -60,7 +61,7 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
 
     @Override
     public QuantityValue evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         StringValue amount = getAmountExpr().evaluate(ctxt);
         // we know the amount is nonnull, nonempty here
 
