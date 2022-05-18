@@ -110,29 +110,29 @@ public class MediaInfoEditTest {
         assertEquals(update.getFileName(), "Foo.png");
         assertEquals(update.getFilePath(), "C:\\Foo.png");
     }
-    
+
     @Test
     public void testUploadNewFile() throws MediaWikiApiErrorException, IOException {
-    	String url = "https://my.site.com/file.png";
-		MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
-    			.addStatement(statementUpdate1New)
-    			.addFileName("Foo.png")
+        String url = "https://my.site.com/file.png";
+        MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
+                .addStatement(statementUpdate1New)
+                .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
                 .build();
-		
-		// set up dependencies
-    	WikibaseDataEditor editor = mock(WikibaseDataEditor.class);
-		MediaFileUtils mediaFileUtils = mock(MediaFileUtils.class);
-		MediaUploadResponse response = mock(MediaUploadResponse.class);
-		MediaInfoIdValue mid = Datamodel.makeMediaInfoIdValue("M1234", "http://www.wikidata.org/entity/");
-		when(response.getMid(any(), any()))
-			.thenReturn(mid);
-		when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}", "summary", Collections.emptyList()))
-		.thenReturn(response);
-		
-		MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
-		assertEquals(returnedMid, mid);
+
+        // set up dependencies
+        WikibaseDataEditor editor = mock(WikibaseDataEditor.class);
+        MediaFileUtils mediaFileUtils = mock(MediaFileUtils.class);
+        MediaUploadResponse response = mock(MediaUploadResponse.class);
+        MediaInfoIdValue mid = Datamodel.makeMediaInfoIdValue("M1234", "http://www.wikidata.org/entity/");
+        when(response.getMid(any(), any()))
+                .thenReturn(mid);
+        when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}", "summary", Collections.emptyList()))
+                .thenReturn(response);
+
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
+        assertEquals(returnedMid, mid);
     }
 
     @Test

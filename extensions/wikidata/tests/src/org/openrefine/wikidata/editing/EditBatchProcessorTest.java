@@ -146,7 +146,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize, 60);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
+                60);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);
@@ -196,7 +197,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toMids(secondBatch))).thenReturn(toMapMediaInfo(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize, 60);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
+                60);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);

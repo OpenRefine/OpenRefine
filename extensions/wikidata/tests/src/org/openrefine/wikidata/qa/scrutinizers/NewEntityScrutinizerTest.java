@@ -87,16 +87,16 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.deletedStatementsType);
     }
-    
+
     @Test
     public void testNewMedia() {
-    	MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
-    			.build();
-    	scrutinize(update);
-    	assertWarningsRaised(NewEntityScrutinizer.newMediaType,
-    			NewEntityScrutinizer.newMediaWithoutFileNameType,
-    			NewEntityScrutinizer.newMediaWithoutFilePathType,
-    			NewEntityScrutinizer.newMediaWithoutWikitextType);
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .build();
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType,
+                NewEntityScrutinizer.newMediaWithoutFileNameType,
+                NewEntityScrutinizer.newMediaWithoutFilePathType,
+                NewEntityScrutinizer.newMediaWithoutWikitextType);
     }
 
 }

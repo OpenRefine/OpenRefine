@@ -54,9 +54,9 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         expr = new WbMediaInfoEditExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr), null, null, null);
 
         jsonRepresentation = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
-        		+ "\"filePath\":null,"
-        		+ "\"fileName\":null,"
-        		+ "\"wikitext\":null,"
+                + "\"filePath\":null,"
+                + "\"fileName\":null,"
+                + "\"wikitext\":null,"
                 + "\"nameDescs\":[{\"name_type\":\"LABEL\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
@@ -98,79 +98,79 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         MediaInfoEdit result = new MediaInfoEditBuilder(subject).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
-    
+
     @Test
     public void testFilePathSerialization() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
-    	String expressionJson = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
-        		+ "\"filePath\":{\"type\":\"wbstringconstant\",\"value\":\"C:\\\\Foo.png\"},"
-        		+ "\"fileName\":null,"
-        		+ "\"wikitext\":null,"
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
+        String expressionJson = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
+                + "\"filePath\":{\"type\":\"wbstringconstant\",\"value\":\"C:\\\\Foo.png\"},"
+                + "\"fileName\":null,"
+                + "\"wikitext\":null,"
                 + "\"nameDescs\":[],\"statementGroups\":[]}";
-    	TestUtils.isSerializedTo(filePathExpr, expressionJson);
+        TestUtils.isSerializedTo(filePathExpr, expressionJson);
     }
- 
+
     @Test
     public void testFilePathEvaluationWithLocalPath() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
-    	
-    	setRow("", "", "3.898,4.389", "my label", matchedCell);
-    	
-    	MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
-		evaluatesTo(result, filePathExpr);
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        evaluatesTo(result, filePathExpr);
     }
-    
+
     @Test
     public void testFilePathEvaluationWithURL() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
-    	
-    	setRow("", "", "3.898,4.389", "my label", matchedCell);
-    	
-    	MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
-		evaluatesTo(result, filePathExpr);
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        evaluatesTo(result, filePathExpr);
     }
-    
+
     @Test
     public void testFilePathEvaluationWithInvalidPath() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
-    	
-    	setRow("", "", "3.898,4.389", "my label", matchedCell);
-    	
-    	MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
-		evaluatesTo(result, filePathExpr);
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), new WbStringConstant("C:\\Foo.png"), null, null);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        evaluatesTo(result, filePathExpr);
     }
-    
+
     @Test
     public void testFileNameSerialization() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), null, new WbStringConstant("Foo.png"), null);
-    	String expressionJson = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
-        		+ "\"fileName\":{\"type\":\"wbstringconstant\",\"value\":\"Foo.png\"},"
-        		+ "\"filePath\":null,"
-        		+ "\"wikitext\":null,"
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), null, new WbStringConstant("Foo.png"), null);
+        String expressionJson = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
+                + "\"fileName\":{\"type\":\"wbstringconstant\",\"value\":\"Foo.png\"},"
+                + "\"filePath\":null,"
+                + "\"wikitext\":null,"
                 + "\"nameDescs\":[],\"statementGroups\":[]}";
-    	TestUtils.isSerializedTo(filePathExpr, expressionJson);
+        TestUtils.isSerializedTo(filePathExpr, expressionJson);
     }
- 
+
     @Test
     public void testFileNameEvaluation() {
-    	WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
-    			new WbEntityVariable("column E"),
-    			Collections.emptyList(), Collections.emptyList(), null, new WbStringConstant("Foo.png"), null);
-    	
-    	setRow("", "", "3.898,4.389", "my label", matchedCell);
-    	
-    	MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").build();
-		evaluatesTo(result, filePathExpr);
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), null, new WbStringConstant("Foo.png"), null);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").build();
+        evaluatesTo(result, filePathExpr);
     }
 
     @Test
