@@ -47,6 +47,7 @@ public abstract class UpdateSchedulerTest {
     protected ItemIdValue existingIdA = Datamodel.makeWikidataItemIdValue("Q43");
     protected ItemIdValue existingIdB = Datamodel.makeWikidataItemIdValue("Q538");
     protected MediaInfoIdValue existingMediaInfoId = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M538");
+    protected MediaInfoIdValue newMediaInfoId = TestingData.newMidA;
     protected ItemIdValue newIdA = TestingData.newIdA;
     protected ItemIdValue newIdB = TestingData.newIdB;
 

@@ -440,11 +440,7 @@ SchemaAlignment._addItem = function(json) {
      e.preventDefault();
   });
   var inputContainer = $('<div></div>').addClass('wbs-entity-input').appendTo(item);
-  // TODO temporary solution to pick another entity type than item
-  // depending on the Wikibase manifest. To be removed in favour of proper support
-  // for multiple entity types per Wikibase
-  let defaultEntityType = 'item';
-  SchemaAlignment._initField(inputContainer, "wikibase-"+defaultEntityType, subject);
+  SchemaAlignment._initField(inputContainer, "wikibase-item", subject);
   var right = $('<div></div>').addClass('wbs-entity-contents').appendTo(item);
 
   // Terms
@@ -534,10 +530,16 @@ SchemaAlignment._addMediaInfo = function(json) {
   var subject = null;
   var statementGroups = null;
   var nameDescs = null;
+  var filePath = null;
+  var fileName = null;
+  var wikitext = null;
   if (json) {
      subject = json.subject;
      statementGroups = json.statementGroups;
      nameDescs = json.nameDescs;
+     filePath = json.filePath;
+     fileName = json.fileName;
+     wikitext = json.wikitext;
   }
 
   var item = $('<div></div>').addClass('wbs-entity')
@@ -554,18 +556,41 @@ SchemaAlignment._addMediaInfo = function(json) {
      e.preventDefault();
   });
   var inputContainer = $('<div></div>').addClass('wbs-entity-input').appendTo(item);
-  // TODO temporary solution to pick another entity type than item
-  // depending on the Wikibase manifest. To be removed in favour of proper support
-  // for multiple entity types per Wikibase
-  let defaultEntityType = 'mediainfo';
-  SchemaAlignment._initField(inputContainer, "wikibase-"+defaultEntityType, subject);
+  SchemaAlignment._initField(inputContainer, "wikibase-mediainfo", subject);
   var right = $('<div></div>').addClass('wbs-entity-contents').appendTo(item);
+
+  // File-specific fields
+  var fileFields = $('<div></div>').addClass('wbs-mediainfo-file-fields').appendTo(right);
+  
+  // File path
+  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-path'))
+	.appendTo(fileFields);
+  var pathInputContainer = $('<span></span>')
+    .addClass('wbs-file-path-input')
+    .appendTo(fileFields);
+  SchemaAlignment._initField(pathInputContainer, "filepath", filePath);
+
+  // File name
+  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-name'))
+	.appendTo(fileFields);
+  var nameInputContainer = $('<span></span>')
+    .addClass('wbs-file-name-input')
+    .appendTo(fileFields);
+  SchemaAlignment._initField(nameInputContainer, "filename", fileName);
+
+  // Wikitext
+  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-wikitext'))
+	.appendTo(fileFields);
+  var wikitextInputContainer = $('<span></span>')
+    .addClass('wbs-wikitext-input')
+    .appendTo(fileFields);
+  SchemaAlignment._initField(wikitextInputContainer, "wikitext", wikitext);
 
   // Captions
   $('<span></span>').addClass('wbs-namedesc-header')
        .text($.i18n('wikibase-schema/captions-header')).appendTo(right);
   $('<div></div>').addClass('wbs-namedesc-container')
-        .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-terms'))
+        .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-captions'))
         .appendTo(right);
   var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
@@ -627,14 +652,24 @@ SchemaAlignment._mediaInfoToJSON = function (mediainfo) {
     });
     var inputContainer = mediainfo.find(".wbs-entity-input").first();
     var subjectJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
+
+    var filePath = SchemaAlignment._inputContainerToJSON(
+	      mediainfo.find('.wbs-file-path-input').first());
+    var fileName = SchemaAlignment._inputContainerToJSON(
+		  mediainfo.find('.wbs-file-name-input').first());
+    var wikitext = SchemaAlignment._inputContainerToJSON(
+		  mediainfo.find('.wbs-wikitext-input').first());
     if (subjectJSON !== null &&
         statementGroupLst.length === statementsDom.length &&
         nameDescLst.length === nameDescsDom.length) {
       return {
 	        type: "wbmediainfoeditexpr",
 	        subject: subjectJSON,
+            filePath: filePath,
+			fileName: fileName,
+			wikitext: wikitext,
             statementGroups: statementGroupLst,
-            nameDescs: nameDescLst}; 
+            nameDescs: nameDescLst};
     } else {
       return null;
     }
@@ -1325,12 +1360,13 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
 
    } else {
     var propagateValue = function(val) {
-        inputContainer.data("jsonValue", {
-           type: "wbstringconstant",
-           value: val,
-        });
+	    var jsonValue = null;
+		if (val) {
+			jsonValue = {type: "wbstringconstant", value: val};
+		}
+        inputContainer.data("jsonValue", jsonValue);
     };
-    propagateValue("");
+    propagateValue(null);
     input.on('change',function() {
       propagateValue($(this).val());
       changedCallback();
@@ -1351,6 +1387,12 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     } else if (mode === "geo-shape") {
         input.attr("placeholder", $.i18n('wikibase-schema/geoshape-with-prefix'));
         SchemaAlignment.setupStringInputValidation(input, /^Data:.+$/);
+    } else if (mode === "filepath") {
+        input.attr("placeholder", $.i18n('wikibase-schema/file-path-placeholder'));
+    } else if (mode === "filename") {
+        input.attr("placeholder", $.i18n('wikibase-schema/file-name-placeholder'));
+    } else if (mode === "wikitext") {
+        input.attr("placeholder", $.i18n('wikibase-schema/wikitext-placeholder'));
     } else {
         SchemaAlignment.setupStringInputValidation(input, /^.+$/);
     }
@@ -1361,7 +1403,10 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         mode !== "tabular-data" &&
         mode !== "commonsMedia" &&
         mode !== "geo-shape" &&
-        mode !== "math") {
+        mode !== "math" &&
+		mode !== "filepath" &&
+		mode !== "filename" &&
+		mode !== "wikitext") {
        alert($.i18n('wikibase-schema/datatype-not-supported-yet'));
     }
   }
