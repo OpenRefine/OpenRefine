@@ -84,9 +84,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 };
 
 ReconStandardServicePanel.prototype._constructUI = function() {
-  console.log("passa para aqui")
   var self = this;
-  console.log(self._service)
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   
@@ -99,35 +97,67 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_max_candidates.html($.i18n('core-recon/max-candidates'));
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
-  console.log(this._service.url)
+
+  let newManifest = null;
+
   $.ajax({
       async: false,
-      type: "POST",
+      type: "GET",
       url: this._service.url,
       body: { "dataType" : "json",
         "timeout":5000
       }}
   )
       .success(function(data, textStatus, jqXHR) {
-        //registerService(data, "json");
-        console.log("deu certo")
-        console.log(data)
+        newManifest = data;
       })
       .error(function(jqXHR, textStatus, errorThrown) {
-        console.log("deu merda")
+        //
+      });
+  if(newManifest != null) {
+    let standardServices = null;
+
+    $.ajax({
+      async: false,
+      type: "GET",
+      url: "command/core/get-preference?" + $.param({
+        name: "reconciliation.standardServices"
+      }),
+      success: function(data) {
+        standardServices = JSON.parse(data.value)
+      },
+      dataType: "json"
+    });
+
+    if(standardServices != null) {
+
+      for(let x in standardServices) {
+        if(x.url = this._service.url) {
+          x = newManifest
+        }
+      }
+
+      Refine.wrapCSRF(function(token) {
+        $.ajax({
+          async: false,
+          type: "POST",
+          url: "command/core/set-preference?" + $.param({
+            name: "reconciliation.standardServices"
+          }),
+          data: {
+            "value" : JSON.stringify(standardServices),
+            csrf_token: token
+          },
+          success: function(data) {
+            //
+          },
+          dataType: "json"
+        });
       });
 
-  $.ajax({
-    async: false,
-    url: "command/core/get-preference?" + $.param({
-      name: "reconciliation.standardServices"
-    }),
-    success: function(data) {
-      console.log("get preference")
-      console.log(data.value)
-    },
-    dataType: "json"
-  });
+
+    }
+  }
 
 
 

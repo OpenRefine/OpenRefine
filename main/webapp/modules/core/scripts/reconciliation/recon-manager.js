@@ -56,7 +56,6 @@ ReconciliationManager.getAllServices = function() {
 };
 
 ReconciliationManager.registerService = function(service) {
-    console.log("registerService")
   ReconciliationManager.customServices.push(service);
   ReconciliationManager._rebuildMap();
 
@@ -64,7 +63,6 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f, silent) {
-    console.log("registerStandardService")
   var dismissBusy = function() {};
   if (!silent) {
     dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
