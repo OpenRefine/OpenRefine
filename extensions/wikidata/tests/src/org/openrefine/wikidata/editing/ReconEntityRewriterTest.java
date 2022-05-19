@@ -28,8 +28,10 @@ import static org.testng.Assert.assertEquals;
 
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.LabeledStatementEntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -87,14 +89,14 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setId(4567L, "Q1234");
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(subject)
+        TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityEdit rewritten = rewriter.rewrite(update);
-        TermedStatementEntityEdit expected = new TermedStatementEntityEditBuilder(subject)
+        EntityEdit rewritten = rewriter.rewrite(update);
+        LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreated))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
@@ -108,11 +110,11 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setId(4567L, "Q1234");
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdB)
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdB)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityEdit rewritten = rewriter.rewrite(update);
-        TermedStatementEntityEdit expected = new TermedStatementEntityEditBuilder(newlyCreated)
+        EntityEdit rewritten = rewriter.rewrite(update);
+        LabeledStatementEntityEdit expected = new ItemEditBuilder(newlyCreated)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         assertEquals(rewritten, expected);
@@ -123,14 +125,14 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.matchedId;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setId(4567L, "Q1234");
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(subject)
+        TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityEdit rewritten = rewriter.rewrite(update);
-        TermedStatementEntityEdit expected = new TermedStatementEntityEditBuilder(subject)
+        EntityEdit rewritten = rewriter.rewrite(update);
+        LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreated))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
@@ -141,17 +143,17 @@ public class ReconEntityRewriterTest {
 
     @Test
     public void testRewritePropertyUpdateOnExistingEntity() throws NewEntityNotCreatedYetException {
-        PropertyIdValue subject = TestingData.matchedPropertyID;
+        ItemIdValue subject = TestingData.existingId;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setId(7654L, "P1234");
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(subject)
+        TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newPropertyIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityEdit rewritten = rewriter.rewrite(update);
-        TermedStatementEntityEdit expected = new TermedStatementEntityEditBuilder(subject)
+        EntityEdit rewritten = rewriter.rewrite(update);
+        LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreatedProperty))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)

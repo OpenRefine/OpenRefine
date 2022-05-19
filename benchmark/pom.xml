@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.4.0</version>
+      <version>7.6.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -111,7 +111,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -123,7 +123,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.3.2</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -131,7 +131,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.12.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>

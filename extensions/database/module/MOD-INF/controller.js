@@ -94,7 +94,7 @@ function init() {
     module,
     [
       "scripts/index/jquery.contextMenu.min.js",
-      "scripts/index/jquery.ui.position.min.js",
+      "scripts/index/jquery.ui.position.js",
       "scripts/database-extension.js",
       "scripts/index/database-import-controller.js",
       "scripts/index/database-source-ui.js"

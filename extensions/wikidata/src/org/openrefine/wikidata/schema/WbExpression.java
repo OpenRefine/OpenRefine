@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -50,7 +51,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = WbEntityIdValueConstant.class, name = "wbentityidvalueconstant"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
-        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"), })
+        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"),
+        @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
+        @Type(value = WbMediaInfoEditExpr.class, name = "wbmediainfoeditexpr"),})
 public interface WbExpression<T> {
 
     /**
@@ -58,5 +61,5 @@ public interface WbExpression<T> {
      * suitable to be the target of a claim.
      */
     public T evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException;
+            throws SkipSchemaExpressionException, QAWarningException;
 }

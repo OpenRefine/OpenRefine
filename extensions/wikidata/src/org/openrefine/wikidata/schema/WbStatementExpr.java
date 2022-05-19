@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
@@ -111,7 +112,7 @@ public class WbStatementExpr {
     }
 
     public StatementEdit evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         Snak mainSnak = null;
         if (mainSnakValueExpr != null) {
             Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);

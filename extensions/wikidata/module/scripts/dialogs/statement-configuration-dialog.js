@@ -40,7 +40,7 @@ class SnakStrategy {
         .attr('for', 'laxValueMatching')
         .appendTo(parentElem);
      checkbox.attr('checked', (!currentState.valueMatcher) || currentState.valueMatcher.type == 'lax');
-     checkbox.change(function() {
+     checkbox.on('change',function() {
         const checked = $(this).prop('checked');
         onChange({'type': self.id(), 'valueMatcher': {'type': checked ? 'lax' : 'strict' }});
      });
@@ -100,7 +100,7 @@ class QualifiersStrategy {
           'pids': pids
         });
      };
-     checkbox.change(onOptionsChange);
+     checkbox.on('change',onOptionsChange);
      pidInput.on('input', onOptionsChange);
 
   }
@@ -163,13 +163,13 @@ StatementConfigurationDialog.launch = function(statement) {
     self._configHasChanged = true;
   });
 
-  this._elmts.modeInput.change(function(e) {
+  this._elmts.modeInput.on('change',function(e) {
     const selected = $(this).val();
     statement.data('jsonMode', selected);
     self._elmts.modeDescription.text($.i18n('wikibase-statement-settings/mode-options/'+selected+'/description'));
     self._configHasChanged = true;
   });
-  this._elmts.strategyInput.change(function(e) {
+  this._elmts.strategyInput.on('change',function(e) {
     const selected = $(this).val();
     const strategy = StatementConfigurationDialog.possibleStrategies.get(selected);
     const initialOptions = strategy.initialState();
@@ -186,7 +186,7 @@ StatementConfigurationDialog.launch = function(statement) {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
-  this._elmts.closeButton.click(function() {
+  this._elmts.closeButton.on('click',function() {
     dismiss();
     if (self._configHasChanged) {
        SchemaAlignment._updateStatementFromMergingStrategy(statement);

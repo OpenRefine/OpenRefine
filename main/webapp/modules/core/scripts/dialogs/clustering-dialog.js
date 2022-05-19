@@ -264,7 +264,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .append(div);
 
             var editCheck = $('<input type="checkbox" />')
-                .change(function() {
+                .on('change',function() {
                     cluster.edit = this.checked;
                 }).appendTo(tr.insertCell(3));
 
@@ -569,11 +569,11 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#ccccff", "#6666ff" ] });
         this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
 
-        this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+        this._elmts.sliderWidgetDiv.on("slide", function(evt, data) {
             self._from = data.from;
             self._to = data.to;
             self._setRangeIndicators();
-        }).bind("stop", function(evt, data) {
+        }).on("stop", function(evt, data) {
             self._from = data.from;
             self._to = data.to;
             self._setRangeIndicators();

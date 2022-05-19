@@ -44,8 +44,8 @@ public class Min implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && 
-                args[0] != null && args[0] instanceof Number && 
-                args[1] != null && args[1] instanceof Number) {
+                args[0] instanceof Number &&
+                args[1] instanceof Number) {
             return Math.min(
                 ((Number) args[0]).doubleValue(),
                 ((Number) args[1]).doubleValue());

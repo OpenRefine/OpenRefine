@@ -41,6 +41,7 @@ import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,7 +248,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
 
             // Evaluate the schema
-            List<TermedStatementEntityEdit> entityDocuments = _schema.evaluate(_project, _engine);
+            List<EntityEdit> entityDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();

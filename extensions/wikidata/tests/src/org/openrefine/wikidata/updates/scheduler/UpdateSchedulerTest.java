@@ -34,15 +34,19 @@ import java.util.stream.Collectors;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
 public abstract class UpdateSchedulerTest {
 
     protected ItemIdValue existingIdA = Datamodel.makeWikidataItemIdValue("Q43");
     protected ItemIdValue existingIdB = Datamodel.makeWikidataItemIdValue("Q538");
+    protected MediaInfoIdValue existingMediaInfoId = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M538");
     protected ItemIdValue newIdA = TestingData.newIdA;
     protected ItemIdValue newIdB = TestingData.newIdB;
 
@@ -56,38 +60,38 @@ public abstract class UpdateSchedulerTest {
 
     public abstract UpdateScheduler getScheduler();
 
-    protected List<TermedStatementEntityEdit> schedule(TermedStatementEntityEdit... itemUpdates)
+    protected List<EntityEdit> schedule(EntityEdit... itemUpdates)
             throws ImpossibleSchedulingException {
         return getScheduler().schedule(Arrays.asList(itemUpdates));
     }
 
-    protected static void assertSetEquals(List<TermedStatementEntityEdit> expected, List<TermedStatementEntityEdit> actual) {
+    protected static void assertSetEquals(List<EntityEdit> expected, List<EntityEdit> actual) {
         assertEquals(expected.stream().collect(Collectors.toSet()), actual.stream().collect(Collectors.toSet()));
     }
 
     @Test
     public void testNewItemNotMentioned()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoNewA).build();
-        List<TermedStatementEntityEdit> scheduled = schedule(updateA);
-        TermedStatementEntityEdit newUpdate = new TermedStatementEntityEditBuilder(newIdA).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).build();
+        List<EntityEdit> scheduled = schedule(updateA);
+        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).build();
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
 
     @Test
     public void testNewItemMentioned()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoNewA).build();
-        TermedStatementEntityEdit newUpdate = new TermedStatementEntityEditBuilder(newIdA).addStatement(sNewAtoB).build();
-        List<TermedStatementEntityEdit> scheduled = schedule(updateA, newUpdate);
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).build();
+        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).build();
+        List<EntityEdit> scheduled = schedule(updateA, newUpdate);
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
 
     @Test
     public void testMerge()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit update1 = new TermedStatementEntityEditBuilder(existingIdA).addStatement(sAtoB).build();
-        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(existingIdA)
+        ItemEdit update1 = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
+        ItemEdit update2 = new ItemEditBuilder(existingIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true).addStatement(sAtoB).build();
         TermedStatementEntityEdit merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
@@ -96,13 +100,13 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMergeNew()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit update1 = new TermedStatementEntityEditBuilder(newIdA)
+        ItemEdit update1 = new ItemEditBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .addStatement(sNewAtoB).build();
-        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(newIdA)
+        ItemEdit update2 = new ItemEditBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .build();
-        TermedStatementEntityEdit merged = update1.merge(update2);
+        ItemEdit merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
     }
 }

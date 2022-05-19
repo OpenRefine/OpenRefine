@@ -25,7 +25,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 
 public class NoEditsMadeScrutinizerTest extends ScrutinizerTest {
@@ -43,13 +43,13 @@ public class NoEditsMadeScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testNonNull() {
-        scrutinize(new TermedStatementEntityEditBuilder(TestingData.newIdA).build());
+        scrutinize(new ItemEditBuilder(TestingData.newIdA).build());
         assertNoWarningRaised();
     }
 
     @Test
     public void testNull() {
-        scrutinize(new TermedStatementEntityEditBuilder(TestingData.existingId).build());
+        scrutinize(new ItemEditBuilder(TestingData.existingId).build());
         assertWarningsRaised(NoEditsMadeScrutinizer.type);
     }
 }

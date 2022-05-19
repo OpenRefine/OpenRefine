@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -85,7 +86,7 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
 
     // for issue #341: https://github.com/Wikidata/Wikidata-Toolkit/issues/341
     @Test
-    public void testExponent() throws SkipSchemaExpressionException, JsonProcessingException {
+    public void testExponent() throws SkipSchemaExpressionException, JsonProcessingException, QAWarningException {
         setRow("38.4E+3", recon("Q42"));
         QuantityValue val = exprWithUnit.evaluate(ctxt);
         assertEquals("38400", val.getNumericValue().toString());
