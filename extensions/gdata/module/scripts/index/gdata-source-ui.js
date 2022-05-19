@@ -71,7 +71,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   });
   
   this._elmts.urlNextButton.on('click',function(evt) {
-    var url = $.trim(self._elmts.urlInput[0].value);
+    var url = jQueryTrim(self._elmts.urlInput[0].value);
     if (url.length === 0) {
       window.alert($.i18n('gdata-source/alert-url'));
     } else {

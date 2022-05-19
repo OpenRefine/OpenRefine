@@ -219,7 +219,7 @@ ReconDialog.prototype._onAddStandardService = function() {
 
   elmts.cancelButton.click(dismiss);
   elmts.form.submit(function() {
-    var url = $.trim(elmts.input[0].value);
+    var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
         self._refresh(index);
