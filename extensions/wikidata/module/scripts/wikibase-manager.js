@@ -130,19 +130,20 @@ WikibaseManager.getSelectedWikibaseAvailableEntityTypes = function () {
  * - for Wikidata it returns 'item'
  * - for Commons it returns 'mediainfo'
  */
-WikibaseManager.getSelectedWikibaseDefaultEntityType = function () {
+WikibaseManager.getSelectedWikibaseEditableEntityTypes = function () {
   let manifest = WikibaseManager.getSelectedWikibase();
   // version 1
   if (manifest.version.split('.')[0] === '1') {
-    return 'item';
+    return ['item'];
   } else { // version 2 or above
-    for (let entityType of ['item', 'property', 'mediainfo']) {
+    let editable = [];
+    for (let entityType of ['item', 'mediainfo']) {
       if (manifest.entity_types[entityType] !== undefined &&
           manifest.entity_types[entityType].site_iri === manifest.wikibase.site_iri) {
-        return entityType;
+        editable.push(entityType);
       }
     }
-    return 'item'; // by default, as a fallback
+    return editable;
   }
 };
 
@@ -156,6 +157,16 @@ WikibaseManager.getAllWikibases = function () {
   return WikibaseManager.wikibases;
 };
 
+WikibaseManager.getAllWikibaseManifests = function () {
+  let manifests = [];
+  for (let wikibaseName in WikibaseManager.wikibases) {
+    if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
+      manifests.push(WikibaseManager.wikibases[wikibaseName])
+    }
+  }
+  return manifests;
+};
+
 WikibaseManager.addWikibase = function (manifest) {
   WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
   WikibaseManager.saveWikibases();
@@ -167,12 +178,7 @@ WikibaseManager.removeWikibase = function (wikibaseName) {
 };
 
 WikibaseManager.saveWikibases = function () {
-  let manifests = [];
-  for (let wikibaseName in WikibaseManager.wikibases) {
-    if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
-      manifests.push(WikibaseManager.wikibases[wikibaseName])
-    }
-  }
+  let manifests = WikibaseManager.getAllWikibaseManifests();
 
   Refine.wrapCSRF(function (token) {
     $.ajax({
@@ -264,10 +270,10 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   $.ajax(manifestURL, {
     "dataType": "json",
     "timeout": 5000
-  }).success(function (data) {
+  }).done(function (data) {
     dismissBusy();
     _onSuccess(data);
-  }).error(function (jqXHR, textStatus, errorThrown) {
+  }).fail(function (jqXHR, textStatus, errorThrown) {
     dismissBusy();
     if (!silent) {
       alert($.i18n("wikibase-management/error-contact")+": " + textStatus + " : " + errorThrown + " - " + manifestURL);
@@ -305,7 +311,7 @@ WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikib
     url: url,
     data: params,
     dataType: "jsonp",
-    timeout: 1000,
+    timeout: 5000,
     cache: true,
     beforeSend: function () {
       if (wikibaseLogoURLCache.exist(url)) {
@@ -315,7 +321,9 @@ WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikib
       return true;
     },
     complete: function (jqXHR, textStatus) {
-      wikibaseLogoURLCache.set(url, jqXHR);
+      if (textStatus === 'success') {
+        wikibaseLogoURLCache.set(url, jqXHR);
+      }
     },
     success: function(response) {
       onSuccess(response.query.general.logo);

@@ -1,4 +1,8 @@
 describe(__filename, function () {
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+  
   it('Check the layout for importing a project', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
@@ -18,6 +22,7 @@ describe(__filename, function () {
     );
     cy.get('#project-upload-form').submit();
 
+    cy.waitForProjectTable(199);
     // ensure is loaded
     cy.get('div[bind="summaryBarDiv"]').contains('199 rows');
   });
@@ -39,7 +44,7 @@ describe(__filename, function () {
     cy.get('#project-name-input').type(projectName);
     cy.get('#project-upload-form').submit();
 
-    // ensure is loaded
+    cy.waitForProjectTable();
     cy.get('#project-name-button').contains(projectName);
   });
 });

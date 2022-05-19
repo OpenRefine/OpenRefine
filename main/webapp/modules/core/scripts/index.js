@@ -211,7 +211,7 @@ $(function() {
       Refine.actionAreas[i].ui.resize();
     }
   };
-  $(window).bind("resize", resize);
+  $(window).on("resize", resize);
   window.setTimeout(resize, 100); // for Chrome, give the window some time to layout first
 
   var renderActionArea = function(actionArea) {
@@ -223,7 +223,7 @@ $(function() {
     .addClass('action-area-tab')
     .text(actionArea.label)
     .appendTo($('#action-area-tabs'))
-    .click(function() {
+    .on('click', function() {
       Refine.selectActionArea(actionArea.id);
     });
 

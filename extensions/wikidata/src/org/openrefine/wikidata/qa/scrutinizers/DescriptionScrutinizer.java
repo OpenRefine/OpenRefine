@@ -1,9 +1,11 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-
 import java.util.Set;
+
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.LabeledStatementEntityEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 /**
  * @author Lu Liu
@@ -11,7 +13,7 @@ import java.util.Set;
 public abstract class DescriptionScrutinizer extends EditScrutinizer {
 
     @Override
-    public void scrutinize(TermedStatementEntityEdit update) {
+    public void scrutinize(ItemEdit update) {
         Set<MonolingualTextValue> descriptions = update.getDescriptions();
         descriptions.addAll(update.getDescriptionsIfNew()); // merge
         for (MonolingualTextValue description : descriptions) {
@@ -27,7 +29,12 @@ public abstract class DescriptionScrutinizer extends EditScrutinizer {
             scrutinize(update, descText, description.getLanguageCode());
         }
     }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	// no descriptions to scrutinize: do nothing
+    }
 
-    public abstract void scrutinize(TermedStatementEntityEdit update, String descText, String lang);
+    public abstract void scrutinize(LabeledStatementEntityEdit update, String descText, String lang);
 
 }

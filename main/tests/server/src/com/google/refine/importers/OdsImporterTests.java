@@ -44,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -126,4 +127,33 @@ public class OdsImporterTests extends ImporterTest {
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
 
+    @Test
+    public void showErrorDialogWhenWrongFormat() throws FileNotFoundException, IOException {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 1);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, ROWS);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        InputStream stream = ClassLoader.getSystemResourceAsStream("NoData_NoSpreadsheet.ods");
+
+        try {
+            List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT, stream);
+            assertEquals(exceptions.size(), 1);
+            Exception NPE = exceptions.get(0);
+            assertEquals(NPE.getMessage(),
+                    "Attempted to parse file as Ods file but failed. " +
+                            "No tables found in Ods file. " +
+                            "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.");
+            assert NPE.getCause() instanceof java.lang.NullPointerException;
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+    }
 }

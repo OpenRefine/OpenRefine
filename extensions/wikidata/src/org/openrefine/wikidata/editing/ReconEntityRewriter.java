@@ -31,6 +31,9 @@ import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -155,19 +158,31 @@ public class ReconEntityRewriter extends DatamodelConverter {
 	 * @throws NewEntityNotCreatedYetException
 	 *      if any non-subject entity had not been created yet
 	 */
-	public TermedStatementEntityEdit rewrite(TermedStatementEntityEdit edit) throws NewEntityNotCreatedYetException {
+	public EntityEdit rewrite(EntityEdit edit) throws NewEntityNotCreatedYetException {
 		try {
 			EntityIdValue subject = (EntityIdValue) copyValue(edit.getEntityId());
-			Set<MonolingualTextValue> labels = edit.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			Set<MonolingualTextValue> labelsIfNew = edit.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			Set<MonolingualTextValue> descriptions = edit.getDescriptions().stream().map(l -> copy(l))
-					.collect(Collectors.toSet());
-			Set<MonolingualTextValue> descriptionsIfNew = edit.getDescriptionsIfNew().stream().map(l -> copy(l))
-					.collect(Collectors.toSet());
-			Set<MonolingualTextValue> aliases = edit.getAliases().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			List<StatementEdit> addedStatements = edit.getStatementEdits().stream().map(l -> copy(l))
-					.collect(Collectors.toList());
-			return new TermedStatementEntityEdit(subject, addedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+			if (subject instanceof ItemIdValue) {
+				ItemEdit update = (ItemEdit) edit;
+				Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
+				Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
+				Set<MonolingualTextValue> descriptions = update.getDescriptions().stream().map(l -> copy(l))
+						.collect(Collectors.toSet());
+				Set<MonolingualTextValue> descriptionsIfNew = update.getDescriptionsIfNew().stream().map(l -> copy(l))
+						.collect(Collectors.toSet());
+				Set<MonolingualTextValue> aliases = update.getAliases().stream().map(l -> copy(l)).collect(Collectors.toSet());
+				List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
+						.collect(Collectors.toList());
+				return new ItemEdit(subject, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+			} else if (subject instanceof MediaInfoIdValue) {
+				MediaInfoEdit update = (MediaInfoEdit) edit;
+				Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
+				Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
+				List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
+						.collect(Collectors.toList());
+				return new MediaInfoEdit(subject, statements, labels, labelsIfNew);
+			} else {
+				throw new IllegalStateException("Rewriting of entities of this type (for subject id "+edit.getEntityId()+") not supported yet");
+			}
 		} catch(MissingEntityIdFound e) {
 			throw new NewEntityNotCreatedYetException(e.value);
 		}

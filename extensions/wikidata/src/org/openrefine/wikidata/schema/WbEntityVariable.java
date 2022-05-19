@@ -24,9 +24,11 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -44,6 +46,8 @@ import com.google.refine.model.Recon.Judgment;
  */
 
 public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
+	
+	public static final String INVALID_ENTITY_ID_FORMAT_WARNING_TYPE = "invalid-entity-id-format";
 
     @JsonCreator
     public WbEntityVariable() {
@@ -63,28 +67,36 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
 
     @Override
     public EntityIdValue fromCell(Cell cell, ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         if (cell.recon != null
                 && (Judgment.Matched.equals(cell.recon.judgment) || Judgment.New.equals(cell.recon.judgment))) {
             if (Judgment.New.equals(cell.recon.judgment)) {
                 return new ReconItemIdValue(cell.recon, cell.value.toString());
             }
-            EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+            
             EntityIdValue reconEntityIdValue = null;
             String entityType = null;
-            if (entityIdValue instanceof ItemIdValue) {
-                reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
-                entityType = "item";
-            } else if (entityIdValue instanceof MediaInfoIdValue) {
-                reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
-                entityType = "mediainfo";
-            } else if (entityIdValue instanceof PropertyIdValue) {
-                reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
-                entityType = "property";
+            try {
+            	EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+	            if (entityIdValue instanceof ItemIdValue) {
+	                reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
+	                entityType = "item";
+	            } else if (entityIdValue instanceof MediaInfoIdValue) {
+	                reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
+	                entityType = "mediainfo";
+	            } else if (entityIdValue instanceof PropertyIdValue) {
+	                reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
+	                entityType = "property";
+	            }
+            } catch(IllegalArgumentException e) {
+            	QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+            	warning.setProperty("example", cell.recon.match.id);
+            	throw new QAWarningException(warning);
             }
             if (reconEntityIdValue == null) {
             	throw new SkipSchemaExpressionException();
             }
+            
             if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRIForEntityType(entityType))) {
                 QAWarning warning = new QAWarning("invalid-identifier-space", null, QAWarning.Severity.INFO, 1);
                 warning.setProperty("example_cell", cell.value.toString());
@@ -92,6 +104,7 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
                 ctxt.addWarning(warning);
                 throw new SkipSchemaExpressionException();
             }
+            
             return reconEntityIdValue;
         }
         throw new SkipSchemaExpressionException();

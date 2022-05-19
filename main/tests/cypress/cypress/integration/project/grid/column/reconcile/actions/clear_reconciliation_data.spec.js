@@ -1,4 +1,8 @@
 describe('Clear reconciliation data', () => {
+    afterEach(() => {
+        cy.addProjectForDeletion();
+    });
+    
     it('Test clearing reconciliation for a reconciled dataset', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');

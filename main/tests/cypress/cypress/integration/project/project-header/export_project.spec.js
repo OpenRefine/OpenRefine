@@ -7,7 +7,7 @@ describe(__filename, function () {
   ];
   it('Export a project through "OpenRefine project archive to file"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -21,7 +21,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Tab-separated value"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -35,7 +35,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Comma-separated value"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -49,7 +49,7 @@ describe(__filename, function () {
   });
   it('Export a project through "HTML table"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -63,7 +63,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Excel (.xls)"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -77,7 +77,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Excel 2007+ (.xlsx)"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -91,7 +91,7 @@ describe(__filename, function () {
   });
   it('Export a project through "ODF spreadsheet"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -105,7 +105,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Custom tabular exporter"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -121,7 +121,7 @@ describe(__filename, function () {
   });
   it('Export a project through "SQL Exporter"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
@@ -137,7 +137,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Templating"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')

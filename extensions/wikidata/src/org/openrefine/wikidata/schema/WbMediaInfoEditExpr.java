@@ -1,61 +1,42 @@
-/*******************************************************************************
- * MIT License
- * 
- * Copyright (c) 2018 Antonin Delpeuch
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
+import org.openrefine.wikidata.schema.WbNameDescExpr.NameDescType;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.StatementGroupEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * The representation of an entity document, which can contain variables both for
+ * The representation of an item edit, which can contain variables both for
  * its own id and in its contents.
  * 
  * @author Antonin Delpeuch
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityEdit> {
-
+public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
+	
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
-
+    
+    public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-mediainfo-subject";
+    
     @JsonCreator
-    public WbEntityDocumentExpr(@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
+    public WbMediaInfoEditExpr(
+    		@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         Validate.notNull(subjectExpr);
@@ -63,6 +44,8 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
         if (nameDescExprs == null) {
             nameDescExprs = Collections.emptyList();
         }
+        nameDescExprs.stream().forEach(nde ->
+        	Validate.isTrue(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW));
         this.nameDescs = nameDescExprs;
         if (statementGroupExprs == null) {
             statementGroupExprs = Collections.emptyList();
@@ -70,15 +53,19 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
         this.statementGroups = statementGroupExprs;
     }
 
-    @Override
-    public TermedStatementEntityEdit evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+
+	@Override
+	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        TermedStatementEntityEditBuilder update = new TermedStatementEntityEditBuilder(subjectId);
+        if (!(subjectId instanceof MediaInfoIdValue)) {
+        	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        	warning.setProperty("example", subjectId.getId());
+        	throw new QAWarningException(warning);
+        }
+		MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
             	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
-            	// TODO also store statement groups in TermedStatementEntityUpdate?
                 for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
                     update.addStatement(s);
                 }
@@ -90,8 +77,8 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
             expr.contributeTo(update, ctxt);
         }
         return update.build();
-    }
-
+	}
+	
     @JsonProperty("subject")
     public WbExpression<? extends EntityIdValue> getSubject() {
         return subject;
@@ -109,10 +96,10 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !WbEntityDocumentExpr.class.isInstance(other)) {
+        if (other == null || !WbMediaInfoEditExpr.class.isInstance(other)) {
             return false;
         }
-        WbEntityDocumentExpr otherExpr = (WbEntityDocumentExpr) other;
+        WbMediaInfoEditExpr otherExpr = (WbMediaInfoEditExpr) other;
         return subject.equals(otherExpr.getSubject()) && nameDescs.equals(otherExpr.getNameDescs())
                 && statementGroups.equals(otherExpr.getStatementGroups());
     }
@@ -121,4 +108,5 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
     public int hashCode() {
         return subject.hashCode() + nameDescs.hashCode() + statementGroups.hashCode();
     }
+
 }

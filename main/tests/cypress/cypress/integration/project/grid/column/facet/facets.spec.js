@@ -285,8 +285,10 @@ describe(__filename, function () {
     cy.get('#tool-panel').contains('1 matching rows');
 
     // now invert, expect 198 rows
+    cy.intercept('POST', '**/command/core/get-rows*').as('getRows');
     cy.getFacetContainer('Shrt_Desc').find('a[bind="invertButton"]').click();
-    cy.waitForOrOperation();
+    cy.wait('@getRows');
+    cy.get('body[ajax_in_progress="false"]');
     cy.get('#tool-panel').contains('198 matching rows');
     cy.getFacetContainer('Shrt_Desc')
       .find('a[bind="invertButton"]')

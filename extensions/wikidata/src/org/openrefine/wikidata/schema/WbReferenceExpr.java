@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -59,7 +60,7 @@ public class WbReferenceExpr implements WbExpression<Reference> {
 
     @Override
     public Reference evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         List<Snak> snakList = new ArrayList<Snak>();
         for (WbSnakExpr expr : getSnaks()) {
             try {
