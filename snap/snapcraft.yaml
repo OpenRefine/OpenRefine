@@ -29,13 +29,13 @@ parts:
       - procps
     prime:
       - -usr/lib/jvm/java-*/lib/security/cacerts
+      - -usr/lib/jvm/java-*/lib/security/blacklisted.certs
       - -usr/lib/jvm/java-*/jre/lib/security/cacerts
 
 apps:
   openrefine:
     command: ./refine
-#    desktop: openrefine.desktop
-#    extensions: [gnome-3-28]
+    extensions: [gnome-3-38]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/default-java
       PATH: $JAVA_HOME/jre/bin:$PATH
