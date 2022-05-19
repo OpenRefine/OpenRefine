@@ -173,10 +173,8 @@ describe(__filename, function () {
 
     cy.get('#project-tags-container').click();
     // Type and Validate the tag, pressing enter
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName1, { force: true });
-    cy.get('body').type('{enter}');
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName2, { force: true });
-    cy.get('body').type('{enter}');
+    cy.get('#project-tags-container .select2-search__field').type(uniqueTagName1+'{enter}');
+    cy.get('#project-tags-container .select2-search__field').type(uniqueTagName2+'{enter}');
     cy.get('#or-import-parsopt').click();
 
     // click next to create the project, and wait until it's loaded
