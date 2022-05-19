@@ -17,7 +17,7 @@ architectures:
 
 layout:
   /usr/bin/free:
-    bind-file: $SNAP/usr/bin/free
+    bind-file: $SNAP/bin/free
 
 parts:
   openrefine:
@@ -26,6 +26,7 @@ parts:
     stage-packages:
       - default-jre
       - wget
+      - procps
     prime:
       - -usr/lib/jvm/java-*/lib/security/cacerts
       - -usr/lib/jvm/java-*/jre/lib/security/cacerts
@@ -33,7 +34,7 @@ parts:
 apps:
   openrefine:
     command: ./refine
-    desktop: openrefine.desktop
+#    desktop: openrefine.desktop
 #    extensions: [gnome-3-28]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/default-java
