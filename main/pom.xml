@@ -347,11 +347,6 @@
       <artifactId>jetty-servlets</artifactId>
       <version>${jetty.version}</version>
     </dependency>
-    <dependency>
-      <groupId>net.steppschuh.markdowngenerator</groupId>
-      <artifactId>markdowngenerator</artifactId>
-      <version>${markdowngenerator.version}</version>
-    </dependency>
 
     <!-- Language detector api -->
     <dependency>

@@ -103,20 +103,6 @@ describe(__filename, function () {
     });
 
   });
-  it('Export a project through "Markdown"', function () {
-
-    cy.loadAndVisitProject(fixture);
-
-    cy.get('#export-button').click();
-    cy.get('.menu-container a')
-        .contains('Markdown')
-        .click();
-
-    cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.md`).should('not.be.empty');
-    });
-
-  });
   it('Export a project through "Custom tabular exporter"', function () {
 
     cy.loadAndVisitProject(fixture, Date.now());
