@@ -1,4 +1,4 @@
-
+@echo off
 
 rem
 rem Configuration variables

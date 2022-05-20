@@ -108,7 +108,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
-    input.suggest(suggestOptions).bind("fb-select", function(e, data) {
+    input.suggest(suggestOptions).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
 
         Refine.postCoreProcess(
@@ -128,12 +128,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         DialogSystem.dismissUntil(level - 1);
     });
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).click(function() {
+    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
       DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
 
     var level = DialogSystem.showDialog(frame);
-    input.focus().data("suggest").textchange();
+    input.trigger('focus').data("suggest").textchange();
   };
 
   var doUseValuesAsIdentifiers = function() {

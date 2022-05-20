@@ -26,6 +26,7 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.model.Cell;
@@ -73,6 +74,19 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
     public void evaluatesTo(T expected, Cell cell) {
         row.setCell(0, cell);
         evaluatesTo(expected, variable);
+    }
+
+    /**
+     * Test that a particular cell evaluates to some warning
+     * 
+     * @param expected
+     *            the expected evaluation of the value
+     * @param cell
+     *            the cell used by the variable
+     */
+    public void evaluatesToWarning(QAWarning expected, Cell cell) {
+        row.setCell(0, cell);
+        evaluatesToWarning(expected, variable);
     }
 
     /**

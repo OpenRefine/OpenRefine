@@ -173,7 +173,7 @@ ProcessPanel.prototype._render = function(newData) {
       .text($.i18n('core-project/cancel-all', processes.length))
       .on('click',function() {
         self._cancelAll();
-        $(this).text($.i18n('core-project/canceling')).unbind();
+        $(this).text($.i18n('core-project/canceling')).off();
       });
     
     this._div.fadeIn(200);

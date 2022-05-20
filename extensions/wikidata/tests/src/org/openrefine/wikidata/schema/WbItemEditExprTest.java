@@ -26,6 +26,8 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
@@ -48,12 +50,12 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
         WbStatementGroupExprTest sgt = new WbStatementGroupExprTest();
         WbNameDescExpr nde = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column D")));
-        WbItemVariable subjectExpr = new WbItemVariable("column E");
+        WbEntityVariable subjectExpr = new WbEntityVariable("column E");
         expr = new WbItemEditExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr));
         fullStatement = sgt.statementGroupUpdate.getStatementEdits().get(0);
 
         jsonRepresentation = "{\"type\":\"wbitemeditexpr\","
-                + "\"subject\":{\"type\":\"wbitemvariable\",\"columnName\":\"column E\"},"
+                + "\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
                 + "\"nameDescs\":[{\"name_type\":\"ALIAS\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
@@ -66,6 +68,14 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
         ItemEdit result = new ItemEditBuilder(subject).addAlias(alias).addStatement(fullStatement)
                 .build();
         evaluatesTo(result, expr);
+    }
+
+    @Test
+    public void testEvaluateInvalidSubjectType() {
+        setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("M23"));
+        QAWarning warning = new QAWarning(WbItemEditExpr.INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        warning.setProperty("example", "M23");
+        evaluatesToWarning(warning, expr);
     }
 
     @Test

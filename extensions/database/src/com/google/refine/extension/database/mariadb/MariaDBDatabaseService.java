@@ -80,10 +80,9 @@ public class MariaDBDatabaseService extends DatabaseService {
    
     @Override
     public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException{
-        try {
-                Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
-                Statement statement = connection.createStatement();
-                ResultSet queryResult = statement.executeQuery(query);
+        Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
+        try(Statement statement = connection.createStatement();
+            ResultSet queryResult = statement.executeQuery(query)) {
                 MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData)queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
@@ -151,10 +150,9 @@ public class MariaDBDatabaseService extends DatabaseService {
 
     @Override
     public ArrayList<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException{
-        try {
-            Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, true);
-            Statement statement = connection.createStatement();
-            ResultSet queryResult = statement.executeQuery(query);
+        Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, true);
+        try(Statement statement = connection.createStatement();
+            ResultSet queryResult = statement.executeQuery(query)) {
             MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData) queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
@@ -173,10 +171,9 @@ public class MariaDBDatabaseService extends DatabaseService {
     @Override
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
-        try {
-                Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
-                Statement statement = connection.createStatement();
-                ResultSet queryResult = statement.executeQuery(query);
+        Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
+        try(Statement statement = connection.createStatement();
+            ResultSet queryResult = statement.executeQuery(query)) {
                 MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData)queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 int index = 0; 

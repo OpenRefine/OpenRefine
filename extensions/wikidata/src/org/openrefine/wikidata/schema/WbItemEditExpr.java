@@ -27,19 +27,23 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * The representation of an item edit, which can contain variables both for
@@ -55,7 +59,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WbItemEditExpr implements WbExpression<ItemEdit> {
 
-    private WbExpression<? extends EntityIdValue> subject;
+    public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-item-subject";
+    
+	private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
 
@@ -78,8 +84,13 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
 
     @Override
     public ItemEdit evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
+        if (!(subjectId instanceof ItemIdValue)) {
+        	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        	warning.setProperty("example", subjectId.getId());
+        	throw new QAWarningException(warning);
+        }
         ItemEditBuilder update = new ItemEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {

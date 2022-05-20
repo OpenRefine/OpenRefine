@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -49,7 +50,7 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
 
     @Override
     public MonolingualTextValue evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         String text = getValueExpr().evaluate(ctxt).getString();
         try {
             String lang = getLanguageExpr().evaluate(ctxt);

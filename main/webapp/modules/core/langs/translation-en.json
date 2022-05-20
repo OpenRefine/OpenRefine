@@ -797,6 +797,7 @@
     "core-buttons/copy": "Copy",
     "core-buttons/transpose": "Transpose",
     "core-buttons/apply-to-all": "Apply to all identical cells",
+    "core-buttons/discover-services": "Discover services...",
     "core-import-formats/text/line-based": "Line-based text files",
     "core-import-formats/text/line-based/*sv": "CSV / TSV / separator-based files",
     "core-import-formats/text/line-based/fixed-width": "Fixed-width field text files",

@@ -285,8 +285,8 @@ Refine.DefaultImportingController.prototype._createProject = function() {
       return;
     }
 
-    var projectTags = $("#tagsInput").val().split(",");
-    
+    var projectTags = $("#tagsInput").val();
+
     var self = this;
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;
