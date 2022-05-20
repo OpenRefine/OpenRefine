@@ -130,7 +130,7 @@ WikibaseDialog.addWikibaseManifest = function () {
       WikibaseDialog.populateDialog();
     };
 
-    let manifestURL = $.trim(elmts.manifestURLInput.val());
+    let manifestURL = jQueryTrim(elmts.manifestURLInput.val());
     if (manifestURL.length) {
       WikibaseManager.fetchManifestFromURL(manifestURL, addManifest);
     } else {

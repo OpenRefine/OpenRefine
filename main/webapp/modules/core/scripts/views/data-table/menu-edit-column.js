@@ -79,7 +79,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     elmts.cancelButton.on('click',dismiss);
     elmts.okButton.on('click',function() {
-      var columnName = $.trim(elmts.columnNameInput[0].value);
+      var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
         return;
@@ -151,7 +151,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     elmts.cancelButton.on('click',dismiss);
     elmts.okButton.on('click',function() {
-      var columnName = $.trim(elmts.columnNameInput[0].value);
+      var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
         return;
@@ -230,7 +230,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.on('click',dismiss);
     elmts.form.on('submit',function(event) {
       event.preventDefault();
-      var newColumnName = $.trim(elmts.columnNameInput[0].value);
+      var newColumnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (newColumnName === column.name) {
         dismiss();
         return;
@@ -425,7 +425,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var repeatCount = "";
       var deleteJoinedColumns = elmts.delete_joined_columnsInput[0].checked;
       var writeOrCopy = $("input[name='write-or-copy']:checked")[0].value;
-      var newColumnName = $.trim(elmts.new_column_nameInput[0].value);
+      var newColumnName = jQueryTrim(elmts.new_column_nameInput[0].value);
       var manageNulls = $("input[name='manage-nulls']:checked")[0].value;
       var nullSubstitute = elmts.null_substituteInput[0].value;
       var fieldSeparator = elmts.field_separatorInput[0].value;

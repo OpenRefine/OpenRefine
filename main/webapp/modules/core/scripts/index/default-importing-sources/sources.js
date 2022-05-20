@@ -143,7 +143,7 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
   this._elmts.nextButton.on('click',function(evt) {
-    if ($.trim(self._elmts.textInput[0].value).length === 0) {
+    if (jQueryTrim(self._elmts.textInput[0].value).length === 0) {
       window.alert($.i18n('core-index-import/warning-clipboard'));
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/uploading-pasted-data'));

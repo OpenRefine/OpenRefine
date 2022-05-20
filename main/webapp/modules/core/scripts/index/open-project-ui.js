@@ -308,8 +308,8 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 
 Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   var projectName = $("#project-name-input")[0].value;
-  var dataURL = $.trim($("#project-url-input")[0].value);
-  if (! $.trim(projectName).length) {
+  var dataURL = jQueryTrim($("#project-url-input")[0].value);
+  if (! jQueryTrim(projectName).length) {
     window.alert($.i18n('core-index-open/warning-proj-name'));
 
   } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {

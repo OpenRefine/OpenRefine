@@ -62,7 +62,7 @@ Refine.SeparatorBasedParserUI.prototype.confirmReadyToCreateProject = function()
 
 Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value)
   };
   
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
