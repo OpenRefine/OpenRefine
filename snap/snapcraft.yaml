@@ -15,10 +15,6 @@ icon: snap/gui/openrefine.png
 architectures:
   - build-on: amd64
 
-layout:
-  /usr/bin/free:
-    bind-file: $SNAP/bin/free
-
 parts:
   openrefine:
     plugin: dump
@@ -27,6 +23,7 @@ parts:
       - default-jre
       - wget
       - procps
+      - xdg-utils
     prime:
       - -usr/lib/jvm/java-*/lib/security/cacerts
       - -usr/lib/jvm/java-*/lib/security/blacklisted.certs
@@ -35,7 +32,6 @@ parts:
 apps:
   openrefine:
     command: ./refine
-    extensions: [gnome-3-38]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/default-java
       PATH: $JAVA_HOME/jre/bin:$PATH
@@ -45,5 +41,3 @@ apps:
       - network-bind
       - x11
       - desktop
-
-#xdg-open http://localhost:3333
