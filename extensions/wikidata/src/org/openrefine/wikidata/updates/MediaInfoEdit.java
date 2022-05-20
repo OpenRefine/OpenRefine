@@ -187,6 +187,12 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 	 */
 	public MediaInfoIdValue uploadNewFile(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags) throws MediaWikiApiErrorException, IOException {
 		Validate.isTrue(isNew());
+		// Temporary addition of the category (should be configurable)
+		String wikitext = this.wikitext;
+		if (!wikitext.contains("[[Category:Uploaded with OpenRefine]]")) {
+			wikitext = wikitext + "\n[[Category:Uploaded with OpenRefine]]";
+		}
+		
 		// Upload the file
 		MediaFileUtils.MediaUploadResponse response;
 		File path = new File(filePath);
