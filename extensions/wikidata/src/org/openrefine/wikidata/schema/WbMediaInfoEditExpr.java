@@ -67,7 +67,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
 	@Override
 	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        if (!(subjectId instanceof MediaInfoIdValue)) {
+        if (!(subjectId instanceof MediaInfoIdValue) && !subjectId.isPlaceholder()) {
         	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
         	warning.setProperty("example", subjectId.getId());
         	throw new QAWarningException(warning);
