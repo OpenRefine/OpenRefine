@@ -1,4 +1,8 @@
 @echo off
+rem Previous line hides the remarks from being displayed with the prompt for each line
+
+rem Change current working directory to directory of the batch script
+cd %~dp0
 
 rem
 rem Configuration variables
