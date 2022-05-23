@@ -213,21 +213,21 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
   var self = this;
   Refine.wrapCSRF(function(token) {
     $.post(
-        "command/core/importing-controller?" + $.param({
+      "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
         "jobID": self._jobID,
         "subCommand": "update-format-and-options",
         "csrf_token": token
-        }),
-        {
+      }),
+      {
         "format" : self._format,
         "options" : JSON.stringify(options)
-        },
-        function(o) {
+      },
+      function(o) {
         if (o.status == 'error') {
-            if (o.message) {
-            alert(o.message);					
-            } else {
+          if (o.message) {
+            alert(o.message);
+          } else {
             var messages = [];
             $.each(o.errors, function() { messages.push(this.message); });
             alert(messages.join('\n\n'));
@@ -235,12 +235,11 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             if(finallyCallBack){
               finallyCallBack();
             }
-        } else {
-            callback(o);
-        }
+          }
+          callback(o);
         },
         "json"
-    );
+    ).fail(() => { alert($.i18n('core-index-parser/update-format-failed')); });
   });
 };
 
