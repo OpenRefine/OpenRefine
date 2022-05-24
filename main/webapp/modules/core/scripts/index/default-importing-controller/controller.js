@@ -264,12 +264,12 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-        function(data) {
-          result.rowModel = data;
-          callback(result);
-        },
+		function(data) {
+			  result.rowModel = data;
+			  callback(result);
+		  },
         "jsonp"
-      );
+	   ).fail(() => { alert($.i18n('core-index/rows-loading-failed')); });
     },
     "json"
   );

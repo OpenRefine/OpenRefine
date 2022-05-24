@@ -291,6 +291,9 @@ Refine.XmlParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
+    	  if (projectData["rowModel"]["rows"].length == 0) {
+		      alert($.i18n('core-index-import/load-xml-rows-error'));
+	      }	 
         new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       }, 20);
     }

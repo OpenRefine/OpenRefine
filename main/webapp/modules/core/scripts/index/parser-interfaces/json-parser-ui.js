@@ -291,6 +291,10 @@ Refine.JsonParserUI.prototype._updatePreview = function() {
     if (result.status == "ok") {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
+        
+    if (projectData["rowModel"]["rows"].length == 0) {
+		alert($.i18n('core-index-import/load-json-rows-error'));
+	}
 
         new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       }, 100);
