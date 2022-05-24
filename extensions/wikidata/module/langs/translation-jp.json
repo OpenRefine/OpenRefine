@@ -283,5 +283,6 @@
     "wikibase-schema/caption": "キャプション",
     "wikibase-schema/caption-override": "キャプション（上書き）",
     "wikibase-schema/captions-header": "キャプション",
-    "wikibase-schema/caption-if-new": "キャプション（上書きしない）"
+    "wikibase-schema/caption-if-new": "キャプション（上書きしない）",
+    "warnings-messages/invalid-item-subject/title": "アイテム編集のIdentifierが無効です"
 }
