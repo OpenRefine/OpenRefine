@@ -123,7 +123,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_cacheResponses.text($.i18n('core-views/cache-responses'));
     elmts.or_views_httpHeaders.text($.i18n('core-views/http-headers'));
     elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/show'));
-    elmts.or_views_httpHeadersShowHide.click(function() {
+    elmts.or_views_httpHeadersShowHide.on('click',function() {
                                                           $( ".set-httpheaders-container" ).toggle( "slow", function() {
                                                             if ($(this).is(':visible')) {
                                                               elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/hide'));
