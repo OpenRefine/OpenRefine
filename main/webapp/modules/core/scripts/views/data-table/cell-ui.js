@@ -519,15 +519,15 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
     elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     
-    elmts.matchButton.click(function() {
+    elmts.matchButton.on('click',function() {
         self._doMatchTopicToOneCell(candidate);
         dismissMenu();
     });
-    elmts.matchSimilarButton.click(function() {
+    elmts.matchSimilarButton.on('click',function() {
         self._doMatchTopicToSimilarCells(candidate);
         dismissMenu();
     });
-    elmts.cancelButton.click(function() {
+    elmts.cancelButton.on('click',function() {
         dismissMenu();
     });
   }

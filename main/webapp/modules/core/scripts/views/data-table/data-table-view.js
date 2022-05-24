@@ -618,8 +618,8 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
         new ExpressionColumnDialog(
                 previewWidget.getExpression(true),
                 $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
