@@ -348,11 +348,18 @@
       <version>${jetty.version}</version>
     </dependency>
 
-    <!-- Language detector api -->
+    <!-- Language detector -->
     <dependency>
       <groupId>com.optimaize.languagedetector</groupId>
       <artifactId>language-detector</artifactId>
       <version>0.6</version>
+    </dependency>
+
+    <!-- date parser -->
+    <dependency>
+      <groupId>com.github.sisyphsu</groupId>
+      <artifactId>dateparser</artifactId>
+      <version>1.0.10</version>
     </dependency>
     <!-- ############################ -->
 
