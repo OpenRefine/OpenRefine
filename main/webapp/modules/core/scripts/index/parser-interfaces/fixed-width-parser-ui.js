@@ -63,11 +63,11 @@ Refine.FixedWidthParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.FixedWidthParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value),
     columnWidths: this._getColumnWidths()
   };
 
-  var columnNames = $.trim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
+  var columnNames = jQueryTrim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
   if (columnNames.length > 0 && columnNames[0].length > 0) {
     options.columnNames = columnNames;
   }
@@ -212,7 +212,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
 
 Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
   var newColumnWidths = [];
-  var a = $.trim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
+  var a = jQueryTrim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
   for (var i = 0; i < a.length; i++) {
     var n = parseInt(a[i],10);
     if (!isNaN(n)) {

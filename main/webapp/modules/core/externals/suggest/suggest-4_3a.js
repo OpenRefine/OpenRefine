@@ -1027,7 +1027,7 @@
             qstr = qstr.replace(m[0], "");
             m = regex.exec(str);
         }
-        qstr = $.trim(qstr.replace(/\s+/g, " "));
+        qstr = jQueryTrim(qstr.replace(/\s+/g, " "));
         return [qstr, filters, overrides];
     },
 
@@ -1183,7 +1183,7 @@
       // SEARCH_PARAMS can be overridden inline
       var extend_ac_param = null;
 
-      if ($.type(filter) === "string") {
+      if (typeof filter === "string") {
           // the original filter may be a single filter param (string)
           filter = [filter];
       }

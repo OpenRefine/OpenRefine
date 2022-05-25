@@ -23,6 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema.exceptions;
 
+/**
+ * Exception thrown to indicate that the expression currently being
+ * evaluated should be skipped (for instance because the underlying
+ * data it was generated from is blank or unreconciled)
+ */
 public class SkipSchemaExpressionException extends Exception {
 
     static final long serialVersionUID = 738592057L;

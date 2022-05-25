@@ -834,5 +834,6 @@
     "core-import-formats/text": "File di testo",
     "core-index-import/invalid-url": "URL non valido",
     "core-index-import/blank-url": "URL vuoto",
-    "core-index-import/remove-row": "Rimuovi questa riga"
+    "core-index-import/remove-row": "Rimuovi questa riga",
+    "core-views/use-values-as-identifiers-note": "Gli identificativi di riconciliazione non saranno validati."
 }

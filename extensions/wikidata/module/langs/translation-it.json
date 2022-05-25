@@ -248,5 +248,11 @@
     "wikibase-statement-settings/strategy-options/property/description": "Confrontare le dichiarazioni usando le loro proprietà.",
     "warnings-messages/item-description-identical-with-label/title": "Descrizione ed etichetta sono uguali",
     "warnings-messages/item-description-end-by-punctuation-sign/title": "La descrizione finisce con un segno di interpunzione",
-    "warnings-messages/item-description-begin-with-uppercase/title": "La descrizione inizia con una lettera maiuscola"
+    "warnings-messages/item-description-begin-with-uppercase/title": "La descrizione inizia con una lettera maiuscola",
+    "wikibase-schema/caption": "Didascalia",
+    "wikibase-schema/caption-if-new": "Didascalia (non sovrascrivere)",
+    "wikibase-schema/captions-header": "Didascalie",
+    "wikibase-schema/add-mediainfo-button": "aggiungi media",
+    "wikibase-schema/add-caption": "aggiungi didascalia",
+    "wikibase-schema/caption-override": "Didascalia (sovrascrivi se presente)"
 }

@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
@@ -47,7 +48,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
             + "{\"type\":\"wbstringvariable\",\"columnName\":\"column A\"}}}";
 
     @Test
-    public void testContributeToLabel() {
+    public void testContributeToLabel() throws QAWarningException {
         WbNameDescExpr labelExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.LABEL,
                 TestingData.getTestMonolingualExpr("fr", "français", "le croissant magnifique"));
         ItemEditBuilder update = new ItemEditBuilder(subject);
@@ -57,7 +58,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     }
 
     @Test
-    public void testContributeToDescription() {
+    public void testContributeToDescription() throws QAWarningException {
         WbNameDescExpr descriptionExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.DESCRIPTION,
                 TestingData.getTestMonolingualExpr("de", "Deutsch", "wunderschön"));
         ItemEditBuilder update = new ItemEditBuilder(subject);
@@ -67,7 +68,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     }
 
     @Test
-    public void testContributeToAlias() {
+    public void testContributeToAlias() throws QAWarningException {
         WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 TestingData.getTestMonolingualExpr("en", "English", "snack"));
         ItemEditBuilder update = new ItemEditBuilder(subject);
@@ -77,7 +78,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     }
 
     @Test
-    public void testSkipped() {
+    public void testSkipped() throws QAWarningException {
         ItemEditBuilder update = new ItemEditBuilder(subject);
         setRow("");
         expr.contributeTo(update, ctxt);

@@ -392,12 +392,15 @@ Cypress.Commands.add(
 
 /**
  * Performs drag and drop on target and source item
+ * sourcSelector jquery selector for the element to be dragged
+ * targetSelector jquery selector for the element to be dropped on
+ * position position relative to the target element to perform the drop
  */
-Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
+Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 'center') => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
   cy.get(targetSelector) // eslint-disable-line
-    .trigger('mousemove')
+    .trigger('mousemove',position)
     .trigger('mouseup', { force: true });
 });
 

@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
@@ -55,7 +56,7 @@ public class WbStatementGroupExpr {
     }
 
     public StatementGroupEdit evaluate(ExpressionContext ctxt, EntityIdValue subject)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
         List<StatementEdit> statements = new ArrayList<>(statementExprs.size());
         for (WbStatementExpr expr : statementExprs) {

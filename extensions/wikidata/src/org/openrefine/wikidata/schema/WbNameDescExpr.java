@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.schema;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
@@ -67,8 +68,9 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
+     * @throws QAWarningException 
      */
-    public void contributeTo(ItemEditBuilder entity, ExpressionContext ctxt) {
+    public void contributeTo(ItemEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
@@ -100,8 +102,9 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
+     * @throws QAWarningException 
      */
-    public void contributeTo(MediaInfoEditBuilder entity, ExpressionContext ctxt) {
+    public void contributeTo(MediaInfoEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {

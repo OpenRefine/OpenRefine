@@ -48,6 +48,7 @@ import com.google.refine.expr.functions.Jsonize;
 import com.google.refine.expr.functions.Length;
 import com.google.refine.expr.functions.Slice;
 import com.google.refine.expr.functions.ToDate;
+import com.google.refine.expr.functions.TimeSinceUnixEpochToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
 import com.google.refine.expr.functions.Type;
@@ -172,26 +173,32 @@ public class ControlFunctionRegistry {
     static public Function getFunction(String name) {
         return s_nameToFunction.get(name);
     }
+
     static public String getFunctionName(Function f) {
         return s_functionToName.get(f);
     }
+
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
-    static public Map<String,Function> getFunctionMap() {
+
+    static public Map<String, Function> getFunctionMap() {
         return Collections.unmodifiableMap(s_nameToFunction);
     }
 
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
     }
+
     static public String getControlName(Control f) {
         return s_controlToName.get(f);
     }
+
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
     }
-    static public Map<String,Control> getControlMap() {
+
+    static public Map<String, Control> getControlMap() {
         return Collections.unmodifiableMap(s_nameToControl);
     }
 
@@ -212,6 +219,7 @@ public class ControlFunctionRegistry {
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
+        registerFunction("timeSinceUnixEpochToDate", new TimeSinceUnixEpochToDate());
 
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());

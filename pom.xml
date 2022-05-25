@@ -63,7 +63,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.13.2</jackson.version>
+    <jackson.version>2.13.3</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
@@ -94,7 +94,7 @@
     <guava.version>31.1-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
-    <testng.version>7.4.0</testng.version>
+    <testng.version>7.6.0</testng.version>
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>

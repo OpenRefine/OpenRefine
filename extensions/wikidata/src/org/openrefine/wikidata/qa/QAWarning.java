@@ -162,4 +162,10 @@ public class QAWarning implements Comparable<QAWarning> {
                 && severity.equals(otherWarning.getSeverity()) && count == otherWarning.getCount()
                 && properties.equals(otherWarning.getProperties());
     }
+
+	@Override
+	public String toString() {
+		return "QAWarning [type=" + type + ", bucketId=" + bucketId + ", severity=" + severity + ", count=" + count
+				+ ", properties=" + properties + "]";
+	}
 }
