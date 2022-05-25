@@ -104,17 +104,18 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          $('<span>').text(cell.v).appendTo(divContent);
+//          $('<span>').html(showNonPrintableChars(cell.v)).appendTo(divContent);
+         $('<span>').html(cell.v).appendTo(divContent);
         }
       }
     }
   };
-
   var even = true;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
     var tr = table.insertRow(table.rows.length);
     even = !even;
     renderRow(tr, r, row, even);
-  }    
+  }
 };
+

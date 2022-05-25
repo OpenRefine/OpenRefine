@@ -42,11 +42,12 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
-  this._shownulls = false;
+  this._showNulls = false;
+  this._showControlChars = false;
 
   this._currentPageNumber = 1;
   this._showRows(0);
-  
+
   this._refocusPageInput = false;
 }
 
@@ -61,7 +62,7 @@ DataTableView._extenders = [];
       "label": "Test",
       "click": function() {
           alert("Test");
-      } 
+      }
     });
   });
 */
@@ -74,11 +75,11 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  
+
   var topHeight =
     this._div.find(".viewpanel-header").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
-  
+
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
   var tableContainerVPadding = tableContainer.outerHeight(true) - tableContainer.height();
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
@@ -98,7 +99,7 @@ DataTableView.prototype.render = function() {
   var html = $(
     '<div class="viewpanel-header">' +
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
-        '<span bind="modeSelectors"></span>' + 
+        '<span bind="modeSelectors"></span>' +
       '</div>' +
       '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
@@ -143,11 +144,8 @@ DataTableView.prototype.render = function() {
 
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
 
-  // show/hide null values in cells
-  $(".data-table-null").toggle(self._shownulls);
-
   this.resize();
-  
+
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
@@ -183,7 +181,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
-  
+
   var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
   var currentPageInput = $('<input type="number">')
     .on('change',function(evt) { self._onChangeGotoPage(this, evt); })
@@ -194,18 +192,18 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("required", "required")
     .val(self._currentPageNumber)
     .css("width", pageInputSize +"px");
-    
+
   pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
   pageControlsSpan.appendTo(pagingControls);
 
   $('span#currentPageInput').replaceWith($(currentPageInput));
-  
-  if(self._refocusPageInput == true) { 
+
+  if(self._refocusPageInput == true) {
     self._refocusPageInput = false;
     var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
     currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
   }
-  
+
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
@@ -232,11 +230,11 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
       });
     }
   };
-  
+
   for (var i = 0; i < self._gridPagesSizes.length; i++) {
     renderPageSize(i);
   }
-  
+
   $('<span>')
   .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
   .appendTo(pageSizeControls);
@@ -245,7 +243,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
   var self = this;
   var newGridPageSize = [];
-  
+
   if(gridPageSize == null || typeof gridPageSize != "object") return defaultGridPageSize;
 
   for (var i = 0; i < gridPageSize.length; i++) {
@@ -254,12 +252,12 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   }
 
   if(newGridPageSize.length < 2) return defaultGridPageSize;
-  
+
   var distinctValueFilter = (value, index, selfArray) => (selfArray.indexOf(value) == index);
   newGridPageSize.filter(distinctValueFilter);
-  
+
   newGridPageSize.sort((a, b) => (a - b));
-  
+
   return newGridPageSize;
 };
 
@@ -345,10 +343,10 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
   if (columnGroups.length > 0) {
     renderColumnGroups(
-        columnGroups, 
+        columnGroups,
         [ theProject.columnModel.keyCellIndex ]
     );
-  }    
+  }
 
   /*------------------------------------------------------------
    *  Column Headers with Menus
@@ -417,7 +415,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         "json"
       );
     });
-    
+
     var tdFlag = tr.insertCell(tr.cells.length);
     var flag = document.createElement('a');
     flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
@@ -481,13 +479,19 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
     renderRow(tr, r, row, even);
   }
+       $(document).on('change', '#toggling-nulls', function () {
+         $(".data-table-null").toggle();
+         });
+          $(document).on('change', '#toggling-control-characters', function () {
+          nonPrintableToggle();
+                });
+
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
   var self = this;
   Refine.fetchRows(start, this._pageSize, function() {
     self.render();
-
     if (onDone) {
       onDone();
     }
@@ -496,34 +500,34 @@ DataTableView.prototype._showRows = function(start, onDone) {
 
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
   var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
-  
-  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") { 
-    $('input#viewpanel-paging-current-input').val(this._currentPageNumber); 
+
+  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") {
+    $('input#viewpanel-paging-current-input').val(this._currentPageNumber);
     return;
   }
-  
+
   if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
   if(gotoPageNumber < 1) gotoPageNumber = 1;
-  
+
   this._currentPageNumber = gotoPageNumber;
   this._showRows((gotoPageNumber - 1) * this._pageSize);
 };
 
 DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
   var keyDownCode = event.which;
-  
+
   if([38, 40].indexOf(keyDownCode) == -1) return;
-  if(self._refocusPageInput == true) return; 
+  if(self._refocusPageInput == true) return;
 
   evt.preventDefault();
   this._refocusPageInput = true;
-  
+
   var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
   if(keyDownCode == 38) {  // Up arrow
     if(newPageValue <= 1) return;
     this._onClickPreviousPage(elmt, evt);
   }
-    
+
   if(keyDownCode == 40) {  // Down arrow
     if(newPageValue >= this._lastPageNumber) return;
     this._onClickNextPage(elmt, evt);
@@ -598,6 +602,48 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
   this.update();
 };
 
+var showSettings = function(){
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/settings-dialog.html"));
+
+    var elmts = DOM.bind(frame);
+       elmts.settingsDialogHeader.text($.i18n('core-views/settings/header'));
+        elmts.settingsCancelButton.text($.i18n('core-buttons/settings-cancel'));
+         elmts.settingsOkButton.html($.i18n('core-buttons/settings-ok'));
+         elmts.show_nulls.html($.i18n('core-buttons/display/show_nulls'));
+         elmts.show_control_chars.text($.i18n('core-buttons/display/show_control_chars'));
+
+         var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.settingsOkButton.click(function() {
+    if($('#toggling-nulls')[0].checked){
+    self._showNulls = true;
+    }else{
+      self._showNulls = false;
+    }
+        if($('#toggling-control-characters')[0].checked){
+        self._showControlChars = true;
+        }else{
+          self._showControlChars = false;
+        }
+     dismiss();
+    });
+        elmts.settingsCancelButton.click(function() {
+        if(self._showNulls){
+        $('.data-table-null').show();
+        }else{
+       $('.data-table-null').hide();
+        }
+       if(self._showControlChars){
+         $(".unprintableCharacters").show();
+         $(".originalCharacters").hide();
+        }else{
+            $(".unprintableCharacters").hide();
+            $(".originalCharacters").show();
+        }
+         dismiss();
+        });
+  };
 /** below can be move to seperate file **/
   var doTextTransformPrompt = function() {
     var frame = $(
@@ -613,7 +659,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
     elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n('core-buttons/cancel'));    
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -627,7 +673,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
                 elmts.repeatCountInput[0].value
         );
     });
-    
+
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts,
       -1,
@@ -641,7 +687,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     };
   };
   /** above can be move to seperate file **/
-  
+
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
@@ -734,10 +780,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-star",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/starred-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.starred"
               },
               {
@@ -751,10 +797,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-flag",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/flagged-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.flagged"
               },
               {
@@ -768,10 +814,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-blank",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/blank-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()"
               },
               {
@@ -819,10 +865,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/non-blank-values",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/non-blank-values'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "filter(row.columnNames,cn,isNonBlank(cells[cn].value))"
               },
               {
@@ -836,10 +882,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/non-blank-records",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/non-blank-records'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))"
               },
               {
@@ -959,11 +1005,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n('core-views/display-null'),
-          id: "core/display-null",
+          label: $.i18n('core-views/display-settings'),
+          id: "core/display-settings",
           click: function() {
-            $(".data-table-null").toggle();
-            self._shownulls = !(self._shownulls);
+          showSettings();
           }
         }
       ]
@@ -1125,8 +1170,8 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
   var self = this;
   new ExpressionPreviewDialog(
     title,
-    column.cellIndex, 
-    o.rowIndices, 
+    column.cellIndex,
+    o.rowIndices,
     o.values,
     expression,
     onDone

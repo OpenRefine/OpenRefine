@@ -209,3 +209,23 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
     });
   }
 };
+
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
+
+function showNonPrintableChars(content) {
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32) {
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+      stringIncNonPrintable += unprintableChar;
+
+    }else{
+    stringIncNonPrintable += content.charAt(character);
+    }
+  }
+  return stringIncNonPrintable;
+}
+
+
+
