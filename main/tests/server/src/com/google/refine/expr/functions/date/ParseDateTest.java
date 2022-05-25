@@ -57,8 +57,7 @@ public class ParseDateTest extends RefineTest {
                 "October 4 2021 at 12:00:02", "2021-10-04T12:00:02Z",
                 "04/10/21 at 12:23:00", "2021-10-04T12:23:00Z",
                 "Oct 4, 2021 at 12:04:00", "2021-10-04T12:04:00Z",
-                "Oct 4, 2021 12:32:09", "2021-10-04T12:32:09Z"
-        );
+                "Oct 4, 2021 12:32:09", "2021-10-04T12:32:09Z");
 
         sampleDates.forEach((actualDate, expectedDate) -> {
 
