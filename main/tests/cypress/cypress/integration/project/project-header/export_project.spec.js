@@ -105,7 +105,7 @@ describe(__filename, function () {
   });
   it('Export a project through "Markdown"', function () {
 
-    cy.loadAndVisitProject(fixture);
+    cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
