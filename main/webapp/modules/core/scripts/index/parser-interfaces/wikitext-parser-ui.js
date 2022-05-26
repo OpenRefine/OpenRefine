@@ -112,10 +112,10 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
 Refine.WikitextParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/wikitext-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
@@ -137,7 +137,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
 /*
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click',function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });
@@ -201,8 +201,8 @@ Refine.WikitextParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.WikitextParserUI.prototype._scheduleUpdatePreview = function() {

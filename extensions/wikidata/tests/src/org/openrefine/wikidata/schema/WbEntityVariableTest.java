@@ -26,16 +26,14 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
@@ -91,6 +89,17 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
         recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
+    }
+
+    @Test
+    public void testReconciledCellWithInvalidFormat() {
+        Recon recon = Recon.makeWikidataRecon(3782378L);
+        recon.judgment = Recon.Judgment.Matched;
+        recon.match = new ReconCandidate("invalid_id", "some item", null, 100.0);
+        Cell cell = new Cell("some value", recon);
+        QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        warning.setProperty("example", "invalid_id");
+        evaluatesToWarning(warning, cell);
     }
 
     @Test

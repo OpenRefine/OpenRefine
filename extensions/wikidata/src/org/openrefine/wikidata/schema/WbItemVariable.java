@@ -24,8 +24,12 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -39,6 +43,8 @@ import com.google.refine.model.Recon.Judgment;
  *
  */
 public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
+	
+	public static final String INVALID_ITEM_ID_FORMAT_WARNING_TYPE = "invalid-item-id-format";
 
     @JsonCreator
     public WbItemVariable() {
@@ -58,7 +64,7 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
 
     @Override
     public ItemIdValue fromCell(Cell cell, ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         if (cell.recon != null
                 && (Judgment.Matched.equals(cell.recon.judgment) || Judgment.New.equals(cell.recon.judgment))) {
             if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRI())) {
@@ -66,6 +72,22 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
                 warning.setProperty("example_cell", cell.value.toString());
                 ctxt.addWarning(warning);
                 throw new SkipSchemaExpressionException();
+            }
+            
+            // Check that the id is of the correct format
+            if (Judgment.Matched.equals(cell.recon.judgment)) {
+	            try {
+	            	EntityIdValue id = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+	            	if (!(id instanceof ItemIdValue)) {
+	            		QAWarning warning = new QAWarning(INVALID_ITEM_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+	            		warning.setProperty("example", cell.recon.match.id);
+	            		throw new QAWarningException(warning);
+	            	}
+	            } catch(IllegalArgumentException e) {
+	            	QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+	            	warning.setProperty("example", cell.recon.match.id);
+	            	throw new QAWarningException(warning);
+	            }
             }
             return new ReconItemIdValue(cell.recon, cell.value.toString());
         }

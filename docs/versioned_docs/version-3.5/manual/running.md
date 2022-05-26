@@ -199,15 +199,16 @@ REFINE_MIN_MEMORY=1400M
 Further modifications can be performed by using JVM preferences. These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. 
 
 Some of the most common keys (with their defaults) are:
+
 |Description|Argument|Syntax example|
 |---|---|---|
-|The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]
-|The workspace director|`-Drefine.data_dir`|/
-|Development mode|`-Drefine.development`|false
-|Headless mode|`-Drefine.headless`|false
-|IP|`-Drefine.host`|127.0.0.1
-|Port|`-Drefine.port`|3333
-|The application folder|`-Drefine.webapp`|main/webapp
+|The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]|
+|The workspace directory|`-Drefine.data_dir`|/where/you/want/the/workspace/|
+|Development mode|`-Drefine.development`|false|
+|Headless mode|`-Drefine.headless`|false|
+|IP|`-Drefine.host`|127.0.0.1|
+|Port|`-Drefine.port`|3333|
+|The application folder|`-Drefine.webapp`|main/webapp|
 
 The syntax is as follows:
 

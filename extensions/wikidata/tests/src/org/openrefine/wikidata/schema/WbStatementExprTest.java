@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
@@ -122,7 +123,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
 
         @Override
         public StatementEdit evaluate(ExpressionContext ctxt)
-                throws SkipSchemaExpressionException {
+                throws SkipSchemaExpressionException, QAWarningException {
             return expr.evaluate(ctxt, subject, property);
         }
     }

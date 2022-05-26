@@ -7,8 +7,8 @@ describe(__filename, function () {
     ]);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[column="NDB_No"]');
-    cy.dragAndDrop('div[column="Energ_Kcal"]', 'div[column="Water"]');
+    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[column="NDB_No"]', 'top');
+    cy.dragAndDrop('div[column="Energ_Kcal"]', 'div[column="Water"]', 'top');
 
     cy.confirmDialogPanel();
 
@@ -28,8 +28,8 @@ describe(__filename, function () {
     ]);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[bind="trashContainer"]');
-    cy.dragAndDrop('div[column="Water"]', 'div[bind="trashContainer"]');
+    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[bind="trashContainer"]','center');
+    cy.dragAndDrop('div[column="Water"]', 'div[bind="trashContainer"]','center');
 
     cy.confirmDialogPanel();
 

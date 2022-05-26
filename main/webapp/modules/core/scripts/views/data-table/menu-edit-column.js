@@ -77,9 +77,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       null
     );
     
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
-      var columnName = $.trim(elmts.columnNameInput[0].value);
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
+      var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
         return;
@@ -123,7 +123,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_cacheResponses.text($.i18n('core-views/cache-responses'));
     elmts.or_views_httpHeaders.text($.i18n('core-views/http-headers'));
     elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/show'));
-    elmts.or_views_httpHeadersShowHide.click(function() {
+    elmts.or_views_httpHeadersShowHide.on('click',function() {
                                                           $( ".set-httpheaders-container" ).toggle( "slow", function() {
                                                             if ($(this).is(':visible')) {
                                                               elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/hide'));
@@ -149,9 +149,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
 
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
-      var columnName = $.trim(elmts.columnNameInput[0].value);
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
+      var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
         return;
@@ -227,10 +227,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
-    elmts.cancelButton.click(dismiss);
-    elmts.form.submit(function(event) {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.form.on('submit',function(event) {
       event.preventDefault();
-      var newColumnName = $.trim(elmts.columnNameInput[0].value);
+      var newColumnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (newColumnName === column.name) {
         dismiss();
         return;
@@ -304,10 +304,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    elmts.separatorInput.focus().select();
+    elmts.separatorInput.trigger('focus').trigger('select');
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
         columnName: column.name,
@@ -425,7 +425,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var repeatCount = "";
       var deleteJoinedColumns = elmts.delete_joined_columnsInput[0].checked;
       var writeOrCopy = $("input[name='write-or-copy']:checked")[0].value;
-      var newColumnName = $.trim(elmts.new_column_nameInput[0].value);
+      var newColumnName = jQueryTrim(elmts.new_column_nameInput[0].value);
       var manageNulls = $("input[name='manage-nulls']:checked")[0].value;
       var nullSubstitute = elmts.null_substituteInput[0].value;
       var fieldSeparator = elmts.field_separatorInput[0].value;
@@ -531,32 +531,32 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     */
     elmts.column_join_columnPicker
       .find('.column-join-column')
-      .click(function() {
+      .on('click',function() {
         elmts.column_join_columnPicker
         .find('.column-join-column')
         .removeClass('selected');
         $(this).addClass('selected');
       });
     elmts.selectAllButton
-      .click(function() {
+      .on('click',function() {
         elmts.column_join_columnPicker
         .find('input[type="checkbox"]')
         .prop('checked',true);
        });
     elmts.deselectAllButton
-      .click(function() {
+      .on('click',function() {
         elmts.column_join_columnPicker
         .find('input[type="checkbox"]')
         .prop('checked',false);
       });
-    elmts.okButton.click(function() {
+    elmts.okButton.on('click',function() {
       transform();
       dismiss();
     });
-    elmts.cancelButton.click(function() {
+    elmts.cancelButton.on('click',function() {
       dismiss();
     });
-    elmts.new_column_nameInput.change(function() {
+    elmts.new_column_nameInput.on('change',function() {
       if (elmts.new_column_nameInput[0].value != "") {
         elmts.copy_to_new_columnInput.prop('checked',true);
       } else
@@ -564,7 +564,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         elmts.write_selected_columnInput.prop('checked',true);
         }
     });
-    elmts.null_substituteInput.change(function() {
+    elmts.null_substituteInput.on('change',function() {
         elmts.replace_nullsInput.prop('checked',true);
     });
   };

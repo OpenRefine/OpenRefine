@@ -5,8 +5,6 @@ WikibaseDialog.launch = function () {
   const elmts = this.elmts = DOM.bind(frame);
   elmts.dialogHeader.text($.i18n("wikibase-management/dialog-header"));
   elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
-  elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
-      WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
   elmts.closeButton.text($.i18n("wikibase-management/close"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
 
@@ -14,33 +12,69 @@ WikibaseDialog.launch = function () {
 
   let level = DialogSystem.showDialog(frame);
 
-  elmts.closeButton.click(function () {
+  elmts.closeButton.on('click',function () {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.addButton.click(function () {
+  elmts.addButton.on('click',function () {
     WikibaseDialog.addWikibaseManifest();
   });
 };
 
 WikibaseDialog.populateDialog = function () {
-  let wikibases = WikibaseManager.getAllWikibases();
+  let wikibases = WikibaseManager.getAllWikibaseManifests();
+  let selectedWikibase =  WikibaseManager.getSelectedWikibaseName().toLowerCase();
+
+  wikibases.sort((a, b) => {
+    let ret;
+    let aName = a.mediawiki.name;
+    let bName = b.mediawiki.name;
+    let aSelected = aName.toLowerCase() === selectedWikibase;
+    let bSelected = bName.toLowerCase() === selectedWikibase;
+    // ascending order
+    // compare selected, then by name
+    if (aSelected) {
+      ret = -1;
+    } else if (bSelected) {
+      ret = 1;
+    } else {
+      if (aName < bName) {
+        ret = -1;
+      } else if (aName > bName) {
+        ret = 1;
+      } else {
+        ret = 0;
+      }
+    }
+    return ret;
+  });
 
   WikibaseDialog.elmts.wikibaseList.empty();
-  for (let wikibaseName in wikibases) {
+  for (let manifest of wikibases) {
+    let wikibaseName = manifest.mediawiki.name;
+
+    let rootURL = manifest.mediawiki.root;
+
+    const wikibase = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-item.html"));
+    let _elmts = DOM.bind(wikibase);
+    if (wikibaseName.toLowerCase() === selectedWikibase) {
+      _elmts.wikibaseItem.addClass("selected");
+    }
+    _elmts.wikibaseItem.click(function(event) {
+      WikibaseDialog.selectWikibase(wikibaseName )
+    });
+    _elmts.wikibaseImage.attr("alt",$.i18n('wikibase-account/logo-alt-text', wikibaseName));
+    _elmts.wikibaseName.text(wikibaseName);
+    _elmts.wikibaseUrl.text(rootURL);
+    _elmts.deleteWikibase.text($.i18n('core-index/delete'));
+    _elmts.deleteWikibase.click(function(event) {
+      WikibaseDialog.removeWikibase(event, wikibaseName);
+    });
+
+    WikibaseDialog.elmts.wikibaseList.append(wikibase);
+
     WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
-      if (wikibases.hasOwnProperty(wikibaseName)) {
-        let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
-        item += "<td class=\"wikibase-dialog-wikibase-logo\">" + "<img src=\""+ data + "\" alt=\"" + $.i18n('wikibase-account/logo-alt-text', wikibaseName) + "\"/>" + "</td>";
-        item += "<td>" + wikibaseName + "</td>";
-        if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
-          item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
-        } else {
-          item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
-        }
-        item += "</tr>";
-        WikibaseDialog.elmts.wikibaseList.append(item);
-      }
+      _elmts.wikibaseImage.attr("src",data);
     }, wikibaseName);
   }
 };
@@ -48,8 +82,6 @@ WikibaseDialog.populateDialog = function () {
 WikibaseDialog.selectWikibase = function (wikibaseName) {
   if (wikibaseName !== WikibaseManager.getSelectedWikibaseName()) {
     WikibaseManager.selectWikibase(wikibaseName);
-    WikibaseDialog.elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
-        WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
     WikibaseDialog.populateDialog();
     SchemaAlignment.onWikibaseChange();
   }
@@ -75,11 +107,11 @@ WikibaseDialog.addWikibaseManifest = function () {
 
   let level = DialogSystem.showDialog(frame);
 
-  elmts.cancelButton.click(function () {
+  elmts.cancelButton.on('click',function () {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.addButton.click(function () {
+  elmts.addButton.on('click',function () {
     let addManifest = function (manifest) {
       if (!WikibaseDialog.validateManifest(manifest)) {
         return;
@@ -98,7 +130,7 @@ WikibaseDialog.addWikibaseManifest = function () {
       WikibaseDialog.populateDialog();
     };
 
-    let manifestURL = $.trim(elmts.manifestURLInput.val());
+    let manifestURL = jQueryTrim(elmts.manifestURLInput.val());
     if (manifestURL.length) {
       WikibaseManager.fetchManifestFromURL(manifestURL, addManifest);
     } else {

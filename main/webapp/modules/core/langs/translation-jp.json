@@ -836,5 +836,10 @@
     "core-views/use-values-as-identifiers-note": "照合IDは有効化されません.",
     "core-index-import/invalid-url": "不正なURL",
     "core-index-import/blank-url": "空のURL",
-    "core-index-import/remove-row": "この行を削除"
+    "core-index-import/remove-row": "この行を削除",
+    "core-index/rows-loading-failed": "行を読み込めませんでした.",
+    "core-index-import/load-xml-rows-error": "XMLデータがパースできませんでした",
+    "core-index-parser/update-format-failed": "パースとフォーマットに失敗しました",
+    "core-buttons/discover-services": "サービスを探す...",
+    "core-index-import/load-json-rows-error": "JSONデータがパースできませんでした"
 }

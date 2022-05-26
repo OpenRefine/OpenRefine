@@ -54,11 +54,11 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
       .text(logged_in_username)
       .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click',function (e) {
     dismiss();
   });
 
-  elmts.logoutButton.click(function () {
+  elmts.logoutButton.on('click',function () {
     frame.hide();
     Refine.postCSRF(
         "command/wikidata/login",
@@ -95,7 +95,7 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   elmts.rememberMe.text($.i18n('wikibase-account/remember-me'));
   elmts.passwordRememberMeTitle.attr("title", $.i18n('wikibase-account/password-remember-me-title'));
   elmts.loginButton.text($.i18n('wikibase-account/log-in'));
-  elmts.usernameInput.focus();
+  elmts.usernameInput.trigger('focus');
 
   // We don't support logging in with owner-only consumer if the target Wikibase doesn't support OAuth.
   if (!WikibaseManager.getSelectedWikibaseOAuth()) {
@@ -107,16 +107,16 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click',function (e) {
     dismiss();
   });
 
-  elmts.explainOwnerOnlyConsumerLogin.click(function (e) {
+  elmts.explainOwnerOnlyConsumerLogin.on('click',function (e) {
     dismiss();
     ManageAccountDialog.displayOwnerOnlyConsumerLogin(onSuccess);
   });
 
-  elmts.loginForm.submit(function (e) {
+  elmts.loginForm.on('submit',function (e) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     let username = elmts.usernameInput.val();
@@ -160,23 +160,23 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
   elmts.rememberMe.text($.i18n('wikibase-account/remember-me'));
   elmts.ownerOnlyConsumerRememberMeTitle.attr("title", $.i18n('wikibase-account/owner-only-consumer-remember-me-title'));
   elmts.loginButton.text($.i18n('wikibase-account/log-in'));
-  elmts.consumerTokenInput.focus();
+  elmts.consumerTokenInput.trigger('focus');
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function () {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click',function (e) {
     dismiss();
   });
 
-  elmts.explainPasswordLogin.click(function (e) {
+  elmts.explainPasswordLogin.on('click',function (e) {
     dismiss();
     ManageAccountDialog.displayPasswordLogin(onSuccess);
   });
 
-  elmts.loginForm.submit(function (e) {
+  elmts.loginForm.on('submit',function (e) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});

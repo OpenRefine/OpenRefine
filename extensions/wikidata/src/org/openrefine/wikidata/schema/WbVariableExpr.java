@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -73,10 +74,11 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
 
     /**
      * Evaluates the expression in a given context, returning
+     * @throws QAWarningException 
      */
     @Override
     public T evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException {
+            throws SkipSchemaExpressionException, QAWarningException {
         Cell cell = ctxt.getCellByName(columnName);
         if (cell != null) {
             return fromCell(cell, ctxt);
@@ -96,7 +98,7 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
      * @return the corresponding Wikibase value
      */
     public abstract T fromCell(Cell cell, ExpressionContext ctxt)
-            throws SkipSchemaExpressionException;
+            throws SkipSchemaExpressionException, QAWarningException;
 
     /**
      * Helper for equality methods of subclasses.

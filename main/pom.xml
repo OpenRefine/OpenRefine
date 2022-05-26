@@ -353,6 +353,14 @@
       <version>${markdowngenerator.version}</version>
     </dependency>
 
+    <!-- Language detector api -->
+    <dependency>
+      <groupId>com.optimaize.languagedetector</groupId>
+      <artifactId>language-detector</artifactId>
+      <version>0.6</version>
+    </dependency>
+    <!-- ############################ -->
+
     <!-- test dependencies -->
 
     <dependency>

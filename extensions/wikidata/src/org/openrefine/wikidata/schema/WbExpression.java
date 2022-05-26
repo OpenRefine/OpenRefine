@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -60,5 +61,5 @@ public interface WbExpression<T> {
      * suitable to be the target of a claim.
      */
     public T evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException;
+            throws SkipSchemaExpressionException, QAWarningException;
 }

@@ -1,4 +1,8 @@
 describe(__filename, function () {
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+  
   it('Test the create project from this computer based on CSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
@@ -33,10 +37,7 @@ describe(__filename, function () {
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
-
-    // ensure the project is loading by checking presence of a project-title element
-    cy.get('#project-title').should('exist');
+    cy.waitForProjectTable();
   });
   it('Test the create project from this computer based on TSV', function () {
     // navigate to the create page
@@ -72,10 +73,7 @@ describe(__filename, function () {
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
-
-    // ensure the project is loading by checking presence of a project-title element
-    cy.get('#project-title').should('exist');
+    cy.waitForProjectTable();
   });
   it('Test the create project from clipboard based on CSV', function () {
     // navigate to the create page
@@ -112,10 +110,7 @@ describe(__filename, function () {
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
-
-    // ensure the project is loading by checking presence of a project-title element
-    cy.get('#project-title').should('exist');
+    cy.waitForProjectTable();
   });
   it('Test the create project from clipboard based on TSV', function () {
     // navigate to the create page
@@ -148,10 +143,59 @@ describe(__filename, function () {
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
+    cy.waitForProjectTable();
+  });
 
-    // ensure the project is loading by checking presence of a project-title element
-    cy.get('#project-title').should('exist');
+  it('Test project renaming', function () {
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
+    cy.get(
+        '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).type('this is a test');
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+        .contains('Create project »')
+        .click();
+    cy.waitForProjectTable();
+
+    cy.get('#project-name-button').contains('this is a test');
+  });
+  
+  it('Test project tagging by adding various tags', function () {
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
+    const uniqueProjectName = Date.now();
+    const uniqueTagName1 = 'tag1_' + Date.now();
+    const uniqueTagName2 = 'tag2_' + Date.now();
+
+    cy.get('#project-tags-container').click();
+    // Type and Validate the tag, pressing enter
+    cy.get('#project-tags-container .select2-search__field').type(uniqueTagName1+'{enter}');
+    cy.get('#project-tags-container .select2-search__field').type(uniqueTagName2+'{enter}');
+    cy.get('#or-import-parsopt').click();
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+        .contains('Create project »')
+        .click();
+    cy.waitForProjectTable();
+
+    cy.addProjectForDeletion();
+    cy.visitOpenRefine();
+    cy.navigateTo('Open project');
+    cy.get('#projects-list')
+        .contains(uniqueProjectName)
+        .parent()
+        .parent()
+        .contains(uniqueTagName1);
+    cy.get('#projects-list')
+        .contains(uniqueProjectName)
+        .parent()
+        .parent()
+        .contains(uniqueTagName2);
   });
   // it('Test the create project from Web URL based on CSV', function () {
   //   // navigate to the create page

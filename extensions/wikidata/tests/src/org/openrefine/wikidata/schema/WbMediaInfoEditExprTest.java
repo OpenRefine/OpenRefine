@@ -3,6 +3,8 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
@@ -26,6 +28,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
     public WbMediaInfoEditExpr expr;
     Cell matchedCell = recon("M23");
+    Cell matchedCellWrongType = recon("Q23");
     EntityIdValue subject = new ReconMediaInfoIdValue(matchedCell.recon, (String) matchedCell.value);
     MonolingualTextValue label = Datamodel.makeMonolingualTextValue("my label", "en");
     Snak mainsnak = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P908"),
@@ -62,6 +65,14 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         MediaInfoEdit result = new MediaInfoEditBuilder(subject).addLabel(label, true).addStatement(fullStatement)
                 .build();
         evaluatesTo(result, expr);
+    }
+
+    @Test
+    public void testEvaluateWrongSubjectType() {
+        setRow("", "", "3.898,4.389", "my label", matchedCellWrongType);
+        QAWarning warning = new QAWarning(WbMediaInfoEditExpr.INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        warning.setProperty("example", "Q23");
+        evaluatesToWarning(warning, expr);
     }
 
     @Test

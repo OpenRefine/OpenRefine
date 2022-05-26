@@ -26,6 +26,8 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
@@ -49,6 +51,28 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         recon.match = new ReconCandidate("Q123", "some item", null, 100.0);
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
+    }
+
+    @Test
+    public void testReconciledCellWithInvalidFormat() {
+        Recon recon = Recon.makeWikidataRecon(3782378L);
+        recon.judgment = Recon.Judgment.Matched;
+        recon.match = new ReconCandidate("invalid_id", "some item", null, 100.0);
+        Cell cell = new Cell("some value", recon);
+        QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        warning.setProperty("example", "invalid_id");
+        evaluatesToWarning(warning, cell);
+    }
+
+    @Test
+    public void testReconciledCellWithInvalidEntityType() {
+        Recon recon = Recon.makeWikidataRecon(3782378L);
+        recon.judgment = Recon.Judgment.Matched;
+        recon.match = new ReconCandidate("P344", "some item", null, 100.0);
+        Cell cell = new Cell("some value", recon);
+        QAWarning warning = new QAWarning(WbItemVariable.INVALID_ITEM_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+        warning.setProperty("example", "P344");
+        evaluatesToWarning(warning, cell);
     }
 
     @Test

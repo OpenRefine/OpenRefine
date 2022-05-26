@@ -7,6 +7,8 @@ on:
       - '4.0'
     paths-ignore:
       - 'docs/**'
+  release:
+    types: [published]
 
 jobs:
   prepare_ui_test_matrix:
@@ -19,7 +21,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.1.1
+        uses: actions/setup-node@v3.2.0
         with:
           node-version: '12'
       - id: set-matrix
@@ -60,7 +62,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.1.1
+        uses: actions/setup-node@v3.2.0
         with:
           node-version: '12'
 
@@ -215,6 +217,12 @@ jobs:
         .github/workflows/release/add_apple_keys.sh
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
+
+    - name: Apply patch to insert Google API credentials
+      run: |
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt .github/workflows/release/gdata.patch.asc
+        git am .github/workflows/release/gdata.patch
+        git reset HEAD^
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install

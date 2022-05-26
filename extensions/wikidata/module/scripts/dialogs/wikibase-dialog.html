@@ -2,15 +2,14 @@
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
     <p bind="explainSelectWikibase"></p>
-    <p bind="currentSelectedWikibase"></p>
     <div class="wikibase-list-wrapper">
-      <table class="wikibase-dialog-wikibase-list" bind="wikibaseList">
+      <ol class="wikibase-list" bind="wikibaseList">
         <!-- dynamically generated -->
-      </table>
+      </ol>
     </div>
   </div>
-  <div class="dialog-footer" bind="dialogFooter">
-      <button class="button" bind="closeButton"></button>
+  <div class="dialog-footer" style="justify-content: space-between" bind="dialogFooter">
       <button class="button" bind="addButton"></button>
+      <button class="button" bind="closeButton"></button>
   </div>
 </div>
