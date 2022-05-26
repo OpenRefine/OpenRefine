@@ -54,7 +54,7 @@ import static org.mockito.Mockito.mock;
 
 public class MdExporterTests extends RefineTest {
 
-    private static final String TEST_PROJECT_NAME = "ods exporter test project";
+    private static final String TEST_PROJECT_NAME = "Md exporter test project";
 
     @Override
     @BeforeTest
