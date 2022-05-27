@@ -56,6 +56,8 @@ abstract public class ExporterRegistry {
         s_formatToExporter.put("template", new TemplatingExporter());
         
         s_formatToExporter.put("sql", new SqlExporter());
+
+        s_formatToExporter.put("json", new JsonExporter());
     }
     
     static public void registerExporter(String format, Exporter exporter) {

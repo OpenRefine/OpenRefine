@@ -62,6 +62,8 @@ function registerCommands() {
   RS.registerCommand(module, "importing-controller", new Packages.com.google.refine.commands.importing.ImportingControllerCommand());
   RS.registerCommand(module, "cancel-importing-job", new Packages.com.google.refine.commands.importing.CancelImportingJobCommand());
 
+    RS.registerCommand(module, "csv-json-importing-job-status", new Packages.com.google.refine.commands.importing.GetImportingJobStatusCommand());
+
   RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
   RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
   RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
