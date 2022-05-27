@@ -406,7 +406,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
           id: "core/collapse-whitespace",
           label: $.i18n('core-views/collapse-white/single'),
-          click: function() { doTextTransform("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
+          click: function() { doTextTransform("value.replace(/[\\p{Zs}\\s]+/,' ')", "keep-original", false, ""); }
         },
         {},
         {
