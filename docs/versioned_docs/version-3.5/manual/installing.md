@@ -49,7 +49,7 @@ For the absolute latest development updates, see the [snapshot releases](https:/
 
 #### What’s changed {#whats-changed}
 
-Our [latest version is OpenRefine 3.5.0](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0), released November 7th 2021. The major changes in this version are listed on the [3.5.0 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0) with the downloadable packages.
+Our [latest version is OpenRefine 3.5.2](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.2), released January 26, 2022. The major changes in this version are listed on the [3.5.2 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.2) with the downloadable packages.
 
 You can find information about all OpenRefine versions on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
 
@@ -103,6 +103,14 @@ You can right-click on `openrefine.exe` or `refine.bat` and pin one of those pro
 <TabItem value="mac">
 
 Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon onto the Applications folder icon (just like you would normally install Mac applications).
+
+:::caution
+When you double-click the OpenRefine icon to start the application on your Mac for the first time, you may see the notification "OpenRefine cannot be opened because the developer cannot be verified". If you see this notification, click <span class="buttonLabels">Cancel</span>.
+
+Instead, _right_-click the application's icon and select `Open` from the pop-up menu. You will see a new notification which now contains an <span class="buttonLabels">Open</span> button.
+![A screenshot of the notification containing an 'Open' button.](/img/mac-open-notification.png)
+After clicking <span class="buttonLabels">Open</span> and starting OpenRefine for the first time, you will be able to start the application normally in the future.
+:::
 
 </TabItem>
 
