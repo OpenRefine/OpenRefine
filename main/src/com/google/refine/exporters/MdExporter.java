@@ -3,7 +3,10 @@ package com.google.refine.exporters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+import net.steppschuh.markdowngenerator.MarkdownSerializationException;
 import net.steppschuh.markdowngenerator.table.Table;
+import net.steppschuh.markdowngenerator.link.Link;
+import net.steppschuh.markdowngenerator.text.Text;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +38,20 @@ public class MdExporter implements StreamExporter{
                 String[] cellData = new String[cells.size()];
                 for(int i = 0; i < cells.size(); i++){
                     CellData cellDatatmp = cells.get(i);
-                    cellData[i] = (cellDatatmp != null && cellDatatmp.text != null) ? cellDatatmp.text : "";
+                    cellData[i] = "";
+                    if(cellDatatmp != null && cellDatatmp.text != null){
+                        String textInCell = cellDatatmp.text;
+                        textInCell = textInCell.replaceAll("([`|])", "\\\\$1");
+                        try {
+                            if(cellDatatmp.link != null){
+                                    cellData[i] = new Link(new Text(textInCell).serialize(), cellDatatmp.link).serialize();
+                            }else{
+                                cellData[i] = new Text(textInCell).serialize();
+                            }
+                        } catch (MarkdownSerializationException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
                 mdDoc.addRow(cellData);
             }
