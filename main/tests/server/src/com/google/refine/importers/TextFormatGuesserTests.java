@@ -47,6 +47,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -267,6 +268,35 @@ public class TextFormatGuesserTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
         testWikiTableString(input);
+    }
+
+
+    @Test
+    public void guessCsvQuote1() throws IOException {
+        String input = "'NDB_No', 'Shrt_Desc', 'Water', 'Energ_Kcal'\n" +
+                "'01001', 'BUTTER,WITH SALT', '1.00', '333'\n" +
+                "'01001', 'BUTTER,WITH SALT', '15.87', '717'\n" +
+                "'01002', 'BUTTER,WHIPPED,WITH SALT', '15.87', '717'\n" +
+                "'01003', 'BUTTER,CREAM', '15.87 oz', '717 oz'\n";
+        File file = new File("f");
+        FileUtils.writeStringToFile(file,input);
+        String result = SeparatorBasedImporter.guessQuote(file,"UTF-8");
+        FileUtils.forceDelete(file);
+        Assert.assertEquals(result,"'");
+    }
+
+    @Test
+    public void guessCsvQuote2() throws IOException {
+        String input = "\"NDB_No\", \"Shrt_Desc\", \"Water\", \"Energ_Kcal\"\n" +
+                "\"01001\", \"BUTTER,WITH SALT\", \"1.00\", \"333\"\n" +
+                "\"01001\", \"BUTTER,WITH SALT\", \"15.87\", \"717\"\n" +
+                "\"01002\", \"BUTTER,WHIPPED,WITH SALT\", \"15.87\", \"717\"\n" +
+                "\"01003\", \"BUTTER,CREAM\", \"15.87 oz\", \"717 oz\"";
+        File file = new File("f");
+        FileUtils.writeStringToFile(file,input);
+        String result = SeparatorBasedImporter.guessQuote(file,"UTF-8");
+        FileUtils.forceDelete(file);
+        Assert.assertEquals(result,"\"");
     }
 
 }
