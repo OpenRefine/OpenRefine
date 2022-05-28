@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "Aggiorna&nbsp;la&nbsp;preview",
     "gdata-parsing/ignore-first": "Ignora le prime",
     "gdata-parsing/ignore": "linee all'inizio del file",
-    "gdata-parsing/parse-next": "Parsa le prossime",
+    "gdata-parsing/parse-first": "Parsa il primo",
     "gdata-parsing/parse": "linee come nomi delle colonne",
     "gdata-parsing/discard-next": "Scarta le prime",
     "gdata-parsing/discard": "righe di dati",

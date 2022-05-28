@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "עדכון תצוגה מקדימה",
     "gdata-parsing/ignore-first": "להתעלם מ־",
     "gdata-parsing/ignore": "השורות הראשונות בתחילת הקובץ",
-    "gdata-parsing/parse-next": "לפענח את",
+    "gdata-parsing/parse-first": "לפענח אתנתח את הראשון",
     "gdata-parsing/parse": "השורות הבאות ככותרות לעמודות",
     "gdata-parsing/discard-next": "התעלמות מ־",
     "gdata-parsing/discard": "שורות הנתונים הראשונות",

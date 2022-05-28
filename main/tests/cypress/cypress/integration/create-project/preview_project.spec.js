@@ -116,7 +116,7 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
-  it('Tests parse-next of parsing options', function () {
+  it('Tests parse-first of parsing options', function () {
     navigateToProjectPreview();
     cy.get('input[bind="columnNamesCheckbox"]').check();
     cy.waitForImportUpdate();

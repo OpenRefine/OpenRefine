@@ -22,7 +22,7 @@
     "gdata-parsing/discard": "filas de datos iniciales",
     "gdata-parsing/discard-next": "Descartar",
     "gdata-parsing/parse": "renglones como cabeceras de columnas",
-    "gdata-parsing/parse-next": "Analizar próximos",
+    "gdata-parsing/parse-first": "Analizar primero",
     "gdata-parsing/ignore": "renglones al principio del archivo",
     "gdata-parsing/ignore-first": "Ignorar primeros",
     "gdata-parsing/preview-button": "Actualizar&nbsp;previsualización",

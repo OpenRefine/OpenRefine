@@ -118,7 +118,7 @@
     "core-index-lang/lang-settings": "Nyelvi beállítások",
     "core-index-parser/parse-cell": "Cella tartalmának feldolgozása<br/>számokká, dátumokká, …",
     "core-index-parser/trim": "Szóközök törlése a karakterláncok elejéről és végéről",
-    "core-index-parser/parse-next": "Dolgozza fel a következő",
+    "core-index-parser/parse-first": "Az első feldolgozása",
     "core-index-parser/commas": "vessző (CSV)",
     "core-index-parser/tabs": "tabulátor (TSV)",
     "core-index-parser/escape": "Különleges karakterek feloldása ezzel \\",

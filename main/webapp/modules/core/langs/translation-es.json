@@ -118,7 +118,7 @@
     "core-index-lang/lang-settings": "Configuración de idioma",
     "core-index-parser/parse-cell": "Procesar texto de celdas en números",
     "core-index-parser/trim": "Quitar espacios al inicio y final de las celdas",
-    "core-index-parser/parse-next": "Seleccionar primera(s)",
+    "core-index-parser/parse-first": "Seleccionar primera(s)",
     "core-index-parser/commas": "comas (CSV)",
     "core-index-parser/tabs": "tabulaciones (TSV)",
     "core-index-parser/store-source": "Cargar el origen del archivo",

@@ -120,7 +120,7 @@
     "core-index-open/del-body": "Weet je zeker dat je het project \"$1\" wil verwijderen?",
     "core-index-open/warning-data-file": "U moet een databestand of een URL specificeren om te ontvangen.",
     "core-index-open/edit-tags-desc": "Projecttags bewerken (gescheiden door spatie of komma):",
-    "core-index-parser/parse-next": "Verwerk eerste",
+    "core-index-parser/parse-first": "Verwerk eerste",
     "core-index-parser/lines-header": "regel(s) als kolomkoppen",
     "core-index-parser/parse-cell": "Tekst naar getallen<br/>, kalenderdata, etc. omzetten",
     "core-index-parser/store-nulls": "Lege cellen als lege waarde opslaan",

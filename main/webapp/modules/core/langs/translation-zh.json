@@ -94,7 +94,7 @@
     "core-index-lang/page-reload": "将会刷新页面来应用这些更改.",
     "core-index-parser/ignore-first": "忽略文件首部的前",
     "core-index-parser/lines-beg": "行",
-    "core-index-parser/parse-next": "将其次的下",
+    "core-index-parser/parse-first": "先分析",
     "core-index-parser/lines-header": "line(s) 作为列头",
     "core-index-parser/discard-initial": "抛弃表格中的前",
     "core-index-parser/rows-data": "行",

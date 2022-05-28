@@ -118,7 +118,7 @@
     "core-index-lang/label": "Piliin ang ginustong wika",
     "core-index-parser/parse-cell": "Parse cell text sa <br/> 1numero, petsa, ...",
     "core-index-parser/trim": "Trim nangungunang & amp; 1 trailing whitespace mula sa mga string",
-    "core-index-parser/parse-next": "Parse susunod",
+    "core-index-parser/parse-first": "Parse muna",
     "core-index-parser/commas": "mga kuwit (CSV)",
     "core-index-parser/tabs": "mga tab (TSV)",
     "core-index-parser/escape": "Eskapo ang mga espesyal na character na may \\",

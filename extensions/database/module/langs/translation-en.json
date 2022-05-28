@@ -37,7 +37,7 @@
     "database-source/databaseSaveButton": "Save",
     "database-source/databaseConnectButton": "Connect",
     "database-source/newConnectionButtonDiv": "New connection",
-    "database-source/new-connection-legend":"New Connection Editor",
+    "database-source/new-connection-legend": "New Connection Editor",
     "database-source/savedConnectionSpan": "Saved connections",
     "database-parsing/start-over": "&laquo; Start over",
     "database-parsing/conf-pars": "Configure parsing options",
@@ -50,7 +50,7 @@
     "database-parsing/disable-auto-preview": "Disable auto preview",
     "database-parsing/ignore-first": "Ignore first",
     "database-parsing/ignore": "line(s) at beginning of file",
-    "database-parsing/parse-next": "Parse next",
+    "database-parsing/parse-first": "Parse first",
     "database-parsing/parse": "line(s) as column headers",
     "database-parsing/discard-next": "Discard initial",
     "database-parsing/discard": "row(s) of data",
@@ -62,5 +62,4 @@
     "database-source/alert-db-host-invalid-character": "Database Host Error: Illegal Character in Input. Only Alphanumeric characters allowed",
     "database-source/alert-db-user-invalid-character": "Database User Error: Illegal Character in Input. Only Alphanumeric characters allowed",
     "database-source/alert-db-port-invalid-character": "Database Port Error: Illegal Character in Input. Only Numeric values allowed."
-    
 }

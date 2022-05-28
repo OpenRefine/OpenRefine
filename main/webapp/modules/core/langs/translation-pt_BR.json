@@ -118,7 +118,7 @@
     "core-index-lang/lang-settings": "Idioma",
     "core-index-parser/parse-cell": "Tentar analisar texto de<br>células como números",
     "core-index-parser/trim": "Cortar espaços no início e no final dos textos das células",
-    "core-index-parser/parse-next": "Analisar próximo",
+    "core-index-parser/parse-first": "Analise primeiro",
     "core-index-parser/commas": "vírgulas (CSV)",
     "core-index-parser/tabs": "tabs (TSV)",
     "core-index-parser/escape": "Ignorar caracteres especiais com \\",

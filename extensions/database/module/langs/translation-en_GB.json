@@ -10,7 +10,7 @@
     "database-parsing/discard": "row(s) of data",
     "database-parsing/discard-next": "Discard initial",
     "database-parsing/parse": "line(s) as column headers",
-    "database-parsing/parse-next": "Parse next",
+    "database-parsing/parse-first": "Parse first",
     "database-parsing/ignore": "line(s) at beginning of file",
     "database-parsing/ignore-first": "Ignore first",
     "database-parsing/preview-button": "Update&nbsp;preview",

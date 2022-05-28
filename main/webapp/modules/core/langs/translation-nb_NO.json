@@ -132,7 +132,7 @@
     "core-index-parser/column-names-optional": "kommainndelt",
     "core-index-parser/ignore-first": "Ignorer første",
     "core-index-parser/lines-beg": "linje(r) på begynnelsen av filen",
-    "core-index-parser/parse-next": "Tolk neste",
+    "core-index-parser/parse-first": "Tolk først",
     "core-index-parser/lines-header": "linje(r) som kolonneoverskrifter",
     "core-index-parser/discard-initial": "Forkast første",
     "core-index-parser/rows-data": "rad(er) med data",

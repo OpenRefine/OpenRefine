@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "Mettre à jour l’aperçu",
     "gdata-parsing/ignore-first": "Ignorer la ou les premières",
     "gdata-parsing/ignore": "ligne(s) du début du fichier",
-    "gdata-parsing/parse-next": "Analyser la ou les",
+    "gdata-parsing/parse-first": "Analysez le premier",
     "gdata-parsing/parse": "ligne(s) suivante(s) comme entêtes de colonnes",
     "gdata-parsing/discard-next": "Ignorer la ou les",
     "gdata-parsing/discard": "première(s) ligne(s) de données",

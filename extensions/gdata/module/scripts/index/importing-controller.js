@@ -172,7 +172,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_worksheet.html($.i18n('gdata-parsing/worksheet')); 
   this._parsingPanelElmts.gdata_ignore_first.html($.i18n('gdata-parsing/ignore-first'));
   this._parsingPanelElmts.gdata_ignore.html($.i18n('gdata-parsing/ignore'));
-  this._parsingPanelElmts.gdata_parse_next.html($.i18n('gdata-parsing/parse-next'));
+  this._parsingPanelElmts.gdata_parse_next.html($.i18n('gdata-parsing/parse-first'));
   this._parsingPanelElmts.gdata_parse.html($.i18n('gdata-parsing/parse'));
   this._parsingPanelElmts.startOverButton.html($.i18n('gdata-parsing/start-over'));
   this._parsingPanelElmts.gdata_conf_pars.html($.i18n('gdata-parsing/conf-pars'));

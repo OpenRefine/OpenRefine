@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "プレビューを更新",
     "gdata-parsing/ignore-first": "先頭を無視",
     "gdata-parsing/ignore": "行分",
-    "gdata-parsing/parse-next": "カラム名として解釈",
+    "gdata-parsing/parse-first": "最初の分析",
     "gdata-parsing/parse": "行分",
     "gdata-parsing/discard-next": "先頭データを破棄",
     "gdata-parsing/discard": "行分",

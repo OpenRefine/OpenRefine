@@ -16,7 +16,7 @@
     "gdata-import/auth-doc": "Documentos autorizados",
     "gdata-parsing/option": "Opções",
     "gdata-exporter/upload-google-sheets-success": "Projeto enviado para o Google Drive ",
-    "gdata-parsing/parse-next": "Analisar próximo",
+    "gdata-parsing/parse-first": "Analise primeiro",
     "gdata-parsing/worksheet": "Planilhas",
     "gdata-import/title": "Documentos públicos",
     "gdata-parsing/limit": "linhas(s) de dados",

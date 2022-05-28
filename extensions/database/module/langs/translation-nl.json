@@ -38,7 +38,7 @@
     "database-parsing/preview-button": "Preview&nbsp;bijwerken",
     "database-parsing/ignore-first": "Negeer eerste",
     "database-parsing/ignore": "regel(s) aan het begin van het bestand",
-    "database-parsing/parse-next": "Parse de volgende",
+    "database-parsing/parse-first": "Parseer de eerste",
     "database-parsing/parse": "rij(en) als kolomkoppen",
     "database-parsing/discard-next": "Verwijder de initiële",
     "database-parsing/limit-next": "Laad maximaal",

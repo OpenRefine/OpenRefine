@@ -11,7 +11,7 @@
     "database-parsing/discard": "linhas(s) de dados",
     "database-parsing/discard-next": "Descartar primeira(s)",
     "database-parsing/parse": "linha(s) como nomes das colunas",
-    "database-parsing/parse-next": "Analisar próximo",
+    "database-parsing/parse-first": "Análise primeiro",
     "database-parsing/ignore": "linhas(s) no começo do arquivo",
     "database-parsing/create-proj": "Criar Projeto &raquo;",
     "database-parsing/ignore-first": "Ignorar primeira(s)",

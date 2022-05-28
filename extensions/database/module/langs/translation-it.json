@@ -37,7 +37,7 @@
     "database-parsing/preview-button": "Aggiorna&nbsp;anteprima",
     "database-parsing/ignore-first": "Ignora le prime",
     "database-parsing/ignore": "righe dall'inizio del file",
-    "database-parsing/parse-next": "Usa le successive",
+    "database-parsing/parse-first": "Analizza prima",
     "database-parsing/parse": "linee come nomi delle colonne",
     "database-parsing/discard-next": "Scarta le prime",
     "database-parsing/discard": "righe di dati",

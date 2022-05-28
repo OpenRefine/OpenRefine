@@ -38,7 +38,7 @@
     "database-parsing/preview-button": "Uppdatera förhandsgranskning",
     "database-parsing/ignore-first": "Ignorera första",
     "database-parsing/ignore": "rad(er) i början av filen",
-    "database-parsing/parse-next": "Tolka nästa",
+    "database-parsing/parse-first": "Tolka den första",
     "database-parsing/parse": "rad(er) som kolumnrubriker",
     "database-parsing/discard-next": "Släng första",
     "database-parsing/discard": "rad(er) av data",

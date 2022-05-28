@@ -35,7 +35,7 @@
     "database-parsing/preview-button": "Oppdater&nbsp;forhåndsvisning",
     "database-parsing/ignore-first": "Ignorer første",
     "database-parsing/ignore": "linje(r) i begynnelsen av fila",
-    "database-parsing/parse-next": "Tolk neste",
+    "database-parsing/parse-first": "Analyser først",
     "database-parsing/parse": "linje(r) som kolonneoverskrifter",
     "database-parsing/discard-next": "Forkast de første",
     "database-parsing/discard": "raden(e) med data",

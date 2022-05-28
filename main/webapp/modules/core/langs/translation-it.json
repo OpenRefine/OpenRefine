@@ -118,7 +118,7 @@
     "core-index-lang/label": "Seleziona la lingua preferita",
     "core-index-parser/parse-cell": "Converti il testo delle<br/>celle in numeri",
     "core-index-parser/trim": "Elimina gli spazi all'inizio ed alla fine delle stringhe",
-    "core-index-parser/parse-next": "Analizza la/e prossima/e",
+    "core-index-parser/parse-first": "Analizza il primo (i)",
     "core-index-parser/commas": "virgole (CSV)",
     "core-index-parser/tabs": "tab (TSV)",
     "core-index-parser/store-source": "Salva la sorgente",

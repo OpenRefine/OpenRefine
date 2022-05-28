@@ -38,7 +38,7 @@
     "database-parsing/preview-button": "プレビューを更新",
     "database-parsing/ignore-first": "最初の",
     "database-parsing/ignore": "行を無視",
-    "database-parsing/parse-next": "その次の",
+    "database-parsing/parse-first": "最初に分析する",
     "database-parsing/parse": "行をカラム名として解釈",
     "database-parsing/discard-next": "最初の",
     "database-parsing/discard": "行分を破棄",

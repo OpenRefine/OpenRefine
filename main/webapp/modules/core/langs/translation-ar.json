@@ -208,7 +208,7 @@
     "core-index-parser/rows-data": "صف (صفوف) من البيانات",
     "core-index-parser/discard-initial": "تجاهل الأولي",
     "core-index-parser/lines-header": "سطر/أسطر كرؤوس أعمدة",
-    "core-index-parser/parse-next": "تحليل التالي",
+    "core-index-parser/parse-first": "التحليل أولا",
     "core-index-parser/lines-beg": "أسطر/سطر في بداية الملف",
     "core-index-parser/ignore-first": "تجاهل أولاً",
     "core-index-lang/page-reload": "سيتم تحديث الصفحة لتطبيق التغيير.",
