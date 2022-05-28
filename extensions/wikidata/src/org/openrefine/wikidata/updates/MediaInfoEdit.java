@@ -13,7 +13,6 @@ import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
@@ -45,6 +44,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 	public MediaInfoEdit(EntityIdValue id, List<StatementEdit> statements, Set<MonolingualTextValue> labels,
 			Set<MonolingualTextValue> labelsIfNew) {
 		super(id, statements, labels, labelsIfNew);
+    	Validate.isTrue(id instanceof MediaInfoIdValue, "the entity id must be an ItemIdValue");
 	}
 	
     /**

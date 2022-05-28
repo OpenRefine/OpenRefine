@@ -4,18 +4,18 @@
  * the status of the validation.
  */
 var fixSuggestInput = function(input) {
-   input.bind("fb-select", function(evt, data) {
+   input.on("fb-select", function(evt, data) {
        input.addClass('wbs-validated-input');
-       input.blur();
-   }).bind("fb-textchange", function(evt, data) {
+       input.trigger('blur');
+   }).on("fb-textchange", function(evt, data) {
        input.removeClass('wbs-validated-input');
-   }).blur(function() {
+   }).on('blur',function() {
        setTimeout(function() {
         if(! input.hasClass('wbs-validated-input')) {
             input.addClass('wbs-unvalidated-input');
         }
        }, 100);
-   }).focus(function() {
+   }).on('focus',function() {
        input.removeClass('wbs-unvalidated-input');
    });
 }

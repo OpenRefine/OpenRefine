@@ -229,7 +229,7 @@ function SqlExporterDialog(options) {
           };
     }
    
-    this._elmts.allowNullToggleCheckbox.click(function() {
+    this._elmts.allowNullToggleCheckbox.on('click',function() {
         if(this.checked){
             $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
                 $(this).prop('checked', true);
@@ -249,32 +249,32 @@ function SqlExporterDialog(options) {
         
     });
     
-    this._elmts.selectAllButton.click(function() {
+    this._elmts.selectAllButton.on('click',function() {
        $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
            $(this).prop('checked', true);
         });
       self._updateOptionCode();
     });
-    this._elmts.deselectAllButton.click(function() {
+    this._elmts.deselectAllButton.on('click',function() {
         $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
            $(this).prop('checked', false);
         });
        self._updateOptionCode();
     });
 
-    this._elmts.includeStructureCheckbox.click(function() {
+    this._elmts.includeStructureCheckbox.on('click',function() {
         $('#includeDropStatementCheckboxId').prop("disabled", !this.checked);
         $('#includeIfExistDropStatementCheckboxId').prop("disabled", !this.checked);
     });
     
-    this._elmts.includeContentCheckbox.click(function() {
+    this._elmts.includeContentCheckbox.on('click',function() {
         $('#nullCellValueToEmptyStringCheckboxId').prop("disabled", !this.checked);
     });
     
 
-    this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.downloadButton.click(function() { self._download(); });
-    this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
+    this._elmts.cancelButton.on('click',function() { self._dismiss(); });
+    this._elmts.downloadButton.on('click',function() { self._download(); });
+    this._elmts.downloadPreviewButton.on('click',function(evt) { self._previewDownload(); });
     this._configureUIFromOptionCode(options);
     this._updateOptionCode();
   };
@@ -427,7 +427,7 @@ function SqlExporterDialog(options) {
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
-    options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
+    options.tableName = jQueryTrim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
     options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;
     
     options.convertNulltoEmptyString = this._elmts.nullCellValueToEmptyStringCheckbox[0].checked;

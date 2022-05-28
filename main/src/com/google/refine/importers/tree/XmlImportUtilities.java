@@ -34,13 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers.tree;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 
@@ -119,131 +115,6 @@ public class XmlImportUtilities extends TreeImportUtilities {
         return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
 
-    /**
-     * Seeks for recurring element in a parsed document
-     * which are likely candidates for being data records
-     * @param parser
-     *              The parser loaded with tree data
-     * @return
-     *              The path to the most numerous of the possible candidates.
-     *              null if no candidates were found (less than 6 recurrences)
-     */
-    static public String[] detectRecordElement(TreeReader parser) {
-        if (logger.isTraceEnabled()) {
-            logger.trace("detectRecordElement(inputStream)");
-        }
-        List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
-
-        try {
-            while (parser.hasNext()) {
-                Token eventType = parser.next();
-                if (eventType == Token.StartEntity) {
-                    RecordElementCandidate candidate =
-                        detectRecordElement(
-                            parser,
-                            new String[] { parser.getFieldName() });
-
-                    if (candidate != null) {
-                        candidates.add(candidate);
-                    }
-                }
-            }
-        } catch (TreeReaderException e) {
-            // silent
-             e.printStackTrace();
-        }
-
-        if (candidates.size() > 0) {
-            sortRecordElementCandidates(candidates);
-
-            return candidates.get(0).path;
-        }
-        logger.info("No candidate elements were found in data - at least 6 similar elements are required");
-        return null;
-    }
-
-    static protected RecordElementCandidate detectRecordElement(TreeReader parser, String[] path) {
-        if (logger.isTraceEnabled()) {
-            logger.trace("detectRecordElement(TreeReader, String[])");
-        }
-        List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
-
-        Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
-
-        try {
-            while (parser.hasNext()) {
-                Token eventType = parser.next();
-                if (eventType == Token.EndEntity ) {
-                    break;
-                } else if (eventType == Token.StartEntity) {
-                    String tagName = parser.getFieldName();
-
-                    immediateChildCandidateMap.put(
-                        tagName,
-                        immediateChildCandidateMap.containsKey(tagName) ?
-                                immediateChildCandidateMap.get(tagName) + 1 : 1);
-
-                    String[] path2 = new String[path.length + 1];
-                    System.arraycopy(path, 0, path2, 0, path.length);
-                    path2[path.length] = tagName;
-
-                    RecordElementCandidate c = detectRecordElement(parser, path2);
-                    if (c != null) {
-                        descendantCandidates.add(c);
-                    }
-                }
-            }
-        } catch (TreeReaderException e) {
-            // silent
-             e.printStackTrace();
-        }
-
-        if (immediateChildCandidateMap.size() > 0) {
-            List<RecordElementCandidate> immediateChildCandidates = new ArrayList<RecordElementCandidate>(immediateChildCandidateMap.size());
-            for (Entry<String, Integer> entry : immediateChildCandidateMap.entrySet()) {
-                int count = entry.getValue();
-                if (count > 1) {
-                    String[] path2 = new String[path.length + 1];
-                    System.arraycopy(path, 0, path2, 0, path.length);
-                    path2[path.length] = entry.getKey();
-
-                    RecordElementCandidate candidate = new RecordElementCandidate();
-                    candidate.path = path2;
-                    candidate.count = count;
-                    immediateChildCandidates.add(candidate);
-                }
-            }
-
-            if (immediateChildCandidates.size() > 0 && immediateChildCandidates.size() < 5) {
-                // There are some promising immediate child elements, but not many,
-                // that can serve as record elements.
-
-                sortRecordElementCandidates(immediateChildCandidates);
-
-                RecordElementCandidate ourCandidate = immediateChildCandidates.get(0);
-                if (logger.isTraceEnabled()) {
-                    logger.trace("ourCandidate.count : " + ourCandidate.count + "; immediateChildCandidates.size() : "
-                            + immediateChildCandidates.size());
-                }
-                if (ourCandidate.count / immediateChildCandidates.size() > 5) {
-                    return ourCandidate;
-                }
-
-                descendantCandidates.add(ourCandidate);
-            }
-        }
-
-        if (descendantCandidates.size() > 0) {
-            sortRecordElementCandidates(descendantCandidates);
-
-            RecordElementCandidate candidate = descendantCandidates.get(0);
-            if (candidate.count / descendantCandidates.size() > 5) {
-                return candidate;
-            }
-        }
-
-        return null;
-    }
 
     /**
      * @param parser

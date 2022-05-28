@@ -31,10 +31,10 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   var doFormSubmit = function() {
     hiddenIframe.find('body').append(elmts.performEditsForm.clone());
     var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
-    formCopy.submit();
+    formCopy.trigger('submit');
 
     if (elmts.editSummary.val().length === 0) {
-      elmts.editSummary.focus();
+      elmts.editSummary.trigger('focus');
       return;
     }
 
@@ -69,11 +69,11 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
    .text(logged_in_username)
    .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
-  frame.find('.cancel-button').click(function() {
+  frame.find('.cancel-button').on('click',function() {
     dismiss();
   });
 
-  this._elmts.editSummary.keypress(function (evt) {
+  this._elmts.editSummary.on('keypress',function (evt) {
     if (evt.which === 13) {
       doFormSubmit();
       evt.preventDefault();
@@ -83,7 +83,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   if (max_severity === 'CRITICAL') {
     elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
-    elmts.performEditsButton.click(function() {
+    elmts.performEditsButton.on('click',function() {
       doFormSubmit();
     });
   }

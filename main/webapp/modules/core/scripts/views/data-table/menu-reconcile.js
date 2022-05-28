@@ -108,7 +108,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
-    input.suggest(suggestOptions).bind("fb-select", function(e, data) {
+    input.suggest(suggestOptions).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
 
         Refine.postCoreProcess(
@@ -128,12 +128,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         DialogSystem.dismissUntil(level - 1);
     });
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).click(function() {
+    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
       DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
 
     var level = DialogSystem.showDialog(frame);
-    input.focus().data("suggest").textchange();
+    input.trigger('focus').data("suggest").textchange();
   };
 
   var doUseValuesAsIdentifiers = function() {
@@ -155,10 +155,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
            .appendTo(select);
     }
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).click(function() {
+    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
       DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
-    $('<button class="button"></button>').html($.i18n('core-buttons/ok')).click(function() {
+    $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
         
         var service = select.val();
         var identifierSpace = null;
@@ -206,10 +206,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var o = DataTableView.sampleVisibleRows(column);
     
-    elmts.cancelButton.click(dismiss);
-    elmts.form.submit(function(event) {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.form.on('submit',function(event) {
       event.preventDefault();
-      var columnName = $.trim(elmts.columnNameInput[0].value);
+      var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
         return;
@@ -260,8 +260,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
       var config = {
         fromColumnName: column.name,
         toColumnName: [],

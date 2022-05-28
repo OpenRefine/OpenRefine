@@ -138,8 +138,8 @@ function initializeUI(uiState) {
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
   $("#or-proj-ext").text($.i18n('core-project/extensions'));
 
-  $('#project-name-button').click(Refine._renameProject);
-  $('#project-permalink-button').mouseenter(function() {
+  $('#project-name-button').on('click',Refine._renameProject);
+  $('#project-permalink-button').on('mouseenter',function() {
     this.href = Refine.getPermanentLink();
   });
 
@@ -156,12 +156,12 @@ function initializeUI(uiState) {
 
   $('<a>').attr("id", "hide-left-panel-button")
     .addClass("visibility-panel-button")
-    .click(function() { Refine._showHideLeftPanel(); })
+    .on('click',function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.leftPanelTabs);
 
   $('<a>').attr("id", "show-left-panel-button")
     .addClass("visibility-panel-button")
-    .click(function() { Refine._showHideLeftPanel(); })
+    .on('click',function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.toolPanelDiv);
   
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
@@ -170,11 +170,11 @@ function initializeUI(uiState) {
   ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 
-  ui.leftPanelTabs.bind('tabsactivate', function(event, tabs) {
-    tabs.newPanel.resize();
+  ui.leftPanelTabs.on('tabsactivate', function(event, tabs) {
+    tabs.newPanel.trigger('resize');
   });
 
-  $(window).bind("resize", resizeAll);
+  $(window).on("resize", resizeAll);
 
   if (uiState.facets) {
     Refine.update({ engineChanged: true });
@@ -284,7 +284,7 @@ Refine._renameProject = function() {
     return;
   }
 
-  name = $.trim(name);
+  name = jQueryTrim(name);
   if (theProject.metadata.name == name || name.length === 0) {
     return;
   }

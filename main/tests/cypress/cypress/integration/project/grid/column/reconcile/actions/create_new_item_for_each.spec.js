@@ -1,4 +1,8 @@
 describe('Create new item for each cell', () => {
+    afterEach(() => {
+        cy.addProjectForDeletion();
+    });
+    
     it('Test discard existing reconciliation judgments', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');

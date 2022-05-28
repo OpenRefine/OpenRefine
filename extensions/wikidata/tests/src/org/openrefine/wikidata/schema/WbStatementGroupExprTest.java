@@ -26,6 +26,7 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
@@ -54,7 +55,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
 
         @Override
         public StatementGroupEdit evaluate(ExpressionContext ctxt)
-                throws SkipSchemaExpressionException {
+                throws SkipSchemaExpressionException, QAWarningException {
             return expr.evaluate(ctxt, subject);
         }
     }

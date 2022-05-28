@@ -57,7 +57,7 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-locate-files').text($.i18n('core-index-import/locate-files'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
+  this._elmts.nextButton.on('click',function(evt) {
     if (self._elmts.fileInput[0].files.length === 0) {
       window.alert($.i18n('core-index-import/warning-data-file'));
     } else {
@@ -89,7 +89,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
-  this._elmts.form.submit(function(evt) {
+  this._elmts.form.on('submit',function(evt) {
     evt.preventDefault();
     let errorString = '';
     $(self._elmts.form).find('input:text').each(function () {
@@ -106,12 +106,12 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
     }
   });
-  this._elmts.addButton.click(function(evt) {
+  this._elmts.addButton.on('click',function(evt) {
     let newRow = self._elmts.urlRow.clone();
     let trashButton = $('<a href="javascript:{}"><span class="ui-icon ui-icon-trash"></span></a>');
     trashButton.attr("title",$.i18n("core-index-import/remove-row"));
     newRow.find('td').append(trashButton);
-    trashButton.click(function (e) {
+    trashButton.on('click',function (e) {
       e.preventDefault();
       $(this).parent().parent().remove();
     })
@@ -120,7 +120,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 UrlImportingSourceUI.prototype.focus = function() {
-  this._elmts.urlInput.focus();
+  this._elmts.urlInput.trigger('focus');
 };
 
 function ClipboardImportingSourceUI(controller) {
@@ -142,8 +142,8 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-clipboard').text($.i18n('core-index-import/clipboard-label'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
-    if ($.trim(self._elmts.textInput[0].value).length === 0) {
+  this._elmts.nextButton.on('click',function(evt) {
+    if (jQueryTrim(self._elmts.textInput[0].value).length === 0) {
       window.alert($.i18n('core-index-import/warning-clipboard'));
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/uploading-pasted-data'));
@@ -152,6 +152,6 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 ClipboardImportingSourceUI.prototype.focus = function() {
-  this._elmts.textInput.focus();
+  this._elmts.textInput.trigger('focus');
 };
 

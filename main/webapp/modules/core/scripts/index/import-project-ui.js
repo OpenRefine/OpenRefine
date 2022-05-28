@@ -40,7 +40,7 @@ Refine.ImportProjectUI = function(elmt) {
   
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
-  this._elmts.projectButton.bind('click', function(e) {	
+  this._elmts.projectButton.on('click', function(e) {	
     if(document.getElementById("project-tar-file-input").value === "" ){	
      alert($.i18n('core-index-import/warning-import-file'));
     }

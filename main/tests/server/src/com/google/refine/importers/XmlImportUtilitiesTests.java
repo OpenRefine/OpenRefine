@@ -87,6 +87,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         record = new ImportRecord();
     }
 
+    @Override
     @AfterMethod
     public void TearDown() throws IOException {
         SUT = null;
@@ -178,29 +179,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
             Assert.fail(e.getMessage());
         }
         Assert.assertNull(response);
-    }
-
-    @Test
-    public void detectRecordElementRegressionXmlTest() {
-        loadSampleXml();
-
-        String[] path = XmlImportUtilitiesStub.detectRecordElement(createXmlParser());
-        Assert.assertNotNull(path);
-        Assert.assertEquals(path.length, 2);
-        Assert.assertEquals(path[0], "library");
-        Assert.assertEquals(path[1], "book");
-    }
-
-    @Test
-    public void detectRecordElementRegressionJsonTest() {
-        loadSampleJson();
-
-        String[] path = XmlImportUtilitiesStub.detectRecordElement(
-                new JSONTreeReader(inputStream));
-        Assert.assertNotNull(path);
-        Assert.assertEquals(path.length, 2);
-        Assert.assertEquals(path[0], JsonImporter.ANONYMOUS);
-        Assert.assertEquals(path[1], JsonImporter.ANONYMOUS);
     }
 
     @Test

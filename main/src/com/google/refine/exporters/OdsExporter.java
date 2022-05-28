@@ -59,7 +59,7 @@ public class OdsExporter implements StreamExporter {
 
     @Override
     public void export(final Project project, Properties params, Engine engine,
-            OutputStream outputStream) throws IOException {
+                       OutputStream outputStream) throws IOException {
 
         final OdfSpreadsheetDocument odfDoc;
         try {
@@ -67,15 +67,17 @@ public class OdsExporter implements StreamExporter {
         } catch (Exception e) {
             throw new IOException("Failed to create spreadsheet",e);
         }
-        
+
         TabularSerializer serializer = new TabularSerializer() {
             OdfTable table;
             //int rowCount = 0;
-            
+            int rowBeforeHeader = 0;
+
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
                 table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+                rowBeforeHeader = table.getRowCount();
             }
 
             @Override
@@ -86,7 +88,7 @@ public class OdsExporter implements StreamExporter {
             public void addRow(List<CellData> cells, boolean isHeader) {
                 OdfTableRow r = table.appendRow();
                 //rowCount++;
-                
+
                 for (int i = 0; i < cells.size(); i++) {
                     OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell
                     CellData cellData = cells.get(i);
@@ -109,12 +111,17 @@ public class OdsExporter implements StreamExporter {
                         }
                     }
                 }
+                if(rowBeforeHeader != 0){               // avoid the api change the default values again
+                    int nowRows = table.getRowCount();
+                    table.removeRowsByIndex(0, rowBeforeHeader);
+                    rowBeforeHeader -= nowRows - table.getRowCount();
+                }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
-        
+
         try {
             odfDoc.save(outputStream);
         } catch (Exception e) {

@@ -71,7 +71,7 @@ HistoryPanel.prototype._render = function() {
 
   this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.past.length + ' / ' + ( this._data.future.length + this._data.past.length ) + '</span>');
 
-  this._div.empty().unbind().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
+  this._div.empty().off().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
 
   var elmts = DOM.bind(this._div);
   
@@ -87,17 +87,17 @@ HistoryPanel.prototype._render = function() {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
     if (lastDoneID >= 0) {
       a.attr("href", "javascript:{}")
-      .click(function(evt) {
+      .on('click',function(evt) {
         return self._onClickHistoryEntry(evt, entry, lastDoneID);
       })
-      .mouseover(function() {
+      .on('mouseover',function() {
         if (past) {
           elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop - this.offsetHeight);
         } else {
           elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
         }
       })
-      .mouseout(function() {
+      .on('mouseout',function() {
         if (past) {
           elmts.pastHighlightDiv.hide();
         } else {
@@ -139,8 +139,8 @@ HistoryPanel.prototype._render = function() {
 
     elmts.helpDiv.hide();
 
-    elmts.filterInput.bind("keyup change input",function() {
-      var filter = $.trim(this.value.toLowerCase());
+    elmts.filterInput.on("keyup change input",function() {
+      var filter = jQueryTrim(this.value.toLowerCase());
       if (filter.length === 0) {
         elmts.bodyDiv.find(".history-entry").removeClass("filtered-out");
       } else {
@@ -159,8 +159,8 @@ HistoryPanel.prototype._render = function() {
     elmts.bodyControlsDiv.hide();
   }
 
-  elmts.extractLink.click(function() { self._extractOperations(); });
-  elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
+  elmts.extractLink.on('click',function() { self._extractOperations(); });
+  elmts.applyLink.on('click',function() { self._showApplyOperationsDialog(); });
 
   this.resize();
 };
@@ -212,7 +212,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     if ("operation" in entry) {
       entry.selected = true;
 
-      $('<input type="checkbox" checked="true" />').appendTo(td0).click(function() {
+      $('<input type="checkbox" checked="true" />').appendTo(td0).on('click',function() {
         entry.selected = !entry.selected;
         updateJson();
       });
@@ -238,8 +238,8 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   };
   updateJson();
 
-  elmts.closeButton.click(function() { DialogSystem.dismissUntil(level - 1); });
-  elmts.selectAllButton.click(function() {
+  elmts.closeButton.on('click',function() { DialogSystem.dismissUntil(level - 1); });
+  elmts.selectAllButton.on('click',function() {
     for (var i = 0; i < json.entries.length; i++) {
       json.entries[i].selected = true;
     }
@@ -247,7 +247,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     frame.find('input[type="checkbox"]').prop('checked', true);
     updateJson();
   });
-  elmts.deselectAllButton.click(function() {
+  elmts.deselectAllButton.on('click',function() {
     for (var i = 0; i < json.entries.length; i++) {
       json.entries[i].selected = false;
     }
@@ -255,7 +255,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     frame.find('input[type="checkbox"]').prop('checked', false);
     updateJson();
   });
-  elmts.saveJsonAsFileButton.click(function() {
+  elmts.saveJsonAsFileButton.on('click',function() {
     var historyJson = elmts.textarea[0].value;
 
     downloadFile('history.json', historyJson);
@@ -303,7 +303,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     return json.replace(/\}\s*\,\s*\]/g, "} ]").replace(/\}\s*\{/g, "}, {");
   };
 
-  elmts.applyButton.click(function() {
+  elmts.applyButton.on('click',function() {
     var json;
 
     try {
@@ -333,11 +333,11 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.cancelButton.click(function() {
+  elmts.cancelButton.on('click',function() {
     DialogSystem.dismissUntil(level - 1);
   });
 
   var level = DialogSystem.showDialog(frame);
 
-  elmts.textarea.focus();
+  elmts.textarea.trigger('focus');
 };

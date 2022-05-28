@@ -34,11 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -58,7 +62,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException  {
+    public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
         if (tempFile.length() == 0) {
@@ -166,7 +170,7 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        FileReader reader = new FileReader(metadataFile);
+        Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
         return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
     }
 }

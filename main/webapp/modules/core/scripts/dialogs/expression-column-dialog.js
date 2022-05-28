@@ -64,19 +64,19 @@ ExpressionColumnDialog.prototype._createDialog = function() {
    * Hook up event handlers.
    */
   
-  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').click(function() {
+  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').on('click',function() {
     self._elmts.columnList.find('.custom-tabular-exporter-dialog-column').removeClass('selected');
     $(this).addClass('selected');
   });
-  this._elmts.selectAllButton.click(function() {
+  this._elmts.selectAllButton.on('click',function() {
     self._elmts.columnList.find('input[type="checkbox"]').prop('checked', true);
   });
-  this._elmts.deselectAllButton.click(function() {
+  this._elmts.deselectAllButton.on('click',function() {
     self._elmts.columnList.find('input[type="checkbox"]').prop('checked', false);
   });
   
-  this._elmts.okButton.click(function() { self._transform(); });
-  this._elmts.cancelButton.click(function() { self._dismiss(); });
+  this._elmts.okButton.on('click',function() { self._transform(); });
+  this._elmts.cancelButton.on('click',function() { self._dismiss(); });
 }  
   
 

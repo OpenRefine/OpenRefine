@@ -1,4 +1,8 @@
 describe('Copy reconciliation data', () => {
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+  
   it('Copy reconciliation data from species to species_copy', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');

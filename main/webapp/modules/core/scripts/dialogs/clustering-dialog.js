@@ -67,18 +67,18 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.html($.i18n('core-buttons/merge-close'));
     this._elmts.closeButton.html($.i18n('core-buttons/close'));
 
-    this._elmts.methodSelector.change(function() {
+    this._elmts.methodSelector.on('change',function() {
         var selection = $(this).find("option:selected").text();
         if (selection == $.i18n('core-dialogs/key-collision')) {
             dialog.find(".binning-controls").show();
             dialog.find(".knn-controls").hide();
             self._method = "binning";
-            self._elmts.keyingFunctionSelector.change();
+            self._elmts.keyingFunctionSelector.trigger('change');
         } else if (selection === $.i18n('core-dialogs/nearest-neighbor')) {
             dialog.find(".binning-controls").hide();
             dialog.find(".knn-controls").show();
             self._method = "knn";
-            self._elmts.distanceFunctionSelector.change();
+            self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
 
@@ -89,8 +89,8 @@ ClusteringDialog.prototype._createDialog = function() {
         params_changer();
     };
 
-    this._elmts.keyingFunctionSelector.change(changer);
-    this._elmts.distanceFunctionSelector.change(changer);
+    this._elmts.keyingFunctionSelector.on('change',changer);
+    this._elmts.distanceFunctionSelector.on('change',changer);
 
     var params_changer = function() {
         self._params = {};
@@ -109,20 +109,20 @@ ClusteringDialog.prototype._createDialog = function() {
         self._cluster();
     };
 
-    this._elmts.ngramSize.change(params_changer);
-    this._elmts.radius.change(params_changer);
-    this._elmts.ngramBlock.change(params_changer);
+    this._elmts.ngramSize.on('change',params_changer);
+    this._elmts.radius.on('change',params_changer);
+    this._elmts.ngramBlock.on('change',params_changer);
 
-    this._elmts.selectAllButton.click(function() { self._selectAll(); });
-    this._elmts.deselectAllButton.click(function() { self._deselectAll(); });
-    this._elmts.exportClusterButton.click(function() { self._onExportCluster(); });
-    this._elmts.applyReClusterButton.click(function() { self._onApplyReCluster(); });
-    this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
-    this._elmts.closeButton.click(function() { self._dismiss(); });
+    this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
+    this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
+    this._elmts.exportClusterButton.on('click',function() { self._onExportCluster(); });
+    this._elmts.applyReClusterButton.on('click',function() { self._onApplyReCluster(); });
+    this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
+    this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
-    .success(function(data) {
+    .done(function(data) {
        var keyers = data.keyers != null ? data.keyers : [];
        var distances = data.distances != null ? data.distances : [];
        var i = 0;
@@ -154,7 +154,7 @@ ClusteringDialog.prototype._createDialog = function() {
        }
        self._level = DialogSystem.showDialog(dialog);
     })
-    .error(function(error) {
+    .fail(function(error) {
             alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
     });
 };
@@ -220,7 +220,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
               parent.find("input[type='text']").val(value);
               var checkbox = parent.find("input[type='checkbox']");
-              checkbox.prop('checked', true).change();
+              checkbox.prop('checked', true).on('change');
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
@@ -258,13 +258,13 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .appendTo(div);
 
             $(tr.insertCell(2))
-                .mouseenter(function() { browseLink.css("visibility", "visible"); })
-                .mouseleave(function() { browseLink.css("visibility", "hidden"); })
+                .on('mouseenter',function() { browseLink.css("visibility", "visible"); })
+                .on('mouseleave',function() { browseLink.css("visibility", "hidden"); })
                 .append(ul)
                 .append(div);
 
             var editCheck = $('<input type="checkbox" />')
-                .change(function() {
+                .on('change',function() {
                     cluster.edit = this.checked;
                 }).appendTo(tr.insertCell(3));
 
@@ -274,7 +274,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
             $('<input type="text" size="25" />')
                 .val(cluster.value)
-                .bind("keyup change input",function() {
+                .on("keyup change input",function() {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(4));
 
@@ -367,11 +367,11 @@ ClusteringDialog.prototype._updateData = function(data) {
 };
 
 ClusteringDialog.prototype._selectAll = function() {
-    $(".clustering-dialog-entry-table input:not(:checked)").prop('checked', true).change();
+    $(".clustering-dialog-entry-table input:not(:checked)").prop('checked', true).trigger('change');
 };
 
 ClusteringDialog.prototype._deselectAll = function() {
-    $(".clustering-dialog-entry-table input:checked").prop('checked', false).change();
+    $(".clustering-dialog-entry-table input:checked").prop('checked', false).trigger('change');
 };
 
 ClusteringDialog.prototype._onApplyClose = function() {
@@ -569,11 +569,11 @@ ClusteringDialog.Facet = function(dialog, title, property, elmt, clusters) {
         this._histogram = new HistogramWidget(this._elmts.histogramContainer, { binColors: [ "#ccccff", "#6666ff" ] });
         this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
 
-        this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+        this._elmts.sliderWidgetDiv.on("slide", function(evt, data) {
             self._from = data.from;
             self._to = data.to;
             self._setRangeIndicators();
-        }).bind("stop", function(evt, data) {
+        }).on("stop", function(evt, data) {
             self._from = data.from;
             self._to = data.to;
             self._setRangeIndicators();

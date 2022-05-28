@@ -92,7 +92,7 @@ ExporterManager.MenuItems = [
 ];
 
 ExporterManager.prototype._initializeUI = function() {
-  this._button.click(function(evt) {
+  this._button.on('click',function(evt) {
     MenuSystem.createAndShowStandardMenu(
         ExporterManager.MenuItems,
         this,
@@ -107,7 +107,7 @@ ExporterManager.prototype._initializeUI = function() {
 ExporterManager.stripNonFileChars = function(name) {
     // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
     // and MacOS https://stackoverflow.com/a/47455094/167425
-    return $.trim(name.replace(/[\\*\/:;,?"<>|#]/g, ' ')).replace(/\s+/g, '-');
+    return jQueryTrim(name.replace(/[\\*\/:;,?"<>|#]/g, ' ')).replace(/\s+/g, '-');
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {

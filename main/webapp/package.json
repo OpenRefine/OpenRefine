@@ -11,7 +11,7 @@
     "jquery-migrate": "1.4.1",
     "js-cookie": "2.2.1",
     "moment": "2.29.3",
-    "select2": "3.5.2-browserify",
+    "select2": "4.1.0-rc.0",
     "tablesorter": "2.31.3",
     "underscore": "1.13.2"
   },
