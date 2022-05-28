@@ -76,7 +76,13 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
-                table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+                String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
+                table.setTableName(tableName);
+                if(!tableName.equals("Sheet1") && odfDoc.getTableList().get(0).getTableName().equals("Sheet1")){
+                    OdfTable defTable;
+                    defTable = odfDoc.getTableByName("Sheet1");
+                    defTable.remove();
+                }
                 rowBeforeHeader = table.getRowCount();
             }
 
