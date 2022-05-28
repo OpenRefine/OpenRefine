@@ -33,14 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,11 +64,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         String separator = guessSeparator(job, fileRecords);
+        String quote = guessQuote(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
         
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
-        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
+        JSONUtilities.safePut(options, "quoteCharacter", quote);
         JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
@@ -172,6 +166,19 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         return cells;
     }
+
+    static public String guessQuote(ImportingJob job, List<ObjectNode>fileRecords) {
+        for (int i = 0; i < 5 && i < fileRecords.size(); i++) {
+            ObjectNode fileRecord = fileRecords.get(i);
+            String encoding = ImportingUtilities.getEncoding(fileRecord);
+            String location = JSONUtilities.getString(fileRecord, "location", null);
+            if (location != null) {
+                File file = new File(job.getRawDataDir(), location);
+                return guessQuote(file,encoding);
+            }
+        }
+        return "";
+    }
     
     static public String guessSeparator(ImportingJob job, List<ObjectNode> fileRecords) {
         for (int i = 0; i < 5 && i < fileRecords.size(); i++) {
@@ -203,6 +210,34 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
     static public Separator guessSeparator(File file, String encoding) {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
+    }
+
+    static public String guessQuote(File file, String encoding){
+        try(InputStream is = new FileInputStream(file);
+            Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+        ){
+            int singleQuoteCount = 0;
+            int doubleQuoteCount = 0;
+            String line;
+            while ((line = bufferedReader.readLine())!=null) {
+                for (char s : line.toCharArray()) {
+                    if (s == '\'') {
+                        singleQuoteCount++;
+                    } else if (s == '\"') {
+                        doubleQuoteCount++;
+                    }
+                }
+            }
+            if(singleQuoteCount>doubleQuoteCount){
+                return "'";
+            }else if(singleQuoteCount<doubleQuoteCount){
+                return "\"";
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return "";
     }
 
     // TODO: Move this to the CSV project?
@@ -279,7 +314,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     });
                     
                     Separator separator = separators.get(0);
-                    if (separator.stddev / separator.averagePerLine < 0.1) {
+                    if (separator.stddev / separator.averagePerLine < 0.2) {
                         return separator;
                     }
                    
