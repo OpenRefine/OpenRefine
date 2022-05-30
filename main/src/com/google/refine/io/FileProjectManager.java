@@ -69,6 +69,8 @@ public class FileProjectManager extends ProjectManager  {
 
     protected File                       _workspaceDir;
 
+    protected static boolean projectRemoved = false;
+
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     static public synchronized void initialize(File dir) {
@@ -289,6 +291,7 @@ public class FileProjectManager extends ProjectManager  {
             }
 
             tempFile.renameTo(file);
+            projectRemoved = false;
             logger.info("Saved workspace");
         }
     }
@@ -296,7 +299,7 @@ public class FileProjectManager extends ProjectManager  {
     protected boolean saveNeeded() {
         boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
                 .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
-        return projectSaveNeeded || _preferenceStore.isDirty();
+        return projectSaveNeeded || _preferenceStore.isDirty() || projectRemoved;
     }
     
     protected void saveProjectMetadata() throws IOException {
@@ -333,7 +336,7 @@ public class FileProjectManager extends ProjectManager  {
                 deleteDir(dir);
             }
         }
-
+        projectRemoved = true;
         saveWorkspace();
     }
 
