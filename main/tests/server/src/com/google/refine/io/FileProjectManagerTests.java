@@ -102,22 +102,7 @@ public class FileProjectManagerTests {
         assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
     }
 
-    /**
-     * Issue #1418 Issue #3719 Issue #3277 deleting the only existing project without saving the workspace will not
-     * remove the projectID from workspace.json
-     */
-    @Test
-    public void deleteProjectWithoutSavingWorkspace() throws IOException {
-        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        manager.saveToFile(workspaceFile);
-        manager.deleteProject(5555);
-
-        InputStream inputStream = new FileInputStream(workspaceFile);
-        JsonObject json = JSON.parse(inputStream);
-        assertFalse(json.get("projectIDs").getAsArray().isEmpty());
-    }
-
-    /**
+     /**
      * Issue fix Issue #1418 Issue #3719 Issue #3277 deleting the only existing project and saving the workspace should
      * remove the projectID from workspace.json
      */
