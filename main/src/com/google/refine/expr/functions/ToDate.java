@@ -125,7 +125,11 @@ public class ToDate implements Function {
             } catch (CalendarParserException e) {
            }
         }
-        return parse(o1,formats);
+        OffsetDateTime date = parse(o1, formats);
+        if (Boolean.FALSE.equals(monthFirst)) {
+            date = date != null ? date.withDayOfMonth(date.getMonthValue()).withMonth(date.getDayOfMonth()) : null;
+        }
+        return date;
     }
 
     private Locale getLocale(List<String> formats) {
