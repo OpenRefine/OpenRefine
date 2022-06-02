@@ -155,11 +155,11 @@ public class ToDate implements Function {
         OffsetDateTime date;
         //need to try using each format in the formats list!
         if(formats.size()>0) {
-            for(int i=0;i<formats.size();i++) {
+            for (String format : formats) {
                 try {
-                    formatter = new SimpleDateFormat(formats.get(i),locale);
+                    formatter = new SimpleDateFormat(format, locale);
                 } catch (IllegalArgumentException e) {
-                    throw new DateFormatException("Unable to parse date format " + formats.get(i));
+                    throw new DateFormatException("Unable to parse date format " + format);
                 }
                 date = parse(o1, formatter);
                 if (date != null) {
