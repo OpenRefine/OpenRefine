@@ -64,7 +64,6 @@ import com.google.refine.expr.functions.booleans.Xor;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
-import com.google.refine.expr.functions.date.ParseDate;
 import com.google.refine.expr.functions.html.InnerHtml;
 import com.google.refine.expr.functions.html.ParseHtml;
 import com.google.refine.expr.functions.math.ACos;
@@ -295,7 +294,6 @@ public class ControlFunctionRegistry {
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
         registerFunction("datePart", new DatePart());
-        registerFunction("parseDate", new ParseDate());
 
         registerFunction("acos", new ACos());
         registerFunction("asin", new ASin());
