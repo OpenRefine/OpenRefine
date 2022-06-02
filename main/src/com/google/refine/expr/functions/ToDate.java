@@ -97,22 +97,19 @@ public class ToDate implements Function {
                     //return new EvalError("Unable to parse as date");
                 }
             } else {
-                return new EvalError("Invalid argument");
-            }
-            for (int i = 2; i < args.length; i++) {
-                if (!(args[i] instanceof String)) {
-                    return new EvalError("Invalid non-string format argument " + args[i].toString());
+                int startIndex = 1; // set this as where to start picking formats from - the first argument
+                if(args[1] instanceof Boolean) {
+                    monthFirst = (Boolean) args[1];
+                    startIndex = 2; // if the second argument is a boolean, then start picking formats from the third argument
                 }
-                formats.add(StringUtils.trim((String) args[i]));
-            }
-            try {
-                if (month_first != null) {
-                    date = parse(o1, month_first, formats);
-                } else {
-                    date = parse(o1, formats);
+                for (int i = startIndex; i < args.length; i++) {
+                    if (!(args[i] instanceof String)) {
+                        // if the argument is not a string, return an error
+                        return new EvalError("Invalid non-string format argument " + args[i].toString());
+                    }
+                    // add the format to the list of formats
+                    formats.add(StringUtils.trim((String) args[i]));
                 }
-            } catch (DateFormatException e) {
-                return new EvalError(e.getMessage());
             }
         }
         if(date != null) {
