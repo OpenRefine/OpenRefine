@@ -61,7 +61,7 @@ public class ToDate implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         String o1;
-        Boolean month_first = null;
+        Boolean monthFirst = null;
         List<String> formats =  new ArrayList<>();
         OffsetDateTime date = null;
         
@@ -81,19 +81,21 @@ public class ToDate implements Function {
                 // ignore cell values that aren't Date, Calendar, Long or String 
                 return new EvalError("Unable to parse as date");
             }
-        }
-        
-        if(args.length==1) {
-            try {
-                date = parse(o1, true, formats);
-            } catch (DateFormatException e) {
-                // Should never happen since we're using an empty format list
-            }
-        } else if (args.length > 1) {
-            if(args[1] instanceof Boolean) {
-                month_first = (Boolean) args[1];
-            } else if (args[1] instanceof String) {
-                formats.add(StringUtils.trim((String) args[1]));
+
+            // if only one argument is given
+            if(args.length == 1 || (args.length == 2 && args[1] instanceof Boolean)) {
+                if(args.length == 1) {
+                    // parse the date without the month preferred first by default
+                    DateParserUtils.preferMonthFirst(true);
+                } else {
+                    // parse the date with the user defined "month first"
+                    DateParserUtils.preferMonthFirst((Boolean) args[1]);
+                }
+                try {
+                    date = DateParserUtils.parseOffsetDateTime(o1);
+                } catch (DateTimeParseException e) {
+                    //return new EvalError("Unable to parse as date");
+                }
             } else {
                 return new EvalError("Invalid argument");
             }
