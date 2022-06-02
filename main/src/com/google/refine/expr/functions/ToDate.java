@@ -118,10 +118,10 @@ public class ToDate implements Function {
         return new EvalError("Unable to convert to a date");
     }
     
-    private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) throws DateFormatException {
-        if(month_first != null) {
+    private OffsetDateTime parse(String o1, Boolean monthFirst, List<String> formats) throws DateFormatException {
+        if(monthFirst != null && formats.size() == 0) {
             try {
-               return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
+               return CalendarParser.parseAsOffsetDateTime( o1, (monthFirst) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
             } catch (CalendarParserException e) {
            }
         }
