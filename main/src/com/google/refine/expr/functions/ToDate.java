@@ -113,16 +113,26 @@ public class ToDate implements Function {
             }
         }
         if(date != null) {
+            // return the parsed date if it was success
             return date;
+        } else {
+            try {
+                monthFirst = monthFirst == null || monthFirst;
+
+                // parse the date with the user defined month_first and the formats
+                date = parse(o1, monthFirst, formats); // checking ig the month_first is null is already done in the parse method
+            } catch (DateFormatException | DateTimeParseException e) {
+                return new EvalError(e.getMessage());
+            }
         }
-        return new EvalError("Unable to convert to a date");
+        return date == null ? new EvalError("Unable to convert to a date") : date;
     }
     
     private OffsetDateTime parse(String o1, Boolean monthFirst, List<String> formats) throws DateFormatException {
         if(monthFirst != null && formats.size() == 0) {
             try {
                return CalendarParser.parseAsOffsetDateTime( o1, (monthFirst) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
-            } catch (CalendarParserException e) {
+            } catch (CalendarParserException ignored) {
            }
         }
         OffsetDateTime date = parse(o1, formats);
