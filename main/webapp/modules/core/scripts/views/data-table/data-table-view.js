@@ -721,6 +721,11 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/to-empty",
           label: $.i18n('core-views/blank-out-empty'),
           click: function() { new commonTransformDialog("\"\"","core-views/blank-out-empty/header" ); }
+        },
+        {
+          id: "core/add-dollar-sign",
+          label: $.i18n('core-views/add-dollar-sign'),
+          click: function() { new commonTransformDialog("value.addDollarSign()","core-views/add-dollar-sign/header" ); }
         }
       ]
     },

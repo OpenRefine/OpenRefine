@@ -689,6 +689,8 @@
     "core-views/blank-out-empty": "To empty string…",
     "core-views/blank-out-empty/header": "To empty string",
     "core-views/blank-out-empty/single": "To empty string",
+    "core-views/add-dollar-sign": "Add dollar sign",
+    "core-views/add-dollar-sign/header": "Add dollar sign",
     "core-views/replace": "Replace…",
     "core-views/replace/header": "Replace",
     "core-views/fill-down": "Fill down",

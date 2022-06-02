@@ -100,6 +100,7 @@ import com.google.refine.expr.functions.math.Sinh;
 import com.google.refine.expr.functions.math.Sum;
 import com.google.refine.expr.functions.math.Tan;
 import com.google.refine.expr.functions.math.Tanh;
+import com.google.refine.expr.functions.strings.AddDollarSign;
 import com.google.refine.expr.functions.strings.Chomp;
 import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Decode;
@@ -224,6 +225,7 @@ public class ControlFunctionRegistry {
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
+        registerFunction("addDollarSign", new AddDollarSign());
 
         registerFunction("detectLanguage", new DetectLanguage());
 
