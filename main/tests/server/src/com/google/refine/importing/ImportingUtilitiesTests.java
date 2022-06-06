@@ -170,6 +170,55 @@ public class ImportingUtilitiesTests extends ImporterTest {
         }
     }
 
+    @Test
+    public void urlImportingInvalidProtocol() throws IOException {
+
+        String url = "file:///etc/passwd";
+        String message = "Unsupported protocol: file";
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getParameter("download")).thenReturn(url.toString());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                    new ImportingUtilities.Progress() {
+
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
+                        }
+
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
+                    });
+            fail("No Exception was thrown");
+        } catch (Exception exception) {
+            assertEquals(exception.getMessage(), message);
+        }
+    }
+
     public static class MockServletInputStream extends ServletInputStream {
 
         private final InputStream delegate;
