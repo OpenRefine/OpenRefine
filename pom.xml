@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>openrefine</artifactId>
   <packaging>pom</packaging>
-  <version>3.6-SNAPSHOT</version>
+  <version>3.7-SNAPSHOT</version>
 
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -375,9 +375,14 @@
   <!-- Locations of the artifacts published -->
   <distributionManagement>
      <snapshotRepository>
-       <id>ossrh</id>
+       <id>ossrh-snapshots</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </snapshotRepository>
+     <snapshotRepository>
+       <id>ossrh</id>
+       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+     </snapshotRepository>
+
   </distributionManagement>
  
 </project>
