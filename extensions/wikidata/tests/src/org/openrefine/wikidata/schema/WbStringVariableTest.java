@@ -46,10 +46,12 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
      * This should not normally happen: cell values should never be null (only whole cells can be null). But better safe
      * than sorry!
      */
+    @Test
     public void testNullStringValue() {
         isSkipped((String) null);
     }
 
+    @Test
     public void testNullCell() {
         isSkipped((Cell) null);
     }
