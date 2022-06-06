@@ -251,6 +251,19 @@
             <deployAtEnd>true</deployAtEnd>
 	 </configuration>
        </plugin>
+       <plugin>
+         <!-- Staging plugin -->
+         <groupId>org.sonatype.plugins</groupId>
+         <artifactId>nexus-staging-maven-plugin</artifactId>
+         <version>1.6.12</version>
+         <extensions>true</extensions>
+         <configuration>
+           <serverId>ossrh</serverId>
+           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+           <autoReleaseAfterClose>true</autoReleaseAfterClose>
+         </configuration>
+      </plugin>
+
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
@@ -376,10 +389,10 @@
   <distributionManagement>
      <snapshotRepository>
        <id>ossrh</id>
-       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
      </snapshotRepository>
      <repository>
-       <id>ossrh_snapshots</id>
+       <id>ossrh</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </repository>
   </distributionManagement>

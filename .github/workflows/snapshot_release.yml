@@ -238,9 +238,11 @@ jobs:
     - name: Upload snapshot releases to OSSRH
       run: |
         if [ ${{ github.event_name }} == release ]; then
+          echo "Deploying to releases"
           mvn deploy -DskipTests=true -DrepositoryId=ossrh
         else
-          mvn deploy -DskipTests=true -DrepositoryId=ossrh_snapshots
+          echo "Deploying to snapshots"
+          mvn deploy -DskipTests=true -DrepositoryId=ossrh
         fi
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
