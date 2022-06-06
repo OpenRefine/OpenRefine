@@ -10,6 +10,7 @@
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
   <url>http://openrefine.org/</url>
+  <inceptionYear>2010</inceptionYear>
   <organization>
     <name>Code for Science &amp; Society Inc.</name>
     <url>https://codeforscience.org/</url>
@@ -43,6 +44,14 @@
     <system>GitHub Issues</system>
     <url>https://github.com/openrefine/openrefine/issues</url>
   </issueManagement>
+
+  <developers>
+    <developer>
+      <id>dfhuynh</id>
+      <name>David F. Huynh</name>
+      <email>dfhuynh@google.com</email>
+    </developer>
+  </developers>
 
   <modules>
         <module>main</module>
@@ -242,15 +251,70 @@
              <sourceDirectory>extensions/gdata/src</sourceDirectory>
           </sourceDirectories>
         </configuration>
-       </plugin>
-       <plugin>
-	 <groupId>org.apache.maven.plugins</groupId>
-	 <artifactId>maven-deploy-plugin</artifactId>
-	 <version>${maven-deploy-plugin.version}</version>
-	 <configuration>
-            <deployAtEnd>true</deployAtEnd>
-	 </configuration>
-       </plugin>
+      </plugin>
+      <plugin>
+        <!-- Pluging to generate release source -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+            <bottom>
+                    <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>
+            <source>11</source>
+            <!-- disable error checks for now (TODO: clean up those errors) -->
+            <doclint>none</doclint>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Signature -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+            <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                    <goal>sign</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Staging plugin -->
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.12</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
@@ -375,14 +439,13 @@
   <!-- Locations of the artifacts published -->
   <distributionManagement>
      <snapshotRepository>
-       <id>ossrh_snapshots</id>
+       <id>ossrh</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </snapshotRepository>
      <repository>
        <id>ossrh</id>
        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
      </repository>
-
   </distributionManagement>
  
 </project>
