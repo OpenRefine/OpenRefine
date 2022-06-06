@@ -1,5 +1,7 @@
 {
   "integrationFolder": "./cypress/integration",
+  "viewportWidth": 1280,
+  "viewportHeight": 768,
   "retries": {
     "runMode": 3,
     "openMode": 0
