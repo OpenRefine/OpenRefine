@@ -8,7 +8,7 @@ on:
     paths-ignore:
       - 'docs/**'
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   prepare_ui_test_matrix:
@@ -235,8 +235,17 @@ jobs:
         APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
         APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
+    - name: Determine which repository to upload to
+      run: |
+        if [ ${{ github.event_name }}
+
     - name: Upload snapshot releases to OSSRH
-      run: mvn deploy -DskipTests=true
+      run: |
+        if [ ${{ github.event_name }} == release ]; then
+           mvn deploy -DskipTests=true -DrepositoryId=ossrh
+        else
+           mvn deploy -DskipTests=true -DrepositoryId=ossrh_snapshots
+        fi
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}

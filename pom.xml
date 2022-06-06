@@ -375,7 +375,7 @@
   <!-- Locations of the artifacts published -->
   <distributionManagement>
      <snapshotRepository>
-       <id>ossrh-snapshots</id>
+       <id>ossrh_snapshots</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </snapshotRepository>
      <snapshotRepository>
