@@ -378,10 +378,10 @@
        <id>ossrh_snapshots</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </snapshotRepository>
-     <snapshotRepository>
+     <repository>
        <id>ossrh</id>
        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-     </snapshotRepository>
+     </repository>
 
   </distributionManagement>
  
