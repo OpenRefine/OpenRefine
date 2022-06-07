@@ -155,26 +155,3 @@ ClipboardImportingSourceUI.prototype.focus = function() {
   this._elmts.textInput.trigger('focus');
 };
 
-function SPARQLImportingSourceUI(controller) {
-  this._controller = controller;
-}
-Refine.DefaultImportingController.sources.push({
-  "label": $.i18n('core-index-import/sparql'),
-  "id": "sparql",
-  "uiClass": SPARQLImportingSourceUI
-});
-
-SPARQLImportingSourceUI.prototype.attachUI = function(bodyDiv) {
-  var self = this;
-
-  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-sparql-form.html"));
-
-  this._elmts = DOM.bind(bodyDiv);
-  
-  $('#or-import-sparql').text($.i18n('core-index-import/sparql-label'));
-  this._elmts.queryButton.html($.i18n('core-buttons/query'));
-};
-
-SPARQLImportingSourceUI.prototype.focus = function() {
-  this._elmts.textInput.trigger('focus');
-};
