@@ -68,7 +68,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   var level = DialogSystem._layers.length;
 
-  $(window).on('keydown',escapeKey);
+    $(window).on('keydown',escapeKey);
   
   return level;
 };
@@ -119,6 +119,17 @@ DialogSystem.showBusy = function(message) {
 
   return function() {
     DialogSystem.dismissUntil(level - 1);
+  };
+};
+
+DialogSystem.showBusyReconciling = function(message) {
+  var frame = document.getElementsByClassName("type-container")[0];
+
+  var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
+  $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
+
+  return function() {
+    $(body).remove()
   };
 };
 
