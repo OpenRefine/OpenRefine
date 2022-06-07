@@ -1,5 +1,5 @@
 {
-    "sparql-index-import/sparql": "SPARQL",
-    "sparql-index-import/sparql-label": "Enter your SPARQL query here:",
+    "sparql-import/importer-name": "SPARQL",
+    "sparql-import/importer-label": "Enter your SPARQL query here:",
     "sparql-buttons/query": "Query"
 }
