@@ -42,6 +42,12 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String deletedStatementsType = "new-item-with-deleted-statements";
     public static final String noTypeType = "new-item-without-instance-of-or-subclass-of";
     public static final String newItemType = "new-item-created";
+    
+    // mediainfo entities
+    public static final String newMediaWithoutFilePathType = "new-media-without-file-path";
+    public static final String newMediaWithoutFileNameType = "new-media-without-file-name";
+    public static final String newMediaWithoutWikitextType = "new-media-without-wikitext";
+    public static final String newMediaType = "new-media-created";
 
     @Override
     public boolean prepareDependencies() {
@@ -50,7 +56,25 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	// TODO add checks for new MediaInfoEntities
+    	if (update.isNew()) {
+    		info(newMediaType);
+    		
+    		if (update.getFileName() == null || update.getFileName().isBlank()) {
+    			QAWarning issue = new QAWarning(newMediaWithoutFileNameType, null, QAWarning.Severity.CRITICAL, 1);
+    			issue.setProperty("example_entity", update.getEntityId());
+    			addIssue(issue);
+    		}
+    		if (update.getFilePath() == null || update.getFilePath().isBlank()) {
+    			QAWarning issue = new QAWarning(newMediaWithoutFilePathType, null, QAWarning.Severity.CRITICAL, 1);
+    			issue.setProperty("example_entity", update.getEntityId());
+    			addIssue(issue);
+    		}
+    		if (update.getWikitext() == null || update.getWikitext().isBlank()) {
+    			QAWarning issue = new QAWarning(newMediaWithoutWikitextType, null, QAWarning.Severity.CRITICAL, 1);
+    			issue.setProperty("example_entity", update.getEntityId());
+    			addIssue(issue);
+    		}
+    	}
     }
 
     @Override

@@ -21,6 +21,9 @@ public class MediaInfoEditBuilder {
     private List<StatementEdit> statements;
     private Set<MonolingualTextValue> labels;
     private Set<MonolingualTextValue> labelsIfNew;
+    private String filePath;
+    private String fileName;
+    private String wikitext;
     private boolean built;
 
     /**
@@ -36,6 +39,9 @@ public class MediaInfoEditBuilder {
         this.statements = new ArrayList<>();
         this.labels = new HashSet<MonolingualTextValue>();
         this.labelsIfNew = new HashSet<MonolingualTextValue>();
+        this.filePath = null;
+        this.fileName = null;
+        this.wikitext = null;
         this.built = false;
     }
 
@@ -98,6 +104,30 @@ public class MediaInfoEditBuilder {
         }
         return this;
     }
+    
+    /**
+     * Sets the path of the file to be uploaded. Can be null for edits on existing entities.
+     */
+    public MediaInfoEditBuilder addFilePath(String path) {
+    	this.filePath = path;
+    	return this;
+    }
+    
+    /**
+     * Sets the file name to use when uploading (for new entities) or to move to (for existing entities).
+     */
+    public MediaInfoEditBuilder addFileName(String name) {
+    	this.fileName = name;
+    	return this;
+    }
+    
+    /**
+     * Sets the wikitext to be inserted in the edit (otherwise it is left as such)
+     */
+    public MediaInfoEditBuilder addWikitext(String wikitext) {
+    	this.wikitext = wikitext;
+    	return this;
+    }
 
     /**
      * Constructs the {@link MediaInfoEdit}.
@@ -106,6 +136,6 @@ public class MediaInfoEditBuilder {
      */
     public MediaInfoEdit build() {
         built = true;
-        return new MediaInfoEdit(id, statements, labels, labelsIfNew);
+        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext);
     }
 }

@@ -86,7 +86,7 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
     public ItemEdit evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        if (!(subjectId instanceof ItemIdValue)) {
+        if (!(subjectId instanceof ItemIdValue) && !subjectId.isPlaceholder()) {
         	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
         	warning.setProperty("example", subjectId.getId());
         	throw new QAWarningException(warning);

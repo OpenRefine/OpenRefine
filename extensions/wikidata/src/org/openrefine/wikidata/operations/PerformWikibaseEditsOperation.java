@@ -26,7 +26,6 @@ package org.openrefine.wikidata.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -42,7 +41,6 @@ import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.EntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -229,9 +227,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 return;
             }
             ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
-
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
+            WikibaseDataFetcher fetcher = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor editor = new WikibaseDataEditor(connection, _schema.getSiteIri());
 
             String summary;
             if (StringUtils.isBlank(_editGroupsUrlSchema)) {
@@ -252,7 +249,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             // Prepare the edits
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
+            EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, entityDocuments, newEntityLibrary, summary,
                     maxlag, _tags, 50, maxEditsPerMinute);
 
             // Perform edits

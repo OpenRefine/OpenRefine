@@ -35,16 +35,21 @@ import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -62,6 +67,7 @@ public class EditBatchProcessor {
 
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
+    private ApiConnection connection;
     private NewEntityLibrary library;
     private List<EntityEdit> scheduled;
     private String summary;
@@ -80,9 +86,13 @@ public class EditBatchProcessor {
      * {@link performOneEdit}.
      * 
      * @param fetcher
-     *            the fetcher to use to retrieve the current state of entities
+     *            the data fetcher to fetch the existing state of the entities to edit
      * @param editor
-     *            the object to use to perform the edits
+     *            the editor to perform the edits
+     * @param connection
+     *            the connection to use to retrieve the current state of entities and edit them
+     * @param siteIri
+     *            the base prefix of the URIs of the entities in this Wikibase
      * @param entityDocuments
      *            the list of entity updates to perform
      * @param library
@@ -97,10 +107,11 @@ public class EditBatchProcessor {
      * @param maxEditsPerMinute
      *            the maximum number of edits per minute to do
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<EntityEdit> entityDocuments,
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, ApiConnection connection, List<EntityEdit> entityDocuments,
             NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
+        this.connection = connection;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
 
@@ -156,18 +167,17 @@ public class EditBatchProcessor {
         }
 
         try {
-            // New entities
             if (update.isNew()) {
+            	// New entities
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
-                // TODO Antonin, 2022-02-11: remove this casting once we have https://github.com/Wikidata/Wikidata-Toolkit/issues/651
-                if (newCell instanceof ItemIdValue) {
-	                ItemDocument itemDocument = (ItemDocument) update.toNewEntity();
-
-	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
-	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
-                } else if (newCell instanceof MediaInfoIdValue) {
-                    throw new NotImplementedException();
+                EntityIdValue createdDocId;
+                if (update instanceof MediaInfoEdit) {
+                	MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                	createdDocId = ((MediaInfoEdit)update).uploadNewFile(editor, mediaFileUtils, summary, tags);
+                } else {
+                	createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
                 }
+                library.setId(newCell.getReconInternalId(), createdDocId.getId());
             } else {
                 // Existing entities
                 EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
