@@ -288,6 +288,103 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.17.1</version>
+        <configuration>
+          <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <workspaceCodeStylesURL>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</workspaceCodeStylesURL>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <inherited>false</inherited>
+        <executions>
+          <!-- Attach tar.gz artifact for linux -->
+          <execution>
+              <id>attach-linux</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <artifacts>
+                      <artifact>
+                          <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+                          <type>tar.gz</type>
+                          <classifier>linux</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+          
+          <!-- Attach the zip file for windows, without embedded JRE -->
+          <execution>
+              <id>attach-win-without-jre</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <skipAttach>${skipCreateExe}</skipAttach>
+                  <artifacts>
+                      <artifact>
+                          <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+                          <type>zip</type>
+                          <classifier>win</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+          
+          <!-- Attach the zip file for windows, with embedded JRE -->
+          <execution>
+              <id>attach-win-with-jre</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <skipAttach>${skipCreateExe}</skipAttach>
+                  <artifacts>
+                      <artifact>
+                          <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+                          <type>zip</type>
+                          <classifier>win-with-java</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+
+          <!-- Attach the final DMG for MacOS -->
+          <execution>
+              <id>attach-dmg</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <artifacts>
+                      <artifact>
+                          <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
+                          <type>dmg</type>
+                          <classifier>mac</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+            </execution>
+          </executions>
+      </plugin>
+      <plugin>
         <!-- Signature -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
@@ -295,7 +392,7 @@
         <executions>
             <execution>
                 <id>sign-artifacts</id>
-                <phase>verify</phase>
+                <phase>deploy</phase>
                 <goals>
                     <goal>sign</goal>
                 </goals>
@@ -315,103 +412,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>net.revelc.code.formatter</groupId>
-        <artifactId>formatter-maven-plugin</artifactId>
-        <version>2.17.1</version>
-        <configuration>
-          <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.10</version>
-        <configuration>
-          <workspaceCodeStylesURL>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</workspaceCodeStylesURL>
-        </configuration>
-      </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>${build-helper-maven-plugin.version}</version>
-          <inherited>false</inherited>
-          <executions>
-            <!-- Attach tar.gz artifact for linux -->
-            <execution>
-                <id>attach-linux</id>
-                <phase>deploy</phase>
-                <goals>
-                    <goal>attach-artifact</goal>
-                </goals>
-                <configuration>
-                    <artifacts>
-                        <artifact>
-                            <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
-                            <type>tar.gz</type>
-                            <classifier>linux</classifier>
-                        </artifact>
-                    </artifacts>
-                </configuration>
-            </execution>
-            
-            <!-- Attach the zip file for windows, without embedded JRE -->
-            <execution>
-                <id>attach-win-without-jre</id>
-                <phase>deploy</phase>
-                <goals>
-                    <goal>attach-artifact</goal>
-                </goals>
-                <configuration>
-                    <skipAttach>${skipCreateExe}</skipAttach>
-                    <artifacts>
-                        <artifact>
-                            <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
-                            <type>zip</type>
-                            <classifier>win</classifier>
-                        </artifact>
-                    </artifacts>
-                </configuration>
-            </execution>
-            
-            <!-- Attach the zip file for windows, with embedded JRE -->
-            <execution>
-                <id>attach-win-with-jre</id>
-                <phase>deploy</phase>
-                <goals>
-                    <goal>attach-artifact</goal>
-                </goals>
-                <configuration>
-                    <skipAttach>${skipCreateExe}</skipAttach>
-                    <artifacts>
-                        <artifact>
-                            <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
-                            <type>zip</type>
-                            <classifier>win-with-java</classifier>
-                        </artifact>
-                    </artifacts>
-                </configuration>
-            </execution>
-
-            <!-- Attach the final DMG for MacOS -->
-            <execution>
-                <id>attach-dmg</id>
-                <phase>deploy</phase>
-                <goals>
-                    <goal>attach-artifact</goal>
-                </goals>
-                <configuration>
-                    <artifacts>
-                        <artifact>
-                            <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
-                            <type>dmg</type>
-                            <classifier>mac</classifier>
-                        </artifact>
-                    </artifacts>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
 
     </plugins>
   </build>
@@ -444,7 +444,7 @@
      </snapshotRepository>
      <repository>
        <id>ossrh</id>
-       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
      </repository>
   </distributionManagement>
  
