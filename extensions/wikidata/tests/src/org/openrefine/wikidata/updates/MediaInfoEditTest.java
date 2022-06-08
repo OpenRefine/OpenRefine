@@ -128,8 +128,9 @@ public class MediaInfoEditTest {
         MediaInfoIdValue mid = Datamodel.makeMediaInfoIdValue("M1234", "http://www.wikidata.org/entity/");
         when(response.getMid(any(), any()))
                 .thenReturn(mid);
-        when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary", Collections.emptyList()))
-                .thenReturn(response);
+        when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
+                Collections.emptyList()))
+                        .thenReturn(response);
 
         MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
         assertEquals(returnedMid, mid);
