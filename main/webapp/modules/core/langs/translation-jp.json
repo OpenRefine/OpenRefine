@@ -74,7 +74,7 @@
     "core-index-import/format": "フォーマット",
     "core-index-import/column-names": "カラム名",
     "core-index-import/uploading-data": "アップロード中…",
-    "core-index-import/clipboard-label": "クリップボードからここにデータを貼り付けてください:",
+    "core-index-import/clipboard-label": "クリップボードからデータを貼り付けてください:",
     "core-index-import/this-computer": "このコンピューター",
     "core-index-import/enter-url": "データをダウンロードするURLを入力してください:",
     "core-index-import/pick-nodes": "レコードノードを選択",
