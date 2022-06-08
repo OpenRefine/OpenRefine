@@ -25,5 +25,18 @@ function init() {
     ]
   );
   
+  // Style files to inject into /index page
+  ClientSideResourceManager.addPaths(
+    "index/styles",
+    module,
+    [
+      "styles/sparql-import.less",
+      "styles/theme.less"
+    ]
+  );
+  
 }
 
+function send(request, response, template, context) {
+  butterfly.sendTextFromTemplate(request, response, context, template, encoding, html);
+}
