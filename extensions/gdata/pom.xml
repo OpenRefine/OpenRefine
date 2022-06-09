@@ -14,6 +14,10 @@
     <version>3.6-beta2</version>
   </parent>
 
+  <properties>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
+
   <build>
     <finalName>openrefine-gdata</finalName>
     <resources>
