@@ -21,6 +21,19 @@ function init() {
     module,
     [
       "scripts/index/sparql-import-controller.js",
+      "scripts/index/parsing-panel.js",
+      "scripts/index/sparql-source-ui.js",
+      "scripts/index/wikidata/Sparql.js"
+    ]
+  );
+  
+  // Script files to inject into /project page
+  ClientSideResourceManager.addPaths(
+    "project/scripts",
+    module,
+    [
+      "scripts/index/sparql-import-controller.js",
+      "scripts/index/parsing-panel.js",
       "scripts/index/sparql-source-ui.js",
       "scripts/index/wikidata/Sparql.js"
     ]
