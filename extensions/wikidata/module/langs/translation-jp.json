@@ -289,5 +289,21 @@
     "warnings-messages/invalid-mediainfo-subject/body": "1<span class=\"wb-issue-preformat\">{example}2</span> のようなIdentifierは、メディアファイルの編集でsubjectとして使用できません。subjectはMidでなければなりません.",
     "warnings-messages/invalid-entity-id-format/title": "照会カラムに <span class=\"wb-issue-preformat\">{example}</span> のような無効identifierが含まれています.",
     "warnings-messages/invalid-item-subject/body": "1<span class=\"wb-issue-preformat\">{example}2</span> のようなIdentifierは、アイテムの編集でsubjectに使用できません。subjectはQidでなければなりません.",
-    "warnings-messages/invalid-item-id-format/title": "照会カラムに <span class=\"wb-issue-preformat\">{example}</span> のような無効なidentifierが含まれています。アイテムのidentifierはQidでなければなりません."
+    "warnings-messages/invalid-item-id-format/title": "照会カラムに <span class=\"wb-issue-preformat\">{example}</span> のような無効なidentifierが含まれています。アイテムのidentifierはQidでなければなりません.",
+    "warnings-messages/new-media-created/title": "新しいメディアがアップロードされました",
+    "warnings-messages/new-media-created/body": "この処理は新しいファイルをアップロードします。このwikiに挿入可能か、確認してください.",
+    "wikibase-schema/mediainfo-file-name": "ファイル名:",
+    "wikibase-schema/file-name-placeholder": "wikiのファイル名",
+    "wikibase-schema/wikitext-placeholder": "ファイルの関連づけられたWikiマークアップ",
+    "warnings-messages/new-media-without-file-name/body": "新しいメディアファイルをアップロードするには、wiki上で使われるファイル名を指定しなければなりません。 例えば、{example_entity}のファイル名が指定されていません。",
+    "warnings-messages/new-media-without-wikitext/title": "wikitextのないメディア",
+    "wikibase-schema/mediainfo-file-path": "ファイルパス:",
+    "wikibase-addition/version-error": "Manifest version $1 はサポートされていません。OpenRefineは、versions 1.x と 2.x だけです.",
+    "wikibase-schema/mediainfo-wikitext": "Wikitext:",
+    "wikibase-schema/file-path-placeholder": "アップロードするファイルの絶対パス/URL",
+    "wikibase-schema/empty-captions": "キャプションが追加されていません",
+    "warnings-messages/new-media-without-file-path/title": "パスのないメディア",
+    "warnings-messages/new-media-without-file-path/body": "新しいメディアファイルをアップロードするには、パス（URL）を指定しなければなりません。 例えば、{example_entity}のパスが指定されていません。",
+    "warnings-messages/new-media-without-file-name/title": "ファイル名がないメディア",
+    "warnings-messages/new-media-without-wikitext/body": "新しいメディアファイルをアップロードするには、関連するwikitextを指定しなければなりません。 例えば、{example_entity}のwikitextが指定されていません。"
 }
