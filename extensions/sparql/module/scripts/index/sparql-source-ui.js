@@ -11,13 +11,13 @@ Refine.SPARQLSourceUI.prototype.attachUI = function(body) {
   $('#or-import-sparql').text($.i18n('sparql-import/importer-label'));
   this._elmts.queryButton.html($.i18n('sparql-buttons/query'));
   
-   //To Do: Get complete url info
   this._elmts.queryButton.on('click',function(evt){
-	var queryInfo = {};
-	queryInfo.query = jQueryTrim($( "#sparql-import-textarea" ).val());
-	if(!query.length === 0){
-		self._controller.startImportingData(queryInfo);
-	}
+	var api = new wikibase.queryService.api.Sparql();
+	var query = jQueryTrim($( "#sparql-import-textarea" ).val());
+	api.query( query ).done(function(){
+		var json = JSON.parse( api.getResultAsJson() );
+		console.log(json);
+	});
 });
   
 };

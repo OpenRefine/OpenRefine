@@ -21,7 +21,8 @@ function init() {
     module,
     [
       "scripts/index/sparql-import-controller.js",
-      "scripts/index/sparql-source-ui.js"
+      "scripts/index/sparql-source-ui.js",
+      "scripts/index/wikidata/Sparql.js"
     ]
   );
   

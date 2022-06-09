@@ -31,34 +31,4 @@ Refine.SPARQLImportController = function(createProjectUI) {
 };
 Refine.CreateProjectUI.controllers.push(Refine.SPARQLImportController);
 
-Refine.SPARQLImportingController.prototype.startImportingData = function(queryInfo) {
-  
-  var self = this;
-  Refine.postCSRF(
-    "command/core/create-importing-job",
-    null,
-    function(data) {
-      Refine.wrapCSRF(function(token) {
-        $.post(
-            "command/core/importing-controller?" + $.param({
-            "controller": "sparql/sparql-importing-controller",
-            "subCommand": "initialize-parser-ui",
-            "dataUrl": queryInfo,
-            "csrf_token": token
-            }),
-            null,
-            function(data2) {
-            
-            if (data2.status == 'ok') {
-                console.log(data2);
-            } else {
-                alert(data2.message);
-            }
-            },
-            "json"
-        );
-      });
-    },
-    "json"
-  );
-};
+
