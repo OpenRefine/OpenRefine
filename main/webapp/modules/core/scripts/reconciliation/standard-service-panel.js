@@ -98,8 +98,9 @@ ReconStandardServicePanel.prototype._constructUI = function () {
 
     this._elmts.rawServiceLink.attr("href", this._service.url);
 
+    self._populateProperties();
     this._guessTypes(function () {
-        self._populatePanel();
+        self._populateTypes();
         self._wireEvents();
     });
 };
@@ -121,7 +122,7 @@ ReconStandardServicePanel.prototype.dispose = function () {
     this._container = null;
 };
 
-ReconStandardServicePanel.prototype._populatePanel = function () {
+ReconStandardServicePanel.prototype._populateTypes = function () {
     var self = this;
 
     /*
@@ -179,6 +180,10 @@ ReconStandardServicePanel.prototype._populatePanel = function () {
 
         this._elmts.typeInput.trigger('focus');
     }
+};
+
+ReconStandardServicePanel.prototype._populateProperties = function () {
+    var self = this;
 
     /*
      *  Populate properties
@@ -215,7 +220,8 @@ ReconStandardServicePanel.prototype._populatePanel = function () {
             renderDetailColumn(column);
         }
     }
-};
+}
+
 
 ReconStandardServicePanel.prototype._wireEvents = function () {
     var self = this;
@@ -289,51 +295,54 @@ ReconStandardServicePanel.prototype.start = function () {
         }
     }
 
-    var columnDetails = [];
-    $.each(
-        this._panel.find('input[name="property"]'),
-        function (index) {
-            var property = $(this).data("data.suggest");
-            if (property && property.id && include[index].checked) {
-                columnDetails.push({
-                    column: this.getAttribute("columnName"),
-                    property: {
-                        id: property.id,
-                        name: property.name
-                    }
-                });
-            } else {
-                var property = jQueryTrim(this.value);
-                if (property && include[index].checked) {
+    if(type.name !== "" && type.id !== "") {
+        var columnDetails = [];
+        $.each(
+            this._panel.find('input[name="property"]'),
+            function (index) {
+                console.log()
+                var property = $(this).data("data.suggest");
+                if (property && property.id && include[index].checked) {
                     columnDetails.push({
                         column: this.getAttribute("columnName"),
                         property: {
-                            id: property,
-                            name: property
+                            id: property.id,
+                            name: property.name
                         }
                     });
+                } else {
+                    var property = jQueryTrim(this.value);
+                    if (property && include[index].checked) {
+                        columnDetails.push({
+                            column: this.getAttribute("columnName"),
+                            property: {
+                                id: property,
+                                name: property
+                            }
+                        });
+                    }
                 }
             }
-        }
-    );
+        );
 
-    Refine.postCoreProcess(
-        "reconcile",
-        {},
-        {
-            columnName: this._column.name,
-            config: JSON.stringify({
-                mode: "standard-service",
-                service: this._service.url,
-                identifierSpace: this._service.identifierSpace,
-                schemaSpace: this._service.schemaSpace,
-                type: (type) ? {id: type.id, name: type.name} : null,
-                autoMatch: this._elmts.automatchCheck[0].checked,
-                columnDetails: columnDetails,
-                limit: parseInt(this._elmts.maxCandidates[0].value) || 0
-            })
-        },
-        {cellsChanged: true, columnStatsChanged: true}
-    );
+        Refine.postCoreProcess(
+            "reconcile",
+            {},
+            {
+                columnName: this._column.name,
+                config: JSON.stringify({
+                    mode: "standard-service",
+                    service: this._service.url,
+                    identifierSpace: this._service.identifierSpace,
+                    schemaSpace: this._service.schemaSpace,
+                    type: (type) ? {id: type.id, name: type.name} : null,
+                    autoMatch: this._elmts.automatchCheck[0].checked,
+                    columnDetails: columnDetails,
+                    limit: parseInt(this._elmts.maxCandidates[0].value) || 0
+                })
+            },
+            {cellsChanged: true, columnStatsChanged: true}
+        );
+    }
 };
 
