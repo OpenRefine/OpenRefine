@@ -107,7 +107,7 @@ ReconDialog.prototype._cleanDialog = function() {
 
 ReconDialog.prototype._populateDialog = function() {
   var self = this;
-
+  console.log("upa upa")
   var services = ReconciliationManager.getAllServices();
   if (services.length > 0) {
     var renderService = function(service) {
@@ -124,6 +124,15 @@ ReconDialog.prototype._populateDialog = function() {
       .on('click',function() {
     	self._toggleServices();
         self._selectService(record);
+      });
+
+      $('<a>')
+      .html("&nbsp;")
+      .addClass("recon-dialog-service-selector-edit")
+      .prependTo(record.selector)
+      .on('click',function(event) {
+        self._editStandardService(service.url);
+        event.stopImmediatePropagation();
       });
 
       $('<a>')
@@ -223,6 +232,35 @@ ReconDialog.prototype._onAddStandardService = function() {
     var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
+        self._refresh(index);
+      });
+    }
+    dismiss();
+  });
+  elmts.input.trigger('focus').trigger('select');
+};
+
+ReconDialog.prototype._editStandardService = function(serviceUrl) {
+  var self = this;
+  var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
+  var elmts = DOM.bind(dialog);
+
+  elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
+  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url'));
+  elmts.addButton.html($.i18n('core-buttons/add-service'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  elmts.input[0].value = serviceUrl
+
+  var level = DialogSystem.showDialog(dialog);
+  var dismiss = function() {
+    DialogSystem.dismissUntil(level - 1);
+  };
+
+  elmts.cancelButton.on('click',dismiss);
+  elmts.form.on('submit',function() {
+    var url = jQueryTrim(elmts.input[0].value);
+    if (url.length > 0) {
+      ReconciliationManager.editStandardService(url,serviceUrl, function(index) {
         self._refresh(index);
       });
     }

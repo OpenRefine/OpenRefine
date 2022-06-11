@@ -120,6 +120,84 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
   });
 };
 
+ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
+    var dismissBusy = function() {};
+    if (!silent) {
+        console.log("silent");
+        dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+    }
+
+    console.log(url)
+
+    var editService = function(data, mode) {
+        data.url = url;
+        data.ui = {
+            "handler" : "ReconStandardServicePanel",
+            "access" : mode
+        };
+
+        index = ReconciliationManager.customServices.length +
+            ReconciliationManager.standardServices.length;
+
+        console.log(ReconciliationManager.standardServices)
+        console.log(oldUrl)
+        console.log(data)
+        for(service of ReconciliationManager.standardServices) {
+            if(service.url === oldUrl) {
+                console.log("SIIIIIIIIIIIIII")
+                console.log(service)
+                service.url = data.url;
+                service.ui = data.ui;
+                console.log(service)
+            }
+        }
+        console.log(ReconciliationManager.standardServices)
+        ReconciliationManager._rebuildMap();
+        console.log(ReconciliationManager.standardServices)
+
+        ReconciliationManager.save();
+
+        dismissBusy();
+
+        if (f) {
+            f(index);
+        }
+    };
+
+    // First, try with CORS (default "json" dataType)
+    $.ajax(
+        url,
+        { "dataType" : "json",
+            "timeout":5000
+        }
+    )
+        .done(function(data, textStatus, jqXHR) {
+            editService(data, "json");
+            console.log("sucesso")
+            console.log(data)
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            // If it fails, try with JSONP
+            $.ajax(
+                url,
+                { "dataType" : "jsonp",
+                    "timeout": 5000
+                }
+            )
+                .done(function(data, textStatus, jqXHR) {
+                    editService(data, "jsonp");
+                    console.log("Sucesso")
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    if (!silent) {
+                        dismissBusy();
+                        alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+                    }
+                });
+        });
+    console.log("Fim")
+};
+
 ReconciliationManager.unregisterService = function(service, f) {
   for (var i = 0; i < ReconciliationManager.customServices.length; i++) {
     if (ReconciliationManager.customServices[i] === service) {
