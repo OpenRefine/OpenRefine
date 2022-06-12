@@ -65,7 +65,7 @@ ReconciliationManager.registerService = function(service) {
 ReconciliationManager.registerStandardService = function(url, f, silent) {
   var dismissBusy = function() {};
   if (!silent) {
-    dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+    dismissBusy =  DialogSystem.showBusy($.i18n('core-util-enc/working')+"...");
   }
 
   var registerService = function(data, mode) {
@@ -120,15 +120,13 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
   });
 };
 
-ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
+ReconciliationManager.editStandardService = function(url, oldUrl, level, f, silent) {
+    DialogSystem.dismissUntil(level - 1);
+
     var dismissBusy = function() {};
     if (!silent) {
-        console.log("silent");
-        dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+        dismissBusy =  DialogSystem.showBusy();
     }
-
-    console.log(url)
-
     var editService = function(data, mode) {
         data.url = url;
         data.ui = {
@@ -136,32 +134,22 @@ ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
             "access" : mode
         };
 
-        index = ReconciliationManager.customServices.length +
-            ReconciliationManager.standardServices.length;
-
-        console.log(ReconciliationManager.standardServices)
-        console.log(oldUrl)
-        console.log(data)
-        for(service of ReconciliationManager.standardServices) {
-            if(service.url === oldUrl) {
-                console.log("SIIIIIIIIIIIIII")
-                console.log(service)
-                service.url = data.url;
-                service.ui = data.ui;
-                console.log(service)
+        for (var i = 0; i < ReconciliationManager.customServices.length; i++) {
+            if (ReconciliationManager.customServices[i].url === oldUrl) {
+                ReconciliationManager.customServices[i] = data
+                break;
             }
         }
-        console.log(ReconciliationManager.standardServices)
+        for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
+            if (ReconciliationManager.standardServices[i].url === oldUrl) {
+                ReconciliationManager.standardServices[i] = data
+                break;
+            }
+        }
         ReconciliationManager._rebuildMap();
-        console.log(ReconciliationManager.standardServices)
-
-        ReconciliationManager.save();
-
+        ReconciliationManager.save(f);
         dismissBusy();
 
-        if (f) {
-            f(index);
-        }
     };
 
     // First, try with CORS (default "json" dataType)
@@ -173,8 +161,6 @@ ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
     )
         .done(function(data, textStatus, jqXHR) {
             editService(data, "json");
-            console.log("sucesso")
-            console.log(data)
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
             // If it fails, try with JSONP
@@ -186,7 +172,6 @@ ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
             )
                 .done(function(data, textStatus, jqXHR) {
                     editService(data, "jsonp");
-                    console.log("Sucesso")
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                     if (!silent) {
@@ -195,7 +180,6 @@ ReconciliationManager.editStandardService = function(url, oldUrl, f, silent) {
                     }
                 });
         });
-    console.log("Fim")
 };
 
 ReconciliationManager.unregisterService = function(service, f) {

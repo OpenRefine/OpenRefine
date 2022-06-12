@@ -107,10 +107,9 @@ ReconDialog.prototype._cleanDialog = function() {
 
 ReconDialog.prototype._populateDialog = function() {
   var self = this;
-  console.log("upa upa")
   var services = ReconciliationManager.getAllServices();
   if (services.length > 0) {
-    var renderService = function(service) {
+    var renderService = function(service,serviceIndex) {
       var record = {
           service: service,
           handler: null
@@ -131,7 +130,7 @@ ReconDialog.prototype._populateDialog = function() {
       .addClass("recon-dialog-service-selector-edit")
       .prependTo(record.selector)
       .on('click',function(event) {
-        self._editStandardService(service.url);
+        self._editStandardService(service.url,serviceIndex);
         event.stopImmediatePropagation();
       });
 
@@ -150,7 +149,7 @@ ReconDialog.prototype._populateDialog = function() {
     };
 
     for (var i = 0; i < services.length; i++) {
-      renderService(services[i]);
+      renderService(services[i],i);
     }
   }
 };
@@ -240,7 +239,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.input.trigger('focus').trigger('select');
 };
 
-ReconDialog.prototype._editStandardService = function(serviceUrl) {
+ReconDialog.prototype._editStandardService = function(serviceUrl,serviceIndex) {
   var self = this;
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
   var elmts = DOM.bind(dialog);
@@ -260,13 +259,10 @@ ReconDialog.prototype._editStandardService = function(serviceUrl) {
   elmts.form.on('submit',function() {
     var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
-      ReconciliationManager.editStandardService(url,serviceUrl, function(index) {
-        self._refresh(index);
+      ReconciliationManager.editStandardService(url,serviceUrl, level, function() {
+        self._refresh(serviceIndex);
       });
     }
-    dismiss();
   });
   elmts.input.trigger('focus').trigger('select');
 };
-
-
