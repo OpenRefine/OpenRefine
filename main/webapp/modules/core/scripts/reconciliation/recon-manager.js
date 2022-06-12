@@ -65,7 +65,7 @@ ReconciliationManager.registerService = function(service) {
 ReconciliationManager.registerStandardService = function(url, f, silent) {
   var dismissBusy = function() {};
   if (!silent) {
-    dismissBusy =  DialogSystem.showBusy($.i18n('core-util-enc/working')+"...");
+    dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
   }
 
   var registerService = function(data, mode) {

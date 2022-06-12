@@ -107,6 +107,7 @@ ReconDialog.prototype._cleanDialog = function() {
 
 ReconDialog.prototype._populateDialog = function() {
   var self = this;
+
   var services = ReconciliationManager.getAllServices();
   if (services.length > 0) {
     var renderService = function(service,serviceIndex) {
@@ -130,7 +131,7 @@ ReconDialog.prototype._populateDialog = function() {
       .addClass("recon-dialog-service-selector-edit")
       .prependTo(record.selector)
       .on('click',function(event) {
-        self._editStandardService(service.url,serviceIndex);
+        self._editStandardService(service.url, serviceIndex);
         event.stopImmediatePropagation();
       });
 
@@ -149,7 +150,7 @@ ReconDialog.prototype._populateDialog = function() {
     };
 
     for (var i = 0; i < services.length; i++) {
-      renderService(services[i],i);
+      renderService(services[i], i);
     }
   }
 };
