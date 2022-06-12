@@ -149,7 +149,6 @@ ReconciliationManager.editStandardService = function(url, oldUrl, level, f, sile
         ReconciliationManager._rebuildMap();
         ReconciliationManager.save(f);
         dismissBusy();
-
     };
 
     // First, try with CORS (default "json" dataType)

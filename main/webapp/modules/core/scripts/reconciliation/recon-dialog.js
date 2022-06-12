@@ -110,7 +110,7 @@ ReconDialog.prototype._populateDialog = function() {
 
   var services = ReconciliationManager.getAllServices();
   if (services.length > 0) {
-    var renderService = function(service,serviceIndex) {
+    var renderService = function(service, serviceIndex) {
       var record = {
           service: service,
           handler: null
@@ -240,7 +240,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.input.trigger('focus').trigger('select');
 };
 
-ReconDialog.prototype._editStandardService = function(serviceUrl,serviceIndex) {
+ReconDialog.prototype._editStandardService = function(serviceUrl, serviceIndex) {
   var self = this;
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
   var elmts = DOM.bind(dialog);
@@ -260,7 +260,7 @@ ReconDialog.prototype._editStandardService = function(serviceUrl,serviceIndex) {
   elmts.form.on('submit',function() {
     var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
-      ReconciliationManager.editStandardService(url,serviceUrl, level, function() {
+      ReconciliationManager.editStandardService(url, serviceUrl, level, function() {
         self._refresh(serviceIndex);
       });
     }
