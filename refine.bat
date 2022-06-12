@@ -63,7 +63,6 @@ echo   extensions_test ........... Run the extensions tests
 echo.
 
 echo   clean ..................... Clean compiled classes
-echo   distclean ................. Remove all generated files
 echo.
 goto end
 
@@ -226,7 +225,6 @@ if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
 if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
-if ""%ACTION%"" == ""distclean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
 if ""%ACTION%"" == """" goto doRun
 %@EndTry%

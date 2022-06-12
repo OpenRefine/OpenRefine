@@ -8,7 +8,7 @@ on:
     paths-ignore:
       - 'docs/**'
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   prepare_ui_test_matrix:
@@ -21,7 +21,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.3.0
         with:
           node-version: '12'
       - id: set-matrix
@@ -62,7 +62,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.3.0
         with:
           node-version: '12'
 
@@ -236,7 +236,8 @@ jobs:
         APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
     - name: Upload snapshot releases to OSSRH
-      run: mvn deploy -DskipTests=true
+      run: |
+        mvn deploy -DskipTests=true -DrepositoryId=ossrh
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}

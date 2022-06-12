@@ -6,7 +6,7 @@ sidebar_label: Introduction
 ---
 
 
-This manual is designed to comprehensively walk through every aspect of setting up and using OpenRefine 3.5.0, including every interface function and feature. 
+This manual is designed to comprehensively walk through every aspect of setting up and using OpenRefine 3.5, including every interface function and feature. 
 
 <!-- 
 This documentation platform provides a separate version of the user manual for each version of OpenRefine (from 3.4.1 onwards) - if you're looking for a later version than 3.4.1, please select the correct version from the dropdown menu in the top bar of this page. 

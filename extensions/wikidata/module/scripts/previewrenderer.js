@@ -73,6 +73,41 @@ EditRenderer._renderMediaInfo = function(json, container) {
   EditRenderer._renderEntity(json.subject, inputContainer);
   var right = $('<div></div>').addClass('wbs-entity-contents').appendTo(mediainfo);
 
+  // File-related fields
+  if (json.filePath || json.fileName || json.wikitext) {
+	  var fileFields = $('<div></div>').addClass('wbs-mediainfo-file-fields').appendTo(right);
+	  
+	  // File path
+      if (json.filePath) {
+		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-path'))
+			.appendTo(fileFields);
+		  $('<span></span>')
+		    .addClass('wbs-file-path-input')
+			.text(json.filePath)
+		    .appendTo(fileFields);
+      }
+	
+	  // File name
+      if (json.fileName) {
+		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-name'))
+			.appendTo(fileFields);
+		  $('<span></span>')
+		    .addClass('wbs-file-name-input')
+			.text(json.fileName)
+		    .appendTo(fileFields);
+      }
+
+      // Wikitext
+      if (json.wikitext) {
+		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-wikitext'))
+			.appendTo(fileFields);
+		  $('<span></span>')
+		    .addClass('wbs-wikitext-input')
+			.text(json.wikitext)
+		    .appendTo(fileFields);
+      }
+   }
+
   // Terms
   if ((json.labels && json.labels.length) ||
       (json.labelsIfNew && json.labelsIfNew.length)) {

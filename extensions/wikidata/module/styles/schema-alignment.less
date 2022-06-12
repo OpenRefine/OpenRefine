@@ -198,11 +198,20 @@
     width: 120px;
 }
 
+.wbs-mediainfo-file-fields {
+	display: grid;
+	grid-template-columns: max-content min(450px, 50%);
+	grid-gap: 0.8em;
+	align-items: center;
+	margin: 1em 0em;
+}
+
+
 /* Fix input rendering for Firefox */
 
 
 .wbs-entity-input input, .wbs-prop-input input, .wbs-target-input input,
-.wbs-monolingual-container input {
+.wbs-monolingual-container input, .wbs-mediainfo-file-fields input {
     width: 100%;
     border: solid #b5b5b5 1px;
     padding: 2px;

@@ -112,6 +112,8 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * @param update
      */
     protected void splitUpdate(EntityEdit edit) {
+    	// TODO (antonin, 2022-05-08): there is a lot of duplication in the two cases below (Item / MediaInfo),
+    	// could we refactor that?
     	if (edit instanceof ItemEdit) {
     		ItemEdit update = (ItemEdit) edit;
 	        ItemEditBuilder pointerFreeBuilder = new ItemEditBuilder(update.getEntityId())
@@ -151,6 +153,9 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     	} else if (edit instanceof MediaInfoEdit) {
     		MediaInfoEdit update = (MediaInfoEdit) edit;
 	        MediaInfoEditBuilder pointerFreeBuilder = new MediaInfoEditBuilder(update.getEntityId())
+    				.addFileName(update.getFileName())
+    				.addFilePath(update.getFilePath())
+    				.addWikitext(update.getWikitext())
 	        		.addLabels(update.getLabels(), true)
 	        		.addLabels(update.getLabelsIfNew(), false);
 	        MediaInfoEditBuilder pointerFullBuilder = new MediaInfoEditBuilder(update.getEntityId());
