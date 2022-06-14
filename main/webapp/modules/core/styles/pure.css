@@ -31,7 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-.button, a.button { 
+.button, a.button {
+  padding: 0.4em 1em;
   background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
   background: -moz-linear-gradient(top,  #f9f9f9,  #e3e3e3);
   filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e3e3e3');
