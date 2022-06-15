@@ -226,6 +226,8 @@
     "core-dialogs/focusing-on-column": " (focusing on $1)",
     "core-dialogs/processing": "Processing…",
     "core-dialogs/error-getColumnInfo": "Error calling 'get-columns-info'",
+    "core-dialogs/column-not-numeric": "Scatterplot requires a numeric column (green values). The column $1 has less than 50% numeric data. If a column has numerical data but is stored as text (black color), then use Column->Edit Cells->Common Transforms->to Number to convert.",
+    "core-dialogs/no-other-numeric-columns": "No other numeric columns, (columns with more than 50% numeric data (green values)), to compare with Column $1.",
     "core-dialogs/no-column-dataset": "There are no columns in this dataset",
     "core-dialogs/linear-plot": "Linear plot",
     "core-dialogs/logarithmic-plot": "Logarithmic Plot",
