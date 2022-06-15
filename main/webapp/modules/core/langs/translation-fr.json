@@ -815,5 +815,7 @@
     "core-views/expand-right": "Afficher toutes les colonnes à droite",
     "core-dialogs/add-all": "Ajouter toutes",
     "core-dialogs/remove-all": "Supprimer toutes",
-    "core-index-import/invalid-url": "URL incorrecte"
+    "core-index-import/invalid-url": "URL incorrecte",
+    "core-index-import/blank-url": "URL vide",
+    "core-index/rows-loading-failed": "Échec de la lecture des rangées."
 }
