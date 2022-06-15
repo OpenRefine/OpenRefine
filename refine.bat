@@ -235,25 +235,46 @@ if ""%ACTION%"" == """" goto doRun
 
 :doRun
 rem --- Log for troubleshooting ------------------------------------------
-echo Getting Java Version...
-java -version 2^>^&1
-echo.=====================================================
-for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| findstr "version"') do (set JVERSION=%%a)
-echo Getting Free Ram...
+set JAVA="%JAVA_HOME%/bin/java"
+set JAVA_VERSION=""
+set JAVA_RELEASE=0
+for /f "tokens=3" %%g in ('^"%JAVA% -version 2^>^&1 ^| findstr /i "version"^"') do (
+  set JAVA_VERSION=%%g
+)
+rem Java 6, 7, 8 starts with 1.x
+rem Java 9+ starts with x using semver versioning
+set JAVA_VERSION=%JAVA_VERSION:"=%
+for /f "delims=.-_ tokens=1-2" %%v in ("%JAVA_VERSION%") do (
+  if /I "%%v" EQU "1" (
+    set JAVA_RELEASE=%%w
+  ) else (
+    set JAVA_RELEASE=%%v
+  )
+)
+echo Java %JAVA_RELEASE% (%JAVA_VERSION%)
+if %JAVA_RELEASE% LSS 11 (
+    echo OpenRefine requires Java version 11 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version.
+    exit /B 1
+)
+if %JAVA_RELEASE% GTR 17 (
+    echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17.
+)
 
+echo Getting Free Ram...
 for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
 (
 echo ----------------------- 
 echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
 echo JAVA_HOME = %JAVA_HOME%
-echo java -version = %JVERSION%
+echo java release = %JAVA_RELEASE%
+echo java -version = %JAVA_VERSION%
 echo freeRam = %freeRam%
 echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
+%JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
 :doMvn
