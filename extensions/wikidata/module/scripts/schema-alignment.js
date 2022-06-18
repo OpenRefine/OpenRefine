@@ -1421,7 +1421,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     column.append($('<div></div>').addClass('wbs-restricted-column-name').text(origText));
     var deleteButton = SchemaAlignment._makeDeleteButton(true).appendTo(column);
     deleteButton.attr('alt', $.i18n('wikibase-schema/remove-column'));
-    deleteButton.click(function (e) {
+    deleteButton.on('click',function (e) {
         columnDiv.remove();
         input.show();
         inputContainer.data("jsonValue", null);
