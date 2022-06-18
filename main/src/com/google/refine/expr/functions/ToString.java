@@ -35,6 +35,7 @@ package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
@@ -54,7 +55,8 @@ public class ToString implements Function {
                     OffsetDateTime odt = (OffsetDateTime)o1;
                     return odt.format(DateTimeFormatter.ofPattern((String)o2));
                 } else if (o1 instanceof Number) {
-                    return String.format((String) o2, (Number) o1);
+                    Formatter formatter = new Formatter();
+                    return formatter.format((String) o2, o1).toString();
                 }
             } else if (args.length == 1) {
                 if (o1 instanceof String) {
@@ -67,7 +69,6 @@ public class ToString implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a Date or Number format string");
     }
 
-    
     @Override
     public String getDescription() {
         return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://docs.openrefine.org/manual/grelfunctions/#date-functions.";
