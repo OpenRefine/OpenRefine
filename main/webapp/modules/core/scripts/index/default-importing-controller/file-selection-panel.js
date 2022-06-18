@@ -261,7 +261,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     } catch (e) {
       // Ignore
     }
-      self._fileSelectionPanelElmts.regexSummary.text($.i18n('core-index-import/match-count'), count);
+      self._fileSelectionPanelElmts.regexSummary.text($.i18n('core-index-import/match-count', count));
   });
   this._fileSelectionPanelElmts.selectRegexButton.unbind().click(function() {
     self._fileSelectionPanelElmts.filePanel
