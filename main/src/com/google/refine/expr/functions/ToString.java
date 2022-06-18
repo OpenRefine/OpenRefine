@@ -35,6 +35,7 @@ package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
@@ -54,7 +55,7 @@ public class ToString implements Function {
                     OffsetDateTime odt = (OffsetDateTime)o1;
                     return odt.format(DateTimeFormatter.ofPattern((String)o2));
                 } else if (o1 instanceof Number) {
-                    return String.format((String) o2, (Number) o1);
+                    return new Formatter().format((String) o2, o1).toString();
                 }
             } else if (args.length == 1) {
                 if (o1 instanceof String) {
