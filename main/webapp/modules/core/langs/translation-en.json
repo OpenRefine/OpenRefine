@@ -769,6 +769,7 @@
     "core-buttons/select-all": "Select all",
     "core-buttons/deselect-all": "Deselect all",
     "core-buttons/select": "Select",
+    "core-buttons/deselect": "Deselect",
     "core-buttons/startover": "&laquo; start over",
     "core-buttons/conf-pars-opt": "Configure parsing options &raquo;",
     "core-buttons/reselect-files": "&laquo; re-select files",
