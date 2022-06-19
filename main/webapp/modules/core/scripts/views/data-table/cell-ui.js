@@ -604,6 +604,13 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
   elmts.typeSelect.val(cellDataType);
 
+  if (cellDataType === "date") {
+    var simpleDateFormatRef = $('<a></a>').attr('href', 'https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html').append('here');
+    elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+    elmts.cell_help_link.html(simpleDateFormatRef);
+    $(elmts.cell_help).css({'font-style': 'italic'});
+  }
+
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
 
