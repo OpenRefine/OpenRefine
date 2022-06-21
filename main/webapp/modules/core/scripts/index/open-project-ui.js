@@ -154,10 +154,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
          console.log('Project '+project.id+' name is not set. skipping...');
          continue;
       }
-      if (project.modified == null) {
-        console.log('Warning: Project '+n+' modified date is undefined. Defaulting to today\'s date.');
-        project.modified = Date.now();
-      }
       project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
       
       if (typeof project.userMetadata !== "undefined")  {
