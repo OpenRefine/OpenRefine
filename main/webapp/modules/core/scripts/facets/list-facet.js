@@ -179,9 +179,8 @@ class ListFacet extends Facet {
     this._elmts.changeButton.attr("title", $.i18n('core-facets/current-exp')+": " + this._config.expression);
 
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
     
-    this._elmts.changeButton.click(function() {
+    this._elmts.changeButton.on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
@@ -195,7 +194,6 @@ class ListFacet extends Facet {
     this._elmts.minimizeButton.on('click',function() { self._minimize(); });
     this._elmts.resetButton.on('click',function() { self._reset(); });
     this._elmts.invertButton.on('click',function() { self._invert(); });
-    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
 
     this._elmts.choiceCountContainer.on('click',function() { self._copyChoices(); });
     this._elmts.sortByCountLink.on('click',function() {

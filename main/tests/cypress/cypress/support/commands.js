@@ -110,7 +110,7 @@ Cypress.Commands.add('getFacetContainer', (facetName) => {
 Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
   return cy
     .get(
-      `#refine-tabs-facets .facets-container .facet-container span[bind="facetTitle"]:contains("${facetName}")`,
+      `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
       { log: false }
     )
     .parentsUntil('.facets-container', { log: false });

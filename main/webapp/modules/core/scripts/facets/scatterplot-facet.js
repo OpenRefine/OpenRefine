@@ -143,9 +143,11 @@ class ScatterplotFacet extends Facet {
     this._elmts.titleSpan.attr("title",$.i18n('core-facets/edit-facet-title', this.facetToolTipText));
 
     this._elmts.titleSpan.text(this._config.name);
+
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
     this._elmts.removeButton.on('click',function() { self._remove(); });
     this._elmts.minimizeButton.on('click',function() { self._minimize(); });
-    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
+
     this._elmts.resetButton.on('click',function() {
       self.reset();
       self._updateRest();

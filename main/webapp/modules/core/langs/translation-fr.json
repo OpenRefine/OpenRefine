@@ -287,7 +287,7 @@
     "core-facets/column-tooltip": "Colonne : $1",
     "core-facets/expr-tooltip": "Expression : $1",
     "core-facets/source-tooltip": "Source : $1",
-    "core-facets/facet-current-title": "Le nom actuel de la facette est : $1.\nEntrez le nouveau nom de la facette :",
+    "core-facets/facet-current-title": "Renommer la facette '$1' : ",
     "core-facets/edit-facet-title": "Cliquez ici pour éditer le nom de la facette",
     "core-facets/current-exp": "Expression en cours",
     "core-facets/set-choice-count": "Indiquer le nombre limite de choix",

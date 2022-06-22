@@ -123,11 +123,11 @@ class TextSearchFacet extends Facet {
       this._elmts.regexCheckbox.prop('checked', true);
     }
 
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
     this._elmts.removeButton.on('click',function() { self._remove(); });
     this._elmts.minimizeButton.on('click',function() { self._minimize(); });
     this._elmts.resetButton.on('click',function() { self._reset(); });
     this._elmts.invertButton.on('click',function() { self._invert(); });
-    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
 
     this._elmts.caseSensitiveCheckbox.bind("change", function() {
       self._config.caseSensitive = this.checked;
