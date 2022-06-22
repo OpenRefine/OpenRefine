@@ -145,7 +145,15 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
   for (var n in data.projects) {
     if (data.projects.hasOwnProperty(n)) {
       var project = data.projects[n];
+      if (project == null) {
+          console.log('Project '+n+' is null. skipping...');
+          continue;
+      }
       project.id = n;
+      if (!project.name) {
+         console.log('Project '+project.id+' name is not set. skipping...');
+         continue;
+      }
       project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
       
       if (typeof project.userMetadata !== "undefined")  {
