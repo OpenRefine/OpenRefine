@@ -86,6 +86,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.9</commons-text.version>
     <commons-validator.version>1.7</commons-validator.version>
+      <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.15</commons-codec.version>
     <commons-compress.version>1.21</commons-compress.version>
@@ -123,13 +124,14 @@
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.0.0-M2</maven-deploy-plugin.version>
     <license-plugin.version>2.0.0</license-plugin.version>
+      <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
 
   <build>
     <!-- It is nice for "mvn" with no arguments to do a reasonable default. -->
     <defaultGoal>install</defaultGoal>
-    
+
     <finalName>openrefine</finalName>
     <resources>
     </resources>
@@ -225,7 +227,7 @@
                                 <include>*.exec</include>
                             </includes>
                         </fileSet>
-                     </fileSets> 
+                     </fileSets>
                 </configuration>
              </execution>
         </executions>
@@ -326,7 +328,7 @@
                   </artifacts>
               </configuration>
           </execution>
-          
+
           <!-- Attach the zip file for windows, without embedded JRE -->
           <execution>
               <id>attach-win-without-jre</id>
@@ -345,7 +347,7 @@
                   </artifacts>
               </configuration>
           </execution>
-          
+
           <!-- Attach the zip file for windows, with embedded JRE -->
           <execution>
               <id>attach-win-with-jre</id>
@@ -411,8 +413,18 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
-
-
+        <plugin>
+            <groupId>org.jvnet.localizer</groupId>
+            <artifactId>localizer-maven-plugin</artifactId>
+            <version>${org-jvnet-localizer-plugin.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
 
@@ -423,7 +435,7 @@
       <dependency>
           <groupId>org.jvnet.localizer</groupId>
           <artifactId>localizer</artifactId>
-          <version>1.31</version>
+          <version>${org-jvnet-localizer.version}</version>
       </dependency>
   </dependencies>
 
@@ -463,5 +475,5 @@
        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
      </repository>
   </distributionManagement>
- 
+
 </project>
