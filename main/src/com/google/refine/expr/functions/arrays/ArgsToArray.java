@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.arrays;
 import java.util.Properties;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescriptions;
 
 public class ArgsToArray implements Function {
 
@@ -46,7 +47,7 @@ public class ArgsToArray implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns all arguments passed to it as an array";
+        return FunctionDescriptions.arr_args_to_array_description();
     }
     
     @Override
