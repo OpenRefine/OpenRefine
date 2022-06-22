@@ -189,6 +189,7 @@ class ListFacet extends Facet {
       });
     });
     
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
     this._elmts.expressionDiv.text(this._config.expression).hide().on('click',function() { self._editExpression(); });
     this._elmts.removeButton.on('click',function() { self._remove(); });
     this._elmts.minimizeButton.on('click',function() { self._minimize(); });
