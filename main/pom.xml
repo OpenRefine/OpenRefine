@@ -31,6 +31,9 @@
       <resource>
         <directory>src</directory>
       </resource>
+      <resource>
+        <directory>resources</directory>
+      </resource>
     </resources>
     <testSourceDirectory>tests/server/src</testSourceDirectory>
     <testResources>
@@ -43,7 +46,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-	<version>${build-helper-maven-plugin.version}</version>
+	    <version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -71,7 +74,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-	<version>${maven-dependency-plugin.version}</version>
+	    <version>${maven-dependency-plugin.version}</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -88,7 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-	<version>${maven-jar-plugin.version}</version>
+	    <version>${maven-jar-plugin.version}</version>
         <executions>
           <execution>
             <goals>
@@ -100,7 +103,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-	<version>${maven-clean-plugin.version}</version>
+	    <version>${maven-clean-plugin.version}</version>
         <configuration>
           <filesets>
             <fileset>
@@ -112,7 +115,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-	<version>${git-commit-id-plugin.version}</version>
+	    <version>${git-commit-id-plugin.version}</version>
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -242,7 +245,7 @@
       <version>${poi.version}</version>
       <exclusions>
 	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
+      <groupId>org.apache.logging.log4j</groupId>
 	  <artifactId>log4j-api</artifactId>
 	</exclusion>
       </exclusions>
@@ -253,7 +256,7 @@
       <version>${poi.version}</version>
       <exclusions>
 	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
+      <groupId>org.apache.logging.log4j</groupId>
 	  <artifactId>log4j-api</artifactId>
 	</exclusion>
       </exclusions>
