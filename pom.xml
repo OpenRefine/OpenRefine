@@ -420,6 +420,11 @@
     <!-- dependencies are stored in the relevant submodules:
           see main/pom.xml, server/pom.xml and each extension.
     -->
+      <dependency>
+          <groupId>org.jvnet.localizer</groupId>
+          <artifactId>localizer</artifactId>
+          <version>1.31</version>
+      </dependency>
   </dependencies>
 
   <!-- enabled to access our snapshots of Wikidata-Toolkit -->
@@ -434,7 +439,18 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+      <repository>
+          <id>jenkins-repo</id>
+          <url>https://repo.jenkins-ci.org/releases/</url>
+      </repository>
   </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jenkins-repo</id>
+            <url>https://repo.jenkins-ci.org/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
   <!-- Locations of the artifacts published -->
   <distributionManagement>
