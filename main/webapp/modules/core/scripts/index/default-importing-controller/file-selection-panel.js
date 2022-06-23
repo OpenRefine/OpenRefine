@@ -205,8 +205,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     $('<button>')
     .text($.i18n('core-buttons/select'))
     .addClass("button")
-    .css('margin-right','3px')
-    .appendTo(tr)
+    .appendTo($('<td>').appendTo(tr))
     .on('click',function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
@@ -224,8 +223,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     $('<button>')
     .text($.i18n('core-buttons/deselect'))
     .addClass("button")
-    .css('margin-left','3px')
-    .appendTo(tr)
+    .appendTo($('<td>').appendTo(tr))
     .on('click',function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
