@@ -64,7 +64,6 @@ public class ToStringTests extends RefineTest {
         // test with large number
         assertEquals(invoke("toString", 1000000000000000000L, "%d"), "1000000000000000000");
 
-
         String inputDate = "2013-06-01";
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"), "2013-06-01");
