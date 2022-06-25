@@ -641,6 +641,15 @@ public class ImportingUtilities {
         }
         return null;
     }
+
+    private static boolean tarIsGZipped(File file) {
+        int magic = 0;
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
+            magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
+        } catch (IOException ignored) {
+        }
+        return magic == GZIPInputStream.GZIP_MAGIC;
+    }
     
     // FIXME: This is wasteful of space and time. We should try to process on the fly
     static private boolean explodeArchive(
