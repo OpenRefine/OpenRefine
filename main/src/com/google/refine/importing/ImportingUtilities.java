@@ -650,7 +650,7 @@ public class ImportingUtilities {
         return null;
     }
 
-    private static boolean tarIsGZipped(File file) {
+    private static boolean isFileGZipped(File file) {
         int magic = 0;
         try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
             magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
@@ -658,7 +658,7 @@ public class ImportingUtilities {
         }
         return magic == GZIPInputStream.GZIP_MAGIC;
     }
-    
+
     // FIXME: This is wasteful of space and time. We should try to process on the fly
     static private boolean explodeArchive(
         File rawDataDir,
@@ -733,7 +733,8 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".gz") 
+            if (fileName.endsWith(".gz")
+                    || isFileGZipped(file)
                     || "gzip".equals(contentEncoding) 
                     || "x-gzip".equals(contentEncoding)
                     || "application/x-gzip".equals(mimeType)) {                
