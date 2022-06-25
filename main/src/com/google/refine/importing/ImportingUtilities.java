@@ -624,8 +624,14 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || tarIsGZipped(file)) {
-                return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
+                TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+                if (archiveInputStream.getNextTarEntry() != null) {
+                    // It's a tar archive
+                    return archiveInputStream;
+                }
+                // It's not a tar archive, so it must be gzip compressed (or something else)
+                return null;
             } else if (fileName.endsWith(".tar.bz2")) {
                 return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
