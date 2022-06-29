@@ -190,6 +190,9 @@ public class OdsImporter extends TabularImportingParserBase {
                             Cell cell = null;
 
                             OdfTableCell sourceCell = row.getCellByIndex(cellIndex);
+                            if (sourceCell != null) {
+                                cell = extractCell(sourceCell, reconMap);
+                            }
                             cells.add(cell);
                             if (cell != null && cellIndex > maxCol) {
                                 maxCol = cellIndex;
@@ -245,5 +248,15 @@ public class OdsImporter extends TabularImportingParserBase {
             value = cell.getDisplayText();
         }
         return value;
+    }
+
+    static protected Cell extractCell(OdfTableCell cell, Map<String, Recon> reconMap) {
+        Serializable value = extractCell(cell);
+
+        if (value != null) {
+            return new Cell(value, null);
+        } else {
+            return null;
+        }
     }
 }
