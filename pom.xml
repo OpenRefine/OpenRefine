@@ -86,7 +86,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.9</commons-text.version>
     <commons-validator.version>1.7</commons-validator.version>
-      <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
+    <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.15</commons-codec.version>
     <commons-compress.version>1.21</commons-compress.version>
@@ -124,7 +124,7 @@
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.0.0-M2</maven-deploy-plugin.version>
     <license-plugin.version>2.0.0</license-plugin.version>
-      <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
+    <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
 
@@ -246,6 +246,7 @@
         <configuration>
           <sourceDirectories>
              <sourceDirectory>main/src</sourceDirectory>
+             <sourceDirectory>main/target/generated-sources</sourceDirectory>
              <sourceDirectory>extensions/jython/src</sourceDirectory>
              <sourceDirectory>extensions/wikidata/src</sourceDirectory>
              <sourceDirectory>extensions/database/src</sourceDirectory>
