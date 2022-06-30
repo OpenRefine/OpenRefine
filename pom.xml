@@ -251,6 +251,7 @@
              <sourceDirectory>extensions/database/src</sourceDirectory>
              <sourceDirectory>extensions/phonetic/src</sourceDirectory>
              <sourceDirectory>extensions/gdata/src</sourceDirectory>
+              <sourceDirectory>main/target/generated-sources</sourceDirectory>
           </sourceDirectories>
         </configuration>
       </plugin>
