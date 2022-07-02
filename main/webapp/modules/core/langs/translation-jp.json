@@ -74,7 +74,7 @@
     "core-index-import/format": "フォーマット",
     "core-index-import/column-names": "カラム名",
     "core-index-import/uploading-data": "アップロード中…",
-    "core-index-import/clipboard-label": "クリップボードからここにデータを貼り付けてください:",
+    "core-index-import/clipboard-label": "クリップボードからデータを貼り付けてください:",
     "core-index-import/this-computer": "このコンピューター",
     "core-index-import/enter-url": "データをダウンロードするURLを入力してください:",
     "core-index-import/pick-nodes": "レコードノードを選択",
@@ -836,5 +836,13 @@
     "core-views/use-values-as-identifiers-note": "照合IDは有効化されません.",
     "core-index-import/invalid-url": "不正なURL",
     "core-index-import/blank-url": "空のURL",
-    "core-index-import/remove-row": "この行を削除"
+    "core-index-import/remove-row": "この行を削除",
+    "core-index/rows-loading-failed": "行を読み込めませんでした.",
+    "core-index-import/load-xml-rows-error": "XMLデータがパースできませんでした",
+    "core-index-parser/update-format-failed": "パースとフォーマットに失敗しました",
+    "core-buttons/discover-services": "サービスを探す...",
+    "core-index-import/load-json-rows-error": "JSONデータがパースできませんでした",
+    "core-dialogs/column-not-numeric": "散布図には数値（緑色）のカラムが必要です。カラム $1 には50%以下の数値しかありません。数値に見える値でもテキスト（黒色）として保存されている場合、セル編集->よく使う変換->数値で、数値に変換してください.",
+    "core-dialogs/no-other-numeric-columns": "カラム $1 と比較する数値カラム（50%以上が数値型）がありません.",
+    "core-buttons/deselect": "選択解除"
 }

@@ -1,5 +1,8 @@
 {
   "type": "mediainfo",
+  "fileName": null,
+  "filePath": null,
+  "wikitext": null,
   "labels": [],
   "labelsIfNew": [],
   "new": false,

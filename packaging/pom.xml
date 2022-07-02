@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.7-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -518,7 +518,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.2.7</version>
+              <version>4.4.0</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

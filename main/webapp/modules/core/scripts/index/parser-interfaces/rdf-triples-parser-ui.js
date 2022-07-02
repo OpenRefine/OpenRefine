@@ -63,7 +63,7 @@ Refine.RdfTriplesParserUI.prototype.dispose = function() {
 
 Refine.RdfTriplesParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value)
   };
 
   options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;

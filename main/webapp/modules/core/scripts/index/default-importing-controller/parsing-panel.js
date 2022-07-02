@@ -63,7 +63,7 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
     if (record.fileName == '(clipboard)') {
       this._projectName = $.i18n('core-index-import/clipboard');
     } else {
-      this._projectName = $.trim(record.fileName.replace(/[\._-]/g, ' ').replace(/\s+/g, ' '));
+      this._projectName = jQueryTrim(record.fileName.replace(/[\._-]/g, ' ').replace(/\s+/g, ' '));
     }
   }
   if (this._projectName) {
@@ -104,11 +104,12 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   $('#or-import-projtags').html($.i18n('core-index-import/project-tags'));
   $('#or-import-updating').text($.i18n('core-index-import/updating-preview'));
   $('#or-import-parseas').text($.i18n('core-index-import/parse-as'));
-  
+
   //tags dropdown
   $("#tagsInput").select2({
-          tags: Refine.TagsManager._getAllProjectTags() ,
-          tokenSeparators: [",", " "]
+    data: Refine.TagsManager._getAllProjectTags() ,
+    tags: true,
+    tokenSeparators: [",", " "]
   });
   
   this._parsingPanelResizer = function() {

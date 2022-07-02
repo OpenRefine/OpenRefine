@@ -4,6 +4,12 @@ on:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - 'main/webapp/modules/core/langs/**'
+      - 'extensions/database/module/langs/**'
+      - 'extensions/gdata/module/langs/**'
+      - 'extensions/pc-axis/module/langs/**'
+      - 'extensions/phonetic/module/langs/**'
+      - 'extensions/wikidata/module/langs/**'
     branches:
       - master
       - '4.0'
@@ -134,7 +140,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.3.0
         with:
           node-version: '12'
       - id: set-matrix
@@ -175,7 +181,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.3.0
         with:
           node-version: '12'
 

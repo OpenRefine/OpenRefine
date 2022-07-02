@@ -486,8 +486,8 @@
             if (options.autoHide || selection.width * selection.height == 0)
                 hide($box.add($outer), function () { $(this).hide(); });
 
-            $(document).unbind('mousemove', selectingMouseMove);
-            $box.mousemove(areaMouseMove);
+            $(document).off('mousemove', selectingMouseMove);
+            $box.on('mousemove',areaMouseMove);
 
             options.onSelectEnd(img, getSelection());
         }
@@ -676,7 +676,7 @@
          * Start selection
          */
         function startSelection() {
-            $(document).unbind('mousemove', startSelection);
+            $(document).off('mousemove', startSelection);
             adjust();
 
             x2 = x1;
@@ -691,9 +691,9 @@
 
             shown = true;
 
-            $(document).unbind('mouseup', cancelSelection)
-                .mousemove(selectingMouseMove).one('mouseup', docMouseUp);
-            $box.unbind('mousemove', areaMouseMove);
+            $(document).off('mouseup', cancelSelection)
+                .on('mousemove',selectingMouseMove).one('mouseup', docMouseUp);
+            $box.off('mousemove', areaMouseMove);
 
             options.onSelectStart(img, getSelection());
         }
@@ -702,7 +702,7 @@
          * Cancel selection
          */
         function cancelSelection() {
-            $(document).unbind('mousemove', startSelection)
+            $(document).off('mousemove', startSelection)
                 .unbind('mouseup', cancelSelection);
             hide($box.add($outer));
 
@@ -731,7 +731,7 @@
             startY = y1 = evY(event);
 
             /* Selection will start when the mouse is moved */
-            $(document).mousemove(startSelection).mouseup(cancelSelection);
+            $(document).on('mousemove',startSelection).on('mouseup',cancelSelection);
 
             return false;
         }
@@ -1094,8 +1094,8 @@
             zIndex = max(zIndex,
                 !isNaN($p.css('z-index')) ? $p.css('z-index') : zIndex);
             /* Also check if any of the ancestor elements has fixed position */
-            if ($p.css('position') == 'fixed')
-                position = 'fixed';
+            // if ($p.css('position') == 'fixed')
+            //     position = 'fixed';
 
             $p = $p.parent(':not(body)');
         }

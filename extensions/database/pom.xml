@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.7-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.3.5</version>
+      <version>42.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.41.8</version>
+      <version>1.42.0</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.5</version>
+      <version>3.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>

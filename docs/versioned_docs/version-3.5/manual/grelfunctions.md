@@ -244,7 +244,7 @@ When an OpenRefine project is started, data is imported and interpreted. A speci
 
 ###### fingerprint(s) {#fingerprints}
 
-Returns the fingerprint of s, a string that is the first step in [fingerprint clustering methods](cellediting#clustering-methods): it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc. For example, `"Ruth  Prawer    Jhabvala".fingerprint()` outputs the string “jhabvala prawer ruth”.
+Returns the fingerprint of s, a string that is the first step in [fingerprint clustering methods](cellediting#clustering-methods): it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc. For example, `"Ruth  Prawer    Jhabvala".fingerprint()` outputs the string “jhabvala prawer ruth”.  This function can be used for simple transliteration to smartly replace Unicode chars into normalized ASCII (e.g. `"L⌜e⌝gạàX̅V̅".fingerprint()` would return ["l⌜e⌝gaaxv"]).  The function is based on Java Normalizer and uses NFKD mode with some custom Unicode mapping additionally.
 
 ###### ngram(s, n) {#ngrams-n}
 

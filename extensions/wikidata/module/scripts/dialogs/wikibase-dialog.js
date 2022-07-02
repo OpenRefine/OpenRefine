@@ -130,7 +130,7 @@ WikibaseDialog.addWikibaseManifest = function () {
       WikibaseDialog.populateDialog();
     };
 
-    let manifestURL = $.trim(elmts.manifestURLInput.val());
+    let manifestURL = jQueryTrim(elmts.manifestURLInput.val());
     if (manifestURL.length) {
       WikibaseManager.fetchManifestFromURL(manifestURL, addManifest);
     } else {
@@ -152,8 +152,16 @@ WikibaseDialog.validateManifest = function (manifest) {
     WikibaseDialog.validateWikibaseManifestV1 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV1);
     WikibaseDialog.validateWikibaseManifestV2 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV2);
   }
+  let majorVersion;
+  if(manifest.version) {
+    majorVersion = manifest.version.split('.')[0];
+    if (!(majorVersion >= 1 && majorVersion <= 2)) {
+      alert($.i18n('wikibase-addition/version-error', manifest.version));
+      return false;
+    }
+  }
 
-  if (manifest.version !== undefined && manifest.version.startsWith('1.')) {
+  if (majorVersion == 1) {
     if (WikibaseDialog.validateWikibaseManifestV1(manifest)) {
        return true;
     } else {

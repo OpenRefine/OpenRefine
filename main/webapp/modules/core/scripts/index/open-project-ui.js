@@ -145,7 +145,15 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
   for (var n in data.projects) {
     if (data.projects.hasOwnProperty(n)) {
       var project = data.projects[n];
+      if (project == null) {
+          console.log('Project '+n+' is null. skipping...');
+          continue;
+      }
       project.id = n;
+      if (!project.name) {
+         console.log('Project '+project.id+' name is not set. skipping...');
+         continue;
+      }
       project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
       
       if (typeof project.userMetadata !== "undefined")  {
@@ -308,8 +316,8 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 
 Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   var projectName = $("#project-name-input")[0].value;
-  var dataURL = $.trim($("#project-url-input")[0].value);
-  if (! $.trim(projectName).length) {
+  var dataURL = jQueryTrim($("#project-url-input")[0].value);
+  if (! jQueryTrim(projectName).length) {
     window.alert($.i18n('core-index-open/warning-proj-name'));
 
   } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {

@@ -427,7 +427,7 @@ function SqlExporterDialog(options) {
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
-    options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
+    options.tableName = jQueryTrim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
     options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;
     
     options.convertNulltoEmptyString = this._elmts.nullCellValueToEmptyStringCheckbox[0].checked;

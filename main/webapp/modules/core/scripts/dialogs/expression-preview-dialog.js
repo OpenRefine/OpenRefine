@@ -147,7 +147,7 @@ ExpressionPreviewDialog.Widget = function(
 };
 
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
-    var s = $.trim(this.expression || "");
+    var s = jQueryTrim(this.expression || "");
     if (!s.length) {
         return null;
     }
@@ -408,7 +408,7 @@ ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
 
 ExpressionPreviewDialog.Widget.prototype.update = function() {
     var self = this;
-    var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
+    var expression = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value);
     var params = {
         project: theProject.id,
         cellIndex: this._cellIndex

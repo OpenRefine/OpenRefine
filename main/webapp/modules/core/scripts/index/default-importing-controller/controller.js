@@ -213,21 +213,21 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
   var self = this;
   Refine.wrapCSRF(function(token) {
     $.post(
-        "command/core/importing-controller?" + $.param({
+      "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
         "jobID": self._jobID,
         "subCommand": "update-format-and-options",
         "csrf_token": token
-        }),
-        {
+      }),
+      {
         "format" : self._format,
         "options" : JSON.stringify(options)
-        },
-        function(o) {
+      },
+      function(o) {
         if (o.status == 'error') {
-            if (o.message) {
-            alert(o.message);					
-            } else {
+          if (o.message) {
+            alert(o.message);
+          } else {
             var messages = [];
             $.each(o.errors, function() { messages.push(this.message); });
             alert(messages.join('\n\n'));
@@ -235,12 +235,11 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             if(finallyCallBack){
               finallyCallBack();
             }
-        } else {
-            callback(o);
-        }
+          }
+          callback(o);
         },
         "json"
-    );
+    ).fail(() => { alert($.i18n('core-index-parser/update-format-failed')); });
   });
 };
 
@@ -265,12 +264,12 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-        function(data) {
-          result.rowModel = data;
-          callback(result);
-        },
+		function(data) {
+			  result.rowModel = data;
+			  callback(result);
+		  },
         "jsonp"
-      );
+	   ).fail(() => { alert($.i18n('core-index/rows-loading-failed')); });
     },
     "json"
   );
@@ -278,15 +277,15 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
 
 Refine.DefaultImportingController.prototype._createProject = function() {
   if ((this._formatParserUI) && this._formatParserUI.confirmReadyToCreateProject()) {
-    var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
+    var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length === 0) {
       window.alert($.i18n('core-index-import/warning-name'));
       this._parsingPanelElmts.projectNameInput.focus();
       return;
     }
 
-    var projectTags = $("#tagsInput").val().split(",");
-    
+    var projectTags = $("#tagsInput").val();
+
     var self = this;
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;

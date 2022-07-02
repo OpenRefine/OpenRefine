@@ -81,7 +81,7 @@ Refine.PCAxisParserUI.prototype.dispose = function() {
 
 Refine.PCAxisParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value)
   };
 
   var parseIntDefault = function(s, def) {

@@ -48,6 +48,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -95,6 +96,8 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
+    
+    final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
     
     static public interface Progress {
         public void setProgress(String message, int percent);
@@ -261,6 +264,10 @@ public class ImportingUtilities {
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
+                    
+                    if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
+                        throw new IOException("Unsupported protocol: " + url.getProtocol());
+                    }
                     
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "download");

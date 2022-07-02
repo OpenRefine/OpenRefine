@@ -31,6 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+jQueryTrim = function( text ) {
+  return text == null ? "" : text.trim();
+};
+
 String.prototype.trim = function() {
   return this.replace(/^\s+/, '').replace(/\s+$/, '');
 };

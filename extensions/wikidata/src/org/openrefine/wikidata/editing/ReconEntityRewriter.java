@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
@@ -39,13 +40,12 @@ import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.DatamodelConverter;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 
 /**
  * A class that rewrites an {@link TermedStatementEntityEdit}, replacing reconciled entity id
@@ -141,6 +141,24 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		return super.copy((PropertyIdValue) value);
 	}
 	
+	@Override
+	public EntityIdValue visit(EntityIdValue value) {
+		if (value.isPlaceholder() && value instanceof ReconEntityIdValue) {
+			ReconEntityIdValue reconIdValue = (ReconEntityIdValue) value;
+			String newId = library.getId(reconIdValue.getReconInternalId());
+			if (newId == null) {
+				if (subject.equals(reconIdValue)) {
+					return subject;
+				} else {
+					throw new MissingEntityIdFound(reconIdValue);
+				}
+			}
+			return EntityIdValueImpl.fromId(newId, reconIdValue.getRecon().identifierSpace);
+		} else {
+			return (EntityIdValue) super.visit(value);
+		}
+	}
+	
 	public StatementEdit copy(StatementEdit value) {
 		return new StatementEdit(copy(value.getStatement()), value.getMerger(), value.getMode());
 	}
@@ -161,7 +179,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 	public EntityEdit rewrite(EntityEdit edit) throws NewEntityNotCreatedYetException {
 		try {
 			EntityIdValue subject = (EntityIdValue) copyValue(edit.getEntityId());
-			if (subject instanceof ItemIdValue) {
+			if (edit instanceof ItemEdit) {
 				ItemEdit update = (ItemEdit) edit;
 				Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
 				Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
@@ -173,13 +191,13 @@ public class ReconEntityRewriter extends DatamodelConverter {
 				List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
 						.collect(Collectors.toList());
 				return new ItemEdit(subject, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
-			} else if (subject instanceof MediaInfoIdValue) {
+			} else if (edit instanceof MediaInfoEdit) {
 				MediaInfoEdit update = (MediaInfoEdit) edit;
 				Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
 				Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
 				List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
 						.collect(Collectors.toList());
-				return new MediaInfoEdit(subject, statements, labels, labelsIfNew);
+				return new MediaInfoEdit(subject, statements, labels, labelsIfNew, update.getFilePath(), update.getFileName(), update.getWikitext());
 			} else {
 				throw new IllegalStateException("Rewriting of entities of this type (for subject id "+edit.getEntityId()+") not supported yet");
 			}

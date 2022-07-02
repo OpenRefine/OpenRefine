@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
@@ -56,6 +55,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -64,6 +64,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
 
     private WikibaseDataFetcher fetcher = null;
     private WikibaseDataEditor editor = null;
+    private ApiConnection connection = null;
     private NewEntityLibrary library = null;
     private String summary = "my fantastic edits";
     private int maxlag = 5;
@@ -73,7 +74,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     public void setUp() {
         fetcher = mock(WikibaseDataFetcher.class);
         editor = mock(WikibaseDataEditor.class);
-        editor.disableEditing(); // just in case we got mocking wrong…
+        connection = mock(ApiConnection.class);
         library = new NewEntityLibrary();// new entities created in the test
         tags = Arrays.asList("my-tag");
     }
@@ -98,9 +99,9 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         ItemDocument expectedNewItem = ItemDocumentBuilder.forItemId(TestingData.newIdA).withLabel(label).build();
         ItemDocument createdNewItem = ItemDocumentBuilder.forItemId(Datamodel.makeWikidataItemIdValue("Q1234"))
                 .withLabel(label).withRevisionId(37828L).build();
-        when(editor.createItemDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
+        when(editor.createEntityDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
 
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, 50, 60);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50, 60);
         assertEquals(2, processor.remainingEdits());
         assertEquals(0, processor.progress());
         processor.performEdit();
@@ -145,7 +146,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, batchSize, 60);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
+                60);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);
@@ -195,7 +197,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toMids(secondBatch))).thenReturn(toMapMediaInfo(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, batchSize, 60);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
+                60);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);

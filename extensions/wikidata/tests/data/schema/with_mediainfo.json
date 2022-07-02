@@ -3,6 +3,9 @@
   "entityEdits": [
     {
       "type": "wbmediainfoeditexpr",
+      "fileName": null,
+      "filePath": null,
+      "wikitext": null,
       "nameDescs": [],
       "statementGroups": [
         {
