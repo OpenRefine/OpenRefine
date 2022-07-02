@@ -1,6 +1,6 @@
 name: openrefine
 base: core20
-version: '3.5.2'
+version: "3.5.2"
 summary: A free, open source, powerful tool for working with messy data
 description: |
   OpenRefine (previously Google Refine) is a powerful tool for working with messy data:
@@ -19,15 +19,67 @@ parts:
   openrefine:
     plugin: dump
     source: https://github.com/OpenRefine/OpenRefine/releases/download/$SNAPCRAFT_PROJECT_VERSION/openrefine-linux-$SNAPCRAFT_PROJECT_VERSION.tar.gz
+    build-packages:
+      - ca-certificates-java
     stage-packages:
+      - curl
       - default-jre
-      - wget
+      - jython
+      #      - libapache-jena-java
+      - libapache-poi-java
+      - libclojure-java
+      - libcommons-codec-java
+      - libcommons-collections3-java
+      - libcommons-collections4-java
+      - libcommons-compress-java
+      - libcommons-fileupload-java
+      - libcommons-io-java
+      - libcommons-lang-java
+      - libcommons-lang3-java
+      - libcommons-text-java
+      - libcommons-validator-java
+      #      - libgoogle-api-services-drive-java
+      #      - libgoogle-api-services-sheets-java
+      #      - libgoogle-http-client-java
+      - libguava-java
+      - libhttpclient-java
+      #      - libhttpclient5-java
+      - libhttpcore-java
+      - libjackson2-annotations-java
+      - libjackson2-core-java
+      - libjackson2-databind-java
+      - libjasypt-java
+      - libjaxb-api-java
+      - libjetty9-java
+      - libjoda-time-java
+      - libjsoup-java
+      - libjsr305-java
+      - libjuniversalchardet-java
+      #      - liblessen-java
+      - liblog4j2-java
+      #      - libmarc4j-java
+      - libmariadb-java
+      - liboauth-signpost-java
+      #      - libodfdom-java
+      #      - libopenrefine-butterfly-java
+      #      - libopenrefine-opencsv-java
+      #      - libopenrefine-vicino-java
+      #      - libowasp-encoder-java
+      - libpostgresql-jdbc-java
+      - librhino-java
+      - libservlet-api-java
+      - libslf4j-java
+      #      - libsweble-common-java
+      #      - libsweble-wikitext-java
+      - libtomcat9-java
+      #      - libwikidata-toolkit-java
+      #      - libxerial-sqlite-jdbc-java
       - procps
-      - xdg-utils
+      - velocity
     prime:
-      - -usr/lib/jvm/java-*/lib/security/cacerts
+      #      - -usr/lib/jvm/java-*/lib/security/cacerts
       - -usr/lib/jvm/java-*/lib/security/blacklisted.certs
-      - -usr/lib/jvm/java-*/jre/lib/security/cacerts
+      #      - -usr/lib/jvm/java-*/jre/lib/security/cacerts
 
 apps:
   openrefine:
