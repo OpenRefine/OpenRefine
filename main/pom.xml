@@ -31,9 +31,6 @@
       <resource>
         <directory>src</directory>
       </resource>
-      <resource>
-        <directory>resources</directory>
-      </resource>
     </resources>
     <testSourceDirectory>tests/server/src</testSourceDirectory>
     <testResources>
