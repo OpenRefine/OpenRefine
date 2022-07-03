@@ -41,7 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescriptions;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class Reverse implements Function {
@@ -82,7 +82,7 @@ public class Reverse implements Function {
 
     @Override
     public String getDescription() {
-        return FunctionDescriptions.arr_reverse_description();
+        return FunctionDescription.arr_reverse();
     }
     
     @Override

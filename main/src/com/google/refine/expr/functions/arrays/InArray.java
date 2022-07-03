@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescriptions;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class InArray implements Function {
@@ -75,7 +75,7 @@ public class InArray implements Function {
 
     @Override
     public String getDescription() {
-        return FunctionDescriptions.arr_in_array_description();
+        return FunctionDescription.arr_in_array();
     }
     
     @Override

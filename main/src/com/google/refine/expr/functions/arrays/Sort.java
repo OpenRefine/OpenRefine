@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescriptions;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class Sort implements Function {
@@ -86,7 +86,7 @@ public class Sort implements Function {
 
     @Override
     public String getDescription() {
-        return FunctionDescriptions.arr_sort_description();
+        return FunctionDescription.arr_sort();
     }
     
     @Override

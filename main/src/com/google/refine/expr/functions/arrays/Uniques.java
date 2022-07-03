@@ -44,7 +44,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescriptions;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class Uniques implements Function {
@@ -74,7 +74,7 @@ public class Uniques implements Function {
 
     @Override
     public String getDescription() {
-        return FunctionDescriptions.arr_uniques_description();
+        return FunctionDescription.arr_uniques();
     }
     
     @Override

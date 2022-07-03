@@ -42,7 +42,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescriptions;
+import com.google.refine.grel.FunctionDescription;
 
 public class Join implements Function {
 
@@ -96,7 +96,7 @@ public class Join implements Function {
 
     @Override
     public String getDescription() {
-        return FunctionDescriptions.arr_join_description();
+        return FunctionDescription.arr_join();
     }
     
     @Override
