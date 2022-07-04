@@ -320,6 +320,7 @@
     "core-views/edit-cells": "Rediger celler",
     "core-views/edit-column": "Rediger kolonne",
     "core-views/sort": "Sorter…",
+    "core-views/sort/single": "Sorter",
     "core-views/collapse-this": "Fold sammen denne kolonnen",
     "core-views/collapse-other": "Fold sammen alle andre kolonner",
     "core-views/collapse-left": "Fold sammen alle kolonnene til venstre",

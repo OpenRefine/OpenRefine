@@ -247,7 +247,7 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
 
   var items = [
     {
-      "label": $.i18n('core-views/sort')+"...",
+      "label": $.i18n('core-views/sort'),
       "click": function() {
         self._showSortingCriterion(criterion, hasOtherCriteria);
       }
