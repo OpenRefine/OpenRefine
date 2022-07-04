@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.html;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -61,7 +62,7 @@ public class InnerHtml implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.html_inner_html();
     }
     
     @Override
