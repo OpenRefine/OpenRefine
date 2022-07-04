@@ -41,6 +41,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Inc implements Function {
 
@@ -86,7 +87,7 @@ public class Inc implements Function {
     
     @Override
     public String getDescription() {
-    	return "Returns a date changed by the given amount in the given unit of time, in quotes. See https://docs.openrefine.org/manual/grelfunctions/#incd-n-s-timeunit for a table. The default unit is 'hour'. A positive value increases the date, and a negative value moves it back in time.";
+    	return FunctionDescription.date_inc();
     }
     
     @Override
