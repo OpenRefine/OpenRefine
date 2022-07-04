@@ -376,6 +376,7 @@
     "core-views/edit-column": "编辑列",
     "core-views/transpose": "变换",
     "core-views/sort": "排序…",
+    "core-views/sort/single": "排序",
     "core-views/collapse-expand": "收起/展开列以更舒适的查看数据",
     "core-views/collapse-this": "收起该列",
     "core-views/collapse-other": "收起所有其他列",

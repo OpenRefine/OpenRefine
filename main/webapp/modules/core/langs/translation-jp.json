@@ -576,6 +576,7 @@
     "core-views/spec-new-val": "新しい値カラム名を指定してください。",
     "core-views/edit-cells": "セル編集",
     "core-views/sort": "ソート…",
+    "core-views/sort/single": "ソート",
     "core-views/match-all-cells": "この項目をこのセルと同じ全セルにマッチ",
     "core-views/col-at-most": "最大のカラム（空白はそのまま）",
     "core-views/warning-sel-judg": "コピー先の判断の種類を選択してください.",

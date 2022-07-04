@@ -453,6 +453,7 @@
     "core-views/edit-all-columns": "Edit all columns",
     "core-views/transpose": "Transpose",
     "core-views/sort": "Sort…",
+    "core-views/sort/single": "Sort",
     "core-views/collapse-expand": "Collapse/expand columns to make viewing the data more convenient",
     "core-views/collapse-this": "Collapse this column",
     "core-views/collapse-other": "Collapse all other columns",
