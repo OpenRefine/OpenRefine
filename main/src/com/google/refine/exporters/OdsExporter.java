@@ -77,12 +77,18 @@ public class OdsExporter implements StreamExporter {
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
                 String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
-                table.setTableName(tableName);
-                if(!tableName.equals("Sheet1") && odfDoc.getTableList().get(0).getTableName().equals("Sheet1")){
-                    OdfTable defTable;
-                    defTable = odfDoc.getTableByName("Sheet1");
-                    defTable.remove();
+                
+                // the ODF document might already contain some other tables
+                try {
+                	table.setTableName(tableName);
+                } catch (IllegalArgumentException e) {
+                	// there is already a table with that name
+                	table = odfDoc.getTableByName(tableName);
                 }
+                // delete any other table which has another name
+                odfDoc.getTableList().stream()
+                	.filter(table -> !table.getTableName().equals(tableName))
+                	.forEach(OdfTable::remove);
                 rowBeforeHeader = table.getRowCount();
             }
 
