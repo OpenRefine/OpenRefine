@@ -14,22 +14,21 @@ When releasing a new version of Refine, the following steps should be followed:
 git tag -a -m "Second beta" 2.6-beta.2
     git push origin --tags
 ```
-5. Create a GitHub release based on that tag, with a summary of the changes as description of the release. The download links can point directly to Maven Central and can be built as follows (replace `3.6-rc1` by your version string):
+5. Create a GitHub release based on that tag, with a summary of the changes as description of the release. Publishing the GitHub release will trigger the generation of the packaged artifacts. The download links can point directly to Maven Central and can be built as follows (replace `3.6-rc1` by your version string):
    * Linux: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=3.6-rc1&c=linux&p=tar.gz
    * MacOS: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=3.6-rc1&c=mac&p=dmg
    * Windows without embedded JRE: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=3.6-rc1&c=win&p=zip
    * Windows with embedded JRE: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=3.6-rc1&c=win-with-java&p=zip
 6. Announce the beta/release candidate for testing
 7. Repeat build/release candidate/testing cycle, if necessary.
-8. Tag the release in git. Build the distributions and upload them. 
-9. [Update the OpenRefine Homebrew cask](https://github.com/OpenRefine/OpenRefine/wiki/Maintaining-OpenRefine's-Homebrew-Cask) or coordinate an update via the [developer list](https://groups.google.com/forum/#!forum/openrefine-dev)
-10. Verify that the correct versions are shown in the widget at [http://openrefine.org/download](http://openrefine.org/download)
-11. Announce on the [OpenRefine mailing list](https://groups.google.com/forum/#!forum/openrefine).
-12. Update the version in master to the next version number with `-SNAPSHOT` (such as `4.3-SNAPSHOT`)
+8. [Update the OpenRefine Homebrew cask](https://github.com/OpenRefine/OpenRefine/wiki/Maintaining-OpenRefine's-Homebrew-Cask) or coordinate an update via the [developer list](https://groups.google.com/forum/#!forum/openrefine-dev)
+9. Verify that the correct versions are shown in the widget at [http://openrefine.org/download](http://openrefine.org/download)
+10. Announce on the [OpenRefine mailing list](https://groups.google.com/forum/#!forum/openrefine).
+11. Update the version in master to the next version number with `-SNAPSHOT` (such as `4.3-SNAPSHOT`)
 ```shell
 mvn versions:set -DnewVersion=4.3-SNAPSHOT
 ```
-13. If releasing a new major or minor version, create a snapshot of the docs, following [Docusaurus' versioning procedure](https://docusaurus.io/docs/versioning).
+12. If releasing a new major or minor version, create a snapshot of the docs, following [Docusaurus' versioning procedure](https://docusaurus.io/docs/versioning).
 
 Apple code signing
 ==================
