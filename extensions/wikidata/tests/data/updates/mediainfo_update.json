@@ -3,6 +3,7 @@
   "fileName": null,
   "filePath": null,
   "wikitext": null,
+  "overrideWikitext": false,
   "labels": [],
   "labelsIfNew": [],
   "new": false,

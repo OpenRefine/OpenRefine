@@ -533,6 +533,7 @@ SchemaAlignment._addMediaInfo = function(json) {
   var filePath = null;
   var fileName = null;
   var wikitext = null;
+  var wikitextOverride = false;
   if (json) {
      subject = json.subject;
      statementGroups = json.statementGroups;
@@ -540,6 +541,7 @@ SchemaAlignment._addMediaInfo = function(json) {
      filePath = json.filePath;
      fileName = json.fileName;
      wikitext = json.wikitext;
+     wikitextOverride = json.wikitextOverride;
   }
 
   var item = $('<div></div>').addClass('wbs-entity')
@@ -569,6 +571,8 @@ SchemaAlignment._addMediaInfo = function(json) {
     .addClass('wbs-file-path-input')
     .appendTo(fileFields);
   SchemaAlignment._initField(pathInputContainer, "filepath", filePath);
+  // add dummy "override" field, not supported for now
+  $('<span></span>').appendTo(fileFields);
 
   // File name
   $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-name'))
@@ -577,6 +581,8 @@ SchemaAlignment._addMediaInfo = function(json) {
     .addClass('wbs-file-name-input')
     .appendTo(fileFields);
   SchemaAlignment._initField(nameInputContainer, "filename", fileName);
+  // add dummy "override" field, not supported for now
+  $('<span></span>').appendTo(fileFields);
 
   // Wikitext
   $('<span></span>').text($.i18n('wikibase-schema/mediainfo-wikitext'))
@@ -585,6 +591,18 @@ SchemaAlignment._addMediaInfo = function(json) {
     .addClass('wbs-wikitext-input')
     .appendTo(fileFields);
   SchemaAlignment._initField(wikitextInputContainer, "wikitext", wikitext);
+  // add override option
+  var overrideSpan = $('<span></span>').appendTo(fileFields);
+  var label = $('<label></label>').appendTo(overrideSpan);
+  var checkbox = $('<input></input>')
+       .attr('type', 'checkbox')
+       .addClass('wbs-wikitext-override')
+       .prop('checked', wikitextOverride)
+       .appendTo(label);
+  $('<span></span>').text($.i18n('wikibase-schema/override-wikitext')).appendTo(label);
+  checkbox.on('change', function(e) {
+    SchemaAlignment._hasChanged();
+  });
 
   // Captions
   $('<span></span>').addClass('wbs-namedesc-header')
@@ -659,15 +677,17 @@ SchemaAlignment._mediaInfoToJSON = function (mediainfo) {
 		  mediainfo.find('.wbs-file-name-input').first());
     var wikitext = SchemaAlignment._inputContainerToJSON(
 		  mediainfo.find('.wbs-wikitext-input').first());
+    var overrideWikitext = mediainfo.find('input[type=checkbox].wbs-wikitext-override').first().prop('checked');
     if (subjectJSON !== null &&
         statementGroupLst.length === statementsDom.length &&
         nameDescLst.length === nameDescsDom.length) {
       return {
-	        type: "wbmediainfoeditexpr",
-	        subject: subjectJSON,
+            type: "wbmediainfoeditexpr",
+            subject: subjectJSON,
             filePath: filePath,
-			fileName: fileName,
-			wikitext: wikitext,
+            fileName: fileName,
+            wikitext: wikitext,
+            overrideWikitext: overrideWikitext,
             statementGroups: statementGroupLst,
             nameDescs: nameDescLst};
     } else {

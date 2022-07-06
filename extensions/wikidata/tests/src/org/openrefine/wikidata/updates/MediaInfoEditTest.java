@@ -110,6 +110,21 @@ public class MediaInfoEditTest {
         assertEquals(update.getFileName(), "Foo.png");
         assertEquals(update.getFilePath(), "C:\\Foo.png");
     }
+    
+    @Test
+    public void testToEntityUpdateOverridingWikitext() {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject)
+                .addWikitext("my new wikitext")
+                .setOverrideWikitext(true)
+                .build();
+        FullMediaInfoUpdate update = edit.toEntityUpdate(Datamodel.makeMediaInfoDocument(existingSubject));
+        assertEquals(update.getStatements().getAdded(), Collections.emptyList());
+        assertEquals(update.getFileName(), null);
+        assertEquals(update.getFilePath(), null);
+        assertEquals(update.getWikitext(), "my new wikitext");
+        assertEquals(update.isOverridingWikitext(), true);
+    }
+
 
     @Test
     public void testUploadNewFile() throws MediaWikiApiErrorException, IOException {
