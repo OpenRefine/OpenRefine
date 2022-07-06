@@ -132,8 +132,7 @@ li.fbs-nomatch {
     border: 1px solid #f5f5f5;
 }
 
-h1#fbs-flyout-title,
-li.fbs-selected .fbs-item-name { 
+h1#fbs-flyout-title { 
     color: #f60;
 }
 
