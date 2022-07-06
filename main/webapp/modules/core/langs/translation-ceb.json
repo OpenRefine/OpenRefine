@@ -557,6 +557,7 @@
     "core-views/spec-new-val": "Palihug paghingalan ug bag-ong bili sa ngalan sa kolum.",
     "core-views/edit-cells": "Usaba ang cells",
     "core-views/sort": "Matang…",
+    "core-views/sort/single": "Matang",
     "core-views/match-all-cells": "Imatch kini nga butang ani ug sa tanan nga managsama nga cells",
     "core-views/col-at-most": "labing mga kolum (leave blank for no limit)",
     "core-views/warning-sel-judg": "Palihug pili ug bisag usa nga kase sa hukom para kopyahon.",

@@ -578,6 +578,7 @@
     "core-views/spec-new-val": "Indique el nombre de columna para el valor nuevo.",
     "core-views/edit-cells": "Editar celdas",
     "core-views/sort": "Ordenar…",
+    "core-views/sort/single": "Ordenar",
     "core-views/match-all-cells": "Emparejar este artículo con esta y todas las celdas idénticas",
     "core-views/warning-sel-judg": "Seleccione algún tipo de parámetro a copiar.",
     "core-views/remove-sort": "Quitar orden",

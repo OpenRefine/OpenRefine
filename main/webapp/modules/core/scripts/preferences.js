@@ -113,6 +113,7 @@ function PreferenceUI(tr, key, initialValue) {
   $(td1).text((initialValue !== null) ? initialValue : "");
 
   var td2 = tr.insertCell(2);
+  $(td2).css('white-space','nowrap');
 
   $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).on('click',function() {
     var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, $(td1).text());
@@ -138,7 +139,8 @@ function PreferenceUI(tr, key, initialValue) {
     }
   });
 
-  $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).on('click',function() {
+  $('<button class="button">').text($.i18n('core-index/delete')).css('margin-left','5px')
+      .appendTo(td2).on('click',function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
       Refine.postCSRF(
         "command/core/set-preference",
@@ -174,7 +176,7 @@ function populatePreferences(prefs) {
   var table = $('<table>')
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
+  .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th>Actions</th></tr>')
   .appendTo(body)[0];
 
   for (var k in prefs) {

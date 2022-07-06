@@ -562,6 +562,7 @@
     "core-views/edit-cells": "I-edit ang mga cell",
     "core-views/contain-names": "(naglalaman ng mga pangalan ng orihinal na haligi)",
     "core-views/sort": "Ayusin…",
+    "core-views/sort/single": "Ayusin",
     "core-views/match-all-cells": "Itugma ang item na ito at ang lahat ng magkaparehong mga selula",
     "core-views/warning-sel-judg": "mangyaring pumili ng hindi bababa sa isang uri ng paghatol upang kopyahin.",
     "core-views/remove-sort": "Alisin ang uri",
