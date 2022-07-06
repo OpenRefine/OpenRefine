@@ -37,17 +37,17 @@ public class MediaFileUtilsTest {
             + "\"csrftoken\":\"6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\\\\"}}}";
     private static final String csrfToken = "6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\";
     private static final String successfulEditResponse = "{\n"
-    		+ "    \"edit\": {\n"
-    		+ "        \"result\": \"Success\",\n"
-    		+ "        \"pageid\": 94542,\n"
-    		+ "        \"title\": \"File:My_test_file.png\",\n"
-    		+ "        \"contentmodel\": \"wikitext\",\n"
-    		+ "        \"oldrevid\": 371705,\n"
-    		+ "        \"newrevid\": 371707,\n"
-    		+ "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
-    		+ "    }\n"
-    		+ "}";
-    
+            + "    \"edit\": {\n"
+            + "        \"result\": \"Success\",\n"
+            + "        \"pageid\": 94542,\n"
+            + "        \"title\": \"File:My_test_file.png\",\n"
+            + "        \"contentmodel\": \"wikitext\",\n"
+            + "        \"oldrevid\": 371705,\n"
+            + "        \"newrevid\": 371707,\n"
+            + "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
+            + "    }\n"
+            + "}";
+
     @Test
     public void testSuccessfulLocalUpload() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
@@ -207,7 +207,7 @@ public class MediaFileUtilsTest {
         MediaInfoIdValue mid = response.getMid(connection, "http://commons.wikimedia.org/entity/");
         assertEquals(mid, Datamodel.makeWikimediaCommonsMediaInfoIdValue("M317966"));
     }
-    
+
     @Test
     public void testEditPage() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
@@ -232,7 +232,7 @@ public class MediaFileUtilsTest {
         mediaFileUtils.fetchCsrfToken();
 
         mediaFileUtils.editPage(12345L, "my new wikitext", "my summary", Collections.emptyList());
-        
+
         // check the requests were done as expected
         InOrder inOrder = Mockito.inOrder(connection);
         Map<String, String> tokenParams = new HashMap<>();

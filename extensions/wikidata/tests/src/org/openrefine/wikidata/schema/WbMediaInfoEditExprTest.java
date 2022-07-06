@@ -51,7 +51,8 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         WbNameDescExpr nde = new WbNameDescExpr(WbNameDescExpr.NameDescType.LABEL,
                 new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column D")));
         WbEntityVariable subjectExpr = new WbEntityVariable("column E");
-        expr = new WbMediaInfoEditExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr), null, null, null, false);
+        expr = new WbMediaInfoEditExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr), null, null, null,
+                false);
 
         jsonRepresentation = "{\"type\":\"wbmediainfoeditexpr\",\"subject\":{\"type\":\"wbentityvariable\",\"columnName\":\"column E\"},"
                 + "\"filePath\":null,"
@@ -175,19 +176,19 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").build();
         evaluatesTo(result, filePathExpr);
     }
-    
+
     @Test
     public void testWikitextEvaluation() {
-    	WbMediaInfoEditExpr wikitextExpr = new WbMediaInfoEditExpr(
+        WbMediaInfoEditExpr wikitextExpr = new WbMediaInfoEditExpr(
                 new WbEntityVariable("column E"),
                 Collections.emptyList(), Collections.emptyList(), null, null, new WbStringConstant("my new wikitext"), true);
-    	
-    	setRow("", "", "3.898,4.389", "my label", matchedCell);
-    	MediaInfoEdit result = new MediaInfoEditBuilder(subject)
-    			.addWikitext("my new wikitext")
-    			.setOverrideWikitext(true)
-    			.build();
-    	evaluatesTo(result, wikitextExpr);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject)
+                .addWikitext("my new wikitext")
+                .setOverrideWikitext(true)
+                .build();
+        evaluatesTo(result, wikitextExpr);
     }
 
     @Test

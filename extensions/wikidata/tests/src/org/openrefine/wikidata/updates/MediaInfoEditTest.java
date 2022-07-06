@@ -110,7 +110,7 @@ public class MediaInfoEditTest {
         assertEquals(update.getFileName(), "Foo.png");
         assertEquals(update.getFilePath(), "C:\\Foo.png");
     }
-    
+
     @Test
     public void testToEntityUpdateOverridingWikitext() {
         MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject)
@@ -124,7 +124,6 @@ public class MediaInfoEditTest {
         assertEquals(update.getWikitext(), "my new wikitext");
         assertEquals(update.isOverridingWikitext(), true);
     }
-
 
     @Test
     public void testUploadNewFile() throws MediaWikiApiErrorException, IOException {
