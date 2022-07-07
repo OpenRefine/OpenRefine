@@ -230,10 +230,20 @@ Data models for structured data about media files on Commons are explained and d
 
 ### Upload edits to Wikimedia Commons
 
-Finally, you will build a schema to model the Wikimedia Commons edits that OpenRefine will perform for each row in your project. See [schema alignment](/.schema-alignment) for general documentation about this feature.
+Finally, you will build a schema to model the Wikimedia Commons edits that OpenRefine will perform for each row in your project. See [schema alignment](./schema-alignment) for general documentation about this feature.
 
 As of OpenRefine 3.6, you will see Wikimedia Commons-specific fields in the schema editor, provided that you have installed and activated the Wikimedia Commons manifest [as described above](#add-the-wikimedia-commons-manifest-to-openrefine). One such Commons-specific 'field' is the [multilingual file caption](https://commons.wikimedia.org/wiki/Commons:File_captions), for which [best practices are documented on Wikimedia Commons](https://commons.wikimedia.org/wiki/Commons:File_captions).
 
 ![A typical Wikimedia Commons schema inside OpenRefine.](/img/commons-schema.png)
 
 You can now drag and drop, and/or enter the desired terms and statements in the [schema](/.schema-alignment), preview your edits, log in to Wikimedia Commons and [upload your edits](./uploading) in the same way as for Wikidata or another Wikibase.
+
+### Revert mistakes with the EditGroups tool
+
+When checking [your user contributions](https://commons.wikimedia.org/wiki/Special:MyContributions), you will see your recent Wikimedia Commons edits done with OpenRefine. Each OpenRefine edit displays a _(details)_ hyperlink after the edit summary, which links to the edit batch in the [EditGroups](https://editgroups-commons.toolforge.org/) tool.
+
+![Edits done by OpenRefine as listed in the user's contributions.](/img/commons-contribution.png)
+
+In EditGroups, entire batches can be easily undone, in case some mistakes have been made.
+
+All Wikimedia Commons batches with OpenRefine are listed at https://editgroups-commons.toolforge.org/?tool=OR.
