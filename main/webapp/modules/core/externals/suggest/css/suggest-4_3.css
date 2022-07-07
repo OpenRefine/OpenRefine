@@ -246,7 +246,7 @@ Freebase Suggest Structure
 .fbs-flyout-pane { width: 319px; margin-left: 3px; } /* flyout container, 3px narrower on each side to create drawer appearance */
 
 ul.fbs-list {    
-    max-height: 400px;
+    max-height: 401px;
     overflow: auto;
     overflow-x: hidden;
     border-bottom: 0;
