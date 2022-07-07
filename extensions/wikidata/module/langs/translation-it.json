@@ -36,7 +36,6 @@
     "wikibase-schema/commons-media": "nome del file",
     "wikibase-schema/math-expression": "espressione matematica",
     "wikibase-schema/geoshape-with-prefix": "nome del file (compreso \"Data:\")",
-    "wikibase-schema/datatype-not-supported-yet": "Ci dispiace, questo tipo di dato non è ancora supportato.",
     "wikibase-schema/invalid-schema-warning-issues": "Il tuo schema è incompleto, per favore correggilo per vedere gli errori.",
     "wikibase-schema/invalid-schema-warning-preview": "Il tuo schema è incompleto, per favore correggilo per vedere l'anteprima.",
     "wikibase-schema/discard-button": "Non salvare le modifiche",

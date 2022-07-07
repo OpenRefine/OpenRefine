@@ -1394,20 +1394,8 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     } else if (mode === "wikitext") {
         input.attr("placeholder", $.i18n('wikibase-schema/wikitext-placeholder'));
     } else {
+        // Assume that other datatypes are string-based
         SchemaAlignment.setupStringInputValidation(input, /^.+$/);
-    }
-    if (mode !== "external-id" &&
-        mode !== "url" &&
-        mode !== "string" &&
-        mode !== "amount" &&
-        mode !== "tabular-data" &&
-        mode !== "commonsMedia" &&
-        mode !== "geo-shape" &&
-        mode !== "math" &&
-		mode !== "filepath" &&
-		mode !== "filename" &&
-		mode !== "wikitext") {
-       alert($.i18n('wikibase-schema/datatype-not-supported-yet'));
     }
   }
 

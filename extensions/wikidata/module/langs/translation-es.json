@@ -128,7 +128,6 @@
     "wikibase-schema/discard-button": "Descartar cambios",
     "wikibase-schema/invalid-schema-warning-preview": "El esquema está incompleto. Corríjalo para ver la previsualización.",
     "wikibase-schema/invalid-schema-warning-issues": "El esquema está incompleto. Corríjalo para ver los problemas.",
-    "wikibase-schema/datatype-not-supported-yet": "Aún no se admite este tipo de dato.",
     "wikibase-schema/geoshape-with-prefix": "nombre de archivo que comienza por «Data:»",
     "wikibase-schema/math-expression": "expresión matemática",
     "wikibase-schema/commons-media": "nombre de archivo",

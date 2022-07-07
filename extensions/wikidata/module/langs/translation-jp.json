@@ -41,7 +41,6 @@
     "wikibase-schema/commons-media": "ファイル名",
     "wikibase-schema/math-expression": "数学的表現",
     "wikibase-schema/geoshape-with-prefix": "\"Data:\"で始まるファイル名",
-    "wikibase-schema/datatype-not-supported-yet": "このデータ型は未対応です.",
     "wikibase-schema/invalid-schema-warning-issues": "スキーマが不完全です。修正してください.",
     "wikibase-schema/invalid-schema-warning-preview": "スキーマが不完全です。修正してください.",
     "wikibase-schema/discard-button": "変更を破棄",
