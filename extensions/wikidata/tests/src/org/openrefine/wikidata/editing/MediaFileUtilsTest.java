@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -32,6 +34,19 @@ public class MediaFileUtilsTest {
     private static final String csrfResponse = "{\"batchcomplete\":\"\",\"query\":{\"tokens\":{"
             + "\"csrftoken\":\"6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\\\\"}}}";
     private static final String csrfToken = "6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\";
+
+    @Test
+    public void testPurge() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.purgePage(12345L);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("action", "purge");
+        params.put("pageids", "12345");
+        verify(connection, times(1)).sendJsonRequest("POST", params);
+    }
 
     @Test
     public void testSuccessfulLocalUpload() throws IOException, MediaWikiApiErrorException {
