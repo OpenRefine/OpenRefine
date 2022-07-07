@@ -236,7 +236,7 @@ As of OpenRefine 3.6, you will see Wikimedia Commons-specific fields in the sche
 
 ![A typical Wikimedia Commons schema inside OpenRefine.](/img/commons-schema.png)
 
-You can now drag and drop, and/or enter the desired terms and statements in the [schema](/.schema-alignment), preview your edits, log in to Wikimedia Commons and [upload your edits](./uploading) in the same way as for Wikidata or another Wikibase.
+You can now drag and drop, and/or enter the desired terms and statements in the [schema](./schema-alignment), preview your edits, log in to Wikimedia Commons and [upload your edits](./uploading) in the same way as for Wikidata or another Wikibase.
 
 ### Revert mistakes with the EditGroups tool
 
