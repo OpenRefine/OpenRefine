@@ -7,7 +7,7 @@ WikibaseDialog.launch = function () {
   elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
   elmts.closeButton.text($.i18n("wikibase-management/close"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
-  elmts.discoverManifestsButton.text($.i18n("wikibase-management/discover-manifests"))
+  elmts.discoverManifestsButton.text($.i18n("wikibase-management/discover-manifests"));
 
   WikibaseDialog.populateDialog();
 
