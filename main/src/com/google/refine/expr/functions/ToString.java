@@ -36,6 +36,7 @@ package com.google.refine.expr.functions;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
+import java.util.UnknownFormatConversionException;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -54,7 +55,11 @@ public class ToString implements Function {
                     OffsetDateTime odt = (OffsetDateTime)o1;
                     return odt.format(DateTimeFormatter.ofPattern((String)o2));
                 } else if (o1 instanceof Number) {
-                    return String.format((String) o2, (Number) o1);
+                    try {
+                        return String.format((String)o2, o1);
+                    } catch (UnknownFormatConversionException e) {
+                        return new EvalError("Unknown format conversion: " + e.getMessage());
+                    }
                 }
             } else if (args.length == 1) {
                 if (o1 instanceof String) {

@@ -562,6 +562,7 @@
     "core-views/edit-cells": "I-edit ang mga cell",
     "core-views/contain-names": "(mayroong orihinal na mga pangalan ng kolum)",
     "core-views/sort": "Isaayos…",
+    "core-views/sort/single": "Isaayos",
     "core-views/match-all-cells": "Itugma ang aytem na ito dito at ang lahat ng mga magkatulad na mga cell",
     "core-views/warning-sel-judg": "Maaaring pumili ng kahit isang uri ng pagpapasya sa pagkopya.",
     "core-views/remove-sort": "Tanggalin ang pagsasaayos",

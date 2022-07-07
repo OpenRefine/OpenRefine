@@ -56,7 +56,7 @@ Refine.CreateProjectUI = function(elmt) {
   $('#create-project-progress-cancel-button').text($.i18n('core-buttons/cancel'));
   $('#create-project-error-ok-button').html($.i18n('core-buttons/ok'));
   
-  $.post(
+  $.get(
     "command/core/get-importing-configuration",
     null,
     function(data) {

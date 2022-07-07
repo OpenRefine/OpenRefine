@@ -421,6 +421,7 @@
     "core-views/edit-column": "Redigera kolumn",
     "core-views/transpose": "Transponera",
     "core-views/sort": "Sortera…",
+    "core-views/sort/single": "Sortera",
     "core-views/collapse-expand": "Kollapsa/expandera kolumner för att se data bättre",
     "core-views/collapse-this": "Kollapsa denna kolumn",
     "core-views/collapse-other": "Kollapsa alla övriga kolumner",

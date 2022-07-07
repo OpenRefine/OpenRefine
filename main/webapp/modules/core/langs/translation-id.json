@@ -316,6 +316,7 @@
     "core-views/collapse-this": "Perluas kolom ini",
     "core-views/collapse-expand": "Perluas kolom untuk memudahkan peninjauan data",
     "core-views/sort": "Urutkan…",
+    "core-views/sort/single": "Urutkan",
     "core-views/transpose": "Transpose",
     "core-views/edit-column": "Sunting kolom",
     "core-views/edit-cells": "Sunting cell",
