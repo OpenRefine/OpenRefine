@@ -424,6 +424,7 @@
     "core-views/spec-new-val": "Adja meg az új érték oszlop nevét.",
     "core-views/edit-cells": "Cellák módosítása",
     "core-views/sort": "Rendezés…",
+    "core-views/sort/single": "Rendezés",
     "core-views/match-all-cells": "Ugyanezen elem illesztése az összes azonos tartalmú cellához",
     "core-views/col-at-most": "oszlop (üres, ha nincs korlát)",
     "core-views/warning-sel-judg": "Válasszon legalább egy másolandó döntést.",

@@ -525,6 +525,7 @@
     "core-views/collapse-this": "Sbalit tento sloupec",
     "core-views/collapse-expand": "Sbalit/rozbalit sloupce a zobrazit data obvyklejším způsobem",
     "core-views/sort": "Seřadit…",
+    "core-views/sort/single": "Seřadit",
     "core-views/transpose": "Překlopit",
     "core-views/edit-all-columns": "Upravit všechny sloupce",
     "core-views/facet": "Faseta",

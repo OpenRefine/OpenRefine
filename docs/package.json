@@ -18,7 +18,7 @@
     "@crowdin/cli": "3",
     "@docusaurus/core": "^2.0.0-beta.10",
     "@docusaurus/preset-classic": "^2.0.0-beta.759298296",
-    "clsx": "^1.1.1",
+    "clsx": "^1.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }
