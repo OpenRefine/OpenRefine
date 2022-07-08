@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -377,6 +378,13 @@ public class FileProjectManager extends ProjectManager  {
         if (file.exists() || file.canRead()) {
 	        try {
 	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+
+                PreferenceStore ps = this.getPreferenceStore();
+                if (ps.get("userLang") != null) {
+                    Locale locale = new Locale.Builder().setLanguage((String) ps.get("userLang")).build();
+                    Locale.setDefault(locale);
+                }
+
 	            found = true;
 	        } catch(IOException e) {
 	        	logger.warn(e.toString());
