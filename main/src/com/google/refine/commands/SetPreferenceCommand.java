@@ -35,6 +35,7 @@ package com.google.refine.commands;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,6 +72,11 @@ public class SetPreferenceCommand extends Command {
             respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
+        }
+
+        if (prefName.equals("userLang") && valueString != null) {
+            Locale locale = new Locale.Builder().setLanguage(valueString).build();
+            Locale.setDefault(locale);
         }
     }
 
