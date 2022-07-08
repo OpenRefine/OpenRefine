@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Length implements Function {
 
@@ -70,7 +71,7 @@ public class Length implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
+        return FunctionDescription.fun_length();
     }
     
     @Override

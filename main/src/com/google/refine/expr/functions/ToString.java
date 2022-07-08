@@ -41,6 +41,7 @@ import java.util.UnknownFormatConversionException;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.StringUtils;
 
 public class ToString implements Function {
@@ -75,7 +76,7 @@ public class ToString implements Function {
     
     @Override
     public String getDescription() {
-        return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://docs.openrefine.org/manual/grelfunctions/#date-functions.";
+        return FunctionDescription.fun_to_string();
     }
     
     @Override

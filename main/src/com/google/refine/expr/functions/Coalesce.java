@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Coalesce implements Function {
 
@@ -58,7 +59,7 @@ public class Coalesce implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the first non-null from a series of objects (meaning any data type - string, date, number, boolean, etc.).";
+        return FunctionDescription.fun_coalesce();
     }
     
     @Override
