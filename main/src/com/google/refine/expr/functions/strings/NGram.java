@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -78,7 +79,7 @@ public class NGram implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns an array of the word n-grams of s. That is, it lists all the possible consecutive combinations of n words in the string.";
+        return FunctionDescription.str_ngram();
     }
     
     @Override

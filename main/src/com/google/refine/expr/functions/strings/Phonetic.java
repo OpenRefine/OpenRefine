@@ -43,6 +43,7 @@ import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Phonetic implements Function {
 
@@ -101,7 +102,7 @@ public class Phonetic implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns a phonetic encoding of a string, based on an available phonetic algorithm. Can be one of the following supported phonetic methods: metaphone, doublemetaphone, metaphone3, soundex, cologne. Defaults to 'metaphone3'.";
+        return FunctionDescription.str_phonetic();
     }
     
     @Override
