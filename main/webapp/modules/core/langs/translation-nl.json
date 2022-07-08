@@ -270,6 +270,7 @@
     "core-views/edit-column": "Kolom bewerken",
     "core-views/transpose": "Omzetten",
     "core-views/sort": "Sorteren…",
+    "core-views/sort/single": "Sorteren",
     "core-views/collapse-this": "Deze kolom inklappen",
     "core-views/collapse-other": "Alle andere kolommen inklappen",
     "core-views/collapse-left": "Alle kolommen links inklappen",

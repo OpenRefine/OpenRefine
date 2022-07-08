@@ -562,6 +562,7 @@
     "core-views/edit-cells": "Editar células",
     "core-views/contain-names": "(contendo os nomes originais das colunas)",
     "core-views/sort": "Ordenar…",
+    "core-views/sort/single": "Ordenar",
     "core-views/match-all-cells": "Combinar este item para esta e todas as células iguais",
     "core-views/warning-sel-judg": "Por favor, selecione ao menos um tipo de resultado para copiar.",
     "core-views/remove-sort": "Remover ordenação",

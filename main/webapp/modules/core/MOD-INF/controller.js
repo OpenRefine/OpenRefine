@@ -500,7 +500,7 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
@@ -547,7 +547,7 @@ function init() {
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
