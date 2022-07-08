@@ -20,10 +20,6 @@ WikibaseDialog.launch = function () {
   elmts.addButton.on('click',function () {
     WikibaseDialog.addWikibaseManifest();
   });
-
-  elmts.discoverManifestsButton.on('click',function () {
-    window.open('https://github.com/OpenRefine/wikibase-manifests');
-  });
 };
 
 WikibaseDialog.populateDialog = function () {
