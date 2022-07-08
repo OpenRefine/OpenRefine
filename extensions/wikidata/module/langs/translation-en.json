@@ -277,5 +277,8 @@
     "wikibase-statement-settings/strategy-options/snak/label": "Property and value",
     "wikibase-statement-settings/strategy-options/snak/description": "Compare statements by their main property and main value only.",
     "wikibase-statement-settings/strategy-options/property/label": "Property",
-    "wikibase-statement-settings/strategy-options/property/description": "Compare statements by their main property only."
+    "wikibase-statement-settings/strategy-options/property/description": "Compare statements by their main property only.",
+    "wikibase-issues/no-warning": "No warning",
+    "wikibase-issues/warning-raised": "Warning raised",
+    "wikibase-issues/locate-offending-rows": "Locate offending rows"
 }
