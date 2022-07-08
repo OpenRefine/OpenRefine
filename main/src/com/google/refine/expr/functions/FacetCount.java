@@ -43,6 +43,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
@@ -85,7 +86,7 @@ public class FacetCount implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName.";
+        return FunctionDescription.fun_facet_count();
     }
     
     @Override
