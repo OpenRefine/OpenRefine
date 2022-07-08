@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -68,7 +69,7 @@ public class Parent implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the parent node or null if no parent. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.xml_parent();
     }
 
     @Override
