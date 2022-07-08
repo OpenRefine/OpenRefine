@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.functions.Type;
@@ -62,7 +63,7 @@ public class XmlText implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element.";
+        return FunctionDescription.xml_xmltext();
     }
     
     @Override
