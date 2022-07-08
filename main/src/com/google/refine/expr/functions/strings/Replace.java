@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Replace implements Function {
 
@@ -65,10 +66,7 @@ public class Replace implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing the find string with the replace string in the inputted string. " +
-                "For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'." +
-                " Find can be a regex pattern. " +
-                "For example, 'The cow jumps over the moon and moos'.replace(/\\s+/, \"_\") will return 'The_cow_jumps_over_the_moon_and_moos'";
+        return FunctionDescription.str_replace();
     }
     
     @Override
