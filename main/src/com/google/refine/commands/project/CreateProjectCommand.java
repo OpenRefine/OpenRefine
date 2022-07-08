@@ -127,7 +127,12 @@ public class CreateProjectCommand extends Command {
             
             List<Exception> exceptions = new LinkedList<Exception>();
             
-            long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
+            long projectId = ImportingUtilities.createProject(job,
+                    format,
+                    optionObj,
+                    exceptions,
+                    true,
+                    ProjectManager.singleton);
 
             HttpUtilities.redirect(response, "/project?project=" + projectId);
         } catch (Exception e) {

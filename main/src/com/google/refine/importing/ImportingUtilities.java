@@ -1005,7 +1005,8 @@ public class ImportingUtilities {
             final String format,
             final ObjectNode optionObj,
             final List<Exception> exceptions,
-            boolean synchronous) {
+            boolean synchronous,
+            final ProjectManager projectManager) {
         final Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
@@ -1017,29 +1018,30 @@ public class ImportingUtilities {
         final Project project = new Project();
         if (synchronous) {
             createProjectSynchronously(
-                job, format, optionObj, exceptions, record, project);
+                job, format, optionObj, exceptions, record.parser, project, projectManager);
         } else {
             new Thread() {
                 @Override
                 public void run() {
                     createProjectSynchronously(
-                        job, format, optionObj, exceptions, record, project);
+                        job, format, optionObj, exceptions, record.parser, project, projectManager);
                 }
             }.start();
         }
         return project.id;
     }
     
-    static private void createProjectSynchronously(
-        final ImportingJob job,
-        final String format,
-        final ObjectNode optionObj,
-        final List<Exception> exceptions,
-        final Format record,
-        final Project project
+    static void createProjectSynchronously(
+            final ImportingJob job,
+            final String format,
+            final ObjectNode optionObj,
+            final List<Exception> exceptions,
+            final ImportingParser parser,
+            final Project project,
+            final ProjectManager projectManager
     ) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
-        record.parser.parse(
+        parser.parse(
             project,
             pm,
             job,
@@ -1053,9 +1055,8 @@ public class ImportingUtilities {
         if (!job.canceled) {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
-                
-                ProjectManager.singleton.registerProject(project, pm);
-                ProjectManager.singleton.ensureProjectSaved(project.id);
+                projectManager.registerProject(project, pm);
+                projectManager.ensureProjectSaved(project.id);
                 job.setProjectID(project.id);
                 job.setState("created-project");
             } else {

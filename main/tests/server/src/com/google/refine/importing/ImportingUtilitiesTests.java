@@ -29,6 +29,10 @@ package com.google.refine.importing;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.anyLong;
 import static org.testng.Assert.*;
 
 import java.io.File;
@@ -40,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -73,22 +78,92 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
+    private final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+            "{\"projectName\":\"acme\",\"projectTags\":[],\"created\":\"2017-12-18T13:28:40.659\",\"modified\":\"2017-12-20T09:28:06.654\",\"creator\":\"\",\"contributors\":\"\",\"subject\":\"\",\"description\":\"\",\"rowCount\":50,\"customMetadata\":{}}");
+
+    private ProjectManager manager;
+    private ImportingParser parser;
+
     @Override
     @BeforeMethod
     public void setUp() {
         super.setUp();
+        manager = mock(ProjectManager.class);
+        parser = mock(ImportingParser.class);
     }
 
     @Test
     public void createProjectMetadataTest()
             throws Exception {
-        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
-                "{\"projectName\":\"acme\",\"projectTags\":[],\"created\":\"2017-12-18T13:28:40.659\",\"modified\":\"2017-12-20T09:28:06.654\",\"creator\":\"\",\"contributors\":\"\",\"subject\":\"\",\"description\":\"\",\"rowCount\":50,\"customMetadata\":{}}");
         ProjectMetadata pm = ImportingUtilities.createProjectMetadata(optionObj);
         Assert.assertEquals(pm.getName(), "acme");
         Assert.assertEquals(pm.getEncoding(), "UTF-8");
         Assert.assertTrue(pm.getTags().length == 0);
     }
+
+
+    @Test
+    public void createProjectWhenJobNotCancelled() {
+        job.updating = true;
+
+        ImportingUtilities.createProjectSynchronously(
+                job,
+                "csv",
+                optionObj,
+                List.of(),
+                parser,
+                project,
+                manager);
+
+        verify(manager).ensureProjectSaved(project.id);
+        verify(manager).registerProject(any(), any());
+        assertFalse(job.updating);
+
+        assertEquals(JSONUtilities.getString(job.getOrCreateDefaultConfig(), "state", ""),
+                "created-project");
+    }
+
+    @Test
+    public void createProjectWhenJobCancelled() {
+        job.updating = true;
+        job.canceled = true;
+
+        ImportingUtilities.createProjectSynchronously(
+                job,
+                "csv",
+                optionObj,
+                List.of(),
+                parser,
+                project,
+                manager);
+
+        verify(manager, never()).ensureProjectSaved(anyLong());
+        verify(manager, never()).registerProject(any(), any());
+        assertTrue(job.updating);
+    }
+
+    @Test
+    public void createProjectWithExceptionsCancelled() {
+        job.updating = true;
+
+        ImportingUtilities.createProjectSynchronously(
+                job,
+                "csv",
+                optionObj,
+                List.of(new Exception("")),
+                parser,
+                project,
+                manager);
+
+        verify(manager, never()).ensureProjectSaved(anyLong());
+        verify(manager, never()).registerProject(any(), any());
+        assertFalse(job.updating);
+
+        assertEquals(JSONUtilities.getString(job.getOrCreateDefaultConfig(), "state", ""),
+                "error");
+
+    }
+
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testZipSlip() throws IOException {

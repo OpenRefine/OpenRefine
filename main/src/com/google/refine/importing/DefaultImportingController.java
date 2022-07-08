@@ -49,6 +49,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
@@ -248,8 +249,13 @@ public class DefaultImportingController implements ImportingController {
                 request.getParameter("options"));
         
         List<Exception> exceptions = new LinkedList<Exception>();
-        
-        ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
+
+        ImportingUtilities.createProject(job,
+                format,
+                optionObj,
+                exceptions,
+                false,
+                ProjectManager.singleton);
         
         HttpUtilities.respond(response, "ok", "done");
     }
