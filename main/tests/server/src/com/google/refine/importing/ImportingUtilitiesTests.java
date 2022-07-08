@@ -101,7 +101,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertTrue(pm.getTags().length == 0);
     }
 
-
     @Test
     public void createProjectWhenJobNotCancelled() {
         job.updating = true;
@@ -163,7 +162,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 "error");
 
     }
-
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testZipSlip() throws IOException {
