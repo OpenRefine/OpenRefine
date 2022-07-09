@@ -15,7 +15,7 @@ WikibaseDialog.prototype.launch = function () {
   elmts.cancelButton.text($.i18n("wikibase-management/cancel"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
 
-  this.activeWikibase =  WikibaseManager.getSelectedWikibaseName().toLowerCase();
+  this.activeWikibase =  WikibaseManager.getSelectedWikibaseName();
   this.selectedWikibase =  this.activeWikibase;
   this.populateDialog();
 
@@ -62,20 +62,23 @@ WikibaseDialog.prototype.populateDialog = function () {
 
     const wikibase = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-item.html"));
     let _elmts = DOM.bind(wikibase);
-    _elmts.wikibaseSelect.value = wikibaseName.toLowerCase();
-    _elmts.wikibaseSelect.id = wikibaseName.toLowerCase()+'Select';
+    _elmts.wikibaseSelect.value = wikibaseName;
+    _elmts.wikibaseSelect.id = wikibaseName+'Select';
 
-    if (wikibaseName.toLowerCase() === this.activeWikibase.toLowerCase()) {
+    debugger;
+    if (wikibaseName === this.activeWikibase) {
       _elmts.wikibaseItem.addClass("active");
     }
 
-    if (wikibaseName.toLowerCase() === this.selectedWikibase.toLowerCase()) {
+    if (wikibaseName === this.selectedWikibase) {
       _elmts.wikibaseSelect.prop("checked",true);
       _elmts.wikibaseItem.addClass("selected");
     }
-    _elmts.wikibaseItem.click( (event) => {
-      this.selectedWikibase = wikibaseName;
-      this.populateDialog();
+    _elmts.wikibaseItem.on('click', (event) => {
+      if (wikibaseName !== this.selectedWikibase) {
+        this.selectedWikibase = wikibaseName;
+        this.populateDialog();
+      }
     });
     _elmts.wikibaseImage.attr("alt",$.i18n('wikibase-account/logo-alt-text', wikibaseName));
     _elmts.wikibaseName.text(wikibaseName);
@@ -96,7 +99,7 @@ WikibaseDialog.prototype.populateDialog = function () {
 WikibaseDialog.prototype.selectWikibase = function (wikibaseName) {
   if (wikibaseName !== WikibaseManager.getSelectedWikibaseName()) {
     WikibaseManager.selectWikibase(wikibaseName);
-    this.activeWikibase =  this.selectedWikibase.toLowerCase();
+    this.activeWikibase =  this.selectedWikibase;
     this.populateDialog();
     SchemaAlignment.onWikibaseChange();
   }
