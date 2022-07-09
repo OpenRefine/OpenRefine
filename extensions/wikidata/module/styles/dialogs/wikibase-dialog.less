@@ -65,11 +65,15 @@
   color: gray;
 }
 
-.wikibase-list li a {
+.wikibase-list li a,span {
   margin: 10px;
   flex: 0 0;
 }
 
-.wikibase-list li.selected a {
+.wikibase-list li.selected a, .wikibase-list li.active a {
   display:none;
+}
+
+.wikibase-list li.active span {
+  display:block !important;
 }
