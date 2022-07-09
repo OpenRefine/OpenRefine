@@ -17,6 +17,7 @@
     "wikibase-management/current-selected-wikibase": "Current selected Wikibase: <a href=\"$1\" target=\"_blank\">$2</a>",
     "wikibase-management/add-wikibase": "Add Wikibase",
     "wikibase-management/close": "Close",
+    "wikibase-management/discover-manifests": "Discover Wikibase instances…",
     "wikibase-management/cancel": "Cancel",
     "wikibase-management/apply": "Apply",
     "wikibase-management/ok": "OK",

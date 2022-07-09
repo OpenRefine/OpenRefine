@@ -14,6 +14,7 @@ WikibaseDialog.prototype.launch = function () {
   elmts.applyButton.text($.i18n("wikibase-management/apply"));
   elmts.cancelButton.text($.i18n("wikibase-management/cancel"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
+  elmts.discoverManifestsButton.text($.i18n("wikibase-management/discover-manifests"));
 
   this.activeWikibase =  WikibaseManager.getSelectedWikibaseName();
   this.selectedWikibase =  this.activeWikibase;
@@ -33,6 +34,10 @@ WikibaseDialog.prototype.launch = function () {
   elmts.okButton.on('click',() => {
     this.selectWikibase(this.selectedWikibase);
     DialogSystem.dismissUntil(level - 1);
+  });
+
+  elmts.discoverManifestsButton.on('click',function () {
+    window.open('https://github.com/OpenRefine/wikibase-manifests');
   });
 };
 
