@@ -82,7 +82,7 @@ public class ParseHtmlTests extends RefineTest {
         Assert.assertEquals(invoke("ownText", Jsoup.parse(h).select("p").first()), "para1");
         Assert.assertTrue(invoke("wholeText", Jsoup.parse(h).select("div.commentthread_comment_text").first()) instanceof String);
         Assert.assertEquals(invoke("wholeText", Jsoup.parse(h).select("div.commentthread_comment_text").first()),
-                "\n  Me : Make a 2nd game ?\n Dev : Nah man , too much work.\n Me : So what's it gonna be ?\n Dev : REMASTER !!!!\n ");
+                "\n  Me : Make a 2nd game ?\n \nDev : Nah man , too much work.\n \nMe : So what's it gonna be ?\n \nDev : REMASTER !!!!\n \n");
         Assert.assertEquals(invoke("parent", Jsoup.parse(h).select("p[type*=child]").first()).toString(),
                 "<div>\n <p type=\"child\">childtext</p>\n</div>");
         Assert.assertEquals(invoke("scriptText", Jsoup.parse(h).select("script").first()), "One Two");
