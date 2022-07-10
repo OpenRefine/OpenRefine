@@ -490,10 +490,10 @@ cypress-wait-until@^1.7.2:
   resolved "https://registry.yarnpkg.com/cypress-wait-until/-/cypress-wait-until-1.7.2.tgz#7f534dd5a11c89b65359e7a0210f20d3dfc22107"
   integrity sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==
 
-cypress@9.7.0:
-  version "9.7.0"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.7.0.tgz#bf55b2afd481f7a113ef5604aa8b693564b5e744"
-  integrity sha512-+1EE1nuuuwIt/N1KXRR2iWHU+OiIt7H28jJDyyI4tiUftId/DrXYEwoDa5+kH2pki1zxnA0r6HrUGHV5eLbF5Q==
+cypress@10.3.0:
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-10.3.0.tgz#fae8d32f0822fcfb938e79c7c31ef344794336ae"
+  integrity sha512-txkQWKzvBVnWdCuKs5Xc08gjpO89W2Dom2wpZgT9zWZT5jXxqPIxqP/NC1YArtkpmp3fN5HW8aDjYBizHLUFvg==
   dependencies:
     "@cypress/request" "^2.88.10"
     "@cypress/xvfb" "^1.2.4"
