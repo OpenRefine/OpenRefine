@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class SetPreferenceCommand extends Command {
@@ -74,9 +75,8 @@ public class SetPreferenceCommand extends Command {
             respondException(response, e);
         }
 
-        if (prefName.equals("userLang") && valueString != null) {
-            Locale locale = new Locale.Builder().setLanguage(valueString).build();
-            Locale.setDefault(locale);
+        if (prefName.equals("userLang")) {
+            LocaleUtils.setLocale(valueString);
         }
     }
 

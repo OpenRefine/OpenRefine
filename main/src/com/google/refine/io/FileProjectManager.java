@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.google.refine.util.LocaleUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -380,10 +381,7 @@ public class FileProjectManager extends ProjectManager  {
 	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
 
                 PreferenceStore ps = this.getPreferenceStore();
-                if (ps.get("userLang") != null) {
-                    Locale locale = new Locale.Builder().setLanguage((String) ps.get("userLang")).build();
-                    Locale.setDefault(locale);
-                }
+                LocaleUtils.setLocale((String) ps.get("userLang"));
 
 	            found = true;
 	        } catch(IOException e) {
