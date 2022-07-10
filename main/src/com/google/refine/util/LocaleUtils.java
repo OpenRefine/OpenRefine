@@ -6,10 +6,9 @@ import java.util.ResourceBundle;
 
 public class LocaleUtils {
     public static void setLocale(String code) {
-        ResourceBundle langResource = ResourceBundle.getBundle("language_codes");
         String localeCode;
-
         try {
+            ResourceBundle langResource = ResourceBundle.getBundle("language_codes");
             localeCode = (String) langResource.getObject(code);
         } catch (NullPointerException | MissingResourceException e) {
             return;
