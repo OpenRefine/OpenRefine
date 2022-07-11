@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -66,10 +67,12 @@ public class ToNumber implements Function {
                     } catch (NumberFormatException e) {
                     }
                 }
-                return new EvalError("Unable to parse as number");
+                // return new EvalError("Unable to parse as number");
+                return new EvalError(EvalErrorMessage.unable_to_parse_as_number());
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
+            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
+            return new EvalError(EvalErrorMessage.expects_one_non_null_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
