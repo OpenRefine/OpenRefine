@@ -39,6 +39,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -52,7 +53,8 @@ public class ParseHtml implements Function {
                 return new ParseXml().call(bindings,args,"html");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(EvalErrorMessage.expects_single_string_as_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
 
