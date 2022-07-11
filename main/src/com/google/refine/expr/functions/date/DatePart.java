@@ -45,6 +45,7 @@ import java.util.TimeZone;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -66,7 +67,8 @@ public class DatePart implements Function {
                 return getPart((OffsetDateTime) args[0], part);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
+        return new EvalError(EvalErrorMessage.expects_date_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
     
     private Object getPart(OffsetDateTime offsetDateTime, String part) {
@@ -94,7 +96,8 @@ public class DatePart implements Function {
         } else if ("time".equals(part)) {       // get Time In Millis
             return offsetDateTime.toInstant().toEpochMilli();
         } else {
-            return new EvalError("Date unit '" + part + "' not recognized.");
+            // return new EvalError("Date unit '" + part + "' not recognized.");
+            return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }
 
@@ -134,7 +137,8 @@ public class DatePart implements Function {
         } else if ("time".equals(part)) {
             return c.getTimeInMillis();
         } else {
-            return new EvalError("Date unit '" + part + "' not recognized.");
+            // return new EvalError("Date unit '" + part + "' not recognized.");
+            return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }
     
