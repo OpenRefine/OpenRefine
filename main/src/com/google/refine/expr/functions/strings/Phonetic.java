@@ -42,6 +42,7 @@ import com.google.refine.clustering.binning.MetaphoneKeyer;
 import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -70,12 +71,14 @@ public class Phonetic implements Function {
                 if (o2 instanceof String) {
                     encoding = ((String) o2).toLowerCase();
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                            + " expects a string for the second argument");
+                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                    //        + " expects a string for the second argument");
+                    return new EvalError(EvalErrorMessage.expects_second_param_string(ControlFunctionRegistry.getFunctionName(this)));
                 }
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string for the second argument, the phonetic encoding to use.");
+                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                //        + " expects a string for the second argument, the phonetic encoding to use.");
+                return new EvalError(EvalErrorMessage.expects_second_param_string_phonetic(ControlFunctionRegistry.getFunctionName(this)));
             }     
         }
         if (args.length < 3) {
@@ -90,13 +93,14 @@ public class Phonetic implements Function {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " doesn't know how to handle the '"
                         + encoding + "' encoding.");
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects one or two string arguments");   
+            // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+            //        + " expects one or two string arguments");
+            return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
     

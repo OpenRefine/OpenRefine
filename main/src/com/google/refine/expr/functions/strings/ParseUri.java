@@ -2,6 +2,8 @@ package com.google.refine.expr.functions.strings;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.ParsingUtilities;
@@ -61,10 +63,12 @@ public class ParseUri implements Function {
 
 
             } catch (URISyntaxException | MalformedURLException e) {
-                return new EvalError("Invalid URI: " + s);
+                // return new EvalError("Invalid URI: " + s);
+                return new EvalError(EvalErrorMessage.invalid_uri(s));
             }
         }
-        return new EvalError("ParseUri takes a single string argument.");
+        // return new EvalError("ParseUri takes a single string argument.");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
