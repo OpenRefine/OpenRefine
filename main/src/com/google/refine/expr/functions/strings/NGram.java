@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -74,7 +75,8 @@ public class NGram implements Function {
             
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
+        return new EvalError(EvalErrorMessage.expects_one_string_and_number(ControlFunctionRegistry.getFunctionName(this)));
     }
     
     @Override
