@@ -16,6 +16,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+    cy.wait(250); // wait for the rest of the update code to run before reloading, for #5051 (TODO: find a better way?)
     cy.reload();
     cy.waitForProjectTable();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
@@ -43,6 +44,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+    cy.wait(250); // wait for the rest of the update code to run before reloading, for #5051 (TODO: find a better way?)
     cy.reload();
     cy.waitForProjectTable();
     cy.getCell(0, 'NDB_No').should('to.contain', 1001);
@@ -71,6 +73,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+    cy.wait(250); // wait for the rest of the update code to run before reloading, for #5051 (TODO: find a better way?)
     cy.reload();
     cy.waitForProjectTable();
     cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
@@ -111,6 +114,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+    cy.wait(250); // wait for the rest of the update code to run before reloading, for #5051 (TODO: find a better way?)
     cy.reload();
     cy.waitForProjectTable();
     cy.getCell(0, 'Fat').should('to.contain', 'true');
