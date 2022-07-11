@@ -42,6 +42,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Column;
@@ -59,7 +60,8 @@ public class FacetCount implements Function {
             Project project = (Project) bindings.get("project");
             Column column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
-                return new EvalError("No such column named " + columnName);
+                // return new EvalError("No such column named " + columnName);
+                return new EvalError(EvalErrorMessage.no_such_column_with_name(columnName));
             }
 
             String key = "nominal-bin:" + facetExpression;
