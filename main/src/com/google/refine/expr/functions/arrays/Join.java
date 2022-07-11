@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -91,7 +92,8 @@ public class Join implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");
+        //return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");
+        return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
