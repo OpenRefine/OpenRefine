@@ -3,6 +3,7 @@ package com.google.refine.expr.functions.strings;
 import com.google.common.base.Optional;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.DetectLanguageUtils;
@@ -41,7 +42,8 @@ public class DetectLanguage implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " requires one argument");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " requires one argument");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

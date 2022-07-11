@@ -3,6 +3,7 @@ package com.google.refine.expr.functions.strings;
 import com.google.common.io.BaseEncoding;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -34,11 +35,13 @@ public class Decode implements Function {
                     case "base64url":
                         return new String( BaseEncoding.base64Url().decode(string));
                     default:
-                        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": Unknown encoding: " + encoding);
+                        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": Unknown encoding: " + encoding);
+                        return new EvalError(EvalErrorMessage.unknown_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": expects two arguments: a string and an encoding.");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": expects two arguments: a string and an encoding.");
+        return new EvalError(EvalErrorMessage.expects_one_string_and_encoding(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

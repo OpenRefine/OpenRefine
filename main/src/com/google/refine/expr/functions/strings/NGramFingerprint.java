@@ -40,6 +40,7 @@ import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -61,7 +62,8 @@ public class NGramFingerprint implements Function {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
+        return new EvalError(EvalErrorMessage.expects_at_least_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {
