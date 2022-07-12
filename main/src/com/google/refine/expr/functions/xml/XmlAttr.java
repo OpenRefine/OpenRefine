@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -63,7 +64,7 @@ public class XmlAttr implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a string from an attribute on an XML or HTML element. Use it in conjunction with parseHtml() or parseXml() to point to an element first.";
+        return FunctionDescription.xml_xmlattr();
     }
     
     @Override

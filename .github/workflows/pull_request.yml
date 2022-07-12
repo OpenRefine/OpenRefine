@@ -174,7 +174,7 @@ jobs:
           java-version: 11
 
       - name: Build OpenRefine
-        run: mvn compile test-compile -pl -benchmark
+        run: ./refine build
 
       - name: Setup Node
         uses: actions/setup-node@v3.3.0

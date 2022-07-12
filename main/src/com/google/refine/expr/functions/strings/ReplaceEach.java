@@ -3,6 +3,7 @@ package com.google.refine.expr.functions.strings;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
@@ -49,7 +50,7 @@ public class ReplaceEach implements Function {
 
     @Override
     public String getDescription() {
-        return "Replace each occurrence of a substring in a string with another substring.";
+        return FunctionDescription.str_replace_each();
     }
 
     @Override

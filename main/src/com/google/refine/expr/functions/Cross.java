@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Project;
 import com.google.refine.util.GetProjectIDException;
 import com.google.refine.util.LookupException;
@@ -95,10 +96,7 @@ public class Cross implements Function {
 
     @Override
     public String getDescription() {
-        return "Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. " +
-                "The first argument will be interpreted as cell.value if set to cell. " +
-                "The second argument will be interpreted as the current project name if omitted or set to \"\". " +
-                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\".";
+        return FunctionDescription.fun_cross();
     }
 
     @Override

@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -60,7 +61,7 @@ public class ReplaceChars implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. You cannot use this to replace a single character with more than one character.";
+        return FunctionDescription.str_replace_chars();
     }
     
     @Override
