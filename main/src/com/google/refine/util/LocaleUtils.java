@@ -1,18 +1,17 @@
 package com.google.refine.util;
 
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.Map;
 
 public class LocaleUtils {
+    private final static Map<String, String> languageCodeMap = Map.of(
+            "bn", "ben",
+            "jp", "ja",
+            "zh", "zh_CN",
+            "zh_Hant", "zh_TW"
+    );
     public static void setLocale(String code) {
-        String localeCode;
-        try {
-            ResourceBundle langResource = ResourceBundle.getBundle("language_codes");
-            localeCode = (String) langResource.getObject(code);
-        } catch (NullPointerException | MissingResourceException e) {
-            return;
-        }
+        String localeCode = languageCodeMap.getOrDefault(code, code);
 
         String[] localeParts = localeCode.split("_");
         Locale.Builder localeBuilder = new Locale.Builder();
