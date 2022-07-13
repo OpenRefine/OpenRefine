@@ -24,18 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.Replace;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
-public class ReplaceTests {
+public class ReplaceTests extends RefineTest {
+
     @Test
-    public void serializeReplace() {
-        String json = "{\"description\":\"Returns the string obtained by replacing f with r in s\",\"params\":\"string s, string or regex f, string r\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Replace(), json);
+    public void testReplace() {
+        assertTrue(invoke("replace") instanceof EvalError);
+        assertTrue(invoke("replace", "test") instanceof EvalError);
+        assertTrue(invoke("replace", "test", "test") instanceof EvalError);
+        assertTrue(invoke("replace", "test", "test", null) instanceof EvalError);
+        assertEquals(invoke("replace", "", "ripe", "green"), "");
+        assertEquals(invoke("replace", "", "", ""), "");
+        assertEquals(invoke("replace", "ripe banana", "ripe", "green"), "green banana");
+        assertEquals(invoke("replace", "ripe banana", "ripe", ""), " banana");
+        assertEquals(invoke("replace", "ripe banana", "wrong", "green"), "ripe banana");
+        assertEquals(invoke("replace", "ripe ripe banana", "ripe", "green"), "green green banana");
     }
 }
-

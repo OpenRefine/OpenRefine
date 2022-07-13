@@ -23,21 +23,32 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 
 public class NoEditsMadeScrutinizer extends EditScrutinizer {
 
     public static final String type = "no-edit-generated";
     
     private boolean nonNullUpdateSeen = false;
-    
+
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
+
     @Override
     public void batchIsBeginning() {
         nonNullUpdateSeen = false;
     }
 
     @Override
-    public void scrutinize(ItemUpdate edit) {
+    public void scrutinize(ItemEdit edit) {
+        nonNullUpdateSeen = true;
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit edit) {
         nonNullUpdateSeen = true;
     }
     

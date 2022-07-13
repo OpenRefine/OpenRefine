@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing;
 
 import org.testng.Assert;
@@ -34,9 +35,8 @@ import com.google.refine.util.TestUtils;
 import com.google.refine.browsing.EngineConfig;
 
 public class EngineConfigTests {
-    
-    public static String engineConfigJson =
-              "{\n"
+
+    public static String engineConfigJson = "{\n"
             + "      \"mode\": \"row-based\",\n"
             + "      \"facets\": [\n"
             + "        {\n"
@@ -50,34 +50,33 @@ public class EngineConfigTests {
             + "        }\n"
             + "      ]\n"
             + "    }";
-    
-    public static String engineConfigRecordModeJson =
-             "{"
+
+    public static String engineConfigRecordModeJson = "{"
             + "    \"mode\":\"record-based\","
             + "    \"facets\":[]"
             + "}";
-    
+
     public static String noFacetProvided = "{\"mode\":\"row-based\"}";
-    
+
     @Test
     public void serializeEngineConfig() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
         TestUtils.isSerializedTo(ec, engineConfigJson);
     }
-    
+
     @Test
     public void serializeEngineConfigRecordMode() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
     }
-    
+
     @Test
     public void reconstructNullEngineConfig() {
         EngineConfig ec = EngineConfig.reconstruct(null);
         Assert.assertEquals(ec.getMode(), Mode.RowBased);
         Assert.assertTrue(ec.getFacetConfigs().isEmpty());
     }
-    
+
     @Test
     public void reconstructNoFacetsProvided() {
         EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);

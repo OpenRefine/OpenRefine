@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
-
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -46,14 +45,12 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
 public class SplitMultiValuedCellsTests extends RefineTest {
-    
+
     Project project;
 
     @Override
@@ -62,14 +59,14 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
     }
-    
+
     @BeforeMethod
     public void createProject() {
         project = createCSVProject(
                 "Key,Value\n"
-              + "Record_1,one:two;three four\n");
+                        + "Record_1,one:two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen\n");
     }
-    
+
     @Test
     public void serializeMultiValuedCellSplitOperationWithSeparator() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
@@ -81,7 +78,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 + "\"regex\":false}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
     }
-    
+
     @Test
     public void serializeMultiValuedCellSplitOperationWithLengths() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
@@ -101,35 +98,36 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     @Test
     public void testSplitMultiValuedCellsTextSeparator() throws Exception {
         AbstractOperation op = new MultiValuedCellSplitOperation(
-            "Value",
-            "Key",
-            ":",
-            false);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+                "Value",
+                "Key",
+                ":",
+                false);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
         Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two;three four");
+        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol),
+                "two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen");
     }
 
     @Test
     public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
         AbstractOperation op = new MultiValuedCellSplitOperation(
-            "Value",
-            "Key",
-            "\\W",
-            true);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+                "Value",
+                "Key",
+                "\\W",
+                true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
         Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
@@ -142,18 +140,18 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsLengths() throws Exception {
-        int[] lengths = {4,4,6,4};
+        int[] lengths = { 4, 4, 6, 4 };
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
-            "Value",
-            "Key",
-            lengths);
+                "Value",
+                "Key",
+                lengths);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:");
         Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
@@ -163,5 +161,94 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
     }
-}
 
+    @Test
+    public void testSplitMultiValuedCellsTextCase() throws Exception {
+        AbstractOperation op = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})",
+                true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
+        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+
+        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;five");
+        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "Six ");
+        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "Sevè");
+        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "Ëight;niné91011twelve thirteen 14Àifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextCaseReverse() throws Exception {
+        AbstractOperation op = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})",
+                true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
+        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+
+        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveS");
+        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "ix S");
+        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "evèË");
+        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "ight;niné91011twelve thirteen 14À");
+        Assert.assertEquals(project.rows.get(4).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(4).getCellValue(valueCol), "ifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextNumber() throws Exception {
+        AbstractOperation op = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})",
+                true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
+        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+
+        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné91011");
+        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "twelve thirteen 14");
+        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "Àifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextNumberReverse() throws Exception {
+        AbstractOperation op = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})",
+                true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
+        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+
+        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné");
+        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "91011twelve thirteen ");
+        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "14Àifteen");
+    }
+}

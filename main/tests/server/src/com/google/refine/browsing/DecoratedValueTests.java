@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing;
 
 import java.time.OffsetDateTime;
@@ -34,6 +35,7 @@ import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.util.TestUtils;
 
 public class DecoratedValueTests {
+
     @Test
     public void serializeDecoratedValue() {
         OffsetDateTime date = OffsetDateTime.parse("2017-03-04T12:56:32Z");

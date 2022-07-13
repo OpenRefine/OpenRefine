@@ -73,8 +73,7 @@ public abstract class TreeImportUtilities {
                     return o1.blankOnFirstRow ? 1 : -1;
                 }
 
-                int c = o2.nonBlankCount - o1.nonBlankCount;
-                return c != 0 ? c : (o1.name.length() - o2.name.length());
+                return o2.nonBlankCount - o1.nonBlankCount;
             }
         });
 
@@ -85,6 +84,7 @@ public abstract class TreeImportUtilities {
             project.columnModel.columns.add(column);
         }
 
+        // The LinkedHashMap iterator will guaranteed that the list is arranged in order found
         List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
             @Override
@@ -96,9 +96,8 @@ public abstract class TreeImportUtilities {
                 // TODO: From a human factors point of view, we probably want
                 // to try to preserve the order that we found things in the XML
                 
-                // Sort by most populated first, then shortest name
-                int c = o2.nonBlankCount - o1.nonBlankCount;
-                return c != 0 ? c : (o1.name.length() - o2.name.length());
+                // Sort by most populated first, but leave order unchanged if they're equal
+                return o2.nonBlankCount - o1.nonBlankCount;
             }
         });
 

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
@@ -44,36 +45,34 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.BlankDownOperation;
-import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class BlankDownTests extends RefineTest {
-    
+
     Project project = null;
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "blank-down", BlankDownOperation.class);
     }
-    
+
     @BeforeMethod
     public void setUp() {
         project = createCSVProject(
-                "key,first,second\n"+
-                "a,b,c\n"+
-                ",d,c\n"+
-                "e,f,c\n"+
-                ",,c\n");
+                "key,first,second\n" +
+                        "a,b,c\n" +
+                        ",d,c\n" +
+                        "e,f,c\n" +
+                        ",,c\n");
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
     }
-    
+
     @Test
     public void serializeBlankDownOperation() throws Exception {
         String json = "{\"op\":\"core/blank-down\","
@@ -83,7 +82,7 @@ public class BlankDownTests extends RefineTest {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json);
     }
-    
+
     @Test
     public void testBlankDownRecords() throws Exception {
         AbstractOperation op = new BlankDownOperation(
@@ -91,13 +90,13 @@ public class BlankDownTests extends RefineTest {
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertNull(project.rows.get(1).cells.get(2));
         Assert.assertEquals("c", project.rows.get(2).cells.get(2).value);
         Assert.assertNull(project.rows.get(3).cells.get(2));
     }
-    
+
     @Test
     public void testBlankDownRows() throws Exception {
         AbstractOperation op = new BlankDownOperation(
@@ -105,33 +104,33 @@ public class BlankDownTests extends RefineTest {
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertNull(project.rows.get(1).cells.get(2));
         Assert.assertNull(project.rows.get(2).cells.get(2));
         Assert.assertNull(project.rows.get(3).cells.get(2));
     }
-    
+
     @Test
     public void testKeyColumnIndex() throws Exception {
-    	// Shift all column indices
-    	for(Row r : project.rows) {
-    		r.cells.add(0, null);
-    	}
-    	List<Column> newColumns = new ArrayList<>();
-    	for(Column c : project.columnModel.columns) {
-    		newColumns.add(new Column(c.getCellIndex()+1, c.getName()));
-    	}
-    	project.columnModel.columns.clear();
-    	project.columnModel.columns.addAll(newColumns);
-    	project.columnModel.update();
-    	
-    	AbstractOperation op = new BlankDownOperation(
+        // Shift all column indices
+        for (Row r : project.rows) {
+            r.cells.add(0, null);
+        }
+        List<Column> newColumns = new ArrayList<>();
+        for (Column c : project.columnModel.columns) {
+            newColumns.add(new Column(c.getCellIndex() + 1, c.getName()));
+        }
+        project.columnModel.columns.clear();
+        project.columnModel.columns.addAll(newColumns);
+        project.columnModel.update();
+
+        AbstractOperation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
         Assert.assertNull(project.rows.get(1).cells.get(3));
         Assert.assertEquals("c", project.rows.get(2).cells.get(3).value);

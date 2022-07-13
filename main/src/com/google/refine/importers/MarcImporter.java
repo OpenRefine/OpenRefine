@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
@@ -57,7 +58,7 @@ public class MarcImporter extends XmlImporter {
     }
     
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job, java.util.List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job, List<ObjectNode> fileRecords, String format) {
         if (fileRecords.size() > 0) {
             ObjectNode firstFileRecord = fileRecords.get(0);
             File file = ImportingUtilities.getFile(job, firstFileRecord);

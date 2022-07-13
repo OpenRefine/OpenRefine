@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import org.jsoup.nodes.Element;
 
+import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -52,16 +53,16 @@ public class XmlText implements Function {
                 return e1.text();
 
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
     }
 
 
     @Override
     public String getDescription() {
-        return "Selects the text from within an element (including all child elements)";
+        return "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element.";
     }
     
     @Override

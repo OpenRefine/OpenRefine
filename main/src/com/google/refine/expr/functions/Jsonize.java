@@ -36,7 +36,10 @@ package com.google.refine.expr.functions;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.util.ParsingUtilities;
 
 public class Jsonize implements Function {
@@ -45,12 +48,13 @@ public class Jsonize implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1) {
             try {
-                return ParsingUtilities.mapper.writeValueAsString(args[0]);
+                return ParsingUtilities.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(args[0]);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return null;
+        String errorMessage = " accepts a single argument";
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + errorMessage);
     }
 
     
@@ -61,7 +65,7 @@ public class Jsonize implements Function {
     
     @Override
     public String getParams() {
-        return "value";
+        return "o";
     }
     
     @Override

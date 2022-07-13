@@ -38,7 +38,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -53,7 +55,7 @@ public class ForEach implements Control {
         if (args.length != 3) {
             return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
+            return ControlFunctionRegistry.getControlName(this) +
                 " expects second argument to be a variable name";
         }
         return null;
@@ -64,8 +66,9 @@ public class ForEach implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError("First argument to forEach is not an array");
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)
+                && !(o instanceof ObjectNode)) {
+            return new EvalError("First argument to forEach is not an array or JSON object");
         }
         
         String name = ((VariableExpr) args[1]).getName();
@@ -105,6 +108,18 @@ public class ForEach implements Control {
                     
                     Object r = args[2].evaluate(bindings);
                     
+                    results.add(r);
+                }
+            } else if (o instanceof ObjectNode) {
+                ObjectNode obj = (ObjectNode) o;
+                results = new ArrayList<Object>(obj.size());
+                for (JsonNode v : obj) {
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
+                    Object r = args[2].evaluate(bindings);
                     results.add(r);
                 }
             } else {

@@ -24,18 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.xml;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.util.TestUtils;
 
 public class InnerXmlTests {
-    @Test
-    public void serializeInnerXml() {
-        String json = "{\"description\":\"The innerXml/innerHtml of an XML/HTML element\",\"params\":\"Element e\",\"returns\":\"String innerXml/innerHtml\"}";
-        TestUtils.isSerializedTo(new InnerXml(), json);
-    }
 }
-

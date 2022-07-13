@@ -24,18 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.util.TestUtils;
 
 public class MD5Tests {
-    @Test
-    public void serializeMD5() {
-        String json = "{\"description\":\"Returns the MD5 hash of s\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new MD5(), json);
-    }
 }
-

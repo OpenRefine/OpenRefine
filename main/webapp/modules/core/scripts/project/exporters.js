@@ -105,16 +105,13 @@ ExporterManager.prototype._initializeUI = function() {
 };
 
 ExporterManager.stripNonFileChars = function(name) {
-    //prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
-    return $.trim(name.replace(/[\\*\/:?"<>|]/g, ' ')).replace(/\s+/g, '-');
+    // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
+    // and MacOS https://stackoverflow.com/a/47455094/167425
+    return $.trim(name.replace(/[\\*\/:;,?"<>|#]/g, ' ')).replace(/\s+/g, '-');
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
   var form = ExporterManager.prepareExportRowsForm(format, true, ext);
-  $('<input />')
-  .attr("name", "contentType")
-  .attr("value", "application/x-unknown") // force download
-  .appendTo(form);
 
   document.body.appendChild(form);
 
@@ -125,7 +122,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
@@ -135,11 +132,11 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 
   $('<input />')
   .attr("name", "project")
-  .attr("value", theProject.id)
+  .val(theProject.id)
   .appendTo(form);
   $('<input />')
   .attr("name", "format")
-  .attr("value", format)
+  .val(format)
   .appendTo(form);
   $('<input />')
   .attr("name", "quoteAll")
@@ -147,7 +144,7 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   if (includeEngine) {
     $('<input />')
     .attr("name", "engine")
-    .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+    .val(JSON.stringify(ui.browsingEngine.getJSON()))
     .appendTo(form);
   }
 
@@ -155,7 +152,7 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 };
 
 ExporterManager.handlers.exportProjectToLocal = function() {
-  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
+  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
@@ -164,7 +161,7 @@ ExporterManager.handlers.exportProjectToLocal = function() {
   .attr("target", "refine-export");
   $('<input />')
   .attr("name", "project")
-  .attr("value", theProject.id)
+  .val(theProject.id)
   .appendTo(form);
 
   document.body.appendChild(form);

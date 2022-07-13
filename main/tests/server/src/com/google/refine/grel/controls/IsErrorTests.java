@@ -24,18 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.IsError;
 import com.google.refine.util.TestUtils;
 
 public class IsErrorTests {
+
     @Test
     public void serializeIsError() {
         String json = "{\"description\":\"Returns whether o is an error\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new IsError(), json);
     }
 }
-

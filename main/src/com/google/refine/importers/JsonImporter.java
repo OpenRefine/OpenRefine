@@ -90,6 +90,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 JsonFactory factory = new JsonFactory();
                 JsonParser parser = factory.createParser(file);
+                parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
 
                 PreviewParsingState state = new PreviewParsingState();
                 JsonNode rootValue = parseForPreview(parser, state);
@@ -205,8 +206,6 @@ public class JsonImporter extends TreeImportingParserBase {
         
         parseOneFile(project, metadata, job, fileSource,
             new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
-        
-        super.parseOneFile(project, metadata, job, fileSource, is, rootColumnGroup, limit, options, exceptions);
     }
     
     static public class JSONTreeReader implements TreeReader {
@@ -224,6 +223,7 @@ public class JsonImporter extends TreeImportingParserBase {
         public JSONTreeReader(InputStream is) {
             try {
                 parser = factory.createParser(is);
+                parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
                 current = null;
                 next  = parser.nextToken(); 
             } catch (IOException e) {

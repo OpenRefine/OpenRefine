@@ -1,0 +1,11 @@
+{
+    "wikibase-extension/import-wikibase-schema": "导入架构…",
+    "wikibase-extension/perform-edits-on-wikibase": "将编辑上传到 Wikibase…",
+    "wikibase-extension/export-to-qs": "导出到 QuickStatements",
+    "wikibase-extension/qs-file": "快速报表文件",
+    "wikibase-extension/wikibase-edits": "维基库编辑…",
+    "wikibase-extension/manage-wikibase-account": "管理 Wikibase 帐户…",
+    "wikibase-extension/menu-label": "维基数据",
+    "wikibase-extension/select-wikibase-instance": "选择 Wikibase 实例…",
+    "wikibase-extension/edit-wikibase-schema": "编辑 Wikibase 架构"
+}

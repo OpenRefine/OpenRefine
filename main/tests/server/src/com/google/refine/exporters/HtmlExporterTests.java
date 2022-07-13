@@ -54,8 +54,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.HtmlTableExporter;
-import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -72,18 +70,18 @@ public class HtmlExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new HtmlTableExporter();
         writer = new StringWriter();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -96,7 +94,7 @@ public class HtmlExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -107,7 +105,7 @@ public class HtmlExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleHtmlTable(){
+    public void exportSimpleHtmlTable() {
         CreateGrid(2, 2);
 
         try {
@@ -117,8 +115,8 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
+                "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -127,14 +125,14 @@ public class HtmlExporterTests extends RefineTest {
                 "<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
                 "</table>\n" +
                 "</body>\n" +
-        "</html>\n");
-        
+                "</html>\n");
+
     }
 
-    // TODO: This test fails because the HTML table exporter 
-    // apparently doesn't honor the column header option.  Should it?
-    @Test(enabled=false)
-    public void exportSimpleHtmlTableNoHeader(){
+    // TODO: This test fails because the HTML table exporter
+    // apparently doesn't honor the column header option. Should it?
+    @Test(enabled = false)
+    public void exportSimpleHtmlTableNoHeader() {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -144,8 +142,8 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
+                "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -154,13 +152,12 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
 
-
     @Test
-    public void exportHtmlTableWithEmptyCells(){
-        CreateGrid(3,3);
+    public void exportHtmlTableWithEmptyCells() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
@@ -171,7 +168,7 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
                 "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
@@ -183,11 +180,11 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        }
-    
+    }
+
     @Test
-    public void exportHtmlTableWithURLs(){
-        CreateGrid(3,3);
+    public void exportHtmlTableWithURLs() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("ftp://ftp.ripe.net/ripe/", null));
         project.rows.get(2).cells.set(0, new Cell("https://gnu.org/", null));
@@ -198,24 +195,25 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
                 "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
                 "<tr><th>column0</th><th>column1</th><th>column2</th></tr>\n" +
                 "<tr><td>row0cell0</td><td>row0cell1</td><td>row0cell2</td></tr>\n" +
-                "<tr><td>row1cell0</td><td><a href=\"ftp://ftp.ripe.net/ripe/\">ftp://ftp.ripe.net/ripe/</a></td><td>row1cell2</td></tr>\n" +
+                "<tr><td>row1cell0</td><td><a href=\"ftp://ftp.ripe.net/ripe/\">ftp://ftp.ripe.net/ripe/</a></td><td>row1cell2</td></tr>\n"
+                +
                 "<tr><td><a href=\"https://gnu.org/\">https://gnu.org/</a></td><td>row2cell1</td><td>row2cell2</td></tr>\n" +
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
     }
 
-    //helper methods
+    // helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -224,12 +222,12 @@ public class HtmlExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);

@@ -24,8 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.importers;
 
+package com.google.refine.importers;
 
 import java.io.StringReader;
 
@@ -37,42 +37,42 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.importers.FixedWidthImporter;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporterTests extends ImporterTest {
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //constants
+    // constants
     String SAMPLE_ROW = "NDB_NoShrt_DescWater";
 
-    //System Under Test
+    // System Under Test
     FixedWidthImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new FixedWidthImporter();
     }
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         SUT = null;
         super.tearDown();
     }
-    
-    //---------------------read tests------------------------
+
+    // ---------------------read tests------------------------
     @Test
-    public void readFixedWidth(){
+    public void readFixedWidth() {
         StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
-        
+
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -81,7 +81,7 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("Col 1");
-        columnNames.add("Col 2"); 
+        columnNames.add("Col 2");
         columnNames.add("Col 3");
         whenGetArrayOption("columnNames", options, columnNames);
 
@@ -89,22 +89,23 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetIntegerOption("headerLines", options, 0);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
         try {
             parseOneFile(SUT, reader);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-        
+
         Assert.assertEquals(project.rows.size(), 3); // Column names count as a row?
         Assert.assertEquals(project.rows.get(1).cells.size(), 3);
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(0), "NDB_No");
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(2), "Water");
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(0), "NDB_No");
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(1), "Shrt_Desc");
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(2), "Water");
         Assert.assertEquals(project.rows.get(2).cells.size(), 3);
-        Assert.assertEquals((String)project.rows.get(2).getCellValue(0), "TooSho");
-        Assert.assertEquals((String)project.rows.get(2).getCellValue(1), "rt");
+        Assert.assertEquals((String) project.rows.get(2).getCellValue(0), "TooSho");
+        Assert.assertEquals((String) project.rows.get(2).getCellValue(1), "rt");
         Assert.assertNull(project.rows.get(2).getCellValue(2));
     }
+
 }

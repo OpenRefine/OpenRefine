@@ -149,9 +149,6 @@ function registerCommands() {
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
   
-  RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
-  RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
-
 }
 
 function registerOperations() {
@@ -204,38 +201,38 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
-  IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+  IM.registerFormat("text", "core-import-formats/text" ); // generic format, no parser to handle it
+  IM.registerFormat("text/line-based", "core-import-formats/text/line-based", "LineBasedParserUI",
       new Packages.com.google.refine.importers.LineBasedImporter());
-  IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+  IM.registerFormat("text/line-based/*sv", "core-import-formats/text/line-based/*sv", "SeparatorBasedParserUI",
       new Packages.com.google.refine.importers.SeparatorBasedImporter());
-  IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+  IM.registerFormat("text/line-based/fixed-width", "core-import-formats/text/line-based/fixed-width", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI", 
               new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI", 
           new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI", 
                   new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
-  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
-  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
+  IM.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
+  IM.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
 
-  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
-  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
+  IM.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
+  IM.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+  IM.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
+  IM.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
+  IM.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
+  IM.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
 
-  IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+  IM.registerFormat("binary", "core-import-formats/binary"); // generic format, no parser to handle it
 
-  IM.registerFormat("service", "Services"); // generic format, no parser to handle it
+  IM.registerFormat("service", "core-import-formats/service"); // generic format, no parser to handle it
 
   /*
    *  Extension to format mappings
    */
-  IM.registerExtension(".txt", "text/line-based");
+  IM.registerExtension(".txt", "text");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
 
@@ -266,7 +263,7 @@ function registerImporting() {
   /*
    *  Mime type to format mappings
    */
-  IM.registerMimeType("text/plain", "text/line-based");
+  IM.registerMimeType("text/plain", "text");
   IM.registerMimeType("text/csv", "text/line-based/*sv");
   IM.registerMimeType("text/x-csv", "text/line-based/*sv");
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
@@ -280,6 +277,7 @@ function registerImporting() {
   IM.registerMimeType("text/turtle", "text/rdf/ttl");
   IM.registerMimeType("application/xml", "text/xml");
   IM.registerMimeType("text/xml", "text/xml");
+  IM.registerMimeType("+xml", "text/xml"); // suffix will be tried only as fallback
   IM.registerMimeType("application/rdf+xml", "text/rdf/xml");
   IM.registerMimeType("application/ld+json", "text/rdf/ld+json");
   IM.registerMimeType("application/atom+xml", "text/xml");
@@ -291,12 +289,15 @@ function registerImporting() {
   IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
-  
+  IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "binary/text/xml/xls/xlsx");
+
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
   IM.registerMimeType("application/javascript", "text/json");
   IM.registerMimeType("text/json", "text/json");
+  IM.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
 
   IM.registerMimeType("application/marc", "text/marc");
   
@@ -330,29 +331,35 @@ function init() {
   registerOperations();
   registerImporting();
 
+  var commonModules = [
+      "3rdparty/jquery.js",
+      "3rdparty/jquery-migrate.js",
+      "externals/jquery-ui/jquery-ui.js",
+      "3rdparty/js.cookie.js",
+      "3rdparty/underscore.js",
+
+      "3rdparty/jquery.i18n/CLDRPluralRuleParser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.js",
+      "3rdparty/jquery.i18n/jquery.i18n.messagestore.js",
+      "3rdparty/jquery.i18n/jquery.i18n.fallbacks.js",
+      "3rdparty/jquery.i18n/jquery.i18n.parser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.emitter.js",
+      "3rdparty/jquery.i18n/jquery.i18n.language.js",
+      "3rdparty/jquery.i18n/languages/fi.js",
+      "3rdparty/jquery.i18n/languages/ru.js",
+    ];
+
   var RC = Packages.com.google.refine.model.recon.ReconConfig;
   RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
 
   ClientSideResourceManager.addPaths(
     "index/scripts",
     module,
-    [
-      
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/date.js",
-      "externals/jquery.i18n.js",
-      "externals/tablesorter/jquery.tablesorter.min.js",
-      "externals/moment-with-locales.min.js",
-      "externals/select2/select2.min.js",
-      "externals/jquery.lavalamp.min.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
+    commonModules.concat([
+      "3rdparty/date.js",
+      "3rdparty/tablesorter/jquery.tablesorter.js",
+      "3rdparty/moment-with-locales.js",
+      "3rdparty/select2/select2.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -389,16 +396,16 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js"
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
-      "externals/select2/select2.css",
-      "externals/tablesorter/theme.blue.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+      "3rdparty/select2/select2.css",
+      "3rdparty/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -426,20 +433,9 @@ function init() {
   ClientSideResourceManager.addPaths(
     "project/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
-      "externals/date.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/underscore-min.js",
+    commonModules.concat([
+      "externals/suggest/suggest-4_3a.js",
+      "3rdparty/date.js",
 
       "scripts/project.js",
 
@@ -466,9 +462,11 @@ function init() {
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
 
+      "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
       "scripts/facets/range-facet.js",
       "scripts/facets/timerange-facet.js",
+      "externals/imgareaselect/jquery.imgareaselect.js", // Used by scatterplot facet only
       "scripts/facets/scatterplot-facet.js",
       "scripts/facets/text-search-facet.js",
 
@@ -490,11 +488,12 @@ function init() {
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/common-transform-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
@@ -502,7 +501,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/jquery-ui-overrides.less",
@@ -540,29 +539,16 @@ function init() {
   ClientSideResourceManager.addPaths(
     "preferences/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
-      "externals/date.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/underscore-min.js",
+    commonModules.concat([
       "scripts/preferences.js",
-    ]
+    ])
   );
   ClientSideResourceManager.addPaths(
     "preferences/styles",
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -603,7 +589,11 @@ function process(path, request, response) {
       var output = response.getWriter();
       try {
         var paths = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-        for each (var qualifiedPath in paths) {
+        for (var key in paths) {
+          if (!paths.hasOwnProperty(key)) {
+            continue;
+          }
+          var qualifiedPath = paths[key];
           var input = null;
           try {
             var url = qualifiedPath.module.getResource(qualifiedPath.path);
@@ -648,9 +638,12 @@ function process(path, request, response) {
         
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
-        for each (var qualifiedPath in styles) {
-          styleInjection.push(
-              '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+        for (var key in styles) {
+          if (styles.hasOwnProperty(key)) {
+            var qualifiedPath = styles[key];
+            styleInjection.push(
+                '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+          }
         }
         context.styleInjection = styleInjection.join("\n");
 
@@ -659,9 +652,12 @@ function process(path, request, response) {
         } else {
           var scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
           var scriptInjection = [];
-          for each (var qualifiedPath in scripts) {
-            scriptInjection.push(
-                '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+          for (var key in scripts) {
+            if (scripts.hasOwnProperty(key)) {
+              var qualifiedPath = scripts[key];
+              scriptInjection.push(
+                  '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+            }
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
@@ -670,11 +666,19 @@ function process(path, request, response) {
           var encodings = [];
           
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
-          for each (var code in sortedCharsetMap.keySet().toArray()) {
+          var keySetArray = sortedCharsetMap.keySet().toArray();
+          for (var key in keySetArray) {
+            if (!keySetArray.hasOwnProperty(key)) {
+              continue;
+            }
+            var code = keySetArray[key];
             var charset = sortedCharsetMap.get(code);
+            var aliasesArray = charset.aliases().toArray();
             var aliases = [];
-            for each (var alias in charset.aliases().toArray()) {
-              aliases.push(alias);
+            for (var key1 in aliasesArray) {
+              if (aliasesArray.hasOwnProperty(key1)) {
+                aliases.push(aliasesArray[key1]);
+              }
             }
             
             encodings.push({

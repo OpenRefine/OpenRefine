@@ -43,7 +43,7 @@ public class Radians implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
+        if (args.length == 1 && args[0] instanceof Number) {
             return Math.toRadians(((Number) args[0]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
@@ -51,12 +51,12 @@ public class Radians implements Function {
 
     @Override
     public String getDescription() {
-        return "Converts an angle in degrees to radians";
+        return "Converts an angle in degrees to radians.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

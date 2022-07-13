@@ -36,7 +36,7 @@ package com.google.refine;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
@@ -56,7 +56,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+    public void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException {
         // empty
     }
 
@@ -93,9 +93,9 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
     }
 
-    //Overridden to make public for testing
+    // Overridden to make public for testing
     @Override
-    public void saveProjects(boolean allModified){
+    public void saveProjects(boolean allModified) {
         super.saveProjects(allModified);
     }
 

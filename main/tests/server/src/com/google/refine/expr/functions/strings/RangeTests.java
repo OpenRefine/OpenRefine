@@ -24,22 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
+package com.google.refine.expr.functions.strings;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.strings.Range;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
 /**
@@ -47,19 +41,17 @@ import com.google.refine.util.TestUtils;
  */
 public class RangeTests extends RefineTest {
 
-    private static Properties bindings;
-    
     private static final Integer[] EMPTY_ARRAY = new Integer[0];
 
-    private static final Integer[] ONE_AND_THREE = new Integer[] {1, 3};
-    private static final Integer[] FIVE_AND_THREE = new Integer[] {5, 3};
+    private static final Integer[] ONE_AND_THREE = new Integer[] { 1, 3 };
+    private static final Integer[] FIVE_AND_THREE = new Integer[] { 5, 3 };
 
-    private static final Integer[] ZERO_TO_TWO = new Integer[] {0, 1, 2};
-    private static final Integer[] ONE_TO_FOUR = new Integer[] {1, 2, 3, 4};
-    private static final Integer[] FIVE_TO_TWO = new Integer[] {5, 4, 3, 2};
+    private static final Integer[] ZERO_TO_TWO = new Integer[] { 0, 1, 2 };
+    private static final Integer[] ONE_TO_FOUR = new Integer[] { 1, 2, 3, 4 };
+    private static final Integer[] FIVE_TO_TWO = new Integer[] { 5, 4, 3, 2 };
 
-    private static final Integer[] NEGATIVE_ONE_TO_FOUR = new Integer[] {-1, 0, 1, 2, 3, 4};
-    private static final Integer[] ONE_TO_NEGATIVE_FOUR = new Integer[] {1, 0, -1, -2, -3, -4};
+    private static final Integer[] NEGATIVE_ONE_TO_FOUR = new Integer[] { -1, 0, 1, 2, 3, 4 };
+    private static final Integer[] ONE_TO_NEGATIVE_FOUR = new Integer[] { 1, 0, -1, -2, -3, -4 };
 
     @Override
     @BeforeTest
@@ -67,34 +59,8 @@ public class RangeTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    @BeforeMethod
-    public void setUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        bindings = null;
-    }
-
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function " + name);
-        }
-        if (args == null) {
-            return function.call(bindings, new Object[0]);
-        } else {
-            return function.call(bindings, args);
-        }
-    }
-
     @Test
-    public void testRangeInvalidParams() {        
+    public void testRangeInvalidParams() {
         // Test number of arguments
         Assert.assertTrue(invoke("range") instanceof EvalError);
         Assert.assertTrue(invoke("range", "") instanceof EvalError);
@@ -192,10 +158,10 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "0"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "1"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "2", "1"))), EMPTY_ARRAY);
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "1"))), new Integer[] {-1, 0});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "1"))), new Integer[] { -1, 0 });
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "5"))), ONE_TO_FOUR);
 
-        Assert.assertEquals(((Integer[]) (invoke("range", "  -1   ", "1"))), new Integer[] {-1, 0});
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1   ", "1"))), new Integer[] { -1, 0 });
         Assert.assertEquals(((Integer[]) (invoke("range", "1", " 5  "))), ONE_TO_FOUR);
 
         // Test valid double string containing three args
@@ -205,10 +171,10 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, 1"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -1"))), ONE_TO_NEGATIVE_FOUR);
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 2"))), new Integer[] {-1, 1, 3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -2"))), new Integer[] {1, -1, -3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 10"))), new Integer[] {-1});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -10"))), new Integer[] {1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 2"))), new Integer[] { -1, 1, 3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -2"))), new Integer[] { 1, -1, -3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 10"))), new Integer[] { -1 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -10"))), new Integer[] { 1 });
 
         Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "0"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "0"))), EMPTY_ARRAY);
@@ -216,20 +182,21 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "1"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-1"))), ONE_TO_NEGATIVE_FOUR);
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "2"))), new Integer[] {-1, 1, 3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-2"))), new Integer[] {1, -1, -3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "10"))), new Integer[] {-1});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-10"))), new Integer[] {1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "2"))), new Integer[] { -1, 1, 3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-2"))), new Integer[] { 1, -1, -3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "10"))), new Integer[] { -1 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-10"))), new Integer[] { 1 });
 
         Assert.assertEquals(((Integer[]) (invoke("range", "  -1  , 5", "1"))), NEGATIVE_ONE_TO_FOUR);
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1,   5"  , "1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1,   5", "1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", " 1   "))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "  -1  ", "5, 1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1", "  5  , 1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "  -1  ", "5,    1   "))), NEGATIVE_ONE_TO_FOUR);
     }
 
-    @Test public void testRangeValidTripleStringParams() {
+    @Test
+    public void testRangeValidTripleStringParams() {
         // Test valid triple string containing three arguments
         Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "0"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "0"))), EMPTY_ARRAY);
@@ -237,10 +204,10 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "1"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-1"))), ONE_TO_NEGATIVE_FOUR);
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "2"))), new Integer[] {-1, 1, 3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-2"))), new Integer[] {1, -1, -3});
-        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "10"))), new Integer[] {-1});
-        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-10"))), new Integer[] {1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "2"))), new Integer[] { -1, 1, 3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-2"))), new Integer[] { 1, -1, -3 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "10"))), new Integer[] { -1 });
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-10"))), new Integer[] { 1 });
 
         Assert.assertEquals(((Integer[]) (invoke("range", "  -1  , 5, 1"))), NEGATIVE_ONE_TO_FOUR);
         Assert.assertEquals(((Integer[]) (invoke("range", "-1,   5  , 1"))), NEGATIVE_ONE_TO_FOUR);
@@ -251,7 +218,7 @@ public class RangeTests extends RefineTest {
     public void testRangeValidIntegerParams() {
         // Test valid single integer argument
         Assert.assertEquals(((Integer[]) (invoke("range", 0))), EMPTY_ARRAY);
-        Assert.assertEquals(((Integer[]) (invoke("range", 5))), new Integer[] {0, 1, 2, 3, 4});
+        Assert.assertEquals(((Integer[]) (invoke("range", 5))), new Integer[] { 0, 1, 2, 3, 4 });
 
         // Test valid double integer arguments
         Assert.assertEquals(((Integer[]) (invoke("range", -1, 5))), NEGATIVE_ONE_TO_FOUR);
@@ -346,12 +313,6 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "0"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-1"))), FIVE_TO_TWO);
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-2"))), FIVE_AND_THREE);
-    }
-
-    @Test
-    public void serializeRange() {
-        String json = "{\"description\":\"Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).\",\"params\":\"A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Range(), json);
     }
 
 }

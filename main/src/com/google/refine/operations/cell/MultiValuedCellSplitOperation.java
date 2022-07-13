@@ -57,7 +57,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _mode;
     final protected String  _separator;
     final protected Boolean _regex;
-    
+
     final protected int[]      _fieldLengths;
 
     @JsonCreator
@@ -183,7 +183,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
-            if("lengths".equals(_mode)) {
+            if ("lengths".equals(_mode)) {
                 if (_fieldLengths.length > 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
                     
@@ -201,9 +201,8 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                         lastIndex = thisIndex;
                     }
                 }
-            }
-            else if (_regex) {
-                Pattern pattern = Pattern.compile(_separator);
+            } else if (_regex) {
+                Pattern pattern = Pattern.compile(_separator, Pattern.UNICODE_CHARACTER_CLASS);
                 values = pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);

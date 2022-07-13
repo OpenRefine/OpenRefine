@@ -30,11 +30,15 @@ open-refine.log
 .vscode
 .metadata # Eclipse plugins specific
 
+# Locally stored "Eclipse launch configurations"
+*.launch
+
 .idea
 *.iml
 
 main/target/
 main/webapp/WEB-INF/lib/
+main/webapp/modules/core/3rdparty/
 server/target/
 extensions/*/target/
 extensions/*/module/MOD-INF/classes/
@@ -55,3 +59,18 @@ apache-maven-*-bin.tar.gz
 
 # Ignore refine-dev.ini
 refine-dev.ini
+
+# Java annotation processor (APT)
+.factorypath
+
+# Code Recommenders
+.recommenders/
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Ignore Node modules that might inadvertently install at current path instead of user or configured env var NODE_PATH 
+node_modules/
+
+# Ignore the node_modules folder as they are dependencies to be installed by end-user
+main/webapp/node_modules

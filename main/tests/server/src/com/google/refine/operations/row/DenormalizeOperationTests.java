@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.row;
 
 import org.testng.annotations.BeforeSuite;
@@ -31,16 +32,15 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.row.DenormalizeOperation;
 import com.google.refine.util.TestUtils;
 
-
 public class DenormalizeOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "denormalize", DenormalizeOperation.class);
     }
-    
+
     @Test
     public void serializeDenormalizeOperation() throws Exception {
         String json = "{"

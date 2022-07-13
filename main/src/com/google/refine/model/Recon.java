@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,6 +62,7 @@ public class Recon implements HasFields {
     
     private static final String WIKIDATA_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
     private static final String WIKIDATA_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
+    private static final Random idGenerator = new Random();
 
     static public enum Judgment {
         @JsonProperty("none")
@@ -151,7 +153,7 @@ public class Recon implements HasFields {
     }
     
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
-        id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
+        id = idGenerator.nextLong();
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;

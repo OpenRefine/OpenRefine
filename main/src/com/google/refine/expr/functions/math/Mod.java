@@ -44,8 +44,8 @@ public class Mod implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && 
-                args[0] != null && args[0] instanceof Number && 
-                args[1] != null && args[1] instanceof Number) {
+                args[0] instanceof Number &&
+                args[1] instanceof Number) {
             int a = ((Number) args[0]).intValue();
             int b = ((Number) args[1]).intValue();
             
@@ -56,12 +56,12 @@ public class Mod implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a modulus b";
+        return "Returns n1 modulus n2.";
     }
     
     @Override
     public String getParams() {
-        return "number a, number b";
+        return "number n1, number n2";
     }
     
     @Override

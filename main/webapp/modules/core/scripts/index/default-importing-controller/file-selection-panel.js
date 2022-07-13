@@ -60,6 +60,7 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
   
   $('#or-import-select').text($.i18n('core-index-import/select-file'));
+  $('#or-import-singleProject').text($.i18n('core-index-import/single-project'));
   $('#or-import-severalFile').text($.i18n('core-index-import/several-file'));
   $('#or-import-selExt').text($.i18n('core-index-import/sel-by-extension'));
   $('#or-import-regex').text($.i18n('core-index-import/sel-by-regex'));
@@ -67,9 +68,9 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._fileSelectionPanelElmts.nextButton.html($.i18n('core-buttons/conf-pars-opt'));
   this._fileSelectionPanelElmts.selectAllButton.text($.i18n('core-buttons/select-all'));
-  this._fileSelectionPanelElmts.unselectAllButton.text($.i18n('core-buttons/unselect-all'));
+  this._fileSelectionPanelElmts.deselectAllButton.text($.i18n('core-buttons/deselect-all'));
   this._fileSelectionPanelElmts.selectRegexButton.text($.i18n('core-buttons/select'));
-  this._fileSelectionPanelElmts.unselectRegexButton.text($.i18n('core-buttons/unselect'));
+  this._fileSelectionPanelElmts.deselectRegexButton.text($.i18n('core-buttons/deselect'));
   
   this._fileSelectionPanelElmts.startOverButton.click(function() {
     self._startOver();
@@ -160,7 +161,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
     });
     if (fileRecord.selected) {
       // Initial selection determined on server side.
-      checkbox.attr("checked", "checked");
+      checkbox.prop('checked', true);
       self._selectedMap[fileRecord.location] = fileRecord;
     }
 
@@ -185,12 +186,12 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       var fileRecord = files[i];
       self._selectedMap[fileRecord.location] = fileRecord;
     }
-    self._fileSelectionPanelElmts.filePanel.find("input").attr("checked", "checked");
+    self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', true);
     self._updateFileSelectionSummary();
   });
-  this._fileSelectionPanelElmts.unselectAllButton.unbind().click(function(evt) {
+  this._fileSelectionPanelElmts.deselectAllButton.unbind().click(function(evt) {
     self._selectedMap = {};
-    self._fileSelectionPanelElmts.filePanel.find("input").removeAttr("checked");
+    self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', false);
     self._updateFileSelectionSummary();
   });
 
@@ -200,7 +201,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
   var renderExtension = function(extension) {
     var tr = table.insertRow(table.rows.length);
     $('<td>').text(extension.extension).appendTo(tr);
-    $('<td>').text(extension.count + (extension.count > 1 ? " files" : " file")).appendTo(tr);
+    $('<td>').text($.i18n('core-index-import/file-count', extension.count)).appendTo(tr);
     $('<button>')
     .text($.i18n('core-buttons/select'))
     .addClass("button")
@@ -213,14 +214,14 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .attr("checked", "checked");
+            .prop('checked', true);
           }
         }
       }
       self._updateFileSelectionSummary();
     });
     $('<button>')
-    .text($.i18n('core-buttons/unselect'))
+    .text($.i18n('core-buttons/deselect'))
     .addClass("button")
     .appendTo($('<td>').appendTo(tr))
     .click(function() {
@@ -231,7 +232,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .removeAttr("checked");
+            .prop('checked', false);
           }
         }
       }
@@ -260,7 +261,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     } catch (e) {
       // Ignore
     }
-    self._fileSelectionPanelElmts.regexSummary.text(count + (count == 1 ? " match" : " matches"));
+      self._fileSelectionPanelElmts.regexSummary.text($.i18n('core-index-import/match-count'), count);
   });
   this._fileSelectionPanelElmts.selectRegexButton.unbind().click(function() {
     self._fileSelectionPanelElmts.filePanel
@@ -275,7 +276,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .attr("checked", "checked");
+            .prop('checked', true);
           }
         }
       }
@@ -284,7 +285,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       // Ignore
     }
   });
-  this._fileSelectionPanelElmts.unselectRegexButton.unbind().click(function() {
+  this._fileSelectionPanelElmts.deselectRegexButton.unbind().click(function() {
     self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")
     .removeClass("highlighted");
@@ -297,7 +298,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .removeAttr("checked");
+            .prop('checked', false);
           }
         }
       }
@@ -317,7 +318,7 @@ Refine.DefaultImportingController.prototype._updateFileSelectionSummary = functi
     }
   }
   this._job.config.fileSelection = fileSelection;
-  this._fileSelectionPanelElmts.summary.text(fileSelection.length + " of " + files.length + " files selected");
+  this._fileSelectionPanelElmts.summary.text($.i18n('core-index-import/files-selected', fileSelection.length, files.length));
 };
 
 Refine.DefaultImportingController.prototype._commitFileSelection = function() {

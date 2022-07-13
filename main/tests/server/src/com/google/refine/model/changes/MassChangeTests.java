@@ -24,9 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model.changes;
 
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,9 +42,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.CellAtRow;
-import com.google.refine.model.changes.ColumnAdditionChange;
-import com.google.refine.model.changes.MassChange;
 
 public class MassChangeTests extends RefineTest {
 
@@ -62,11 +60,9 @@ public class MassChangeTests extends RefineTest {
     }
 
     /**
-     * Test case for #914 - Demonstrates MassChange revert doesn't work by
-     * adding two columns to a project with a MassChange and then reverting.
-     * Without the fix, column "a" will be removed before column "b", causing
-     * column "b" removal to fail because it won't be found at index 1 as
-     * expected.
+     * Test case for #914 - Demonstrates MassChange revert doesn't work by adding two columns to a project with a
+     * MassChange and then reverting. Without the fix, column "a" will be removed before column "b", causing column "b"
+     * removal to fail because it won't be found at index 1 as expected.
      */
     @Test
     public void testWrongReverseOrder()

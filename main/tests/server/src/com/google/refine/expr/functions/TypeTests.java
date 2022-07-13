@@ -24,18 +24,60 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
-public class TypeTests {
+public class TypeTests extends RefineTest {
+
+    static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
+    private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+    @Override
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+
+    @BeforeMethod
+    public void setUp() {
+        bindings = new Properties();
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        bindings = null;
+    }
+
     @Test
-    public void serializeType() {
-        String json = "{\"description\":\"Returns the type of o\",\"params\":\"object o\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Type(), json);
+    public void testTypeInvalidParams() {
+        Assert.assertTrue(invoke("type") instanceof EvalError);
+    }
+
+    @Test
+    public void testType() {
+        Assert.assertEquals(invoke("type", (Object) null), "undefined");
+        Assert.assertEquals(invoke("type", 1), "number");
+        Assert.assertEquals(invoke("type", true), "boolean");
+        Assert.assertEquals(invoke("type", "a string"), "string");
+        Assert.assertEquals(invoke("type", dateTimeValue), "date");
+        Assert.assertEquals(invoke("type", listArray), "array");
     }
 }
-

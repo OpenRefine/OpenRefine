@@ -11,19 +11,21 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsRequestInitializer;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
@@ -32,16 +34,19 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class GoogleAPIExtension {
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
-    // We can set the second param to a default client_id for release version
+
+    // For a production release, the second parameter (default value) can be set
+    // for the following three properties (client_id, client_secret, and API key) to
+    // the production values from the Google API console
     private static final String CLIENT_ID = System.getProperty("ext.gdata.clientid", "");
-    // We can set the second param to a default client_secret for release version
     private static final String CLIENT_SECRET = System.getProperty("ext.gdata.clientsecret", "");
+    private static final String API_KEY = System.getProperty("ext.gdata.apikey", "");
     
     /** Global instance of the HTTP transport. */
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
     /** Global instance of the JSON factory. */
-    protected static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    protected static final JsonFactory JSON_FACTORY = new GsonFactory();
 
     private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS};
     
@@ -54,6 +59,10 @@ abstract public class GoogleAPIExtension {
     
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
+        String host = request.getHeader("Host");
+        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
+	    return "https://github.com/OpenRefine/OpenRefine/wiki/Google-Extension#missing-credentials";
+        }
         String authorizedUrl = makeRedirectUrl(module, request);
         String state = makeState(module, request);
         
@@ -110,8 +119,8 @@ abstract public class GoogleAPIExtension {
       }
     
     static public Drive getDriveService(String token) {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
-        
+        Credential credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
+
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
@@ -156,19 +165,28 @@ abstract public class GoogleAPIExtension {
      * @throws IOException
      */
     public static Sheets getSheetsService(String token) throws IOException {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
+        final Credential credential;
+        if (token != null) {
+            credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
+        } else {
+            credential = null;
+        }
         int connectTimeout = getConnectTimeout();
         int readTimeout = getReadTimeout();
         
-        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
-            @Override
-            public void initialize(HttpRequest httpRequest) throws IOException {
-                credential.initialize(httpRequest);
-                httpRequest.setConnectTimeout(connectTimeout);  
-                httpRequest.setReadTimeout(readTimeout);  // 3 minutes read timeout
-            }
-        })
-          .setApplicationName(SERVICE_APP_NAME).build();
+        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                .setApplicationName(SERVICE_APP_NAME)
+                .setSheetsRequestInitializer(new SheetsRequestInitializer(API_KEY))
+                .setHttpRequestInitializer(new HttpRequestInitializer() {
+                    @Override
+                    public void initialize(HttpRequest httpRequest) throws IOException {
+                        if (credential != null) {
+                            credential.initialize(httpRequest);
+                        }
+                        httpRequest.setConnectTimeout(connectTimeout);
+                        httpRequest.setReadTimeout(readTimeout);
+                    }
+                }).build();
     }
 
     private static int getConnectTimeout() {

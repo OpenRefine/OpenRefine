@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,7 +178,7 @@ public abstract class ProjectManager {
      * @param tos
      * @throws IOException
      */
-    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
+    public abstract void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException;
 
 
     /**

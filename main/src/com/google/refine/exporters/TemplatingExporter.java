@@ -57,7 +57,7 @@ public class TemplatingExporter implements WriterExporter {
 
     @Override
     public String getContentType() {
-        return "application/x-unknown";
+        return "text/plain";
     }
     
     protected static class TemplateConfig {

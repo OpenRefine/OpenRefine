@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -83,7 +84,7 @@ public class SmartSplitTests {
         String[] actual = (String[]) invoke("smartSplit", testString, '#');
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testSmartSplitCharSepSpace() {
         String testString = "teststring1 teststring2 teststring3 teststring4";
@@ -91,7 +92,7 @@ public class SmartSplitTests {
         String[] actual = (String[]) invoke("smartSplit", testString, ' ');
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testSmartSplitStringSepGiven() {
         String testString = "teststring1#@$teststring2#@$teststring3#@$teststring4";
@@ -101,8 +102,7 @@ public class SmartSplitTests {
     }
 
     /**
-     * Lookup a control function by name and invoke it with a variable number of
-     * args
+     * Lookup a control function by name and invoke it with a variable number of args
      */
     private static Object invoke(String name, Object... args) {
         // registry uses static initializer, so no need to set it up
@@ -115,12 +115,6 @@ public class SmartSplitTests {
         } else {
             return function.call(bindings, args);
         }
-    }
-
-    @Test
-    public void serializeSmartSplit() {
-        String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \\\"sep\\\" is not given.\",\"params\":\"string s, optional string sep\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new SmartSplit(), json);
     }
 
 }

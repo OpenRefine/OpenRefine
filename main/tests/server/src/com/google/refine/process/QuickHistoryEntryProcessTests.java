@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.process;
 
 import static org.mockito.Mockito.mock;
@@ -32,16 +33,15 @@ import org.testng.annotations.Test;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
-import com.google.refine.process.Process;
-import com.google.refine.process.QuickHistoryEntryProcess;
 import com.google.refine.util.TestUtils;
 
 public class QuickHistoryEntryProcessTests {
+
     public static class QuickHistoryEntryProcessStub extends QuickHistoryEntryProcess {
 
         public QuickHistoryEntryProcessStub(Project project, String briefDescription) {
             super(project, briefDescription);
-            
+
         }
 
         @Override
@@ -49,16 +49,16 @@ public class QuickHistoryEntryProcessTests {
                 throws Exception {
             return null;
         }
-        
+
     }
-    
+
     @Test
     public void serializeQuickHistoryEntryProcess() {
         Project project = mock(Project.class);
         Process process = new QuickHistoryEntryProcessStub(project, "quick description");
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
-                + "\"id\":"+hashCode+","
+                + "\"id\":" + hashCode + ","
                 + "\"description\":"
                 + "\"quick description\","
                 + "\"immediate\":true,"

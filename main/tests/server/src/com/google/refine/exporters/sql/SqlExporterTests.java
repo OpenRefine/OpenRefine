@@ -71,9 +71,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
-
 public class SqlExporterTests extends RefineTest {
-    
+
     private static final String TEST_PROJECT_NAME = "SQL_EXPORTER_TEST_PROJECT";
 
     @Override
@@ -82,7 +81,7 @@ public class SqlExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
     Project project;
@@ -91,11 +90,11 @@ public class SqlExporterTests extends RefineTest {
     SqlCreateBuilder sqlCreateBuilder;
     SqlInsertBuilder sqlInsertBuilder;
 
-    //System Under Test
+    // System Under Test
     SqlExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new SqlExporter();
         writer = new StringWriter();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -108,7 +107,7 @@ public class SqlExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -119,12 +118,12 @@ public class SqlExporterTests extends RefineTest {
         sqlCreateBuilder = null;
         sqlInsertBuilder = null;
     }
-    
+
     @Test
-    public void testExportSqlWithNonZeroScaleNumericValue(){
+    public void testExportSqlWithNonZeroScaleNumericValue() {
         createNonZeroScaleNumericGrid(2, 2);
         String tableName = "sql_table_test";
-        String optionsString = createOptionsFromProject(tableName, SqlData.SQL_TYPE_NUMERIC,null).toString();
+        String optionsString = createOptionsFromProject(tableName, SqlData.SQL_TYPE_NUMERIC, null).toString();
         when(options.getProperty("options")).thenReturn(optionsString);
 
         try {
@@ -132,34 +131,32 @@ public class SqlExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
-        logger.info("result = \n" + result);
+        logger.debug("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        //logger.info("checkResult1 =" + checkResult);
         checkResult = result.contains("INSERT INTO " + tableName);
-       // logger.info("checkResult2 =" + checkResult);
-        Assert.assertEquals(checkResult,  true);
-   
+        Assert.assertEquals(checkResult, true);
+
     }
 
     private void createNonZeroScaleNumericGrid(int noOfRows, int noOfColumns) {
         createColumnsWithScaleEqualsTwo(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell(generateRandomNumericValues() , null));
+            for (int j = 0; j < noOfColumns; j++) {
+                row.cells.add(new Cell(generateRandomNumericValues(), null));
             }
             project.rows.add(row);
         }
-        
+
     }
-    
-    protected void createColumnsWithScaleEqualsTwo(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+
+    protected void createColumnsWithScaleEqualsTwo(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -169,10 +166,10 @@ public class SqlExporterTests extends RefineTest {
     }
 
     @Test
-    public void testExportSimpleSql(){
+    public void testExportSimpleSql() {
         createGrid(2, 2);
         String tableName = "sql_table_test";
-        String optionsString = createOptionsFromProject(tableName, null,null).toString();
+        String optionsString = createOptionsFromProject(tableName, null, null).toString();
         when(options.getProperty("options")).thenReturn(optionsString);
 
         try {
@@ -180,128 +177,144 @@ public class SqlExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
 
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         Assert.assertTrue(result.contains("INSERT INTO " + tableName));
-   
+
     }
-    
+
     @Test
-    public void testExportSqlNoSchema(){
+    public void testExportSqlNoSchema() {
         createGrid(2, 2);
         String tableName = "sql_table_test";
-        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null,null);
+        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeStructure", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-       // logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
-        //logger.info("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        Assert.assertEquals(checkResult,  false);
-       
+        Assert.assertEquals(checkResult, false);
+
         checkResult = result.contains("INSERT INTO " + tableName);
-        Assert.assertEquals(checkResult,  true);
-   
+        Assert.assertEquals(checkResult, true);
+
     }
-    
+
     @Test
-    public void testExportSqlNoContent(){
+    public void testExportSqlNoContent() {
         createGrid(2, 2);
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeContent", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
-       // logger.info("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        Assert.assertEquals(checkResult,  true);
-       
+        Assert.assertEquals(checkResult, true);
+
         checkResult = result.contains("INSERT INTO " + tableName);
-        Assert.assertEquals(checkResult,  false);
-   
+        Assert.assertEquals(checkResult, false);
+
     }
-    
+
     @Test
-    public void testExportSqlIncludeSchemaWithDropStmt(){
+    public void testExportSqlIncludeSchemaWithDropStmt() {
         createGrid(2, 2);
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
-        
+
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
-        //logger.info("result = " + result);
-        
+
         Assert.assertNotNull(result);
 //        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
 //        assertNotEquals(writer.toString(), SqlExporter.NO_COL_SELECTED_ERROR);
-        
+
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult1 = " + checkResult);
-       
-        checkResult = result.contains("INSERT INTO " + tableName );
-        Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult2 = " + checkResult);
-        
+        Assert.assertEquals(checkResult, true);
+
+        checkResult = result.contains("INSERT INTO " + tableName);
+        Assert.assertEquals(checkResult, true);
+
         checkResult = result.contains("DROP TABLE IF EXISTS " + tableName + ";");
-        Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult3 = " + checkResult);
-   
+        Assert.assertEquals(checkResult, true);
+
     }
 
     @Test
-    public void testGetCreateSql(){
-        createGrid(3,3);
+    public void testGetCreateSql() {
+        createGrid(3, 3);
         String tableName = "sql_table_test";
         String type = "CHAR";
         String size = "2";
         JsonNode optionsJson = createOptionsFromProject(tableName, type, size);
-       // logger.info("Options:: = " + optionsJson.toString());
         List<String> columns = project.columnModel.columns.stream().map(col -> col.getName()).collect(Collectors.toList());
-       
-        sqlCreateBuilder  = new SqlCreateBuilder(tableName, columns, optionsJson);
+
+        sqlCreateBuilder = new SqlCreateBuilder(tableName, columns, optionsJson);
         String createSql = sqlCreateBuilder.getCreateSQL();
-        //logger.info("createSql = \n" + createSql);
         Assert.assertNotNull(createSql);
         boolean result = createSql.contains(type + "(" + size + ")");
-        Assert.assertEquals(result,  true);
-        
+        Assert.assertEquals(result, true);
+
     }
-    
+
     @Test
-    public void testExportSqlWithNullFields(){
+    public void testExportSqlWithSpecialCharacterInclusiveColumnNames() {
+        int noOfCols = 4;
+        int noOfRows = 1;
+        createGridWithSpecialCharacters(noOfRows, noOfCols);
+        String tableName = "sql_table_test";
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        optionsJson.put("trimColumnNames", true);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (_column_0_,_column_1_,_column_2_,_column_3_) VALUES \n" +
+                "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+
+    }
+
+    @Test
+    public void testExportSqlWithNullFields() {
         int inNull = 8;
         createGridWithNullFields(3, 3, inNull);
         String tableName = "sql_table_test";
@@ -309,29 +322,25 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
-        
-        
+
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
         Assert.assertNotNull(result);
-        //logger.info("\nresult = " + result);
-       // logger.info("\nNull Count:" + countWordInString(result, "null"));
-        
+
         int countNull = countWordInString(result, "null");
         Assert.assertEquals(countNull, inNull);
 
     }
-    
+
     @Test
-    public void testExportSqlWithNotNullColumns(){
+    public void testExportSqlWithNotNullColumns() {
         int noOfCols = 4;
         int noOfRows = 3;
         createGrid(noOfRows, noOfCols);
@@ -340,26 +349,26 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
-        
-       when(options.getProperty("options")).thenReturn(optionsJson.toString());
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         String result = writer.toString();
-        logger.info("\nresult:={} ", result);
+        logger.debug("\nresult:={} ", result);
         Assert.assertNotNull(result);
-     
+
         int countNull = countWordInString(result, "NOT NULL");
-        logger.info("\nNot Null Count: {}" , countNull);
+        logger.debug("\nNot Null Count: {}", countNull);
         Assert.assertEquals(countNull, noOfCols);
 
     }
-    
+
     @Test
-    public void testExportSqlWithSingleQuote(){
+    public void testExportSqlWithSingleQuote() {
         int noOfCols = 4;
         int noOfRows = 1;
         createGridWithSingleQuote(noOfRows, noOfCols);
@@ -368,41 +377,41 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
-        
-       when(options.getProperty("options")).thenReturn(optionsJson.toString());
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
-        
-        String result = writer.toString();
-        logger.info("\nresult:={} ", result);
 
-        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" + 
-        		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" +
+                "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
 
     }
-  
-    //helper methods
-    
-   public int countWordInString(String input, String word){
-       if(input == null || input.isEmpty()) {
-           return 0;
-       }
-       int i = 0;
-       Pattern p = Pattern.compile(word);
-       Matcher m = p.matcher( input );
-       while (m.find()) {
-           i++;
-       }
-       
-       return i;
-       
-   }
-    
-   protected void createColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+
+    // helper methods
+
+    public int countWordInString(String input, String word) {
+        if (input == null || input.isEmpty()) {
+            return 0;
+        }
+        int i = 0;
+        Pattern p = Pattern.compile(word);
+        Matcher m = p.matcher(input);
+        while (m.find()) {
+            i++;
+        }
+
+        return i;
+
+    }
+
+    protected void createColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -411,174 +420,188 @@ public class SqlExporterTests extends RefineTest {
         }
     }
 
-    protected void createGrid(int noOfRows, int noOfColumns){
+    protected void createColumnsWithSpecialCharacters(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
+            try {
+                project.columnModel.addColumn(i, new Column(i, "@" + "column" + " " + i + "/"), true);
+            } catch (ModelException e1) {
+                Assert.fail("Could not create column");
+            }
+        }
+    }
+
+    protected void createGrid(int noOfRows, int noOfColumns) {
         createColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
-    protected void createGridWithSingleQuote(int noOfRows, int noOfColumns){
+
+    protected void createGridWithSingleQuote(int noOfRows, int noOfColumns) {
         createColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("It's row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
-    protected void createGridWithNullFields(int noOfRows, int noOfColumns, int noOfNullFields){
-        createColumns(noOfColumns);
-        if(noOfNullFields > (noOfColumns * noOfRows)) {
-            noOfNullFields = noOfColumns * noOfRows;
-        }
-        int k = 0;
-        for(int i = 0; i < noOfRows; i++){
+
+    protected void createGridWithSpecialCharacters(int noOfRows, int noOfColumns) {
+        createColumnsWithSpecialCharacters(noOfColumns);
+
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
-                if(k < noOfNullFields) {
-                    row.cells.add(new Cell("", null)); 
-                    k++;
-                }else {
-                    row.cells.add(new Cell("row" + i + "cell" + j, null));
-                }
-                
+            for (int j = 0; j < noOfColumns; j++) {
+                row.cells.add(new Cell("It's row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
+
+    protected void createGridWithNullFields(int noOfRows, int noOfColumns, int noOfNullFields) {
+        createColumns(noOfColumns);
+        if (noOfNullFields > (noOfColumns * noOfRows)) {
+            noOfNullFields = noOfColumns * noOfRows;
+        }
+        int k = 0;
+        for (int i = 0; i < noOfRows; i++) {
+            Row row = new Row(noOfColumns);
+            for (int j = 0; j < noOfColumns; j++) {
+                if (k < noOfNullFields) {
+                    row.cells.add(new Cell("", null));
+                    k++;
+                } else {
+                    row.cells.add(new Cell("row" + i + "cell" + j, null));
+                }
+
+            }
+            project.rows.add(row);
+        }
+    }
+
     protected ObjectNode createNumericColOptionsFromProject(String tableName, String type, String size) {
-        
+
         ObjectNode json = ParsingUtilities.mapper.createObjectNode();
         ArrayNode columns = json.putArray("columns");
         json.put("tableName", tableName);
-        
+
         List<Column> cols = project.columnModel.columns;
-      
+
         cols.forEach(c -> {
-            //logger.info("Column Name = " + c.getName());
             ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
             columnModel.put("name", c.getName());
-            if(type != null) {
+            if (type != null) {
                 columnModel.put("type", type);
             } else {
                 columnModel.put("type", "VARCHAR");
             }
-            if(size != null) {
-                columnModel.put("size", size); 
+            if (size != null) {
+                columnModel.put("size", size);
             } else {
                 columnModel.put("size", "100");
             }
-            
-            if(type != null) {
+
+            if (type != null) {
                 columnModel.put("type", type);
             }
-            if(size != null) {
-               // logger.info(" Size = " + size);
+            if (size != null) {
                 columnModel.put("size", size);
             }
-            
+
             columns.add(columnModel);
-       
+
         });
-        
-       return json;
+
+        return json;
     }
-  
-   protected JsonNode createOptionsFromProject(String tableName, String type, String size) {
-       ObjectNode json = ParsingUtilities.mapper.createObjectNode();
-       json.put("tableName", tableName);
-       ArrayNode columns = json.putArray("columns");
-       
-       List<Column> cols = project.columnModel.columns;
-     
-       cols.forEach(c -> {
-           //logger.info("Column Name = " + c.getName());
-           ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
-           columnModel.put("name", c.getName());
-           if(type != null) {
-               columnModel.put("type", type);
-           }else {
-               columnModel.put("type", "VARCHAR");
-           }
-           if(size != null) {
-               columnModel.put("size", size); 
-           }else {
-               columnModel.put("size", "100");
-           }
-           
-           if(type != null) {
-               columnModel.put("type", type);
-           }
-           if(size != null) {
-              // logger.info(" Size = " + size);
-               columnModel.put("size", size);
-           }
-           
-           columns.add(columnModel);
-      
-       });
-       
-       return json;
-   }
-   
+
+    protected JsonNode createOptionsFromProject(String tableName, String type, String size) {
+        ObjectNode json = ParsingUtilities.mapper.createObjectNode();
+        json.put("tableName", tableName);
+        ArrayNode columns = json.putArray("columns");
+
+        List<Column> cols = project.columnModel.columns;
+
+        cols.forEach(c -> {
+            ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
+            columnModel.put("name", c.getName());
+            if (type != null) {
+                columnModel.put("type", type);
+            } else {
+                columnModel.put("type", "VARCHAR");
+            }
+            if (size != null) {
+                columnModel.put("size", size);
+            } else {
+                columnModel.put("size", "100");
+            }
+
+            if (type != null) {
+                columnModel.put("type", type);
+            }
+            if (size != null) {
+                columnModel.put("size", size);
+            }
+
+            columns.add(columnModel);
+
+        });
+
+        return json;
+    }
+
     protected ObjectNode createOptionsFromProject(String tableName, String type, String size, String defaultValue,
             boolean allowNull) {
-       
-       ObjectNode json = ParsingUtilities.mapper.createObjectNode();
-       ArrayNode columns = json.putArray("columns");
-       json.put("tableName", tableName);
-       
-       List<Column> cols = project.columnModel.columns;
-     
-       cols.forEach(c -> {
-           //logger.info("Column Name = " + c.getName());
-           ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
-           columnModel.put("name", c.getName());
-           if(type != null) {
-               columnModel.put("type", type);
-           }else {
-               columnModel.put("type", "VARCHAR");
-           }
-           if(size != null) {
-               columnModel.put("size", size); 
-           }else {
-               columnModel.put("size", "100");
-           }
-           
-           if(type != null) {
-               columnModel.put("type", type);
-           }
-           if(size != null) {
-              // logger.info(" Size = " + size);
-               columnModel.put("size", size);
-           }
-          
-           columnModel.put("defaultValue", defaultValue);
-           columnModel.put("allowNull", allowNull);
-           
-           columns.add(columnModel);
-      
-       });
-       
-      return json;
-   }
-    
-    double generateRandomNumericValues(){
-        int precision = 100; //scale = 2
-        double randomnum = Math.floor(Math.random() * (10 * precision - 1 * precision) + 1 * precision) / (1*precision);
+
+        ObjectNode json = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode columns = json.putArray("columns");
+        json.put("tableName", tableName);
+
+        List<Column> cols = project.columnModel.columns;
+
+        cols.forEach(c -> {
+            ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
+            columnModel.put("name", c.getName());
+            if (type != null) {
+                columnModel.put("type", type);
+            } else {
+                columnModel.put("type", "VARCHAR");
+            }
+            if (size != null) {
+                columnModel.put("size", size);
+            } else {
+                columnModel.put("size", "100");
+            }
+
+            if (type != null) {
+                columnModel.put("type", type);
+            }
+            if (size != null) {
+                columnModel.put("size", size);
+            }
+
+            columnModel.put("defaultValue", defaultValue);
+            columnModel.put("allowNull", allowNull);
+
+            columns.add(columnModel);
+
+        });
+
+        return json;
+    }
+
+    double generateRandomNumericValues() {
+        int precision = 100; // scale = 2
+        double randomnum = Math.floor(Math.random() * (10 * precision - 1 * precision) + 1 * precision) / (1 * precision);
         return randomnum;
     }
-    
-   
-  
+
 }

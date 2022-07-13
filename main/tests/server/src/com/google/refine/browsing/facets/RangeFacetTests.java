@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
@@ -42,19 +43,20 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RangeFacetTests extends RefineTest {
-    public static String configJson = "{\n" + 
-            "          \"selectNumeric\": true,\n" + 
-            "          \"expression\": \"value\",\n" + 
-            "          \"selectBlank\": true,\n" + 
-            "          \"selectNonNumeric\": true,\n" + 
-            "          \"selectError\": true,\n" + 
-            "          \"name\": \"my column\",\n" + 
-            "          \"from\": -30,\n" + 
-            "          \"to\": 90,\n" + 
-            "          \"type\": \"range\",\n" + 
-            "          \"columnName\": \"my column\"\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"selectNumeric\": true,\n" +
+            "          \"expression\": \"value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectNonNumeric\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": -30,\n" +
+            "          \"to\": 90,\n" +
+            "          \"type\": \"range\",\n" +
+            "          \"columnName\": \"my column\"\n" +
             "        }";
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -74,13 +76,13 @@ public class RangeFacetTests extends RefineTest {
             + "\"nonNumericCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
+
     @Test
     public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
-    
+
     @Test
     public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column\n"

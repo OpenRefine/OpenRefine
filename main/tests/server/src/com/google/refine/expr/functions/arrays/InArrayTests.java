@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,49 +33,27 @@ import java.util.List;
 import java.util.Properties;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.arrays.InArray;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
 public class InArrayTests extends RefineTest {
-    
+
     static Properties bindings;
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
-    static final String stringArray[] = {"v1","v2","v3"};
-    
-    
-    @BeforeMethod
-    public void SetUp() {
-        bindings = new Properties();
-    }
+    static final String stringArray[] = { "v1", "v2", "v3" };
 
-    @AfterMethod
-    public void TearDown() {
-        bindings = null;
-    }
-    
-    @Test
-    public void serializeInArray() {
-        String json = "{\"description\":\"Checks if array a contains string s\",\"params\":\"array a, string s\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new InArray(), json);
-    }
-    
     @Test
     public void testInArrayParameters() {
         Assert.assertTrue(invoke("inArray") instanceof EvalError);
         Assert.assertTrue(invoke("inArray", "string1") instanceof EvalError);
-        Assert.assertTrue(invoke("inArray", "string1","string2") instanceof EvalError);
-        Assert.assertTrue(invoke("inArray", "string1","string2","string3") instanceof EvalError);
+        Assert.assertTrue(invoke("inArray", "string1", "string2") instanceof EvalError);
+        Assert.assertTrue(invoke("inArray", "string1", "string2", "string3") instanceof EvalError);
     }
-    
+
     @Test
     public void testInArray() {
         Assert.assertTrue((boolean) invoke("inArray", listArray, "v1"));
@@ -82,7 +61,7 @@ public class InArrayTests extends RefineTest {
         Assert.assertTrue((boolean) invoke("inArray", stringArray, "v1"));
         Assert.assertFalse((boolean) invoke("inArray", stringArray, "v4"));
     }
-    
+
     @Test
     public void testInArrayWithArrayNode() {
         ObjectMapper mapper = new ObjectMapper();
@@ -93,18 +72,4 @@ public class InArrayTests extends RefineTest {
         Assert.assertTrue((boolean) invoke("inArray", arrayNode, "v1"));
         Assert.assertFalse((boolean) invoke("inArray", arrayNode, "v4"));
     }
-    
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
-    }
 }
-

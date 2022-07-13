@@ -92,7 +92,7 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
 
         if (getUnitExpr() != null) {
             ItemIdValue unit = getUnitExpr().evaluate(ctxt);
-            return Datamodel.makeQuantityValue(parsedAmount, lowerBound, upperBound, unit.getIri());
+            return Datamodel.makeQuantityValue(parsedAmount, lowerBound, upperBound, unit);
         }
 
         return Datamodel.makeQuantityValue(parsedAmount, lowerBound, upperBound);

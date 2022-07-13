@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -37,12 +38,12 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     public void scrutinize(Value value) {
         scrutinize(defaultPid, value);
     }
-    
+
     public void scrutinize(PropertyIdValue pid, Value value) {
         scrutinize(Datamodel.makeValueSnak(pid, value));
     }
 
     public void scrutinizeLabel(MonolingualTextValue text) {
-        scrutinize(new ItemUpdateBuilder(TestingData.existingId).addLabel(text, true).build());
+        scrutinize(new ItemEditBuilder(TestingData.existingId).addLabel(text, true).build());
     }
 }

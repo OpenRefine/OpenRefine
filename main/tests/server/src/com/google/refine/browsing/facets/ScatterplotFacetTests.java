@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing.facets;
 
 import static org.testng.Assert.assertFalse;
@@ -46,23 +47,24 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ScatterplotFacetTests extends RefineTest {
-    public static String configJson = "{\n" + 
-            "          \"to_x\": 1,\n" + 
-            "          \"to_y\": 1,\n" + 
-            "          \"dot\": 1,\n" + 
-            "          \"from_x\": 0.21333333333333335,\n" + 
-            "          \"l\": 150,\n" + 
-            "          \"type\": \"scatterplot\",\n" + 
-            "          \"from_y\": 0.26666666666666666,\n" + 
-            "          \"dim_y\": \"lin\",\n" + 
-            "          \"ex\": \"value\",\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"to_x\": 1,\n" +
+            "          \"to_y\": 1,\n" +
+            "          \"dot\": 1,\n" +
+            "          \"from_x\": 0.21333333333333335,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"scatterplot\",\n" +
+            "          \"from_y\": 0.26666666666666666,\n" +
+            "          \"dim_y\": \"lin\",\n" +
+            "          \"ex\": \"value\",\n" +
             "          \"dim_x\": \"lin\",\n" +
-            "          \"ey\": \"value\",\n" + 
-            "          \"cx\": \"my column\",\n" + 
-            "          \"cy\": \"e\",\n" + 
-            "          \"name\": \"my column (x) vs. e (y)\"\n" + 
+            "          \"ey\": \"value\",\n" +
+            "          \"cx\": \"my column\",\n" +
+            "          \"cy\": \"e\",\n" +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
             "        }";
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column (x) vs. e (y)\","
             + "\"cx\":\"my column\","
@@ -80,19 +82,19 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"from_y\":0.26666666666666666,"
             + "\"to_y\":1"
             + "}";
-    
+
     @Test
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
-    
+
     @Test
     public void serializeScatterplotFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column,e\n"
-                + "89.2,89.2\n" + 
-                "-45.9,-45.9\n" + 
-                "blah,blah\n" + 
+                + "89.2,89.2\n" +
+                "-45.9,-45.9\n" +
+                "blah,blah\n" +
                 "0.4,0.4\n");
         Engine engine = new Engine(project);
         project.rows.get(0).cells.set(0, new Cell(89.2, null));
@@ -101,13 +103,13 @@ public class ScatterplotFacetTests extends RefineTest {
         project.rows.get(1).cells.set(1, new Cell(-45.9, null));
         project.rows.get(3).cells.set(0, new Cell(0.4, null));
         project.rows.get(3).cells.set(1, new Cell(0.4, null));
-        
+
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
-        
+
         ScatterplotFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
         TestUtils.isSerializedTo(facet, facetJson);
-        
+
         RowFilter filter = facet.getRowFilter(project);
         assertTrue(filter.filterRow(project, 0, project.rows.get(0)));
         assertFalse(filter.filterRow(project, 1, project.rows.get(1)));

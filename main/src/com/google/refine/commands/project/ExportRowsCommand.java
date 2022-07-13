@@ -58,6 +58,7 @@ import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.exporters.sql.SqlExporterException;
 import com.google.refine.model.Project;
+import com.google.common.net.PercentEscaper;
 
 public class ExportRowsCommand extends Command {
     private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
@@ -100,6 +101,15 @@ public class ExportRowsCommand extends Command {
                 contentType = exporter.getContentType();
             }
             response.setHeader("Content-Type", contentType);
+
+            String preview = params.getProperty("preview");
+            if (!"true".equals(preview)) {
+                String path = request.getPathInfo();
+                String filename = path.substring(path.lastIndexOf('/') + 1);
+                PercentEscaper escaper = new PercentEscaper("", false);
+                filename = escaper.escape(filename);
+                response.setHeader("Content-Disposition", "attachment; filename=" +filename+"; filename*=utf-8' '" + filename);
+            }
             
             if (exporter instanceof WriterExporter) {
                 String encoding = params.getProperty("encoding");

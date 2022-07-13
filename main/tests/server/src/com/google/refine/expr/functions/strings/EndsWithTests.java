@@ -24,18 +24,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.EndsWith;
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class EndsWithTests {
+public class EndsWithTests extends RefineTest {
+
     @Test
-    public void serializeEndsWith() {
-        String json = "{\"description\":\"Returns whether s ends with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new EndsWith(), json);
+    public void testStartsWith() {
+        assertTrue((Boolean) invoke("endsWith", "testString", "ing"));
+        assertFalse((Boolean) invoke("startsWith", "testString", "banana"));
     }
 }
-

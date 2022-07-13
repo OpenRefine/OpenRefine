@@ -24,36 +24,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.process;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ProcessManagerTests {
-    
+
     ProcessManager processManager;
     Process process1, process2;
-    
+
     @BeforeMethod
     public void setUp() {
         processManager = new ProcessManager();
         process1 = new LongRunningProcessTests.LongRunningProcessStub("some description");
         process2 = new LongRunningProcessTests.LongRunningProcessStub("some other description");
     }
-    
+
     @Test
     public void serializeProcessManager() throws Exception {
         processManager.queueProcess(process1);
         processManager.queueProcess(process2);
         processManager.onFailedProcess(process1, new IllegalArgumentException("unexpected error"));
+        // Wait for process to complete to avoid race where they serialize with
+        // different values for status: running vs done
+        int total = 0;
+        while (processManager.hasPending() && total < 1000) {
+            Thread.sleep(100);
+            total += 100;
+        }
         String processJson = ParsingUtilities.defaultWriter.writeValueAsString(process2);
         TestUtils.isSerializedTo(processManager, "{"
-                + "\"processes\":["+processJson+"],\n"
+                + "\"processes\":[" + processJson + "],\n"
                 + "\"exceptions\":[{\"message\":\"unexpected error\"}]"
                 + "}");
     }

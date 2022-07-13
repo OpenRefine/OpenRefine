@@ -10,11 +10,12 @@
             <tr><td width="1%"><input type="radio" name="export-destination" value="google" id="$export-to-google-drive" /></td>
               <td><label for="$export-to-google-drive" bind="toGoogleDriveRadio"></label></td></tr>
           </table></div></td>
-     </div>
+    </table></div>
    </div>
   
-  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
-    <td><button class="button" bind="exportButton"></button></td>
-    <td><button class="button" bind="cancelButton"></button></td>
-  </tr></table></div></div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="exportButton"></button>
+    <button class="button" bind="cancelButton"></button>
+  </div>
+  </div>
 </div>

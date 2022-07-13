@@ -76,9 +76,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   position: fixed;
   overflow: hidden;
   padding: 0px;
-  padding-top: @padding_tight;
+  padding-top: 0px;
   font-size: 1.3em;
   background: @chrome_secondary;  
+  border-top-right-radius: 7px;
   }
   
 #left-panel  .ui-tabs .ui-tabs-panel {
@@ -94,6 +95,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0px;
   padding-left: @padding_tight;
   background: @chrome_primary;
+  border-top-left-radius: 7px;
   }
 
 #tool-panel {
@@ -102,9 +104,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 #summary-bar {
-  position: absolute;
-  top: @padding_normal;
-  left: @padding_normal;
+  display: inline-block;
+  margin: 7px 0px 0px 4px;
   font-size: 1.8em;
   font-weight: bold;
   }

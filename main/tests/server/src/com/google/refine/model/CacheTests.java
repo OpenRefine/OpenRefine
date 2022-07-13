@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package com.google.refine.model;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -48,16 +49,11 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
-import com.google.refine.model.Cell;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.row.RowRemovalOperation;
 
-
 public class CacheTests extends RefineTest {
-    
+
     // Equivalent to duplicate facet on Column A with true selected
     static final String ENGINE_JSON_DUPLICATES = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column A\",\"expression\":\"facetCount(value, 'value', 'Column A') > 1\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":true,\"l\":\"true\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
 
@@ -77,15 +73,15 @@ public class CacheTests extends RefineTest {
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("CacheTests", "Column A");
-        
+
         engine = new Engine(project);
         engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
-        
+
         bindings = new Properties();
         bindings.put("project", project);
-        
+
     }
 
     @AfterMethod
@@ -96,9 +92,8 @@ public class CacheTests extends RefineTest {
     }
 
     /**
-     * Test for issue 567.  Problem doesn't seem to occur when testing
-     * interactively, but this demonstrates that the facet count cache
-     * can get stale after row removal operations
+     * Test for issue 567. Problem doesn't seem to occur when testing interactively, but this demonstrates that the
+     * facet count cache can get stale after row removal operations
      * 
      * @throws Exception
      */
@@ -106,22 +101,22 @@ public class CacheTests extends RefineTest {
     public void testIssue567() throws Exception {
         for (int i = 0; i < 5; i++) {
             Row row = new Row(5);
-            row.setCell(0, new Cell(i < 4 ? "a":"b", null));
+            row.setCell(0, new Cell(i < 4 ? "a" : "b", null));
             project.rows.add(row);
         }
-        engine.getAllRows().accept(project, new CountingRowVisitor(5)) ;
+        engine.getAllRows().accept(project, new CountingRowVisitor(5));
         engine.getAllFilteredRows().accept(project, new CountingRowVisitor(4));
         Function fc = new FacetCount();
-        Integer count = (Integer) fc.call(bindings, new Object[] {"a", "value", "Column A"});
+        Integer count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
         Assert.assertEquals(count.intValue(), 4);
         EngineDependentOperation op = new RowRemovalOperation(engine_config);
         op.createProcess(project, options).performImmediate();
-        engine.getAllRows().accept(project, new CountingRowVisitor(1)) ;
+        engine.getAllRows().accept(project, new CountingRowVisitor(1));
         engine.getAllFilteredRows().accept(project, new CountingRowVisitor(0));
-        count = (Integer) fc.call(bindings, new Object[] {"a", "value", "Column A"});
+        count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
         Assert.assertEquals(count.intValue(), 0);
     }
-    
+
     class CountingRowVisitor implements RowVisitor {
 
         private int count = 0;
@@ -139,12 +134,12 @@ public class CacheTests extends RefineTest {
 
         @Override
         public void start(Project project) {
-            count = 0; 
+            count = 0;
         }
 
         @Override
         public void end(Project project) {
-            Assert.assertEquals(count, target); 
+            Assert.assertEquals(count, target);
         }
     }
 }

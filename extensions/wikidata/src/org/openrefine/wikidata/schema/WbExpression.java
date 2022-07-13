@@ -40,15 +40,19 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = WbLocationVariable.class, name = "wblocationvariable"),
         @Type(value = WbItemConstant.class, name = "wbitemconstant"),
         @Type(value = WbItemVariable.class, name = "wbitemvariable"),
+        @Type(value = WbEntityVariable.class, name = "wbentityvariable"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
         @Type(value = WbDateConstant.class, name = "wbdateconstant"),
         @Type(value = WbDateVariable.class, name = "wbdatevariable"),
         @Type(value = WbMonolingualExpr.class, name = "wbmonolingualexpr"),
         @Type(value = WbPropConstant.class, name = "wbpropconstant"),
+        @Type(value = WbEntityIdValueConstant.class, name = "wbentityidvalueconstant"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
-        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"), })
+        @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"),
+        @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
+        @Type(value = WbMediaInfoEditExpr.class, name = "wbmediainfoeditexpr"),})
 public interface WbExpression<T> {
 
     /**

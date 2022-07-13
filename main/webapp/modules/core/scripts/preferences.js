@@ -71,19 +71,28 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({
-url : "command/core/load-language?",
-type : "POST",
-async : false,
-data : {
-module : "core",
-//lang : lang
-},
-success : function(data) {
-dictionary = data['dictionary'];
-lang = data['lang'];
-}
+  url : "command/core/load-language?",
+  type : "POST",
+  async : false,
+  data : {
+    module : "core",
+    //lang : lang
+  },
+  success : function(data) {
+    dictionary = data['dictionary'];
+    lang = data['lang'];
+  }
+}).fail(function( jqXhr, textStatus, errorThrown ) {
+  var errorMessage = $.i18n('core-index/prefs-loading-failed');
+  if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
+    alert(errorMessage); 
+  } else {
+    alert( textStatus + ':' + errorThrown );
+  }
 });
+
 $.i18n().load(dictionary, lang);
+$.i18n().locale = lang;
 //End internationalization
 
 function deDupUserMetaData(arrObj)  {
@@ -94,19 +103,19 @@ function deDupUserMetaData(arrObj)  {
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
-function PreferenceUI(tr, key, value) {
+function PreferenceUI(tr, key, initialValue) {
   var self = this;
 
   var td0 = tr.insertCell(0);
   $(td0).text(key);
 
   var td1 = tr.insertCell(1);
-  $(td1).text((value !== null) ? value : "");
+  $(td1).text((initialValue !== null) ? initialValue : "");
 
   var td2 = tr.insertCell(2);
 
   $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
-    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, value);
+    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, $(td1).text());
     if (newValue !== null) {
       if (key === "userMetadata")  {
           newValue = deDupUserMetaData(newValue);

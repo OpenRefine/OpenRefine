@@ -62,9 +62,7 @@ public class SqlCreateBuilder {
 
         List<JsonNode> columnOptionArray = options == null ? Collections.emptyList() : JSONUtilities.getArray(options, "columns");
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        
-        
-      
+
         int count = columnOptionArray.size();
 
         for (int i = 0; i < count; i++) {
@@ -75,8 +73,8 @@ public class SqlCreateBuilder {
                 String size = JSONUtilities.getString(columnOptions, "size", "");
                 boolean allowNull = JSONUtilities.getBoolean(columnOptions, "allowNull", true);
                 String defaultValue = JSONUtilities.getString(columnOptions, "defaultValue", null);
-                logger.info("allowNull::{}" , allowNull);
-                
+                logger.debug("allowNull::{}" , allowNull);
+
                 String allowNullStr = "NULL";
                 if(!allowNull) {
                     allowNullStr = "NOT NULL";
@@ -85,7 +83,7 @@ public class SqlCreateBuilder {
                 
                 if (name != null) {
                     if(trimColNames) {
-                        String trimmedCol = name.replaceAll("\\s", "");
+                        String trimmedCol = name.replaceAll("[^a-zA-Z0-9_]", "_");
                         createSB.append( trimmedCol + " ");
                     }else{
                         createSB.append(name + " ");

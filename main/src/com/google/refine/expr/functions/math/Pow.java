@@ -35,6 +35,8 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class Pow implements Function {
@@ -47,17 +49,17 @@ public class Pow implements Function {
                 ((Number) args[1]).doubleValue()
             );
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
     }
 
     @Override
     public String getDescription() {
-        return "Returns a^b";
+        return "Returns n1 raised to the power of n2.";
     }
     
     @Override
     public String getParams() {
-        return "number a, number b";
+        return "number n1, number n2";
     }
     
     @Override

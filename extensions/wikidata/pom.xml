@@ -11,12 +11,11 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <properties>
-    <powermock.version>2.0.2</powermock.version>
-    <wdtk.version>0.11.1</wdtk.version>
+    <wdtk.version>0.13.2</wdtk.version>
   </properties>
 
   <build>
@@ -35,43 +34,6 @@
     <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>UTF-8</encoding>
-          <showDeprecation>false</showDeprecation>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
@@ -84,7 +46,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
+	<version>${maven-dependency-plugin.version}</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -98,18 +60,6 @@
             </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>module/MOD-INF/lib</directory>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -122,14 +72,19 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
       <version>${wdtk.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
@@ -144,8 +99,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- downgrade wdtk's okhttp because it fails our tests for an unclear reason -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp-urlconnection</artifactId>
+      <version>${okhttp.version}</version>
     </dependency>
 
     <!-- testing dependencies -->
@@ -161,27 +122,22 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.10</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.23.4</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-testng</artifactId>
-      <version>${powermock.version}</version>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>${okhttp.version}</version>
       <scope>test</scope>
-     </dependency>
-     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-     </dependency> 
+    </dependency>
+
   </dependencies>
 
 </project>

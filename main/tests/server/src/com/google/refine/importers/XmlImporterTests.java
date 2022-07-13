@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -33,12 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.google.refine.importers.tree.ImportColumnGroup;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,13 +53,12 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
-
 
 public class XmlImporterTests extends ImporterTest {
 
@@ -63,16 +67,16 @@ public class XmlImporterTests extends ImporterTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
-    //dependencies
+
+    // dependencies
     ByteArrayInputStream inputStream = null;
 
-    //System Under Test
+    // System Under Test
     XmlImporter SUT = null;
-    
+
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new XmlImporter();
     }
@@ -93,10 +97,9 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSample(){
+    public void canParseSample() {
         RunTest(getSample());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -104,12 +107,37 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
-    
+
     @Test
-    public void canParseDeeplyNestedSample(){
+    public void setsProjectMetadata() throws IOException {
+        // Setup a file record to import
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), "UTF-8");
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                "{\"location\": \"test-file.xml\",\"fileName\": \"test-file.xml\"}"));
+
+        // We need a real ObjectNode to support the deepCopy() method
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+
+        SUT.parse(
+                project,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options,
+                new ArrayList<Exception>());
+
+        assertNotNull(metadata.getModified());
+        assertNotNull(metadata.getCreated());
+        assertNotEquals(metadata.getImportOptionMetadata().size(), 0);
+    }
+
+    @Test
+    public void canParseDeeplyNestedSample() {
         RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -117,36 +145,34 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
-    
+
     @Test
-    public void canParseSampleWithMixedElement(){
+    public void canParseSampleWithMixedElement() {
         RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
-        
+
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
-    
+
     @Test
     public void ignoresDtds() {
-    	RunTest(getSampleWithDtd());
-    	
-    	assertProjectCreated(project, 4, 6);
-    	Row row = project.rows.get(0);
+        RunTest(getSampleWithDtd());
+
+        assertProjectCreated(project, 4, 6);
+        Row row = project.rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
 
     @Test
-    public void canParseSampleWithDuplicateNestedElements(){
+    public void canParseSampleWithDuplicateNestedElements() {
         RunTest(getSampleWithDuplicateNestedElements());
 
-        log(project);
         assertProjectCreated(project, 4, 12);
 
         Row row = project.rows.get(0);
@@ -158,11 +184,10 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testCanParseLineBreak(){
+    public void testCanParseLineBreak() {
 
         RunTest(getSampleWithLineBreak());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(3);
@@ -173,77 +198,112 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testElementsWithVaryingStructure(){
+    public void testElementsWithVaryingStructure() {
         RunTest(getSampleWithVaryingStructure());
 
-        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.getColumnByCellIndex(4).getName(), "book - genre");
 
         Row row0 = project.rows.get(0);
         Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),4);
+        Assert.assertEquals(row0.cells.size(), 4);
 
-        Row row5  = project.rows.get(5);
+        Row row5 = project.rows.get(5);
         Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),5);
+        Assert.assertEquals(row5.cells.size(), 5);
     }
 
     @Test
-    public void testElementWithNestedTree(){
+    public void testElementWithNestedTree() {
         RunTest(getSampleWithTreeStructure());
-        log(project);
+
         assertProjectCreated(project, 5, 6);
 
-        Assert.assertEquals(project.columnModel.columnGroups.size(),1);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
-        Assert.assertNull(project.columnModel.columnGroups.get(0).parentGroup);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).subgroups.size(),0);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan,2);
+        Assert.assertEquals(project.columnModel.columnGroups.size(), 1);
+        ColumnGroup cg0 = project.columnModel.columnGroups.get(0);
+        Assert.assertEquals(cg0.keyColumnIndex, 1);
+        Assert.assertEquals(cg0.startColumnIndex, 1);
+        Assert.assertNull(cg0.parentGroup);
+        Assert.assertEquals(cg0.subgroups.size(), 0);
+        Assert.assertEquals(cg0.columnSpan, 2);
     }
 
-    //------------helper methods---------------
+    @Test
+    public void testAddFileColumn() throws Exception {
+        final String FILE = "xml-sample-format-1.xml";
+        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        // File is assumed to be in job.getRawDataDir(), so copy it there
+        FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", FILE, "xml-sample-format-1.xml")));
 
-    public static String getTypicalElement(int id){
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, "library");
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        List<Exception> exceptions = new ArrayList<Exception>();
+
+        SUT.parse(
+                project,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options,
+                exceptions);
+        Assert.assertNotNull(project.columnModel.getColumnByName("File"));
+        Assert.assertEquals(project.rows.get(0).getCell(0).value, "xml-sample-format-1.xml");
+    }
+
+    // ------------helper methods---------------
+
+    public static String getTypicalElement(int id) {
         return "<book id=\"" + id + "\">" +
-        "<author>Author " + id + ", The</author>" +
-        "<title>Book title " + id + "</title>" +
-        "<publish_date>2010-05-26</publish_date>" +
-        "</book>";
+                "<author>Author " + id + ", The</author>" +
+                "<title>Book title " + id + "</title>" +
+                "<publish_date>2010-05-26</publish_date>" +
+                "</book>";
     }
 
-    public static String getElementWithDuplicateSubElement(int id){
+    public static String getElementWithDuplicateSubElement(int id) {
         return "<book id=\"" + id + "\">" +
-        "<authors>" +
-        "<author>Author " + id + ", The</author>" +
-        "<author>Author " + id + ", Another</author>" +
-        "</authors>" +
-        "<title>Book title " + id + "</title>" +
-        "<publish_date>2010-05-26</publish_date>" +
-        "</book>";
+                "<authors>" +
+                "<author>Author " + id + ", The</author>" +
+                "<author>Author " + id + ", Another</author>" +
+                "</authors>" +
+                "<title>Book title " + id + "</title>" +
+                "<publish_date>2010-05-26</publish_date>" +
+                "</book>";
     }
 
-    public static String getSample(){
+    public static String getSample() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library>");
         return sb.toString();
     }
-    
-    public static String getSampleWithDtd(){
+
+    public static String getSampleWithDtd() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?>");
-        sb.append("<!DOCTYPE library [\n" + 
-    			"<!ENTITY % asd SYSTEM \"http://domain.does.not.exist:4444/ext.dtd\">\n" + 
-    			"%asd;\n" + 
-    			"%c;\n" + 
-    			"]><library>");
-        for(int i = 1; i < 7; i++){
+        sb.append("<!DOCTYPE library [\n" +
+                "<!ENTITY % asd SYSTEM \"http://domain.does.not.exist:4444/ext.dtd\">\n" +
+                "%asd;\n" +
+                "%c;\n" +
+                "]><library>");
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library>");
@@ -252,47 +312,34 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
-        
+                job, Collections.emptyList(), "text/xml");
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
         JSONUtilities.append(path, "book");
-        
+
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
     }
-    
+
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
-        
+                job, Collections.emptyList(), "text/xml");
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");
         JSONUtilities.append(path, "nest2");
         JSONUtilities.append(path, "library");
         JSONUtilities.append(path, "book");
-        
+
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
     }
-    
-    public static String getDeeplyNestedSample(){
+
+    public static String getDeeplyNestedSample() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><nest><nest2><library>");
-        for(int i = 1; i < 7; i++){
-            sb.append(getTypicalElement(i));
-        }
-        sb.append("</library></nest2>");
-        sb.append("<anElement>asdf</anElement></nest>");
-        return sb.toString();
-    }
-    
-    public static String getMixedElementSample(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\"?><nest>");
-        sb.append("somemixeduptext");
-        sb.append("<nest2><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library></nest2>");
@@ -300,10 +347,23 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithDuplicateNestedElements(){
+    public static String getMixedElementSample() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\"?><nest>");
+        sb.append("somemixeduptext");
+        sb.append("<nest2><library>");
+        for (int i = 1; i < 7; i++) {
+            sb.append(getTypicalElement(i));
+        }
+        sb.append("</library></nest2>");
+        sb.append("<anElement>asdf</anElement></nest>");
+        return sb.toString();
+    }
+
+    public static String getSampleWithDuplicateNestedElements() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getElementWithDuplicateSubElement(i));
         }
         sb.append("</library>");
@@ -311,10 +371,10 @@ public class XmlImporterTests extends ImporterTest {
 
     }
 
-    public static String getSampleWithLineBreak(){
+    public static String getSampleWithLineBreak() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 4; i++){
+        for (int i = 1; i < 4; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("<book id=\"4\">" +
@@ -328,10 +388,10 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithVaryingStructure(){
+    public static String getSampleWithVaryingStructure() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 6; i++){
+        for (int i = 1; i < 6; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("<book id=\"6\">" +
@@ -344,10 +404,10 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithTreeStructure(){
+    public static String getSampleWithTreeStructure() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append("<book id=\"" + i + "\">" +
                     "<author><author-name>Author " + i + ", The</author-name>" +
                     "<author-dob>1950-0" + i + "-15</author-dob></author>" +
@@ -359,13 +419,13 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private void RunTest(String testString){
+    private void RunTest(String testString) {
         RunTest(testString, getOptions(job, SUT));
     }
-    
+
     private void RunTest(String testString, ObjectNode objectNode) {
         try {
-            inputStream = new ByteArrayInputStream(testString.getBytes( "UTF-8" ));
+            inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e1) {
             Assert.fail();
         }
@@ -377,7 +437,7 @@ public class XmlImporterTests extends ImporterTest {
             Assert.fail();
         }
     }
-    
+
     @Override
     protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         parseOneInputStream(parser, inputStream, options);

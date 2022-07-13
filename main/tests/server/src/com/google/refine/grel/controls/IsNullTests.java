@@ -24,18 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.IsNull;
 import com.google.refine.util.TestUtils;
 
 public class IsNullTests {
+
     @Test
     public void serializeIsNull() {
         String json = "{\"description\":\"Returns whether o is null\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new IsNull(), json);
     }
 }
-

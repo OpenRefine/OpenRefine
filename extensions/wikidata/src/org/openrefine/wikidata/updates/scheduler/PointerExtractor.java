@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -40,6 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -48,7 +49,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  * @author Antonin Delpeuch
  *
  */
-public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
+public class PointerExtractor implements ValueVisitor<Set<ReconEntityIdValue>> {
 
     /**
      * Extracts all the new entities mentioned by this statement. This does not
@@ -58,8 +59,8 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      *            the statement to inspect
      * @return the set of all new entities mentioned by the statement
      */
-    public Set<ReconItemIdValue> extractPointers(Statement statement) {
-        Set<ReconItemIdValue> result = new HashSet<>();
+    public Set<ReconEntityIdValue> extractPointers(Statement statement) {
+        Set<ReconEntityIdValue> result = new HashSet<>();
         result.addAll(extractPointers(statement.getClaim().getMainSnak()));
         result.addAll(extractPointers(statement.getClaim().getQualifiers()));
         statement.getReferences().stream().map(l -> extractPointers(l.getSnakGroups())).forEach(s -> result.addAll(s));
@@ -72,8 +73,8 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      * @param snakGroups
      * @return
      */
-    public Set<ReconItemIdValue> extractPointers(List<SnakGroup> snakGroups) {
-        Set<ReconItemIdValue> result = new HashSet<>();
+    public Set<ReconEntityIdValue> extractPointers(List<SnakGroup> snakGroups) {
+        Set<ReconEntityIdValue> result = new HashSet<>();
         snakGroups.stream().map(s -> extractPointers(s)).forEach(s -> result.addAll(s));
         return result;
     }
@@ -84,8 +85,8 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      * @param snakGroup
      * @return
      */
-    public Set<ReconItemIdValue> extractPointers(SnakGroup snakGroup) {
-        Set<ReconItemIdValue> result = new HashSet<>();
+    public Set<ReconEntityIdValue> extractPointers(SnakGroup snakGroup) {
+        Set<ReconEntityIdValue> result = new HashSet<>();
         snakGroup.getSnaks().stream().map(s -> extractPointers(s)).forEach(s -> result.addAll(s));
         return result;
     }
@@ -98,10 +99,12 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      * @param snak
      * @return
      */
-    public Set<ReconItemIdValue> extractPointers(Snak snak) {
-        Set<ReconItemIdValue> result = new HashSet<>();
+    public Set<ReconEntityIdValue> extractPointers(Snak snak) {
+        Set<ReconEntityIdValue> result = new HashSet<>();
         result.addAll(extractPointers(snak.getPropertyId()));
-        result.addAll(extractPointers(snak.getValue()));
+        if (snak instanceof ValueSnak) {
+            result.addAll(extractPointers(((ValueSnak)snak).getValue()));
+        }
         return result;
     }
 
@@ -111,11 +114,11 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      * @param value
      * @return
      */
-    public Set<ReconItemIdValue> extractPointers(Value value) {
+    public Set<ReconEntityIdValue> extractPointers(Value value) {
         if (value == null) {
             return Collections.emptySet();
         }
-        Set<ReconItemIdValue> pointers = value.accept(this);
+        Set<ReconEntityIdValue> pointers = value.accept(this);
         if (pointers == null) {
             return Collections.emptySet();
         }
@@ -123,9 +126,9 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(EntityIdValue value) {
-        if (ReconItemIdValue.class.isInstance(value)) {
-            ReconItemIdValue recon = (ReconItemIdValue) value;
+    public Set<ReconEntityIdValue> visit(EntityIdValue value) {
+        if (ReconEntityIdValue.class.isInstance(value)) {
+            ReconEntityIdValue recon = (ReconEntityIdValue) value;
             if (recon.isNew()) {
                 return Collections.singleton(recon);
             }
@@ -134,33 +137,33 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(GlobeCoordinatesValue value) {
+    public Set<ReconEntityIdValue> visit(GlobeCoordinatesValue value) {
         return null;
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(MonolingualTextValue value) {
+    public Set<ReconEntityIdValue> visit(MonolingualTextValue value) {
         return null;
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(QuantityValue value) {
+    public Set<ReconEntityIdValue> visit(QuantityValue value) {
         // units cannot be new because WDTK represents them as strings already
         return null;
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(StringValue value) {
+    public Set<ReconEntityIdValue> visit(StringValue value) {
         return null;
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(TimeValue value) {
+    public Set<ReconEntityIdValue> visit(TimeValue value) {
         return null;
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(UnsupportedValue value) {
+    public Set<ReconEntityIdValue> visit(UnsupportedValue value) {
         return null;
     }
 }

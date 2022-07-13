@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -51,26 +52,26 @@ public class InnerHtml implements Function {
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(bindings, args, "html");
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single String as an argument");
     }
 
 
     @Override
     public String getDescription() {
-        return "The innerHtml of an HTML element";
+        return "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.";
     }
     
     @Override
     public String getParams() {
-        return "Element e";
+        return "element e";
     }
     
     @Override
     public String getReturns() {
-        return "String innerHtml";
+        return "string innerHtml";
     }
 }
 

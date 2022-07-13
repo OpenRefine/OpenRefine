@@ -59,7 +59,16 @@ ReconDialog.prototype._createDialog = function() {
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
+  this._registerDialogServiceOpener();
 };
+
+ReconDialog.prototype._registerDialogServiceOpener = function() {
+  var self = this;
+
+  $('.recon-dialog-service-opener').click(function() {
+    self._toggleServices();
+  });
+}
 
 ReconDialog.prototype._onOK = function() {
   if (this._selectedServiceRecordIndex >= 0) {
@@ -120,10 +129,11 @@ ReconDialog.prototype._populateDialog = function() {
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(record.selector)
-      .click(function() {
+      .click(function(event) {
         ReconciliationManager.unregisterService(service, function() {
           self._refresh(-1);
         });
+        event.stopImmediatePropagation();
       });
 
       self._serviceRecords.push(record);
@@ -132,11 +142,6 @@ ReconDialog.prototype._populateDialog = function() {
     for (var i = 0; i < services.length; i++) {
       renderService(services[i]);
     }
-    
-
-    $('.recon-dialog-service-opener').click(function() {
-      self._toggleServices();
-    });
   }
 };
 
@@ -203,7 +208,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   var elmts = DOM.bind(dialog);
 
   elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
-  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url')+":");
+  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url'));
   elmts.addButton.html($.i18n('core-buttons/add-service'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
@@ -213,7 +218,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   };
 
   elmts.cancelButton.click(dismiss);
-  elmts.addButton.click(function() {
+  elmts.form.submit(function() {
     var url = $.trim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {

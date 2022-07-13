@@ -1,0 +1,51 @@
+<div class="dialog-frame" style="width: 800px;">
+  <form bind="loginForm" method="post">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody" style="position: relative; height: 240px">
+    <div class="wikidata-logo">
+      <a href="https://www.wikidata.org/" target="_blank">
+        <img src="extension/wikidata/images/Wikibase_logo.png" alt="Wikidata logo"/>
+      </a>
+    </div>
+    <div class="right-of-logo">
+      <p class="body-text" bind="explainLogIn"></p>
+      <p class="body-text" bind="explainOwnerOnlyConsumerWiki"></p>
+      <div class="wikibase-user-management-area">
+        <div class="wikibase-user-login" bind="loginArea">
+          <p bind="invalidCredentials" class="wikibase-invalid-credentials"></p>
+            <table>
+              <tr>
+                <td><label for="wb-consumer-token" bind="consumerTokenLabel"></label></td>
+                <td><input name="wb-consumer-token" id="wb-consumer-token" type="text" bind="consumerTokenInput"/></td>
+              </tr>
+              <tr>
+                <td><label for="wb-consumer-secret" bind="consumerSecretLabel"></label></td>
+                <td><input name="wb-consumer-secret" id="wb-consumer-secret" type="password" bind="consumerSecretInput"/></td>
+              </tr>
+              <tr>
+                <td><label for="wb-access-token" bind="accessTokenLabel"></label></td>
+                <td><input name="wb-access-token" id="wb-access-token" type="text" bind="accessTokenInput"/></td>
+              </tr>
+              <tr>
+                <td><label for="wb-access-secret" bind="accessSecretLabel"></label></td>
+                <td><input name="wb-access-secret" id="wb-access-secret" type="password" bind="accessSecretInput"/></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="remember-credentials" id="remember-credentials" bind="rememberCredentials"/></td>
+                <td>
+                  <span><label for="remember-credentials"bind="rememberMe"></label></span>
+                  <span><img src="extension/wikidata/images/Information.png" style="height: 0.8rem;" alt="information" bind="ownerOnlyConsumerRememberMeTitle"/></span>
+                </td>
+              </tr>
+            </table>
+        </div>
+      </div>
+    </div>
+    <span style="cursor: pointer" bind="explainPasswordLogin"></span>
+  </div>
+  <div class="dialog-footer">
+    <button class="button cancel-button" type="button" bind="cancelButton"></button>
+    <button class="button button-primary" type="submit" bind="loginButton"></button>
+  </div>
+  </form>
+</div>

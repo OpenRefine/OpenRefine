@@ -24,18 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.If;
 import com.google.refine.util.TestUtils;
 
 public class IfTests {
+
     @Test
     public void serializeIf() {
         String json = "{\"description\":\"Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. Otherwise, evaluates expression eFalse and returns that result instead.\",\"params\":\"expression o, expression eTrue, expression eFalse\",\"returns\":\"Depends on actual arguments\"}";
         TestUtils.isSerializedTo(new If(), json);
     }
 }
-

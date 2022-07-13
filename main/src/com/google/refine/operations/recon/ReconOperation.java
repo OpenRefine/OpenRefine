@@ -285,26 +285,22 @@ public class ReconOperation extends EngineDependentOperation {
                     Recon    recon = j < recons.size() ? recons.get(j) : null;
                     JobGroup group = jobToGroup.get(job);
                     List<ReconEntry> entries = group.entries;
-                    
-                    if (recon == null) {
-                        group.trials++;
-                        if (group.trials < 3) {
-                            logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
-                            continue; // try again next time
-                        }
-                        logger.warn("Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value);
-                    }
-                    
+
                     jobToGroup.remove(job);
                     jobs.remove(j);
                     done++;
-                    
-                    if (recon == null) {
-                        recon = _reconConfig.createNewRecon(_historyEntryID);
+
+                    if (recon != null) {
+                        recon.judgmentBatchSize = entries.size();
                     }
-                    recon.judgmentBatchSize = entries.size();
                     
                     for (ReconEntry entry : entries) {
+                        if (recon == null) {
+                            // TODO add EvalError instead? That is not so convenient
+                            // for users because they would lose the cell contents.
+                            // Better leave the cell unreconciled so they can be reconciled again later.
+                            continue;
+                        }
                         Cell oldCell = entry.cell;
                         Cell newCell = new Cell(oldCell.value, recon);
                         
@@ -328,6 +324,7 @@ public class ReconOperation extends EngineDependentOperation {
                 }
             }
             
+            // TODO: Option to keep partial results after cancellation?
             if (!_canceled) {
                 Change reconChange = new ReconChange(
                     cellChanges, 

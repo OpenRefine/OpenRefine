@@ -190,7 +190,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
 
   this._facets.push({ elmt: elmt, facet: facet });
 
-  ui.leftPanelTabs.tabs({ active: 0 });
+  ui.leftPanelTabs.tabs();
 
   Refine.update({ engineChanged: true });
 };

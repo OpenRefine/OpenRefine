@@ -52,7 +52,7 @@ public class ToUppercase implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns s converted to uppercase";
+        return "Returns string s converted to all uppercase characters.";
     }
     
     @Override

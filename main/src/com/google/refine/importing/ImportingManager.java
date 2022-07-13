@@ -256,14 +256,21 @@ public class ImportingManager {
     }
     
     static public String getFormatFromMimeType(String mimeType) {
-        return mimeTypeToFormat.get(mimeType);
+        String format = mimeTypeToFormat.get(mimeType);
+        if (format == null) {
+            // Try Structured Name Syntax Suffix
+            // https://tools.ietf.org/html/rfc6838#section-4.2.8
+            if (mimeType.contains("+")) {
+                // These are registered with a leading plus sign (+) to show they're suffixes
+                mimeType = "+" + mimeType.split("\\+")[1];
+                format = mimeTypeToFormat.get(mimeType);
+            }
+        }
+        return format;
     }
     
     static public String getFormat(String fileName, String mimeType) {
         String fileNameFormat = getFormatFromFileName(fileName);
-        if (mimeType != null) {
-            mimeType = mimeType.split(";")[0];
-        }
         String mimeTypeFormat = mimeType == null ? null : getFormatFromMimeType(mimeType);
         if (mimeTypeFormat == null) {
             return fileNameFormat;

@@ -35,12 +35,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.spi.LoggerRepository;
-import org.openrefine.wikidata.editing.ConnectionManager;
+import org.apache.commons.lang3.StringUtils;
+import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
-import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.editing.NewEntityLibrary;
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -65,20 +67,54 @@ import com.google.refine.util.Pool;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
+    
+    // only used for backwards compatibility, these things are configurable through
+    // the manifest now.
+    static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
 
     @JsonProperty("summary")
     private String summary;
+
+    @JsonProperty("maxlag")
+    private int maxlag;
+
+    @JsonProperty("editGroupsUrlSchema")
+    private String editGroupsUrlSchema;
+    
+    @JsonProperty("maxEditsPerMinute")
+    private int maxEditsPerMinute;
+    
+    @JsonProperty("tag")
+    private String tagTemplate;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
     		@JsonProperty("engineConfig")
     		EngineConfig engineConfig,
     		@JsonProperty("summary")
-    		String summary) {
+    		String summary,
+            @JsonProperty("maxlag")
+            Integer maxlag,
+            @JsonProperty("editGroupsUrlSchema")
+            String editGroupsUrlSchema,
+            @JsonProperty("maxEditsPerMinute")
+    		Integer maxEditsPerMinute,
+    		@JsonProperty("tag")
+    		String tag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
+        if (maxlag == null) {
+            // For backward compatibility, if the maxlag parameter is not included
+            // in the serialized JSON text, set it to 5.
+            maxlag = 5;
+        }
+        this.maxlag = maxlag;
+        this.maxEditsPerMinute = maxEditsPerMinute == null ? Manifest.DEFAULT_MAX_EDITS_PER_MINUTE : maxEditsPerMinute;
+        this.tagTemplate = tag == null ? Manifest.DEFAULT_TAG_TEMPLATE : tag;
+        // a fallback to Wikidata for backwards compatibility is done later on
+        this.editGroupsUrlSchema = editGroupsUrlSchema;
     }
 
     @Override
@@ -89,44 +125,49 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @Override
     public Process createProcess(Project project, Properties options)
             throws Exception {
-        return new PerformEditsProcess(project, createEngine(project), getBriefDescription(project), summary);
+        return new PerformEditsProcess(
+                project,
+                createEngine(project),
+                getBriefDescription(project),
+                editGroupsUrlSchema,
+                summary);
     }
 
     static public class PerformWikibaseEditsChange implements Change {
 
-        private NewItemLibrary newItemLibrary;
+        private NewEntityLibrary newEntityLibrary;
 
-        public PerformWikibaseEditsChange(NewItemLibrary library) {
-            newItemLibrary = library;
+        public PerformWikibaseEditsChange(NewEntityLibrary library) {
+            newEntityLibrary = library;
         }
 
         @Override
         public void apply(Project project) {
             // we don't re-run changes on Wikidata
-            newItemLibrary.updateReconciledCells(project, false);
+            newEntityLibrary.updateReconciledCells(project, false);
         }
 
         @Override
         public void revert(Project project) {
             // this does not do anything on Wikibase side -
             // (we don't revert changes on Wikidata either)
-            newItemLibrary.updateReconciledCells(project, true);
+            newEntityLibrary.updateReconciledCells(project, true);
         }
 
         @Override
         public void save(Writer writer, Properties options)
                 throws IOException {
-            if (newItemLibrary != null) {
+            if (newEntityLibrary != null) {
                 writer.write("newItems=");
                 ObjectMapper mapper = new ObjectMapper();
-                writer.write(mapper.writeValueAsString(newItemLibrary) + "\n");
+                writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
             writer.write("/ec/\n"); // end of change
         }
 
         static public Change load(LineNumberReader reader, Pool pool)
                 throws Exception {
-            NewItemLibrary library = new NewItemLibrary();
+            NewEntityLibrary library = new NewEntityLibrary();
             String line = null;
             while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
                 int equal = line.indexOf('=');
@@ -135,7 +176,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
                 if ("newItems".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
-                    library = mapper.readValue(value, NewItemLibrary.class);
+                    library = mapper.readValue(value, NewEntityLibrary.class);
                 }
             }
             return new PerformWikibaseEditsChange(library);
@@ -148,24 +189,34 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected Project _project;
         protected Engine _engine;
         protected WikibaseSchema _schema;
+        protected String _editGroupsUrlSchema;
         protected String _summary;
         protected List<String> _tags;
         protected final long _historyEntryID;
 
-        protected PerformEditsProcess(Project project, Engine engine, String description, String summary) {
+        protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
             super(description);
             this._project = project;
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
-            String tag = "openrefine";
-            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-            if (matcher.matches()) {
-                tag += "-"+matcher.group(1);
+            String tag = tagTemplate;
+            if (tag.contains("${version}")) {
+	            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+	            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+	            if (matcher.matches()) {
+	                tag = tag.replace("${version}", matcher.group(1));
+	            }
             }
-            this._tags = Arrays.asList(tag);
+            this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
+            if (editGroupsUrlSchema == null &&
+                    ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
+                // For backward compatibility, if no editGroups schema is provided
+                // and we edit Wikidata, then add Wikidata's editGroups schema
+                editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
+            }
+            this._editGroupsUrlSchema = editGroupsUrlSchema;
         }
 
         @Override
@@ -173,31 +224,36 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
             ConnectionManager manager = ConnectionManager.getInstance();
-            if (!manager.isLoggedIn()) {
+            String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
+            if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
                 return;
             }
-            ApiConnection connection = manager.getConnection();
+            ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            
-            // Generate batch token
-            long token = (new Random()).nextLong();
-            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-            // from the user-supplied ones, we replace these separators by similar unicode characters to
-            // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
-            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 11)));
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
+
+            String summary;
+            if (StringUtils.isBlank(_editGroupsUrlSchema)) {
+                summary = _summary;
+            } else {
+                // Generate batch id
+                String batchId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
+                // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                // from the user-supplied ones, we replace these separators by similar unicode characters to
+                // make sure they can be told apart.
+                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
+            }
 
             // Evaluate the schema
-            List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
+            List<EntityEdit> entityDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
-            NewItemLibrary newItemLibrary = new NewItemLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    _tags, 50);
+            NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
+            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
+                    maxlag, _tags, 50, maxEditsPerMinute);
 
             // Perform edits
             logger.info("Performing edits");
@@ -216,7 +272,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             _progress = 100;
 
             if (!_canceled) {
-                Change change = new PerformWikibaseEditsChange(newItemLibrary);
+                Change change = new PerformWikibaseEditsChange(newEntityLibrary);
 
                 HistoryEntry historyEntry = new HistoryEntry(_historyEntryID, _project, _description,
                         PerformWikibaseEditsOperation.this, change);

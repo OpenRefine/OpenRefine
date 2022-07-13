@@ -64,22 +64,22 @@ function formatRelativeDate(d) {
   var tomorrow = Date.today().add({ days: 1 });
 
   if (d.between(today, tomorrow)) {
-    return $.i18n('core-util-enc/today')+" " + d.toString("h:mm tt");
+    return $.i18n('core-util-enc/today', d.toString("h:mm tt"));
   } else if (d.between(last_week, today)) {
     var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
-    return (diff <= 1) ? ($.i18n('core-util-enc/yesterday')+" " + d.toString("h:mm tt")) : (diff + " "+$.i18n('core-util-enc/days-ago'));
+    return (diff <= 1) ? ($.i18n('core-util-enc/yesterday', d.toString("h:mm tt"))) : $.i18n('core-util-enc/days-ago', diff);
   } else if (d.between(last_month, today)) {
     var diff = Math.floor((today.getDayOfYear() - d.getDayOfYear()) / 7);
     if (diff < 1) {diff += 52};
-    return (diff == 1) ? $.i18n('core-util-enc/week-ago') : diff.toFixed(0) + " "+$.i18n('core-util-enc/weeks-ago') ;
+    return $.i18n('core-util-enc/week-agos', diff) ;
   } else if (d.between(almost_last_year, today)) {
     var diff = today.getMonth() - d.getMonth();
     if (diff < 1) {
       diff += 12;
     }
-    return (diff == 1) ? $.i18n('core-util-enc/month-ago') : diff + " "+ $.i18n('core-util-enc/months-ago');
+    return $.i18n('core-util-enc/months-ago', diff);
   } else {
     var diff = Math.floor(today.getYear() - d.getYear());
-    return (diff == 1) ? $.i18n('core-util-enc/year-ago') : diff + " "+$.i18n('core-util-enc/years-ago');
+    return $.i18n('core-util-enc/years-ago', diff);
   }
 }

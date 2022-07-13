@@ -30,9 +30,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
- 
-package com.google.refine.expr;
 
+package com.google.refine.expr;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -40,38 +39,34 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.expr.ExpressionUtils;
-
 
 public class ExpressionUtilsTests extends RefineTest {
 
-    
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-
     // -----------------tests------------
 
     @Test
     public void testSameValueTrue() {
-        Assert.assertTrue(ExpressionUtils.sameValue(null,null));
-        Assert.assertTrue(ExpressionUtils.sameValue("",""));
-        Assert.assertTrue(ExpressionUtils.sameValue("one","one"));
-        Assert.assertTrue(ExpressionUtils.sameValue(1,1));
-        Assert.assertTrue(ExpressionUtils.sameValue(1.0,1.00));
-        Assert.assertTrue(ExpressionUtils.sameValue(true,true));
+        Assert.assertTrue(ExpressionUtils.sameValue(null, null));
+        Assert.assertTrue(ExpressionUtils.sameValue("", ""));
+        Assert.assertTrue(ExpressionUtils.sameValue("one", "one"));
+        Assert.assertTrue(ExpressionUtils.sameValue(1, 1));
+        Assert.assertTrue(ExpressionUtils.sameValue(1.0, 1.00));
+        Assert.assertTrue(ExpressionUtils.sameValue(true, true));
     }
 
     @Test
     public void testSameValueFalse() {
-        Assert.assertFalse(ExpressionUtils.sameValue("",null));
-        Assert.assertFalse(ExpressionUtils.sameValue(null,""));
-        Assert.assertFalse(ExpressionUtils.sameValue("one","two"));
-        Assert.assertFalse(ExpressionUtils.sameValue(1,2));
-        Assert.assertFalse(ExpressionUtils.sameValue(1,1.0));
-        Assert.assertFalse(ExpressionUtils.sameValue(true,false));
+        Assert.assertFalse(ExpressionUtils.sameValue("", null));
+        Assert.assertFalse(ExpressionUtils.sameValue(null, ""));
+        Assert.assertFalse(ExpressionUtils.sameValue("one", "two"));
+        Assert.assertFalse(ExpressionUtils.sameValue(1, 2));
+        Assert.assertFalse(ExpressionUtils.sameValue(1, 1.0));
+        Assert.assertFalse(ExpressionUtils.sameValue(true, false));
     }
 }

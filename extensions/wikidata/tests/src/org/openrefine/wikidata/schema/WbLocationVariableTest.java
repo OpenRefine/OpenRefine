@@ -21,12 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
+
+import com.google.refine.model.Cell;
 
 public class WbLocationVariableTest extends WbVariableTest<GlobeCoordinatesValue> {
 
@@ -61,6 +64,24 @@ public class WbLocationVariableTest extends WbVariableTest<GlobeCoordinatesValue
     @Test
     public void testEmpty() {
         isSkipped("");
+    }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+
+    public void testNullCell() {
+        isSkipped((Cell) null);
     }
 
     @Test

@@ -1,0 +1,92 @@
+const WikidataManifestV1_0 = {
+  "version": "1.0",
+  "mediawiki": {
+    "name": "Wikidata",
+    "root": "https://www.wikidata.org/wiki/",
+    "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
+    "api": "https://www.wikidata.org/w/api.php"
+  },
+  "wikibase": {
+    "site_iri": "http://www.wikidata.org/entity/",
+    "maxlag": 5,
+    "properties": {
+      "instance_of": "P31",
+      "subclass_of": "P279"
+    },
+    "constraints": {
+      "property_constraint_pid": "P2302",
+      "exception_to_constraint_pid": "P2303",
+      "constraint_status_pid": "P2316",
+      "mandatory_constraint_qid": "Q21502408",
+      "suggestion_constraint_qid": "Q62026391",
+      "distinct_values_constraint_qid": "Q21502410",
+      "multi_value_constraint_qid": "Q21510857",
+      "used_as_qualifier_constraint_qid": "Q21510863",
+      "single_value_constraint_qid": "Q19474404",
+      "symmetric_constraint_qid": "Q21510862",
+      "type_constraint_qid": "Q21503250",
+      "value_type_constraint_qid": "Q21510865",
+      "inverse_constraint_qid": "Q21510855",
+      "item_requires_statement_constraint_qid": "Q21503247",
+      "value_requires_statement_constraint_qid": "Q21510864",
+      "conflicts_with_constraint_qid": "Q21502838",
+      "one_of_constraint_qid": "Q21510859",
+      "mandatory_qualifier_constraint_qid": "Q21510856",
+      "allowed_qualifiers_constraint_qid": "Q21510851",
+      "range_constraint_qid": "Q21510860",
+      "difference_within_range_constraint_qid": "Q21510854",
+      "common_link_constraint_qid": "Q21510852",
+      "contemporary_constraint_qid": "Q25796498",
+      "format_constraint_qid": "Q21502404",
+      "used_for_values_only_constraint_qid": "Q21528958",
+      "used_as_reference_constraint_qid": "Q21528959",
+      "no_bounds_constraint_qid": "Q51723761",
+      "allowed_units_constraint_qid": "Q21514353",
+      "single_best_value_constraint_qid": "Q52060874",
+      "allowed_entity_types_constraint_qid": "Q52004125",
+      "citation_needed_constraint_qid": "Q54554025",
+      "property_scope_constraint_qid": "Q53869507",
+      "class_pid": "P2308",
+      "relation_pid": "P2309",
+      "instance_of_relation_qid": "Q21503252",
+      "subclass_of_relation_qid": "Q21514624",
+      "instance_or_subclass_of_relation_qid": "Q30208840",
+      "property_pid": "P2306",
+      "item_of_property_constraint_pid": "P2305",
+      "minimum_value_pid": "P2313",
+      "maximum_value_pid": "P2312",
+      "minimum_date_pid": "P2310",
+      "maximum_date_pid": "P2311",
+      "namespace_pid": "P2307",
+      "format_as_a_regular_expression_pid": "P1793",
+      "syntax_clarification_pid": "P2916",
+      "constraint_scope_pid": "P4680",
+      "separator_pid": "P4155",
+      "constraint_checked_on_main_value_qid": "Q46466787",
+      "constraint_checked_on_qualifiers_qid": "Q46466783",
+      "constraint_checked_on_references_qid": "Q46466805",
+      "none_of_constraint_qid": "Q52558054",
+      "one_of_qualifier_value_property_constraint_qid": "Q52712340",
+      "integer_constraint_qid": "Q52848401",
+      "wikibase_item_qid": "Q29934200",
+      "wikibase_property_qid": "Q29934218",
+      "wikibase_lexeme_qid": "Q51885771",
+      "wikibase_form_qid": "Q54285143",
+      "wikibase_sense_qid": "Q54285715",
+      "wikibase_media_info_qid": "Q59712033",
+      "property_scope_pid": "P5314",
+      "as_main_value_qid": "Q54828448",
+      "as_qualifiers_qid": "Q54828449",
+      "as_references_qid": "Q54828450"
+    }
+  },
+  "oauth": {
+    "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+  },
+  "reconciliation": {
+    "endpoint": "https://wikidata.reconci.link/${lang}/api"
+  },
+  "editgroups": {
+    "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
+  }
+};

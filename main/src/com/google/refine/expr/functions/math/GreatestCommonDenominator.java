@@ -43,8 +43,8 @@ public class GreatestCommonDenominator implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number) {
             return GreatestCommonDenominator.GCD(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
@@ -56,12 +56,12 @@ public class GreatestCommonDenominator implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the greatest common denominator of the two numbers";
+        return "Returns the greatest common denominator of two numbers.";
     }
     
     @Override
     public String getParams() {
-        return "number d, number e";
+        return "number n1, number n2";
     }
     
     @Override

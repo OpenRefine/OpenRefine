@@ -24,18 +24,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.StartsWith;
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class StartsWithTests {
+public class StartsWithTests extends RefineTest {
+
     @Test
-    public void serializeStartsWith() {
-        String json = "{\"description\":\"Returns whether s starts with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new StartsWith(), json);
+    public void testStartsWith() {
+        assertTrue((Boolean) invoke("startsWith", "testString", "test"));
+        assertFalse((Boolean) invoke("startsWith", "testString", "banana"));
     }
 }
-

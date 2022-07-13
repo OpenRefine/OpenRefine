@@ -14,7 +14,7 @@ public class CalendarScrutinizer extends ValueScrutinizer {
 
 	@Override
 	public void scrutinize(Value value) {
-		if(TimeValue.class.isInstance(value)) {
+		if(value instanceof TimeValue) {
 			TimeValue time = (TimeValue)value;
 			if(time.getPreferredCalendarModel().equals(earliestGregorian.getPreferredCalendarModel()) &&
 			   time.getPrecision() >= 10 &&
@@ -28,4 +28,8 @@ public class CalendarScrutinizer extends ValueScrutinizer {
 		}
 	}
 
+	@Override
+	public boolean prepareDependencies() {
+		return true;
+	}
 }

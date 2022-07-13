@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.column;
 
 import org.testng.annotations.BeforeSuite;
@@ -31,17 +32,16 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnMoveOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ColumnMoveOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation(getCoreModule(), "column-move", ColumnMoveOperation.class);
     }
-    
+
     @Test
     public void serializeColumnMoveOperation() throws Exception {
         String json = "{\"op\":\"core/column-move\","

@@ -276,6 +276,8 @@ public abstract class Command {
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();
@@ -367,7 +369,7 @@ public abstract class Command {
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         writer.writeStartObject();
         writer.writeStringField("code", "error");   
-        writer.writeStringField("message", e.getMessage());
+        writer.writeStringField("message", e.toString());
         writer.writeStringField("stack", sw.toString());
         writer.writeEndObject();
         writer.flush();

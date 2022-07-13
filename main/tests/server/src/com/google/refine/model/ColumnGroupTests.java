@@ -24,29 +24,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.model.ColumnGroup;
 import com.google.refine.util.TestUtils;
 
 public class ColumnGroupTests {
-    
+
     String json = "{"
             + "\"startColumnIndex\":2,"
             + "\"columnSpan\":3,"
             + "\"keyColumnIndex\":1"
             + "}";
+
     @Test
     public void serializeColumnGroup() throws Exception {
         TestUtils.isSerializedTo(ColumnGroup.load(json), json);
     }
-    
+
     @Test
     public void serializeColumnGroupWithSubgroups() throws Exception {
-        ColumnGroup cg = new ColumnGroup(2,3,1);
-        ColumnGroup subCg = new ColumnGroup(2,2,1);
+        ColumnGroup cg = new ColumnGroup(2, 3, 1);
+        ColumnGroup subCg = new ColumnGroup(2, 2, 1);
         cg.subgroups.add(subCg);
         String fullJson = "{"
                 + "\"startColumnIndex\":2,"

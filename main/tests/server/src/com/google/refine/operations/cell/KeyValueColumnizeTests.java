@@ -63,13 +63,12 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
 public class KeyValueColumnizeTests extends RefineTest {
+
     // dependencies
     private RefineServlet servlet;
     private Project project;
@@ -77,7 +76,6 @@ public class KeyValueColumnizeTests extends RefineTest {
     private ObjectNode options;
     private ImportingJob job;
     private SeparatorBasedImporter importer;
-
 
     @Override
     @BeforeTest
@@ -87,7 +85,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-	servlet = new RefineServletStub();
+        servlet = new RefineServletStub();
         File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
         project = new Project();
@@ -97,21 +95,21 @@ public class KeyValueColumnizeTests extends RefineTest {
         options = mock(ObjectNode.class);
         OperationRegistry.registerOperation(getCoreModule(), "key-value-columnize", KeyValueColumnizeOperation.class);
 
-	ImportingManager.initialize(servlet);
+        ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();
-	importer = new SeparatorBasedImporter(); 
+        importer = new SeparatorBasedImporter();
     }
 
     @AfterMethod
     public void TearDown() {
-	ImportingManager.disposeJob(job.id);
-	ProjectManager.singleton.deleteProject(project.id);
-	job = null;
+        ImportingManager.disposeJob(job.id);
+        ProjectManager.singleton.deleteProject(project.id);
+        job = null;
         project = null;
-	pm = null;
+        pm = null;
         options = null;
     }
-    
+
     @Test
     public void serializeKeyValueColumnizeOperation() throws Exception {
         String json = "{\"op\":\"core/key-value-columnize\","
@@ -131,28 +129,29 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     /**
      * Test in the case where an ID is available in the first column.
+     * 
      * @throws Exception
      */
     @Test
     public void testKeyValueColumnizeWithID() throws Exception {
         Project project = createCSVProject(
                 "ID,Cat,Val\n"
-                + "1,a,1\n"
-                + "1,b,3\n"
-                + "2,b,4\n"
-                + "2,c,5\n"
-                + "3,a,2\n"
-                + "3,b,5\n"
-                + "3,d,3\n");
+                        + "1,a,1\n"
+                        + "1,b,3\n"
+                        + "2,b,4\n"
+                        + "2,c,5\n"
+                        + "3,a,2\n"
+                        + "3,b,5\n"
+                        + "3,d,3\n");
 
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
 
         Process process = op.createProcess(project, new Properties());
-        
+
         process.performImmediate();
-            
-        // Expected output from the GUI. 
+
+        // Expected output from the GUI.
         // ID,a,b,c,d
         // 1,1,3,,
         // 2,,4,5,
@@ -164,26 +163,26 @@ public class KeyValueColumnizeTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.get(3).getName(), "c");
         Assert.assertEquals(project.columnModel.columns.get(4).getName(), "d");
         Assert.assertEquals(project.rows.size(), 3);
-        
+
         // The actual row data structure has to leave the columns model untouched for redo/undo purpose.
         // So we have 2 empty columns(column 1,2) on the row level.
         // 1,1,3,,
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "1");
         Assert.assertEquals(project.rows.get(0).cells.get(3).value, "1");
         Assert.assertEquals(project.rows.get(0).cells.get(4).value, "3");
-        
+
         // 2,,4,5,
         Assert.assertEquals(project.rows.get(1).cells.get(0).value, "2");
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "4");
         Assert.assertEquals(project.rows.get(1).cells.get(5).value, "5");
-        
+
         // 3,2,5,,3
         Assert.assertEquals(project.rows.get(2).cells.get(0).value, "3");
         Assert.assertEquals(project.rows.get(2).cells.get(3).value, "2");
         Assert.assertEquals(project.rows.get(2).cells.get(4).value, "5");
         Assert.assertEquals(project.rows.get(2).cells.get(6).value, "3");
     }
-    
+
     /**
      * Test to demonstrate the intended behaviour of the function, for issue #1214
      * https://github.com/OpenRefine/OpenRefine/issues/1214
@@ -191,57 +190,55 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @Test
     public void testKeyValueColumnize() throws Exception {
-	String csv = "Key,Value\n"
-		+ "merchant,Katie\n"
-		+ "fruit,apple\n"
-		+ "price,1.2\n"
-		+ "fruit,pear\n"
-		+ "price,1.5\n"
-		+ "merchant,John\n"
-		+ "fruit,banana\n"
-		+ "price,3.1\n";
-	prepareOptions(",", 20, 0, 0, 1, false, false);
+        String csv = "Key,Value\n"
+                + "merchant,Katie\n"
+                + "fruit,apple\n"
+                + "price,1.2\n"
+                + "fruit,pear\n"
+                + "price,1.5\n"
+                + "merchant,John\n"
+                + "fruit,banana\n"
+                + "price,3.1\n";
+        prepareOptions(",", 20, 0, 0, 1, false, false);
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, pm);
 
-	AbstractOperation op = new KeyValueColumnizeOperation(
-		"Key",
-		"Value",
-		null);
+        AbstractOperation op = new KeyValueColumnizeOperation(
+                "Key",
+                "Value",
+                null);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-	int merchantCol = project.columnModel.getColumnByName("merchant").getCellIndex();
-	int fruitCol = project.columnModel.getColumnByName("fruit").getCellIndex();
-	int priceCol = project.columnModel.getColumnByName("price").getCellIndex();
-	
-	Assert.assertEquals(project.rows.get(0).getCellValue(merchantCol), "Katie");
-	Assert.assertEquals(project.rows.get(1).getCellValue(merchantCol), null);
-	Assert.assertEquals(project.rows.get(2).getCellValue(merchantCol), "John");
-	Assert.assertEquals(project.rows.get(0).getCellValue(fruitCol), "apple");
-	Assert.assertEquals(project.rows.get(1).getCellValue(fruitCol), "pear");
-	Assert.assertEquals(project.rows.get(2).getCellValue(fruitCol), "banana");
-	Assert.assertEquals(project.rows.get(0).getCellValue(priceCol), "1.2");
-	Assert.assertEquals(project.rows.get(1).getCellValue(priceCol), "1.5");
-	Assert.assertEquals(project.rows.get(2).getCellValue(priceCol), "3.1");
+        int merchantCol = project.columnModel.getColumnByName("merchant").getCellIndex();
+        int fruitCol = project.columnModel.getColumnByName("fruit").getCellIndex();
+        int priceCol = project.columnModel.getColumnByName("price").getCellIndex();
+
+        Assert.assertEquals(project.rows.get(0).getCellValue(merchantCol), "Katie");
+        Assert.assertEquals(project.rows.get(1).getCellValue(merchantCol), null);
+        Assert.assertEquals(project.rows.get(2).getCellValue(merchantCol), "John");
+        Assert.assertEquals(project.rows.get(0).getCellValue(fruitCol), "apple");
+        Assert.assertEquals(project.rows.get(1).getCellValue(fruitCol), "pear");
+        Assert.assertEquals(project.rows.get(2).getCellValue(fruitCol), "banana");
+        Assert.assertEquals(project.rows.get(0).getCellValue(priceCol), "1.2");
+        Assert.assertEquals(project.rows.get(1).getCellValue(priceCol), "1.5");
+        Assert.assertEquals(project.rows.get(2).getCellValue(priceCol), "3.1");
     }
 
     private void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-        }
 
+        whenGetStringOption("separator", options, sep);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+    }
 
 }
-

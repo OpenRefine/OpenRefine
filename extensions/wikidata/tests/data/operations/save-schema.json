@@ -2,8 +2,9 @@
     "op": "wikidata/save-wikibase-schema",
     "description": "Save Wikibase schema",
     "schema": {
-      "itemDocuments": [
+      "entityEdits": [
         {
+          "type": "wbitemeditexpr",
           "subject": {
             "label": "University of Oxford",
             "type": "wbitemconstant",
@@ -28,6 +29,9 @@
             }
           ]
         }
-      ]
+      ],
+      "siteIri": "http://www.wikidata.org/entity/",
+      "mediaWikiApiEndpoint":"https://www.wikidata.org/w/api.php",
+      "entityTypeSiteIRI": {}
     }
 }

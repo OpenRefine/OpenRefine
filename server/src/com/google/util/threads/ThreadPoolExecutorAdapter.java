@@ -1,5 +1,3 @@
-package com.google.util.threads;
-
 //========================================================================
 //$$Id: ThreadPoolExecutorAdapter.java,v 1.3 2007/11/02 12:39:41 ludovic_orban Exp $$
 //
@@ -14,14 +12,15 @@ package com.google.util.threads;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
+package com.google.util.threads;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.mortbay.component.LifeCycle;
-import org.mortbay.log.Log;
-import org.mortbay.thread.ThreadPool;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 /**
  * Jetty {@link ThreadPool} that bridges requests to a
@@ -36,13 +35,11 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
     }
 
     @Override
-    public boolean dispatch(Runnable job) {
+    public void execute(Runnable job) {
         try {
             executor.execute(job);
-            return true;
         } catch (RejectedExecutionException e) {
-            Log.warn(e);
-            return false;
+            Log.getLog().warn(e);
         }
     }
 

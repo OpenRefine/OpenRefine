@@ -24,18 +24,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.Jsonize;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.util.TestUtils;
 
-public class JsonizeTests {
+public class JsonizeTests extends RefineTest {
+
     @Test
-    public void serializeJsonize() {
-        String json = "{\"description\":\"Quotes a value as a JSON literal value\",\"params\":\"value\",\"returns\":\"JSON literal value\"}";
-        TestUtils.isSerializedTo(new Jsonize(), json);
+    public void testToString() throws CalendarParserException {
+
+        assertTrue(invoke("jsonize") instanceof EvalError);
+
+        Object[] emptyArray = {};
+        assertEquals(invoke("jsonize", (Object) emptyArray), "[ ]");
+
+        Object[] objArray = { 4, "hello", true, 0.01, null };
+        assertEquals(invoke("jsonize", (Object) objArray), "[ 4, \"hello\", true, 0.01, null ]");
+
+        Object[][] multiArray = { { "OpenRefine", 12 }, { 13, 4.6 }, { "data", "mining" } };
+        assertEquals(invoke("jsonize", (Object) multiArray), "[ [ \"OpenRefine\", 12 ], [ 13, 4.6 ], [ \"data\", \"mining\" ] ]");
+
     }
 }
-

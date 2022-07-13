@@ -24,21 +24,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model;
 
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class RecordModelTests extends RefineTest {
+
     @Test
     public void serializeRecordModel() {
         Project proj = createCSVProject("key,val\n"
                 + "34,first\n"
-                + ",second"
-                );
+                + ",second");
         TestUtils.isSerializedTo(proj.recordModel, "{\"hasRecords\":true}");
     }
 }

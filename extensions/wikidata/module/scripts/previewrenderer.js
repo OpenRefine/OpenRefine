@@ -11,25 +11,22 @@ EditRenderer.maxStatements = 25; // max number of statements per statement group
 // main method: takes a DOM element and a list
 // of edits to render there.
 EditRenderer.renderEdits = function(edits, container) {
-   for(var i = 0; i != edits.length; i++) {
-      EditRenderer._renderItem(edits[i], container);
+   for(var i = 0; i < edits.length; i++) {
+	  if (edits[i].type === 'item') {
+		EditRenderer._renderItem(edits[i], container);
+	  } else if (edits[i].type === 'mediainfo') {
+		EditRenderer._renderMediaInfo(edits[i], container);
+	  } else {
+		console.error("unsupported entity type to be rendered in preview tab: "+edits[i].type);
+	  }
    }
-}
+};
 
 /**************/
 /*** ITEMS ****/
 /**************/
 
 EditRenderer._renderItem = function(json, container) {
-  var subject = json;
-  var statementGroups = null;
-  var nameDescs = null;
-  if (json) {
-     subject = json.subject;
-     statementGroups = json.statementGroups;
-     nameDescs = json.nameDescs;
-  }
-
   var item = $('<div></div>').addClass('wbs-item').appendTo(container);
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
   EditRenderer._renderEntity(json.subject, inputContainer);
@@ -55,16 +52,52 @@ EditRenderer._renderItem = function(json, container) {
   }
 
   // Statements
-  if (json.addedStatementGroups && json.addedStatementGroups.length) {
+  if (json.statementGroups && json.statementGroups.length) {
     // $('<div></div>').addClass('wbs-statements-header')
-    //        .text($.i18n('wikidata-schema/statements-header')).appendTo(right);
+    //        .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
     var statementsGroupContainer = $('<div></div>').addClass('wbs-statement-group-container')
             .appendTo(right);
-    for(var i = 0; i != json.addedStatementGroups.length; i++) {
-       EditRenderer._renderStatementGroup(json.addedStatementGroups[i], statementsGroupContainer);
+    for(var i = 0; i != json.statementGroups.length; i++) {
+       EditRenderer._renderStatementGroup(json.statementGroups[i], statementsGroupContainer);
     }
   }
-}
+};
+
+/***************************/
+/*** MEDIAINFO ENTITIES ****/
+/***************************/
+
+EditRenderer._renderMediaInfo = function(json, container) {
+  var mediainfo = $('<div></div>').addClass('wbs-entity').addClass('wbs-mediainfo').appendTo(container);
+  var inputContainer = $('<div></div>').addClass('wbs-mediainfo-input').appendTo(mediainfo);
+  EditRenderer._renderEntity(json.subject, inputContainer);
+  var right = $('<div></div>').addClass('wbs-entity-contents').appendTo(mediainfo);
+
+  // Terms
+  if ((json.labels && json.labels.length) ||
+      (json.labelsIfNew && json.labelsIfNew.length)) {
+    var termsContainer = $('<div></div>').addClass('wbs-namedesc-container')
+        .appendTo(right);
+    
+    this._renderTermsList(json.labels, "caption-override", termsContainer);
+    this._renderTermsList(json.labelsIfNew, "caption-if-new", termsContainer);
+
+    // Clear the float
+    $('<div></div>').attr('style', 'clear: right').appendTo(right);
+  }
+
+  // Statements
+  if (json.statementGroups && json.statementGroups.length) {
+    // $('<div></div>').addClass('wbs-statements-header')
+    //        .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
+    var statementsGroupContainer = $('<div></div>').addClass('wbs-statement-group-container')
+            .appendTo(right);
+    for(var i = 0; i != json.statementGroups.length; i++) {
+       EditRenderer._renderStatementGroup(json.statementGroups[i], statementsGroupContainer);
+    }
+  }
+};
+
 
 /**************************
  * NAMES AND DESCRIPTIONS *
@@ -80,18 +113,18 @@ EditRenderer._renderTermsList = function(termList, termType, termsContainer) {
     if(termList.length > this.maxTerms) {
         $('<div></div>').addClass('wbs-namedesc').text('...').appendTo(termsContainer);
     }
-}
+};
 
 EditRenderer._renderTerm = function(termType, json, container) {
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
   var type_container = $('<div></div>').addClass('wbs-namedesc-type').appendTo(namedesc);
   var type_span = $('<span></span>').appendTo(type_container)
-        .text($.i18n('wikidata-schema/'+termType));
+        .text($.i18n('wikibase-schema/'+termType));
 
   var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
   EditRenderer._renderValue({datavalue:json,datatype:'monolingualtext'}, value_container); 
-}
+};
 
 /********************
  * STATEMENT GROUPS *
@@ -105,16 +138,16 @@ EditRenderer._renderStatementGroup = function(json, container) {
   EditRenderer._renderEntity(json.property, inputContainer);
 
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
-  for (var i = 0; i != json.statements.length; i++) {
-     EditRenderer._renderStatement(json.statements[i], statementContainer);
+  for (var i = 0; i != json.statementEdits.length; i++) {
+     EditRenderer._renderStatement(json.statementEdits[i], statementContainer);
   }
-  if(json.statements.length > EditRenderer.maxStatements) {
+  if(json.statementEdits.length > EditRenderer.maxStatements) {
      $('<div></div>')
          .text('...')
          .addClass('wbs-statement')
          .appendTo(statementContainer);
   }
-}
+};
 
 /**************
  * STATEMENTS *
@@ -124,20 +157,34 @@ EditRenderer._renderStatement = function(json, container) {
  
   var statement = $('<div></div>').addClass('wbs-statement').appendTo(container);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
-  EditRenderer._renderValue(json.mainsnak, inputContainer);
+  var mode = json.mode;
+  var strategyType = json.mergingStrategy.type;
+  if (!(mode === 'delete' && strategyType === 'property')) {
+    EditRenderer._renderValue(json.statement.mainsnak, inputContainer);
+  } else {
+    inputContainer.append(
+      $('<span></span>').addClass('wbs-value-placeholder')
+        .text($.i18n('wikibase-preview/delete-all-existing-statements'))
+    );
+  }
+
+  // mode and strategy
+  statement.addClass('wbs-statement-mode-' + json.mode);
+  statement.addClass('wbs-statement-strategy-' + json.mergingStrategy.type);
 
   // add rank
   var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
 
   // add qualifiers...
-  var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+  var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
+  var right = $('<div></div>').addClass('wbs-right').appendTo(qualifiersSection);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
 
-  if (json.qualifiers) {
-    for (var pid_id in json['qualifiers-order']) {
-      var pid = json['qualifiers-order'][pid_id];
-      if (json.qualifiers.hasOwnProperty(pid)) {
-        var qualifiers = json.qualifiers[pid];
+  if (json.statement.qualifiers) {
+    for (var pid_id in json.statement['qualifiers-order']) {
+      var pid = json.statement['qualifiers-order'][pid_id];
+      if (json.statement.qualifiers.hasOwnProperty(pid)) {
+        var qualifiers = json.statement.qualifiers[pid];
         for (var i = 0; i != qualifiers.length; i++) {
           EditRenderer._renderSnak(qualifiers[i], qualifierContainer);
         }
@@ -147,10 +194,11 @@ EditRenderer._renderStatement = function(json, container) {
 
   // and references
   $('<div></div>').attr('style', 'clear: right').appendTo(statement);
-  var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+  var referencesSection = $('<div></div>').addClass('wbs-references-section').appendTo(statement);
+  var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(referencesSection);
   var triangle = $('<div></div>').addClass('triangle-icon').addClass('pointing-right').appendTo(referencesToggleContainer);
   var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
-  right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+  right = $('<div></div>').addClass('wbs-right').appendTo(referencesSection);
   var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
   referencesToggle.click(function () {
       triangle.toggleClass('pointing-down');
@@ -159,13 +207,13 @@ EditRenderer._renderStatement = function(json, container) {
   });
   referenceContainer.hide();
 
-  if (json.references) {
-      for (var i = 0; i != json.references.length; i++) {
-        EditRenderer._renderReference(json.references[i], referenceContainer);
+  if (json.statement.references) {
+      for (var i = 0; i != json.statement.references.length; i++) {
+          EditRenderer._renderReference(json.statement.references[i], referenceContainer);
       }
   }
   EditRenderer._updateReferencesNumber(referenceContainer);
-}
+};
 
 /*********************************
  * QUALIFIER AND REFERENCE SNAKS *
@@ -180,7 +228,7 @@ EditRenderer._renderSnak = function(json, container) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   EditRenderer._renderEntity(json.full_property, inputContainer);
   EditRenderer._renderValue(json, statementContainer);
-}
+};
 
 /**************
  * REFERENCES *
@@ -206,8 +254,8 @@ EditRenderer._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html(childrenCount+$.i18n('wikidata-schema/nb-references'));
-}
+  a.html(childrenCount+$.i18n('wikibase-schema/nb-references'));
+};
 
 /*******************
  * VALUE RENDERING *
@@ -218,7 +266,7 @@ EditRenderer.renderedValueCache = {};
 EditRenderer._renderEntity = function(json, container) {
   var html = WarningsRenderer._renderEntity(json);
   $(html).appendTo(container);
-}
+};
 
 EditRenderer._renderValue = function(json, container) {
   var input = $('<span></span>').appendTo(container);
@@ -245,7 +293,7 @@ EditRenderer._renderValue = function(json, container) {
             params.datatype = json.datatype;
         }
         $.get(
-            'https://www.wikidata.org/w/api.php',
+            WikibaseManager.getSelectedWikibaseApi(),
             params,
             function (data) {
                 if('result' in data) {
@@ -257,6 +305,6 @@ EditRenderer._renderValue = function(json, container) {
         );
     }
   }
-}
+};
 
 

@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
   top: @padding_normal;
   padding: 0 10px 0 0;
-   float: left;
+  float: left;
   }
 
 .viewpanel-paging {
@@ -55,42 +55,98 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-weight: bold;
   }
 
-.data-header-table-container {
-  border-top: 1px solid @chrome_primary;
-  border-bottom: 2px solid @chrome_primary;
-  background: @fill_primary;
-  overflow: visible;
+.viewpanel-rowrecord a {
+  background-color: @fill_primary;
+  margin: 0px 1px 0px 1px;
+  padding: 2px 5px 2px 5px;
+  .rounded_corners(4px);
   }
 
-.data-header-table {
+.viewpanel-pagesize a {
+  background-color: @fill_primary;
+  margin: 0px 2px 0px 2px;
+  padding: 2px 3px 2px 3px;
+  .rounded_corners(4px);
+  }
+
+div.viewpanel-pagesize span:first-of-type {
+  margin: 0px 0px 0px 20px;
+}
+
+.viewpanel-paging a {
+  background-color: @fill_primary;
+  margin: 0px 4px 0px 4px;
+  padding: 2px 10px 2px 10px;
+  .rounded_corners(4px);
+  }
+
+.viewpanel-paging span#viewpanel-paging-current {
+  margin: 0 10px 0 10px;
+  padding: 0px;
+  }
+
+.viewpanel-paging input#viewpanel-paging-current-input {
+  width: 60px;
+  margin: 0px;
+  padding: 0px;
+  height: 16px;
+  position: relative;
+  top: -2px;
+  }
+
+.data-table-header {
   width: 1px;
   position: relative;
+  background: @fill_primary;
   }
   
 .data-table-container {
   overflow: auto;
+  border-top: 1px solid @chrome_primary;
   }
 
-.data-header-table, .data-table {
+.data-table-header, .data-table {
   margin: 0;
   padding: 0;
-  font-size: 1.1em;
-  border-collapse: collapse;
+  font-size: 1.05em;
+  border-collapse: separate;
   }
 
-.data-table td, .data-header-table td {
+.data-table td, .data-table-header td, .data-table-header th {
   padding: 2px 5px;
   }
+
 .data-table td {
-  border-bottom: 1px dotted #ddd;
-  border-right: 1px solid #ddd;
+  border-bottom: 0.02rem dotted #ddd;
+  border-right: 0.02rem solid #ddd;
   }
-.data-header-table td {
-  border-bottom: 1px dotted @chrome_primary;
-  border-right: 1px solid @chrome_primary;
+
+.data-table-header td, .data-table-header th {
+  border-bottom: 0.02rem dotted @chrome_primary;
+  border-right: 0.02rem solid @chrome_primary;
+  }
+
+table {
+  position: relative;
+  }
+
+th.column-header {
+  position: -webkit-sticky; /* Safari */ 
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  will-change: transform;
+  }
+
+th {
+  text-align: left;
   }
 
 table.data-header-table > tbody > tr > td {
+  overflow: hidden !important;
+  }
+
+table > thead > tr > th {
   overflow: hidden !important;
   }
 
@@ -102,7 +158,8 @@ table.data-table > tbody > tr.contextual > td > div {
   opacity: 0.3;
   }
 
-table.data-header-table td.column-header, table.data-table td.column-header {
+table.data-table-header td.column-header, table.data-table-header th.column-header,
+table.data-table td.column-header, table.data-table th.column-header {
   vertical-align: top;
   white-space: nowrap;
   cursor: pointer;
@@ -112,9 +169,9 @@ table.data-header-table td.column-header, table.data-table td.column-header {
   }
 
 /* For the preview in the importing stage */
-table.data-table td.column-header {
+table.data-table td.column-header, table.data-table th.column-header {
   background: @fill_primary;
-  border-bottom: 2px solid @chrome_primary;
+  border-bottom: 0.12rem solid @chrome_primary;
   }
 
 .column-header-name {

@@ -43,7 +43,7 @@ public class Tanh implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
+        if (args.length == 1 && args[0] instanceof Number) {
             return StrictMath.tanh(((Number) args[0]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
@@ -51,12 +51,12 @@ public class Tanh implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the hyperbolic tangent of a value";
+        return "Returns the hyperbolic tangent of an angle.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

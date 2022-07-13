@@ -1,0 +1,26 @@
+{
+    "version": "1.0",
+    "mediawiki": {
+        "name": "Wikidata",
+        "root": "https://www.wikidata.org/wiki/",
+        "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
+        "api": "https://www.wikidata.org/w/api.php"
+    },
+    "wikibase": {
+        "site_iri": "http://www.wikidata.org/entity/",
+        "maxlag": 5,
+        "properties": {
+            "instance_of": "P31",
+            "subclass_of": "P279"
+        }
+    },
+    "oauth": {
+        "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+    },
+    "reconciliation": {
+        "endpoint": "https://wikidata.reconci.link/${lang}/api"
+    },
+    "editgroups": {
+        "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
+    }
+}

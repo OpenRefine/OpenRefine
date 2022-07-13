@@ -26,24 +26,27 @@ package org.openrefine.wikidata.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.WriterExporter;
@@ -53,10 +56,15 @@ public class QuickStatementsExporter implements WriterExporter {
 
     final static Logger logger = LoggerFactory.getLogger("QuickStatementsExporter");
 
-    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new items.";
-    public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikidata first.";
+    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities.";
+    public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikibase first.";
+    
+    protected final QSSnakPrinter mainSnakPrinter;
+    protected final QSSnakPrinter referenceSnakPrinter;
 
     public QuickStatementsExporter() {
+        mainSnakPrinter = new QSSnakPrinter(false);
+        referenceSnakPrinter = new QSSnakPrinter(true);
     }
 
     @Override
@@ -90,17 +98,46 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<ItemUpdate> items = schema.evaluate(project, engine);
-        translateItemList(items, writer);
+        List<EntityEdit> items = schema.evaluate(project, engine);
+        
+        // First, check the entity edits for any problems, and only start the translation if there are no problems
+        String errorMessage = null;
+        Optional<EntityEdit> unsupportedEntityTypeEdit = items.stream()
+        		.filter(entityEdit -> !(entityEdit instanceof ItemEdit || entityEdit instanceof MediaInfoEdit))
+        		.findAny();
+        if (unsupportedEntityTypeEdit.isPresent()) {
+        	errorMessage = "Unable to export updates on "+
+    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported for this entity type";
+        }
+        Optional<EntityEdit> newMediaInfo = items.stream()
+        		.filter(entityEdit -> entityEdit instanceof MediaInfoEdit && entityEdit.isNew())
+        		.findAny();
+        if (newMediaInfo.isPresent()) {
+        	errorMessage = "Unable to create a new mediainfo entity "+
+    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported";
+        }
+        
+        if (errorMessage != null) {
+        	writer.write(errorMessage);
+        } else {
+        	translateItemList(items, writer);
+        }
     }
 
-    public void translateItemList(List<ItemUpdate> updates, Writer writer)
+    public void translateItemList(List<EntityEdit> updates, Writer writer)
             throws IOException {
         QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
         try {
-            List<ItemUpdate> scheduled = scheduler.schedule(updates);
-            for (ItemUpdate item : scheduled) {
-                translateItem(item, writer);
+            List<EntityEdit> scheduled = scheduler.schedule(updates);
+            for (EntityEdit entityEdit : scheduled) {
+            	if (entityEdit instanceof ItemEdit) {
+            		translateItem((ItemEdit) entityEdit, writer);
+            	} else if (entityEdit instanceof MediaInfoEdit) {
+            		translateMediaInfo((MediaInfoEdit) entityEdit, writer);
+            	} else {
+            		// prevented by the earlier checks above
+            		throw new IllegalStateException();
+            	}
             }
         } catch (ImpossibleSchedulingException e) {
             writer.write(impossibleSchedulingErrorMessage);
@@ -108,7 +145,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     }
 
-    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, ItemIdValue id,
+    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, EntityIdValue id,
             Writer writer)
             throws IOException {
         for (MonolingualTextValue value : values) {
@@ -121,26 +158,37 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
 
-    protected void translateItem(ItemUpdate item, Writer writer)
+    protected void translateItem(ItemEdit item, Writer writer)
             throws IOException {
-        String qid = item.getItemId().getId();
+        String qid = item.getEntityId().getId();
         if (item.isNew()) {
             writer.write("CREATE\n");
             qid = "LAST";
-            item = item.normalizeLabelsAndAliases();
         }
 
-        translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);
-        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getItemId(), writer);
-        translateNameDescr(qid, item.getDescriptions(), "D", item.getItemId(), writer);
-        translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getItemId(), writer);
-        translateNameDescr(qid, item.getAliases(), "A", item.getItemId(), writer);
+        translateNameDescr(qid, item.getLabels(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getDescriptions(), "D", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getAliases(), "A", item.getEntityId(), writer);
 
-        for (Statement s : item.getAddedStatements()) {
-            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);
+        for (StatementEdit s : item.getStatementEdits()) {
+            translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);
         }
-        for (Statement s : item.getDeletedStatements()) {
-            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), false, writer);
+    }
+    
+    protected void translateMediaInfo(MediaInfoEdit item, Writer writer)
+            throws IOException {
+        String qid = item.getEntityId().getId();
+        if (item.isNew()) {
+            throw new IllegalStateException();
+        }
+
+        translateNameDescr(qid, item.getLabels(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getEntityId(), writer);
+
+        for (StatementEdit s : item.getStatementEdits()) {
+            translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);
         }
     }
 
@@ -148,39 +196,36 @@ public class QuickStatementsExporter implements WriterExporter {
             throws IOException {
         Claim claim = statement.getClaim();
 
-        Value val = claim.getValue();
-        ValueVisitor<String> vv = new QSValuePrinter();
-        String targetValue = val.accept(vv);
-        if (targetValue != null) { // issue #2320
-            if (!add) {
-                // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Removing_statements,
-                // Removing statements won't be followed by qualifiers or references.
-                writer.write("- ");
-                writer.write(qid + "\t" + pid + "\t" + targetValue);
+        Snak mainSnak = claim.getMainSnak();
+        String mainSnakQS = mainSnak.accept(mainSnakPrinter);
+        if (!add) {
+            // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Removing_statements,
+            // Removing statements won't be followed by qualifiers or references.
+            writer.write("- ");
+            writer.write(qid + mainSnakQS);
+            writer.write("\n");
+        } else { // add statements
+            if (statement.getReferences().isEmpty()) {
+                writer.write(qid + mainSnakQS);
+                for (SnakGroup q : claim.getQualifiers()) {
+                    translateSnakGroup(q, false, writer);
+                }
                 writer.write("\n");
-            } else { // add statements
-                if (statement.getReferences().isEmpty()) {
-                    writer.write(qid + "\t" + pid + "\t" + targetValue);
+            } else {
+                // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Add_statement_with_sources
+                // Existing statements with an exact match (property and value) will not be added again;
+                // however additional references might be added to the statement.
+
+                // So, to handle multiple references, we can duplicate the statement just with different references.
+                for (Reference r : statement.getReferences()) {
+                    writer.write(qid + mainSnakQS);
                     for (SnakGroup q : claim.getQualifiers()) {
                         translateSnakGroup(q, false, writer);
                     }
-                    writer.write("\n");
-                } else {
-                    // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Add_statement_with_sources
-                    // Existing statements with an exact match (property and value) will not be added again;
-                    // however additional references might be added to the statement.
-
-                    // So, to handle multiple references, we can duplicate the statement just with different references.
-                    for (Reference r : statement.getReferences()) {
-                        writer.write(qid + "\t" + pid + "\t" + targetValue);
-                        for (SnakGroup q : claim.getQualifiers()) {
-                            translateSnakGroup(q, false, writer);
-                        }
-                        for (SnakGroup g : r.getSnakGroups()) {
-                            translateSnakGroup(g, true, writer);
-                        }
-                        writer.write("\n");
+                    for (SnakGroup g : r.getSnakGroups()) {
+                        translateSnakGroup(g, true, writer);
                     }
+                    writer.write("\n");
                 }
             }
         }
@@ -189,21 +234,11 @@ public class QuickStatementsExporter implements WriterExporter {
     protected void translateSnakGroup(SnakGroup sg, boolean reference, Writer writer)
             throws IOException {
         for (Snak s : sg.getSnaks()) {
-            translateSnak(s, reference, writer);
-        }
-    }
-
-    protected void translateSnak(Snak s, boolean reference, Writer writer)
-            throws IOException {
-        String pid = s.getPropertyId().getId();
-        if (reference) {
-            pid = pid.replace('P', 'S');
-        }
-        Value val = s.getValue();
-        ValueVisitor<String> vv = new QSValuePrinter();
-        String valStr = val.accept(vv);
-        if (valStr != null) {
-            writer.write("\t" + pid + "\t" + valStr);
+            if (reference) {
+                writer.write(s.accept(referenceSnakPrinter));
+            } else {
+                writer.write(s.accept(mainSnakPrinter));
+            }
         }
     }
 

@@ -50,17 +50,23 @@ public class WbLanguageConstant implements WbExpression<String> {
         _langLabel = langLabel;
     }
 
+    public static String normalizeLanguageCode(String lang) {
+        return normalizeLanguageCode(lang, null);
+    }
+
     /**
      * Checks that a language code is valid and returns its preferred version
      * (converting deprecated language codes to their better values).
      * 
      * @param lang
      *            a Wikimedia language code
+     * @param mediaWikiApiEndpoint
+     *            the MediaWiki API endpoint of the Wikibase
      * @return the normalized code, or null if the code is invalid.
      */
-    public static String normalizeLanguageCode(String lang) {
+    public static String normalizeLanguageCode(String lang, String mediaWikiApiEndpoint) {
         try {
-        	if (LanguageCodeStore.ALLOWED_LANGUAGE_CODES.contains(lang)) {
+        	if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
         		return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
         	} else {
         		return null;

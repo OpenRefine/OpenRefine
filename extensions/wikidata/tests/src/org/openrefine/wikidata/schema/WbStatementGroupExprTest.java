@@ -21,30 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
+public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdit> {
 
     private WbPropConstant propertyExpr = new WbPropConstant("P908", "myprop", "time");
     public WbStatementGroupExpr expr;
 
-    private ItemIdValue subject;
-    public StatementGroup statementGroup;
+    private EntityIdValue subject;
+    public StatementGroupEdit statementGroupUpdate;
 
     public String jsonRepresentation;
 
-    class Wrapper implements WbExpression<StatementGroup> {
+    class Wrapper implements WbExpression<StatementGroupEdit> {
 
         public WbStatementGroupExpr expr;
 
@@ -53,7 +53,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
         }
 
         @Override
-        public StatementGroup evaluate(ExpressionContext ctxt)
+        public StatementGroupEdit evaluate(ExpressionContext ctxt)
                 throws SkipSchemaExpressionException {
             return expr.evaluate(ctxt, subject);
         }
@@ -63,7 +63,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
         WbStatementExprTest statementTest = new WbStatementExprTest();
         expr = new WbStatementGroupExpr(propertyExpr, Collections.singletonList(statementTest.statementExpr));
         subject = statementTest.subject;
-        statementGroup = Datamodel.makeStatementGroup(Collections.singletonList(statementTest.fullStatement));
+        statementGroupUpdate = new StatementGroupEdit(Collections.singletonList(statementTest.fullStatementUpdate));
         jsonRepresentation = "{\"property\":{\"type\":\"wbpropconstant\",\"pid\":\"P908\",\"label\":\"myprop\",\"datatype\":\"time\"},"
                 + "\"statements\":[" + statementTest.jsonRepresentation + "]}";
     }
@@ -76,7 +76,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
-        evaluatesTo(statementGroup, new Wrapper(expr));
+        evaluatesTo(statementGroupUpdate, new Wrapper(expr));
     }
 
     @Test
@@ -89,5 +89,10 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
     public void testSerialize()
             throws JsonProcessingException {
         JacksonSerializationTest.canonicalSerialization(WbStatementGroupExpr.class, expr, jsonRepresentation);
+    }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableList() {
+        expr.getStatements().clear();
     }
 }

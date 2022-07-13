@@ -24,18 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.util.TestUtils;
 
 public class ParseJsonTests {
-    @Test
-    public void serializeParseJson() {
-        String json = "{\"description\":\"Parses a string as JSON\",\"params\":\"string s\",\"returns\":\"JSON object\"}";
-        TestUtils.isSerializedTo(new ParseJson(), json);
-    }
 }
-

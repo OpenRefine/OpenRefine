@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.history;
 
 import static org.mockito.Mockito.mock;
@@ -35,14 +36,13 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.util.TestUtils;
 
 public class HistoryEntryTests extends RefineTest {
-	
+
     public static final String fullJson = "{"
             + "\"id\":1533633623158,"
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
@@ -56,29 +56,29 @@ public class HistoryEntryTests extends RefineTest {
             + "   \"expression\":\"grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "   \"onError\":\"set-to-blank\"}"
             + "}";
-    
-	public static final String unknownOperationJson = "{"
+
+    public static final String unknownOperationJson = "{"
             + "\"id\":1533633623158,"
             + "\"description\":\"some mysterious operation\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
             + "\"operation\":{\"op\":\"someextension/unknown-operation\","
             + "   \"description\":\"some mysterious operation\","
             + "   \"some_parameter\":234\n"
-		    + "}\n"
+            + "}\n"
             + "}";
-    
+
     Project project;
-    
+
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
     }
-    
+
     @BeforeMethod
     public void setUp() {
         project = mock(Project.class);
     }
-    
+
     @Test
     public void serializeHistoryEntry() throws Exception {
         String json = "{\"id\":1533651837506,"
@@ -86,23 +86,23 @@ public class HistoryEntryTests extends RefineTest {
                 + "\"time\":\"2018-08-07T14:18:29Z\"}";
         TestUtils.isSerializedTo(HistoryEntry.load(project, json), json);
     }
-    
+
     @Test
     public void serializeHistoryEntryWithOperation() throws Exception {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
                 + "\"time\":\"2018-08-07T09:06:37Z\"}";
-        
+
         HistoryEntry historyEntry = HistoryEntry.load(project, fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, false);
         TestUtils.isSerializedTo(historyEntry, fullJson, true);
     }
-    
+
     @Test
     public void deserializeUnknownOperation() throws IOException {
-    	// Unknown operations are serialized back as they were parsed
-    	HistoryEntry entry = HistoryEntry.load(project, unknownOperationJson);
-    	TestUtils.isSerializedTo(entry, unknownOperationJson, true);
+        // Unknown operations are serialized back as they were parsed
+        HistoryEntry entry = HistoryEntry.load(project, unknownOperationJson);
+        TestUtils.isSerializedTo(entry, unknownOperationJson, true);
     }
 }

@@ -121,16 +121,8 @@ Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
             $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
                             .appendTo(li);
     });
-
-    self._addTagsListAnimation();
 };
 
-Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
-    $("#tagsUl").lavalamp({
-            setOnClick : true,
-            duration : 300
-    });
-};
 
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
     var self = this;
@@ -220,7 +212,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href","")
       .html("<img src='images/close.png' />")
       .click(function() {
-        if (window.confirm($.i18n('core-index-open/del-body') + project.name + "\"?")) {
+        if (window.confirm($.i18n('core-index-open/del-body', project.name))) {
           Refine.postCSRF(
             "command/core/delete-project",
             { "project" : project.id },
@@ -266,7 +258,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $("<span/>")
         .addClass("project-tag")
         .text(tag)
-        .attr("title", $.i18n('core-index-open/edit-tags'))
         .appendTo(tagsCell);
         $(tr).addClass(tag);
     });
@@ -364,7 +355,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
@@ -374,7 +364,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });

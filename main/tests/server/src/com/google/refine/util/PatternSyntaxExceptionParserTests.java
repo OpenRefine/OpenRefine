@@ -42,10 +42,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.PatternSyntaxExceptionParser;
 
 public class PatternSyntaxExceptionParserTests extends RefineTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -53,116 +52,116 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
     }
 
     @Test
-    public void unmatchedOpeningParenthesisTest(){
+    public void unmatchedOpeningParenthesisTest() {
         String s = "(abc";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression is missing a closing ')' character.");
+                    "The regular expression is missing a closing ')' character.");
         }
     }
 
     @Test
-    public void unmatchedClosingParenthesisTest(){
+    public void unmatchedClosingParenthesisTest() {
         String s = "abc)";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression is missing a opening '(' character.");
+                    "The regular expression is missing a opening '(' character.");
         }
     }
 
     @Test
-    public void unmatchedOpeningSquareBracketTest(){
+    public void unmatchedOpeningSquareBracketTest() {
         String s = "[abc";
         try {
             Pattern.compile(s);
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
+                    "The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
         }
     }
 
     @Test
-    public void danglingBackslashTest(){
+    public void danglingBackslashTest() {
         String s = "abc\\";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a backslash '\\' at the end.");
+                    "The regular expression has a backslash '\\' at the end.");
         }
     }
 
     @Test
-    public void unmatchedOpeningCurlyBracketTest(){
+    public void unmatchedOpeningCurlyBracketTest() {
         String s = "abc{3";
         try {
             Pattern.compile(s);
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.");
+                    "The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.");
         }
     }
 
     @Test
-    public void illegalQuantifierStatement(){
+    public void illegalQuantifierStatement() {
         String s = "abc{";
         try {
             Pattern.compile(s);
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.");
+                    "The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.");
         }
     }
 
     @Test
-    public void quantifierTargetValidityTest(){
+    public void quantifierTargetValidityTest() {
         String s = "abc+*";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a '*','+' or '?' in the wrong place.");
+                    "The regular expression has a '*','+' or '?' in the wrong place.");
         }
     }
 
     @Test
-    public void quantifierMagnitudeTest(){
+    public void quantifierMagnitudeTest() {
         String s = "a{4,3}";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a quantifier statement where the minimum is larger than the maximum (e.g. {4,3}).");
+                    "The regular expression has a quantifier statement where the minimum is larger than the maximum (e.g. {4,3}).");
         }
     }
 
     @Test
-    public void rangeOrderTest(){
+    public void rangeOrderTest() {
         String s = "abc[9-0]";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])");
+                    "The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])");
         }
     }
 

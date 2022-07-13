@@ -23,11 +23,21 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * Inspects an edit batch and emits warnings.
@@ -38,19 +48,35 @@ public abstract class EditScrutinizer {
 
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
-
-    public EditScrutinizer() {
-        _fetcher = null;
-        _store = null;
-    }
+    protected Manifest manifest;
 
     public void setStore(QAWarningStore store) {
         _store = store;
     }
 
+    /**
+     * The fetcher will be set to null if 'property_constraint_pid' is missing in the manifest.
+     */
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }
+
+    public void setManifest(Manifest manifest) {
+        this.manifest = manifest;
+    }
+
+    public String getConstraintsRelatedId(String name) {
+        return manifest.getConstraintsRelatedId(name);
+    }
+
+    /**
+     * Prepare the dependencies(i.e. constraint-related pids and qids) needed by the scrutinizer.
+     *
+     * Called before {@link EditScrutinizer#batchIsBeginning()}.
+     *
+     * @return false if any necessary dependency is missing, true otherwise.
+     */
+    public abstract boolean prepareDependencies();
     
     /**
      * Called before an edit batch is scrutinized.
@@ -60,12 +86,36 @@ public abstract class EditScrutinizer {
     }
 
     /**
-     * Reads the candidate edits and emits warnings in the store
+     * Reads the candidate edit and emits warnings in the store
      * 
      * @param edit:
-     *            the list of ItemUpdates to scrutinize
+     *            the {@link EntityEdit} to scrutinize
      */
-    public abstract void scrutinize(ItemUpdate edit);
+    public void scrutinize(EntityEdit edit) {
+    	if (edit instanceof ItemEdit) {
+    		scrutinize((ItemEdit) edit);
+    	} else if (edit instanceof MediaInfoEdit) {
+    		scrutinize((MediaInfoEdit) edit);
+    	} else {
+    		throw new IllegalArgumentException("Scrutinizing this type of entity edit is not supported yet");
+    	}
+    }
+    
+    /**
+     * Reads the candidate edit and emits warnings in the store
+     * 
+     * @param edit:
+     *            the {@link ItemEdit} to scrutinize
+     */
+    public abstract void scrutinize(ItemEdit edit);
+    
+    /**
+     * Reads the candidate edit and emits warnings in the store
+     * 
+     * @param edit:
+     *            the {@link ItemEdit} to scrutinize
+     */
+    public abstract void scrutinize(MediaInfoEdit edit);
     
     /**
      * Method called once the edit batch has been read entirely
@@ -91,8 +141,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple INFO warnings
-     * 
-     * @param warning
      */
     protected void info(String type) {
         addIssue(type, null, QAWarning.Severity.INFO, 1);
@@ -101,8 +149,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple warnings
-     * 
-     * @param warning
      */
     protected void warning(String type) {
         addIssue(type, null, QAWarning.Severity.WARNING, 1);
@@ -110,8 +156,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple important warnings
-     * 
-     * @param warning
      */
     protected void important(String type) {
         addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
@@ -119,10 +163,30 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple critical warnings
-     * 
-     * @param warning
      */
     protected void critical(String type) {
         addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
+    }
+
+    /**
+     * Returns the values of a given property in qualifiers
+     *
+     * @param groups
+     *            the qualifiers
+     * @param pid
+     *            the property to filter on
+     * @return
+     */
+    protected List<Value> findValues(List<SnakGroup> groups, String pid) {
+        List<Value> results = new ArrayList<>();
+        for (SnakGroup group : groups) {
+            if (group.getProperty().getId().equals(pid)) {
+                for (Snak snak : group.getSnaks())
+                    if (snak instanceof ValueSnak) {
+                        results.add(((ValueSnak)snak).getValue());
+                    }
+            }
+        }
+        return results;
     }
 }

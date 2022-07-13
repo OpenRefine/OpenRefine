@@ -44,6 +44,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,30 +54,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.apache.tools.bzip2.CBZip2InputStream;
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +86,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -135,11 +138,13 @@ public class ImportingUtilities {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
             JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
-            return;
+            throw new IOException(e.getMessage());
         }
         
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
+        
+        EncodingGuesser.guess(job);
         
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
@@ -170,7 +175,7 @@ public class ImportingUtilities {
         File rawDataDir,
         ObjectNode retrievalRecord,
         final Progress progress
-    ) throws Exception {
+    ) throws IOException, FileUploadException {
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
         
@@ -217,7 +222,6 @@ public class ImportingUtilities {
             }
         });
 
-        @SuppressWarnings("unchecked")
         List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
@@ -279,55 +283,56 @@ public class ImportingUtilities {
                     }
 
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        DefaultHttpClient client = new DefaultHttpClient();
-                        DecompressingHttpClient httpclient = 
-                                new DecompressingHttpClient(client);
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
-                        if ("https".equals(url.getProtocol())) {
-                            // HTTPS only - no sending password in the clear over HTTP
-                            String userinfo = url.getUserInfo();
-                            if (userinfo != null) {
-                                int s = userinfo.indexOf(':');
-                                if (s > 0) {
-                                    String user = userinfo.substring(0, s);
-                                    String pw = userinfo.substring(s + 1, userinfo.length());
-                                    client.getCredentialsProvider().setCredentials(
-                                            new AuthScope(url.getHost(), 443),
-                                            new UsernamePasswordCredentials(user, pw));
+                        final URL lastUrl = url;
+                        final HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
+
+                            @Override
+                            public String handleResponse(final ClassicHttpResponse response) throws IOException {
+                                final int status = response.getCode();
+                                if (status >= HttpStatus.SC_SUCCESS && status < HttpStatus.SC_REDIRECTION) {
+                                    final HttpEntity entity = response.getEntity();
+                                    if (entity == null) {
+                                        throw new IOException("No content found in " + lastUrl.toExternalForm());
+                                    }
+
+                                    try {
+                                    InputStream stream2 = entity.getContent();
+
+                                    String mimeType = null;
+                                    String charset = null;
+                                    ContentType contentType = ContentType.parse(entity.getContentType());
+                                    if (contentType != null) {
+                                        mimeType = contentType.getMimeType();
+                                        Charset cs = contentType.getCharset();
+                                        if (cs != null) {
+                                            charset = cs.toString();
+                                        }
+                                    }
+                                    JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                                    JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                                    if (saveStream(stream2, lastUrl, rawDataDir, progress, update,
+                                            fileRecord, fileRecords,
+                                            entity.getContentLength())) {
+                                        return "saved"; // signal to increment archive count
+                                    }
+
+                                    } catch (final IOException ex) {
+                                        throw new ClientProtocolException(ex);
+                                    }
+                                    return null;
+                                } else {
+                                    // String errorBody = EntityUtils.toString(response.getEntity());
+                                    throw new ClientProtocolException(String.format("HTTP error %d : %s for URL %s", status,
+                                            response.getReasonPhrase(), lastUrl.toExternalForm()));
                                 }
                             }
-                        }
- 
-                        HttpResponse response = httpclient.execute(httpGet);
-                        
-                        try {
-                            response.getStatusLine();
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
-                            }
-                            InputStream stream2 = entity.getContent();
-                            String encoding = null;
-                            if (entity.getContentEncoding() != null) {
-                                encoding = entity.getContentEncoding().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                            String contentType = null;
-                            if (entity.getContentType() != null) {
-                                contentType = entity.getContentType().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                            if (saveStream(stream2, url, rawDataDir, progress, update, 
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.releaseConnection();
-                        }
+                        };
+
+                        HttpClient httpClient = new HttpClient();
+                        if (httpClient.getResponse(urlString, null, responseHandler) != null) {
+                            archiveCount++;
+                        };
+                        downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
                         URLConnection urlConnection = url.openConnection();
@@ -354,7 +359,6 @@ public class ImportingUtilities {
                     parameters.put(name, value);
                     // TODO: We really want to store this on the request so it's available for everyone
 //                    request.getParameterMap().put(name, value);
-                    
                 }
 
             } else { // is file content
@@ -376,6 +380,7 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
@@ -400,7 +405,7 @@ public class ImportingUtilities {
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
             final SavingUpdate update, ObjectNode fileRecord, ArrayNode fileRecords, long length)
-            throws IOException, Exception {
+            throws IOException {
         String localname = url.getPath();
         if (localname.isEmpty() || localname.endsWith("/")) {
             localname = localname + "temp";
@@ -418,7 +423,7 @@ public class ImportingUtilities {
         long actualLength = saveStreamToFile(stream, file, update);
         JSONUtilities.safePut(fileRecord, "size", actualLength);
         if (actualLength == 0) {
-            throw new Exception("No content found in " + url.toString());
+            throw new IOException("No content found in " + url.toString());
         } else if (length >= 0) {
             update.totalExpectedSize += (actualLength - length);
         } else {
@@ -440,18 +445,21 @@ public class ImportingUtilities {
             name = name.substring(0, q);
         }
         
-        File file = new File(dir, name);     
+        File file = new File(dir, name);
+        Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
-        if (!file.toPath().normalize().startsWith(dir.toPath().normalize())) {
-        	throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+        if (!normalizedFile.startsWith(dir.toPath().normalize() + File.separator)) {
+            throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
         
-        int dot = name.indexOf('.');
-        String prefix = dot < 0 ? name : name.substring(0, dot);
-        String suffix = dot < 0 ? "" : name.substring(dot);
+        Path normalizedParent = normalizedFile.getParent();
+        String fileName = normalizedFile.getFileName().toString();
+        int dot = fileName.lastIndexOf('.');
+        String prefix = dot < 0 ? fileName : fileName.substring(0, dot);
+        String suffix = dot < 0 ? "" : fileName.substring(dot);
         int index = 2;
         while (file.exists()) {
-            file = new File(dir, prefix + "-" + index++ + suffix);
+            file = normalizedParent.resolve(prefix + "-" + index++ + suffix).toFile();
         }
         
         file.getParentFile().mkdirs();
@@ -499,7 +507,20 @@ public class ImportingUtilities {
             JSONUtilities.getString(fileRecord, "fileName", "unknown")
         );
     }
-    
+
+    static public String getArchiveFileName(ObjectNode fileRecord) {
+        return JSONUtilities.getString(
+                fileRecord,
+                "archiveFileName",
+                null
+        );
+    }
+
+    static public boolean hasArchiveFileField(List<ObjectNode> fileRecords) {
+        List<ObjectNode> filterResults = fileRecords.stream().filter(fileRecord -> getArchiveFileName(fileRecord) != null).collect(Collectors.toList());
+        return filterResults.size() > 0;
+    }
+
     static private abstract class SavingUpdate {
         public long totalExpectedSize = 0;
         public long totalRetrievedSize = 0;
@@ -507,7 +528,8 @@ public class ImportingUtilities {
         abstract public void savedMore();
         abstract public boolean isCanceled();
     }
-    static public long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
+
+    static private long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
         long length = 0;
         FileOutputStream fos = new FileOutputStream(file);
         try {
@@ -523,13 +545,15 @@ public class ImportingUtilities {
                 }
             }
             return length;
+        } catch (ZipException e) {
+            throw new IOException("Compression format not supported, " + e.getMessage());
         } finally {
             fos.close();
         }
     }
     
     static public boolean postProcessRetrievedFile(
-            File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) {
+            File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) throws IOException {
         
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
@@ -592,11 +616,11 @@ public class ImportingUtilities {
         String fileName = file.getName();
         try {
             if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
-                return new TarInputStream(new GZIPInputStream(new FileInputStream(file)));
+                return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar.bz2")) {
-                return new TarInputStream(new CBZip2InputStream(new FileInputStream(file)));
+                return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
-                return new TarInputStream(new FileInputStream(file));
+                return new TarArchiveInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".zip") 
                     || "application/x-zip-compressed".equals(contentType)
                     || "application/zip".equals(contentType) 
@@ -611,18 +635,19 @@ public class ImportingUtilities {
         return null;
     }
     
-    static public boolean explodeArchive(
+    // FIXME: This is wasteful of space and time. We should try to process on the fly
+    static private boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,
         ObjectNode archiveFileRecord,
         ArrayNode fileRecords,
         final Progress progress
-    ) {
-        if (archiveIS instanceof TarInputStream) {
-            TarInputStream tis = (TarInputStream) archiveIS;
+    ) throws IOException {
+        if (archiveIS instanceof TarArchiveInputStream) {
+            TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
-                TarEntry te;
-                while (!progress.isCanceled() && (te = tis.getNextEntry()) != null) {
+                TarArchiveEntry te;
+                while (!progress.isCanceled() && (te = tis.getNextTarEntry()) != null) {
                     if (!te.isDirectory()) {
                         String fileName2 = te.getName();
                         File file2 = allocateFile(rawDataDir, fileName2);
@@ -650,32 +675,27 @@ public class ImportingUtilities {
             return true;
         } else if (archiveIS instanceof ZipInputStream) {
             ZipInputStream zis = (ZipInputStream) archiveIS;
-            try {
-                ZipEntry ze;
-                while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        String fileName2 = ze.getName();
-                        File file2 = allocateFile(rawDataDir, fileName2);
-                        
-                        progress.setProgress("Extracting " + fileName2, -1);
-                        
-                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
-                        JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
-                        JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
-                        JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+            ZipEntry ze;
+            while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
+                if (!ze.isDirectory()) {
+                    String fileName2 = ze.getName();
+                    File file2 = allocateFile(rawDataDir, fileName2);
 
-                        JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
-                        postProcessSingleRetrievedFile(file2, fileRecord2);
-                        
-                        JSONUtilities.append(fileRecords, fileRecord2);
-                    }
+                    progress.setProgress("Extracting " + fileName2, -1);
+
+                    ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+                    JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+                    JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
+                    JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+                    JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+
+                    JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
+                    postProcessSingleRetrievedFile(file2, fileRecord2);
+
+                    JSONUtilities.append(fileRecords, fileRecord2);
                 }
-            } catch (IOException e) {
-                // TODO: what to do?
-                e.printStackTrace();
             }
             return true;
         }
@@ -702,7 +722,7 @@ public class ImportingUtilities {
                     // No BZ prefix as appended by command line tools.  Reset and hope for the best
                     is.reset();
                 }
-                return new CBZip2InputStream(is);
+                return new BZip2CompressorInputStream(is);
             }
         } catch (IOException e) {
             logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);
@@ -786,8 +806,9 @@ public class ImportingUtilities {
             }
         });
         
-        // Default to text/line-based to to avoid parsing as binary/excel.
-        String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
+        // Default to "text" to to avoid parsing as "binary/excel".
+        // "text" is more general than "text/line-based", so a better starting point
+        String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
             // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {

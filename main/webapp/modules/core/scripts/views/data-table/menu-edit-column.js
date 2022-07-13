@@ -215,19 +215,45 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doRenameColumn = function() {
-    var newColumnName = window.prompt($.i18n('core-views/enter-col-name'), column.name);
-    if (newColumnName !== null) {
-      Refine.postCoreProcess(
-        "rename-column", 
-        {
-          oldColumnName: column.name,
-          newColumnName: newColumnName
-        },
-        null,
-        { modelsChanged: true }
-      );
-    }
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/enter-col-name'));
+    elmts.columnNameInput.text();
+    elmts.columnNameInput[0].value = column.name;
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    elmts.cancelButton.click(dismiss);
+    elmts.form.submit(function(event) {
+      event.preventDefault();
+      var newColumnName = $.trim(elmts.columnNameInput[0].value);
+      if (newColumnName === column.name) {
+        dismiss();
+        return;
+      }
+      if (newColumnName.length > 0) {
+        Refine.postCoreProcess(
+            "rename-column",
+            {
+              oldColumnName: column.name,
+              newColumnName: newColumnName
+            },
+            null,
+            {modelsChanged: true},
+            {
+              onDone: function () {
+                dismiss();
+              }
+            }
+        );
+      }
+    });
   };
+  
 
   var doMoveColumnTo = function(index) {
     Refine.postCoreProcess(
@@ -259,7 +285,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doSplitColumn = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-column-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/split-col')+" " + column.name + " "+$.i18n('core-views/several-col'));
+    elmts.dialogHeader.text($.i18n('core-views/split-col', column.name));
     
     elmts.or_views_howSplit.text($.i18n('core-views/how-split'));
     elmts.or_views_bySep.text($.i18n('core-views/by-sep'));
@@ -484,6 +510,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         .appendTo(elmts.column_join_columnPicker);
       $('<input>').
         attr('type', 'checkbox')
+        .attr("column", colName)
         .prop('checked',(i == columnIndex) ? true : false)
         .appendTo(div);
       $('<span>')
@@ -548,28 +575,28 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-column" ], [
       {
         id: "core/split-column",
-        label: $.i18n('core-views/split-into-col')+"...",
+        label: $.i18n('core-views/split-into-col'),
         click: doSplitColumn
       },
       {
         id: "core/join-column",
-        label: $.i18n('core-views/join-col')+"...",
+        label: $.i18n('core-views/join-col'),
           click : doJoinColumns
         },
       {},
       {
         id: "core/add-column",
-        label: $.i18n('core-views/add-based-col')+"...",
+        label: $.i18n('core-views/add-based-col'),
         click: doAddColumn
       },
       {
         id: "core/add-column-by-fetching-urls",
-        label: $.i18n('core-views/add-by-urls')+"...",
+        label: $.i18n('core-views/add-by-urls'),
         click: doAddColumnByFetchingURLs
       },
       {
         id: "core/add-column-by-reconciliation",
-        label: $.i18n('core-views/add-col-recon-val')+"...",
+        label: $.i18n('core-views/add-col-recon-val'),
         click: doAddColumnByReconciliation
       },
       {},

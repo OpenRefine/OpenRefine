@@ -46,10 +46,10 @@ public class Combin implements Function {
         if(args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
         }
-        if(args[0] == null || !(args[0] instanceof Number)) {
+        if(!(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
         }
-        if(args[1] == null || !(args[1] instanceof Number)) {
+        if(!(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
         }
 
@@ -85,12 +85,12 @@ public class Combin implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the number of combinations for n elements as divided into k";
+        return "Returns the number of combinations for n2 elements as divided into n1.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n1, number n2";
     }
     
     @Override

@@ -89,16 +89,33 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
-  this._elmts.form.submit(function(evt){
+  this._elmts.form.submit(function(evt) {
     evt.preventDefault();
-    if(!isUrlValid(self._elmts.urlInput[0].value)) {
-      window.alert($.i18n('core-index-import/warning-web-address'));
+    let errorString = '';
+    $(self._elmts.form).find('input:text').each(function () {
+      let url = this.value.trim();
+      if (url.length === 0) {
+        errorString += $.i18n('core-index-import/blank-url')+'\n';
+      } else if(!isUrlValid(url)) {
+        errorString += $.i18n('core-index-import/invalid-url')+' '+url+'\n';
+      }
+    });
+    if (errorString) {
+      window.alert($.i18n('core-index-import/warning-web-address')+"\n"+errorString);
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
     }
   });
   this._elmts.addButton.click(function(evt) {
-    self._elmts.buttons.before(self._elmts.urlRow.clone());
+    let newRow = self._elmts.urlRow.clone();
+    let trashButton = $('<a href="javascript:{}"><span class="ui-icon ui-icon-trash"></span></a>');
+    trashButton.attr("title",$.i18n("core-index-import/remove-row"));
+    newRow.find('td').append(trashButton);
+    trashButton.click(function (e) {
+      e.preventDefault();
+      $(this).parent().parent().remove();
+    })
+    self._elmts.buttons.before(newRow);
   });
 };
 

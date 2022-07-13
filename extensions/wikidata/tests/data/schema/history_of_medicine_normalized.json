@@ -1,1 +1,204 @@
-{"itemDocuments":[{"subject":{"type":"wbitemvariable","columnName":"name"},"statementGroups":[{"property":{"datatype":"wikibase-item","pid":"P39","label":"position held","type":"wbpropconstant"},"statements":[{"references":[{"snaks":[{"prop":{"datatype":"wikibase-item","pid":"P248","label":"stated in","type":"wbpropconstant"},"value":{"label":"The History of The Royal Society of Medicine","type":"wbitemconstant","qid":"Q42036099"}},{"prop":{"datatype":"string","pid":"P304","label":"page","type":"wbpropconstant"},"value":{"type":"wbstringconstant","value":"330-333"}}]}],"qualifiers":[{"prop":{"datatype":"wikibase-item","pid":"P642","label":"of","type":"wbpropconstant"},"value":{"label":"History of Medicine Society","type":"wbitemconstant","qid":"Q37461404"}},{"prop":{"datatype":"time","pid":"P580","label":"start date","type":"wbpropconstant"},"value":{"type":"wbdatevariable","columnName":"start"}},{"prop":{"datatype":"time","pid":"P582","label":"end date","type":"wbpropconstant"},"value":{"type":"wbdatevariable","columnName":"end"}}],"value":{"label":"president","type":"wbitemconstant","qid":"Q30461"}}]}],"nameDescs":[]},{"subject":{"label":"History of Medicine Society","type":"wbitemconstant","qid":"Q37461404"},"statementGroups":[{"property":{"datatype":"wikibase-item","pid":"P488","label":"chairperson","type":"wbpropconstant"},"statements":[{"references":[{"snaks":[{"prop":{"datatype":"wikibase-item","pid":"P248","label":"stated in","type":"wbpropconstant"},"value":{"label":"The History of The Royal Society of Medicine","type":"wbitemconstant","qid":"Q42036099"}},{"prop":{"datatype":"string","pid":"P304","label":"page","type":"wbpropconstant"},"value":{"type":"wbstringconstant","value":"330-333"}}]}],"qualifiers":[{"prop":{"datatype":"time","pid":"P580","label":"start date","type":"wbpropconstant"},"value":{"type":"wbdatevariable","columnName":"start"}},{"prop":{"datatype":"time","pid":"P582","label":"end date","type":"wbpropconstant"},"value":{"type":"wbdatevariable","columnName":"end"}}],"value":{"type":"wbitemvariable","columnName":"name"}}]}],"nameDescs":[]}]}
+{
+  "entityTypeSiteIRI": {},
+  "entityEdits": [
+    {
+      "type": "wbitemeditexpr",
+      "nameDescs": [],
+      "statementGroups": [
+        {
+          "property": {
+            "datatype": "wikibase-item",
+            "label": "position held",
+            "pid": "P39",
+            "type": "wbpropconstant"
+          },
+          "statements": [
+            {
+              "mergingStrategy": {
+                "pids": [],
+                "type": "qualifiers",
+                "valueMatcher": {
+                  "type": "strict"
+                }
+              },
+              "mode": "add_or_merge",
+              "qualifiers": [
+                {
+                  "prop": {
+                    "datatype": "wikibase-item",
+                    "label": "of",
+                    "pid": "P642",
+                    "type": "wbpropconstant"
+                  },
+                  "value": {
+                    "label": "History of Medicine Society",
+                    "qid": "Q37461404",
+                    "type": "wbitemconstant"
+                  }
+                },
+                {
+                  "prop": {
+                    "datatype": "time",
+                    "label": "start date",
+                    "pid": "P580",
+                    "type": "wbpropconstant"
+                  },
+                  "value": {
+                    "columnName": "start",
+                    "type": "wbdatevariable"
+                  }
+                },
+                {
+                  "prop": {
+                    "datatype": "time",
+                    "label": "end date",
+                    "pid": "P582",
+                    "type": "wbpropconstant"
+                  },
+                  "value": {
+                    "columnName": "end",
+                    "type": "wbdatevariable"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "snaks": [
+                    {
+                      "prop": {
+                        "datatype": "wikibase-item",
+                        "label": "stated in",
+                        "pid": "P248",
+                        "type": "wbpropconstant"
+                      },
+                      "value": {
+                        "label": "The History of The Royal Society of Medicine",
+                        "qid": "Q42036099",
+                        "type": "wbitemconstant"
+                      }
+                    },
+                    {
+                      "prop": {
+                        "datatype": "string",
+                        "label": "page",
+                        "pid": "P304",
+                        "type": "wbpropconstant"
+                      },
+                      "value": {
+                        "type": "wbstringconstant",
+                        "value": "330-333"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "value": {
+                "label": "president",
+                "qid": "Q30461",
+                "type": "wbitemconstant"
+              }
+            }
+          ]
+        }
+      ],
+      "subject": {
+        "columnName": "name",
+        "type": "wbitemvariable"
+      }
+    },
+    {
+      "type": "wbitemeditexpr",
+      "nameDescs": [],
+      "statementGroups": [
+        {
+          "property": {
+            "datatype": "wikibase-item",
+            "label": "chairperson",
+            "pid": "P488",
+            "type": "wbpropconstant"
+          },
+          "statements": [
+            {
+              "mergingStrategy": {
+                "pids": [],
+                "type": "qualifiers",
+                "valueMatcher": {
+                  "type": "strict"
+                }
+              },
+              "mode": "add_or_merge",
+              "qualifiers": [
+                {
+                  "prop": {
+                    "datatype": "time",
+                    "label": "start date",
+                    "pid": "P580",
+                    "type": "wbpropconstant"
+                  },
+                  "value": {
+                    "columnName": "start",
+                    "type": "wbdatevariable"
+                  }
+                },
+                {
+                  "prop": {
+                    "datatype": "time",
+                    "label": "end date",
+                    "pid": "P582",
+                    "type": "wbpropconstant"
+                  },
+                  "value": {
+                    "columnName": "end",
+                    "type": "wbdatevariable"
+                  }
+                }
+              ],
+              "references": [
+                {
+                  "snaks": [
+                    {
+                      "prop": {
+                        "datatype": "wikibase-item",
+                        "label": "stated in",
+                        "pid": "P248",
+                        "type": "wbpropconstant"
+                      },
+                      "value": {
+                        "label": "The History of The Royal Society of Medicine",
+                        "qid": "Q42036099",
+                        "type": "wbitemconstant"
+                      }
+                    },
+                    {
+                      "prop": {
+                        "datatype": "string",
+                        "label": "page",
+                        "pid": "P304",
+                        "type": "wbpropconstant"
+                      },
+                      "value": {
+                        "type": "wbstringconstant",
+                        "value": "330-333"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "value": {
+                "columnName": "name",
+                "type": "wbitemvariable"
+              }
+            }
+          ]
+        }
+      ],
+      "subject": {
+        "label": "History of Medicine Society",
+        "qid": "Q37461404",
+        "type": "wbitemconstant"
+      }
+    }
+  ],
+  "mediaWikiApiEndpoint": "https://www.wikidata.org/w/api.php",
+  "siteIri": "http://www.wikidata.org/entity/"
+}

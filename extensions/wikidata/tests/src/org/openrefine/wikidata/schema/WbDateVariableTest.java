@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
@@ -32,13 +33,13 @@ import com.google.refine.model.Cell;
 
 public class WbDateVariableTest extends WbVariableTest<TimeValue> {
 
-    private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
     private TimeValue day = Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11,
-            0, 0, 0,  TimeValue.CM_GREGORIAN_PRO);
-    private TimeValue minute = Datamodel.makeTimeValue(2001, (byte) 2, (byte) 3, (byte)0, (byte)0, (byte)0, (byte)11, (byte)0, (byte)0, (byte)0, TimeValue.CM_GREGORIAN_PRO);
+            0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
+    private TimeValue minute = Datamodel.makeTimeValue(2001, (byte) 2, (byte) 3, (byte) 0, (byte) 0, (byte) 0, (byte) 11, (byte) 0,
+            (byte) 0, (byte) 0, TimeValue.CM_GREGORIAN_PRO);
 
-    
     @Override
     public WbVariableExpr<TimeValue> initVariableExpr() {
         return new WbDateVariable();
@@ -61,6 +62,26 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
         isSkipped("  2018-XX");
         isSkipped("invalid format");
     }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
 
     @Test
     public void testNumber() {
@@ -68,10 +89,10 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
         evaluatesTo(year, new Cell(2018, null));
         isSkipped(new Cell(1234.56, null));
     }
-    
+
     @Test
     public void testMinutesISO() {
-    	// Wikidata currently only supports up to day precision
+        // Wikidata currently only supports up to day precision
         evaluatesTo(minute, "2001-02-03T04:05Z");
     }
 

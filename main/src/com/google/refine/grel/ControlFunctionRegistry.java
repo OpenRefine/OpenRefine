@@ -137,8 +137,11 @@ import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.expr.functions.xml.OwnText;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.expr.functions.xml.SelectXml;
+import com.google.refine.expr.functions.xml.WholeText;
+import com.google.refine.expr.functions.xml.ScriptText;
 import com.google.refine.expr.functions.xml.XmlAttr;
 import com.google.refine.expr.functions.xml.XmlText;
+import com.google.refine.expr.functions.xml.Parent;
 import com.google.refine.grel.controls.Filter;
 import com.google.refine.grel.controls.ForEach;
 import com.google.refine.grel.controls.ForEachIndex;
@@ -256,6 +259,9 @@ public class ControlFunctionRegistry {
         registerFunction("innerXml", new InnerXml());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
+        registerFunction("wholeText", new WholeText());
+        registerFunction("parent", new Parent());
+        registerFunction("scriptText", new ScriptText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
@@ -301,6 +307,7 @@ public class ControlFunctionRegistry {
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
         registerFunction("randomNumber", new RandomNumber());
+        registerFunction("random", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());

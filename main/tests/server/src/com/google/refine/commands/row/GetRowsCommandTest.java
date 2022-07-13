@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.row;
 
 import static org.mockito.Mockito.mock;
@@ -42,18 +43,17 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.row.GetRowsCommand;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class GetRowsCommandTest extends RefineTest {
-    
+
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
     Project project = null;
     StringWriter writer = null;
-    
+
     @BeforeMethod
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -68,75 +68,75 @@ public class GetRowsCommandTest extends RefineTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testJsonOutputRows() throws ServletException, IOException {
-        String rowJson = "{\n" + 
-                "       \"filtered\" : 2,\n" + 
-                "       \"limit\" : 2,\n" + 
-                "       \"mode\" : \"row-based\",\n" + 
-                "       \"pool\" : {\n" + 
-                "         \"recons\" : { }\n" + 
-                "       },\n" + 
-                "       \"rows\" : [ {\n" + 
-                "         \"cells\" : [ {\n" + 
-                "           \"v\" : \"c\"\n" + 
-                "         }, {\n" + 
-                "           \"v\" : \"d\"\n" + 
-                "         } ],\n" + 
-                "         \"flagged\" : false,\n" + 
-                "         \"i\" : 0,\n" + 
-                "         \"starred\" : false\n" + 
-                "       }, {\n" + 
-                "         \"cells\" : [ null, {\n" + 
-                "           \"v\" : \"f\"\n" + 
-                "         } ],\n" + 
-                "         \"flagged\" : false,\n" + 
-                "         \"i\" : 1,\n" + 
-                "         \"starred\" : false\n" + 
-                "       } ],\n" + 
-                "       \"start\" : 0,\n" + 
-                "       \"total\" : 2\n" + 
+        String rowJson = "{\n" +
+                "       \"filtered\" : 2,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"total\" : 2\n" +
                 "     }";
-        
+
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
-    
+
     @Test
     public void testJsonOutputRecords() throws ServletException, IOException {
-        String recordJson = "{\n" + 
-                "       \"filtered\" : 1,\n" + 
-                "       \"limit\" : 2,\n" + 
-                "       \"mode\" : \"record-based\",\n" + 
-                "       \"pool\" : {\n" + 
-                "         \"recons\" : { }\n" + 
-                "       },\n" + 
-                "       \"rows\" : [ {\n" + 
-                "         \"cells\" : [ {\n" + 
-                "           \"v\" : \"c\"\n" + 
-                "         }, {\n" + 
-                "           \"v\" : \"d\"\n" + 
-                "         } ],\n" + 
-                "         \"flagged\" : false,\n" + 
-                "         \"i\" : 0,\n" + 
-                "         \"j\" : 0,\n" + 
-                "         \"starred\" : false\n" + 
-                "       }, {\n" + 
-                "         \"cells\" : [ null, {\n" + 
-                "           \"v\" : \"f\"\n" + 
-                "         } ],\n" + 
-                "         \"flagged\" : false,\n" + 
-                "         \"i\" : 1,\n" + 
-                "         \"starred\" : false\n" + 
-                "       } ],\n" + 
-                "       \"start\" : 0,\n" + 
-                "       \"total\" : 1\n" + 
+        String recordJson = "{\n" +
+                "       \"filtered\" : 1,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"record-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"j\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"total\" : 1\n" +
                 "     }";
-        
+
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(recordJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }
 }

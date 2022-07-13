@@ -99,7 +99,7 @@ public class Diff implements Function {
     
     @Override
     public String getDescription() {
-        return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
+        return "For strings, takes two strings and compares them, returning a string. Returns the remainder of o2 starting with the first character where they differ. For dates, returns the difference in given time units. See the time unit table at https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit.";
     }
     
     @Override

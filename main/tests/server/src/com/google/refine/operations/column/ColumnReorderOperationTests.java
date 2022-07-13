@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.column;
 
 import java.util.Arrays;
@@ -38,10 +39,8 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.TestUtils;
-
 
 public class ColumnReorderOperationTests extends RefineTest {
 
@@ -55,14 +54,14 @@ public class ColumnReorderOperationTests extends RefineTest {
     @BeforeMethod
     public void createProject() {
         project = createCSVProject(
-                        "a,b,c\n"+
-                        "1|2,d,e\n"+
+                "a,b,c\n" +
+                        "1|2,d,e\n" +
                         "3,f,g\n");
     }
 
     @Test
     public void serializeColumnReorderOperation() {
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b","c","a"));
+        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
                 + "\"description\":\"Reorder columns\","
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
@@ -81,7 +80,6 @@ public class ColumnReorderOperationTests extends RefineTest {
         Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
         Assert.assertEquals(project.rows.get(1).getCellValue(bCol), "f");
         Assert.assertEquals(project.rows.get(1).getCellValue(cCol), "g");
-
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
         Process process = op.createProcess(project, new Properties());

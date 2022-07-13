@@ -24,16 +24,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.TestUtils;
 
 public class ReconTests {
-    
+
     String fullJson = "{\"id\":1533651559492945033,"
             + "\"judgmentHistoryEntry\":1533651616890,"
             + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -55,13 +60,13 @@ public class ReconTests {
             + "\"judgmentAction\":\"mass\","
             + "\"judgmentBatchSize\":1,"
             + "\"matchRank\":0}";
-    
+
     @Test
-    public void serializeReconSaveMode() throws Exception {      
+    public void serializeReconSaveMode() throws Exception {
         Recon r = Recon.loadStreaming(fullJson);
         TestUtils.isSerializedTo(r, fullJson, true);
     }
-        
+
     @Test
     public void serializeReconViewMode() throws Exception {
         Recon r = Recon.loadStreaming(fullJson);
@@ -78,7 +83,7 @@ public class ReconTests {
                 + "}}";
         TestUtils.isSerializedTo(r, shortJson, false);
     }
-    
+
     @Test
     public void serializeReconSaveModeNoMatch() throws Exception {
         String json = "{\"id\":1533651559492945033,"
@@ -96,6 +101,23 @@ public class ReconTests {
         r.match = null;
         r.judgment = Judgment.None;
         TestUtils.isSerializedTo(r, json);
+    }
+
+    /**
+     * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785. Generating many recon objects within a short
+     * amount of time leads to collisions in id generation.
+     */
+    @Test
+    public void randomIdGeneration() {
+        long numberOfSamples = 100000L;
+        String space = "http://some.url/";
+        long judgmentHistoryId = 1234L;
+        Set<Long> ids = LongStream.range(0L, numberOfSamples)
+                .mapToObj(i -> new Recon(judgmentHistoryId, space, space).id)
+                .collect(Collectors.toSet());
+        // make sure we generated as many ids as Recon objects (if ids.size() is smaller,
+        // then we have had some collisions)
+        Assert.assertEquals(ids.size(), numberOfSamples);
     }
 
 }

@@ -7,12 +7,15 @@
 <div bind="controlPanel" class="default-importing-file-selection-control-panel">
   <div class="grid-layout layout-full layout-tighter"><table>
     <tr>
+      <td colspan="3" id="or-import-singleProject"></td>
+    </tr>
+    <tr>
       <td colspan="3" id="or-import-severalFile"></td>
     </tr>
     <tr>
       <td width="98%" bind="summary"></td>
       <td width="1%"><button bind="selectAllButton" class="button"></button></td>
-      <td width="1%"><button bind="unselectAllButton" class="button"></button></td>
+      <td width="1%"><button bind="deselectAllButton" class="button"></button></td>
     </tr>
   </table></div>
   
@@ -21,11 +24,11 @@
   
   <h2 id="or-import-regex"></h2>
   <div class="grid-layout layout-full layout-tighter"><table>
-    <tr><td colspan="3"><input bind="regexInput" style="width: 100%;"/></td></tr>
+    <tr><td colspan="3"><input spellcheck="false" bind="regexInput" style="width: 100%;"/></td></tr>
     <tr>
       <td bind="regexSummary"></td>
       <td width="1%"><button bind="selectRegexButton" class="button"></button></td>
-      <td width="1%"><button bind="unselectRegexButton" class="button"></button></td>
+      <td width="1%"><button bind="deselectRegexButton" class="button"></button></td>
     </tr>
   </table></div>
 </div>

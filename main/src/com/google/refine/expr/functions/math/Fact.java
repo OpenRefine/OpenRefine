@@ -43,7 +43,7 @@ public class Fact implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
+        if (args.length == 1 && args[0] instanceof Number) {
             return FactN.factorial(((Number) args[0]).intValue(), 1);
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
@@ -51,12 +51,12 @@ public class Fact implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the factorial of a number";
+        return "Returns the factorial of a number, starting from 1.";
     }
     
     @Override
     public String getParams() {
-        return "number i";
+        return "number n";
     }
     
     @Override

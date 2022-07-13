@@ -43,7 +43,7 @@ public class Log implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
+        if (args.length == 1 && args[0] instanceof Number) {
             return Math.log10(((Number) args[0]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
@@ -51,7 +51,7 @@ public class Log implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the base 10 log of n";
+        return "Returns the base 10 logarithm of n.";
     }
     
     @Override

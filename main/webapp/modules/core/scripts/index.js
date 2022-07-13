@@ -133,34 +133,35 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
-          
-
+          $("#openrefine-version").text($.i18n('core-index/refine-version', OpenRefineVersion.full_version));
+          $("#java-runtime-version").text(OpenRefineVersion.java_runtime_name + " " + OpenRefineVersion.java_runtime_version);
+          if (OpenRefineVersion.display_new_version_notice === "true") {
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
-             function( data ) {
-              var latestVersion = data.tag_name;
-              var latestVersionName = data.name;
-              var latestVersionUrl = data.html_url;
-              var thisVersion = OpenRefineVersion.version;
+                function (data) {
+                  var latestVersion = data.tag_name;
+                  var latestVersionName = data.name;
+                  var latestVersionUrl = data.html_url;
+                  var thisVersion = OpenRefineVersion.version;
 
-              if(latestVersion.startsWith("v")) {
-                latestVersion = latestVersion.substr(1);
-              }
+                  if (latestVersion.startsWith("v")) {
+                    latestVersion = latestVersion.substr(1);
+                  }
 
-              if (isThereNewRelease(thisVersion,latestVersion)) {
-                var container = $('<div id="notification-container">')
-                .appendTo(document.body);
-                var notification = $('<div id="notification">')
-                .text($.i18n('core-index/new-version')+' ')
-                .appendTo(container);
-                $('<a>')
-                .addClass('notification-action')
-                .attr("href", latestVersionUrl)
-                .attr("target", "_blank")
-                .text($.i18n('core-index/download')+' ' + latestVersionName + ' '+$.i18n('core-index/now')+'.')
-                .appendTo(notification);
-              }
-            });
+                  if (isThereNewRelease(thisVersion, latestVersion)) {
+                    var container = $('<div id="notification-container">')
+                        .appendTo(document.body);
+                    var notification = $('<div id="notification">')
+                        .text($.i18n('core-index/new-version') + ' ')
+                        .appendTo(container);
+                    $('<a>')
+                        .addClass('notification-action')
+                        .attr("href", latestVersionUrl)
+                        .attr("target", "_blank")
+                        .text($.i18n('core-index/download-now', latestVersionName))
+                        .appendTo(notification);
+                  }
+                });
+          }
         }
     );
   };

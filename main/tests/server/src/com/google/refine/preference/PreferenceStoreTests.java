@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.preference;
 
 import static org.testng.Assert.assertFalse;
@@ -35,11 +36,11 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class PreferenceStoreTests {
+
     public static String json = "{"
             + "\"entries\":{"
             + "   \"reconciliation.standardServices\":["
@@ -48,10 +49,10 @@ public class PreferenceStoreTests {
             + "   \"scripting.starred-expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647,\"list\":[]},"
             + "   \"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
             + "}}";
-    
+
     @Test
     public void serializePreferenceStore() throws JsonParseException, JsonMappingException, IOException {
- 
+
         String jsonAfter = "{"
                 + "\"entries\":{"
                 + "   \"reconciliation.standardServices\":["
@@ -68,5 +69,5 @@ public class PreferenceStoreTests {
         TestUtils.isSerializedTo(prefStore, jsonAfter);
         assertFalse(prefStore.isDirty());
     }
-    
+
 }

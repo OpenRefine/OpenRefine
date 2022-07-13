@@ -24,18 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.arrays.Uniques;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.util.TestUtils;
 
-public class UniquesTests {
-    @Test
-    public void serializeUniques() {
-        String json = "{\"description\":\"Returns array a with duplicates removed\",\"params\":\"array a\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Uniques(), json);
-    }
-}
+public class UniquesTests extends RefineTest {
 
+    @Test
+    public void uniquesJsonArray() throws ParsingException {
+        String[] test = { "'{a:[2,1,1,3]}'.parseJson().a.uniques().toString()", "[2, 1, 3]" };
+        parseEval(bindings, test);
+        String[] test1 = { "'[2,2,null,null,3,3]'.parseJson().uniques().toString()", "[2, null, 3]" };
+        parseEval(bindings, test1);
+    }
+
+    @Test
+    public void uniquesArray() throws ParsingException {
+        String[] test = { "[2,1,1,3].uniques().toString()", "[2, 1, 3]" };
+        parseEval(bindings, test);
+        String[] test1 = { "[2,2,null,null,3,3,3].uniques().toString()", "[2, null, 3]" };
+        parseEval(bindings, test1);
+
+        String[] test2 = { "['z','b','c','c','a'].uniques().toString()", "[z, b, c, a]" };
+        parseEval(bindings, test2);
+        String[] test3 = { "['z','z',null,'c','a'].uniques().toString()", "[z, null, c, a]" };
+        parseEval(bindings, test3);
+
+        String[] test4 = { "[toDate(2020), '2018-03-02'.toDate(), toDate(2020)].uniques().toString()",
+                "[2020-01-01T00:00Z, 2018-03-02T00:00Z]" };
+        parseEval(bindings, test4);
+
+        String[] test5 = { "[null,null,null].uniques().toString()", "[null]" };
+        parseEval(bindings, test5);
+    }
+
+    @Test
+    public void uniquesMixedArray() throws ParsingException {
+        String[] test = { "[2,1.0,3,1.0].uniques().toString()", "[2, 1.0, 3]" };
+        parseEval(bindings, test);
+        String[] test1 = { "[2,'a',3,3,'a'].uniques().toString()", "[2, a, 3]" };
+        parseEval(bindings, test1);
+    }
+
+}

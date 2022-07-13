@@ -21,10 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
+
+import com.google.refine.model.Cell;
 
 public class WbLanguageVariableTest extends WbVariableTest<String> {
 
@@ -45,6 +48,16 @@ public class WbLanguageVariableTest extends WbVariableTest<String> {
         isSkipped("unknown language code");
         isSkipped((String) null);
         isSkipped("");
+    }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
     }
 
     @Test

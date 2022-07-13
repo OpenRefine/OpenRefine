@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.ByteArrayInputStream;
+
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -59,8 +61,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.StreamExporter;
-import com.google.refine.exporters.XlsExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -70,25 +70,25 @@ import com.google.refine.model.Row;
 public class XlsxExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xlsx exporter test project";
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     StreamExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XlsExporter(true);
         stream = new ByteArrayOutputStream();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -101,7 +101,7 @@ public class XlsxExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         stream = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -111,7 +111,18 @@ public class XlsxExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleXlsx(){
+    public void getContentType() {
+        Assert.assertEquals(SUT.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @Test
+    public void getSpreadsheetVersion() {
+        XlsExporter exporter = (XlsExporter) SUT;
+        Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL2007);
+    }
+
+    @Test
+    public void exportSimpleXlsx() {
         CreateGrid(2, 2);
 
         try {
@@ -120,22 +131,22 @@ public class XlsxExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        ByteArrayInputStream inStream = new ByteArrayInputStream( stream.toByteArray() );
+        ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toByteArray());
         try {
             XSSFWorkbook wb = new XSSFWorkbook(inStream);
             XSSFSheet ws = wb.getSheetAt(0);
             XSSFRow row1 = ws.getRow(1);
             XSSFCell cell0 = row1.getCell(0);
-            Assert.assertEquals(cell0.toString(),"row0cell0");
+            Assert.assertEquals(cell0.toString(), "row0cell0");
             wb.close();
         } catch (IOException e) {
             Assert.fail();
         }
     }
-    
+
     @Test
-    public void exportXlsxDateType() throws IOException{
-        OffsetDateTime odt =  OffsetDateTime.parse("2019-04-09T12:00+00:00");
+    public void exportXlsxDateType() throws IOException {
+        OffsetDateTime odt = OffsetDateTime.parse("2019-04-09T12:00+00:00");
         createDateGrid(2, 2, odt);
 
         try {
@@ -143,8 +154,8 @@ public class XlsxExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
-        ByteArrayInputStream inStream = new ByteArrayInputStream( stream.toByteArray() );
+
+        ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toByteArray());
         try {
             XSSFWorkbook wb = new XSSFWorkbook(inStream);
             XSSFSheet ws = wb.getSheetAt(0);
@@ -156,9 +167,9 @@ public class XlsxExporterTests extends RefineTest {
             Assert.fail();
         }
     }
-    
+
     @Test
-    public void exportXlsxStringWithURLs() throws IOException{
+    public void exportXlsxStringWithURLs() throws IOException {
         String url = "GET /primo-library/,http:%2F%2Fcatalogue.unice.fr HTTP/1.1";
         createDateGrid(2, 2, url);
 
@@ -167,8 +178,8 @@ public class XlsxExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
-        ByteArrayInputStream inStream = new ByteArrayInputStream( stream.toByteArray() );
+
+        ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toByteArray());
         try {
             XSSFWorkbook wb = new XSSFWorkbook(inStream);
             XSSFSheet ws = wb.getSheetAt(0);
@@ -181,10 +192,46 @@ public class XlsxExporterTests extends RefineTest {
         }
     }
 
-    //helper methods
+    @Test
+    public void test257Columns() throws IOException {
+        CreateGrid(2, 257);
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(256);
+            Assert.assertEquals(cell0.toString(), "row0cell256");
+        }
+    }
+
+    @Test
+    public void test10000Columns() throws IOException {
+        CreateGrid(2, 10000);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(9999);
+            Assert.assertEquals(cell0.toString(), "row0cell9999");
+        }
+    }
+
+    // helper methods
+
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -193,24 +240,24 @@ public class XlsxExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
-    private void createDateGrid(int noOfRows, int noOfColumns, Serializable value){
+
+    private void createDateGrid(int noOfRows, int noOfColumns, Serializable value) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell(value, null));
             }
             project.rows.add(row);

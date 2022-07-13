@@ -6,13 +6,18 @@
         <td width="1%"><button class="button" bind="pickRecordElementsButton"></button></td>
         <td width="1%"><button class="button" bind="previewButton"></button></td>
       </tr>
+      <tr>
+        <td style="text-align: right;">&nbsp;</td>
+        <td width="1%"><input type="checkbox" bind="disableAutoPreviewCheckbox" id="$disable" />
+          <label for="$disable" id="or-disable-auto-preview"></label></td>
+      </tr>
     </table></div></td>
   </tr>
   <tr>
     <td><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
         <td><label for="$limit" id="or-import-load"></label></td>
-        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+        <td><input bind="limitInput" spellcheck="false" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit" id="or-import-rows"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="storeEmptyStringsCheckbox" id="$store-empty-strings" value=true/></td>
         <td colspan="2"><label for="$store-empty-strings" id="or-import-preserve"></label></td></tr>
@@ -22,6 +27,8 @@
         <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
         <td colspan="2"><label for="$include-file-sources" id="or-import-source"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="includeArchiveFileCheckbox" id="$include-archive-file" /></td>
+        <td colspan="2"><label for="$include-archive-file" id="or-import-archive"></label></td></tr>
     </table></div></td>
   </tr>
 </table></div>

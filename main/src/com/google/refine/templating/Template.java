@@ -87,6 +87,7 @@ public class Template {
         protected Properties bindings;
 
         public int total;
+        public int totalRows;
 
         public RowWritingVisitor(Writer writer, int limit) {
             this.limit = limit;
@@ -150,12 +151,17 @@ public class Template {
             }
         }
 
+        /**
+         * This method is modified for issue 3955
+         * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955
+         * The modification is to use the new variable totalRows instead of total
+         */
         public boolean internalVisit(Project project, int rowIndex, Row row) {
             try {
-                if (total > 0 && _separator != null) {
+                if (totalRows > 0 && _separator != null) {
                     writer.write(_separator);
                 }
-
+                totalRows++;
                 ExpressionUtils.bind(bindings, row, rowIndex, null, null);
                 for (Fragment f : _fragments) {
                     if (f instanceof StaticFragment) {

@@ -24,18 +24,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Properties;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.ToNumber;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
-public class ToNumberTests {
-    @Test
-    public void serializeToNumber() {
-        String json = "{\"description\":\"Returns o converted to a number\",\"params\":\"o\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new ToNumber(), json);
-    }
-}
+public class ToNumberTests extends RefineTest {
 
+    private static final Double EPSILON = 0.000001;
+    static Properties bindings = new Properties();
+
+    @Test
+    public void testConversions() {
+        Function f = new ToNumber();
+        assertEquals(f.call(bindings, new Object[] { Long.valueOf(11) }), Long.valueOf(11));
+        assertEquals(f.call(bindings, new Object[] { "12" }), Long.valueOf(12));
+        assertTrue((Double) f.call(bindings, new Object[] { "12345.6789" }) - Double.valueOf(12345.6789) < EPSILON);
+        assertTrue(f.call(bindings, new Object[] { "abc" }) instanceof EvalError);
+    }
+
+    @Test
+    public void testToNumber() {
+        assertTrue(invoke("toNumber") instanceof EvalError);
+        assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
+        assertTrue(invoke("toNumber", "") instanceof EvalError);
+        assertTrue(invoke("toNumber", "string") instanceof EvalError);
+        assertEquals(invoke("toNumber", "0.0"), 0.0);
+        assertEquals(invoke("toNumber", "123"), Long.valueOf(123));
+        assertTrue(Math.abs((Double) invoke("toNumber", "123.456") - 123.456) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", "001.234") - 1.234) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", "1e2") - 100.0) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", Double.parseDouble("100.0")) - 100.0) < EPSILON);
+    }
+
+}

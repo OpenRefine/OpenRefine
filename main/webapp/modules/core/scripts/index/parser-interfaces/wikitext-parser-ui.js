@@ -100,8 +100,11 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
 
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   options.reconService = ReconciliationManager.ensureDefaultServicePresent();
+
+  options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;
 
   return options;
 };
@@ -115,7 +118,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
-  
+  $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
   $('#or-import-wiki-base-url').text($.i18n('core-index-parser/wiki-base-url'));
   $('#or-import-parse').text($.i18n('core-index-parser/parse-next'));
   $('#or-import-header').text($.i18n('core-index-parser/lines-header'));
@@ -128,10 +131,12 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
+  $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
+
 
 /*
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
@@ -181,9 +186,20 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
+  }
 
+  if (this._config.disableAutoPreview) {
+    this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
+  }
+
+  // If disableAutoPreviewCheckbox is not checked, we will schedule an automatic update
   var onChange = function() {
-    self._scheduleUpdatePreview();
+    if (!self._optionContainerElmts.disableAutoPreviewCheckbox[0].checked)
+    {
+        self._scheduleUpdatePreview();
+    }
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);

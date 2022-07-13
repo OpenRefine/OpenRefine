@@ -139,11 +139,15 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
             self._elmts.previewTextarea[0].value = data;
         },
         "text"
-    );
+    ).fail(function (jqXhr, textStatus, errorMessage) {
+        if (jqXhr.status === 500) {
+            self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
+        }
+    });
 };
 
 TemplatingExporterDialog.prototype._export = function() {
-    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
@@ -154,7 +158,7 @@ TemplatingExporterDialog.prototype._export = function() {
     var appendField = function(name, value) {
         $('<textarea />')
             .attr("name", name)
-            .attr("value", value)
+            .val(value)
             .appendTo(form);
     };
 

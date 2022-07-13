@@ -14,16 +14,15 @@
     <h1 id="gdata-auth-doc"></h1>
     
     <div bind="signinPage" class="gdata-page">
-      <p><span id="gdata-please"></span> <button class="gdata-signin button button-primary" id="gdata-signin-btn"></button>
-        <span id="gdata-access-data"></p>
+      <p><span id="gdata-please-signin"></span> <button class="gdata-signin button button-primary" id="gdata-signin-btn"></button></p>
     </div>
     <div bind="progressPage" class="gdata-page">
       <p><img src="images/large-spinner.gif" /> <span id="gdata-retrieving"></span></p>
     </div>
     <div bind="listingPage" class="gdata-page grid-layout layout-normal"><table>
       <tr>
-        <td width="%"><button class="gdata-signout button" id="gdata-signout"></button></td>
-        <td><button class="gdata-signin button" id="gdata-resignin"></button> <span id="gdata-another-account"></span></td>
+        <td colspan="2"><span id="gdata-re-signin-another"></span><button class="gdata-signin button button-primary" id="gdata-resignin"></button>
+        <button class="gdata-signout button button-primary" id="gdata-signout"></button>
       </tr>
       <tr><td colspan="2"><div bind="listingContainer" class="grid-layout layout-tight gdata-document-container"></div></td></tr>
     </table></div>

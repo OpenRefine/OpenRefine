@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -53,5 +54,10 @@ public class WbLanguageConstantTest extends WbExpressionTest<String> {
         assertEquals("mul", WbLanguageConstant.normalizeLanguageCode("mul"));
         assertNull(WbLanguageConstant.normalizeLanguageCode("non-existent language code"));
         assertNull(WbLanguageConstant.normalizeLanguageCode(null));
+    }
+
+    @Test
+    public void testFallbackLangCodes() {
+        assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de", "http://not.exist/w/api.php"));
     }
 }

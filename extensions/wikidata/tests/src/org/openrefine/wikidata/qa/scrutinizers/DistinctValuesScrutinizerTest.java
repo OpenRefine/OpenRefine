@@ -21,15 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
+
+    public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
+
+    public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P163");
+    public static Value value1 = Datamodel.makeWikidataItemIdValue("Q41673");
+    public static Value value2 = Datamodel.makeWikidataItemIdValue("Q43175");
+
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(DISTINCT_VALUES_CONSTRAINT_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -39,10 +62,70 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
     @Test
     public void testTrigger() {
         ItemIdValue idA = TestingData.existingId;
-        ItemIdValue idB = TestingData.matchedId;
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB)).build();
-        ItemUpdate updateB = new ItemUpdateBuilder(idB).addStatement(TestingData.generateStatement(idB, idB)).build();
-        scrutinize(updateA, updateB);
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, value1);
+        Statement statement1 = new StatementImpl("P163", mainSnak, idA);
+        Statement statement2 = new StatementImpl("P163", mainSnak, idA);
+
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
+                .build();
+
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(DistinctValuesScrutinizer.type);
+    }
+
+    @Test
+    public void testDeletedStatement() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, value1);
+        Statement statement1 = new StatementImpl("P163", mainSnak, idA);
+        Statement statement2 = new StatementImpl("P163", mainSnak, idA);
+
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
+                .addStatement(delete(statement1))
+                .addStatement(delete(statement2))
+                .build();
+
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
+
+    @Test
+    public void testNoIssue() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
+        Snak snak2 = Datamodel.makeValueSnak(propertyIdValue, value2);
+        Statement statement1 = new StatementImpl("P163", snak1, idA);
+        Statement statement2 = new StatementImpl("P163", snak2, idA);
+
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
+                .build();
+
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
     }
 }

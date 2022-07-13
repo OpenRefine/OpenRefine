@@ -24,18 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.ForNonBlank;
 import com.google.refine.util.TestUtils;
 
 public class ForNonBlankTests {
+
     @Test
     public void serializeForNonBlank() {
         String json = "{\"description\":\"Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead.\",\"params\":\"expression o, variable v, expression eNonBlank, expression eBlank\",\"returns\":\"Depends on actual arguments\"}";
         TestUtils.isSerializedTo(new ForNonBlank(), json);
     }
 }
-

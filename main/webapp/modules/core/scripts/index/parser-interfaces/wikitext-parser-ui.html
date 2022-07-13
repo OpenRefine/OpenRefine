@@ -2,15 +2,15 @@
       <tr><td colspan="2" id="or-import-colsep"></td></tr>
          
       <tr><td width="1%"><input type="checkbox" bind="wikiCheckbox" id="$reconcileWiki" /></td><td><label for="$reconcileWiki" id="or-import-wiki-base-url"></label>
-        <input bind="wikiUrlInput" type="text" class="lightweight" size="30" id="$wikiUrl" /></td></tr>
+        <input bind="wikiUrlInput" spellcheck="false" type="text" class="lightweight" size="30" id="$wikiUrl" /></td></tr>
 
       <tr><td width="1%"><input type="checkbox" bind="headerLinesCheckbox" id="$headers" /></td>
         <td><label for="$headers" id="or-import-parse"></label>
-          <input bind="headerLinesInput" type="text" class="lightweight" size="2" value="1" />
+          <input bind="headerLinesInput" spellcheck="false" type="text" class="lightweight" size="2" value="1" />
           <label for="$headers" id="or-import-header"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
         <td><label for="$limit" id="or-import-load"></label>
-          <input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+          <input bind="limitInput" spellcheck="false" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit" id="or-import-rows2"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
         <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
@@ -29,8 +29,16 @@
       <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
         <td><label for="$include-file-sources" id="or-import-source"></label></td></tr>
 
+      <tr><td width="1%"><input type="checkbox" bind="includeArchiveFileCheckbox" id="$include-archive-file" /></td>
+        <td><label for="$include-archive-file" id="or-import-archive"></label></td></tr>
+
       <tr>
         <td width="1%"></td>
         <td><button class="button" bind="previewButton"></button></td>
+      </tr>
+      <tr>
+          <td width="1%"></td>
+          <td width="1%"><input type="checkbox" bind="disableAutoPreviewCheckbox" id="$disable" />
+            <label for="$disable" id="or-disable-auto-preview"></label></td>
       </tr>
 </table></div>
