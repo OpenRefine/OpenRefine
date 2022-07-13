@@ -40,6 +40,7 @@ import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ParseHtml implements Function {
 
@@ -57,7 +58,7 @@ public class ParseHtml implements Function {
 
     @Override
     public String getDescription() {
-        return "Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing ' /' at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, value.parseHtml().toString().";
+        return FunctionDescription.html_parse_html();
     }
     
     @Override

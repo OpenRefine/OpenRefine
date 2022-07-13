@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Cosh implements Function {
 
@@ -51,7 +52,7 @@ public class Cosh implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the hyperbolic cosine of a value.";
+        return FunctionDescription.math_cosh();
     }
     
     @Override

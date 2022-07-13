@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Round implements Function {
 
@@ -51,7 +52,7 @@ public class Round implements Function {
     
     @Override
     public String getDescription() {
-        return "Rounds a number to the nearest integer.";
+        return FunctionDescription.math_round();
     }
     
     @Override

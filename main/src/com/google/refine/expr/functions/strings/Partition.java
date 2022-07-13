@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Partition implements Function {
 
@@ -99,8 +100,7 @@ public class Partition implements Function {
     
     @Override
     public String getDescription() {
-        return 
-            "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. If omitFragment is true, frag is not returned.";
+        return FunctionDescription.str_partition();
     }
     
     @Override

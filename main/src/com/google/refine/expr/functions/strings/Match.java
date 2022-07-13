@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Match implements Function {
 
@@ -76,7 +77,7 @@ public class Match implements Function {
     
     @Override
     public String getDescription() {
-        return "Attempts to match the string s in its entirety against the regex pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order).";
+        return FunctionDescription.str_match();
     }
     
     @Override
