@@ -32,13 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 .button, a.button { 
-  background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
-  background: -moz-linear-gradient(top,  #f9f9f9,  #e3e3e3);
-  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e3e3e3');
-  }
+  background: linear-gradient(#f9f9f9,  #e3e3e3);
+}
 
-.button:active, a.button:active { 
-  background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9));
-  background: -moz-linear-gradient(top,  #e3e3e3,  #f9f9f9);
-  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#f9f9f9');
-  }
+.button:active, a.button:active {
+  background: linear-gradient(#e3e3e3,  #f9f9f9);
+}
