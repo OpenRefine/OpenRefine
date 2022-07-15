@@ -784,6 +784,7 @@
     "core-buttons/merge-close": "Merge selected &amp; Close",
     "core-buttons/export-cluster": "Export clusters",
     "core-buttons/close": "Close",
+    "core-buttons/reset": "Reset",
     "core-buttons/reset-template": "Reset template",
     "core-buttons/export": "Export",
     "core-buttons/preview": "Preview",
