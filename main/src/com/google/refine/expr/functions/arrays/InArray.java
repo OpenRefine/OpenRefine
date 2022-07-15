@@ -73,7 +73,8 @@ public class InArray implements Function {
             //return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
             return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two parameters: an array and a string");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two parameters: an array and a string");
+        return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

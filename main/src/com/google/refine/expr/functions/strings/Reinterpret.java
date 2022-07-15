@@ -68,7 +68,8 @@ public class Reinterpret implements Function {
                 return reinterpret(str, decoder, encoder);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects String to reinterpret with a given target encoding and optional source encoding");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects String to reinterpret with a given target encoding and optional source encoding");
+        return new EvalError(EvalErrorMessage.expects_string_to_reinterpret(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private Object reinterpret(String str, String decoder, String encoder) {

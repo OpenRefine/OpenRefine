@@ -2,6 +2,7 @@ package com.google.refine.expr.functions.strings;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang.StringUtils;
@@ -41,11 +42,13 @@ public class ReplaceEach implements Function {
                     // replace each occurrence of search with corresponding element in replace
                     return StringUtils.replaceEachRepeatedly(str, search, replace);
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": the number of replacements must be equal to or less than the number of search strings.");
+                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": the number of replacements must be equal to or less than the number of search strings.");
+                    return new EvalError(EvalErrorMessage.str_replace_replacements_equal_to_searches(ControlFunctionRegistry.getFunctionName(this)));
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 arguments: string, array of strings to replace, array of replacement strings");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 arguments: string, array of strings to replace, array of replacement strings");
+        return new EvalError(EvalErrorMessage.str_replace_replacements_equal_to_searches(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

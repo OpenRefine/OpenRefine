@@ -56,13 +56,13 @@ public class Parent implements Function {
                 return e1.parent();
 
             }else{
-
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + "() cannot work with this '"
-                        + new Type().call(bindings, args)
-                        + "'"
-                        + " but instead needs a jsoup XML or HTML Element to work with."
-                        + " For arrays, you might select an index or loop over them with forEach().");
+                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                //        + "() cannot work with this '"
+                //        + new Type().call(bindings, args)
+                //        + "'"
+                //        + " but instead needs a jsoup XML or HTML Element to work with."
+                //        + " For arrays, you might select an index or loop over them with forEach().");
+                return new EvalError(EvalErrorMessage.xml_parent_cannot_work_with(ControlFunctionRegistry.getFunctionName(this), new Type().call(bindings, args)));
             }
         }
         // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");

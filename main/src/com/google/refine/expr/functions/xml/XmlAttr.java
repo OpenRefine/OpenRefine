@@ -56,7 +56,8 @@ public class XmlAttr implements Function {
                     return e1.attr(o2.toString());
                 }
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
+                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
+                return new EvalError(EvalErrorMessage.xml_attr_failed(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
         // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");

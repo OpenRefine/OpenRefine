@@ -62,7 +62,8 @@ public class Phonetic implements Function {
             Object o1 = args[0];
             str = (o1 instanceof String) ? (String) o1 : o1.toString();
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            return new EvalError(EvalErrorMessage.expects_at_least_one_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
         String encoding = "metaphone3";
         if (args.length > 1) {
@@ -93,9 +94,10 @@ public class Phonetic implements Function {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " doesn't know how to handle the '"
-                        + encoding + "' encoding.");
+                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                //        + " doesn't know how to handle the '"
+                //        + encoding + "' encoding.");
+                return new EvalError(EvalErrorMessage.unable_to_handle_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
             }
         } else {
             // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
