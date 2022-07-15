@@ -14,19 +14,7 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
-    
-# Same, on 4.0 branch
-- package-ecosystem: maven
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: com.thoughtworks.xstream:xstream
-    versions:
-    - "> 1.4.12"
-    - "< 2"
-  target-branch: "4.0"
+  target-branch: "master"
     
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
