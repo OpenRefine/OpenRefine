@@ -43,3 +43,8 @@ updates:
   directory: "main/tests/cypress"
   schedule:
     interval: "daily"
+  ignore:
+# Ignore cypress updates until interactive 'Run all specs' fixed https://github.com/cypress-io/cypress/discussions/21628
+  - dependency-name: cypress
+    versions:
+    - ">= 10.0.0"
