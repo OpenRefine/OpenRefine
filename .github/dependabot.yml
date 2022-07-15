@@ -26,7 +26,7 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
-  target-branch: 4.0
+  target-branch: "4.0"
     
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
