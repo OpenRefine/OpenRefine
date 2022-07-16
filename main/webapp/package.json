@@ -13,7 +13,7 @@
     "moment": "2.29.3",
     "select2": "4.1.0-rc.0",
     "tablesorter": "2.31.3",
-    "underscore": "1.13.2"
+    "underscore": "1.13.4"
   },
   "devDependencies": {}
 }
