@@ -257,7 +257,7 @@ Refine.CreateProjectUI.prototype.showImportJobError = function(message, stack) {
   $('#create-project-error-stack').text(stack || $.i18n('core-index-create/no-details'));
 
   this.showCustomPanel(this._errorPanel);
-  $('#create-project-error-ok-button').unbind().click(function() {
+  $('#create-project-error-ok-button').off().on('click',function() {
     self.showSourceSelectionPanel();
   });
 };
