@@ -16,6 +16,11 @@ updates:
     - "< 2"
   target-branch: "master"
     
+# For main webapp
+- package-ecosystem: "npm"
+  directory: "main/webapp"
+  schedule:
+    interval: "daily"
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
   directory: "docs/"
