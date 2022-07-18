@@ -49,6 +49,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class RowFlagOperation extends EngineDependentOperation {
     final protected boolean _flagged;
@@ -70,7 +71,10 @@ public class RowFlagOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return (_flagged ? "Flag rows" : "Unflag rows");
+        //return (_flagged ? "Flag rows" : "Unflag rows");
+        return _flagged ?
+                OperationDescription.row_flag_brief():
+                OperationDescription.row_unflag_brief();
     }
 
    @Override

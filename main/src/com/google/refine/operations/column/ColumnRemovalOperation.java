@@ -41,6 +41,7 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRemovalChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnRemovalOperation extends AbstractOperation {
     final protected String _columnName;
@@ -61,7 +62,8 @@ public class ColumnRemovalOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Remove column " + _columnName;
+        // return "Remove column " + _columnName;
+        return OperationDescription.column_removal_brief(_columnName);
     }
 
     @Override

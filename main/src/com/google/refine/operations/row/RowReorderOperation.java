@@ -48,7 +48,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowReorderChange;
-import com.google.refine.sorting.SortingConfig;
+ import com.google.refine.operations.OperationDescription;
+ import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 
@@ -78,7 +79,8 @@ public class RowReorderOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Reorder rows";
+        // return "Reorder rows";
+        return OperationDescription.row_reorder_brief();
     }
 
     @Override

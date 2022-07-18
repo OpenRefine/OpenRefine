@@ -45,6 +45,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.operations.OperationDescription;
 
 public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
     final protected String  _columnName;
@@ -73,7 +74,8 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
+        // return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
+        return OperationDescription.cell_transpose_rows_into_columns_brief(_rowCount, _columnName);
     }
 
     @Override

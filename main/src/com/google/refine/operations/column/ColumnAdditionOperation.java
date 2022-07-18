@@ -58,6 +58,7 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
@@ -119,10 +120,11 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Create column " + _newColumnName + 
-            " at index " + _columnInsertIndex + 
-            " based on column " + _baseColumnName + 
-            " using expression " + _expression;
+        // return "Create column " + _newColumnName +
+        //    " at index " + _columnInsertIndex +
+        //    " based on column " + _baseColumnName +
+        //    " using expression " + _expression;
+        return OperationDescription.column_addition_brief(_newColumnName, _columnInsertIndex, _baseColumnName, _expression);
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {

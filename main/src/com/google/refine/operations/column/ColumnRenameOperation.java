@@ -40,6 +40,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRenameChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnRenameOperation extends AbstractOperation {
     final protected String _oldColumnName;
@@ -68,7 +69,8 @@ public class ColumnRenameOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Rename column " + _oldColumnName + " to " + _newColumnName;
+        // return "Rename column " + _oldColumnName + " to " + _newColumnName;
+        return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
     }
 
     @Override

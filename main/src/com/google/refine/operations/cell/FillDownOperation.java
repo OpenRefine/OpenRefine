@@ -48,6 +48,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class FillDownOperation extends EngineDependentMassCellOperation {
     
@@ -63,7 +64,8 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Fill down cells in column " + _columnName;
+        // return "Fill down cells in column " + _columnName;
+        return OperationDescription.cell_fill_down_brief(_columnName);
     }
 
     @Override

@@ -53,6 +53,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.StringUtils;
 
@@ -129,7 +130,8 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Mass edit cells in column " + _columnName;
+        // return "Mass edit cells in column " + _columnName;
+        return OperationDescription.cell_mass_edit_brief(_columnName);
     }
 
     @Override

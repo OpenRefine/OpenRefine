@@ -47,6 +47,7 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCellOperation {
     
@@ -81,7 +82,8 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     
     @Override
     public String getBriefDescription(Project project) {
-        return "Use values as reconciliation identifiers in column " + _columnName;
+        // return "Use values as reconciliation identifiers in column " + _columnName;
+        return OperationDescription.recon_use_values_as_identifiers_brief(_columnName);
     }
 
     @Override

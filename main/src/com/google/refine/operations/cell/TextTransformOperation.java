@@ -52,6 +52,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     @JsonProperty("expression")
@@ -106,7 +107,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Text transform on cells in column " + _columnName + " using expression " + _expression;
+        // return "Text transform on cells in column " + _columnName + " using expression " + _expression;
+        return OperationDescription.cell_text_transform_brief(_columnName, _expression);
     }
 
     @Override

@@ -47,6 +47,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class BlankDownOperation extends EngineDependentMassCellOperation {
     
@@ -62,7 +63,8 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Blank down cells in column " + _columnName;
+        // return "Blank down cells in column " + _columnName;
+        return OperationDescription.cell_blank_down_brief(_columnName);
     }
 
     @Override

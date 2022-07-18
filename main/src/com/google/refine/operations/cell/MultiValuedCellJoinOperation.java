@@ -46,6 +46,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+import com.google.refine.operations.OperationDescription;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
     final protected String    _columnName;
@@ -83,7 +84,8 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Join multi-valued cells in column " + _columnName;
+        // return "Join multi-valued cells in column " + _columnName;
+        return OperationDescription.cell_multivalued_cell_join_brief(_columnName);
     }
 
     @Override

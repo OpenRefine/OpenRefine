@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import com.google.refine.operations.OperationDescription;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.message.BasicHeader;
 
@@ -194,10 +195,11 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Create column " + _newColumnName +
-            " at index " + _columnInsertIndex +
-            " by fetching URLs based on column " + _baseColumnName +
-            " using expression " + _urlExpression;
+        // return "Create column " + _newColumnName +
+        //    " at index " + _columnInsertIndex +
+        //    " by fetching URLs based on column " + _baseColumnName +
+        //    " using expression " + _urlExpression;
+        return OperationDescription.column_addition_by_fetching_urls_brief(_newColumnName, _columnInsertIndex, _baseColumnName, _urlExpression);
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.google.refine.operations.OperationDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -153,7 +154,8 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Split multi-valued cells in column " + _columnName;
+        // return "Split multi-valued cells in column " + _columnName;
+        return OperationDescription.cell_multivalued_cell_split_brief(_columnName);
     }
 
     @Override

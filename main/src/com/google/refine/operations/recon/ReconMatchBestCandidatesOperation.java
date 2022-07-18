@@ -52,6 +52,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
     @JsonCreator
@@ -70,7 +71,8 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Match each cell to its best recon candidate in column " + _columnName;
+        // return "Match each cell to its best recon candidate in column " + _columnName;
+        return OperationDescription.recon_match_best_candidates_brief(_columnName);
     }
 
     @Override
