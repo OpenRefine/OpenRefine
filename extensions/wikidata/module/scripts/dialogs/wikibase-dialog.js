@@ -60,14 +60,14 @@ WikibaseDialog.populateDialog = function () {
     if (wikibaseName.toLowerCase() === selectedWikibase) {
       _elmts.wikibaseItem.addClass("selected");
     }
-    _elmts.wikibaseItem.click(function(event) {
+    _elmts.wikibaseItem.on('click',function(event) {
       WikibaseDialog.selectWikibase(wikibaseName )
     });
     _elmts.wikibaseImage.attr("alt",$.i18n('wikibase-account/logo-alt-text', wikibaseName));
     _elmts.wikibaseName.text(wikibaseName);
     _elmts.wikibaseUrl.text(rootURL);
     _elmts.deleteWikibase.text($.i18n('core-index/delete'));
-    _elmts.deleteWikibase.click(function(event) {
+    _elmts.deleteWikibase.on('click',function(event) {
       WikibaseDialog.removeWikibase(event, wikibaseName);
     });
 
