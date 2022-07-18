@@ -552,7 +552,7 @@ SchemaAlignment._addMediaInfo = function(json) {
         .appendTo(item);
   var deleteButton = SchemaAlignment._makeDeleteButton()
         .appendTo(deleteToolbar)
-        .click(function(e) {
+        .on('click',function(e) {
      item.remove();
      SchemaAlignment._hasChanged();
      e.preventDefault();
@@ -612,7 +612,7 @@ SchemaAlignment._addMediaInfo = function(json) {
         .appendTo(right);
   var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
-  .click(function(e) {
+  .on('click',function(e) {
      SchemaAlignment._addNameDesc(item, {name_type: 'LABEL_IF_NEW', value: null});
      e.preventDefault();
   }).appendTo(termToolbar);
