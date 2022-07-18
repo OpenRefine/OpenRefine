@@ -24,6 +24,7 @@ public class MediaInfoEditBuilder {
     private String filePath;
     private String fileName;
     private String wikitext;
+    private boolean overrideWikitext;
     private boolean built;
 
     /**
@@ -42,6 +43,7 @@ public class MediaInfoEditBuilder {
         this.filePath = null;
         this.fileName = null;
         this.wikitext = null;
+        this.overrideWikitext = false;
         this.built = false;
     }
 
@@ -128,6 +130,14 @@ public class MediaInfoEditBuilder {
     	this.wikitext = wikitext;
     	return this;
     }
+    
+    /**
+     * Sets whether the wikitext should override any existing one
+     */
+    public MediaInfoEditBuilder setOverrideWikitext(boolean overrideWikitext) {
+    	this.overrideWikitext = overrideWikitext;
+    	return this;
+    }
 
     /**
      * Constructs the {@link MediaInfoEdit}.
@@ -136,6 +146,6 @@ public class MediaInfoEditBuilder {
      */
     public MediaInfoEdit build() {
         built = true;
-        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext);
+        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext);
     }
 }

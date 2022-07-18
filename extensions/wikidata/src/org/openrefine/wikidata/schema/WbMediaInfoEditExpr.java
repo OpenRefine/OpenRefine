@@ -35,6 +35,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     private WbExpression<StringValue> filePath;
     private WbExpression<StringValue> fileName;
     private WbExpression<StringValue> wikitext;
+    private boolean overrideWikitext;
     
     public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-mediainfo-subject";
     
@@ -45,7 +46,8 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs,
             @JsonProperty("filePath") WbExpression<StringValue> filePath,
             @JsonProperty("fileName") WbExpression<StringValue> fileName,
-            @JsonProperty("wikitext") WbExpression<StringValue> wikitext) {
+            @JsonProperty("wikitext") WbExpression<StringValue> wikitext,
+            @JsonProperty("overrideWikitext") boolean overrideWikitext) {
         Validate.notNull(subjectExpr);
         this.subject = subjectExpr;
         if (nameDescExprs == null) {
@@ -61,6 +63,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
+        this.overrideWikitext = overrideWikitext;
     }
 
 
@@ -116,6 +119,9 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         		;
         	}
         }
+        if (overrideWikitext) {
+        	update.setOverrideWikitext(overrideWikitext);
+        }
         return update.build();
 	}
 	
@@ -170,12 +176,20 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     }
     
     /**
-     * The wikitext which replaces any existing wikitext.
+     * The wikitext to be added to the file (or edited)
      * @return
      */
     @JsonProperty("wikitext")
     public WbExpression<StringValue> getWikitext() {
     	return wikitext;
+    }
+    
+    /**
+     * Whether the provided wikitext should override any existing wikitext.
+     */
+    @JsonProperty("overrideWikitext")
+    public boolean isOverridingWikitext() {
+    	return overrideWikitext;
     }
 
     @Override

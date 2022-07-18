@@ -21,6 +21,7 @@ public class FullMediaInfoUpdate extends MediaInfoUpdateImpl implements MediaInf
 	private final String filePath;
 	private final String fileName;
 	private final String wikitext;
+	private final boolean overrideWikitext;
 	
 	/**
 	 * Creates an update on an existing mediainfo entity.
@@ -46,12 +47,14 @@ public class FullMediaInfoUpdate extends MediaInfoUpdateImpl implements MediaInf
 			StatementUpdate statementUpdate,
 			String filePath,
 			String fileName,
-			String wikitext) {
+			String wikitext,
+			boolean overrideWikitext) {
 		super(entityId, baseRevisionId, labels, statementUpdate);
 		Validate.notNull(entityId);
 		this.filePath = filePath;
 		this.fileName = fileName;
 		this.wikitext = wikitext;
+		this.overrideWikitext = overrideWikitext;
 		Validate.notNull(labels);
 		Validate.notNull(statementUpdate);
 	}
@@ -90,5 +93,13 @@ public class FullMediaInfoUpdate extends MediaInfoUpdateImpl implements MediaInf
 	@JsonIgnore
 	public String getWikitext() {
 		return wikitext;
+	}
+
+	/**
+	 * Whether any existing wikitext should be overridden
+	 */
+	@JsonIgnore
+	public boolean isOverridingWikitext() {
+		return overrideWikitext;
 	}
 }
