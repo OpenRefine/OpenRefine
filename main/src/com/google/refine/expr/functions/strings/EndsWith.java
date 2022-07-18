@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class EndsWith implements Function {
 
@@ -55,7 +56,7 @@ public class EndsWith implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s ends with sub. For example, \"food\".endsWith(\"ood\") returns true, whereas \"food\".endsWith(\"odd\") returns false.";
+        return FunctionDescription.str_ends_with();
     }
     
     @Override

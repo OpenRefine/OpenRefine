@@ -34,6 +34,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.FullMediaInfoUpdate;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
@@ -182,6 +183,14 @@ public class EditBatchProcessor {
                 // Existing entities
                 EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
                 editor.editEntityDocument(entityUpdate, false, summary, tags);
+                if (entityUpdate instanceof FullMediaInfoUpdate) {
+                    FullMediaInfoUpdate fullMediaInfoUpdate = (FullMediaInfoUpdate) entityUpdate;
+                    if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
+                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                        long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
+                        mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                    }
+                }
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way

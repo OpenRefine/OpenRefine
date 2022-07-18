@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ATan2 implements Function {
 
@@ -52,7 +53,7 @@ public class ATan2 implements Function {
 
     @Override
     public String getDescription() {
-        return "Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.";
+        return FunctionDescription.math_atan2();
     }
     
     @Override

@@ -42,6 +42,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class InArray implements Function {
@@ -74,7 +75,7 @@ public class InArray implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns true if the array contains the desired string, and false otherwise. Will not convert data types.";
+        return FunctionDescription.arr_in_array();
     }
     
     @Override

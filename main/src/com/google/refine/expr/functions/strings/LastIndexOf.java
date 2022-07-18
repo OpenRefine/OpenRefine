@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class LastIndexOf implements Function {
 
@@ -55,7 +56,7 @@ public class LastIndexOf implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, \"parallel\".lastIndexOf(\"a\") returns 3 (pointing at the second 'a').";
+        return FunctionDescription.str_last_index_of();
     }
     
     @Override

@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.DetectLanguageUtils;
 import com.optimaize.langdetect.i18n.LdLocale;
 import com.optimaize.langdetect.profiles.LanguageProfile;
@@ -45,7 +46,7 @@ public class DetectLanguage implements Function {
 
     @Override
     public String getDescription() {
-        return "Detects the language of the given string and provides the language code.";
+        return FunctionDescription.str_detect_language();
     }
 
     @Override

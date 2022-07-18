@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -57,7 +58,7 @@ public class SplitByCharType implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories.";
+        return FunctionDescription.str_split_by_char_type();
     }
     
     @Override
