@@ -26,10 +26,8 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -37,6 +35,9 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 
 public class WbReferenceExprTest extends WbExpressionTest<Reference> {
 
@@ -85,5 +86,16 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
         expr.getSnaks().clear();
+    }
+    
+    @Test
+    public void testValidate() throws ModelException {
+    	ColumnModel columnModel = new ColumnModel();
+    	columnModel.addColumn(0, new Column(0, "column A"), false);
+    	columnModel.addColumn(0, new Column(0, "column B"), false);
+    	hasNoValidationError(expr, columnModel);
+    	hasValidationError("Null snak in reference", new WbReferenceExpr(Arrays.asList(
+            null,
+            new WbSnakExpr(new WbPropConstant("P347", "reference URL", "url"), new WbStringVariable("column B")))), columnModel);
     }
 }

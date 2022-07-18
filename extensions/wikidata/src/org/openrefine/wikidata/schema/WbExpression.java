@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -59,7 +60,17 @@ public interface WbExpression<T> {
     /**
      * Evaluates the value expression in a given context, returns a Wikibase value
      * suitable to be the target of a claim.
+     * 
+     * As a premise to calling that method, we assume that calling {@link #validate(ValidationState)}
+     * did not log any error in the validation state.
      */
     public T evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException, QAWarningException;
+
+    
+    /**
+     * Check that this expression is fully formed and ready to be evaluated.
+     * @param state
+     */
+    public void validate(ValidationState validation);
 }

@@ -3,12 +3,14 @@ package org.openrefine.wikidata.schema;
 import java.util.Collections;
 import java.util.List;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.WbNameDescExpr.NameDescType;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
@@ -48,24 +50,65 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             @JsonProperty("fileName") WbExpression<StringValue> fileName,
             @JsonProperty("wikitext") WbExpression<StringValue> wikitext,
             @JsonProperty("overrideWikitext") boolean overrideWikitext) {
-        Validate.notNull(subjectExpr);
         this.subject = subjectExpr;
         if (nameDescExprs == null) {
             nameDescExprs = Collections.emptyList();
         }
-        nameDescExprs.stream().forEach(nde ->
-        	Validate.isTrue(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW));
+        
         this.nameDescs = nameDescExprs;
         if (statementGroupExprs == null) {
             statementGroupExprs = Collections.emptyList();
         }
-        this.statementGroups = statementGroupExprs;
+        this.statementGroups = statementGroupExprs == null ? Collections.emptyList() : statementGroupExprs;
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
         this.overrideWikitext = overrideWikitext;
     }
 
+	@Override
+	public void validate(ValidationState validation) {
+		if (subject == null) {
+			validation.addError("No subject provided");
+		} else {
+			validation.enter(new PathElement(Type.SUBJECT));
+			subject.validate(validation);
+			validation.leave();
+		}
+		nameDescs.stream().forEach(nde -> {
+			if (nde == null) {
+				validation.addError("Null term in MediaInfo entity");
+			} else if (!(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW)) {
+				validation.addError("Invalid term type for MediaInfo entity: "+nde.getType());
+	    	} else {
+	    		validation.enter(new PathElement(nde.getPathElementType()));
+	    		nde.validate(validation);
+	    		validation.leave();
+	    	}
+		});
+		statementGroups.stream().forEach(statementGroup -> {
+			if (statementGroup == null) {
+				validation.addError("Null statement in MediaInfo entity");
+			} else {
+				statementGroup.validate(validation);
+			}
+		});
+		if (fileName != null) {
+			validation.enter(new PathElement(Type.FILENAME));
+			fileName.validate(validation);
+			validation.leave();
+		}
+		if (filePath != null) {
+			validation.enter(new PathElement(Type.FILEPATH));
+			filePath.validate(validation);
+			validation.leave();
+		}
+		if (wikitext != null) {
+			validation.enter(new PathElement(Type.WIKITEXT));
+			wikitext.validate(validation);
+			validation.leave();
+		}
+	}
 
 	@Override
 	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {

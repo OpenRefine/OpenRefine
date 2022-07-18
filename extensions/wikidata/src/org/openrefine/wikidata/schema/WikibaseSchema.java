@@ -32,6 +32,8 @@ import java.util.Map;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +60,7 @@ import com.google.refine.util.ParsingUtilities;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WikibaseSchema implements OverlayModel {
 
-    final static Logger logger = LoggerFactory.getLogger("RdfSchema");
+    final static Logger logger = LoggerFactory.getLogger("WikibaseSchema");
 
     @JsonProperty("entityEdits")
     protected List<WbExpression<? extends EntityEdit>> entityEditExprs = new ArrayList<>();
@@ -71,6 +73,8 @@ public class WikibaseSchema implements OverlayModel {
 
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
+    
+    protected boolean validated;
 
     /**
      * Constructor.
@@ -78,6 +82,7 @@ public class WikibaseSchema implements OverlayModel {
      */
     public WikibaseSchema() {
     	entityTypeSiteIri = Collections.emptyMap();
+    	validated = false;
     }
 
     /**
@@ -99,6 +104,26 @@ public class WikibaseSchema implements OverlayModel {
         this.siteIri = siteIri;
         this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
+        validated = false;
+    }
+    
+    /**
+     * Checks that this schema is complete.
+     * @param validationContext
+     */
+    public void validate(ValidationState validationContext) {
+    	int index = 0;
+    	for (WbExpression<? extends EntityEdit> entityEdit : entityEditExprs) {
+    		if (entityEdit == null) {
+    			validationContext.addError("Empty entity edit");
+    		} else {
+    			validationContext.enter(new PathElement(PathElement.Type.ENTITY, index));
+    			entityEdit.validate(validationContext);
+    			validationContext.leave();
+    		}
+    		index++;
+    	}
+    	validated = validationContext.getValidationErrors().isEmpty();
     }
 
     /**
@@ -171,6 +196,9 @@ public class WikibaseSchema implements OverlayModel {
      * @return entity updates are stored in their generating order (not merged yet).
      */
     public List<EntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
+    	if (!validated) {
+    		throw new IllegalStateException("The schema has not been validated before being evaluated");
+    	}
         List<EntityEdit> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));

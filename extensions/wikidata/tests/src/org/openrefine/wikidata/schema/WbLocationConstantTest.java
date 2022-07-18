@@ -28,10 +28,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
+
+import com.google.refine.model.ColumnModel;
 
 public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesValue> {
 
@@ -42,6 +45,7 @@ public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesVal
     private String input = "1.2345,6.7890";
     private String inputWithPrecision = "1.2345,6.7890,0.1";
 
+    @Test
     public void testParseValid()
             throws ParseException {
         assertEquals(loc, WbLocationConstant.parse(input));
@@ -53,35 +57,29 @@ public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesVal
             throws ParseException {
         WbLocationConstant.parse("some bad value");
     }
+    
+    @Test
+    public void testValidate() {
+    	hasNoValidationError(new WbLocationConstant(input));
+    	hasValidationError("Invalid geographical coordinates: 'some bad value'", new WbLocationConstant("some bad value"));
+    	hasValidationError("Invalid geographical coordinates: 'lat,lng'", new WbLocationConstant("lat,lng"));
+    	hasValidationError("Invalid geographical coordinates: '0.1,2.3,4.5,6.7'", new WbLocationConstant("0.1,2.3,4.5,6.7"));
+    }
 
     @Test
     public void testEvaluate()
             throws ParseException {
-        evaluatesTo(loc, new WbLocationConstant(input));
+        WbLocationConstant expression = new WbLocationConstant(input);
+        expression.validate(new ValidationState(new ColumnModel()));
+		evaluatesTo(loc, expression);
     }
 
     @Test
     public void testEvaluateWithPrecision()
             throws ParseException {
-        evaluatesTo(locWithPrecision, new WbLocationConstant(inputWithPrecision));
-    }
-
-    @Test(expectedExceptions = ParseException.class)
-    public void constructInvalid()
-            throws ParseException {
-        new WbLocationConstant("some bad value");
-    }
-
-    @Test(expectedExceptions = ParseException.class)
-    public void constructNotNumber()
-            throws ParseException {
-        new WbLocationConstant("lat,lng");
-    }
-
-    @Test(expectedExceptions = ParseException.class)
-    public void constructtooManyParts()
-            throws ParseException {
-        new WbLocationConstant("0.1,2.3,4.5,6.7");
+        WbLocationConstant expression = new WbLocationConstant(inputWithPrecision);
+        expression.validate(new ValidationState(new ColumnModel()));
+		evaluatesTo(locWithPrecision, expression);
     }
 
     @Test

@@ -33,8 +33,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
@@ -67,7 +67,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
     public static Pattern calendarSuffixPattern = Pattern.compile("_(Q[1-9][0-9]*)$");
 
     private TimeValue parsed;
-    private String origDatestamp;
+    private final String origDatestamp;
 
     /**
      * Constructor. Used for deserialization from JSON. The object will be
@@ -79,9 +79,22 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      */
     @JsonCreator
     public WbDateConstant(@JsonProperty("value") String origDatestamp) {
-        Validate.notNull(origDatestamp);
-        this.setOrigDatestamp(origDatestamp);
+        this.origDatestamp = origDatestamp;
+        parsed = null;
     }
+    
+	@Override
+	public void validate(ValidationState validation) {
+		if (origDatestamp == null) {
+			validation.addError("Empty date field");
+		} else {
+			try {
+	            this.parsed = parse(origDatestamp);
+	        } catch (ParseException e) {
+	            validation.addError(String.format("Invalid date provided: '%s'", origDatestamp));
+	        }
+		}
+	}
 
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
@@ -178,15 +191,6 @@ public class WbDateConstant implements WbExpression<TimeValue> {
     @JsonProperty("value")
     public String getOrigDatestamp() {
         return origDatestamp;
-    }
-
-    private void setOrigDatestamp(String origDatestamp) {
-        this.origDatestamp = origDatestamp;
-        try {
-            this.parsed = parse(origDatestamp);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid datestamp provided: " + origDatestamp);
-        }
     }
 
     @Override

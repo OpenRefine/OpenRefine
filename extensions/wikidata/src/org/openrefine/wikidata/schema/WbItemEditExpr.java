@@ -26,11 +26,12 @@ package org.openrefine.wikidata.schema;
 import java.util.Collections;
 import java.util.List;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
@@ -70,7 +71,6 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
     		@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
-        Validate.notNull(subjectExpr);
         this.subject = subjectExpr;
         if (nameDescExprs == null) {
             nameDescExprs = Collections.emptyList();
@@ -81,6 +81,30 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
         }
         this.statementGroups = statementGroupExprs;
     }
+    
+
+	@Override
+	public void validate(ValidationState validation) {
+		if (subject == null) {
+			validation.addError("No subject item id provided");
+		} else {
+			validation.enter(new PathElement(PathElement.Type.SUBJECT));
+			subject.validate(validation);
+			validation.leave();
+		}
+		nameDescs.stream()
+			.forEach(nameDesc -> {
+				validation.enter(new PathElement(nameDesc.getPathElementType()));
+				nameDesc.validate(validation);
+				validation.leave();
+			});
+		statementGroups.stream()
+			.forEach(statementGroup -> {
+				validation.enter();
+				statementGroup.validate(validation);
+				validation.leave();
+			});
+	}
 
     @Override
     public ItemEdit evaluate(ExpressionContext ctxt)

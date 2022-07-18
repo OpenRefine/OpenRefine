@@ -43,4 +43,12 @@ public class WbItemConstantTest extends WbExpressionTest<ItemIdValue> {
     public void testEvaluate() {
         evaluatesTo(Datamodel.makeWikidataItemIdValue("Q42"), constant);
     }
+    
+    @Test
+    public void testValidate() {
+    	hasNoValidationError(constant);
+    	hasValidationError("No entity id provided", new WbItemConstant(null, "my label"));
+    	hasValidationError("No entity label provided", new WbItemConstant("Q23", null));
+    	hasValidationError("Invalid entity id format: 'invalid format'", new WbItemConstant("invalid format", "my label"));
+    }
 }

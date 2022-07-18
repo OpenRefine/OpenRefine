@@ -26,8 +26,13 @@ public class WbStringConstantTest extends WbExpressionTest<StringValue> {
         evaluatesTo(Datamodel.makeStringValue("hello world"), new WbStringConstant(" hello world "));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void testEmpty() {
-        new WbStringConstant("");
+        hasValidationError("Empty value", new WbStringConstant(""));
+    }
+    
+    @Test
+    public void testValidate() {
+    	hasNoValidationError(constant);
     }
 }

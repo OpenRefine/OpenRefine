@@ -129,4 +129,8 @@ public class ExpressionContext {
             warningStore.addWarning(warning);
         }
     }
+
+	public ColumnModel getColumnModel() {
+		return columnModel;
+	}
 }

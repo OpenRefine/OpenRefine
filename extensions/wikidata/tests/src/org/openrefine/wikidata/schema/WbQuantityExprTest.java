@@ -35,6 +35,9 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 
 public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
 
@@ -92,6 +95,18 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         assertEquals("38400", val.getNumericValue().toString());
         assertEquals("38350", val.getLowerBound().toString());
         assertEquals("38450", val.getUpperBound().toString());
+    }
+    
+    @Test
+    public void testValidate() throws ModelException {
+    	ColumnModel columnModel = new ColumnModel();
+    	columnModel.addColumn(0, new Column(0, "column A"), true);
+    	columnModel.addColumn(0, new Column(0, "column B"), true);
+
+    	hasNoValidationError(exprWithUnit, columnModel);
+    	hasNoValidationError(exprWithoutUnit, columnModel);
+    	hasValidationError("No quantity amount provided", new WbQuantityExpr(null,
+            new WbItemVariable("column B")), columnModel);
     }
 
 }

@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -51,6 +52,19 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     @JsonCreator
     public WbVariableExpr() {
         columnName = null;
+    }
+    
+    /**
+     * Checks that we have a valid column name.
+     */
+    @Override
+    public void validate(ValidationState validation) {
+    	if (columnName == null) {
+    		validation.addError("No column provided");
+    	}
+    	if (validation.getColumnModel().getColumnByName(columnName) == null) {
+    		validation.addError("Column '"+columnName+"' does not exist");
+    	}
     }
 
     /**
