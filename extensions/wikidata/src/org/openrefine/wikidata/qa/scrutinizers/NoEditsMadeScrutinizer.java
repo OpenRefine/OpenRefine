@@ -55,7 +55,7 @@ public class NoEditsMadeScrutinizer extends EditScrutinizer {
     @Override
     public void batchIsFinished() {
         if(!nonNullUpdateSeen) {
-            info(type);
+            infoNotFacetable(type);
         }
     }
 
