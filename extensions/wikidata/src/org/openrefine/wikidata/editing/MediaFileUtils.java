@@ -123,13 +123,38 @@ public class MediaFileUtils {
 	}
 	
 	/**
-	 * Retrieves the page id which corresponds to the given filename,
-	 * at the cost of one API call. This should not be needed anymore when
-	 * this is already exposed in the API response of the upload action.
+	 * Edits the text contents of a wiki page
 	 * 
-	 * https://phabricator.wikimedia.org/T307096
-	 * 
-	*/
+	 * @param pageId the pageId of the page to edit
+	 * @param wikitext the new contents which should override the existing one
+	 * @param summary the edit summary
+	 * @param tags any tags that should be applied to the edit
+	 * @throws IOException if a network error happened
+	 * @throws MediaWikiApiErrorException if the editing failed for some reason, after a few retries
+	 */
+	public void editPage(long pageId, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("action", "edit");
+		parameters.put("tags", String.join("|", tags));
+		parameters.put("summary", summary);
+		parameters.put("pageid", Long.toString(pageId));
+		parameters.put("text", wikitext);
+		parameters.put("bot", "true");
+		parameters.put("token", getCsrfToken());
+		
+		int retries = 3;
+		MediaWikiApiErrorException lastException = null;
+		while (retries > 0) {
+			try {
+				apiConnection.sendJsonRequest("POST", parameters);
+				return;
+			} catch(MediaWikiApiErrorException e) {
+				lastException = e;
+			}
+			retries--;
+		}
+		throw lastException;
+	}
 	
 	/**
 	 * Internal method, common to both local and remote file upload.

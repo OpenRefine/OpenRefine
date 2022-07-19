@@ -41,6 +41,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Project;
 
 public class Reinterpret implements Function {
@@ -97,7 +98,7 @@ public class Reinterpret implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns s reinterpreted through the given character encoders. You must supply one of the supported encodings for each of the original source and the target output: https://docs.oracle.com/javase/1.5.0/docs/guide/intl/encoding.doc.html. Note that quotes are required around character encoders.";
+        return FunctionDescription.str_reinterpret();
     }
     
     @Override

@@ -3,6 +3,7 @@ package com.google.refine.expr.functions.strings;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.ParsingUtilities;
 
 import java.net.MalformedURLException;
@@ -68,7 +69,7 @@ public class ParseUri implements Function {
 
     @Override
     public String getDescription() {
-        return "Parses a URI and extracts its components.";
+        return FunctionDescription.str_parse_uri();
     }
 
     @Override

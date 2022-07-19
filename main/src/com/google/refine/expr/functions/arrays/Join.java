@@ -42,6 +42,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Join implements Function {
 
@@ -95,7 +96,7 @@ public class Join implements Function {
 
     @Override
     public String getDescription() {
-        return "Joins the items in the array with sep, and returns it all as a string.";
+        return FunctionDescription.arr_join();
     }
     
     @Override

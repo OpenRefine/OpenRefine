@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -63,7 +64,7 @@ public class SelectXml implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the Jsoup selector syntax: https://jsoup.org/apidocs/org/jsoup/select/Selector.html.";
+        return FunctionDescription.xml_selectxml();
     }
     
     @Override

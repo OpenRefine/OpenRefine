@@ -77,7 +77,7 @@ EditRenderer._renderMediaInfo = function(json, container) {
   if (json.filePath || json.fileName || json.wikitext) {
 	  var fileFields = $('<div></div>').addClass('wbs-mediainfo-file-fields').appendTo(right);
 	  
-	  // File path
+      // File path
       if (json.filePath) {
 		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-path'))
 			.appendTo(fileFields);
@@ -87,7 +87,7 @@ EditRenderer._renderMediaInfo = function(json, container) {
 		    .appendTo(fileFields);
       }
 	
-	  // File name
+      // File name
       if (json.fileName) {
 		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-file-name'))
 			.appendTo(fileFields);
@@ -99,7 +99,10 @@ EditRenderer._renderMediaInfo = function(json, container) {
 
       // Wikitext
       if (json.wikitext) {
-		  $('<span></span>').text($.i18n('wikibase-schema/mediainfo-wikitext'))
+		  $('<span></span>').text($.i18n(
+                                json.overrideWikitext ?
+                                'wikibase-schema/mediainfo-wikitext-override' :
+                                'wikibase-schema/mediainfo-wikitext-no-override'))
 			.appendTo(fileFields);
 		  $('<span></span>')
 		    .addClass('wbs-wikitext-input')

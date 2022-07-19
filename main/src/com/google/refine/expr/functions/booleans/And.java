@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class And implements Function {
 
@@ -56,7 +57,7 @@ public class And implements Function {
 
     @Override
     public String getDescription() {
-    	return "Uses the logical operator AND on two or more booleans to output a boolean. Evaluates multiple statements into booleans, then returns true if all of the statements are true. For example, (1 < 3).and(1 < 0) returns false because one condition is true and one is false.";
+    	return FunctionDescription.bool_and();
     }
     
     @Override

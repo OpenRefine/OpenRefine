@@ -305,5 +305,6 @@
     "warnings-messages/new-media-without-file-path/title": "パスのないメディア",
     "warnings-messages/new-media-without-file-path/body": "新しいメディアファイルをアップロードするには、パス（URL）を指定しなければなりません。 例えば、{example_entity}のパスが指定されていません。",
     "warnings-messages/new-media-without-file-name/title": "ファイル名がないメディア",
-    "warnings-messages/new-media-without-wikitext/body": "新しいメディアファイルをアップロードするには、関連するwikitextを指定しなければなりません。 例えば、{example_entity}のwikitextが指定されていません。"
+    "warnings-messages/new-media-without-wikitext/body": "新しいメディアファイルをアップロードするには、関連するwikitextを指定しなければなりません。 例えば、{example_entity}のwikitextが指定されていません。",
+    "wikibase-management/discover-manifests": "Wikibase のインスタンスを探す…"
 }

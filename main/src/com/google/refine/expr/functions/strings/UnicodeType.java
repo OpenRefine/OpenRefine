@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class UnicodeType implements Function {
 
@@ -92,7 +93,7 @@ public class UnicodeType implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings describing each character of s by their unicode type.";
+        return FunctionDescription.str_unicode_type();
     }
     
     @Override

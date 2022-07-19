@@ -39,6 +39,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.ParsingUtilities;
 
 public class ParseJson implements Function {
@@ -61,7 +62,7 @@ public class ParseJson implements Function {
     
     @Override
     public String getDescription() {
-        return "Parses a string as JSON.";
+        return FunctionDescription.str_parse_json();
     }
     
     @Override

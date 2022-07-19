@@ -294,7 +294,7 @@ class ListFacet extends Facet {
         .addClass("action")
         .addClass("secondary")
         .appendTo(messageDiv)
-        .click(function() {
+        .on('click',function() {
           self._setChoiceCountLimit(self._data.choiceCount);
         });
         

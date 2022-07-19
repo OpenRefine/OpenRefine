@@ -34,6 +34,7 @@ import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.FullMediaInfoUpdate;
+import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
@@ -176,9 +177,16 @@ public class EditBatchProcessor {
                 EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
                 editor.editEntityDocument(entityUpdate, false, summary, tags);
                 if (entityUpdate instanceof FullMediaInfoUpdate) {
-                    // manually purge the wikitext page associated with this mediainfo
-                    MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
-                    mediaFileUtils.purgePage(Long.parseLong(entityUpdate.getEntityId().getId().substring(1)));
+                    FullMediaInfoUpdate fullMediaInfoUpdate = (FullMediaInfoUpdate) entityUpdate;
+                    if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
+                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                        long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
+                        mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                    } else {
+                        // manually purge the wikitext page associated with this mediainfo
+                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                        mediaFileUtils.purgePage(Long.parseLong(entityUpdate.getEntityId().getId().substring(1)));
+                    }
                 }
             }
         } catch (MediaWikiApiErrorException e) {

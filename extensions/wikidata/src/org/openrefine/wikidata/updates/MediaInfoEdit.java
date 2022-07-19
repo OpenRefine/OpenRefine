@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,11 +44,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MediaInfoEdit extends LabeledStatementEntityEdit {
 	
-	protected final String filePath;
-	protected final String fileName;
-	protected final String wikitext;
-	
-    static final Logger logger = LoggerFactory.getLogger(MediaInfoEdit.class);
+    protected final String filePath;
+	  protected final String fileName;
+	  protected final String wikitext;
+
+  static final Logger logger = LoggerFactory.getLogger(MediaInfoEdit.class);
+	protected final boolean overrideWikitext;
 
     /**
      * Constructor.
@@ -65,6 +67,10 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the path of the file to upload
      * @param fileName
      *            the desired file name on the wiki (File:…)
+     * @param wikitext
+     *            the wikitext to associate to the file (depending on overriding settings)
+     * @param overrideWikitext
+     *            whether the supplied wikitext should override any existing one
      */
 	public MediaInfoEdit(
 			EntityIdValue id,
@@ -73,11 +79,13 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 			Set<MonolingualTextValue> labelsIfNew,
 			String filePath,
 			String fileName,
-			String wikitext) {
+			String wikitext,
+			boolean overrideWikitext) {
 		super(id, statements, labels, labelsIfNew);
 		this.filePath = filePath;
 		this.fileName = fileName;
 		this.wikitext = wikitext;
+		this.overrideWikitext = overrideWikitext;
 	}
 	
     /**
@@ -100,6 +108,10 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the path of the file to upload
      * @param fileName
      *            the desired file name on the wiki (File:…)
+     * @param wikitext
+     *            the wikitext to associate to the file (depending on overriding settings)
+     * @param overrideWikitext
+     *            whether the supplied wikitext should override any existing one
      */
     protected MediaInfoEdit(
             EntityIdValue id,
@@ -108,11 +120,13 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
     		Map<String, MonolingualTextValue> labelsIfNew,
     		String filePath,
     		String fileName,
-    		String wikitext) {
+    		String wikitext,
+    		boolean overrideWikitext) {
     	super(id, statements, labels, labelsIfNew);
     	this.filePath = filePath;
     	this.fileName = fileName;
     	this.wikitext = wikitext;
+    	this.overrideWikitext = overrideWikitext;
     }
     
     @JsonProperty("filePath")
@@ -128,6 +142,11 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
     @JsonProperty("wikitext")
     public String getWikitext() {
     	return wikitext;
+    }
+    
+    @JsonProperty("overrideWikitext")
+    public boolean isOverridingWikitext() {
+    	return overrideWikitext;
     }
 
 	@Override
@@ -150,7 +169,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
                 statementUpdate,
                 filePath,
                 fileName,
-                wikitext);
+                wikitext,
+                overrideWikitext);
 	}
 
 	@Override
@@ -170,7 +190,11 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         String newFilePath = other.getFilePath() == null ? filePath : other.getFilePath();
         String newFileName = other.getFileName() == null ? fileName : other.getFileName();
         String newWikitext = other.getWikitext() == null ? wikitext : other.getWikitext();
-        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext);
+        if (overrideWikitext && wikitext != null && !other.isOverridingWikitext()) {
+        	newWikitext = wikitext;
+        }
+        boolean newOverrideWikitext = other.isOverridingWikitext() || overrideWikitext;
+        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext);
 	}
 
 	@Override
@@ -272,7 +296,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         	builder.append(fileName);
         }
         if (fileName != null) {
-        	builder.append("\n Wikitext: ");
+        	builder.append(overrideWikitext ? "\n Wikitext (overrride): " : "\n Wikitext (no override): ");
         	builder.append(wikitext);
         }
         if (isNull()) {
@@ -288,8 +312,13 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             return false;
         }
         MediaInfoEdit otherUpdate = (MediaInfoEdit) other;
-        return id.equals(otherUpdate.getEntityId()) && statements.equals(otherUpdate.getStatementEdits())
-                && getLabels().equals(otherUpdate.getLabels());
+        return id.equals(otherUpdate.getEntityId())
+        		&& statements.equals(otherUpdate.getStatementEdits())
+                && getLabels().equals(otherUpdate.getLabels())
+                && Objects.equals(filePath, otherUpdate.getFilePath())
+                && Objects.equals(fileName, otherUpdate.getFileName())
+                && Objects.equals(wikitext, otherUpdate.getWikitext())
+                && overrideWikitext == otherUpdate.isOverridingWikitext();
     }
 
     @Override

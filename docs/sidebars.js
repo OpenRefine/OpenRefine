@@ -18,7 +18,7 @@ module.exports = {
       'manual/reconciling',
       {
         type: 'category',
-        label: 'Wikibase',
+        label: 'Wikibase, Wikidata and Wikimedia Commons',
         items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
                 'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
       },

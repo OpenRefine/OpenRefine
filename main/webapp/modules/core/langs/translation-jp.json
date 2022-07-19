@@ -845,5 +845,6 @@
     "core-index-import/load-json-rows-error": "JSONデータがパースできませんでした",
     "core-dialogs/column-not-numeric": "散布図には数値（緑色）のカラムが必要です。カラム $1 には50%以下の数値しかありません。数値に見える値でもテキスト（黒色）として保存されている場合、セル編集->よく使う変換->数値で、数値に変換してください.",
     "core-dialogs/no-other-numeric-columns": "カラム $1 と比較する数値カラム（50%以上が数値型）がありません.",
-    "core-buttons/deselect": "選択解除"
+    "core-buttons/deselect": "選択解除",
+    "core-buttons/reset": "リセット"
 }
