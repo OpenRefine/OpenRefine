@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
@@ -56,7 +57,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     final static Logger logger = LoggerFactory.getLogger("QuickStatementsExporter");
 
-    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities.";
+    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities. QuickStatements does not support creating two new entities which refer to each other. Consider uploading your edits directly with OpenRefine.";
     public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikibase first.";
     
     protected final QSSnakPrinter mainSnakPrinter;
@@ -98,6 +99,13 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
+    	// Validate the schema
+    	ValidationState validation = new ValidationState(project.columnModel);
+		schema.validate(validation);
+		if (!validation.getValidationErrors().isEmpty()) {
+			throw new IllegalStateException("Schema is incomplete");
+		}
+		// Evaluate the schema
         List<EntityEdit> items = schema.evaluate(project, engine);
         
         // First, check the entity edits for any problems, and only start the translation if there are no problems
