@@ -69,7 +69,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
    .text(logged_in_username)
    .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
-  frame.find('.cancel-button').on('click',function() {
+  elmts.cancelButton.on('click',function() {
     dismiss();
   });
 

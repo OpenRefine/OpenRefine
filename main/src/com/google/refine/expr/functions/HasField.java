@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.HasFields;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class HasField implements Function {
 
@@ -61,7 +62,7 @@ public class HasField implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether o has a member field called name.";
+        return FunctionDescription.fun_has_field();
     }
     
     @Override

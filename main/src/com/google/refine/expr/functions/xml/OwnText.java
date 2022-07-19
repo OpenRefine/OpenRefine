@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -61,7 +62,7 @@ public class OwnText implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.";
+        return FunctionDescription.xml_owntext();
     }
     
     @Override

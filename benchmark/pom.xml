@@ -106,6 +106,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.jvnet.localizer</groupId>
+        <artifactId>localizer-maven-plugin</artifactId>
+        <version>${org-jvnet-localizer-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -115,7 +125,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

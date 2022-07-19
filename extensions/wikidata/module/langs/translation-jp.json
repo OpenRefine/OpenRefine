@@ -41,7 +41,6 @@
     "wikibase-schema/commons-media": "ファイル名",
     "wikibase-schema/math-expression": "数学的表現",
     "wikibase-schema/geoshape-with-prefix": "\"Data:\"で始まるファイル名",
-    "wikibase-schema/datatype-not-supported-yet": "このデータ型は未対応です.",
     "wikibase-schema/invalid-schema-warning-issues": "スキーマが不完全です。修正してください.",
     "wikibase-schema/invalid-schema-warning-preview": "スキーマが不完全です。修正してください.",
     "wikibase-schema/discard-button": "変更を破棄",
@@ -305,5 +304,6 @@
     "warnings-messages/new-media-without-file-path/title": "パスのないメディア",
     "warnings-messages/new-media-without-file-path/body": "新しいメディアファイルをアップロードするには、パス（URL）を指定しなければなりません。 例えば、{example_entity}のパスが指定されていません。",
     "warnings-messages/new-media-without-file-name/title": "ファイル名がないメディア",
-    "warnings-messages/new-media-without-wikitext/body": "新しいメディアファイルをアップロードするには、関連するwikitextを指定しなければなりません。 例えば、{example_entity}のwikitextが指定されていません。"
+    "warnings-messages/new-media-without-wikitext/body": "新しいメディアファイルをアップロードするには、関連するwikitextを指定しなければなりません。 例えば、{example_entity}のwikitextが指定されていません。",
+    "wikibase-management/discover-manifests": "Wikibase のインスタンスを探す…"
 }

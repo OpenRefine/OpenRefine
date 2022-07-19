@@ -48,13 +48,13 @@ Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = functio
   if (this._fileSelectionPanelResizer) {
     $(window).off("resize", this._fileSelectionPanelResizer);
   }
-  this._fileSelectionPanel.unbind().empty();
+  this._fileSelectionPanel.off().empty();
 };
 
 Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = function() {
   var self = this; 
 
-  this._fileSelectionPanel.unbind().empty().html(
+  this._fileSelectionPanel.off().empty().html(
       DOM.loadHTML("core", "scripts/index/default-importing-controller/file-selection-panel.html"));
 
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);

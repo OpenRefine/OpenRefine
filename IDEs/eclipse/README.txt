@@ -7,6 +7,9 @@
   developing OpenRefine with Eclipse (http://www.eclipse.org/).
   
   
+  For general information on how to setup your Eclipse, please see OpenRefine technical documentation at:
+  https://docs.openrefine.org/technical-reference/build-test-run#building-testing-and-running-openrefine-from-eclipse
+  
   
   Code Style Format Configurations (Refine.style.xml)
   ------------------------------------------------------

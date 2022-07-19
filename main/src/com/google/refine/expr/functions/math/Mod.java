@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Mod implements Function {
 
@@ -56,7 +57,7 @@ public class Mod implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns n1 modulus n2.";
+        return FunctionDescription.math_mod();
     }
     
     @Override

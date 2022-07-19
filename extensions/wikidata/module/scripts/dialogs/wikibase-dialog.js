@@ -31,10 +31,6 @@ WikibaseDialog.prototype.launch = function () {
     this.selectWikibase(this.selectedWikibase);
     DialogSystem.dismissUntil(level - 1);
   });
-
-  elmts.discoverManifestsButton.on('click',function () {
-    window.open('https://github.com/OpenRefine/wikibase-manifests');
-  });
 };
 
 WikibaseDialog.prototype.populateDialog = function () {

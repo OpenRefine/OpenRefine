@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -75,7 +76,7 @@ public class Split implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. If preserveTokens is true, empty segments are preserved.";
+        return FunctionDescription.str_split();
     }
     
     @Override

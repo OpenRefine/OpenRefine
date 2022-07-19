@@ -156,6 +156,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     				.addFileName(update.getFileName())
     				.addFilePath(update.getFilePath())
     				.addWikitext(update.getWikitext())
+    				.setOverrideWikitext(update.isOverridingWikitext())
 	        		.addLabels(update.getLabels(), true)
 	        		.addLabels(update.getLabelsIfNew(), false);
 	        MediaInfoEditBuilder pointerFullBuilder = new MediaInfoEditBuilder(update.getEntityId());

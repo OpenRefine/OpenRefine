@@ -46,6 +46,7 @@ import java.util.TimeZone;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class DatePart implements Function {
 
@@ -139,7 +140,7 @@ public class DatePart implements Function {
     
     @Override
     public String getDescription() {
-    	return "Returns part of a date. The data type returned depends on the unit. See https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit, https://docs.openrefine.org/manual/grelfunctions#date-functions for a table. ";
+    	return FunctionDescription.date_part();
     }
     
     @Override

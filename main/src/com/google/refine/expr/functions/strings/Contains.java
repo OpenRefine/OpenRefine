@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Contains implements Function {
 
@@ -62,7 +63,7 @@ public class Contains implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true.";
+        return FunctionDescription.str_contains();
     }
     
     @Override

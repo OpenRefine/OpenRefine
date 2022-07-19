@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Or implements Function {
 
@@ -56,7 +57,7 @@ public class Or implements Function {
 
     @Override
     public String getDescription() {
-        return "Uses the logical operator OR on two or more booleans to output a boolean. For example, (1 < 3).or(1 > 7) returns true because at least one of the conditions (the first one) is true.";
+        return FunctionDescription.bool_or();
     }
     
     @Override
