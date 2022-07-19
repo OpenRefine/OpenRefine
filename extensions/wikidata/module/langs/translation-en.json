@@ -19,7 +19,6 @@
     "wikibase-management/close": "Close",
     "wikibase-management/discover-manifests": "Discover Wikibase instances…",
     "wikibase-management/cancel": "Cancel",
-    "wikibase-management/apply": "Apply",
     "wikibase-management/ok": "OK",
     "wikibase-management/contact-service": "Contacting manifest service",
     "wikibase-management/error-contact": "Error contacting manifest service",

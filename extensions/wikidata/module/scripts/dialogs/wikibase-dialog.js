@@ -11,7 +11,6 @@ WikibaseDialog.prototype.launch = function () {
   elmts.dialogHeader.text($.i18n("wikibase-management/dialog-header"));
   elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
   elmts.okButton.text($.i18n("wikibase-management/ok"));
-  elmts.applyButton.text($.i18n("wikibase-management/apply"));
   elmts.cancelButton.text($.i18n("wikibase-management/cancel"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
   elmts.discoverManifestsButton.text($.i18n("wikibase-management/discover-manifests"));
@@ -27,9 +26,6 @@ WikibaseDialog.prototype.launch = function () {
   });
   elmts.addButton.on('click',() => {
     this.addWikibaseManifest();
-  });
-  elmts.applyButton.on('click',() => {
-    this.selectWikibase(this.selectedWikibase);
   });
   elmts.okButton.on('click',() => {
     this.selectWikibase(this.selectedWikibase);
