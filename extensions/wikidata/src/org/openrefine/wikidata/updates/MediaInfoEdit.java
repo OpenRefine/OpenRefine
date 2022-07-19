@@ -14,11 +14,14 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.MediaFileUtils;
 import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.editing.ReconEntityRewriter;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -41,9 +44,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MediaInfoEdit extends LabeledStatementEntityEdit {
 	
-	protected final String filePath;
-	protected final String fileName;
-	protected final String wikitext;
+    protected final String filePath;
+	  protected final String fileName;
+	  protected final String wikitext;
+
+  static final Logger logger = LoggerFactory.getLogger(MediaInfoEdit.class);
 	protected final boolean overrideWikitext;
 
     /**
@@ -241,7 +246,17 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 			// should not be reachable as the scheduling should have been done before
 			Validate.fail("The entity edit contains references to new entities which have not been created yet.");
 		}
-
+		
+		// perform a null edit to trigger an update of rendered wikitext (for instance, for up to date categories)
+		// https://phabricator.wikimedia.org/T237991
+		try {
+			mediaFileUtils.purgePage(Long.parseLong(mid.getId().substring(1)));
+		} catch(MediaWikiApiErrorException e) {
+			// if we failed to purge but still managed to carry out all the earlier steps,
+			// we want to return the created mid, so catching this exception here
+			logger.warn("Failed to purge page after structured data edit:");
+			logger.warn(e.getErrorMessage());
+		}
 		return mid;
 	}
 

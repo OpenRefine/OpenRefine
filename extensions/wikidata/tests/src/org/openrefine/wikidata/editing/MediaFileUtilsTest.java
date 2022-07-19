@@ -49,6 +49,19 @@ public class MediaFileUtilsTest {
             + "}";
 
     @Test
+    public void testPurge() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.purgePage(12345L);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("action", "purge");
+        params.put("pageids", "12345");
+        verify(connection, times(1)).sendJsonRequest("POST", params);
+    }
+
+    @Test
     public void testSuccessfulLocalUpload() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
 

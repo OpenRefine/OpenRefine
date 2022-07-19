@@ -54,6 +54,20 @@ public class MediaFileUtils {
 	}
 	
 	/**
+	 * Purge the cache associated with a given MediaWiki page.
+	 * 
+	 * @throws MediaWikiApiErrorException 
+	 * @throws IOException 
+	 */
+	public void purgePage(long pageid) throws IOException, MediaWikiApiErrorException {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("action", "purge");
+		parameters.put("pageids", Long.toString(pageid));
+		
+		apiConnection.sendJsonRequest("POST", parameters);
+	}
+	
+	/**
 	 * Upload a local file to the MediaWiki instance.
 	 * 
 	 * @param path the path to the local file
