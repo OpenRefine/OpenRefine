@@ -147,22 +147,23 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             List<CellChange> cellChanges) {
         
         if (_judgment == Judgment.None) {
-            return "Discard recon judgments for " + cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            // return "Discard recon judgments for " + cellChanges.size() + " cells containing \"" +
+            //    _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_none_desc(cellChanges.size(), _similarValue, _columnName);
         } else if (_judgment == Judgment.New) {
             if (_shareNewTopics) {
-                return "Mark to create one single new item for " + cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                // return "Mark to create one single new item for " + cellChanges.size() + " cells containing \"" +
+                //    _similarValue + "\" in column " + _columnName;
+                return OperationDescription.recon_judge_similar_cells_new_share_desc(cellChanges.size(), _similarValue, _columnName);
             } else {
-                return "Mark to create one new item for each of " + cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                // return "Mark to create one new item for each of " + cellChanges.size() + " cells containing \"" +
+                //    _similarValue + "\" in column " + _columnName;
+                return OperationDescription.recon_judge_similar_cells_new_desc(cellChanges.size(), _similarValue, _columnName);
             }
         } else if (_judgment == Judgment.Matched) {
-            return "Match item " + 
-                _match.name + " (" +
-                _match.id + ") for " +
-                cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            // return "Match item " +_match.name + " (" +_match.id + ") for " +
+            // cellChanges.size() + " cells containing \"" + _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_matched_desc(_match.name, _match.id, cellChanges.size(), _similarValue, _columnName);
         }
         throw new InternalError("Can't get here");
     }

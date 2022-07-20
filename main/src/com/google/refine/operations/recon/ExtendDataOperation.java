@@ -115,9 +115,10 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Extend data at index " + _columnInsertIndex + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size();
+        // return "Extend data at index " + _columnInsertIndex +
+        //    " based on column " + column.getName() +
+        //    " by filling " + cellsAtRows.size();
+        return OperationDescription.recon_extend_data_desc(_columnInsertIndex, column.getName(), cellsAtRows.size());
     }
     
     @Override

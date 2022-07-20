@@ -203,10 +203,11 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName +
-            ", filling " + cellsAtRows.size() +
-            " rows by fetching URLs based on column " + column.getName() +
-            " and formulated as " + _urlExpression;
+        // return "Create new column " + _newColumnName +
+        //    ", filling " + cellsAtRows.size() +
+        //    " rows by fetching URLs based on column " + column.getName() +
+        //    " and formulated as " + _urlExpression;
+        return OperationDescription.column_addition_by_fetching_urls_desc(_newColumnName, cellsAtRows.size(), column.getName(), _urlExpression);
     }
 
 

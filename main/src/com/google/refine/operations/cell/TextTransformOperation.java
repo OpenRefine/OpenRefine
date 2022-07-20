@@ -115,8 +115,9 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Text transform on " + cellChanges.size() + 
-            " cells in column " + column.getName() + ": " + _expression;
+        // return "Text transform on " + cellChanges.size() +
+        //    " cells in column " + column.getName() + ": " + _expression;
+        return OperationDescription.cell_text_transform_desc(cellChanges.size(), column.getName(), _expression);
     }
 
     @Override

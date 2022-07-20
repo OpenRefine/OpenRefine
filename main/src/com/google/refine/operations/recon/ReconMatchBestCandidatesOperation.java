@@ -79,8 +79,9 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Match each of " + cellChanges.size() + 
-            " cells to its best candidate in column " + column.getName();
+        // return "Match each of " + cellChanges.size() +
+        //    " cells to its best candidate in column " + column.getName();
+        return OperationDescription.recon_match_best_candidates_desc(cellChanges.size(), column.getName());
     }
 
     @Override

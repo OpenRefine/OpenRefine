@@ -138,8 +138,9 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Mass edit " + cellChanges.size() + 
-            " cells in column " + column.getName();
+        // return "Mass edit " + cellChanges.size() +
+        //    " cells in column " + column.getName();
+        return OperationDescription.cell_mass_edit_desc(cellChanges.size(), column.getName());
     }
 
     @Override

@@ -128,10 +128,11 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size() +
-            " rows with " + _expression;
+        // return "Create new column " + _newColumnName +
+        //    " based on column " + column.getName() +
+        //    " by filling " + cellsAtRows.size() +
+        //    " rows with " + _expression;
+        return OperationDescription.column_addition_desc(_newColumnName, column.getName(), cellsAtRows.size(), _expression);
     }
     
     @Override

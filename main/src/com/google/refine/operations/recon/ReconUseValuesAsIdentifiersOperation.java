@@ -146,8 +146,9 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
 
     @Override
     protected String createDescription(Column column, List<CellChange> cellChanges) {
-        return "Use values as reconciliation identifiers for "+ cellChanges.size() + 
-        " cells in column " + column.getName();
+        // return "Use values as reconciliation identifiers for "+ cellChanges.size() +
+        // " cells in column " + column.getName();
+        return OperationDescription.recon_use_values_as_identifiers_desc(cellChanges.size(), column.getName());
     }
     
     @Override
