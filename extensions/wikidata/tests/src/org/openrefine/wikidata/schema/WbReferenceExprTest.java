@@ -87,15 +87,15 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
     public void testUnmodifiableList() {
         expr.getSnaks().clear();
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), false);
-    	columnModel.addColumn(0, new Column(0, "column B"), false);
-    	hasNoValidationError(expr, columnModel);
-    	hasValidationError("Null snak in reference", new WbReferenceExpr(Arrays.asList(
-            null,
-            new WbSnakExpr(new WbPropConstant("P347", "reference URL", "url"), new WbStringVariable("column B")))), columnModel);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), false);
+        columnModel.addColumn(0, new Column(0, "column B"), false);
+        hasNoValidationError(expr, columnModel);
+        hasValidationError("Null snak in reference", new WbReferenceExpr(Arrays.asList(
+                null,
+                new WbSnakExpr(new WbPropConstant("P347", "reference URL", "url"), new WbStringVariable("column B")))), columnModel);
     }
 }

@@ -75,23 +75,22 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
                 .build();
         evaluatesTo(result, expr);
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), false);
-    	columnModel.addColumn(0, new Column(0, "column B"), false);
-    	columnModel.addColumn(0, new Column(0, "column C"), false);
-    	columnModel.addColumn(0, new Column(0, "column D"), false);
-    	columnModel.addColumn(0, new Column(0, "column E"), false);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), false);
+        columnModel.addColumn(0, new Column(0, "column B"), false);
+        columnModel.addColumn(0, new Column(0, "column C"), false);
+        columnModel.addColumn(0, new Column(0, "column D"), false);
+        columnModel.addColumn(0, new Column(0, "column E"), false);
 
-    	
-    	hasNoValidationError(expr, columnModel);
-    	hasValidationError("No subject provided", new WbMediaInfoEditExpr(null, null, null, null, null, null));
-    	hasValidationError("Null term in MediaInfo entity", new WbMediaInfoEditExpr(new WbEntityVariable("column E"),
-    			Collections.singletonList(null), null, null, null, null), columnModel);
-    	hasValidationError("Null statement in MediaInfo entity", new WbMediaInfoEditExpr(new WbEntityVariable("column E"),
-    			null, Collections.singletonList(null), null, null, null), columnModel);
+        hasNoValidationError(expr, columnModel);
+        hasValidationError("No subject provided", new WbMediaInfoEditExpr(null, null, null, null, null, null, false));
+        hasValidationError("Null term in MediaInfo entity", new WbMediaInfoEditExpr(new WbEntityVariable("column E"),
+                Collections.singletonList(null), null, null, null, null, false), columnModel);
+        hasValidationError("Null statement in MediaInfo entity", new WbMediaInfoEditExpr(new WbEntityVariable("column E"),
+                null, Collections.singletonList(null), null, null, null, false), columnModel);
     }
 
     @Test

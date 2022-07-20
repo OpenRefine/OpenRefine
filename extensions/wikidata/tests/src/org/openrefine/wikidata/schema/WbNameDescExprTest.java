@@ -103,13 +103,13 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testSerialization() {
         JacksonSerializationTest.canonicalSerialization(WbNameDescExpr.class, expr, jsonRepresentation);
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), true);
-    	ValidationState validationState = new ValidationState(columnModel);
-    	expr.validate(validationState);
-    	Assert.assertTrue(validationState.getValidationErrors().isEmpty());
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        ValidationState validationState = new ValidationState(columnModel);
+        expr.validate(validationState);
+        Assert.assertTrue(validationState.getValidationErrors().isEmpty());
     }
 }

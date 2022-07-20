@@ -63,10 +63,10 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
             return expr.evaluate(ctxt, subject);
         }
 
-		@Override
-		public void validate(ValidationState validation) {
-			expr.validate(validation);
-		}
+        @Override
+        public void validate(ValidationState validation) {
+            expr.validate(validation);
+        }
     }
 
     public WbStatementGroupExprTest() {
@@ -105,14 +105,14 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
     public void testUnmodifiableList() {
         expr.getStatements().clear();
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), true);
-    	columnModel.addColumn(1, new Column(1, "column B"), true);
-    	columnModel.addColumn(2, new Column(2, "column C"), true);
-    	
-    	hasNoValidationError(new Wrapper(expr), columnModel);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(1, new Column(1, "column B"), true);
+        columnModel.addColumn(2, new Column(2, "column C"), true);
+
+        hasNoValidationError(new Wrapper(expr), columnModel);
     }
 }

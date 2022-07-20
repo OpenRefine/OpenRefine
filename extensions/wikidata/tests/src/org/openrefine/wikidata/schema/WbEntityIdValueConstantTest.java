@@ -22,13 +22,13 @@ public class WbEntityIdValueConstantTest extends WbExpressionTest<EntityIdValue>
         JacksonSerializationTest.canonicalSerialization(WbExpression.class, constant,
                 "{\"type\":\"wbentityidvalueconstant\",\"id\":\"P48\",\"label\":\"my ID\"}");
     }
-    
+
     @Test
     public void testValidate() {
-    	hasNoValidationError(constant);
-    	hasValidationError("No entity label provided", new WbEntityIdValueConstant("P48", null));
-    	hasValidationError("No entity id provided", new WbEntityIdValueConstant(null, "my label"));
-    	hasValidationError("Invalid entity id format: 'invalid format'", new WbEntityIdValueConstant("invalid format", "my label"));
+        hasNoValidationError(constant);
+        hasValidationError("No entity label provided", new WbEntityIdValueConstant("P48", null));
+        hasValidationError("No entity id provided", new WbEntityIdValueConstant(null, "my label"));
+        hasValidationError("Invalid entity id format: 'invalid format'", new WbEntityIdValueConstant("invalid format", "my label"));
 
     }
 }

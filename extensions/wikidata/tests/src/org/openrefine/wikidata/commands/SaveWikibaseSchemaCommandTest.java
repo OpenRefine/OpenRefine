@@ -71,9 +71,9 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
 
         String string = writer.toString();
-		assertTrue(string.contains("\"error\""));
+        assertTrue(string.contains("\"error\""));
     }
-    
+
     @Test
     public void testNoSchema() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -81,36 +81,36 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
 
         String string = writer.toString();
-		assertTrue(string.contains("\"error\""));
+        assertTrue(string.contains("\"error\""));
     }
-    
+
     @Test
     public void testIncompleteSchema() throws IOException, ServletException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
-    	// schema that is syntactically correct but misses some elements
-    	String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
+        // schema that is syntactically correct but misses some elements
+        String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
         command.doPost(request, response);
-        
+
         String expectedError = "{"
-        		+ "\"reason\":\"invalid-schema\","
-        		+ "\"message\":\"Invalid Wikibase schema\","
-        		+ "\"errors\":["
-        		+ "{\"path\":["
-        		+ "{\"type\":\"entity\",\"position\":0,\"name\":null},"
-        		+ "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
-        		+ "{\"type\":\"reference\",\"position\":0,\"name\":null},"
-        		+ "{\"type\":\"value\",\"position\":-1,\"name\":\"reference URL (P854)\"}],"
-        		+ "\"message\":\"Column 'nonexisting_column_name' does not exist\"},"
-        		+ "{\"path\":["
-        		+ "{\"type\":\"entity\",\"position\":0,\"name\":null},"
-        		+ "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
-        		+ "{\"type\":\"reference\",\"position\":0,\"name\":null},"
-        		+ "{\"type\":\"value\",\"position\":-1,\"name\":\"retrieved (P813)\"}"
-        		+ "],\"message\":\"Empty date field\"}]}";
-        
+                + "\"reason\":\"invalid-schema\","
+                + "\"message\":\"Invalid Wikibase schema\","
+                + "\"errors\":["
+                + "{\"path\":["
+                + "{\"type\":\"entity\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
+                + "{\"type\":\"reference\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"value\",\"position\":-1,\"name\":\"reference URL (P854)\"}],"
+                + "\"message\":\"Column 'nonexisting_column_name' does not exist\"},"
+                + "{\"path\":["
+                + "{\"type\":\"entity\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
+                + "{\"type\":\"reference\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"value\",\"position\":-1,\"name\":\"retrieved (P813)\"}"
+                + "],\"message\":\"Empty date field\"}]}";
+
         assertEquals(writer.toString(), expectedError);
     }
 

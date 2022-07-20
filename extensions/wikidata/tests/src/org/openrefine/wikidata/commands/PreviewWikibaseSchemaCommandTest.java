@@ -70,7 +70,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         ArrayNode edits = (ArrayNode) response.get("edits_preview");
         assertEquals(3, edits.size());
     }
-    
+
     @Test
     public void testIncompleteSchema() throws IOException, ServletException {
         String schemaJson = jsonFromFile("schema/inception_with_errors.json");

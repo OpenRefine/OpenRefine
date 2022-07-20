@@ -60,12 +60,12 @@ public class WbLanguageConstantTest extends WbExpressionTest<String> {
     public void testFallbackLangCodes() {
         assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de", "http://not.exist/w/api.php"));
     }
-    
+
     @Test
     public void testValidate() {
-    	hasNoValidationError(constant);
-    	hasValidationError("Empty language field", new WbLanguageConstant(null, "Deutsch"));
-    	hasValidationError("Empty text field", new WbLanguageConstant("de", null));
-    	hasValidationError("Invalid language code 'invalid_code'", new WbLanguageConstant("invalid_code", "unknown language"));
+        hasNoValidationError(constant);
+        hasValidationError("Empty language field", new WbLanguageConstant(null, "Deutsch"));
+        hasValidationError("Empty text field", new WbLanguageConstant("de", null));
+        hasValidationError("Invalid language code 'invalid_code'", new WbLanguageConstant("invalid_code", "unknown language"));
     }
 }

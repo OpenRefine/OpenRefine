@@ -57,13 +57,13 @@ public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesVal
             throws ParseException {
         WbLocationConstant.parse("some bad value");
     }
-    
+
     @Test
     public void testValidate() {
-    	hasNoValidationError(new WbLocationConstant(input));
-    	hasValidationError("Invalid geographical coordinates: 'some bad value'", new WbLocationConstant("some bad value"));
-    	hasValidationError("Invalid geographical coordinates: 'lat,lng'", new WbLocationConstant("lat,lng"));
-    	hasValidationError("Invalid geographical coordinates: '0.1,2.3,4.5,6.7'", new WbLocationConstant("0.1,2.3,4.5,6.7"));
+        hasNoValidationError(new WbLocationConstant(input));
+        hasValidationError("Invalid geographical coordinates: 'some bad value'", new WbLocationConstant("some bad value"));
+        hasValidationError("Invalid geographical coordinates: 'lat,lng'", new WbLocationConstant("lat,lng"));
+        hasValidationError("Invalid geographical coordinates: '0.1,2.3,4.5,6.7'", new WbLocationConstant("0.1,2.3,4.5,6.7"));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesVal
             throws ParseException {
         WbLocationConstant expression = new WbLocationConstant(input);
         expression.validate(new ValidationState(new ColumnModel()));
-		evaluatesTo(loc, expression);
+        evaluatesTo(loc, expression);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesVal
             throws ParseException {
         WbLocationConstant expression = new WbLocationConstant(inputWithPrecision);
         expression.validate(new ValidationState(new ColumnModel()));
-		evaluatesTo(locWithPrecision, expression);
+        evaluatesTo(locWithPrecision, expression);
     }
 
     @Test

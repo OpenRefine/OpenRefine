@@ -56,15 +56,15 @@ public class WbSnakExprTest extends WbExpressionTest<Snak> {
             throws JsonProcessingException {
         JacksonSerializationTest.canonicalSerialization(WbSnakExpr.class, expr, jsonRepresentation);
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), true);
-    	
-    	hasNoValidationError(expr, columnModel);
-    	WbSnakExpr missingValue = new WbSnakExpr(propStringExpr, null);
-    	hasValidationError("Missing value", missingValue, columnModel);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+
+        hasNoValidationError(expr, columnModel);
+        WbSnakExpr missingValue = new WbSnakExpr(propStringExpr, null);
+        hasValidationError("Missing value", missingValue, columnModel);
     }
 
     // TODO check that the datatype of the property matches that of the datavalue

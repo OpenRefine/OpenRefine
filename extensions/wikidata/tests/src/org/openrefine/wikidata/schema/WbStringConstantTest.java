@@ -30,9 +30,9 @@ public class WbStringConstantTest extends WbExpressionTest<StringValue> {
     public void testEmpty() {
         hasValidationError("Empty value", new WbStringConstant(""));
     }
-    
+
     @Test
     public void testValidate() {
-    	hasNoValidationError(constant);
+        hasNoValidationError(constant);
     }
 }

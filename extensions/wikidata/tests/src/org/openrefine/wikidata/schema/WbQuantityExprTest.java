@@ -96,17 +96,17 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         assertEquals("38350", val.getLowerBound().toString());
         assertEquals("38450", val.getUpperBound().toString());
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), true);
-    	columnModel.addColumn(0, new Column(0, "column B"), true);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(0, new Column(0, "column B"), true);
 
-    	hasNoValidationError(exprWithUnit, columnModel);
-    	hasNoValidationError(exprWithoutUnit, columnModel);
-    	hasValidationError("No quantity amount provided", new WbQuantityExpr(null,
-            new WbItemVariable("column B")), columnModel);
+        hasNoValidationError(exprWithUnit, columnModel);
+        hasNoValidationError(exprWithoutUnit, columnModel);
+        hasValidationError("No quantity amount provided", new WbQuantityExpr(null,
+                new WbItemVariable("column B")), columnModel);
     }
 
 }

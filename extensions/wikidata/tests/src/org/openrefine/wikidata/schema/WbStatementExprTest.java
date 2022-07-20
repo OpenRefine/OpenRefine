@@ -131,10 +131,10 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             return expr.evaluate(ctxt, subject, property);
         }
 
-		@Override
-		public void validate(ValidationState validation) {
-			expr.validate(validation);
-		}
+        @Override
+        public void validate(ValidationState validation) {
+            expr.validate(validation);
+        }
     }
 
     public String jsonRepresentation = "{"
@@ -271,31 +271,31 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testUnmodifiableReferencesList() {
         statementExpr.getReferences().clear();
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), true);
-    	columnModel.addColumn(1, new Column(1, "column B"), true);
-    	columnModel.addColumn(2, new Column(2, "column C"), true);
-    	
-    	hasNoValidationError(new Wrapper(statementExpr), columnModel);
-    	hasNoValidationError(new Wrapper(statementDeleteExpr), columnModel);
-    	
-    	WbStatementExpr missingMainValue = new WbStatementExpr(
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(1, new Column(1, "column B"), true);
+        columnModel.addColumn(2, new Column(2, "column C"), true);
+
+        hasNoValidationError(new Wrapper(statementExpr), columnModel);
+        hasNoValidationError(new Wrapper(statementDeleteExpr), columnModel);
+
+        WbStatementExpr missingMainValue = new WbStatementExpr(
                 null,
                 Collections.singletonList(qualifierExpr),
                 Collections.singletonList(refExpr),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE);
-    	hasValidationError("Missing main statement value", new Wrapper(missingMainValue), columnModel);
-    	
-    	WbStatementExpr nullQualifier = new WbStatementExpr(
+        hasValidationError("Missing main statement value", new Wrapper(missingMainValue), columnModel);
+
+        WbStatementExpr nullQualifier = new WbStatementExpr(
                 mainValueExpr,
                 Collections.singletonList(null),
                 Collections.singletonList(refExpr),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE);
-    	hasValidationError("Empty qualifier in statement", new Wrapper(nullQualifier), columnModel);
+        hasValidationError("Empty qualifier in statement", new Wrapper(nullQualifier), columnModel);
     }
 }

@@ -65,18 +65,18 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
                 + sgt.jsonRepresentation + "]}";
     }
-    
+
     @Test
     public void testValidate() throws ModelException {
-    	ColumnModel columnModel = new ColumnModel();
-    	columnModel.addColumn(0, new Column(0, "column A"), false);
-    	columnModel.addColumn(0, new Column(0, "column B"), false);
-    	columnModel.addColumn(0, new Column(0, "column C"), false);
-    	columnModel.addColumn(0, new Column(0, "column D"), false);
-    	columnModel.addColumn(0, new Column(0, "column E"), false);
-    	
-    	hasNoValidationError(expr, columnModel);
-    	hasValidationError("No subject item id provided", new WbItemEditExpr(null, null, null), columnModel);
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), false);
+        columnModel.addColumn(0, new Column(0, "column B"), false);
+        columnModel.addColumn(0, new Column(0, "column C"), false);
+        columnModel.addColumn(0, new Column(0, "column D"), false);
+        columnModel.addColumn(0, new Column(0, "column E"), false);
+
+        hasNoValidationError(expr, columnModel);
+        hasValidationError("No subject item id provided", new WbItemEditExpr(null, null, null), columnModel);
     }
 
     @Test

@@ -141,12 +141,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        
+
         // Validate the schema
         ValidationState validation = new ValidationState(project.columnModel);
         schema.validate(validation);
         assertTrue(validation.getValidationErrors().isEmpty());
-        
+
         Engine engine = new Engine(project);
         List<EntityEdit> updates = schema.evaluate(project, engine);
         List<EntityEdit> expected = new ArrayList<>();
@@ -156,30 +156,30 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test
     public void testValidate() throws IOException {
-    	String serialized = TestingData.jsonFromFile("schema/inception_with_errors.json");
-    	WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-    	
-    	// Validate the schema
+        String serialized = TestingData.jsonFromFile("schema/inception_with_errors.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
         ValidationState validation = new ValidationState(project.columnModel);
         schema.validate(validation);
-        
+
         List<ValidationError> expectedErrors = new ArrayList<>();
         expectedErrors.add(new ValidationError(Arrays.asList(
-        		new PathElement(Type.ENTITY, 0),
-        		new PathElement(Type.STATEMENT, "inception (P571)"),
-        		new PathElement(Type.REFERENCE, 0),
-        		new PathElement(Type.VALUE, "reference URL (P854)")),
-        		"Column 'nonexisting_column_name' does not exist"));
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "reference URL (P854)")),
+                "Column 'nonexisting_column_name' does not exist"));
         expectedErrors.add(new ValidationError(Arrays.asList(
-        		new PathElement(Type.ENTITY, 0),
-        		new PathElement(Type.STATEMENT, "inception (P571)"),
-        		new PathElement(Type.REFERENCE, 0),
-        		new PathElement(Type.VALUE, "retrieved (P813)")),
-        		"Empty date field"));
-        
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "retrieved (P813)")),
+                "Empty date field"));
+
         assertEquals(validation.getValidationErrors(), expectedErrors);
     }
 
@@ -195,12 +195,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        
+
         // Validate the schema
         ValidationState validation = new ValidationState(project.columnModel);
         schema.validate(validation);
         assertTrue(validation.getValidationErrors().isEmpty());
-        
+
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
                 + "      \"mode\": \"row-based\",\n"
