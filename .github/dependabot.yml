@@ -14,20 +14,13 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
+  target-branch: "master"
     
-# Same, on 4.0 branch
-- package-ecosystem: maven
-  directory: "/"
+# For main webapp
+- package-ecosystem: "npm"
+  directory: "main/webapp"
   schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: com.thoughtworks.xstream:xstream
-    versions:
-    - "> 1.4.12"
-    - "< 2"
-  target-branch: 4.0
-    
+    interval: "daily"
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
   directory: "docs/"
@@ -43,3 +36,8 @@ updates:
   directory: "main/tests/cypress"
   schedule:
     interval: "daily"
+  ignore:
+# Ignore cypress updates until interactive 'Run all specs' fixed https://github.com/cypress-io/cypress/discussions/21628
+  - dependency-name: cypress
+    versions:
+    - ">= 10.0.0"

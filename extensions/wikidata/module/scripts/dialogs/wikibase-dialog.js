@@ -1,60 +1,57 @@
-const WikibaseDialog = {};
+function WikibaseDialog() {
+  this.launch();
+}
 
-WikibaseDialog.launch = function () {
+WikibaseDialog.activeWikibase = undefined;
+WikibaseDialog.selectedWikibase = undefined;
+
+WikibaseDialog.prototype.launch = function () {
   const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-dialog.html"));
   const elmts = this.elmts = DOM.bind(frame);
   elmts.dialogHeader.text($.i18n("wikibase-management/dialog-header"));
   elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
-  elmts.closeButton.text($.i18n("wikibase-management/close"));
+  elmts.okButton.text($.i18n("wikibase-management/ok"));
+  elmts.cancelButton.text($.i18n("wikibase-management/cancel"));
   elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
   elmts.discoverManifestsButton.text($.i18n("wikibase-management/discover-manifests"));
 
-  WikibaseDialog.populateDialog();
+  this.activeWikibase =  WikibaseManager.getSelectedWikibaseName();
+  this.selectedWikibase =  this.activeWikibase;
+  this.populateDialog();
 
   let level = DialogSystem.showDialog(frame);
 
-  elmts.closeButton.on('click',function () {
+  elmts.cancelButton.on('click',function () {
     DialogSystem.dismissUntil(level - 1);
   });
-
-  elmts.addButton.on('click',function () {
-    WikibaseDialog.addWikibaseManifest();
+  elmts.addButton.on('click',() => {
+    this.addWikibaseManifest();
   });
-
-  elmts.discoverManifestsButton.on('click',function () {
-    window.open('https://github.com/OpenRefine/wikibase-manifests');
+  elmts.okButton.on('click',() => {
+    this.selectWikibase(this.selectedWikibase);
+    DialogSystem.dismissUntil(level - 1);
   });
 };
 
-WikibaseDialog.populateDialog = function () {
+WikibaseDialog.prototype.populateDialog = function () {
   let wikibases = WikibaseManager.getAllWikibaseManifests();
-  let selectedWikibase =  WikibaseManager.getSelectedWikibaseName().toLowerCase();
+
 
   wikibases.sort((a, b) => {
     let ret;
-    let aName = a.mediawiki.name;
-    let bName = b.mediawiki.name;
-    let aSelected = aName.toLowerCase() === selectedWikibase;
-    let bSelected = bName.toLowerCase() === selectedWikibase;
-    // ascending order
-    // compare selected, then by name
-    if (aSelected) {
+    let aName = a.mediawiki.name.toLowerCase();
+    let bName = b.mediawiki.name.toLowerCase();
+    if (aName < bName) {
       ret = -1;
-    } else if (bSelected) {
+    } else if (aName > bName) {
       ret = 1;
     } else {
-      if (aName < bName) {
-        ret = -1;
-      } else if (aName > bName) {
-        ret = 1;
-      } else {
-        ret = 0;
-      }
+      ret = 0;
     }
     return ret;
   });
 
-  WikibaseDialog.elmts.wikibaseList.empty();
+  this.elmts.wikibaseList.empty();
   for (let manifest of wikibases) {
     let wikibaseName = manifest.mediawiki.name;
 
@@ -62,21 +59,33 @@ WikibaseDialog.populateDialog = function () {
 
     const wikibase = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-item.html"));
     let _elmts = DOM.bind(wikibase);
-    if (wikibaseName.toLowerCase() === selectedWikibase) {
+    _elmts.wikibaseSelect.value = wikibaseName;
+    _elmts.wikibaseSelect.id = wikibaseName+'Select';
+
+    debugger;
+    if (wikibaseName === this.activeWikibase) {
+      _elmts.wikibaseItem.addClass("active");
+    }
+
+    if (wikibaseName === this.selectedWikibase) {
+      _elmts.wikibaseSelect.prop("checked",true);
       _elmts.wikibaseItem.addClass("selected");
     }
-    _elmts.wikibaseItem.click(function(event) {
-      WikibaseDialog.selectWikibase(wikibaseName )
+    _elmts.wikibaseItem.on('click', (event) => {
+      if (wikibaseName !== this.selectedWikibase) {
+        this.selectedWikibase = wikibaseName;
+        this.populateDialog();
+      }
     });
     _elmts.wikibaseImage.attr("alt",$.i18n('wikibase-account/logo-alt-text', wikibaseName));
     _elmts.wikibaseName.text(wikibaseName);
     _elmts.wikibaseUrl.text(rootURL);
     _elmts.deleteWikibase.text($.i18n('core-index/delete'));
-    _elmts.deleteWikibase.click(function(event) {
-      WikibaseDialog.removeWikibase(event, wikibaseName);
+    _elmts.deleteWikibase.on('click', (event) => {
+      this.removeWikibase(event, wikibaseName);
     });
 
-    WikibaseDialog.elmts.wikibaseList.append(wikibase);
+    this.elmts.wikibaseList.append(wikibase);
 
     WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
       _elmts.wikibaseImage.attr("src",data);
@@ -84,22 +93,23 @@ WikibaseDialog.populateDialog = function () {
   }
 };
 
-WikibaseDialog.selectWikibase = function (wikibaseName) {
+WikibaseDialog.prototype.selectWikibase = function (wikibaseName) {
   if (wikibaseName !== WikibaseManager.getSelectedWikibaseName()) {
     WikibaseManager.selectWikibase(wikibaseName);
-    WikibaseDialog.populateDialog();
+    this.activeWikibase =  this.selectedWikibase;
+    this.populateDialog();
     SchemaAlignment.onWikibaseChange();
   }
 };
 
-WikibaseDialog.removeWikibase = function (e, wikibaseName) {
+WikibaseDialog.prototype.removeWikibase = function (e, wikibaseName) {
   e.stopPropagation(); // must stop, otherwise the removed Wikibase will be selected
   WikibaseManager.removeWikibase(wikibaseName);
-  WikibaseDialog.populateDialog();
+  this.populateDialog();
 };
 
 
-WikibaseDialog.addWikibaseManifest = function () {
+WikibaseDialog.prototype.addWikibaseManifest = function () {
   const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/add-wikibase-dialog.html"));
   const elmts = DOM.bind(frame);
   elmts.dialogHeader.text($.i18n("wikibase-addition/dialog-header"));
@@ -116,9 +126,9 @@ WikibaseDialog.addWikibaseManifest = function () {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.addButton.on('click',function () {
-    let addManifest = function (manifest) {
-      if (!WikibaseDialog.validateManifest(manifest)) {
+  elmts.addButton.on('click', () => {
+    let addManifest = (manifest) => {
+      if (!this.validateManifest(manifest)) {
         return;
       }
 
@@ -132,7 +142,7 @@ WikibaseDialog.addWikibaseManifest = function () {
       }
 
       DialogSystem.dismissUntil(level - 1);
-      WikibaseDialog.populateDialog();
+      this.populateDialog();
     };
 
     let manifestURL = jQueryTrim(elmts.manifestURLInput.val());
@@ -151,7 +161,7 @@ WikibaseDialog.addWikibaseManifest = function () {
   });
 };
 
-WikibaseDialog.validateManifest = function (manifest) {
+WikibaseDialog.prototype.validateManifest = function (manifest) {
   if (!WikibaseDialog.ajv) {
     WikibaseDialog.ajv = new Ajv();
     WikibaseDialog.validateWikibaseManifestV1 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV1);

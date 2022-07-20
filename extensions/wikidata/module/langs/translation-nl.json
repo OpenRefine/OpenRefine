@@ -38,7 +38,6 @@
     "wikibase-schema/commons-media": "bestandsnaam",
     "wikibase-schema/math-expression": "wiskundige uitdrukking",
     "wikibase-schema/geoshape-with-prefix": "bestandsnaam beginnend met \"Data:\"",
-    "wikibase-schema/datatype-not-supported-yet": "Dit gegevenstype wordt nog niet ondersteund.",
     "wikibase-schema/invalid-schema-warning-issues": "Je schema is incompleet. Pas het aan om de issues te bekijken.",
     "wikibase-schema/invalid-schema-warning-preview": "Je schema is incompleet. Pas het aan om de preview te bekijken.",
     "wikibase-schema/discard-button": "Wijzigingen ongedaan maken",

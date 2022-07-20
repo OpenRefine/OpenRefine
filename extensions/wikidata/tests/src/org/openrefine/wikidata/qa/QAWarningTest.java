@@ -34,7 +34,8 @@ public class QAWarningTest {
     public static QAWarning exampleWarning = new QAWarning("add-statements-with-invalid-format", "P2427",
             QAWarning.Severity.IMPORTANT, 1);
     public static String exampleJson = "{\"severity\":\"IMPORTANT\","
-            + "\"count\":1,\"bucketId\":\"P2427\",\"type\":\"add-statements-with-invalid-format\"}";
+            + "\"count\":1,\"bucketId\":\"P2427\",\"type\":\"add-statements-with-invalid-format\","
+            + "\"aggregationId\":\"add-statements-with-invalid-format_P2427\",\"facetable\":true}";
 
     @Test
     public void testSerialize() {
