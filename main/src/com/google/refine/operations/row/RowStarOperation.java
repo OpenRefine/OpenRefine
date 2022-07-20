@@ -50,6 +50,7 @@ import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.operations.EngineDependentOperation;
  import com.google.refine.operations.OperationDescription;
+ import com.google.refine.operations.OperationHistoryEntry;
 
 public class RowStarOperation extends EngineDependentOperation {
     final protected boolean _starred;
@@ -87,7 +88,8 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
         return new HistoryEntry(
             historyEntryID,
             project, 
-            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
+            // (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows",
+                _starred ? OperationHistoryEntry.row_star(changes.size()) : OperationHistoryEntry.row_unstar(changes.size()),
             this, 
             new MassChange(changes, false)
         );

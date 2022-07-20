@@ -69,7 +69,7 @@ public class ColumnReorderOperation extends AbstractOperation {
         return new HistoryEntry(
             historyEntryID,
             project, 
-            "Reorder columns", 
+            getBriefDescription(null),
             this, 
             new ColumnReorderChange(_columnNames)
         );

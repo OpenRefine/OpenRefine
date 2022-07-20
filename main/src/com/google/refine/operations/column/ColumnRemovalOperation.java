@@ -73,7 +73,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
             throw new Exception("No column named " + _columnName);
         }
         
-        String description = "Remove column " + column.getName();
+        String description = getBriefDescription(project);
         
         Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
         

@@ -118,7 +118,7 @@ public class RowReorderOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project, 
-                "Reorder rows", 
+                getBriefDescription(null),
                 this, 
                 new RowReorderChange(rowIndices)
         );
