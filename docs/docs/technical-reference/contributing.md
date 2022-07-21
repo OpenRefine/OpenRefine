@@ -47,7 +47,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Install OpenRefine, learn to use it by following some tutorials or watching [some videos](http://openrefine.org/). That will ensure you understand the user workflows and get familiar with the terminology used in the tool.
 
-- Fork the GitHub repository, clone it on your machine and set up your IDE to work on it. We have [instructions for this](https://github.com/OpenRefine/OpenRefine/wiki/Building-OpenRefine-From-Source).
+- Fork the GitHub repository, clone it on your machine and set up your IDE to work on it. We have [instructions for this](/technical-reference/build-test-run).
 
 - Browse through the list of issues to find an issue that you find interesting. You should pick one where you understand what the problem is as a user, you can see why fixing it would be an improvement to the tool. It is also a good idea to pick an issue that matches your technical skills: some require work on the backend (in Java) or in the frontend (Javascript), often both. We try to maintain a list of [good first issues](https://github.com/OpenRefine/OpenRefine/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) which should be easier than others and should not require any difficult design decision.
 

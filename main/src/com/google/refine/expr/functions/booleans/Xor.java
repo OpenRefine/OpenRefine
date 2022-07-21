@@ -30,6 +30,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Xor implements Function {
 
@@ -43,7 +44,7 @@ public class Xor implements Function {
 
     @Override
     public String getDescription() {
-    	return "Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, (1 < 3).xor(1 < 7) returns false because more than one of the conditions is true.";
+    	return FunctionDescription.bool_xor();
     }
     
     @Override

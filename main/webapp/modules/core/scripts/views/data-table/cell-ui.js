@@ -448,15 +448,25 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     suggestOptions2.key = null;
     suggestOptions2.query_param_name = "prefix";
   }
-  elmts.input
+  var suggest = elmts.input
   .val(this._cell.v)
-  .suggest(suggestOptions2)
-  .on("fb-select", function(e, data) {
+  .suggest(suggestOptions2);
+
+  suggest.on("fb-pane-show", function(e, data) {
+    DialogSystem.pauseEscapeKeyHandling();
+  });
+
+  suggest.on("fb-pane-hide", function(e, data) {
+    DialogSystem.setupEscapeKeyHandling();
+  });
+
+  suggest.on("fb-select", function(e, data) {
     match = data;
     commit();
   })
-  .trigger('focus')
-  .data("suggest").textchange();
+      .trigger('focus')
+      .data("suggest").textchange();
+
 };
 
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {

@@ -132,7 +132,6 @@
     "wikibase-schema/discard-button": "Discard changes",
     "wikibase-schema/invalid-schema-warning-preview": "Your schema is incomplete, fix it to see the preview.",
     "wikibase-schema/invalid-schema-warning-issues": "Your schema is incomplete, fix it to see the issues.",
-    "wikibase-schema/datatype-not-supported-yet": "This datatype is not supported yet, sorry.",
     "wikibase-schema/geoshape-with-prefix": "filename starting with \"Data:\"",
     "wikibase-schema/math-expression": "mathematical expression",
     "wikibase-schema/commons-media": "filename",

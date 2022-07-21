@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
@@ -75,7 +76,7 @@ public class Unescape implements Function {
     
     @Override
     public String getDescription() {
-        return "Unescapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript'. Note that quotes are required around your mode. ";
+        return FunctionDescription.str_unescape();
     }
     
     @Override

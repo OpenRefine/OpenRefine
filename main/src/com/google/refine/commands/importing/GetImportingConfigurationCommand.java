@@ -50,7 +50,7 @@ public class GetImportingConfigurationCommand extends Command {
         ImportingConfiguration config = new ImportingConfiguration();
     }
     /**
-     * This command uses POST but does not actually modify any state so
+     * Deprecated. This command uses POST but does not actually modify any state so
      * it is not CSRF-protected.
      */
     @Override
@@ -58,5 +58,11 @@ public class GetImportingConfigurationCommand extends Command {
             throws ServletException, IOException {
 
         respondJSON(response, new ConfigurationResponse());
+    }
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 }

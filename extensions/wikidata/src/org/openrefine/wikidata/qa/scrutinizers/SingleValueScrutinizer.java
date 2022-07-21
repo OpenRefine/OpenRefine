@@ -78,6 +78,9 @@ public class SingleValueScrutinizer extends EditScrutinizer {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getEntityId());
+                // disable faceting for this one since multiple values are likely coming from different rows.
+                // if they are not, then this should already be clear from the schema.
+                issue.setFacetable(false);
                 addIssue(issue);
             } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()){
                 seenSingleProperties.add(pid);

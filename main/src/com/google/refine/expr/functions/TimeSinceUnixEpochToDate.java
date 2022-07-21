@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class TimeSinceUnixEpochToDate implements Function {
 
@@ -46,7 +47,7 @@ public class TimeSinceUnixEpochToDate implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'second'.";
+        return FunctionDescription.fun_time_since_unix_epoch_to_date();
     }
 
     @Override

@@ -150,7 +150,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     .attr('href', 'javascript:{}')
     .text(doc.title)
     .appendTo(td)
-    .click(function(evt) {
+    .on('click',function(evt) {
       self._controller.startImportingDocument(doc);
     });
     

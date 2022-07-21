@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -68,5 +69,22 @@ public class EvalError implements Serializable {
     public String getType() {
         return "error";
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(message);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EvalError other = (EvalError) obj;
+		return Objects.equals(message, other.message);
+	}
 
 }

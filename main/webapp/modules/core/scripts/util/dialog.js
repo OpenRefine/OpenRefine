@@ -74,25 +74,36 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   var level = DialogSystem._layers.length;
 
-  $(window).on('keydown',escapeKey);
-  
+  DialogSystem.setupEscapeKeyHandling();
+
   return level;
 };
+
+
+DialogSystem.pauseEscapeKeyHandling = function() {
+  $(window).off('keydown',escapeKey);
+}
+
+DialogSystem.setupEscapeKeyHandling = function() {
+  $(window).on('keydown',escapeKey);
+}
 
 DialogSystem.dismissLevel = function(level) {
     var layer = DialogSystem._layers[level];
 
-    $(document).off("keydown", layer.keyHandler);
+    if (layer) {
+      $(document).off("keydown", layer.keyHandler);
 
-    layer.overlay.remove();
-    layer.container.remove();
-    layer.container.off();
+      layer.overlay.remove();
+      layer.container.remove();
+      layer.container.off();
 
-    if (layer.onCancel) {
-      try {
-        layer.onCancel();
-      } catch (e) {
-        Refine.reportException(e);
+      if (layer.onCancel) {
+        try {
+          layer.onCancel();
+        } catch (e) {
+          Refine.reportException(e);
+        }
       }
     }
 };
