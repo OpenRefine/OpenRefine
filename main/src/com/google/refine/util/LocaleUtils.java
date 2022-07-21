@@ -4,13 +4,14 @@ import java.util.Locale;
 import java.util.Map;
 
 public class LocaleUtils {
-    private final static Map<String, String> languageCodeMap = Map.of(
-            "bn", "ben",
-            "jp", "ja",
-            "zh", "zh_CN",
-            "zh_Hant", "zh_TW"
-    );
     public static void setLocale(String code) {
+        Map<String, String> languageCodeMap = Map.of(
+                "bn", "ben",
+                "jp", "ja",
+                "zh", "zh_CN",
+                "zh_Hant", "zh_TW"
+        );
+
         String localeCode = languageCodeMap.getOrDefault(code, code);
 
         String[] localeParts = localeCode.split("_");
@@ -21,6 +22,5 @@ public class LocaleUtils {
             default: return;
         }
         Locale.setDefault(localeBuilder.build());
-        System.out.println(Locale.getDefault());
     }
 }
