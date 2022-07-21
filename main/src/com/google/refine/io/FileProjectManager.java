@@ -380,8 +380,7 @@ public class FileProjectManager extends ProjectManager  {
 	        try {
 	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
 
-                PreferenceStore ps = this.getPreferenceStore();
-                LocaleUtils.setLocale((String) ps.get("userLang"));
+                LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
 
 	            found = true;
 	        } catch(IOException e) {

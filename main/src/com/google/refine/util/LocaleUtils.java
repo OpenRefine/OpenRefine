@@ -5,6 +5,9 @@ import java.util.Map;
 
 public class LocaleUtils {
     public static void setLocale(String code) {
+        if (code == null) {
+            return;
+        }
         Map<String, String> languageCodeMap = Map.of(
                 "bn", "ben",
                 "jp", "ja",
@@ -18,7 +21,7 @@ public class LocaleUtils {
         Locale.Builder localeBuilder = new Locale.Builder();
         switch (localeParts.length) {
             case 1: localeBuilder.setLanguage(localeParts[0]); break;
-            case 2: localeBuilder.setLanguage(localeParts[0]).setRegion(localeParts[1]);break;
+            case 2: localeBuilder.setLanguage(localeParts[0]).setRegion(localeParts[1]); break;
             default: return;
         }
         Locale.setDefault(localeBuilder.build());
