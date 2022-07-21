@@ -1,7 +1,7 @@
 var WarningsRenderer = {};
 
 // renders a Wikibase entity into a link
-WarningsRenderer._renderEntity = function (entity) {
+WarningsRenderer._renderEntity = function (entity, plainText) {
   if (!entity.id && entity.value) {
     entity.id = entity.value.id;
   }
@@ -13,6 +13,9 @@ WarningsRenderer._renderEntity = function (entity) {
   var fullLabel = id;
   if (entity.label) {
     fullLabel = entity.label + ' (' + id + ')';
+  }
+  if (plainText) {
+    return fullLabel;
   }
 
   var url = entity.iri;
@@ -28,7 +31,7 @@ WarningsRenderer._renderEntity = function (entity) {
 };
 
 // replaces the issue properties in localization template
-WarningsRenderer._replaceIssueProperties = function (template, properties) {
+WarningsRenderer._replaceIssueProperties = function (template, properties, plainText) {
   template = template.replace(new RegExp('{wikibase_name}', 'g'), WikibaseManager.getSelectedWikibaseName);
   if (!properties) {
     return template;
@@ -38,12 +41,43 @@ WarningsRenderer._replaceIssueProperties = function (template, properties) {
     if (properties.hasOwnProperty(key)) {
       var rendered = properties[key];
       if (key.endsWith('_entity')) {
-        rendered = WarningsRenderer._renderEntity(properties[key]);
+        rendered = WarningsRenderer._renderEntity(properties[key], plainText);
       }
       expanded = expanded.replace(new RegExp('{' + key + '}', 'g'), rendered);
     }
   }
   return expanded;
+};
+
+WarningsRenderer._createFacetForWarning = function (warning) {
+  var warningRaised = $.i18n('wikibase-issues/warning-raised');
+  var noWarning = $('wikibase-issues/no-warning');
+  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/title'), warning.properties, true);
+  ui.browsingEngine.addFacet(
+      'list',
+      {
+          columnName: '',
+          name: title,
+          expression: 'grel:if(wikibaseIssues().inArray('+JSON.stringify(warning.aggregationId)+'), '+JSON.stringify(warningRaised)+', '+JSON.stringify(noWarning)+')',
+          selection: [
+              {
+              v: {
+                  v: warningRaised,
+                  l: warningRaised
+              }
+              }
+          ],
+          selectBlank: false,
+          selectError: false,
+          omitBlank: false,
+          omitError: false,
+          invert: false
+      },
+      {scroll: false}
+  );
+
+  // switch to the grid
+  SchemaAlignment.switchTab('#view-panel');
 };
 
 WarningsRenderer._renderWarning = function (warning) {
@@ -63,6 +97,24 @@ WarningsRenderer._renderWarning = function (warning) {
   var p = $('<p></p>')
       .html(body)
       .appendTo(bodyTd);
+  if (warning.facetable) {
+    var facetingButton = $('<button></button>')
+        .addClass('button')
+        .text($.i18n('wikibase-issues/locate-offending-rows'))
+        .appendTo(bodyTd);
+    facetingButton.on('click', function(evt) {
+        var onSaved = function() {
+          WarningsRenderer._createFacetForWarning(warning);
+        };
+        // the faceting relies on having an up to date schema
+        if (SchemaAlignment._hasUnsavedChanges) {
+           SchemaAlignment._save(onSaved);
+        } else {
+           onSaved();
+        }
+        evt.preventDefault();
+    });
+  }
   var countTd = $('<td></td>')
       .addClass('wb-warning-count')
       .appendTo(tr);

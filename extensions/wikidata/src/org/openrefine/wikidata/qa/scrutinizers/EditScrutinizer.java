@@ -135,37 +135,46 @@ public abstract class EditScrutinizer {
         _store.addWarning(warning);
     }
 
-    protected void addIssue(String type, String aggregationId, Severity severity, int count) {
-        addIssue(new QAWarning(type, aggregationId, severity, count));
+    protected void addIssue(String type, String aggregationId, Severity severity, int count, boolean facetable) {
+        QAWarning warning = new QAWarning(type, aggregationId, severity, count);
+        warning.setFacetable(facetable);
+		addIssue(warning);
     }
 
     /**
      * Helper to be used by subclasses to emit simple INFO warnings
      */
     protected void info(String type) {
-        addIssue(type, null, QAWarning.Severity.INFO, 1);
-
+        addIssue(type, null, QAWarning.Severity.INFO, 1, true);
+    }
+    
+    /**
+     * Helper to be used by subclasses to emit simple INFO warnings,
+     * which are not facetable
+     */
+    protected void infoNotFacetable(String type) {
+        addIssue(type, null, QAWarning.Severity.INFO, 1, false);
     }
 
     /**
      * Helper to be used by subclasses to emit simple warnings
      */
     protected void warning(String type) {
-        addIssue(type, null, QAWarning.Severity.WARNING, 1);
+        addIssue(type, null, QAWarning.Severity.WARNING, 1, true);
     }
 
     /**
      * Helper to be used by subclasses to emit simple important warnings
      */
     protected void important(String type) {
-        addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
+        addIssue(type, null, QAWarning.Severity.IMPORTANT, 1, true);
     }
 
     /**
      * Helper to be used by subclasses to emit simple critical warnings
      */
     protected void critical(String type) {
-        addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
+        addIssue(type, null, QAWarning.Severity.CRITICAL, 1, true);
     }
 
     /**

@@ -23,8 +23,11 @@ public final class ManifestParser {
         } catch (JsonProcessingException e) {
             throw new ManifestException("invalid manifest format", e);
         }
-
-        String version = root.path("version").textValue();
+        return parse(root);
+    }
+    
+    public static Manifest parse(JsonNode manifestJson) throws ManifestException {
+        String version = manifestJson.path("version").textValue();
         if (StringUtils.isBlank(version)) {
             throw new ManifestException("invalid manifest format, version is missing");
         }
@@ -35,10 +38,10 @@ public final class ManifestParser {
         String majorVersion = version.split("\\.")[0];
         // support only v1.x for now
         if ("1".equals(majorVersion)) {
-            return new ManifestV1(root);
+            return new ManifestV1(manifestJson);
         } else if ("2".equals(majorVersion)) {
         	try {
-				return new ManifestV2(root);
+				return new ManifestV2(manifestJson);
 			} catch (IOException e) {
 				throw new ManifestException("invalid manifest format: " + e.getMessage());
 			}
