@@ -14,9 +14,9 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
-  - dependency-name: jetty-*
-      versions:
-        - ">= 10.0.0"
+  - dependency-name: "jetty-*"
+    versions:
+      - ">= 10.0.0"
   target-branch: "master"
     
 # For main webapp
