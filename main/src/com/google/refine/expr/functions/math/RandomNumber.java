@@ -40,6 +40,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class RandomNumber implements Function {
 
@@ -68,7 +69,7 @@ public class RandomNumber implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.";
+        return FunctionDescription.math_random_number();
     }
     
     @Override

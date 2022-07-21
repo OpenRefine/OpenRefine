@@ -40,6 +40,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Sum implements Function {
 
@@ -80,7 +81,7 @@ public class Sum implements Function {
 
     @Override
     public String getDescription() {
-        return "Return the sum of the numbers in the array. Ignores non-number items. Returns 0 if the array does not contain numbers.";
+        return FunctionDescription.math_sum();
     }
     
     @Override

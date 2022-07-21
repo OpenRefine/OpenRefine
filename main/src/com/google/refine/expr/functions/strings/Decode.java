@@ -4,6 +4,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 import java.util.Properties;
 
@@ -42,7 +43,7 @@ public class Decode implements Function {
 
     @Override
     public String getDescription() {
-        return "Decodes a string using the specified encoding. Encodings include Base16, Base32Hex, Base32, Base64, and Base64Url.";
+        return FunctionDescription.str_decode();
     }
 
     @Override

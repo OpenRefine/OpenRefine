@@ -576,6 +576,7 @@
     "core-views/spec-new-val": "新しい値カラム名を指定してください。",
     "core-views/edit-cells": "セル編集",
     "core-views/sort": "ソート…",
+    "core-views/sort/single": "ソート",
     "core-views/match-all-cells": "この項目をこのセルと同じ全セルにマッチ",
     "core-views/col-at-most": "最大のカラム（空白はそのまま）",
     "core-views/warning-sel-judg": "コピー先の判断の種類を選択してください.",
@@ -844,5 +845,6 @@
     "core-index-import/load-json-rows-error": "JSONデータがパースできませんでした",
     "core-dialogs/column-not-numeric": "散布図には数値（緑色）のカラムが必要です。カラム $1 には50%以下の数値しかありません。数値に見える値でもテキスト（黒色）として保存されている場合、セル編集->よく使う変換->数値で、数値に変換してください.",
     "core-dialogs/no-other-numeric-columns": "カラム $1 と比較する数値カラム（50%以上が数値型）がありません.",
-    "core-buttons/deselect": "選択解除"
+    "core-buttons/deselect": "選択解除",
+    "core-buttons/reset": "リセット"
 }

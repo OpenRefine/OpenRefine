@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Max implements Function {
 
@@ -55,7 +56,7 @@ public class Max implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the greater of two numbers.";
+        return FunctionDescription.math_max();
     }
     
     @Override

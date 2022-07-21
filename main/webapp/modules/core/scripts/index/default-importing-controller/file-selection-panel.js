@@ -48,13 +48,13 @@ Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = functio
   if (this._fileSelectionPanelResizer) {
     $(window).off("resize", this._fileSelectionPanelResizer);
   }
-  this._fileSelectionPanel.unbind().empty();
+  this._fileSelectionPanel.off().empty();
 };
 
 Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = function() {
   var self = this; 
 
-  this._fileSelectionPanel.unbind().empty().html(
+  this._fileSelectionPanel.off().empty().html(
       DOM.loadHTML("core", "scripts/index/default-importing-controller/file-selection-panel.html"));
 
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
@@ -195,17 +195,18 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     self._updateFileSelectionSummary();
   });
 
-  var table = $('<table></table>')
-  .appendTo(this._fileSelectionPanelElmts.extensionContainer)[0];
+  var table = $('<table></table>').appendTo(this._fileSelectionPanelElmts.extensionContainer)[0];
 
   var renderExtension = function(extension) {
     var tr = table.insertRow(table.rows.length);
-    $('<td>').text(extension.extension).appendTo(tr);
-    $('<td>').text($.i18n('core-index-import/file-count', extension.count)).appendTo(tr);
+    $('<td>').css('width','25%').css('text-align','left').text(extension.extension).appendTo(tr);
+    $('<td>').css('width','25%').css('text-align','left').text($.i18n('core-index-import/file-count', extension.count)).appendTo(tr);
+    var actionTD = $('<td>').css('text-align','right');
+    actionTD.appendTo(tr);
     $('<button>')
     .text($.i18n('core-buttons/select'))
     .addClass("button")
-    .appendTo($('<td>').appendTo(tr))
+    .appendTo(actionTD)
     .on('click',function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
@@ -223,7 +224,8 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     $('<button>')
     .text($.i18n('core-buttons/deselect'))
     .addClass("button")
-    .appendTo($('<td>').appendTo(tr))
+    .css('margin-left','5px')
+    .appendTo(actionTD)
     .on('click',function() {
       for (var i = 0; i < files.length; i++) {
         var file = files[i];

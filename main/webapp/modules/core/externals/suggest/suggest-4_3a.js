@@ -1364,7 +1364,7 @@
       var correction = response_data.correction;
       if (correction && correction.length) {
         var spell_link = $('<a class="fbs-spell-link" href="#">').text(correction[0])
-          .bind("click.suggest", function(e) {
+          .on("click.suggest", function(e) {
             e.preventDefault();
             e.stopPropagation();
             self.input.val(correction[0]).trigger("textchange");
@@ -1381,7 +1381,7 @@
         if (!more.length) {
           var more_link = $('<a class="fbs-more-link" href="#" title="(Ctrl+m)">view more</a>');
           more = $('<div class="fbs-more">').append(more_link);
-          more_link.bind("click.suggest", function(e) {
+          more_link.on("click.suggest", function(e) {
             e.preventDefault();
             e.stopPropagation();
             var m = $(this).parent(".fbs-more");
@@ -1406,7 +1406,7 @@
             .append('<div class="fbs-suggestnew-description">Your item not in the list?</div>')
             .append(button)
             .append('<span class="fbs-suggestnew-shortcut">(Shift+Enter)</span>')
-            .bind("click.suggest", function(e) {
+            .on("click.suggest", function(e) {
               e.stopPropagation();
               self.suggest_new(e);
             });

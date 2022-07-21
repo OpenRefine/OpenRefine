@@ -33,9 +33,9 @@ import org.testng.annotations.Test;
 public class QAWarningStoreTest {
 
     public static String exampleJson = "{\"max_severity\":\"CRITICAL\",\"nb_warnings\":5,"
-            + "\"warnings\":[{\"type\":\"new-item-without-label\",\"bucketId\":null,"
-            + "\"severity\":\"CRITICAL\",\"count\":3},{\"type\":\"add-statements-with-invalid-format\","
-            + "\"bucketId\":\"P2427\",\"severity\":\"IMPORTANT\",\"count\":2}]}";
+            + "\"warnings\":[{\"type\":\"new-item-without-label\",\"bucketId\":null,\"aggregationId\":\"new-item-without-label\","
+            + "\"severity\":\"CRITICAL\",\"count\":3,\"facetable\":true},{\"type\":\"add-statements-with-invalid-format\","
+            + "\"bucketId\":\"P2427\",\"aggregationId\":\"add-statements-with-invalid-format_P2427\",\"severity\":\"IMPORTANT\",\"count\":2,\"facetable\":true}]}";
 
     private QAWarningStore store;
     private QAWarning otherWarning;

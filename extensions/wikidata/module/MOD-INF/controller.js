@@ -49,6 +49,12 @@ function init() {
     RefineServlet.registerCommand(module, "login", new LoginCommand());
 
     /*
+     * GREL functions
+     */
+    var CFR = Packages.com.google.refine.grel.ControlFunctionRegistry;
+    CFR.registerFunction("wikibaseIssues", new Packages.org.openrefine.wikidata.functions.WikibaseIssuesFunction());
+
+    /*
      * Resources
      */
     ClientSideResourceManager.addPaths(

@@ -16,7 +16,14 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+    
+    // check that it triggered an operation
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('.history-entry span').should('to.contain', 'Reorder rows');
+    
+    // after reloading, the grid should still be in the new order
     cy.reload();
+    cy.waitForProjectTable();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
     cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
   });
@@ -42,7 +49,14 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+
+    // check that it triggered an operation
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('.history-entry span').should('to.contain', 'Reorder rows');
+    
+    // after reloading, the grid should still be in the new order
     cy.reload();
+    cy.waitForProjectTable();
     cy.getCell(0, 'NDB_No').should('to.contain', 1001);
     cy.getCell(1, 'NDB_No').should('to.contain', 1002);
   });
@@ -69,7 +83,14 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+
+    // check that it triggered an operation
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('.history-entry span').should('to.contain', 'Reorder rows');
+    
+    // after reloading, the grid should still be in the new order
     cy.reload();
+    cy.waitForProjectTable();
     cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
     cy.getCell(1, 'Date').should('to.contain', '2020-12-17T00:00:00Z');
   });
@@ -108,7 +129,14 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
+
+    // check that it triggered an operation
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('.history-entry span').should('to.contain', 'Reorder rows');
+    
+    // after reloading, the grid should still be in the new order
     cy.reload();
+    cy.waitForProjectTable();
     cy.getCell(0, 'Fat').should('to.contain', 'true');
     cy.getCell(1, 'Fat').should('to.contain', 'false');
   });

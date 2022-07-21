@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -70,7 +71,7 @@ public class InnerXml implements Function {
 
     @Override
     public String getDescription() {
-    	return "Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. Use it in conjunction with parseXml() and select() to provide an element.";
+    	return FunctionDescription.xml_innerxml();
     }
     
     @Override

@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.clustering.binning.FingerprintKeyer;
 import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Fingerprint implements Function {
 
@@ -55,7 +56,7 @@ public class Fingerprint implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the fingerprint of s, a string that is the first step in fingerprint clustering methods: it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc.";
+        return FunctionDescription.str_fingerprint();
     }
     
     @Override
