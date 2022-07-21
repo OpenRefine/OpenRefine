@@ -64,39 +64,40 @@ import edu.mit.simile.vicino.clustering.VPTreeClusterer;
 import edu.mit.simile.vicino.distances.Distance;
 
 public class kNNClusterer extends Clusterer {
-    
+
     public static class kNNClustererConfig extends ClustererConfig {
+
         @JsonIgnore
         private String _distanceStr;
         @JsonIgnore
         private SimilarityDistance _distance;
         @JsonIgnore
         private kNNClustererConfigParameters _parameters = null;
-        
+
         @JsonIgnore
         public SimilarityDistance getDistance() {
             return _distance;
         }
-        
+
         @JsonProperty("function")
         public void setDistance(String distanceStr) {
-        	_distanceStr = distanceStr;
-        	_distance = DistanceFactory.get(_distanceStr.toLowerCase());
+            _distanceStr = distanceStr;
+            _distance = DistanceFactory.get(_distanceStr.toLowerCase());
         }
-        
+
         @JsonProperty("function")
         public String getDistanceStr() {
-        	return _distanceStr;
+            return _distanceStr;
         }
-        
+
         @JsonProperty("params")
         public kNNClustererConfigParameters getParameters() {
             return _parameters;
         }
-        
+
         @JsonProperty("params")
         public void setParameters(kNNClustererConfigParameters params) {
-        	_parameters = params;
+            _parameters = params;
         }
 
         @Override
@@ -110,10 +111,11 @@ public class kNNClusterer extends Clusterer {
         public String getType() {
             return "knn";
         }
-        
+
     }
-    
-    public static class kNNClustererConfigParameters  {
+
+    public static class kNNClustererConfigParameters {
+
         public static final double defaultRadius = 1.0d;
         public static final int defaultBlockingNgramSize = 6;
         @JsonProperty("radius")
@@ -136,13 +138,13 @@ public class kNNClusterer extends Clusterer {
         Distance _distance;
         kNNClustererConfigParameters _params;
         VPTreeClusterer _clusterer;
-        
+
         public VPTreeClusteringRowVisitor(Distance d, kNNClustererConfigParameters params) {
             _distance = d;
             _clusterer = new VPTreeClusterer(_distance);
             _params = params;
         }
-        
+
         @Override
         public void start(Project project) {
             // nothing to do
@@ -152,7 +154,7 @@ public class kNNClusterer extends Clusterer {
         public void end(Project project) {
             // nothing to do
         }
-        
+
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
@@ -164,7 +166,7 @@ public class kNNClusterer extends Clusterer {
             }
             return false;
         }
-        
+
         public List<Set<Serializable>> getClusters() {
             return _clusterer.getClusters(_params.radius);
         }
@@ -177,20 +179,21 @@ public class kNNClusterer extends Clusterer {
         int _blockingNgramSize = 6;
         HashSet<String> _data;
         NGramClusterer _clusterer;
-        
-        private class DistanceWrapper extends Distance {
-        	private final SimilarityDistance _d;
-        	
-        	protected DistanceWrapper(SimilarityDistance d) {
-        		_d = d;
-        	}
 
-			@Override
-			public double d(String arg0, String arg1) {
-				return _d.compute(arg0, arg1);
-			}
+        private class DistanceWrapper extends Distance {
+
+            private final SimilarityDistance _d;
+
+            protected DistanceWrapper(SimilarityDistance d) {
+                _d = d;
+            }
+
+            @Override
+            public double d(String arg0, String arg1) {
+                return _d.compute(arg0, arg1);
+            }
         }
-        
+
         public BlockingClusteringRowVisitor(SimilarityDistance _distance2, kNNClustererConfigParameters params) {
             _distance = _distance2;
             _data = new HashSet<String>();
@@ -198,7 +201,7 @@ public class kNNClusterer extends Clusterer {
             _radius = params.radius;
             _clusterer = new NGramClusterer(new DistanceWrapper(_distance), _blockingNgramSize);
         }
-        
+
         @Override
         public void start(Project project) {
             // nothing to do
@@ -208,7 +211,7 @@ public class kNNClusterer extends Clusterer {
         public void end(Project project) {
             // nothing to do
         }
-        
+
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             Cell cell = row.getCell(_colindex);
@@ -220,12 +223,12 @@ public class kNNClusterer extends Clusterer {
             }
             return false;
         }
-        
+
         public List<Set<Serializable>> getClusters() {
             return _clusterer.getClusters(_radius);
         }
     }
-    
+
     public void initializeFromConfig(Project project, kNNClustererConfig config) {
         super.initializeFromConfig(project, config);
         _distance = config.getDistance();
@@ -234,37 +237,39 @@ public class kNNClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-        //VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
-        BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance,_params);
+        // VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
+        BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance, _params);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
-     
+
         _clusters = visitor.getClusters();
     }
 
-    public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
+    public static class ValuesComparator implements Comparator<Entry<Serializable, Integer>>, Serializable {
+
         private static final long serialVersionUID = 204469656070583155L;
+
         @Override
-        public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
+        public int compare(Entry<Serializable, Integer> o1, Entry<Serializable, Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
     }
-    
+
     protected List<ClusteredEntry> getClusteredEntries(Set<Serializable> s) {
         return s.stream()
                 .map(e -> new ClusteredEntry(e, _counts.get(e)))
                 .sorted(ClusteredEntry.comparator)
                 .collect(Collectors.toList());
     }
-    
+
     @JsonValue
     public List<List<ClusteredEntry>> getJsonRepresentation() {
         return _clusters.stream()
-                        .filter(m -> m.size() > 1)
-                        .map(m -> getClusteredEntries(m))
+                .filter(m -> m.size() > 1)
+                .map(m -> getClusteredEntries(m))
                 .collect(Collectors.toList());
     }
-    
+
     private void count(Serializable s) {
         if (_counts.containsKey(s)) {
             _counts.put(s, _counts.get(s) + 1);

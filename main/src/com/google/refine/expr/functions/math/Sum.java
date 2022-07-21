@@ -48,14 +48,12 @@ public class Sum implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null && (v.getClass().isArray() || v instanceof List<?>)) {
-                int length = v.getClass().isArray() ? 
-                        ((Object[]) v).length :
-                        ExpressionUtils.toObjectList(v).size();
-                
+                int length = v.getClass().isArray() ? ((Object[]) v).length : ExpressionUtils.toObjectList(v).size();
+
                 double total = 0;
-                
+
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
                     for (int i = 0; i < length; i++) {
@@ -83,12 +81,12 @@ public class Sum implements Function {
     public String getDescription() {
         return FunctionDescription.math_sum();
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -43,8 +44,7 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     }
 
     /**
-     * Constructs a variable and sets the column it is bound to. Mostly used as a
-     * convenience method for testing.
+     * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      * 
      * @param columnName
      *            the name of the column the expression should draw its value from
@@ -57,10 +57,10 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     public StringValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         if (cell != null && cell.value != null && !cell.value.toString().isEmpty()) {
-        	String stringValue = cell.value.toString();
-        	if (cell.value instanceof Double && ((Double)cell.value) % 1 == 0) {
-        		stringValue = Long.toString(((Double)cell.value).longValue());
-        	}
+            String stringValue = cell.value.toString();
+            if (cell.value instanceof Double && ((Double) cell.value) % 1 == 0) {
+                stringValue = Long.toString(((Double) cell.value).longValue());
+            }
             return Datamodel.makeStringValue(stringValue.trim());
         }
         throw new SkipSchemaExpressionException();

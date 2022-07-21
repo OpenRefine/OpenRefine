@@ -34,21 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel;
 
 public class Scanner {
+
     static public enum TokenType {
-        Error,
-        Delimiter,
-        Operator,
-        Identifier,
-        Number,
-        String,
-        Regex
+        Error, Delimiter, Operator, Identifier, Number, String, Regex
     }
 
     static public class Token {
-        final public int        start;
-        final public int        end;
-        final public TokenType  type;
-        final public String     text;
+
+        final public int start;
+        final public int end;
+        final public TokenType type;
+        final public String text;
 
         Token(int start, int end, TokenType type, String text) {
             this.start = start;
@@ -59,6 +55,7 @@ public class Scanner {
     }
 
     static public class ErrorToken extends Token {
+
         final public String detail; // error detail
 
         public ErrorToken(int start, int end, String text, String detail) {
@@ -68,6 +65,7 @@ public class Scanner {
     }
 
     static public class NumberToken extends Token {
+
         final public Number value;
 
         public NumberToken(int start, int end, String text, Number value) {
@@ -77,6 +75,7 @@ public class Scanner {
     }
 
     static public class RegexToken extends Token {
+
         final public boolean caseInsensitive;
 
         public RegexToken(int start, int end, String text, boolean caseInsensitive) {
@@ -85,9 +84,9 @@ public class Scanner {
         }
     }
 
-    protected String     _text;  // input text to tokenize
-    protected int        _index; // index of the next character to process
-    protected int        _limit; // process up to this index
+    protected String _text; // input text to tokenize
+    protected int _index; // index of the next character to process
+    protected int _limit; // process up to this index
 
     public Scanner(String s) {
         this(s, 0, s.length());
@@ -104,11 +103,10 @@ public class Scanner {
     }
 
     /**
-     * The regexPossible flag is used by the parser to hint the scanner what to do
-     * when it encounters a slash. Since the divide operator / and the opening
-     * delimiter of a regex literal are the same, but divide operators and regex
-     * literals can't occur at the same place in an expression, this flag is a cheap
-     * way to distinguish the two without having to look ahead.
+     * The regexPossible flag is used by the parser to hint the scanner what to do when it encounters a slash. Since the
+     * divide operator / and the opening delimiter of a regex literal are the same, but divide operators and regex
+     * literals can't occur at the same place in an expression, this flag is a cheap way to distinguish the two without
+     * having to look ahead.
      *
      * @param regexPossible
      * @return
@@ -152,22 +150,20 @@ public class Scanner {
                 // TODO: support exponent e notation
 
                 return new NumberToken(
-                    start,
-                    _index,
-                    _text.substring(start, _index),
-                    value2
-                );
+                        start,
+                        _index,
+                        _text.substring(start, _index),
+                        value2);
             } else {
                 return new NumberToken(
-                    start,
-                    _index,
-                    _text.substring(start, _index),
-                    value
-                );
+                        start,
+                        _index,
+                        _text.substring(start, _index),
+                        value);
             }
         } else if (c == '"' || c == '\'') {
             /*
-             *  String Literal
+             * String Literal
              */
 
             StringBuffer sb = new StringBuffer();
@@ -181,11 +177,10 @@ public class Scanner {
                     _index++; // skip closing delimiter
 
                     return new Token(
-                        start,
-                        _index,
-                        TokenType.String,
-                        sb.toString()
-                    );
+                            start,
+                            _index,
+                            TokenType.String,
+                            sb.toString());
                 } else if (c == '\\') {
                     _index++; // skip escaping marker
                     if (_index < _limit) {
@@ -222,14 +217,13 @@ public class Scanner {
             }
 
             return new Token(
-                start,
-                _index,
-                TokenType.Identifier,
-                _text.substring(start, _index)
-            );
+                    start,
+                    _index,
+                    TokenType.Identifier,
+                    _text.substring(start, _index));
         } else if (c == '/' && regexPossible) {
             /*
-             *  Regex literal
+             * Regex literal
              */
             StringBuffer sb = new StringBuffer();
 
@@ -247,11 +241,10 @@ public class Scanner {
                     }
 
                     return new RegexToken(
-                        start,
-                        _index,
-                        sb.toString(),
-                        caseInsensitive
-                    );
+                            start,
+                            _index,
+                            sb.toString(),
+                            caseInsensitive);
                 } else if (c == '\\') {
                     sb.append(c);
 
@@ -271,66 +264,59 @@ public class Scanner {
             _index++;
 
             return new Token(
-                start,
-                _index,
-                TokenType.Operator,
-                _text.substring(start, _index)
-            );
+                    start,
+                    _index,
+                    TokenType.Operator,
+                    _text.substring(start, _index));
         } else if ("()[],".indexOf(c) >= 0) { // delimiter
             _index++;
 
             return new Token(
-                start,
-                _index,
-                TokenType.Delimiter,
-                _text.substring(start, _index)
-            );
+                    start,
+                    _index,
+                    TokenType.Delimiter,
+                    _text.substring(start, _index));
         } else if (c == '!' && _index < _limit - 1 && _text.charAt(_index + 1) == '=') {
             _index += 2;
             return new Token(
-                start,
-                _index,
-                TokenType.Operator,
-                _text.substring(start, _index)
-            );
+                    start,
+                    _index,
+                    TokenType.Operator,
+                    _text.substring(start, _index));
         } else if (c == '<') {
             if (_index < _limit - 1 &&
                     (_text.charAt(_index + 1) == '=' ||
-                     _text.charAt(_index + 1) == '>')) {
+                            _text.charAt(_index + 1) == '>')) {
 
                 _index += 2;
                 return new Token(
-                    start,
-                    _index,
-                    TokenType.Operator,
-                    _text.substring(start, _index)
-                );
+                        start,
+                        _index,
+                        TokenType.Operator,
+                        _text.substring(start, _index));
             } else {
                 _index++;
                 return new Token(
-                    start,
-                    _index,
-                    TokenType.Operator,
-                    _text.substring(start, _index)
-                );
+                        start,
+                        _index,
+                        TokenType.Operator,
+                        _text.substring(start, _index));
             }
         } else if (">=".indexOf(c) >= 0) { // operator
             if (_index < _limit - 1 && _text.charAt(_index + 1) == '=') {
                 _index += 2;
                 return new Token(
-                    start,
-                    _index,
-                    TokenType.Operator,
-                    _text.substring(start, _index)
-                );
+                        start,
+                        _index,
+                        TokenType.Operator,
+                        _text.substring(start, _index));
             } else {
                 _index++;
                 return new Token(
-                    start,
-                    _index,
-                    TokenType.Operator,
-                    _text.substring(start, _index)
-                );
+                        start,
+                        _index,
+                        TokenType.Operator,
+                        _text.substring(start, _index));
             }
         } else {
             _index++;
@@ -338,10 +324,9 @@ public class Scanner {
         }
 
         return new ErrorToken(
-            start,
-            _index,
-            _text.substring(start, _index),
-            detail
-        );
+                start,
+                _index,
+                _text.substring(start, _index),
+                detail);
     }
 }

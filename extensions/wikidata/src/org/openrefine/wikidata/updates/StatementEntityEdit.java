@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.updates;
 
 import java.util.List;
@@ -16,40 +17,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public interface StatementEntityEdit extends EntityEdit {
-	
-	/**
-	 * Edits made to statements
-	 */
-	@JsonIgnore
-	List<StatementEdit> getStatementEdits();
 
-	/**
-	 * Groups added statements in {@link StatementGroupsEdit} objects.
-	 */
-	@JsonProperty("statementGroups")
-	List<StatementGroupEdit> getStatementGroupEdits();
-	
-	/**
-	 * @return the statements which should be added or merged with
-	 * the existing ones on the item.
-	 */
-	@JsonIgnore
-	public default List<Statement> getAddedStatements() {
-		return getStatementEdits().stream()
-				.filter(statement -> statement.getMode() != StatementEditingMode.DELETE)
-				.map(StatementEdit::getStatement)
-				.collect(Collectors.toList());
-	}
+    /**
+     * Edits made to statements
+     */
+    @JsonIgnore
+    List<StatementEdit> getStatementEdits();
 
-	/**
-	 * @return the statements which should be deleted from the item.
-	 */
-	@JsonIgnore
-	public default List<Statement> getDeletedStatements() {
-		return getStatementEdits().stream()
-				.filter(statement -> statement.getMode() == StatementEditingMode.DELETE)
-				.map(StatementEdit::getStatement)
-				.collect(Collectors.toList());
-	}
-	
+    /**
+     * Groups added statements in {@link StatementGroupsEdit} objects.
+     */
+    @JsonProperty("statementGroups")
+    List<StatementGroupEdit> getStatementGroupEdits();
+
+    /**
+     * @return the statements which should be added or merged with the existing ones on the item.
+     */
+    @JsonIgnore
+    public default List<Statement> getAddedStatements() {
+        return getStatementEdits().stream()
+                .filter(statement -> statement.getMode() != StatementEditingMode.DELETE)
+                .map(StatementEdit::getStatement)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @return the statements which should be deleted from the item.
+     */
+    @JsonIgnore
+    public default List<Statement> getDeletedStatements() {
+        return getStatementEdits().stream()
+                .filter(statement -> statement.getMode() == StatementEditingMode.DELETE)
+                .map(StatementEdit::getStatement)
+                .collect(Collectors.toList());
+    }
+
 }

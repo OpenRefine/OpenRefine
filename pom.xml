@@ -296,6 +296,9 @@
         <version>2.17.1</version>
         <configuration>
           <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
+          <excludes> <!-- file should not be linted because it was copied from a dependency (sigh) -->
+            <exclude>**/Metaphone3.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>

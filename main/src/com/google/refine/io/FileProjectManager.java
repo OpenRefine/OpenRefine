@@ -65,8 +65,8 @@ import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
 
-
 public class FileProjectManager extends ProjectManager  {
+
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File                       _workspaceDir;
@@ -115,8 +115,8 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     /**
-     * Import an external project that has been received as a .tar file, expanded, and
-     * copied into our workspace directory.
+     * Import an external project that has been received as a .tar file, expanded, and copied into our workspace
+     * directory.
      *
      * @param projectID
      */
@@ -196,7 +196,7 @@ public class FileProjectManager extends ProjectManager  {
         this.tarDir("", dir, tos);
     }
 
-    protected void tarDir(String relative, File dir, TarArchiveOutputStream tos) throws IOException{
+    protected void tarDir(String relative, File dir, TarArchiveOutputStream tos) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File file : files) {
@@ -231,7 +231,7 @@ public class FileProjectManager extends ProjectManager  {
             byte[] buf = new byte[buffersize];
             int count;
 
-            while((count = fis.read(buf, 0, buffersize)) != -1) {
+            while ((count = fis.read(buf, 0, buffersize)) != -1) {
                 os.write(buf, 0, count);
             }
         } finally {
@@ -246,7 +246,7 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     @Override
-    protected void saveProject(Project project) throws IOException{
+    protected void saveProject(Project project) throws IOException {
         ProjectUtilities.save(project);
     }
 
@@ -255,10 +255,9 @@ public class FileProjectManager extends ProjectManager  {
         return ProjectUtilities.load(getProjectDir(id), id);
     }
 
-
     /**
-     * Save the workspace's data out to file in a safe way: save to a temporary file first
-     * and rename it to the real file.
+     * Save the workspace's data out to file in a safe way: save to a temporary file first and rename it to the real
+     * file.
      */
     @Override
     protected void saveWorkspace() {
@@ -305,7 +304,7 @@ public class FileProjectManager extends ProjectManager  {
     }
     
     protected void saveProjectMetadata() throws IOException {
-        for(Entry<Long,ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+        for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
             ProjectMetadata metadata = entry.getValue();
             if (metadata != null && metadata.isDirty()) {
                 ProjectMetadataUtilities.save(metadata, getProjectDir(entry.getKey()));
@@ -325,8 +324,6 @@ public class FileProjectManager extends ProjectManager  {
         }
         return saveWasNeeded;
     }
-
-
 
     @Override
     public void deleteProject(long projectID) {
@@ -383,7 +380,7 @@ public class FileProjectManager extends ProjectManager  {
                 LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
 
 	            found = true;
-	        } catch(IOException e) {
+            } catch (IOException e) {
 	        	logger.warn(e.toString());
 	        }
         }
@@ -429,7 +426,7 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     @Override
-    public HistoryEntryManager getHistoryEntryManager(){
+    public HistoryEntryManager getHistoryEntryManager() {
         return new FileHistoryEntryManager();
     }
     
@@ -474,7 +471,7 @@ public class FileProjectManager extends ProjectManager  {
     
     @JsonProperty("preferences")
     protected void setPreferences(PreferenceStore preferences) {
-    	if(preferences != null) {
+        if (preferences != null) {
     		_preferenceStore = preferences;
     	}
     }

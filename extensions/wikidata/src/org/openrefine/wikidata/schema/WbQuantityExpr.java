@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.math.BigDecimal;
@@ -45,13 +46,11 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     private final WbExpression<? extends ItemIdValue> unitExpr;
 
     /**
-     * Creates an expression for a quantity, which contains two sub-expressions: one
-     * for the amount (a string with a particular format) and one for the unit,
-     * which is optional.
+     * Creates an expression for a quantity, which contains two sub-expressions: one for the amount (a string with a
+     * particular format) and one for the unit, which is optional.
      * 
-     * Setting unitExpr to null will give quantities without units. Setting it to a
-     * non-null value will make the unit mandatory: if the unit expression fails to
-     * evaluate, the whole quantity expression will fail too.
+     * Setting unitExpr to null will give quantities without units. Setting it to a non-null value will make the unit
+     * mandatory: if the unit expression fails to evaluate, the whole quantity expression will fail too.
      */
     @JsonCreator
     public WbQuantityExpr(@JsonProperty("amount") WbExpression<? extends StringValue> amountExpr,
@@ -86,7 +85,6 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         String originalAmount = amount.getString().toUpperCase();
         try { 
             parsedAmount = new BigDecimal(originalAmount);
-            
             
             if (originalAmount.contains("E")) {
                 // engineering notation: we derive the precision from

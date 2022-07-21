@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -13,9 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {
-    
+
     public static final String type = "forbidden-value";
     public String allowedValuesConstraintQid;
     public String allowedValuesConstraintPid;
@@ -34,7 +34,9 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     }
 
     class AllowedValueConstraint {
+
         Set<Value> allowedValues;
+
         AllowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
@@ -45,7 +47,9 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     }
 
     class DisallowedValueConstraint {
+
         Set<Value> disallowedValues;
+
         DisallowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
@@ -63,7 +67,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
         PropertyIdValue pid = snak.getPropertyId();
         Value value = null;
         if (snak instanceof ValueSnak) {
-            value = ((ValueSnak)snak).getValue();
+            value = ((ValueSnak) snak).getValue();
         }
         List<Statement> allowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, allowedValuesConstraintQid);
         List<Statement> disallowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, disallowedValuesConstraintQid);
@@ -76,8 +80,8 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
             DisallowedValueConstraint constraint = new DisallowedValueConstraint(disallowedValueConstraintDefinitions.get(0));
             disallowedValues = constraint.disallowedValues;
         }
-        if((allowedValues != null && !allowedValues.contains(value)) ||
-           (disallowedValues != null && disallowedValues.contains(value))) {
+        if ((allowedValues != null && !allowedValues.contains(value)) ||
+                (disallowedValues != null && disallowedValues.contains(value))) {
             QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
             issue.setProperty("property_entity", pid);
             issue.setProperty("example_value_entity", value);

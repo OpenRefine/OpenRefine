@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -47,8 +48,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * The representation of an item edit, which can contain variables both for
- * its own id and in its contents.
+ * The representation of an item edit, which can contain variables both for its own id and in its contents.
  * 
  * @author Antonin Delpeuch
  *

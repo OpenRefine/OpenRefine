@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.editing;
 
 import java.io.File;
@@ -44,8 +45,7 @@ public class MediaFileUtils {
 	}
 	
 	/**
-	 * Sets how long we should wait before retrying in case
-	 * of a maxlag error.
+     * Sets how long we should wait before retrying in case of a maxlag error.
 	 * 
 	 * @param milliseconds
 	 */
@@ -70,16 +70,22 @@ public class MediaFileUtils {
 	/**
 	 * Upload a local file to the MediaWiki instance.
 	 * 
-	 * @param path the path to the local file
-	 * @param fileName its filename once stored on the wiki
-	 * @param wikitext the accompanying wikitext for the file
-	 * @param summary the edit summary associated with the upload
-	 * @param tags tags to apply to the edit
+     * @param path
+     *            the path to the local file
+     * @param fileName
+     *            its filename once stored on the wiki
+     * @param wikitext
+     *            the accompanying wikitext for the file
+     * @param summary
+     *            the edit summary associated with the upload
+     * @param tags
+     *            tags to apply to the edit
 	 * @return
 	 * @throws IOException
 	 * @throws MediaWikiApiErrorException
 	 */
-	public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
+    public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags)
+            throws IOException, MediaWikiApiErrorException {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "upload");
 		parameters.put("tags", String.join("|", tags));
@@ -94,19 +100,25 @@ public class MediaFileUtils {
 	}
 	
 	/**
-	 * Upload a file that the MediaWiki server fetches directly from the supplied URL.
-	 * The URL domain must likely be whitelisted before.
+     * Upload a file that the MediaWiki server fetches directly from the supplied URL. The URL domain must likely be
+     * whitelisted before.
 	 * 
-	 * @param url the URL of the file to upload
-	 * @param fileName its filename once stored on the wiki
-	 * @param wikitext the accompanying wikitext for the file
-	 * @param summary the edit summary associated with the upload
-	 * @param tags tags to apply to the edit
+     * @param url
+     *            the URL of the file to upload
+     * @param fileName
+     *            its filename once stored on the wiki
+     * @param wikitext
+     *            the accompanying wikitext for the file
+     * @param summary
+     *            the edit summary associated with the upload
+     * @param tags
+     *            tags to apply to the edit
 	 * @return
 	 * @throws IOException
 	 * @throws MediaWikiApiErrorException
 	 */
-	public MediaUploadResponse uploadRemoteFile(URL url, String fileName, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
+    public MediaUploadResponse uploadRemoteFile(URL url, String fileName, String wikitext, String summary, List<String> tags)
+            throws IOException, MediaWikiApiErrorException {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "upload");
 		parameters.put("tags", String.join("|", tags));
@@ -123,12 +135,18 @@ public class MediaFileUtils {
 	/**
 	 * Edits the text contents of a wiki page
 	 * 
-	 * @param pageId the pageId of the page to edit
-	 * @param wikitext the new contents which should override the existing one
-	 * @param summary the edit summary
-	 * @param tags any tags that should be applied to the edit
-	 * @throws IOException if a network error happened
-	 * @throws MediaWikiApiErrorException if the editing failed for some reason, after a few retries
+     * @param pageId
+     *            the pageId of the page to edit
+     * @param wikitext
+     *            the new contents which should override the existing one
+     * @param summary
+     *            the edit summary
+     * @param tags
+     *            any tags that should be applied to the edit
+     * @throws IOException
+     *             if a network error happened
+     * @throws MediaWikiApiErrorException
+     *             if the editing failed for some reason, after a few retries
 	 */
 	public void editPage(long pageId, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
 		Map<String, String> parameters = new HashMap<>();
@@ -146,7 +164,7 @@ public class MediaFileUtils {
 			try {
 				apiConnection.sendJsonRequest("POST", parameters);
 				return;
-			} catch(MediaWikiApiErrorException e) {
+            } catch (MediaWikiApiErrorException e) {
 				lastException = e;
 			}
 			retries--;
@@ -163,7 +181,8 @@ public class MediaFileUtils {
 	 * @throws IOException
 	 * @throws MediaWikiApiErrorException
 	 */
-	protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files) throws IOException, MediaWikiApiErrorException {
+    protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files)
+            throws IOException, MediaWikiApiErrorException {
 		int retries = 3;
 		MediaWikiApiErrorException lastException = null;
 		while (retries > 0) {
@@ -176,7 +195,7 @@ public class MediaFileUtils {
 				MediaUploadResponse response = ParsingUtilities.mapper.treeToValue(uploadNode, MediaUploadResponse.class);
 				// todo check for errors which should be retried
 				return response;
-			} catch(TokenErrorException e) {
+            } catch (TokenErrorException e) {
 				lastException = e;
 				// if the token was invalid, try again with a fresh one
 				csrfToken = null;
@@ -228,12 +247,10 @@ public class MediaFileUtils {
 		private MediaInfoIdValue mid = null;
 		
 		/**
-		 * Retrieves the Mid, either from the upload response
-		 * or by issuing another call to obtain it from the filename
+         * Retrieves the Mid, either from the upload response or by issuing another call to obtain it from the filename
 		 * through the supplied connection.
 		 * 
-		 * This should not be needed anymore when
-		 * this is already exposed in the API response of the upload action.
+         * This should not be needed anymore when this is already exposed in the API response of the upload action.
 	 	 * https://phabricator.wikimedia.org/T307096
 		 * 
 		 * @param connection

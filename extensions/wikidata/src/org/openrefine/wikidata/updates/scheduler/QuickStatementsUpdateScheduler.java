@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.ArrayList;
@@ -46,21 +47,20 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
     private PointerExtractor extractor = new PointerExtractor();
 
     /**
-     * This map holds for each new entity id value a list of updates that refer to
-     * this id (and should hence be scheduled right after creation of that entity).
+     * This map holds for each new entity id value a list of updates that refer to this id (and should hence be
+     * scheduled right after creation of that entity).
      */
     private Map<EntityIdValue, UpdateSequence> pointerUpdates;
 
     /**
-     * This contains all updates which do not refer to any new entity apart from
-     * possibly the subject, in the order that they were supplied to us.
+     * This contains all updates which do not refer to any new entity apart from possibly the subject, in the order that
+     * they were supplied to us.
      */
     private UpdateSequence pointerFreeUpdates;
 
     /**
-     * Separates out the statements which refer to new entities from the rest of the
-     * update. The resulting updates are stored in {@link referencingUpdates} and
-     * {@link updatesWithoutReferences}.
+     * Separates out the statements which refer to new entities from the rest of the update. The resulting updates are
+     * stored in {@link referencingUpdates} and {@link updatesWithoutReferences}.
      * 
      * @param update
      * @throws ImpossibleSchedulingException
@@ -68,92 +68,94 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
      */
     protected void splitUpdate(EntityEdit edit)
             throws ImpossibleSchedulingException {
-    	if (edit instanceof ItemEdit) {
-	    	ItemEdit update = (ItemEdit) edit;
-	        ItemEditBuilder remainingUpdateBuilder = new ItemEditBuilder(update.getEntityId())
-	                .addLabels(update.getLabels(), true)
-	                .addLabels(update.getLabelsIfNew(), false)
-	                .addDescriptions(update.getDescriptions(), true)
-	                .addDescriptions(update.getDescriptionsIfNew(), false)
-	                .addAliases(update.getAliases());
-	        Map<EntityIdValue, ItemEditBuilder> referencingUpdates = new HashMap<>();
-	
-	        for (StatementEdit statement : update.getStatementEdits()) {
-	            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
-	            if (pointers.isEmpty()) {
-	                remainingUpdateBuilder.addStatement(statement);
-	            } else if (pointers.size() == 1 && !update.isNew()) {
-	                EntityIdValue pointer = pointers.stream().findFirst().get();
-	                ItemEditBuilder referencingBuilder = referencingUpdates.get(pointer);
-	                if (referencingBuilder == null) {
-	                    referencingBuilder = new ItemEditBuilder(update.getEntityId());
-	                }
-	                referencingBuilder.addStatement(statement);
-	                referencingUpdates.put(pointer, referencingBuilder);
-	            } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getEntityId())) {
-	                remainingUpdateBuilder.addStatement(statement);
-	            } else {
-	                throw new ImpossibleSchedulingException("An item refers to multiple new entities, which is not supported by QuickStatements");
-	            }
-	        }
-	
-	        // Add the update that is not referring to anything to the schedule
-	        ItemEdit pointerFree = remainingUpdateBuilder.build();
-	        if (!pointerFree.isNull()) {
-	            pointerFreeUpdates.add(pointerFree);
-	        }
-	        // Add the other updates to the map
-	        for (Entry<EntityIdValue, ItemEditBuilder> entry : referencingUpdates.entrySet()) {
-	        	TermedStatementEntityEdit pointerUpdate = entry.getValue().build();
-	            UpdateSequence pointerUpdatesForKey = pointerUpdates.get(entry.getKey());
-	            if (pointerUpdatesForKey == null) {
-	                pointerUpdatesForKey = new UpdateSequence();
-	            }
-	            pointerUpdatesForKey.add(pointerUpdate);
-	            pointerUpdates.put(entry.getKey(), pointerUpdatesForKey);
-	        }
-    	} else if (edit instanceof MediaInfoEdit){
-	    	MediaInfoEdit update = (MediaInfoEdit) edit;
-	        MediaInfoEditBuilder remainingUpdateBuilder = new MediaInfoEditBuilder(update.getEntityId())
-	                .addLabels(update.getLabels(), true)
-	                .addLabels(update.getLabelsIfNew(), false);
-	        Map<EntityIdValue, MediaInfoEditBuilder> referencingUpdates = new HashMap<>();
-	
-	        for (StatementEdit statement : update.getStatementEdits()) {
-	            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
-	            if (pointers.isEmpty()) {
-	                remainingUpdateBuilder.addStatement(statement);
-	            } else if (pointers.size() == 1 && !update.isNew()) {
-	                EntityIdValue pointer = pointers.stream().findFirst().get();
-	                MediaInfoEditBuilder referencingBuilder = referencingUpdates.get(pointer);
-	                if (referencingBuilder == null) {
-	                    referencingBuilder = new MediaInfoEditBuilder(update.getEntityId());
-	                }
-	                referencingBuilder.addStatement(statement);
-	                referencingUpdates.put(pointer, referencingBuilder);
-	            } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getEntityId())) {
-	                remainingUpdateBuilder.addStatement(statement);
-	            } else {
-	                throw new ImpossibleSchedulingException("A mediainfo entity refers to multiple new entities, which is not supported by QuickStatements");
-	            }
-	        }
-	
-	        // Add the update that is not referring to anything to the schedule
-	        MediaInfoEdit pointerFree = remainingUpdateBuilder.build();
-	        if (!pointerFree.isNull()) {
-	            pointerFreeUpdates.add(pointerFree);
-	        }
-	        // Add the other updates to the map
-	        for (Entry<EntityIdValue, MediaInfoEditBuilder> entry : referencingUpdates.entrySet()) {
-	        	MediaInfoEdit pointerUpdate = entry.getValue().build();
-	            UpdateSequence pointerUpdatesForKey = pointerUpdates.get(entry.getKey());
-	            if (pointerUpdatesForKey == null) {
-	                pointerUpdatesForKey = new UpdateSequence();
-	            }
-	            pointerUpdatesForKey.add(pointerUpdate);
-	            pointerUpdates.put(entry.getKey(), pointerUpdatesForKey);
-	        }
-    	}
+        if (edit instanceof ItemEdit) {
+            ItemEdit update = (ItemEdit) edit;
+            ItemEditBuilder remainingUpdateBuilder = new ItemEditBuilder(update.getEntityId())
+                    .addLabels(update.getLabels(), true)
+                    .addLabels(update.getLabelsIfNew(), false)
+                    .addDescriptions(update.getDescriptions(), true)
+                    .addDescriptions(update.getDescriptionsIfNew(), false)
+                    .addAliases(update.getAliases());
+            Map<EntityIdValue, ItemEditBuilder> referencingUpdates = new HashMap<>();
+
+            for (StatementEdit statement : update.getStatementEdits()) {
+                Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
+                if (pointers.isEmpty()) {
+                    remainingUpdateBuilder.addStatement(statement);
+                } else if (pointers.size() == 1 && !update.isNew()) {
+                    EntityIdValue pointer = pointers.stream().findFirst().get();
+                    ItemEditBuilder referencingBuilder = referencingUpdates.get(pointer);
+                    if (referencingBuilder == null) {
+                        referencingBuilder = new ItemEditBuilder(update.getEntityId());
+                    }
+                    referencingBuilder.addStatement(statement);
+                    referencingUpdates.put(pointer, referencingBuilder);
+                } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getEntityId())) {
+                    remainingUpdateBuilder.addStatement(statement);
+                } else {
+                    throw new ImpossibleSchedulingException(
+                            "An item refers to multiple new entities, which is not supported by QuickStatements");
+                }
+            }
+
+            // Add the update that is not referring to anything to the schedule
+            ItemEdit pointerFree = remainingUpdateBuilder.build();
+            if (!pointerFree.isNull()) {
+                pointerFreeUpdates.add(pointerFree);
+            }
+            // Add the other updates to the map
+            for (Entry<EntityIdValue, ItemEditBuilder> entry : referencingUpdates.entrySet()) {
+                TermedStatementEntityEdit pointerUpdate = entry.getValue().build();
+                UpdateSequence pointerUpdatesForKey = pointerUpdates.get(entry.getKey());
+                if (pointerUpdatesForKey == null) {
+                    pointerUpdatesForKey = new UpdateSequence();
+                }
+                pointerUpdatesForKey.add(pointerUpdate);
+                pointerUpdates.put(entry.getKey(), pointerUpdatesForKey);
+            }
+        } else if (edit instanceof MediaInfoEdit) {
+            MediaInfoEdit update = (MediaInfoEdit) edit;
+            MediaInfoEditBuilder remainingUpdateBuilder = new MediaInfoEditBuilder(update.getEntityId())
+                    .addLabels(update.getLabels(), true)
+                    .addLabels(update.getLabelsIfNew(), false);
+            Map<EntityIdValue, MediaInfoEditBuilder> referencingUpdates = new HashMap<>();
+
+            for (StatementEdit statement : update.getStatementEdits()) {
+                Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
+                if (pointers.isEmpty()) {
+                    remainingUpdateBuilder.addStatement(statement);
+                } else if (pointers.size() == 1 && !update.isNew()) {
+                    EntityIdValue pointer = pointers.stream().findFirst().get();
+                    MediaInfoEditBuilder referencingBuilder = referencingUpdates.get(pointer);
+                    if (referencingBuilder == null) {
+                        referencingBuilder = new MediaInfoEditBuilder(update.getEntityId());
+                    }
+                    referencingBuilder.addStatement(statement);
+                    referencingUpdates.put(pointer, referencingBuilder);
+                } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getEntityId())) {
+                    remainingUpdateBuilder.addStatement(statement);
+                } else {
+                    throw new ImpossibleSchedulingException(
+                            "A mediainfo entity refers to multiple new entities, which is not supported by QuickStatements");
+                }
+            }
+
+            // Add the update that is not referring to anything to the schedule
+            MediaInfoEdit pointerFree = remainingUpdateBuilder.build();
+            if (!pointerFree.isNull()) {
+                pointerFreeUpdates.add(pointerFree);
+            }
+            // Add the other updates to the map
+            for (Entry<EntityIdValue, MediaInfoEditBuilder> entry : referencingUpdates.entrySet()) {
+                MediaInfoEdit pointerUpdate = entry.getValue().build();
+                UpdateSequence pointerUpdatesForKey = pointerUpdates.get(entry.getKey());
+                if (pointerUpdatesForKey == null) {
+                    pointerUpdatesForKey = new UpdateSequence();
+                }
+                pointerUpdatesForKey.add(pointerUpdate);
+                pointerUpdates.put(entry.getKey(), pointerUpdatesForKey);
+            }
+        }
     }
 
     @Override

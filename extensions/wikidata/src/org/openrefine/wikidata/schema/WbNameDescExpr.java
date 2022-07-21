@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
@@ -38,9 +39,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An expression that represent a term (label, description or alias). The
- * structure is slightly different from other expressions because we need to
- * call different methods on {@link ItemEditBuilder}.
+ * An expression that represent a term (label, description or alias). The structure is slightly different from other
+ * expressions because we need to call different methods on {@link ItemEditBuilder}.
  * 
  * @author Antonin Delpeuch
  *

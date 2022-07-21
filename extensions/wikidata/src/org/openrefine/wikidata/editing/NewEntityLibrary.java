@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import java.util.HashMap;
@@ -41,8 +42,7 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 
 /**
- * This keeps track of the new entities that we have created for each internal
- * reconciliation id.
+ * This keeps track of the new entities that we have created for each internal reconciliation id.
  * 
  * @author Antonin Delpeuch
  *
@@ -94,11 +94,10 @@ public class NewEntityLibrary {
         Set<Integer> impactedColumns = new HashSet<>();
 
         /*
-         * Note that there is a slight violation of OpenRefine's model here: if we
-         * reconcile multiple cells to the same new Entity, and then perform this
-         * operation on a subset of the corresponding rows, we are going to modify cells
-         * that are outside the facet (because they are reconciled to the same cell).
-         * But I think this is the right thing to do.
+         * Note that there is a slight violation of OpenRefine's model here: if we reconcile multiple cells to the same
+         * new Entity, and then perform this operation on a subset of the corresponding rows, we are going to modify
+         * cells that are outside the facet (because they are reconciled to the same cell). But I think this is the
+         * right thing to do.
          */
 
         for (Row row : project.rows) {
@@ -116,28 +115,28 @@ public class NewEntityLibrary {
                             new String[0], 100);
                     recon.addCandidate(recon.match);
                     changed = true;
-                    
+
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset
                         && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.New;
-                    if(recon.candidates != null) {
-                    	recon.candidates.remove(recon.candidates.size()-1);
+                    if (recon.candidates != null) {
+                        recon.candidates.remove(recon.candidates.size() - 1);
                     }
                     recon.match = null;
                     changed = true;
                 }
-                
+
                 if (changed) {
-	                impactedColumns.add(i);
-	                // Compute features
-	                Column column = project.columnModel.getColumnByCellIndex(i);
-	                ReconConfig config = column.getReconConfig();
-	                if (config instanceof StandardReconConfig) {
-	                	StandardReconConfig stdConfig = (StandardReconConfig)config;
-										if (cell.getValue() instanceof String) {
-	                		stdConfig.computeFeatures(recon, (String) cell.getValue());
-										}
-	                }
+                    impactedColumns.add(i);
+                    // Compute features
+                    Column column = project.columnModel.getColumnByCellIndex(i);
+                    ReconConfig config = column.getReconConfig();
+                    if (config instanceof StandardReconConfig) {
+                        StandardReconConfig stdConfig = (StandardReconConfig) config;
+                        if (cell.getValue() instanceof String) {
+                            stdConfig.computeFeatures(recon, (String) cell.getValue());
+                        }
+                    }
                 }
             }
         }

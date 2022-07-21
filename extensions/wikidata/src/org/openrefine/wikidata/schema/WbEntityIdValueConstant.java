@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.SuggestedEntityIdValue;

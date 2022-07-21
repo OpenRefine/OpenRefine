@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Map;
@@ -35,8 +36,7 @@ import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Row;
 
 /**
- * A class holding all the necessary information about the context in which a
- * schema expression is evaluated.
+ * A class holding all the necessary information about the context in which a schema expression is evaluated.
  * 
  * @author Antonin Delpeuch
  *
@@ -67,8 +67,8 @@ public class ExpressionContext {
      * @param columnModel
      *            lets us access cells by column name
      * @param warningStore
-     *            where to store the issues encountered when evaluating (can be set
-     *            to null if these issues should be ignored)
+     *            where to store the issues encountered when evaluating (can be set to null if these issues should be
+     *            ignored)
      */
     public ExpressionContext(
     		String baseIRI,
@@ -103,8 +103,7 @@ public class ExpressionContext {
     }
 
     /**
-     * Retrieves a cell in the current row, by column name. If the column does not
-     * exist, null is returned.
+     * Retrieves a cell in the current row, by column name. If the column does not exist, null is returned.
      * 
      * @param name
      *            the name of the column to retrieve the cell from

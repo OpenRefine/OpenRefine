@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.expr;
 
 import java.io.IOException;
@@ -40,35 +41,38 @@ import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.TopList;
 
-
 public class GetStarredExpressionsCommand extends Command {
-    
-    protected static class Expression  {
+
+    protected static class Expression {
+
         @JsonProperty("code")
         protected String code;
+
         protected Expression(String c) {
             code = c;
         }
     }
-    
-    protected static class ExpressionList  {
+
+    protected static class ExpressionList {
+
         @JsonProperty("expressions")
         protected List<Expression> expressions;
+
         protected ExpressionList(List<Expression> e) {
             expressions = e;
         }
     }
-    
+
     public static ExpressionList getExpressionsList() {
-        TopList topList = (TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
-		List<String> starredExpressions = topList == null ? Collections.emptyList() : topList.getList();
+        TopList topList = (TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
+        List<String> starredExpressions = topList == null ? Collections.emptyList() : topList.getList();
         return new ExpressionList(starredExpressions.stream().map(e -> new Expression(e)).collect(Collectors.toList()));
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             respondJSON(response, getExpressionsList());
         } catch (Exception e) {

@@ -43,7 +43,7 @@ public class MetaphoneKeyer extends Keyer {
         _metaphone = new Metaphone();
         _metaphone.setMaxCodeLen(2000);
     }
-    
+
     @Override
     public String key(String s, Object... o) {
         return _metaphone.metaphone(s);

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
@@ -43,8 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * A constant for a time value, accepting a number of formats which determine
- * the precision of the parsed value.
+ * A constant for a time value, accepting a number of formats which determine the precision of the parsed value.
  * 
  * @author Antonin Delpeuch
  *
@@ -52,8 +52,8 @@ import com.google.common.collect.ImmutableMap;
 public class WbDateConstant implements WbExpression<TimeValue> {
 
     /**
-     * Map of formats accepted by the parser. Each format is associated to the time
-     * precision it induces (an integer according to Wikibase's data model).
+     * Map of formats accepted by the parser. Each format is associated to the time precision it induces (an integer
+     * according to Wikibase's data model).
      */
     public static Map<SimpleDateFormat, Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat, Integer> builder()
             .put(new SimpleDateFormat("yyyy'M'"), 6)
@@ -70,9 +70,8 @@ public class WbDateConstant implements WbExpression<TimeValue> {
     private final String origDatestamp;
 
     /**
-     * Constructor. Used for deserialization from JSON. The object will be
-     * constructed even if the time cannot be parsed (it will evaluate to null) in
-     * {@link evaluate}.
+     * Constructor. Used for deserialization from JSON. The object will be constructed even if the time cannot be parsed
+     * (it will evaluate to null) in {@link evaluate}.
      * 
      * @param origDatestamp
      *            the date value as a string
@@ -103,8 +102,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
     }
 
     /**
-     * Parses a timestamp into a Wikibase {@link TimeValue}. The precision is
-     * automatically inferred from the format.
+     * Parses a timestamp into a Wikibase {@link TimeValue}. The precision is automatically inferred from the format.
      * 
      * @param datestamp
      *            the time to parse
@@ -122,17 +120,17 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         
         String trimmedDatestamp = datestamp.trim();
         
-        if("TODAY".equals(trimmedDatestamp)) {
+        if ("TODAY".equals(trimmedDatestamp)) {
 	        Calendar calendar = Calendar.getInstance();
 	    	TimeValue todaysDate = Datamodel.makeTimeValue(
 	    			calendar.get(Calendar.YEAR),
-	    			(byte)(calendar.get(Calendar.MONTH)+1),
-	    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
-	    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
+                    (byte) (calendar.get(Calendar.MONTH) + 1),
+                    (byte) calendar.get(Calendar.DAY_OF_MONTH),
+                    (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
 	    	return todaysDate;
         }
 
-        if(trimmedDatestamp.startsWith("-")){
+        if (trimmedDatestamp.startsWith("-")) {
             trimmedDatestamp = trimmedDatestamp.substring(1);
             bceFlag = true;
         }
@@ -147,10 +145,10 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             
             // Potentially parse the calendar Qid after the date
             int consumedUntil = position.getIndex();
-            if(consumedUntil < trimmedDatestamp.length()) {
+            if (consumedUntil < trimmedDatestamp.length()) {
             	Matcher matcher = calendarSuffixPattern.matcher(
             			trimmedDatestamp.subSequence(position.getIndex(), trimmedDatestamp.length()));
-            	if(matcher.find()) {
+                if (matcher.find()) {
             		String calendarQid = matcher.group(1);
             		calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
             		consumedUntil = trimmedDatestamp.length();
@@ -176,8 +174,8 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             long year = calendar.get(Calendar.YEAR);
             int month = precision < 10 ? 0 : calendar.get(Calendar.MONTH) + 1;
             int day_of_month = precision < 11 ? 0 : calendar.get(Calendar.DAY_OF_MONTH);
-            if(bceFlag)
-                year = -1*year;
+            if (bceFlag)
+                year = -1 * year;
             return Datamodel.makeTimeValue(year, (byte) month,
                     (byte) day_of_month, (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,

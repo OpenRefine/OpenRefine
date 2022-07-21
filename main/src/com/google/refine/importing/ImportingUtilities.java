@@ -97,12 +97,15 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
+
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
     
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
     
     static public interface Progress {
+
         public void setProgress(String message, int percent);
+
         public boolean isCanceled();
     }
     
@@ -126,6 +129,7 @@ public class ImportingUtilities {
                 job.getRawDataDir(),
                 retrievalRecord,
                 new Progress() {
+
                     @Override
                     public void setProgress(String message, int percent) {
                         if (message != null) {
@@ -133,12 +137,12 @@ public class ImportingUtilities {
                         }
                         JSONUtilities.safePut(progress, "percent", percent);
                     }
+
                     @Override
                     public boolean isCanceled() {
                         return job.canceled;
                     }
-                }
-            );
+                    });
         } catch (Exception e) {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
@@ -179,8 +183,7 @@ public class ImportingUtilities {
         Properties parameters,
         File rawDataDir,
         ObjectNode retrievalRecord,
-        final Progress progress
-    ) throws IOException, FileUploadException {
+            final Progress progress) throws IOException, FileUploadException {
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
         
@@ -192,10 +195,12 @@ public class ImportingUtilities {
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
         final SavingUpdate update = new SavingUpdate() {
+
             @Override
             public void savedMore() {
                 progress.setProgress(null, calculateProgressPercent(totalExpectedSize, totalRetrievedSize));
             }
+
             @Override
             public boolean isCanceled() {
                 return progress.isCanceled();
@@ -206,6 +211,7 @@ public class ImportingUtilities {
         
         ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
         upload.setProgressListener(new ProgressListener() {
+
             boolean setContentLength = false;
             long lastBytesRead = 0;
             
@@ -227,7 +233,7 @@ public class ImportingUtilities {
             }
         });
 
-        List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
+        List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
@@ -340,7 +346,8 @@ public class ImportingUtilities {
                         HttpClient httpClient = new HttpClient();
                         if (httpClient.getResponse(urlString, null, responseHandler) != null) {
                             archiveCount++;
-                        };
+                        }
+                        ;
                         downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
@@ -513,28 +520,29 @@ public class ImportingUtilities {
         return JSONUtilities.getString(
             fileRecord,
             "url",
-            JSONUtilities.getString(fileRecord, "fileName", "unknown")
-        );
+                JSONUtilities.getString(fileRecord, "fileName", "unknown"));
     }
 
     static public String getArchiveFileName(ObjectNode fileRecord) {
         return JSONUtilities.getString(
                 fileRecord,
                 "archiveFileName",
-                null
-        );
+                null);
     }
 
     static public boolean hasArchiveFileField(List<ObjectNode> fileRecords) {
-        List<ObjectNode> filterResults = fileRecords.stream().filter(fileRecord -> getArchiveFileName(fileRecord) != null).collect(Collectors.toList());
+        List<ObjectNode> filterResults = fileRecords.stream().filter(fileRecord -> getArchiveFileName(fileRecord) != null)
+                .collect(Collectors.toList());
         return filterResults.size() > 0;
     }
 
     static private abstract class SavingUpdate {
+
         public long totalExpectedSize = 0;
         public long totalRetrievedSize = 0;
         
         abstract public void savedMore();
+
         abstract public boolean isCanceled();
     }
 
@@ -542,7 +550,7 @@ public class ImportingUtilities {
         long length = 0;
         FileOutputStream fos = new FileOutputStream(file);
         try {
-            byte[] bytes = new byte[16*1024];
+            byte[] bytes = new byte[16 * 1024];
             int c;
             while ((update == null || !update.isCanceled()) && (c = stream.read(bytes)) > 0) {
                 fos.write(bytes, 0, c);
@@ -665,8 +673,7 @@ public class ImportingUtilities {
         InputStream archiveIS,
         ObjectNode archiveFileRecord,
         ArrayNode fileRecords,
-        final Progress progress
-    ) throws IOException {
+            final Progress progress) throws IOException {
         if (archiveIS instanceof TarArchiveInputStream) {
             TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
@@ -740,7 +747,7 @@ public class ImportingUtilities {
                     || "application/x-gzip".equals(mimeType)) {                
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
-                    ||"application/x-bzip2".equals(mimeType)) {
+                    || "application/x-bzip2".equals(mimeType)) {
                 InputStream is = new FileInputStream(file);
                 is.mark(4);
                 if (!(is.read() == 'B' && is.read() == 'Z')) {
@@ -750,7 +757,7 @@ public class ImportingUtilities {
                 return new BZip2CompressorInputStream(is);
             }
         } catch (IOException e) {
-            logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);
+            logger.warn("Something that looked like a compressed file gave an error on open: " + file, e);
         }
         return null;
     }
@@ -759,12 +766,11 @@ public class ImportingUtilities {
         File rawDataDir,
         InputStream uncompressedIS,
         ObjectNode fileRecord,
-        final Progress progress
-    ) throws IOException {
+            final Progress progress) throws IOException {
         String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
-        for (String ext : new String[] {".gz",".bz2"}) {
+        for (String ext : new String[] { ".gz", ".bz2" }) {
             if (fileName.endsWith(ext)) {
-                fileName = fileName.substring(0, fileName.length()-ext.length());
+                fileName = fileName.substring(0, fileName.length() - ext.length());
                 break;
             }
         }
@@ -798,12 +804,15 @@ public class ImportingUtilities {
     }
 
     /**
-     * Figure out the best (most common) format for the set of files, select
-     * all files which match that format, and return the format found.
+     * Figure out the best (most common) format for the set of files, select all files which match that format, and
+     * return the format found.
      * 
-     * @param job ImportingJob object
-     * @param retrievalRecord JSON object containing "files" key with all our files
-     * @param fileSelectionIndexes JSON array of selected file indices matching best format
+     * @param job
+     *            ImportingJob object
+     * @param retrievalRecord
+     *            JSON object containing "files" key with all our files
+     * @param fileSelectionIndexes
+     *            JSON array of selected file indices matching best format
      * @return best (highest frequency) format
      */
     static public String autoSelectFiles(ImportingJob job, ObjectNode retrievalRecord, ArrayNode fileSelectionIndexes) {
@@ -825,6 +834,7 @@ public class ImportingUtilities {
             }
         }
         Collections.sort(formats, new Comparator<String>() {
+
             @Override
             public int compare(String o1, String o2) {
                 return formatToCount.get(o2) - formatToCount.get(o1);
@@ -884,6 +894,7 @@ public class ImportingUtilities {
             }
         }
         Collections.sort(formats, new Comparator<String>() {
+
             @Override
             public int compare(String o1, String o2) {
                 return formatToCount.get(o2) - formatToCount.get(o1);
@@ -939,8 +950,7 @@ public class ImportingUtilities {
     static void rankFormats(ImportingJob job, final String bestFormat, ArrayNode rankedFormats) {
         final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
         
-        boolean download = bestFormat == null ? true :
-            ImportingManager.formatToRecord.get(bestFormat).download;
+        boolean download = bestFormat == null ? true : ImportingManager.formatToRecord.get(bestFormat).download;
         
         List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
         for (String format : ImportingManager.formatToRecord.keySet()) {
@@ -955,6 +965,7 @@ public class ImportingUtilities {
             Collections.sort(formats);
         } else {
             Collections.sort(formats, new Comparator<String>() {
+
                 @Override
                 public int compare(String format1, String format2) {
                     if (format1.equals(bestFormat)) {
@@ -994,7 +1005,6 @@ public class ImportingUtilities {
         }
     }
 
-    
     static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, List<Exception> exceptions) {
         Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
@@ -1012,8 +1022,7 @@ public class ImportingUtilities {
             format,
             100,
             optionObj,
-            exceptions
-        );
+                exceptions);
         
         job.project.update(); // update all internal models, indexes, caches, etc.
     }
@@ -1038,6 +1047,7 @@ public class ImportingUtilities {
                 job, format, optionObj, exceptions, record, project);
         } else {
             new Thread() {
+
                 @Override
                 public void run() {
                     createProjectSynchronously(
@@ -1054,8 +1064,7 @@ public class ImportingUtilities {
         final ObjectNode optionObj,
         final List<Exception> exceptions,
         final Format record,
-        final Project project
-    ) {
+            final Project project) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
         record.parser.parse(
             project,
@@ -1065,8 +1074,7 @@ public class ImportingUtilities {
             format,
             -1,
             optionObj,
-            exceptions
-        );
+                exceptions);
         
         if (!job.canceled) {
             if (exceptions.size() == 0) {

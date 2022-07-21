@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.validation.ValidationState;
@@ -60,10 +61,10 @@ public class WbStringConstant implements WbExpression<StringValue> {
     
     @Override
     public boolean equals(Object other) {
-        if(other == null || !WbStringConstant.class.isInstance(other)) {
+        if (other == null || !WbStringConstant.class.isInstance(other)) {
             return false;
         }
-        return value.equals(((WbStringConstant)other).getValue());
+        return value.equals(((WbStringConstant) other).getValue());
     }
     
     @Override

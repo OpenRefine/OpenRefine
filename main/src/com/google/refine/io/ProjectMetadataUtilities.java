@@ -58,8 +58,8 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
-
 public class ProjectMetadataUtilities {
+
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
     public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException {
@@ -75,11 +75,11 @@ public class ProjectMetadataUtilities {
         File oldFile = new File(projectDir, "metadata.old.json");
 
         if (file.exists()) {
-            if(file.length() > 0) {
+            if (file.length() > 0) {
                 if (oldFile.exists()) {
                     oldFile.delete();
                 }
-            file.renameTo(oldFile);
+                file.renameTo(oldFile);
             } else {
                 file.delete();
             }
@@ -87,8 +87,8 @@ public class ProjectMetadataUtilities {
 
         tempFile.renameTo(file);
     }
-    
-    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException   {
+
+    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
         try {
             ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
@@ -99,17 +99,17 @@ public class ProjectMetadataUtilities {
 
     static public ProjectMetadata load(File projectDir) {
         ProjectMetadata pm = null;
-        
+
         pm = loadMetaDataIfExist(projectDir, ProjectMetadata.DEFAULT_FILE_NAME);
 
         if (pm == null) {
             pm = loadMetaDataIfExist(projectDir, ProjectMetadata.TEMP_FILE_NAME);
-        } 
-        
+        }
+
         if (pm == null) {
             pm = loadMetaDataIfExist(projectDir, ProjectMetadata.OLD_FILE_NAME);
         }
-        
+
         return pm;
     }
 
@@ -118,23 +118,24 @@ public class ProjectMetadataUtilities {
         File file = new File(projectDir, fileName);
         if (file.exists()) {
             try {
-               pm = loadFromFile(file);
+                pm = loadFromFile(file);
             } catch (Exception e) {
                 logger.warn("load metadata failed: " + file.getAbsolutePath());
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
-        
+
         return pm;
     }
-    
+
     /**
-     * Reconstruct the project metadata on a best efforts basis.  The name is
-     * gone, so build something descriptive from the column names.  Recover the
-     * creation and modification times based on whatever files are available.
+     * Reconstruct the project metadata on a best efforts basis. The name is gone, so build something descriptive from
+     * the column names. Recover the creation and modification times based on whatever files are available.
      * 
-     * @param projectDir the project directory
-     * @param id the project id
+     * @param projectDir
+     *            the project directory
+     * @param id
+     *            the project id
      * @return
      */
     static public ProjectMetadata recover(File projectDir, long id) {
@@ -142,9 +143,9 @@ public class ProjectMetadataUtilities {
         Project p = ProjectUtilities.load(projectDir, id);
         if (p != null) {
             List<String> columnNames = p.columnModel.getColumnNames();
-            String tempName = "<recovered project> - " + columnNames.size() 
+            String tempName = "<recovered project> - " + columnNames.size()
                     + " cols X " + p.rows.size() + " rows - "
-                    + StringUtils.join(columnNames,'|');
+                    + StringUtils.join(columnNames, '|');
             p.dispose();
             long ctime = System.currentTimeMillis();
             long mtime = 0;
@@ -152,7 +153,7 @@ public class ProjectMetadataUtilities {
             File dataFile = new File(projectDir, "data.zip");
             ctime = mtime = dataFile.lastModified();
 
-            File historyDir = new File(projectDir,"history");
+            File historyDir = new File(projectDir, "history");
             File[] files = historyDir.listFiles();
             if (files != null) {
                 for (File f : files) {

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -67,8 +68,8 @@ public class WbLanguageConstant implements WbExpression<String> {
     }
 
     /**
-     * Checks that a language code is valid and returns its preferred version
-     * (converting deprecated language codes to their better values).
+     * Checks that a language code is valid and returns its preferred version (converting deprecated language codes to
+     * their better values).
      * 
      * @param lang
      *            a Wikimedia language code

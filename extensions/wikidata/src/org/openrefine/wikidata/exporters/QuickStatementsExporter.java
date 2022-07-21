@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
@@ -114,15 +115,15 @@ public class QuickStatementsExporter implements WriterExporter {
         		.filter(entityEdit -> !(entityEdit instanceof ItemEdit || entityEdit instanceof MediaInfoEdit))
         		.findAny();
         if (unsupportedEntityTypeEdit.isPresent()) {
-        	errorMessage = "Unable to export updates on "+
-    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported for this entity type";
+            errorMessage = "Unable to export updates on " +
+                    unsupportedEntityTypeEdit.get().getEntityId() + " with QuickStatements, not supported for this entity type";
         }
         Optional<EntityEdit> newMediaInfo = items.stream()
         		.filter(entityEdit -> entityEdit instanceof MediaInfoEdit && entityEdit.isNew())
         		.findAny();
         if (newMediaInfo.isPresent()) {
-        	errorMessage = "Unable to create a new mediainfo entity "+
-    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported";
+            errorMessage = "Unable to create a new mediainfo entity " +
+                    unsupportedEntityTypeEdit.get().getEntityId() + " with QuickStatements, not supported";
         }
         
         if (errorMessage != null) {

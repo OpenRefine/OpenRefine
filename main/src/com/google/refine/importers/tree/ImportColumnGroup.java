@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers.tree;
 
 import java.util.LinkedHashMap;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
  * A column group describes a branch in tree structured data
  */
 public class ImportColumnGroup extends ImportVertical {
+
     public Map<String, ImportColumnGroup> subgroups = new LinkedHashMap<String, ImportColumnGroup>();
     public Map<String, ImportColumn> columns = new LinkedHashMap<String, ImportColumn>();
     public int nextRowIndex; // TODO: this can be hoisted into superclass
@@ -50,11 +52,11 @@ public class ImportColumnGroup extends ImportVertical {
             nonBlankCount = Math.max(nonBlankCount, g.nonBlankCount);
         }
     }
-    
+
     @Override
     public String toString() {
         return String.format("name=%s, nextRowIndex=%d, columns={%s}, subgroups={{%s}}",
-                name,nextRowIndex,StringUtils.join(columns.keySet(), ','),
-                StringUtils.join(subgroups.keySet(),','));
+                name, nextRowIndex, StringUtils.join(columns.keySet(), ','),
+                StringUtils.join(subgroups.keySet(), ','));
     }
 }

@@ -45,31 +45,28 @@ import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 
 public class ReconCandidate implements HasFields {
+
     @JsonProperty("id")
-    final public String     id;
+    final public String id;
     @JsonProperty("name")
-    final public String     name;
+    final public String name;
     @JsonProperty("types")
-    final public String[]   types;
+    final public String[] types;
     @JsonProperty("score")
-    final public double     score;
-    
+    final public double score;
+
     @JsonCreator
     public ReconCandidate(
-            @JsonProperty("id")
-            String topicID,
-            @JsonProperty("name")
-            String topicName,
-            @JsonProperty("types")
-            String[] typeIDs,
-            @JsonProperty("score")
-            double score) {
+            @JsonProperty("id") String topicID,
+            @JsonProperty("name") String topicName,
+            @JsonProperty("types") String[] typeIDs,
+            @JsonProperty("score") double score) {
         this.id = topicID;
         this.name = topicName;
         this.types = typeIDs == null ? new String[0] : typeIDs;
         this.score = score;
     }
-    
+
     @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
@@ -83,32 +80,32 @@ public class ReconCandidate implements HasFields {
         }
         return null;
     }
-    
+
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return false;
     }
-    
+
     static public ReconCandidate loadStreaming(String s) throws Exception {
         return ParsingUtilities.mapper.readValue(s, ReconCandidate.class);
     }
-    
+
     @Deprecated
     static public ReconCandidate loadStreaming(JsonParser jp) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
             return null;
         }
-        
+
         String id = null;
         String name = null;
         List<String> types = null;
         double score = 0;
-        
+
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
             jp.nextToken();
-            
+
             if ("id".equals(fieldName)) {
                 id = jp.getText();
             } else if ("name".equals(fieldName)) {
@@ -119,15 +116,15 @@ public class ReconCandidate implements HasFields {
                 if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
                     return null;
                 }
-                
+
                 types = new ArrayList<String>();
-                
+
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
                     types.add(jp.getText());
                 }
             }
         }
-        
+
         String[] typesA;
         if (types != null) {
             typesA = new String[types.size()];
@@ -135,12 +132,11 @@ public class ReconCandidate implements HasFields {
         } else {
             typesA = new String[0];
         }
-        
+
         return new ReconCandidate(
-            id,
-            name,
-            typesA, 
-            score
-        );
+                id,
+                name,
+                typesA,
+                score);
     }
 }

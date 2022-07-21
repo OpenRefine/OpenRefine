@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
@@ -34,8 +35,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A constant for a geographical location. The accepted format is lat,lng or
- * lat/lng.
+ * A constant for a geographical location. The accepted format is lat,lng or lat/lng.
  * 
  * @author Antonin Delpeuch
  *

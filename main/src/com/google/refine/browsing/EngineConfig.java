@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing;
 
 import java.io.IOException;
@@ -36,34 +37,31 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.facets.FacetConfig;
 import com.google.refine.util.ParsingUtilities;
 
+public class EngineConfig {
 
-public class EngineConfig  {
-    
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
-    
+
     @JsonCreator
     public EngineConfig(
-            @JsonProperty("facets")
-            List<FacetConfig> facets,
-            @JsonProperty("mode")
-            Mode mode) {
+            @JsonProperty("facets") List<FacetConfig> facets,
+            @JsonProperty("mode") Mode mode) {
         _facets = facets == null ? Collections.emptyList() : facets;
         _mode = mode == null ? Mode.RowBased : mode;
     }
-    
+
     @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
     }
-    
+
     @JsonProperty("facets")
     public List<FacetConfig> getFacetConfigs() {
         return _facets;
     }
-    
+
     public static EngineConfig reconstruct(String json) {
-        if(json == null) {
+        if (json == null) {
             return new EngineConfig(Collections.emptyList(), Mode.RowBased);
         }
         try {

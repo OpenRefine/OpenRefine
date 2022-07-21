@@ -50,17 +50,17 @@ public class ToLowercase implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_to_lowercase();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

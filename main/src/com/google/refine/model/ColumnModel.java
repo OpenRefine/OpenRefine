@@ -50,25 +50,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class ColumnModel {
 
-public class ColumnModel  {
     @JsonProperty("columns")
-    final public List<Column>      columns = new LinkedList<Column>();
+    final public List<Column> columns = new LinkedList<Column>();
     @JsonProperty("columnGroups")
     final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
-    
+
     private int _maxCellIndex = -1;
     private int _keyColumnIndex;
-    
-    transient protected Map<String, Column>  _nameToColumn;
+
+    transient protected Map<String, Column> _nameToColumn;
     transient protected Map<Integer, Column> _cellIndexToColumn;
-    transient protected List<ColumnGroup>    _rootColumnGroups;
-    transient protected List<String>         _columnNames;
-    
+    transient protected List<ColumnGroup> _rootColumnGroups;
+    transient protected List<String> _columnNames;
+
     public ColumnModel() {
         internalInitialize();
     }
-    
+
     synchronized public void setMaxCellIndex(int maxCellIndex) {
         this._maxCellIndex = Math.max(this._maxCellIndex, maxCellIndex);
     }
@@ -84,7 +84,7 @@ public class ColumnModel  {
     synchronized public int allocateNewCellIndex() {
         return ++_maxCellIndex;
     }
-    
+
     synchronized public void setKeyColumnIndex(int keyColumnIndex) {
         // TODO: check validity of new cell index, e.g., it's not in any group
         this._keyColumnIndex = keyColumnIndex;
@@ -94,7 +94,7 @@ public class ColumnModel  {
     synchronized public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
-    
+
     synchronized public void addColumnGroup(int startColumnIndex, int span, int keyColumnIndex) {
         for (ColumnGroup g : columnGroups) {
             if (g.startColumnIndex == startColumnIndex && g.columnSpan == span) {
@@ -106,20 +106,20 @@ public class ColumnModel  {
                 }
             }
         }
-        
+
         ColumnGroup cg = new ColumnGroup(startColumnIndex, span, keyColumnIndex);
-        
+
         columnGroups.add(cg);
-        
+
     }
 
     public void update() {
         internalInitialize();
     }
-    
+
     synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
         String name = column.getName();
-        
+
         if (_nameToColumn.containsKey(name)) {
             if (!avoidNameCollision) {
                 throw new ModelException("Duplicated column name");
@@ -128,11 +128,11 @@ public class ColumnModel  {
                 column.setName(name);
             }
         }
-        
+
         columns.add(index < 0 ? columns.size() : index, column);
         _nameToColumn.put(name, column); // so the next call can check
     }
-    
+
     synchronized public String getUnduplicatedColumnName(String baseName) {
         String name = baseName;
         int i = 1;
@@ -146,15 +146,16 @@ public class ColumnModel  {
         }
         return name;
     }
-    
+
     synchronized public Column getColumnByName(String name) {
         return _nameToColumn.get(name);
     }
-    
+
     /**
      * Return the index of the column with the given name.
      * 
-     * @param name column name to look up
+     * @param name
+     *            column name to look up
      * @return index of column with given name or -1 if not found.
      */
     synchronized public int getColumnIndexByName(String name) {
@@ -166,48 +167,58 @@ public class ColumnModel  {
         }
         return -1;
     }
-    
+
     synchronized public Column getColumnByCellIndex(int cellIndex) {
         return _cellIndexToColumn.get(cellIndex);
     }
-    
+
     @JsonIgnore
     synchronized public List<String> getColumnNames() {
         return _columnNames;
     }
-    
+
     @JsonProperty("keyCellIndex")
     @JsonInclude(Include.NON_NULL)
     public Integer getJsonKeyCellIndex() {
-        if(columns.size() > 0) {
+        if (columns.size() > 0) {
             return getKeyColumnIndex();
         }
         return null;
     }
-    
+
     @JsonProperty("keyColumnName")
     @JsonInclude(Include.NON_NULL)
     public String getKeyColumnName() {
-        if(columns.size() > 0) {
+        if (columns.size() > 0) {
             return columns.get(_keyColumnIndex).getName();
         }
         return null;
     }
-    
-    synchronized public void save(Writer writer, Properties options) throws IOException {
-        writer.write("maxCellIndex="); writer.write(Integer.toString(_maxCellIndex)); writer.write('\n');
-        writer.write("keyColumnIndex="); writer.write(Integer.toString(_keyColumnIndex)); writer.write('\n');
 
-        writer.write("columnCount="); writer.write(Integer.toString(columns.size())); writer.write('\n');
+    synchronized public void save(Writer writer, Properties options) throws IOException {
+        writer.write("maxCellIndex=");
+        writer.write(Integer.toString(_maxCellIndex));
+        writer.write('\n');
+        writer.write("keyColumnIndex=");
+        writer.write(Integer.toString(_keyColumnIndex));
+        writer.write('\n');
+
+        writer.write("columnCount=");
+        writer.write(Integer.toString(columns.size()));
+        writer.write('\n');
         for (Column column : columns) {
-            column.save(writer); writer.write('\n');
+            column.save(writer);
+            writer.write('\n');
         }
-        
-        writer.write("columnGroupCount="); writer.write(Integer.toString(columnGroups.size())); writer.write('\n');
+
+        writer.write("columnGroupCount=");
+        writer.write(Integer.toString(columnGroups.size()));
+        writer.write('\n');
         for (ColumnGroup group : columnGroups) {
-            group.save(writer); writer.write('\n');
+            group.save(writer);
+            writer.write('\n');
         }
-        
+
         writer.write("/e/\n");
     }
 
@@ -217,48 +228,48 @@ public class ColumnModel  {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
             String value = line.substring(equal + 1);
-            
+
             if ("maxCellIndex".equals(field)) {
                 _maxCellIndex = Integer.parseInt(value);
             } else if ("keyColumnIndex".equals(field)) {
                 _keyColumnIndex = Integer.parseInt(value);
             } else if ("columnCount".equals(field)) {
                 int count = Integer.parseInt(value);
-                
+
                 for (int i = 0; i < count; i++) {
                     columns.add(Column.load(reader.readLine()));
                 }
             } else if ("columnGroupCount".equals(field)) {
                 int count = Integer.parseInt(value);
-                
+
                 for (int i = 0; i < count; i++) {
                     columnGroups.add(ColumnGroup.load(reader.readLine()));
                 }
             }
         }
-        
+
         internalInitialize();
     }
-    
+
     synchronized protected void internalInitialize() {
         generateMaps();
-        
+
         // Turn the flat list of column groups into a tree
-        
+
         _rootColumnGroups = new LinkedList<ColumnGroup>(columnGroups);
         Collections.sort(_rootColumnGroups, new Comparator<ColumnGroup>() {
+
             @Override
             public int compare(ColumnGroup o1, ColumnGroup o2) {
                 int firstDiff = o1.startColumnIndex - o2.startColumnIndex;
-                return firstDiff != 0 ?
-                    firstDiff : // whichever group that starts first goes first 
-                    (o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
+                return firstDiff != 0 ? firstDiff : // whichever group that starts first goes first
+                (o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
             }
         });
-        
+
         for (int i = _rootColumnGroups.size() - 1; i >= 0; i--) {
             ColumnGroup g = _rootColumnGroups.get(i);
-            
+
             for (int j = i + 1; j < _rootColumnGroups.size(); j++) {
                 ColumnGroup g2 = _rootColumnGroups.get(j);
                 if (g2.parentGroup == null && g.contains(g2)) {
@@ -267,14 +278,14 @@ public class ColumnModel  {
                 }
             }
         }
-        
+
         for (int i = _rootColumnGroups.size() - 1; i >= 0; i--) {
             if (_rootColumnGroups.get(i).parentGroup != null) {
                 _rootColumnGroups.remove(i);
             }
         }
     }
-    
+
     protected void generateMaps() {
         _nameToColumn = new HashMap<String, Column>();
         _cellIndexToColumn = new HashMap<Integer, Column>();
@@ -291,7 +302,7 @@ public class ColumnModel  {
         }
         _maxCellIndex = maxCellIndex;
     }
-    
+
     /**
      * Clear cached value computations for all columns
      */

@@ -43,21 +43,19 @@ import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRemovalChange;
 
 public class ColumnRemovalOperation extends AbstractOperation {
+
     final protected String _columnName;
 
     @JsonCreator
     public ColumnRemovalOperation(
-        @JsonProperty("columnName")
-        String columnName
-    ) {
+            @JsonProperty("columnName") String columnName) {
         _columnName = columnName;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-
 
     @Override
     protected String getBriefDescription(Project project) {
@@ -70,11 +68,11 @@ public class ColumnRemovalOperation extends AbstractOperation {
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }
-        
+
         String description = "Remove column " + column.getName();
-        
+
         Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
-        
+
         return new HistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
     }
 }

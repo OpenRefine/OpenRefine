@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
@@ -88,18 +89,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
-    		@JsonProperty("engineConfig")
-    		EngineConfig engineConfig,
-    		@JsonProperty("summary")
-    		String summary,
-            @JsonProperty("maxlag")
-            Integer maxlag,
-            @JsonProperty("editGroupsUrlSchema")
-            String editGroupsUrlSchema,
-            @JsonProperty("maxEditsPerMinute")
-    		Integer maxEditsPerMinute,
-    		@JsonProperty("tag")
-    		String tag) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("summary") String summary,
+            @JsonProperty("maxlag") Integer maxlag,
+            @JsonProperty("editGroupsUrlSchema") String editGroupsUrlSchema,
+            @JsonProperty("maxEditsPerMinute") Integer maxEditsPerMinute,
+            @JsonProperty("tag") String tag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -248,7 +243,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 // Because commas and colons are used by Wikibase to separate the auto-generated summaries
                 // from the user-supplied ones, we replace these separators by similar unicode characters to
                 // make sure they can be told apart.
-                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                String summaryWithoutCommas = _summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
                 summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
             }
 

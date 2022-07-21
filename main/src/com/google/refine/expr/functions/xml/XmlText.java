@@ -50,30 +50,31 @@ public class XmlText implements Function {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
+                Element e1 = (Element) o1;
                 return e1.text();
 
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '"
+                        + new Type().call(bindings, args)
+                        + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args)
+                + "' and expects a single XML or HTML element as an argument");
     }
-
 
     @Override
     public String getDescription() {
         return FunctionDescription.xml_xmltext();
     }
-    
+
     @Override
     public String getParams() {
         return "Element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "String text";
     }
 }
-

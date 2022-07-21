@@ -49,18 +49,17 @@ import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class SetPreferenceCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
-        PreferenceStore ps = project != null ? 
-                project.getMetadata().getPreferenceStore() : 
-                ProjectManager.singleton.getPreferenceStore();
+        PreferenceStore ps = project != null ? project.getMetadata().getPreferenceStore() : ProjectManager.singleton.getPreferenceStore();
                 
         String prefName = request.getParameter("name");
         String valueString = request.getParameter("value");

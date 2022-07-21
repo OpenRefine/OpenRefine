@@ -49,7 +49,7 @@ public class Multinomial implements Function {
         }
         int sum = 0;
         int product = 1;
-        for (int i = 0; i < args.length; i++){
+        for (int i = 0; i < args.length; i++) {
             if (!(args[i] instanceof Number)) {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
             }
@@ -64,12 +64,12 @@ public class Multinomial implements Function {
     public String getDescription() {
         return FunctionDescription.math_multinomial();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

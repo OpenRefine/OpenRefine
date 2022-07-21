@@ -54,12 +54,12 @@ public class ACos implements Function {
     public String getDescription() {
         return FunctionDescription.math_acos();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

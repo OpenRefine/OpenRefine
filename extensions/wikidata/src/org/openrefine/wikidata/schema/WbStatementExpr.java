@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ public class WbStatementExpr {
         List<PropertyIdValue> propertyOrder = new ArrayList<PropertyIdValue>();
         for (Snak snak : snaks) {
             List<Snak> existingSnaks = snakGroups.get(snak.getPropertyId());
-            if(existingSnaks == null) {
+            if (existingSnaks == null) {
                 existingSnaks = new ArrayList<Snak>();
                 snakGroups.put(snak.getPropertyId(), existingSnaks);
                 propertyOrder.add(snak.getPropertyId());

@@ -56,10 +56,8 @@ import com.google.refine.util.ParsingUtilities;
 public class PreviewWikibaseSchemaCommand extends Command {
 	
 	/**
-	 * This command uses POST but is left CSRF-unprotected since it does not
-	 * incur a side effect or state change in the backend.
-	 * The reason why it uses POST is to make sure large schemas and engines
-	 * can be passed as parameters.
+     * This command uses POST but is left CSRF-unprotected since it does not incur a side effect or state change in the
+     * backend. The reason why it uses POST is to make sure large schemas and engines can be passed as parameters.
 	 */
     
     @Override
@@ -79,7 +77,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     schema = WikibaseSchema.reconstruct(schemaJson);
                 } catch (IOException e) {
-                    respondError(response, "Wikibase schema could not be parsed. Error message: "+e.getMessage());
+                    respondError(response, "Wikibase schema could not be parsed. Error message: " + e.getMessage());
                     return;
                 }
             } else {

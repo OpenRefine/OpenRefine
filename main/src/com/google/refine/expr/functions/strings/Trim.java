@@ -52,16 +52,17 @@ public class Trim implements Function {
         }
         return new EvalError("Invalid parameters");
     }
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_trim();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

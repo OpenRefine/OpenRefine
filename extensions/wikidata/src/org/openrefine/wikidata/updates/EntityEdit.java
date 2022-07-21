@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.updates;
 
 import java.util.HashMap;
@@ -15,9 +16,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * A class to plan an update of an entity, after evaluating the schema but
- * before fetching the current content of the entity (this is why it does not
- * extend {@link EntityUpdate}).
+ * A class to plan an update of an entity, after evaluating the schema but before fetching the current content of the
+ * entity (this is why it does not extend {@link EntityUpdate}).
  * 
  * @author Antonin Delpeuch
  */
@@ -27,38 +27,36 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface EntityEdit {
 
-	/**
-	 * The id of the entity being edited
-	 */
-	@JsonProperty("subject")
-	EntityIdValue getEntityId();
+    /**
+     * The id of the entity being edited
+     */
+    @JsonProperty("subject")
+    EntityIdValue getEntityId();
 
     /**
-     * In case the subject id is not new, returns the corresponding update given
-     * the current state of the entity. Throws a validation exception otherwise.
+     * In case the subject id is not new, returns the corresponding update given the current state of the entity. Throws
+     * a validation exception otherwise.
      */
-	EntityUpdate toEntityUpdate(EntityDocument entityDocument);
-	
+    EntityUpdate toEntityUpdate(EntityDocument entityDocument);
+
     /**
-     * Merges all the changes in other with this instance. Both updates should have
-     * the same subject. Changes coming from `other` have priority over changes
-     * from this instance. This instance is not modified, the merged update is returned
-     * instead.
+     * Merges all the changes in other with this instance. Both updates should have the same subject. Changes coming
+     * from `other` have priority over changes from this instance. This instance is not modified, the merged update is
+     * returned instead.
      * 
      * @param other
      *            the other change that should be merged
      */
     EntityEdit merge(EntityEdit otherEdit);
-	
+
     /**
-     * In case the subject id is new, returns the corresponding new item document
-     * to be created. Throws a validation exception otherwise.
+     * In case the subject id is new, returns the corresponding new item document to be created. Throws a validation
+     * exception otherwise.
      */
     EntityDocument toNewEntity();
-    
+
     /**
-     * Group a list of {@link EntityUpdate}s by subject: this is useful to make one single
-     * edit per entity.
+     * Group a list of {@link EntityUpdate}s by subject: this is useful to make one single edit per entity.
      * 
      * @param entityDocuments
      * @return a map from entity ids to merged {@link EntityUpdate} for that id
@@ -72,7 +70,7 @@ public interface EntityEdit {
 
             EntityIdValue qid = update.getEntityId();
             if (map.containsKey(qid)) {
-            	EntityEdit oldUpdate = map.get(qid);
+                EntityEdit oldUpdate = map.get(qid);
                 map.put(qid, oldUpdate.merge(update));
             } else {
                 map.put(qid, update);
@@ -80,7 +78,7 @@ public interface EntityEdit {
         }
         return map;
     }
-    
+
     /**
      * Is this update about a new entity?
      */
@@ -88,15 +86,14 @@ public interface EntityEdit {
     public default boolean isNew() {
         return EntityIdValue.SITE_LOCAL.equals(getEntityId().getSiteIri());
     }
-    
+
     /**
-     * @return true when this change leaves the content of the document untouched.
-     * In the case of a new entity, this could still mean making an edit to create the
-     * blank entity.
+     * @return true when this change leaves the content of the document untouched. In the case of a new entity, this
+     *         could still mean making an edit to create the blank entity.
      */
     @JsonIgnore
     boolean isEmpty();
-    
+
     /**
      * @return true when this change is empty and its subject is not new
      */

@@ -34,11 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importing;
 
 public interface UrlRewriter {
+
     static public class Result {
+
         public String rewrittenUrl;
         public String format;
         public boolean download;
     }
-    
+
     public Result rewrite(String url);
 }

@@ -66,12 +66,13 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporter extends TabularImportingParserBase {
+
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
-    
+
     public ExcelImporter() {
         super(true);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -80,14 +81,13 @@ public class ExcelImporter extends TabularImportingParserBase {
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
-            for (int index = 0;index < fileRecords.size();index++) {
+            for (int index = 0; index < fileRecords.size(); index++) {
                 ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
 
                 Workbook wb = null;
                 try {
-                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) :
-                                 new HSSFWorkbook(new POIFSFileSystem(file));
+                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) : new HSSFWorkbook(new POIFSFileSystem(file));
 
                     int sheetCount = wb.getNumberOfSheets();
                     for (int i = 0; i < sheetCount; i++) {
@@ -95,7 +95,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                         int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
 
                         ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
+                        JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getSheetName());
                         JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                         JSONUtilities.safePut(sheetRecord, "rows", rows);
                         if (rows > 1) {
@@ -110,100 +110,96 @@ public class ExcelImporter extends TabularImportingParserBase {
                         wb.close();
                     }
                 }
-            }                
+            }
         } catch (IOException e) {
             logger.error("Error generating parser UI initialization data for Excel file", e);
         } catch (IllegalArgumentException e) {
             logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
-        } catch (POIXMLException|InvalidFormatException e) {
+        } catch (POIXMLException | InvalidFormatException e) {
             logger.error("Error generating parser UI initialization data for Excel file - invalid XML", e);
         }
-        
+
         return options;
     }
-    
+
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        InputStream inputStream,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
-          inputStream = new BufferedInputStream(inputStream);
+            inputStream = new BufferedInputStream(inputStream);
         }
-        
+
         try {
-            wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ?
-                new XSSFWorkbook(inputStream) :
-                new HSSFWorkbook(new POIFSFileSystem(inputStream));
+            wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ? new XSSFWorkbook(inputStream)
+                    : new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
             exceptions.add(new ImportException(
-                "Attempted to parse as an Excel file but failed. " +
-                "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
-                e
-            ));
+                    "Attempted to parse as an Excel file but failed. " +
+                            "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
+                    e));
             return;
-        } catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
             exceptions.add(new ImportException(
-               "Attempted to parse file as an Excel file but failed. " +
-               "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. " +
-               "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
-               "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
-               e
-           ));
+                    "Attempted to parse file as an Excel file but failed. " +
+                            "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. "
+                            +
+                            "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
+                            "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
+                    e));
             return;
         } catch (IllegalArgumentException e) {
             exceptions.add(new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
-                    "Only Excel 97 and later formats are supported.",
-                    e
-                ));
-                return;
+                            "Only Excel 97 and later formats are supported.",
+                    e));
+            return;
         } catch (POIXMLException e) {
             exceptions.add(new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
-                    "Invalid XML.",
-                    e
-                ));
-                return;
+                            "Invalid XML.",
+                    e));
+            return;
         }
-        
+
         ArrayNode sheets = (ArrayNode) options.get("sheets");
-        
-        for(int i=0;i<sheets.size();i++)  {
+
+        for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
             ObjectNode sheetObj = (ObjectNode) sheets.get(i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
-            
+
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
-            
+
             final Sheet sheet = wb.getSheetAt(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = sheet.getLastRowNum();
-            
+
             TableDataReader dataReader = new TableDataReader() {
+
                 int nextRow = 0;
-                
+
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
                     if (nextRow > lastRow) {
                         return null;
                     }
-                    
+
                     List<Object> cells = new ArrayList<Object>();
                     org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
                     if (row != null) {
                         short lastCell = row.getLastCellNum();
                         for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
                             Cell cell = null;
-                            
+
                             org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
                             if (sourceCell != null) {
                                 cell = extractCell(sourceCell);
@@ -214,38 +210,37 @@ public class ExcelImporter extends TabularImportingParserBase {
                     return cells;
                 }
             };
-            
+
             // TODO: Do we need to preserve the original filename? Take first piece before #?
 //           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             TabularImportingParserBase.readTable(
-                project,
-                metadata,
-                job,
-                dataReader,
-                fileSource + "#" + sheet.getSheetName(),
-                limit,
-                options,
-                exceptions
-            );
+                    project,
+                    metadata,
+                    job,
+                    dataReader,
+                    fileSource + "#" + sheet.getSheetName(),
+                    limit,
+                    options,
+                    exceptions);
         }
     }
-    
+
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.FORMULA)) {
             cellType = cell.getCachedFormulaResultType();
         }
         if (cellType.equals(CellType.ERROR) ||
-            cellType.equals(CellType.BLANK)) {
+                cellType.equals(CellType.BLANK)) {
             return null;
         }
-        
+
         Serializable value = null;
         if (cellType.equals(CellType.BOOLEAN)) {
             value = cell.getBooleanCellValue();
         } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
-            
+
             if (DateUtil.isCellDateFormatted(cell)) {
                 value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following

@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -23,8 +24,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * The representation of an item edit, which can contain variables both for
- * its own id and in its contents.
+ * The representation of an item edit, which can contain variables both for its own id and in its contents.
  * 
  * @author Antonin Delpeuch
  *
@@ -54,7 +54,6 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         if (nameDescExprs == null) {
             nameDescExprs = Collections.emptyList();
         }
-        
         this.nameDescs = nameDescExprs;
         if (statementGroupExprs == null) {
             statementGroupExprs = Collections.emptyList();
@@ -138,7 +137,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         		if (pathValue != null && !pathValue.getString().isBlank()) {
         			update.addFilePath(pathValue.getString());
         		}
-        	} catch(SkipSchemaExpressionException e) {
+            } catch (SkipSchemaExpressionException e) {
         		;
         	}
         }
@@ -148,7 +147,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         		if (nameValue != null && !nameValue.getString().isBlank()) {
         			update.addFileName(nameValue.getString());
         		}
-        	} catch(SkipSchemaExpressionException e) {
+            } catch (SkipSchemaExpressionException e) {
         		;
         	}
         }
@@ -158,7 +157,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         		if (wikitextValue != null && !wikitextValue.getString().isBlank()) {
         			update.addWikitext(wikitextValue.getString());
         		}
-        	} catch(SkipSchemaExpressionException e) {
+            } catch (SkipSchemaExpressionException e) {
         		;
         	}
         }
@@ -169,9 +168,8 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
 	}
 	
 	/**
-	 * The Mid for the entity. If marked as new, a new
-	 * file will be uploaded, otherwise the existing MediaInfo
-	 * entity will be edited.
+     * The Mid for the entity. If marked as new, a new file will be uploaded, otherwise the existing MediaInfo entity
+     * will be edited.
 	 */
     @JsonProperty("subject")
     public WbExpression<? extends EntityIdValue> getSubject() {
@@ -195,10 +193,8 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     }
     
     /**
-     * The path to the file that should be uploaded,
-     * either to replace the current file if the subject already exists,
-     * or to create a new file on the MediaWiki instance if the subject
-     * does not exist yet.
+     * The path to the file that should be uploaded, either to replace the current file if the subject already exists,
+     * or to create a new file on the MediaWiki instance if the subject does not exist yet.
      * 
      * Can be null if editing existing entities only (in which case the files' contents are not changed)
      */
@@ -208,8 +204,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     }
     
     /**
-     * The filename at which the file should be uploaded (if new),
-     * or moved (if existing).
+     * The filename at which the file should be uploaded (if new), or moved (if existing).
      * 
      * Can be null if editing existing entities only (in which case the files will not be moved)
      */
@@ -220,6 +215,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     
     /**
      * The wikitext to be added to the file (or edited)
+     * 
      * @return
      */
     @JsonProperty("wikitext")

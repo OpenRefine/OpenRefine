@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
@@ -49,7 +50,7 @@ public class SaveWikibaseSchemaCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}

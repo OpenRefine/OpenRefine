@@ -49,12 +49,13 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class XmlImportUtilities extends TreeImportUtilities {
+
     final static Logger logger = LoggerFactory.getLogger("XmlImportUtilities");
 
     static public String[] detectPathFromTag(TreeReader parser, String tag) throws TreeReaderException {
         while (parser.hasNext()) {
             Token eventType = parser.next();
-            if (eventType == Token.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+            if (eventType == Token.StartEntity) {// XMLStreamConstants.START_ELEMENT) {
                 List<String> path = detectRecordElement(parser, tag);
                 if (path != null) {
                     String[] path2 = new String[path.size()];
@@ -70,20 +71,19 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * Looks for an element with the given tag name in the Tree data being parsed, returning the path hierarchy to reach it.
+     * Looks for an element with the given tag name in the Tree data being parsed, returning the path hierarchy to reach
+     * it.
      *
      * @param parser
      * @param tag
-     *         The element name (can be qualified) to search for
-     * @return
-     *         If the tag is found, an array of strings is returned.
-     *         If the tag is at the top level, the tag will be the only item in the array.
-     *         If the tag is nested beneath the top level, the array is filled with the hierarchy with the tag name at the last index
-     *         null if the the tag is not found.
+     *            The element name (can be qualified) to search for
+     * @return If the tag is found, an array of strings is returned. If the tag is at the top level, the tag will be the
+     *         only item in the array. If the tag is nested beneath the top level, the array is filled with the
+     *         hierarchy with the tag name at the last index null if the the tag is not found.
      * @throws ServletException
      */
     static protected List<String> detectRecordElement(TreeReader parser, String tag) throws TreeReaderException {
-        if(parser.current() == Token.Ignorable) {
+        if (parser.current() == Token.Ignorable) {
             parser.next();
         }
 
@@ -98,9 +98,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
         while (parser.hasNext()) {
             Token eventType = parser.next();
-            if (eventType == Token.EndEntity) {//XMLStreamConstants.END_ELEMENT) {
+            if (eventType == Token.EndEntity) {// XMLStreamConstants.END_ELEMENT) {
                 break;
-            } else if (eventType == Token.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+            } else if (eventType == Token.StartEntity) {// XMLStreamConstants.START_ELEMENT) {
                 List<String> path = detectRecordElement(parser, tag);
                 if (path != null) {
                     path.add(0, localName);
@@ -115,7 +115,6 @@ public class XmlImportUtilities extends TreeImportUtilities {
         return prefix != null && prefix.length() > 0 ? (prefix + ":" + localName) : localName;
     }
 
-
     /**
      * @param parser
      * @param project
@@ -124,7 +123,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated 2020-07-23 Use {@link XmlImportUtilities#importTreeData(TreeReader, Project, String[], ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated 2020-07-23 Use
+     *             {@link XmlImportUtilities#importTreeData(TreeReader, Project, String[], ImportColumnGroup, int, boolean, boolean, boolean)}
      */
     @Deprecated
     static public void importTreeData(
@@ -133,21 +133,20 @@ public class XmlImportUtilities extends TreeImportUtilities {
             String[] recordPath,
             ImportColumnGroup rootColumnGroup,
             int limit,
-            ImportParameters parameters
-        ) throws TreeReaderException{
-        importTreeData(parser, project, recordPath, rootColumnGroup, limit, parameters.trimStrings, parameters.storeEmptyStrings, parameters.guessDataType);
+            ImportParameters parameters) throws TreeReaderException {
+        importTreeData(parser, project, recordPath, rootColumnGroup, limit, parameters.trimStrings, parameters.storeEmptyStrings,
+                parameters.guessDataType);
     }
-    
+
     static public void importTreeData(
-        TreeReader parser,
-        Project project,
-        String[] recordPath,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        boolean trimStrings,
-        boolean storeEmptyStrings,
-        boolean guessDataTypes
-    ) throws TreeReaderException{
+            TreeReader parser,
+            Project project,
+            String[] recordPath,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            boolean trimStrings,
+            boolean storeEmptyStrings,
+            boolean guessDataTypes) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         }
@@ -160,7 +159,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
         } catch (TreeReaderException e) {
-            logger.error("Exception from XML parse",e);
+            logger.error("Exception from XML parse", e);
             throw e;
         }
     }
@@ -174,7 +173,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated Use {@link XmlImportUtilities#findRecord(Project, TreeReader, String[], int, ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated Use
+     *             {@link XmlImportUtilities#findRecord(Project, TreeReader, String[], int, ImportColumnGroup, int, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void findRecord(
@@ -184,11 +184,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
             int pathIndex,
             ImportColumnGroup rootColumnGroup,
             int limit,
-            ImportParameters parameters
-        ) throws TreeReaderException {
-            findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, limit, parameters.trimStrings,
-                    parameters.storeEmptyStrings, parameters.guessDataType);
-        }
+            ImportParameters parameters) throws TreeReaderException {
+        findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, limit, parameters.trimStrings,
+                parameters.storeEmptyStrings, parameters.guessDataType);
+    }
 
     /**
      * @param project
@@ -197,32 +196,34 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param pathIndex
      * @param rootColumnGroup
      * @param limit
-     * @param trimStrings trim whitespace from strings if true
-     * @param storeEmptyStrings store empty strings if true
-     * @param guessDataTypes guess whether strings represent numbers and convert
+     * @param trimStrings
+     *            trim whitespace from strings if true
+     * @param storeEmptyStrings
+     *            store empty strings if true
+     * @param guessDataTypes
+     *            guess whether strings represent numbers and convert
      * @throws TreeReaderException
      */
     static protected void findRecord(
-        Project project,
-        TreeReader parser,
-        String[] recordPath,
-        int pathIndex,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        boolean trimStrings,
-        boolean storeEmptyStrings,
-        boolean guessDataTypes
-    ) throws TreeReaderException {
+            Project project,
+            TreeReader parser,
+            String[] recordPath,
+            int pathIndex,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            boolean trimStrings,
+            boolean storeEmptyStrings,
+            boolean guessDataTypes) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
-            logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:"+Arrays.toString(recordPath));
+            logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:" + Arrays.toString(recordPath));
         }
-        if(parser.current() == Token.Ignorable){//XMLStreamConstants.START_DOCUMENT){
+        if (parser.current() == Token.Ignorable) {// XMLStreamConstants.START_DOCUMENT){
             logger.warn("Cannot use findRecord method for START_DOCUMENT event");
             return;
         }
-        
+
         String recordPathSegment = recordPath[pathIndex];
-        
+
         String localName = parser.getFieldName();
         String fullName = composeName(parser.getPrefix(), localName);
         if (recordPathSegment.equals(localName) || recordPathSegment.equals(fullName)) {
@@ -256,9 +257,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
     static protected void skip(TreeReader parser) throws TreeReaderException {
         while (parser.hasNext()) {
             Token eventType = parser.next();
-            if (eventType == Token.StartEntity) {//XMLStreamConstants.START_ELEMENT) {
+            if (eventType == Token.StartEntity) {// XMLStreamConstants.START_ELEMENT) {
                 skip(parser);
-            } else if (eventType == Token.EndEntity) { //XMLStreamConstants.END_ELEMENT) {
+            } else if (eventType == Token.EndEntity) { // XMLStreamConstants.END_ELEMENT) {
                 return;
             }
         }
@@ -270,34 +271,34 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param rootColumnGroup
      * @param parameter
      * @throws TreeReaderException
-     * @deprecated Use {@link XmlImportUtilities#processRecord(Project, TreeReader, ImportColumnGroup, boolean, boolean, boolean)}
+     * @deprecated Use
+     *             {@link XmlImportUtilities#processRecord(Project, TreeReader, ImportColumnGroup, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void processRecord(
             Project project,
             TreeReader parser,
             ImportColumnGroup rootColumnGroup,
-            ImportParameters parameter
-        ) throws TreeReaderException {
+            ImportParameters parameter) throws TreeReaderException {
         processRecord(project, parser, rootColumnGroup, parameter.trimStrings, parameter.storeEmptyStrings, parameter.guessDataType);
     }
-    
+
     /**
-     * processRecord parses Tree data for a single element and it's sub-elements,
-     * adding the parsed data as a row to the project
+     * processRecord parses Tree data for a single element and it's sub-elements, adding the parsed data as a row to the
+     * project
+     * 
      * @param project
      * @param parser
      * @param rootColumnGroup
      * @throws ServletException
      */
     static protected void processRecord(
-        Project project,
-        TreeReader parser,
-        ImportColumnGroup rootColumnGroup,
-        boolean trimStrings,
-        boolean storeEmptyStrings,
-        boolean guessDataTypes
-    ) throws TreeReaderException {
+            Project project,
+            TreeReader parser,
+            ImportColumnGroup rootColumnGroup,
+            boolean trimStrings,
+            boolean storeEmptyStrings,
+            boolean guessDataTypes) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("processRecord(Project,TreeReader,ImportColumnGroup)");
         }
@@ -308,12 +309,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * processFieldAsRecord parses Tree data for a single element and it's sub-elements,
-     * adding the parsed data as a row to the project
+     * processFieldAsRecord parses Tree data for a single element and it's sub-elements, adding the parsed data as a row
+     * to the project
+     * 
      * @param project
      * @param parser
      * @param rootColumnGroup
-     * @throws TreeReaderException 
+     * @throws TreeReaderException
      * @throws ServletException
      */
     @Deprecated
@@ -324,30 +326,30 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * processFieldAsRecord parses Tree data for a single element and it's sub-elements,
-     * adding the parsed data as a row to the project
+     * processFieldAsRecord parses Tree data for a single element and it's sub-elements, adding the parsed data as a row
+     * to the project
+     * 
      * @param project
      * @param parser
      * @param rootColumnGroup
      * @throws ServletException
      */
     static protected void processFieldAsRecord(
-        Project project,
-        TreeReader parser,
-        ImportColumnGroup rootColumnGroup,
-        boolean trimStrings,
-        boolean storeEmptyStrings,
-        boolean guessDataType
-    ) throws TreeReaderException {
+            Project project,
+            TreeReader parser,
+            ImportColumnGroup rootColumnGroup,
+            boolean trimStrings,
+            boolean storeEmptyStrings,
+            boolean guessDataType) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("processFieldAsRecord(Project,TreeReader,ImportColumnGroup)");
-        }        
+        }
         Serializable value = parser.getValue();
         ImportRecord record = null;
         if (value instanceof String) {
             String text = (String) value;
             if (trimStrings) {
-               text = text.trim();
+                text = text.trim();
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 record = new ImportRecord();
@@ -358,18 +360,16 @@ public class XmlImportUtilities extends TreeImportUtilities {
                         parser.getFieldName(),
                         (String) value,
                         storeEmptyStrings,
-                        guessDataType
-                        );
+                        guessDataType);
             }
         } else {
             record = new ImportRecord();
             addCell(
-                project,
-                rootColumnGroup,
-                record,
-                parser.getFieldName(),
-                value
-            );
+                    project,
+                    rootColumnGroup,
+                    record,
+                    parser.getFieldName(),
+                    value);
         }
         if (record != null) {
             addImportRecordToProject(record, project);
@@ -381,7 +381,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
         addImportRecordToProject(record, project);
     }
-    
+
     static protected void addImportRecordToProject(ImportRecord record, Project project) {
         for (List<Cell> row : record.rows) {
             if (row.size() > 0) {
@@ -396,7 +396,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             }
         }
     }
-    
+
     @Deprecated
     static protected void processSubRecord(
             Project project,
@@ -404,12 +404,11 @@ public class XmlImportUtilities extends TreeImportUtilities {
             ImportColumnGroup columnGroup,
             ImportRecord record,
             int level,
-            ImportParameters parameter
-        ) throws TreeReaderException {
-            processSubRecord(project, parser, columnGroup, record, level, parameter.trimStrings,
-                    parameter.storeEmptyStrings, parameter.guessDataType);
-        }
-    
+            ImportParameters parameter) throws TreeReaderException {
+        processSubRecord(project, parser, columnGroup, record, level, parameter.trimStrings,
+                parameter.storeEmptyStrings, parameter.guessDataType);
+    }
+
     /**
      *
      * @param project
@@ -419,30 +418,29 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @throws ServletException
      */
     static protected void processSubRecord(
-        Project project,
-        TreeReader parser,
-        ImportColumnGroup columnGroup,
-        ImportRecord record,
-        int level,
-        boolean trimStrings,
-        boolean storeEmptyStrings,
-        boolean guessDataType
-    ) throws TreeReaderException {
+            Project project,
+            TreeReader parser,
+            ImportColumnGroup columnGroup,
+            ImportRecord record,
+            int level,
+            boolean trimStrings,
+            boolean storeEmptyStrings,
+            boolean guessDataType) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
-            logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:"+level+" "+columnGroup);
+            logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:" + level + " " + columnGroup);
         }
-        
-        if(parser.current() == Token.Ignorable) {
+
+        if (parser.current() == Token.Ignorable) {
             return;
         }
-        
+
         ImportColumnGroup thisColumnGroup = getColumnGroup(
-                    project,
-                    columnGroup,
-                    composeName(parser.getPrefix(), parser.getFieldName()));
-        
+                project,
+                columnGroup,
+                composeName(parser.getPrefix(), parser.getFieldName()));
+
         thisColumnGroup.nextRowIndex = Math.max(thisColumnGroup.nextRowIndex, columnGroup.nextRowIndex);
-        
+
         int attributeCount = parser.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i);
@@ -451,14 +449,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 addCell(
-                    project,
-                    thisColumnGroup,
-                    record,
-                    composeName(parser.getAttributePrefix(i), parser.getAttributeLocalName(i)),
-                    text,
-                    storeEmptyStrings,
-                    guessDataType
-                );
+                        project,
+                        thisColumnGroup,
+                        record,
+                        composeName(parser.getAttributePrefix(i), parser.getAttributeLocalName(i)),
+                        text,
+                        storeEmptyStrings,
+                        guessDataType);
             }
         }
 
@@ -466,25 +463,24 @@ public class XmlImportUtilities extends TreeImportUtilities {
             Token eventType = parser.next();
             if (eventType == Token.StartEntity) {
                 processSubRecord(
-                    project,
-                    parser,
-                    thisColumnGroup,
-                    record,
-                    level+1,
-                    trimStrings,
-                    storeEmptyStrings,
-                    guessDataType
-                );
-            } else if (//eventType == XMLStreamConstants.CDATA ||
-                        eventType == Token.Value) { //XMLStreamConstants.CHARACTERS) {
+                        project,
+                        parser,
+                        thisColumnGroup,
+                        record,
+                        level + 1,
+                        trimStrings,
+                        storeEmptyStrings,
+                        guessDataType);
+            } else if (// eventType == XMLStreamConstants.CDATA ||
+            eventType == Token.Value) { // XMLStreamConstants.CHARACTERS) {
                 Serializable value = parser.getValue();
                 String colName = parser.getFieldName();
                 if (value instanceof String) {
                     String text = (String) value;
-                    if(trimStrings) {
+                    if (trimStrings) {
                         text = text.trim();
                     }
-                    addCell(project, thisColumnGroup, record, colName, text, 
+                    addCell(project, thisColumnGroup, record, colName, text,
                             storeEmptyStrings, guessDataType);
                 } else {
                     addCell(project, thisColumnGroup, record, colName, value);
