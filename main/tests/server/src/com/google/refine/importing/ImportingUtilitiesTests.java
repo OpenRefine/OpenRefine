@@ -381,9 +381,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void testImportGZipCompressedFiles() throws IOException {
-        String[] filenames = {"persons", "persons.csv.gz"};
+        String[] filenames = { "persons", "persons.csv.gz" };
         InputStreamReader reader = null;
-        for (String filename: filenames) {
+        for (String filename : filenames) {
             String filePathNoExtension = ClassLoader.getSystemResource(filename).getPath();
 
             File tmp = File.createTempFile("openrefine-test-" + filename.split("\\.")[0], "", job.getRawDataDir());
