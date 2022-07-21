@@ -61,8 +61,7 @@ WikibaseDialog.prototype.populateDialog = function () {
     let _elmts = DOM.bind(wikibase);
     _elmts.wikibaseSelect.value = wikibaseName;
     _elmts.wikibaseSelect.id = wikibaseName+'Select';
-
-    debugger;
+    
     if (wikibaseName === this.activeWikibase) {
       _elmts.wikibaseItem.addClass("active");
     }

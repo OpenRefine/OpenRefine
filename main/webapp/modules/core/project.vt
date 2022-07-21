@@ -51,9 +51,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <a id="project-permalink-button" href="javascript:{}" class="secondary"></a>
       </div>
       <div id="project-controls">
-        <a href="./" class="button" target="_blank"><span id="or-proj-open"></span></a>
-        <a class="button" bind="exportButton" id="export-button" href="#export"><span class="button-menu" id="or-proj-export"></span></a>
-        <a href="https://docs.openrefine.org" target="_blank" class="button"><span id="or-proj-help"></span></a>
+        <a class="small-button button" href="./" target="_blank"><span id="or-proj-open"></span></a>
+        <a class="button small-button" bind="exportButton" id="export-button" href="#export"><span class="button-menu" id="or-proj-export"></span></a>
+        <a class="small-button button" href="https://docs.openrefine.org" target="_blank"><span id="or-proj-help"></span></a>
       </div>
     </div>
     
