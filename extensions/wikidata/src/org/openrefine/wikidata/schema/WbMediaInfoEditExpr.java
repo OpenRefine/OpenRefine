@@ -80,7 +80,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             } else if (!(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW)) {
                 validation.addError("Invalid term type for MediaInfo entity: " + nde.getType());
             } else {
-                validation.enter(new PathElement(nde.getPathElementType()));
+	    		validation.enter(new PathElement(nde.getPathElementType(), nde.getStaticLanguage()));
                 nde.validate(validation);
                 validation.leave();
             }

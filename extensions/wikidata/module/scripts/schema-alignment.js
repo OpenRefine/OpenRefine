@@ -1574,7 +1574,8 @@ SchemaAlignment.preview = function() {
   self.schemaValidationErrorsInPreview.empty();
   self.schemaValidationErrorsInIssues.empty();
   this._previewPanes.empty();
-  $('#wikibase-issues-panel').empty();
+  self._issuesElmts.warningsArea.empty();
+  self._issuesElmts.schemaValidationErrors.empty();
   this.updateNbEdits(0);
   var schema = this.getJSON();
   if (schema === null) {
@@ -1637,14 +1638,14 @@ SchemaAlignment.onProjectUpdate = function(options) {
  *************************/
 
 SchemaAlignment._updateWarnings = function(warnings, totalCount) {
-   var mainDiv = $('#wikibase-issues-panel');
+   var self = this;
    var countsElem = this.issuesTabCount;
 
    // clear everything
-   mainDiv.empty();
    countsElem.hide();
+   self._issuesElmts.warningsArea.empty();
 
-   var table = $('<table></table>').appendTo(mainDiv);
+   var table = $('<table></table>').appendTo(self._issuesElmts.warningsArea);
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
@@ -1682,6 +1683,9 @@ SchemaAlignment._renderSchemaValidationErrors = function(container, errors) {
       }
       span.text(pathElementText); 
     }
-    var message = $('<span></span>').text(error.message).appendTo(li);
+    var message = $('<span></span>')
+        .addClass('schema-validation-error')
+        .text(error.message)
+        .appendTo(li);
   }
 }
