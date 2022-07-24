@@ -15,11 +15,11 @@ import java.util.*;
 /**
  * A store for the allowed language code for terms and monolingual text values in Wikibase.
  *
- * @todo separate the languages allowed for terms from the ones allowed for monolingual text. Currently the list is for
+ * TODO: separate the languages allowed for terms from the ones allowed for monolingual text. Currently the list is for
  *       monolingual texts (which is larger).
  * 
  *       Query to update this list: curl
- *       "https://www.wikidata.org/w/api.php?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=monolingualtext&format=json"
+ *       "https://www.wikidata.org/w/api.php?action=query&amp;meta=wbcontentlanguages&amp;wbclprop=code&amp;wbclcontext=monolingualtext&amp;format=json"
  *       | jq ".query.wbcontentlanguages[].code" | sed -e "s/$/,/"
  * 
  * @author Antonin Delpeuch

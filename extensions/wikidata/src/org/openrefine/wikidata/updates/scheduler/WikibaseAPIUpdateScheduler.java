@@ -108,7 +108,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     /**
      * Splits an update into two parts
      * 
-     * @param update
+     * @param edit
      */
     protected void splitUpdate(EntityEdit edit) {
         // TODO (antonin, 2022-05-08): there is a lot of duplication in the two cases below (Item / MediaInfo),

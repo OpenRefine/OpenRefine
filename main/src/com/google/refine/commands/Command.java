@@ -114,7 +114,6 @@ public abstract class Command {
      *
      * @param request
      * @return
-     * @throws JSONException
      */
     static protected EngineConfig getEngineConfig(HttpServletRequest request) {
         if (request == null) {

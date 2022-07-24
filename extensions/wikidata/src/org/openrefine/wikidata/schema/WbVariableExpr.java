@@ -119,8 +119,6 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
      * 
      * @param other
      *            the object to compare
-     * @param columnName
-     *            the column name to compare to
      * @param targetClass
      *            the target class for equality
      * @return

@@ -60,7 +60,6 @@ public class SqlInsertBuilder {
      * @param columns
      * @param rows
      * @param sqlOptions
-     * @param sqlErrors
      */
     public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JsonNode sqlOptions) {
         this.table = table;
@@ -212,7 +211,6 @@ public class SqlInsertBuilder {
      * @param col
      * @param rowValue
      * @param quote
-     * @param fieldCount
      */
     public void handleNullField(
             boolean allowNullChkBox,

@@ -158,8 +158,8 @@ public class ReconciledDataExtensionJob {
         this.endpoint = endpoint;
     }
 
-    /**
-     * @todo Although the HTTP code has been unified, there may still be opportunity to refactor a higher level querying
+    /*
+     * TODO  Although the HTTP code has been unified, there may still be opportunity to refactor a higher level querying
      *       library out of this which could be shared with StandardReconConfig
      *
      *       It may also be possible to extract a library to query reconciliation services which could be used outside

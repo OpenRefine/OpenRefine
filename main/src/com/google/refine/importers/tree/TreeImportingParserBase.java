@@ -54,7 +54,7 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 /**
- * Abstract class for importer parsers which handle tree-shaped data (currently XML & JSON).
+ * Abstract class for importer parsers which handle tree-shaped data (currently XML &amp; JSON).
  */
 abstract public class TreeImportingParserBase extends ImportingParserBase {
 

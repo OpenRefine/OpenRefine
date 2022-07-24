@@ -60,9 +60,10 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 
     /**
      * Separates out the statements which refer to new entities from the rest of the update. The resulting updates are
-     * stored in {@link referencingUpdates} and {@link updatesWithoutReferences}.
+     * stored in {@link #pointerUpdates} and {@link #pointerFreeUpdates}.
      * 
-     * @param update
+     * @param edit
+     *             the edit to be split
      * @throws ImpossibleSchedulingException
      *             if two new entity ids are referred to in the same statement
      */

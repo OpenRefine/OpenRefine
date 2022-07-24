@@ -82,7 +82,7 @@ public class Parser {
         return new ParsingException("Parsing error at offset " + index + ": " + desc);
     }
 
-    /**
+    /*
      * <expression> := <sub-expression> | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
      */
     protected Evaluable parseExpression() throws ParsingException {
@@ -104,7 +104,7 @@ public class Parser {
         return sub;
     }
 
-    /**
+    /*
      * <sub-expression> := <term> | <sub-expression> [ "+" "-" ] <term>
      */
     protected Evaluable parseSubExpression() throws ParsingException {
@@ -126,7 +126,7 @@ public class Parser {
         return sub;
     }
 
-    /**
+    /*
      * <term> := <factor> | <term> [ "*" "/" "%" ] <factor>
      */
     protected Evaluable parseTerm() throws ParsingException {
@@ -148,7 +148,7 @@ public class Parser {
         return factor;
     }
 
-    /**
+    /*
      * <term> := <term-start> ( <path-segment> )* <term-start> := <string> | <number> | - <number> | <regex> |
      * <identifier> | <identifier> ( <expression-list> )
      *
@@ -284,7 +284,7 @@ public class Parser {
         return eval;
     }
 
-    /**
+    /*
      * <expression-list> := <empty> | <expression> ( "," <expression> )*
      *
      */

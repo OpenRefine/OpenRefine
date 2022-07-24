@@ -56,7 +56,7 @@ public class ExpressionContext {
      * 
      * @param baseIRI
      *            the siteIRI of the schema
-     * @param entityTypeBaseIRIS
+     * @param entityTypeBaseIRIs
      *            the siteIRI for specific entity types, falling back on the baseIRI otherwise
      * @param mediaWikiApiEndpoint
      *            the MediaWiki API endpoint of the Wikibase

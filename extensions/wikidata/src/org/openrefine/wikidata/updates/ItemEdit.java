@@ -95,7 +95,7 @@ public class ItemEdit extends TermedStatementEntityEdit {
      * from `other` have priority over changes from this instance. This instance is not modified, the merged update is
      * returned instead.
      * 
-     * @param other
+     * @param otherEdit
      *            the other change that should be merged
      */
     @Override

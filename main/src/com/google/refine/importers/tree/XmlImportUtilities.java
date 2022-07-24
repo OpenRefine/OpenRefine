@@ -38,8 +38,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +78,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @return If the tag is found, an array of strings is returned. If the tag is at the top level, the tag will be the
      *         only item in the array. If the tag is nested beneath the top level, the array is filled with the
      *         hierarchy with the tag name at the last index null if the the tag is not found.
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected List<String> detectRecordElement(TreeReader parser, String tag) throws TreeReaderException {
         if (parser.current() == Token.Ignorable) {
@@ -290,7 +288,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param project
      * @param parser
      * @param rootColumnGroup
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processRecord(
             Project project,
@@ -316,7 +314,6 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param parser
      * @param rootColumnGroup
      * @throws TreeReaderException
-     * @throws ServletException
      */
     @Deprecated
     static protected void processFieldAsRecord(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup,
@@ -332,7 +329,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param project
      * @param parser
      * @param rootColumnGroup
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processFieldAsRecord(
             Project project,
@@ -415,7 +412,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param parser
      * @param columnGroup
      * @param record
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processSubRecord(
             Project project,

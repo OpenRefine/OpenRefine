@@ -79,7 +79,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * Constructor.
      * 
-     * @todo remove this, it does not create a valid schema.
+     * TODO remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
     	entityTypeSiteIri = Collections.emptyMap();

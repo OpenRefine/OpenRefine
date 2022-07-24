@@ -137,8 +137,7 @@ public class GuessTypesOfColumnCommand extends Command {
      * @param project
      * @param column
      * @return
-     * @throws JSONException,
-     *             IOException
+     * @throws IOException
      */
     protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
             throws IOException {

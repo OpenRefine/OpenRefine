@@ -303,7 +303,7 @@ public class RefineServlet extends Butterfly {
      *
      * @param module
      *            the module the command belongs to
-     * @param name
+     * @param commandName
      *            command verb for command
      * @param commandObject
      *            object implementing the command
@@ -383,7 +383,7 @@ public class RefineServlet extends Butterfly {
 
     /**
      * @deprecated extensions relying on HttpURLConnection should rather migrate to a more high-level and mature HTTP
-     *             client. Use {@link RefineServlet.getUserAgent()} instead.
+     *             client. Use {@link RefineServlet#getUserAgent()} instead.
      */
     @Deprecated
     static public void setUserAgent(URLConnection urlConnection) {
@@ -394,7 +394,7 @@ public class RefineServlet extends Butterfly {
 
     /**
      * @deprecated extensions relying on HttpURLConnection should rather migrate to a more high-level and mature HTTP
-     *             client. Use {@link RefineServlet.getUserAgent()} instead.
+     *             client. Use {@link RefineServlet#getUserAgent()} instead.
      */
     @Deprecated
     static public void setUserAgent(HttpURLConnection httpConnection) {

@@ -64,10 +64,8 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
      * 
      * @param id
      *            the subject of the update
-     * @param addedStatements
-     *            the statements to add
-     * @param deletedStatements
-     *            the statements to delete
+     * @param statements
+     *            the statements to edit
      * @param labels
      *            the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew
@@ -132,7 +130,7 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
     /**
      * Generates the statement groups which should appear on this entity if it is created as new.
      * 
-     * @todo those statements are not currently deduplicated among themselves
+     * TODO those statements are not currently deduplicated among themselves
      */
     protected List<StatementGroup> getStatementGroupsForNewEntity() {
         Map<PropertyIdValue, List<Statement>> map = statements.stream()

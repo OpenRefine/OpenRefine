@@ -205,7 +205,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
     }
 
     /**
-     * Unchecked version of {@class NewEntityNotCreatedYetException}, for internal use only.
+     * Unchecked version of {@link NewEntityNotCreatedYetException}, for internal use only.
      */
     protected static class MissingEntityIdFound extends Error {
 

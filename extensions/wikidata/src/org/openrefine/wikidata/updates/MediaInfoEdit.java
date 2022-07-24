@@ -95,10 +95,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      * 
      * @param id
      *            the subject of the update
-     * @param addedStatements
-     *            the statements to add
-     * @param deletedStatements
-     *            the statements to delete
+     * @param statements
+     *            the statements to edit
      * @param labels
      *            the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew

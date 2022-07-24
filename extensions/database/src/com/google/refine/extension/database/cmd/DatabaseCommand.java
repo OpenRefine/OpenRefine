@@ -80,7 +80,6 @@ public abstract class DatabaseCommand extends Command {
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */
@@ -96,7 +95,6 @@ public abstract class DatabaseCommand extends Command {
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */

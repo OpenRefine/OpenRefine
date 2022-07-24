@@ -25,7 +25,7 @@ public interface StatementEntityEdit extends EntityEdit {
     List<StatementEdit> getStatementEdits();
 
     /**
-     * Groups added statements in {@link StatementGroupsEdit} objects.
+     * Groups added statements in {@link StatementGroupEdit} objects.
      */
     @JsonProperty("statementGroups")
     List<StatementGroupEdit> getStatementGroupEdits();

@@ -76,7 +76,7 @@ public class EditBatchProcessor {
 
     /**
      * Initiates the process of pushing a batch of updates to Wikibase. This schedules the updates and is a prerequisite
-     * for calling {@link performOneEdit}.
+     * for calling {@link #performEdit()}.
      * 
      * @param fetcher
      *            the data fetcher to fetch the existing state of the entities to edit
@@ -84,8 +84,6 @@ public class EditBatchProcessor {
      *            the editor to perform the edits
      * @param connection
      *            the connection to use to retrieve the current state of entities and edit them
-     * @param siteIri
-     *            the base prefix of the URIs of the entities in this Wikibase
      * @param entityDocuments
      *            the list of entity updates to perform
      * @param library
