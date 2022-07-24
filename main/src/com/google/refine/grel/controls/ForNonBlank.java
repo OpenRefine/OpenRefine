@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
@@ -45,10 +46,11 @@ public class ForNonBlank implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 4) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
+            // return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
+            return ControlEvalError.expects_four_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects second argument to be a variable name";
+            // return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
+            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }

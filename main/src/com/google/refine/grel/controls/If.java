@@ -38,13 +38,15 @@ import java.util.Properties;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 public class If implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            // return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }

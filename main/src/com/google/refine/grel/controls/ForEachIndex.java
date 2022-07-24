@@ -43,6 +43,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
@@ -50,13 +51,14 @@ public class ForEachIndex implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 4) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
+            // return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
+            return ControlEvalError.expects_four_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects second argument to be the index's variable name";
+            // return ControlFunctionRegistry.getControlName(this) + " expects second argument to be the index's variable name";
+            return ControlEvalError.expects_second_arg_index_var_name(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[2] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects third argument to be the element's variable name";
+            // return ControlFunctionRegistry.getControlName(this) + " expects third argument to be the element's variable name";
+            return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }

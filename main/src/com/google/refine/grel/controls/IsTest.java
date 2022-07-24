@@ -38,13 +38,15 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 abstract class IsTest implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 1) {
-            return ControlFunctionRegistry.getControlName(this) + " expects one argument";
+            // return ControlFunctionRegistry.getControlName(this) + " expects one argument";
+            return ControlEvalError.expects_one_arg(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
