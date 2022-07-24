@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -82,7 +83,8 @@ public class With implements Control {
     
     @Override
     public String getDescription() {
-            return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+        // return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+        return ControlDescription.with_desc();
     }
     
     @Override

@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
@@ -65,8 +66,9 @@ public class If implements Control {
     
     @Override
     public String getDescription() {
-            return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-            "Otherwise, evaluates expression eFalse and returns that result instead.";
+        // return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
+        // "Otherwise, evaluates expression eFalse and returns that result instead.";
+        return ControlDescription.if_desc();
     }
     
     @Override

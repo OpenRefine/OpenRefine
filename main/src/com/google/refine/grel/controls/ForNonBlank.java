@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -85,8 +86,8 @@ public class ForNonBlank implements Control {
 
     @Override
     public String getDescription() {
-            return "Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. " +
-            "Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead.";
+        // return "Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. " + "Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead.";
+        return ControlDescription.for_non_blank_desc();
     }
     
     @Override

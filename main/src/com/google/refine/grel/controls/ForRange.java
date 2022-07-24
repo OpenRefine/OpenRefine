@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -133,7 +134,8 @@ public class ForRange implements Control {
 
     @Override
     public String getDescription() {
-        return "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array.";
+        // return "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array.";
+        return ControlDescription.for_range_desc();
     }
     
     @Override

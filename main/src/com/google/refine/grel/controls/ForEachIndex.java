@@ -43,6 +43,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -148,7 +149,8 @@ public class ForEachIndex implements Control {
     
     @Override
     public String getDescription() {
-            return "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+        // return "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+        return ControlDescription.foreach_index_desc();
     }
     
     @Override
