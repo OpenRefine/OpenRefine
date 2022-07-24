@@ -76,7 +76,6 @@ public class MediaFileUtilsTest {
         uploadParams.put("filename", "My_test_file.png");
         uploadParams.put("text", "my wikitext");
         uploadParams.put("token", csrfToken);
-        uploadParams.put("ignorewarnings", "0");
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(
                 successfulUploadResponse);
         when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(uploadJsonResponse);
@@ -107,7 +106,6 @@ public class MediaFileUtilsTest {
         uploadParams.put("filename", "My_test_file.png");
         uploadParams.put("text", "my wikitext");
         uploadParams.put("token", csrfToken);
-        uploadParams.put("ignorewarnings", "0");
         uploadParams.put("url", url);
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenReturn(uploadJsonResponse);
@@ -141,7 +139,6 @@ public class MediaFileUtilsTest {
         invalidParams.put("filename", "My_test_file.png");
         invalidParams.put("text", "my wikitext");
         invalidParams.put("token", "invalid_token");
-        invalidParams.put("ignorewarnings", "0");
         invalidParams.put("url", url);
         when(connection.sendJsonRequest("POST", invalidParams, Collections.emptyMap()))
                 .thenThrow(new TokenErrorException("wrongtoken", "looks bad"));
@@ -154,7 +151,6 @@ public class MediaFileUtilsTest {
         uploadParams.put("filename", "My_test_file.png");
         uploadParams.put("text", "my wikitext");
         uploadParams.put("token", csrfToken);
-        uploadParams.put("ignorewarnings", "0");
         uploadParams.put("url", url);
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap()))
@@ -189,7 +185,6 @@ public class MediaFileUtilsTest {
         uploadParams.put("filename", "My_test_file.png");
         uploadParams.put("text", "my wikitext");
         uploadParams.put("token", csrfToken);
-        uploadParams.put("ignorewarnings", "0");
         uploadParams.put("url", url);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenThrow(
                 new MaxlagErrorException("the server is too slow"));

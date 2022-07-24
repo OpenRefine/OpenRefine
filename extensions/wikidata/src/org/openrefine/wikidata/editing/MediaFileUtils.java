@@ -87,7 +87,6 @@ public class MediaFileUtils {
 		parameters.put("filename", fileName);
 		parameters.put("text", wikitext);
 		parameters.put("token", getCsrfToken());
-		parameters.put("ignorewarnings", "0");
 		Map<String, ImmutablePair<String, java.io.File>> files = new HashMap<>();
 		files.put("file", new ImmutablePair<String, File>(fileName, path));
 		
@@ -115,7 +114,6 @@ public class MediaFileUtils {
 		parameters.put("filename", fileName);
 		parameters.put("text", wikitext);
 		parameters.put("token", getCsrfToken());
-		parameters.put("ignorewarnings", "0");
 		parameters.put("url", url.toExternalForm());
 		Map<String, ImmutablePair<String, java.io.File>> files = Collections.emptyMap();
 		
