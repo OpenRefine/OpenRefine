@@ -71,7 +71,8 @@ public class ForRange implements Control {
         } else if (ExpressionUtils.isError(stepO)) {
             return stepO;
         } else if (!(fromO instanceof Number) || !(toO instanceof Number) || !(stepO instanceof Number)) {
-            return new EvalError("First, second, and third arguments of forRange must all be numbers");
+            // return new EvalError("First, second, and third arguments of forRange must all be numbers");
+            return ControlEvalError.for_range();
         }
         
         String indexName = ((VariableExpr) args[3]).getName();

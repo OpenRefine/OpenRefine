@@ -44,6 +44,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -67,7 +68,8 @@ public class Filter implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError("First argument is not an array");
+            // return new EvalError("First argument is not an array");
+            return ControlEvalError.filter();
         }
         
         String name = ((VariableExpr) args[1]).getName();
@@ -145,7 +147,8 @@ public class Filter implements Control {
     
     @Override
     public String getDescription() {
-            return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.";
+        // return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.";
+        return ControlDescription.filter_desc();
     }
     
     @Override

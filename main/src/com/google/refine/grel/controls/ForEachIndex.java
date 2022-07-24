@@ -69,7 +69,8 @@ public class ForEachIndex implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError("First argument to forEach is not an array");
+            // return new EvalError("First argument to forEach is not an array");
+            return ControlEvalError.foreach_index();
         }
         
         String indexName = ((VariableExpr) args[1]).getName();
