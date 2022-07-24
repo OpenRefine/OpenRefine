@@ -63,7 +63,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
      * stored in {@link #pointerUpdates} and {@link #pointerFreeUpdates}.
      * 
      * @param edit
-     *             the edit to be split
+     *            the edit to be split
      * @throws ImpossibleSchedulingException
      *             if two new entity ids are referred to in the same statement
      */

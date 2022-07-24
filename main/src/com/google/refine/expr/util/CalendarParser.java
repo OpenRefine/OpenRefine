@@ -294,7 +294,8 @@ class ParserState {
      * @param cal
      *            calendar to fill
      * @param ignoreChanges
-     *            if <code>true</code>, throw an exception when a date like <code>Sept 31</code> is changed to <code>Oct 1</code>
+     *            if <code>true</code>, throw an exception when a date like <code>Sept 31</code> is changed to
+     *            <code>Oct 1</code>
      * 
      * @throws CalendarParserException
      *             if the date cannot be set for some reason
@@ -675,13 +676,14 @@ public class CalendarParser {
 
     /**
      * Translate a string representation of an ordinal number to the appropriate numeric value.<br>
-     * For example, <code>"1st"</code> would return <code>1</code>, <code>"23rd"</code> would return <code>23</code>, etc.
+     * For example, <code>"1st"</code> would return <code>1</code>, <code>"23rd"</code> would return <code>23</code>,
+     * etc.
      * 
      * @param str
      *            ordinal string
      * 
-     * @return the numeric value of the ordinal number, or <code>CalendarParser.UNSET</code> if the supplied string is not a
-     *         valid ordinal number.
+     * @return the numeric value of the ordinal number, or <code>CalendarParser.UNSET</code> if the supplied string is
+     *         not a valid ordinal number.
      */
     private static final int getOrdinalNumber(String str) {
         final int len = (str == null ? 0 : str.length());
@@ -825,8 +827,8 @@ public class CalendarParser {
 
     /**
      * Convert the supplied month name to its numeric representation. <br>
-     * For example, <code>"January"</code> (or any substring) would return <code>1</code> and <code>"December"</code> would return
-     * <code>12</code>.
+     * For example, <code>"January"</code> (or any substring) would return <code>1</code> and <code>"December"</code>
+     * would return <code>12</code>.
      * 
      * @param str
      *            month name
@@ -900,7 +902,8 @@ public class CalendarParser {
      *            order in which pieces of numeric strings are assigned (should be one of <code>YY_MM_DD</code>,
      *            <code>MM_DD_YY</code>, etc.)
      * @param ignoreChanges
-     *            if <code>true</code>, ignore date changes such as <code>Feb 31</code> being changed to <code>Mar 3</code>.
+     *            if <code>true</code>, ignore date changes such as <code>Feb 31</code> being changed to
+     *            <code>Mar 3</code>.
      * 
      * @return parsed date
      * 
@@ -1533,7 +1536,8 @@ public class CalendarParser {
      * @param order
      *            year/month/day order (YY_MM_DD, MM_DD_YY, etc.)
      * @param ignoreChanges
-     *            if <code>true</code>, ignore date changes such as <code>Feb 31</code> being changed to <code>Mar 3</code>.
+     *            if <code>true</code>, ignore date changes such as <code>Feb 31</code> being changed to
+     *            <code>Mar 3</code>.
      * 
      * @return parsed date
      * 
