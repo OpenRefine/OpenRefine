@@ -39,7 +39,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -47,6 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.CharMatcher;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,6 +216,7 @@ public class XmlImporter extends TreeImportingParserBase {
         static final int WHITESPACE_CHARACTERS_TOKEN = 15;
 
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
+            inputStream = removeInvalidCharacters(inputStream);
             parser = createXMLStreamReader(inputStream);
         }
 
