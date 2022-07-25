@@ -215,6 +215,13 @@ public class XmlImporter extends TreeImportingParserBase {
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
             parser = createXMLStreamReader(inputStream);
         }
+
+        private InputStream removeInvalidCharacters(InputStream inputStream) throws IOException {
+            String in = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            Pattern p = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
+            String result = p.matcher(in).replaceAll("");
+            return IOUtils.toInputStream(result, StandardCharsets.UTF_8);
+        }
         
         @Override
         public Token next() throws TreeReaderException {
