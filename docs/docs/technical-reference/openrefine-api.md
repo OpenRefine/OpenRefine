@@ -266,7 +266,7 @@ Libraries using the [OpenRefine API](openrefine-api):
 
 ### Ruby {#ruby}
 * [refine-ruby](https://github.com/distillytics/refine-ruby)
-  * The above is a maintained fork of [google-refine](https://github.com/maxogden/refine-ruby)
+  * The above is a maintained fork of [refine-ruby](https://github.com/maxogden/refine-ruby)
 * [google_refine](https://github.com/chengguangnan/google_refine)
 
 ### NodeJS {#nodejs}
@@ -279,7 +279,8 @@ Libraries using the [OpenRefine API](openrefine-api):
 * [openrefine-php-client](https://github.com/keboola/openrefine-php-client)
 
 ### Java {#java}
-* [refine-java](https://github.com/dtap-gmbh/refine-java)
+* [refine-java](https://github.com/ancore/refine-java)
+* [ontorefine-cli](https://github.com/Ontotext-AD/ontorefine-cli) that is a fork of the above for Ontotext's OntoRefine
 
 ### Bash {#bash}
 * [bash-refine.sh](https://gist.github.com/felixlohmeier/d76bd27fbc4b8ab6d683822cdf61f81d) (templates for shell scripts)
