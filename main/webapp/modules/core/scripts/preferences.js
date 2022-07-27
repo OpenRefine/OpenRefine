@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -68,7 +68,9 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
 };
 
 
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
+//var lang = (navigator.language ||
+//     navigator.userLanguage).split("-")[0];
+var lang = (navigator.language || navigator.languages[0]).split("-")[0];
 var dictionary = "";
 $.ajax({
   url : "command/core/load-language?",
@@ -76,7 +78,7 @@ $.ajax({
   async : false,
   data : {
     module : "core",
-    //lang : lang
+    lang : lang
   },
   success : function(data) {
     dictionary = data['dictionary'];
@@ -85,7 +87,7 @@ $.ajax({
 }).fail(function( jqXhr, textStatus, errorThrown ) {
   var errorMessage = $.i18n('core-index/prefs-loading-failed');
   if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-    alert(errorMessage); 
+    alert(errorMessage);
   } else {
     alert( textStatus + ':' + errorThrown );
   }
@@ -99,7 +101,7 @@ function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
-    
+
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
@@ -122,7 +124,7 @@ function PreferenceUI(tr, key, initialValue) {
           newValue = deDupUserMetaData(newValue);
       }
       $(td1).text(newValue);
-      
+
       Refine.postCSRF(
         "command/core/set-preference",
         {
@@ -195,11 +197,11 @@ function populatePreferences(prefs) {
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));
-        
+
         if (key === "userMetadata")  {
             value = deDupUserMetaData(value);
         }
-        
+
         Refine.postCSRF(
           "command/core/set-preference",
           {

@@ -32,9 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 // Internationalization init
-var lang =
-    navigator.language.split("-")[0] ||
-    navigator.languages[0].split("-")[0];
+var lang = (navigator.language || navigator.languages[0]).split("-")[0];
 //    || navigator.userLanguage.split("-")[0]; removed, IE Only
 var dictionary = "";
 $.ajax({

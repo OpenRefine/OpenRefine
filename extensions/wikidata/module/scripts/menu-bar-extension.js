@@ -1,4 +1,5 @@
 // Load the localization file
+var lang = (navigator.language || navigator.languages[0]).split("-")[0];
 var dictionary = {};
 $.ajax({
   url: "command/core/load-language?",
@@ -6,7 +7,7 @@ $.ajax({
   async: false,
   data: {
     module: "wikidata",
-//		lang : lang
+    lang : lang
   },
   success: function (data) {
     dictionary = data['dictionary'];

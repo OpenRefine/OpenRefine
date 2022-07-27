@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -68,20 +68,22 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
    });
 };
 
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
+//var lang = (navigator.language ||
+//     navigator.userLanguage).split("-")[0];  removed, IE Only
+var lang = (navigator.language || navigator.languages[0]).split("-")[0];
 var dictionary = "";
 $.ajax({
-	url : "command/core/load-language?",
-	type : "POST",
-	async : false,
-	data : {
-	  module : "core",
-//		lang : lang
-	},
-	success : function(data) {
-		dictionary = data['dictionary'];
-        lang = data['lang'];
-	}
+  url : "command/core/load-language?",
+  type : "POST",
+  async : false,
+  data : {
+    module : "core",
+    lang : lang
+  },
+  success : function(data) {
+    dictionary = data['dictionary'];
+    lang = data['lang'];
+  }
 });
 $.i18n().load(dictionary, lang);
 $.i18n({ locale: lang });
@@ -206,7 +208,7 @@ $(function() {
     .css("margin-top", rightPanelBodyVPaddings + "px")
     .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-    
+
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       Refine.actionAreas[i].ui.resize();
     }
@@ -234,7 +236,7 @@ $(function() {
     renderActionArea(Refine.actionAreas[i]);
   }
   Refine.selectActionArea('create-project');
-  
+
   $("#slogan").text($.i18n('core-index/slogan')+".");
   $("#or-index-pref").text($.i18n('core-index/preferences'));
   $("#or-index-help").text($.i18n('core-index/help'));
