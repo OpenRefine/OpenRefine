@@ -67,33 +67,7 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
    });
 };
 
-
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
-var dictionary = "";
-$.ajax({
-  url : "command/core/load-language?",
-  type : "POST",
-  async : false,
-  data : {
-    module : "core",
-    //lang : lang
-  },
-  success : function(data) {
-    dictionary = data['dictionary'];
-    lang = data['lang'];
-  }
-}).fail(function( jqXhr, textStatus, errorThrown ) {
-  var errorMessage = $.i18n('core-index/prefs-loading-failed');
-  if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-    alert(errorMessage); 
-  } else {
-    alert( textStatus + ':' + errorThrown );
-  }
-});
-
-$.i18n().load(dictionary, lang);
-$.i18n().locale = lang;
-//End internationalization
+I18NUtil.init();
 
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
