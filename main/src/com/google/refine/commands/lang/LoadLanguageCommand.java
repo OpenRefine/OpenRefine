@@ -161,7 +161,7 @@ public class LoadLanguageCommand extends Command {
                 langFile = new File(module.getPath(), "langs" + File.separator + strLangFile);
                 try {
                     fisLang = new FileInputStream(langFile);
-                    logger.warn("An alternate file " + strMessage + " was found -- rename to [" + strLangFile + "]", ex);
+                    logger.warn("An alternate file " + strMessage + " was found -- rename to [" + strLangFile + "]");
                 } catch (FileNotFoundException ex) {
                     // ...continue...
                 }
