@@ -76,8 +76,8 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <log4j.version>2.17.2</log4j.version>
-    <jetty.version>9.4.46.v20220331</jetty.version>
+    <log4j.version>2.18.0</log4j.version>
+    <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.5.0</jena.version>
     <poi.version>5.2.2</poi.version>
@@ -86,12 +86,13 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.9</commons-text.version>
     <commons-validator.version>1.7</commons-validator.version>
+    <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.15</commons-codec.version>
     <commons-compress.version>1.21</commons-compress.version>
     <velocity.version>1.5</velocity.version>
     <marc4j.version>2.9.2</marc4j.version>
-    <jsoup.version>1.14.2</jsoup.version>
+    <jsoup.version>1.15.2</jsoup.version>
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
@@ -103,7 +104,7 @@
     <guava.version>31.1-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
-    <testng.version>7.6.0</testng.version>
+    <testng.version>7.6.1</testng.version>
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
@@ -112,8 +113,8 @@
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
-    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+    <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
@@ -121,15 +122,16 @@
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M2</maven-deploy-plugin.version>
+    <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     <license-plugin.version>2.0.0</license-plugin.version>
+    <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
 
   <build>
     <!-- It is nice for "mvn" with no arguments to do a reasonable default. -->
     <defaultGoal>install</defaultGoal>
-    
+
     <finalName>openrefine</finalName>
     <resources>
     </resources>
@@ -225,7 +227,7 @@
                                 <include>*.exec</include>
                             </includes>
                         </fileSet>
-                     </fileSets> 
+                     </fileSets>
                 </configuration>
              </execution>
         </executions>
@@ -244,6 +246,7 @@
         <configuration>
           <sourceDirectories>
              <sourceDirectory>main/src</sourceDirectory>
+             <sourceDirectory>main/target/generated-sources</sourceDirectory>
              <sourceDirectory>extensions/jython/src</sourceDirectory>
              <sourceDirectory>extensions/wikidata/src</sourceDirectory>
              <sourceDirectory>extensions/database/src</sourceDirectory>
@@ -326,7 +329,7 @@
                   </artifacts>
               </configuration>
           </execution>
-          
+
           <!-- Attach the zip file for windows, without embedded JRE -->
           <execution>
               <id>attach-win-without-jre</id>
@@ -345,7 +348,7 @@
                   </artifacts>
               </configuration>
           </execution>
-          
+
           <!-- Attach the zip file for windows, with embedded JRE -->
           <execution>
               <id>attach-win-with-jre</id>
@@ -411,8 +414,18 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
-
-
+        <plugin>
+            <groupId>org.jvnet.localizer</groupId>
+            <artifactId>localizer-maven-plugin</artifactId>
+            <version>${org-jvnet-localizer-plugin.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
 
@@ -420,6 +433,11 @@
     <!-- dependencies are stored in the relevant submodules:
           see main/pom.xml, server/pom.xml and each extension.
     -->
+      <dependency>
+          <groupId>org.jvnet.localizer</groupId>
+          <artifactId>localizer</artifactId>
+          <version>${org-jvnet-localizer.version}</version>
+      </dependency>
   </dependencies>
 
   <!-- enabled to access our snapshots of Wikidata-Toolkit -->
@@ -434,7 +452,18 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+      <repository>
+          <id>jenkins-repo</id>
+          <url>https://repo.jenkins-ci.org/releases/</url>
+      </repository>
   </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jenkins-repo</id>
+            <url>https://repo.jenkins-ci.org/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
   <!-- Locations of the artifacts published -->
   <distributionManagement>
@@ -447,5 +476,5 @@
        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
      </repository>
   </distributionManagement>
- 
+
 </project>

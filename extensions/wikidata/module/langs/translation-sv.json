@@ -52,7 +52,6 @@
     "wikibase-schema/add-qualifier": "lägg till kvalifikator",
     "wikibase-schema/item-or-reconciled-column": "skriv in objekt eller dra avstämd kolumn hit",
     "wikibase-schema/full-url": "full URL inklusive protokoll",
-    "wikibase-schema/datatype-not-supported-yet": "Denna datatyp stöds tyvärr inte ännu.",
     "wikibase-schema/discard-button": "Ignorera ändringar",
     "wikibase-schema/unsaved-changes-alt": "Du har olagrade ändringar i ditt Wikidata-schema.",
     "wikibase-schema/discard-schema-changes-alt": "Ignorera ändringarna i schemat.",

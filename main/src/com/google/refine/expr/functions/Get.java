@@ -43,6 +43,7 @@ import com.google.refine.expr.HasFields;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Get implements Function {
 
@@ -152,11 +153,7 @@ public class Get implements Function {
 
     @Override
     public String getDescription() {
-        return 
-            "If o has named fields, returns the field named 'from' of o. " +
-            "If o is an array, returns a sub-array o[from, to]. " +
-            "if o is a string, returns o.substring(from, to)."
-        ;
+        return FunctionDescription.fun_get();
     }
     
     @Override

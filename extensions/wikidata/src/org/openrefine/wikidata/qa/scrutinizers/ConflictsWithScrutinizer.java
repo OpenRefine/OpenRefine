@@ -100,6 +100,10 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", conflictingPid);
                     issue.setProperty("example_entity", update.getEntityId());
+                    // we disable faceting for this issue because the conflicting statements
+                    // could be coming from different rows. This is an issue which can normally be solved
+                    // by looking at the schema only, anyway.
+                    issue.setFacetable(false);
                     addIssue(issue);
                 }
             }

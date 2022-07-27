@@ -107,7 +107,7 @@ describe(__filename, function () {
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'Error: Traceback');
+    ).should('to.contain', 'Error:');
   });
 
   it('Test a Clojure language error', function () {

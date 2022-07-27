@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Find implements Function {
 
@@ -70,7 +71,7 @@ public class Find implements Function {
     
     @Override
     public String getDescription() {
-        return "Outputs an array of all consecutive substrings inside string s that match the substring or regex pattern p. You can supply a substring by putting it in quotes.";
+        return FunctionDescription.str_find();
     }
     
     @Override

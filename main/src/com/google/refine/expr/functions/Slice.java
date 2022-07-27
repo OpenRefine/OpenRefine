@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Slice implements Function {
 
@@ -124,7 +125,7 @@ public class Slice implements Function {
 
     @Override
     public String getDescription() {
-        return "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only.";
+        return FunctionDescription.fun_slice();
 
     }
     

@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -14,6 +16,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 import org.openrefine.wikidata.editing.MediaFileUtils.MediaUploadResponse;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -28,10 +32,34 @@ import com.google.refine.util.ParsingUtilities;
 
 public class MediaFileUtilsTest {
 
-    private static final String successfullUploadResponse = "{\"upload\":{\"result\":\"Success\",\"filename\":\"My_test_file.png\",\"pageid\":12345}}";
+    private static final String successfulUploadResponse = "{\"upload\":{\"result\":\"Success\",\"filename\":\"My_test_file.png\",\"pageid\":12345}}";
     private static final String csrfResponse = "{\"batchcomplete\":\"\",\"query\":{\"tokens\":{"
             + "\"csrftoken\":\"6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\\\\"}}}";
     private static final String csrfToken = "6f0da9b0e2626f86c5d862244d5faddd626a6eb2+\\";
+    private static final String successfulEditResponse = "{\n"
+            + "    \"edit\": {\n"
+            + "        \"result\": \"Success\",\n"
+            + "        \"pageid\": 94542,\n"
+            + "        \"title\": \"File:My_test_file.png\",\n"
+            + "        \"contentmodel\": \"wikitext\",\n"
+            + "        \"oldrevid\": 371705,\n"
+            + "        \"newrevid\": 371707,\n"
+            + "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
+            + "    }\n"
+            + "}";
+
+    @Test
+    public void testPurge() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.purgePage(12345L);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("action", "purge");
+        params.put("pageids", "12345");
+        verify(connection, times(1)).sendJsonRequest("POST", params);
+    }
 
     @Test
     public void testSuccessfulLocalUpload() throws IOException, MediaWikiApiErrorException {
@@ -50,7 +78,7 @@ public class MediaFileUtilsTest {
         uploadParams.put("token", csrfToken);
         uploadParams.put("ignorewarnings", "0");
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(
-                successfullUploadResponse);
+                successfulUploadResponse);
         when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(uploadJsonResponse);
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
@@ -81,7 +109,7 @@ public class MediaFileUtilsTest {
         uploadParams.put("token", csrfToken);
         uploadParams.put("ignorewarnings", "0");
         uploadParams.put("url", url);
-        JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfullUploadResponse);
+        JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenReturn(uploadJsonResponse);
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
@@ -128,7 +156,7 @@ public class MediaFileUtilsTest {
         uploadParams.put("token", csrfToken);
         uploadParams.put("ignorewarnings", "0");
         uploadParams.put("url", url);
-        JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfullUploadResponse);
+        JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap()))
                 .thenReturn(uploadJsonResponse);
 
@@ -191,6 +219,41 @@ public class MediaFileUtilsTest {
                 MediaUploadResponse.class);
         MediaInfoIdValue mid = response.getMid(connection, "http://commons.wikimedia.org/entity/");
         assertEquals(mid, Datamodel.makeWikimediaCommonsMediaInfoIdValue("M317966"));
+    }
+
+    @Test
+    public void testEditPage() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+
+        // mock CSRF token request
+        mockCsrfCall(connection);
+
+        // mock wikitext edit call
+        Map<String, String> uploadParams = new HashMap<>();
+        uploadParams.put("action", "edit");
+        uploadParams.put("tags", "");
+        uploadParams.put("summary", "my summary");
+        uploadParams.put("pageid", "12345");
+        uploadParams.put("text", "my new wikitext");
+        uploadParams.put("token", csrfToken);
+        uploadParams.put("bot", "true");
+        JsonNode editJsonResponse = ParsingUtilities.mapper.readTree(successfulEditResponse);
+        when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenReturn(editJsonResponse);
+
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        // For this test, assume the CSRF token has already been fetched
+        mediaFileUtils.fetchCsrfToken();
+
+        mediaFileUtils.editPage(12345L, "my new wikitext", "my summary", Collections.emptyList());
+
+        // check the requests were done as expected
+        InOrder inOrder = Mockito.inOrder(connection);
+        Map<String, String> tokenParams = new HashMap<>();
+        tokenParams.put("action", "query");
+        tokenParams.put("meta", "tokens");
+        tokenParams.put("type", "csrf");
+        inOrder.verify(connection, times(1)).sendJsonRequest("POST", tokenParams);
+        inOrder.verify(connection, times(1)).sendJsonRequest("POST", uploadParams);
     }
 
     protected void mockCsrfCall(ApiConnection connection) throws IOException, MediaWikiApiErrorException {

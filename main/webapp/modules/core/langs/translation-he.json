@@ -381,6 +381,7 @@
     "core-views/edit-column": "עריכת עמודה",
     "core-views/transpose": "לשנות",
     "core-views/sort": "מיון…",
+    "core-views/sort/single": "מיון",
     "core-views/collapse-expand": "כיווץ/הרחבת עמודות להצגת נתונים נוחה יותר",
     "core-views/collapse-this": "כיווץ",
     "core-views/collapse-other": "כיווץ כל העמודות האחרות",

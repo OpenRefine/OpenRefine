@@ -41,11 +41,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.google.refine.util.LocaleUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -377,6 +379,9 @@ public class FileProjectManager extends ProjectManager  {
         if (file.exists() || file.canRead()) {
 	        try {
 	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+
+                LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
+
 	            found = true;
 	        } catch(IOException e) {
 	        	logger.warn(e.toString());

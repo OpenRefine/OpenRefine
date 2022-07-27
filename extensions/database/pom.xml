@@ -84,12 +84,12 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.42.0</version>
+      <version>1.42.2</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.29</version>
+      <version>8.0.30</version>
     </dependency>
     <dependency>
       <groupId>org.jasypt</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>3.0.5</version>
+      <version>3.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>

@@ -31,6 +31,9 @@
       <resource>
         <directory>src</directory>
       </resource>
+      <resource>
+        <directory>resources</directory>
+      </resource>
     </resources>
     <testSourceDirectory>tests/server/src</testSourceDirectory>
     <testResources>
@@ -53,6 +56,7 @@
             <configuration>
               <sources>
                 <source>src</source>
+                <source>${project.build.directory}/generated-sources/</source>
               </sources>
             </configuration>
           </execution>
@@ -242,7 +246,7 @@
       <version>${poi.version}</version>
       <exclusions>
 	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
+      	  <groupId>org.apache.logging.log4j</groupId>
 	  <artifactId>log4j-api</artifactId>
 	</exclusion>
       </exclusions>
@@ -253,7 +257,7 @@
       <version>${poi.version}</version>
       <exclusions>
 	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
+      	  <groupId>org.apache.logging.log4j</groupId>
 	  <artifactId>log4j-api</artifactId>
 	</exclusion>
       </exclusions>

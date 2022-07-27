@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ToNumber implements Function {
 
@@ -74,7 +75,7 @@ public class ToNumber implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.";
+        return FunctionDescription.fun_to_number();
     }
     
     @Override

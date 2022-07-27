@@ -41,6 +41,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 import au.com.bytecode.opencsv.CSVParser;
+import com.google.refine.grel.FunctionDescription;
 
 public class SmartSplit implements Function {
 
@@ -102,7 +103,7 @@ public class SmartSplit implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern.";
+        return FunctionDescription.str_smart_split();
     }
     
     @Override
