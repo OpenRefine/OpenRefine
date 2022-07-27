@@ -4,6 +4,12 @@ on:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - 'main/webapp/modules/core/langs/**'
+      - 'extensions/database/module/langs/**'
+      - 'extensions/gdata/module/langs/**'
+      - 'extensions/pc-axis/module/langs/**'
+      - 'extensions/phonetic/module/langs/**'
+      - 'extensions/wikidata/module/langs/**'
     branches:
       - master
       - '4.0'
@@ -89,10 +95,6 @@ jobs:
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
-    - name: Submit test coverage to Coveralls
-      run: |
-        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
-
   windows_server_tests:
     runs-on: windows-latest
 
@@ -134,7 +136,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.4.1
         with:
           node-version: '12'
       - id: set-matrix
@@ -175,7 +177,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.4.1
         with:
           node-version: '12'
 

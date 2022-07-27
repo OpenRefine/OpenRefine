@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.xml;
 import java.util.Properties;
 
 import com.google.refine.expr.functions.Type;
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
@@ -69,7 +70,7 @@ public class ParseXml implements Function {
 
     @Override
     public String getDescription() {
-    	return "Given a cell full of XML-formatted text, parseXml() returns a full XML document and adds any missing closing tags.";
+    	return FunctionDescription.xml_parsexml();
     }
     
     @Override

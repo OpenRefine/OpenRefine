@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.WordUtils;
 
 import com.google.refine.expr.EvalError;
@@ -63,7 +64,7 @@ public class ToTitlecase implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, 'Once upon a midnight DREARY'.toTitlecase() returns the string 'Once Upon A Midnight Dreary'.";
+        return FunctionDescription.str_to_title_case();
     }
     
     @Override

@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Combin implements Function {
 
@@ -85,7 +86,7 @@ public class Combin implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the number of combinations for n2 elements as divided into n1.";
+        return FunctionDescription.math_ceil();
     }
     
     @Override

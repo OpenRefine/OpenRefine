@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Not implements Function {
 
@@ -56,7 +57,7 @@ public class Not implements Function {
     
     @Override
     public String getDescription() {
-        return "Uses the logical operator NOT on a boolean to output a boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false.";
+        return FunctionDescription.bool_not();
     }
     
     @Override

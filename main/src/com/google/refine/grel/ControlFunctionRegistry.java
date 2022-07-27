@@ -125,6 +125,7 @@ import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
 import com.google.refine.expr.functions.strings.ReplaceChars;
+import com.google.refine.expr.functions.strings.ReplaceEach;
 import com.google.refine.expr.functions.strings.SHA1;
 import com.google.refine.expr.functions.strings.SmartSplit;
 import com.google.refine.expr.functions.strings.Split;
@@ -233,6 +234,7 @@ public class ControlFunctionRegistry {
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
         registerFunction("replaceChars", new ReplaceChars());
+        registerFunction("replaceEach", new ReplaceEach());
         registerFunction("range", new Range());
         registerFunction("split", new Split());
         registerFunction("smartSplit", new SmartSplit());

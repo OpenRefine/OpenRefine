@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.google.refine.expr.EvalError;
@@ -55,7 +56,7 @@ public class SHA1 implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the SHA-1 hash of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string.";
+        return FunctionDescription.str_sha1();
     }
     
     @Override

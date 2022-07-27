@@ -108,7 +108,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   });
   this._elmts.addButton.on('click',function(evt) {
     let newRow = self._elmts.urlRow.clone();
-    let trashButton = $('<a href="javascript:{}"><span class="ui-icon ui-icon-trash"></span></a>');
+    let trashButton = $('<a style="margin-left:0.2em;" href=""><img style="height:16px;" src="images/close.png"></a>');
     trashButton.attr("title",$.i18n("core-index-import/remove-row"));
     newRow.find('td').append(trashButton);
     trashButton.on('click',function (e) {

@@ -40,6 +40,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.ParsingUtilities;
 
 public class Jsonize implements Function {
@@ -60,7 +61,7 @@ public class Jsonize implements Function {
     
     @Override
     public String getDescription() {
-        return "Quotes a value as a JSON literal value";
+        return FunctionDescription.fun_jsonize();
     }
     
     @Override

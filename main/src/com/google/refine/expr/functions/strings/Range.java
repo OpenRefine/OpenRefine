@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 /**
  * Implements the logic behind the range function.
@@ -319,8 +320,7 @@ public class Range implements Function {
 
     @Override
     public String getDescription() {
-        return 
-                "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).";
+        return FunctionDescription.str_range();
     }
     
     @Override

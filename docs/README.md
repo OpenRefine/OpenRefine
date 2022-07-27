@@ -104,3 +104,7 @@ Your translations will not be immediately published on <https://docs.openrefine.
 The translated pages will first appear under <https://docs.openrefine.org/next/> (the documentation for the development version).
 When we publish a version, the translations for that version, we will take a snapshot of the translations during that time.
 We will trial this process for 3.5.
+
+### License
+
+This documentation is published under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).

@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class StartsWith implements Function {
 
@@ -54,7 +55,7 @@ public class StartsWith implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s starts with sub. For example, \"food\".startsWith(\"foo\") returns true, whereas \"food\".startsWith(\"bar\") returns false.";
+        return FunctionDescription.str_starts_with();
     }
     
     @Override

@@ -81,6 +81,9 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("item1_entity", entityId);
                 issue.setProperty("item2_entity", otherId);
+                // we disable faceting for this issue because the distinct values are likely
+                // coming from different rows, and our current faceting mechanism is not able to detect those.
+                issue.setFacetable(false);
                 addIssue(issue);
             } else {
                 seen.put(mainSnakValue, entityId);
