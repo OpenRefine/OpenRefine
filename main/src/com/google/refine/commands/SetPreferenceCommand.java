@@ -35,6 +35,7 @@ package com.google.refine.commands;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class SetPreferenceCommand extends Command {
@@ -71,6 +73,10 @@ public class SetPreferenceCommand extends Command {
             respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
+        }
+
+        if (prefName.equals("userLang")) {
+            LocaleUtils.setLocale(valueString);
         }
     }
 
