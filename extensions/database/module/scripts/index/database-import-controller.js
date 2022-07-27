@@ -27,9 +27,11 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//Internationalization init
-var lang = navigator.language.split("-")[0]
-    || navigator.userLanguage.split("-")[0];
+// Internationalization init
+var lang =
+    navigator.language.split("-")[0] ||
+    navigator.languages[0].split("-")[0];
+//    || navigator.userLanguage.split("-")[0];  removed, IE Only
 var dictionary = "";
 $.ajax({
   url : "command/core/load-language?",
@@ -37,6 +39,7 @@ $.ajax({
   async : false,
   data : {
     module : "database",
+		lang : lang
   },
   success : function(data) {
     dictionary = data['dictionary'];

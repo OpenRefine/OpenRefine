@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -65,7 +65,7 @@ public class LoadLanguageCommand extends Command {
             throws ServletException, IOException {
         doPost(request, response);
     }
-    
+
     /**
      * POST is supported but does not actually change any state so we do
      * not add CSRF protection to it. This ensures existing extensions will not
@@ -80,15 +80,28 @@ public class LoadLanguageCommand extends Command {
             modname = "core";
         }
 
+        // Suggested languages from request, if given...
         String[] langs = request.getParameterValues("lang");
-        if (langs == null || "".equals(langs[0])) {
-            PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
-            if (ps != null) {
-                langs = new String[] {(String) ps.get("userLang")};
+
+        // Always replace suggested with user preference language, if available...
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        if (ps != null) {
+            String strLang = (String) ps.get("userLang");
+            if ( strLang != null && ! strLang.isEmpty() ) {
+
+                // CORRECTOR...
+                // TODO: This code may be removed sometime after the 3.7 release has been circulated.
+                if ( "jp".equals(strLang) ) {
+                    strLang = "ja";
+                    ps.put("userLang", strLang);
+                }
+                // End CORRECTOR
+
+                langs = new String[] { strLang };
             }
         }
-        
-        // Default language is English
+
+        // Add default English language as least favored...
         if (langs.length == 0 || langs[langs.length-1] != "en" ) {
             langs = Arrays.copyOf(langs, langs.length+1);
             langs[langs.length-1] = "en";
@@ -96,50 +109,80 @@ public class LoadLanguageCommand extends Command {
 
         ObjectNode translations = null;
         String bestLang = null;
+        // Process from least favored to best language...
         for (int i = langs.length-1; i >= 0; i--) {
             if (langs[i] == null) continue;
-            ObjectNode json = loadLanguage(this.servlet, modname, langs[i]);
-            if (json != null) {
-                bestLang = langs[i];
-                if (translations == null) {
-                    translations = json;
-                } else {
-                    translations = mergeLanguages(json, translations);
-                }
+
+            ObjectNode json = LoadLanguageCommand.loadLanguage(this.servlet, modname, langs[i]);
+            if (json == null)  continue;
+
+            bestLang = langs[i];
+            if (translations == null) {
+                translations = json;
+            } else {
+                translations = LoadLanguageCommand.mergeLanguages(json, translations);
             }
         }
-         
+
         if (translations != null) {
             try {
                 ObjectNode node = ParsingUtilities.mapper.createObjectNode();
                 node.set("dictionary", translations);
                 node.set("lang", new TextNode(bestLang));
-            	respondJSON(response, node);
+            	Command.respondJSON(response, node);
             } catch (IOException e) {
                 logger.error("Error writing language labels to response stream");
+                Command.respondException(response, e);
             }
         } else {
         	logger.error("Failed to load any language files");
+            Command.respondException(response, new IOException("No language files") );
         }
     }
-    
-    static ObjectNode loadLanguage(RefineServlet servlet, String modname, String lang) throws UnsupportedEncodingException {
-        
-        ButterflyModule module = servlet.getModule(modname);
-        File langFile = new File(module.getPath(), "langs" + File.separator + "translation-" + lang + ".json");
+
+    static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang)
+            throws UnsupportedEncodingException {
+        ButterflyModule module = servlet.getModule(strModule);
+        String strLangFile = "translation-" + strLang + ".json";
+        String strMessage = "[" + strModule + ":" + strLangFile + "]";
+        File langFile = new File(module.getPath(), "langs" + File.separator + strLangFile);
+        FileInputStream fisLang = null;
         try {
-            Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
-            return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
-        } catch (FileNotFoundException e1) {
+            fisLang = new FileInputStream(langFile);
+        } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
-        } catch (IOException e) {
-            logger.error("JSON error reading/writing language file: " + langFile, e);
+            logger.warn("Language file " + strMessage + " not found", e);
+
+            // CORRECTOR...
+            // TODO: This code may be removed sometime after the 3.7 release has been circulated.
+            if ( "ja".equals(strLang) ) {
+                String strLangFileJP = "translation-jp.json";
+                strMessage = "[" + strModule + ":" + strLangFileJP + "]";
+                langFile = new File(module.getPath(), "langs" + File.separator + strLangFile);
+                try {
+                    fisLang = new FileInputStream(langFile);
+                    logger.warn("An alternate file " + strMessage + " was found -- rename to [" + strLangFile + "]", ex);
+                } catch (FileNotFoundException ex) {
+                    // ...continue...
+                }
+            }
+            // End CORRECTOR
+        } catch (SecurityException e) {
+            logger.error("Language file " + strMessage + " cannot be read (security)", e);
+        }
+        if (fisLang != null) {
+            try {
+                Reader reader = new BufferedReader(new InputStreamReader(fisLang, "UTF-8"));
+                return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
+            } catch (Exception e) {
+                logger.error("Language file " + strMessage + " cannot be read (io)", e);
+            }
         }
         return null;
     }
-    
+
     /**
-     * Perform a language fallback, server-side
+     * Update the language content to the preferred language, server-side
      * @param preferred
      *      the JSON translation for the preferred language
      * @param fallback
@@ -154,9 +197,9 @@ public class LoadLanguageCommand extends Command {
         while(iterator.hasNext()) {
             Entry<String,JsonNode> entry = iterator.next();
             String code = entry.getKey();
-            JsonNode value = preferred.get(code);
+            JsonNode value = preferred.get(code); // ...new value
             if (value == null) {;
-                value = entry.getValue();
+                value = entry.getValue(); // ...reuse existing value
             }
             results.set(code, value);
         }
