@@ -261,7 +261,7 @@ Libraries using the [OpenRefine API](openrefine-api):
 
 ### Python {#python}
 * [refine-client-py](https://github.com/PaulMakepeace/refine-client-py/)
-  * Or this fork of the above with an extended CLI [openrefine-client](https://github.com/felixlohmeier/openrefine-client)
+* [openrefine-client](https://github.com/opencultureconsulting/openrefine-client), a fork of the above with an extended CLI 
 * [refine-python](https://github.com/maxogden/refine-python)
 
 ### Ruby {#ruby}
