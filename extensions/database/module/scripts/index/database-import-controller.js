@@ -39,7 +39,7 @@ $.ajax({
   async : false,
   data : {
     module : "database",
-		lang : lang
+    lang : lang
   },
   success : function(data) {
     dictionary = data['dictionary'];
