@@ -35,7 +35,24 @@ var theProject;
 var thePreferences;
 var ui = {};
 
-I18NUtil.init();
+var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
+var dictionary = "";
+$.ajax({
+	url : "command/core/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+	  module : "core",
+//		lang : lang
+	},
+	success : function(data) {
+		dictionary = data['dictionary'];
+        lang = data['lang'];
+	}
+});
+$.i18n().load(dictionary, lang);
+$.i18n({ locale: lang });
+// End internationalization
 
 var Refine = {};
 
