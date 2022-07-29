@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.FullyPropertySerializingValueSnak;
@@ -56,29 +57,29 @@ public class WbSnakExpr implements WbExpression<Snak> {
         this.prop = propExpr;
         this.value = valueExpr;
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (prop == null) {
-			validation.addError("Missing property");
-		} else {
-			validation.enter(new PathElement(PathElement.Type.PROPERTY));
-			prop.validate(validation);
-			validation.leave();
-		}
-		if (value == null) {
-			validation.addError("Missing value");
-		} else {
-			String propertyId = null;
-			if (prop instanceof WbPropConstant) {
-				WbPropConstant propConstant = (WbPropConstant) prop;
-				propertyId = propConstant.getLabel() + " (" + propConstant.getPid() + ")";
-			}
-			validation.enter(new PathElement(PathElement.Type.VALUE, propertyId));
-			value.validate(validation);
-			validation.leave();
-		}
-	}
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (prop == null) {
+            validation.addError("Missing property");
+        } else {
+            validation.enter(new PathElement(PathElement.Type.PROPERTY));
+            prop.validate(validation);
+            validation.leave();
+        }
+        if (value == null) {
+            validation.addError("Missing value");
+        } else {
+            String propertyId = null;
+            if (prop instanceof WbPropConstant) {
+                WbPropConstant propConstant = (WbPropConstant) prop;
+                propertyId = propConstant.getLabel() + " (" + propConstant.getPid() + ")";
+            }
+            validation.enter(new PathElement(PathElement.Type.VALUE, propertyId));
+            value.validate(validation);
+            validation.leave();
+        }
+    }
 
     @Override
     public Snak evaluate(ExpressionContext ctxt)

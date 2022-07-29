@@ -49,12 +49,12 @@ public class ArgsToArray implements Function {
     public String getDescription() {
         return FunctionDescription.arr_args_to_array();
     }
-    
+
     @Override
     public String getParams() {
         return "a1, a2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

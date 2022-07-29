@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -47,28 +48,27 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * The representation of an item edit, which can contain variables both for
- * its own id and in its contents.
+ * The representation of an item edit, which can contain variables both for its own id and in its contents.
  * 
  * @author Antonin Delpeuch
  *
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = WbItemEditExpr.class, property = "type")
 @JsonSubTypes({
-    @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
+        @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WbItemEditExpr implements WbExpression<ItemEdit> {
 
     public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-item-subject";
-    
-	private WbExpression<? extends EntityIdValue> subject;
+
+    private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
 
     @JsonCreator
     public WbItemEditExpr(
-    		@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
+            @JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         this.subject = subjectExpr;
@@ -81,44 +81,43 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
         }
         this.statementGroups = statementGroupExprs;
     }
-    
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (subject == null) {
-			validation.addError("No subject item id provided");
-		} else {
-			validation.enter(new PathElement(PathElement.Type.SUBJECT));
-			subject.validate(validation);
-			validation.leave();
-		}
-		nameDescs.stream()
-			.forEach(nameDesc -> {
-				validation.enter(new PathElement(nameDesc.getPathElementType()));
-				nameDesc.validate(validation);
-				validation.leave();
-			});
-		statementGroups.stream()
-			.forEach(statementGroup -> {
-				validation.enter();
-				statementGroup.validate(validation);
-				validation.leave();
-			});
-	}
+    @Override
+    public void validate(ValidationState validation) {
+        if (subject == null) {
+            validation.addError("No subject item id provided");
+        } else {
+            validation.enter(new PathElement(PathElement.Type.SUBJECT));
+            subject.validate(validation);
+            validation.leave();
+        }
+        nameDescs.stream()
+                .forEach(nameDesc -> {
+                    validation.enter(new PathElement(nameDesc.getPathElementType()));
+                    nameDesc.validate(validation);
+                    validation.leave();
+                });
+        statementGroups.stream()
+                .forEach(statementGroup -> {
+                    validation.enter();
+                    statementGroup.validate(validation);
+                    validation.leave();
+                });
+    }
 
     @Override
     public ItemEdit evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
         if (!(subjectId instanceof ItemIdValue) && !subjectId.isPlaceholder()) {
-        	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
-        	warning.setProperty("example", subjectId.getId());
-        	throw new QAWarningException(warning);
+            QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+            warning.setProperty("example", subjectId.getId());
+            throw new QAWarningException(warning);
         }
         ItemEditBuilder update = new ItemEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
-            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+                StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
                 for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
                     update.addStatement(s);
                 }

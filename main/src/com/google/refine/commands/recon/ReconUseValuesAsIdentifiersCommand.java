@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.recon;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,18 +36,18 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 
 public class ReconUseValuesAsIdentifiersCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
-        
+
         return new ReconUseValuesAsIdentifiersOperation(
-            engineConfig, 
-            columnName, 
-            request.getParameter("service"),
-            request.getParameter("identifierSpace"),
-            request.getParameter("schemaSpace")
-        );
+                engineConfig,
+                columnName,
+                request.getParameter("service"),
+                request.getParameter("identifierSpace"),
+                request.getParameter("schemaSpace"));
     }
 }

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -50,25 +51,25 @@ public class WbLanguageConstant implements WbExpression<String> {
         _origLangId = langId;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (_origLangId != null && _langId == null) {
-			validation.addError("Invalid language code '" + _origLangId + "'");
-		} else if (_langId == null) {
-			validation.addError("Empty language field");
-		}
-        if (_langLabel == null) {
-        	validation.addError("Empty text field");
+    @Override
+    public void validate(ValidationState validation) {
+        if (_origLangId != null && _langId == null) {
+            validation.addError("Invalid language code '" + _origLangId + "'");
+        } else if (_langId == null) {
+            validation.addError("Empty language field");
         }
-	}
+        if (_langLabel == null) {
+            validation.addError("Empty text field");
+        }
+    }
 
     public static String normalizeLanguageCode(String lang) {
         return normalizeLanguageCode(lang, null);
     }
 
     /**
-     * Checks that a language code is valid and returns its preferred version
-     * (converting deprecated language codes to their better values).
+     * Checks that a language code is valid and returns its preferred version (converting deprecated language codes to
+     * their better values).
      * 
      * @param lang
      *            a Wikimedia language code
@@ -78,13 +79,13 @@ public class WbLanguageConstant implements WbExpression<String> {
      */
     public static String normalizeLanguageCode(String lang, String mediaWikiApiEndpoint) {
         try {
-        	if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
-        		return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
-        	} else {
-        		return null;
-        	}
+            if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
+                return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
+            } else {
+                return null;
+            }
         } catch (IllegalArgumentException e) {
-        	return null;
+            return null;
         }
     }
 

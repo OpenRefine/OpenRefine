@@ -52,8 +52,9 @@ import com.google.refine.grel.ast.OperatorCallExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
-    protected Scanner   _scanner;
-    protected Token     _token;
+
+    protected Scanner _scanner;
+    protected Token _token;
     protected Evaluable _root;
 
     public Parser(String s) throws ParsingException {
@@ -81,9 +82,8 @@ public class Parser {
         return new ParsingException("Parsing error at offset " + index + ": " + desc);
     }
 
-    /**
-     *  <expression> := <sub-expression>
-     *                | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
+    /*
+     * <expression> := <sub-expression> | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
      */
     protected Evaluable parseExpression() throws ParsingException {
         Evaluable sub = parseSubExpression();
@@ -104,9 +104,8 @@ public class Parser {
         return sub;
     }
 
-    /**
-     *  <sub-expression> := <term>
-     *                    | <sub-expression> [ "+" "-" ] <term>
+    /*
+     * <sub-expression> := <term> | <sub-expression> [ "+" "-" ] <term>
      */
     protected Evaluable parseSubExpression() throws ParsingException {
         Evaluable sub = parseTerm();
@@ -127,9 +126,8 @@ public class Parser {
         return sub;
     }
 
-    /**
-     *  <term> := <factor>
-     *          | <term> [ "*" "/" "%" ] <factor>
+    /*
+     * <term> := <factor> | <term> [ "*" "/" "%" ] <factor>
      */
     protected Evaluable parseTerm() throws ParsingException {
         Evaluable factor = parseFactor();
@@ -150,15 +148,11 @@ public class Parser {
         return factor;
     }
 
-    /**
-     *  <term> := <term-start> ( <path-segment> )*
-     *  <term-start> :=
-     *      <string> | <number> | - <number> | <regex> | <identifier> |
-     *      <identifier> ( <expression-list> )
+    /*
+     * <term> := <term-start> ( <path-segment> )* <term-start> := <string> | <number> | - <number> | <regex> |
+     * <identifier> | <identifier> ( <expression-list> )
      *
-     *  <path-segment> := "[" <expression-list> "]"
-     *                  | "." <identifier>
-     *                  | "." <identifier> "(" <expression-list> ")"
+     * <path-segment> := "[" <expression-list> "]" | "." <identifier> | "." <identifier> "(" <expression-list> ")"
      *
      */
     protected Evaluable parseFactor() throws ParsingException {
@@ -182,13 +176,13 @@ public class Parser {
                 throw makeException("Bad regular expression (" + e.getMessage() + ")");
             }
         } else if (_token.type == TokenType.Number) {
-            eval = new LiteralExpr(((NumberToken)_token).value);
+            eval = new LiteralExpr(((NumberToken) _token).value);
             next(false);
         } else if (_token.type == TokenType.Operator && _token.text.equals("-")) { // unary minus?
             next(true);
 
             if (_token != null && _token.type == TokenType.Number) {
-                Number n = ((NumberToken)_token).value;
+                Number n = ((NumberToken) _token).value;
 
                 eval = new LiteralExpr(n instanceof Long ? -n.longValue() : -n.doubleValue());
 
@@ -202,7 +196,7 @@ public class Parser {
 
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
                 eval = "null".equals(text) ? new LiteralExpr(null) : new VariableExpr(text);
-            } else if( "PI".equals(text) ) {
+            } else if ("PI".equals(text)) {
                 eval = new LiteralExpr(Math.PI);
                 next(false);
             } else {
@@ -248,9 +242,9 @@ public class Parser {
         }
 
         while (_token != null) {
-        	if (_token.type == TokenType.Error) {
-        		throw makeException("Unknown function or control named" + _token.text);
-        	} else if (_token.type == TokenType.Operator && _token.text.equals(".")) {
+            if (_token.type == TokenType.Error) {
+                throw makeException("Unknown function or control named" + _token.text);
+            } else if (_token.type == TokenType.Operator && _token.text.equals(".")) {
                 next(false); // swallow .
 
                 if (_token == null || _token.type != TokenType.Identifier) {
@@ -290,16 +284,15 @@ public class Parser {
         return eval;
     }
 
-    /**
-     *  <expression-list> := <empty>
-     *                     | <expression> ( "," <expression> )*
+    /*
+     * <expression-list> := <empty> | <expression> ( "," <expression> )*
      *
      */
     protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
         List<Evaluable> l = new LinkedList<Evaluable>();
 
         if (_token != null &&
-            (_token.type != TokenType.Delimiter || !_token.text.equals(closingDelimiter))) {
+                (_token.type != TokenType.Delimiter || !_token.text.equals(closingDelimiter))) {
 
             while (_token != null) {
                 Evaluable eval = parseExpression();

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.SuggestedItemIdValue;
@@ -44,22 +45,22 @@ public class WbItemConstant implements WbExpression<ItemIdValue> {
         this.qid = qid;
         this.label = label;
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (qid == null) {
-			validation.addError("No entity id provided");
-		} else {
-			try {
-				EntityIdValueImpl.guessEntityTypeFromId(qid);
-			} catch(IllegalArgumentException e) {
-				validation.addError("Invalid entity id format: '"+qid+"'");
-			}
-		}
-		if (label == null) {
-			validation.addError("No entity label provided");
-		}
-	}
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (qid == null) {
+            validation.addError("No entity id provided");
+        } else {
+            try {
+                EntityIdValueImpl.guessEntityTypeFromId(qid);
+            } catch (IllegalArgumentException e) {
+                validation.addError("Invalid entity id format: '" + qid + "'");
+            }
+        }
+        if (label == null) {
+            validation.addError("No entity label provided");
+        }
+    }
 
     @Override
     public ItemIdValue evaluate(ExpressionContext ctxt) {

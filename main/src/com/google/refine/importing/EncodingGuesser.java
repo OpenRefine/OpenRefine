@@ -17,8 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.JSONUtilities;
 
 /**
- * This class tries to find the correct encoding based on the
- * http://site.icu-project.org/ and the icu4j library
+ * This class tries to find the correct encoding based on the http://site.icu-project.org/ and the icu4j library
  * http://site.icu-project.org/home/why-use-icu4j.
  * 
  * @author <a href="mailto:kontakt@stundzig.de">Steffen Stundzig</a>
@@ -54,8 +53,7 @@ public final class EncodingGuesser {
     }
 
     /**
-     * uses the first found encoding in the file records as initial encoding and
-     * put them into the options
+     * uses the first found encoding in the file records as initial encoding and put them into the options
      * 
      * @param fileRecords
      * @param options

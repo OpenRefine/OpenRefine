@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
@@ -66,13 +67,13 @@ public class WbStatementExpr {
 
     @JsonCreator
     public WbStatementExpr(
-    		@JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
+            @JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs,
             @JsonProperty("mergingStrategy") StatementMerger merger,
             @JsonProperty("mode") StatementEditingMode mode) {
-    	// do not require a main value when deleting with a property only merger
-    	
+        // do not require a main value when deleting with a property only merger
+
         this.mainSnakValueExpr = mainSnakValueExpr;
         if (qualifierExprs == null) {
             qualifierExprs = Collections.emptyList();
@@ -83,56 +84,56 @@ public class WbStatementExpr {
         }
         this.referenceExprs = referenceExprs;
         if (merger == null) {
-        	merger = StatementMerger.FORMER_DEFAULT_STRATEGY;
+            merger = StatementMerger.FORMER_DEFAULT_STRATEGY;
         }
         this.merger = merger;
         if (mode == null) {
-        	mode = StatementEditingMode.ADD_OR_MERGE;
+            mode = StatementEditingMode.ADD_OR_MERGE;
         }
         this.mode = mode;
     }
-    
-	public void validate(ValidationState validation) {
-		if (!(StatementEditingMode.DELETE.equals(mode)
-				&& (merger instanceof PropertyOnlyStatementMerger))
-				&& mainSnakValueExpr == null) {
-    		validation.addError("Missing main statement value");
-    	}
-		if (mainSnakValueExpr != null) {
-			validation.enter(new PathElement(Type.VALUE));
-			mainSnakValueExpr.validate(validation);
-			validation.leave();
-		}
-		int index = 0;
-		for (WbSnakExpr qualifier : qualifierExprs) {
-			if (qualifier == null) {
-				validation.addError("Empty qualifier in statement");
-			} else {
-				validation.enter(new PathElement(Type.QUALIFIER, index));
-				qualifier.validate(validation);
-				validation.leave();
-			}
-			index++;
-		}
-		index = 0;
-		for (WbReferenceExpr reference : referenceExprs) {
-			if (reference == null) {
-				validation.addError("Empty reference in statement");
-			} else {
-				validation.enter(new PathElement(Type.REFERENCE, index));
-				reference.validate(validation);
-				validation.leave();
-			}
-			index++;
-		}
-	}
+
+    public void validate(ValidationState validation) {
+        if (!(StatementEditingMode.DELETE.equals(mode)
+                && (merger instanceof PropertyOnlyStatementMerger))
+                && mainSnakValueExpr == null) {
+            validation.addError("Missing main statement value");
+        }
+        if (mainSnakValueExpr != null) {
+            validation.enter(new PathElement(Type.VALUE));
+            mainSnakValueExpr.validate(validation);
+            validation.leave();
+        }
+        int index = 0;
+        for (WbSnakExpr qualifier : qualifierExprs) {
+            if (qualifier == null) {
+                validation.addError("Empty qualifier in statement");
+            } else {
+                validation.enter(new PathElement(Type.QUALIFIER, index));
+                qualifier.validate(validation);
+                validation.leave();
+            }
+            index++;
+        }
+        index = 0;
+        for (WbReferenceExpr reference : referenceExprs) {
+            if (reference == null) {
+                validation.addError("Empty reference in statement");
+            } else {
+                validation.enter(new PathElement(Type.REFERENCE, index));
+                reference.validate(validation);
+                validation.leave();
+            }
+            index++;
+        }
+    }
 
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {
         Map<PropertyIdValue, List<Snak>> snakGroups = new HashMap<>();
         List<PropertyIdValue> propertyOrder = new ArrayList<PropertyIdValue>();
         for (Snak snak : snaks) {
             List<Snak> existingSnaks = snakGroups.get(snak.getPropertyId());
-            if(existingSnaks == null) {
+            if (existingSnaks == null) {
                 existingSnaks = new ArrayList<Snak>();
                 snakGroups.put(snak.getPropertyId(), existingSnaks);
                 propertyOrder.add(snak.getPropertyId());
@@ -151,10 +152,10 @@ public class WbStatementExpr {
         Snak mainSnak = null;
         if (mainSnakValueExpr != null) {
             Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
-        	mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+            mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         } else {
-        	// hack to make sure we have a non-null snak
-        	mainSnak = Datamodel.makeNoValueSnak(propertyId);
+            // hack to make sure we have a non-null snak
+            mainSnak = Datamodel.makeNoValueSnak(propertyId);
         }
 
         // evaluate qualifiers
@@ -203,15 +204,15 @@ public class WbStatementExpr {
     public List<WbReferenceExpr> getReferences() {
         return Collections.unmodifiableList(referenceExprs);
     }
-    
+
     @JsonProperty("mergingStrategy")
     public StatementMerger getStatementMerger() {
-    	return merger;
+        return merger;
     }
-    
+
     @JsonProperty("mode")
     public StatementEditingMode getMode() {
-    	return mode;
+        return mode;
     }
 
     @Override

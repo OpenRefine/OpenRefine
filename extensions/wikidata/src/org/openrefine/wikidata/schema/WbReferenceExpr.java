@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
@@ -59,21 +60,21 @@ public class WbReferenceExpr implements WbExpression<Reference> {
         this.snakExprs = snakExprs;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (snakExprs == null) {
-			validation.addError("No reference snaks provided");
-		} else {
-			// empty reference snaks are allowed
-			snakExprs.forEach(snak -> {
-				if (snak == null) {
-					validation.addError("Null snak in reference");
-				} else {
-					snak.validate(validation);
-				}
-			});
-		}
-	}
+    @Override
+    public void validate(ValidationState validation) {
+        if (snakExprs == null) {
+            validation.addError("No reference snaks provided");
+        } else {
+            // empty reference snaks are allowed
+            snakExprs.forEach(snak -> {
+                if (snak == null) {
+                    validation.addError("Null snak in reference");
+                } else {
+                    snak.validate(validation);
+                }
+            });
+        }
+    }
 
     @Override
     public Reference evaluate(ExpressionContext ctxt)

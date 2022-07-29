@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
@@ -50,15 +51,15 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
         this.datatype = datatype;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (pid == null) {
-			validation.addError("Missing property id");
-		}
-		if (label == null) {
-			validation.addError("Missing property label");
-		}
-	}
+    @Override
+    public void validate(ValidationState validation) {
+        if (pid == null) {
+            validation.addError("Missing property id");
+        }
+        if (label == null) {
+            validation.addError("Missing property label");
+        }
+    }
 
     @Override
     public PropertyIdValue evaluate(ExpressionContext ctxt) {

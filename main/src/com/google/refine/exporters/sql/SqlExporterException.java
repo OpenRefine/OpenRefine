@@ -24,8 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.exporters.sql;
 
+package com.google.refine.exporters.sql;
 
 public class SqlExporterException extends RuntimeException {
 

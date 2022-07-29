@@ -59,12 +59,12 @@ public class Or implements Function {
     public String getDescription() {
         return FunctionDescription.bool_or();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

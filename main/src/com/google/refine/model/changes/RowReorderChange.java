@@ -46,12 +46,13 @@ import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
 public class RowReorderChange implements Change {
+
     final protected List<Integer> _rowIndices;
-    
+
     public RowReorderChange(List<Integer> rowIndices) {
         _rowIndices = rowIndices;
     }
-    
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
@@ -94,25 +95,27 @@ public class RowReorderChange implements Change {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("rowIndexCount="); writer.write(Integer.toString(_rowIndices.size())); writer.write('\n');
+        writer.write("rowIndexCount=");
+        writer.write(Integer.toString(_rowIndices.size()));
+        writer.write('\n');
         for (Integer index : _rowIndices) {
             writer.write(index.toString());
             writer.write('\n');
         }
         writer.write("/ec/\n"); // end of change marker
     }
-    
+
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         List<Integer> rowIndices = null;
-        
+
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
-            
+
             if ("rowIndexCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
-                
+
                 rowIndices = new ArrayList<Integer>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
@@ -122,9 +125,9 @@ public class RowReorderChange implements Change {
                 }
             }
         }
-        
+
         RowReorderChange change = new RowReorderChange(rowIndices);
-        
+
         return change;
     }
 }

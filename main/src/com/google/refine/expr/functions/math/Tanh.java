@@ -54,12 +54,12 @@ public class Tanh implements Function {
     public String getDescription() {
         return FunctionDescription.math_tanh();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

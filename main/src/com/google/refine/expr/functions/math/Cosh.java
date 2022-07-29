@@ -54,12 +54,12 @@ public class Cosh implements Function {
     public String getDescription() {
         return FunctionDescription.math_cosh();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -46,15 +46,16 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Judge if a row matches by evaluating a given expression on the row, based on a particular
- * column, and checking the result. It's a match if the result satisfies some string comparisons. 
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
+ * result. It's a match if the result satisfies some string comparisons.
  */
 abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
+
     final protected Evaluable _evaluable;
-    final protected Boolean   _invert;
-    final protected String    _columnName;
-    final protected int       _cellIndex;
-    
+    final protected Boolean _invert;
+    final protected String _columnName;
+    final protected int _cellIndex;
+
     public ExpressionStringComparisonRowFilter(Evaluable evaluable, Boolean invert, String columnName, int cellIndex) {
         _evaluable = evaluable;
         _invert = invert;
@@ -65,7 +66,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
     @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-        
+
         Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
         Boolean invert = _invert;
@@ -88,7 +89,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (checkValue(JsonValueConverter.convert(a.get(i)).toString())) {
                         return !invert;
@@ -103,6 +104,6 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
         }
         return invert;
     }
-    
+
     abstract protected boolean checkValue(String s);
 }

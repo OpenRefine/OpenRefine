@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.SuggestedEntityIdValue;
@@ -15,33 +16,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class WbEntityIdValueConstant implements WbExpression<EntityIdValue> {
-	
+
     private String id;
     private String label;
 
     @JsonCreator
     public WbEntityIdValueConstant(
-    		@JsonProperty("id") String id,
-    		@JsonProperty("label") String label) {
+            @JsonProperty("id") String id,
+            @JsonProperty("label") String label) {
         this.id = id;
         this.label = label;
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (id == null) {
-			validation.addError("No entity id provided");
-		} else {
-			try {
-				EntityIdValueImpl.guessEntityTypeFromId(id);
-			} catch(IllegalArgumentException e) {
-				validation.addError("Invalid entity id format: '"+id+"'");
-			}
-		}
-		if (label == null) {
-			validation.addError("No entity label provided");
-		}
-	}
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (id == null) {
+            validation.addError("No entity id provided");
+        } else {
+            try {
+                EntityIdValueImpl.guessEntityTypeFromId(id);
+            } catch (IllegalArgumentException e) {
+                validation.addError("Invalid entity id format: '" + id + "'");
+            }
+        }
+        if (label == null) {
+            validation.addError("No entity label provided");
+        }
+    }
 
     @Override
     public EntityIdValue evaluate(ExpressionContext ctxt) {

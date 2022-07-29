@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
@@ -32,8 +33,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * The base interface for all expressions, which evaluate to a particular type T
- * in an ExpressionContext.
+ * The base interface for all expressions, which evaluate to a particular type T in an ExpressionContext.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @Type(value = WbStringConstant.class, name = "wbstringconstant"),
@@ -54,23 +54,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
         @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"),
         @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
-        @Type(value = WbMediaInfoEditExpr.class, name = "wbmediainfoeditexpr"),})
+        @Type(value = WbMediaInfoEditExpr.class, name = "wbmediainfoeditexpr"), })
 public interface WbExpression<T> {
 
     /**
-     * Evaluates the value expression in a given context, returns a Wikibase value
-     * suitable to be the target of a claim.
+     * Evaluates the value expression in a given context, returns a Wikibase value suitable to be the target of a claim.
      * 
-     * As a premise to calling that method, we assume that calling {@link #validate(ValidationState)}
-     * did not log any error in the validation state.
+     * As a premise to calling that method, we assume that calling {@link #validate(ValidationState)} did not log any
+     * error in the validation state.
      */
     public T evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException, QAWarningException;
 
-    
     /**
      * Check that this expression is fully formed and ready to be evaluated.
-     * @param state
+     * 
+     * @param validation
+     *            the state in which to log any validation errors
      */
     public void validate(ValidationState validation);
 }

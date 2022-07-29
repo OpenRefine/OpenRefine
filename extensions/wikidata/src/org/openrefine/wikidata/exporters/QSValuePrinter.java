@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import java.math.BigDecimal;
@@ -39,12 +40,11 @@ import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
- * Prints a Wikibase value as a string as required by QuickStatements. Format
- * documentation: https://www.wikidata.org/wiki/Help:QuickStatements
+ * Prints a Wikibase value as a string as required by QuickStatements. Format documentation:
+ * https://www.wikidata.org/wiki/Help:QuickStatements
  * 
- * Any new entity id will be assumed to be the last one created, represented
- * with "LAST". It is fine to do this assumption because we are working on edit
- * batches previously scheduled by {@link QuickStatementsUpdateScheduler}.
+ * Any new entity id will be assumed to be the last one created, represented with "LAST". It is fine to do this
+ * assumption because we are working on edit batches previously scheduled by {@link QuickStatementsUpdateScheduler}.
  * 
  * @author Antonin Delpeuch
  *
@@ -99,7 +99,7 @@ public class QSValuePrinter implements ValueVisitor<String> {
 
     @Override
     public String visit(UnsupportedValue value) {
-            // we know this cannot happen, since UnsupportedValues cannot be generated in OpenRefine
-            return "<UNSUPPORTED>";
+        // we know this cannot happen, since UnsupportedValues cannot be generated in OpenRefine
+        return "<UNSUPPORTED>";
     }
 }

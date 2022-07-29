@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Map;
@@ -35,8 +36,7 @@ import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Row;
 
 /**
- * A class holding all the necessary information about the context in which a
- * schema expression is evaluated.
+ * A class holding all the necessary information about the context in which a schema expression is evaluated.
  * 
  * @author Antonin Delpeuch
  *
@@ -56,7 +56,7 @@ public class ExpressionContext {
      * 
      * @param baseIRI
      *            the siteIRI of the schema
-     * @param entityTypeBaseIRIS
+     * @param entityTypeBaseIRIs
      *            the siteIRI for specific entity types, falling back on the baseIRI otherwise
      * @param mediaWikiApiEndpoint
      *            the MediaWiki API endpoint of the Wikibase
@@ -67,17 +67,17 @@ public class ExpressionContext {
      * @param columnModel
      *            lets us access cells by column name
      * @param warningStore
-     *            where to store the issues encountered when evaluating (can be set
-     *            to null if these issues should be ignored)
+     *            where to store the issues encountered when evaluating (can be set to null if these issues should be
+     *            ignored)
      */
     public ExpressionContext(
-    		String baseIRI,
-    		Map<String, String> entityTypeBaseIRIs,
-    		String mediaWikiApiEndpoint,
-    		int rowId,
-    		Row row,
-    		ColumnModel columnModel,
-    		QAWarningStore warningStore) {
+            String baseIRI,
+            Map<String, String> entityTypeBaseIRIs,
+            String mediaWikiApiEndpoint,
+            int rowId,
+            Row row,
+            ColumnModel columnModel,
+            QAWarningStore warningStore) {
         Validate.notNull(baseIRI);
         this.baseIRI = baseIRI;
         this.entityTypeIRIs = entityTypeBaseIRIs;
@@ -93,9 +93,9 @@ public class ExpressionContext {
     public String getBaseIRI() {
         return baseIRI;
     }
-    
+
     public String getBaseIRIForEntityType(String entityType) {
-    	return entityTypeIRIs.getOrDefault(entityType, baseIRI);
+        return entityTypeIRIs.getOrDefault(entityType, baseIRI);
     }
 
     public String getMediaWikiApiEndpoint() {
@@ -103,8 +103,7 @@ public class ExpressionContext {
     }
 
     /**
-     * Retrieves a cell in the current row, by column name. If the column does not
-     * exist, null is returned.
+     * Retrieves a cell in the current row, by column name. If the column does not exist, null is returned.
      * 
      * @param name
      *            the name of the column to retrieve the cell from
@@ -130,7 +129,7 @@ public class ExpressionContext {
         }
     }
 
-	public ColumnModel getColumnModel() {
-		return columnModel;
-	}
+    public ColumnModel getColumnModel() {
+        return columnModel;
+    }
 }

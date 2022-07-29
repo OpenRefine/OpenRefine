@@ -49,7 +49,7 @@ public class Length implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -73,12 +73,12 @@ public class Length implements Function {
     public String getDescription() {
         return FunctionDescription.fun_length();
     }
-    
+
     @Override
     public String getParams() {
         return "array a or string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

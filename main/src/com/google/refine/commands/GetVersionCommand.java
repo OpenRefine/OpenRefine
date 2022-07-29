@@ -45,6 +45,7 @@ import com.google.refine.RefineServlet;
 public class GetVersionCommand extends Command {
 
     protected class VersionResponse {
+
         @JsonProperty("version")
         public String version = RefineServlet.VERSION;
         @JsonProperty("revision")

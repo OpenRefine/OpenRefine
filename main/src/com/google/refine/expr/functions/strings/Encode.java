@@ -1,3 +1,4 @@
+
 package com.google.refine.expr.functions.strings;
 
 import com.google.common.io.BaseEncoding;
@@ -9,11 +10,12 @@ import com.google.refine.grel.FunctionDescription;
 import java.util.Properties;
 
 public class Encode implements Function {
+
     /**
-     * Encodes a string using a given encoding.
-     * Encodings include Base16, Base32Hex, Base32, Base64, and Base64Url.
+     * Encodes a string using a given encoding. Encodings include Base16, Base32Hex, Base32, Base64, and Base64Url.
      *
-     * @param args Arguments to the function.
+     * @param args
+     *            Arguments to the function.
      * @return The encoded string.
      */
     @Override

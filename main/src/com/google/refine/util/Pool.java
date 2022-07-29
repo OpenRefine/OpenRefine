@@ -54,22 +54,23 @@ import com.google.refine.model.ReconCandidate;
  * A serializable pool of ReconCandidates indexed by ID.
  *
  */
-public class Pool  {
+public class Pool {
+
     @JsonProperty("recons")
     final protected Map<String, Recon> recons = new HashMap<String, Recon>();
-    
+
     // This is only for backward compatibility while loading old project files
     final protected Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
-    
+
     private void pool(ReconCandidate candidate) {
         candidates.put(candidate.id, candidate);
     }
-    
+
     public void pool(Recon recon) {
         recons.put(Long.toString(recon.id), recon);
         poolReconCandidates(recon);
     }
-    
+
     public void poolReconCandidates(Recon recon) {
         if (recon.match != null) {
             pool(recon.match);
@@ -80,15 +81,15 @@ public class Pool  {
             }
         }
     }
-    
+
     public Recon getRecon(String id) {
         return recons.get(id);
     }
-    
+
     public ReconCandidate getReconCandidate(String topicID) {
         return candidates.get(topicID);
     }
-    
+
     public void save(OutputStream out) throws IOException {
         Writer writer = new OutputStreamWriter(out, "UTF-8");
         try {
@@ -97,37 +98,39 @@ public class Pool  {
             writer.flush();
         }
     }
-    
+
     public void save(Writer writer) throws IOException {
-        writer.write(RefineServlet.VERSION); writer.write('\n');
-        
+        writer.write(RefineServlet.VERSION);
+        writer.write('\n');
+
         Collection<Recon> recons2 = recons.values();
-        writer.write("reconCount=" + recons2.size()); writer.write('\n');
-        
+        writer.write("reconCount=" + recons2.size());
+        writer.write('\n');
+
         for (Recon recon : recons2) {
             ParsingUtilities.saveWriter.writeValue(writer, recon);
             writer.write('\n');
         }
     }
-    
+
     public void load(InputStream is) throws Exception {
         load(new InputStreamReader(is, "UTF-8"));
     }
-    
+
     public void load(Reader reader) throws Exception {
         LineNumberReader reader2 = new LineNumberReader(reader);
 
         /* String version = */ reader2.readLine();
-        
+
         String line;
         while ((line = reader2.readLine()) != null) {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
             String value = line.substring(equal + 1);
-            
+
             if ("reconCandidateCount".equals(field)) {
                 int count = Integer.parseInt(value);
-                
+
                 for (int i = 0; i < count; i++) {
                     line = reader2.readLine();
                     if (line != null) {
@@ -140,7 +143,7 @@ public class Pool  {
                 }
             } else if ("reconCount".equals(field)) {
                 int count = Integer.parseInt(value);
-                
+
                 for (int i = 0; i < count; i++) {
                     line = reader2.readLine();
                     if (line != null) {
