@@ -69,7 +69,8 @@ public interface WbExpression<T> {
     /**
      * Check that this expression is fully formed and ready to be evaluated.
      * 
-     * @param state
+     * @param validation
+     *            the state in which to log any validation errors
      */
     public void validate(ValidationState validation);
 }
