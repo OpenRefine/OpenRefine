@@ -311,5 +311,7 @@
     "wikibase-schema/override-wikitext": "既存のwikitextを上書きする",
     "wikibase-issues/no-warning": "警告なし",
     "wikibase-issues/warning-raised": "警告あり",
-    "wikibase-issues/locate-offending-rows": "違反行を示す"
+    "wikibase-issues/locate-offending-rows": "違反行を示す",
+    "wikibase-management/cancel": "キャンセル",
+    "wikibase-management/ok": "OK"
 }
