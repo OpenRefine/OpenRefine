@@ -72,7 +72,7 @@ public class ForEach implements Control {
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)
                 && !(o instanceof ObjectNode)) {
             // return new EvalError("First argument to forEach is not an array or JSON object");
-            return ControlEvalError.foreach();
+            return new EvalError(ControlEvalError.foreach());
         }
         
         String name = ((VariableExpr) args[1]).getName();
