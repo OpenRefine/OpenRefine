@@ -85,9 +85,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .browsing-panel-help, .history-panel-help {
   margin: 1em;
   padding: 0 0 13px 0;
-  background: @fill_primary;
-  border: 1px solid @chrome_primary;
-  color: @near_black;
+  background: var(--fill-primary);
+  border: 1px solid var(--chrome-primary);
+  color: var(--near-black);
   .rounded_corners();
   }
   
@@ -146,7 +146,7 @@ div#body div#left-panel a#hide-left-panel-button:hover {
 }
 
 @history_done_background: #fff;
-@history_undone_background: @chrome_secondary;
+@history_undone_background: var(--chrome-secondary);
 @history_entry_index_width: 30px;
 
 a.history-entry {
@@ -186,8 +186,8 @@ a.history-entry.filtered-out > * {
 
 .history-panel-filter {
   padding: @padding_tighter @padding_normal;
-  background: @chrome_secondary;
-  border: 1px solid @chrome_primary;
+  background: var(--chrome-secondary);
+  border: 1px solid var(--chrome-primary);
   border-left: 0;  
   border-right: 0;
   }
@@ -207,7 +207,7 @@ a.history-entry.filtered-out > * {
   }
 
 .history-now {
-  background: @selected_primary;
+  background: var(--selected-primary);
   }
 
 .history-future {
@@ -233,7 +233,7 @@ a.history-entry.filtered-out > * {
   }
 
 .history-future a.history-entry, .history-future a.history-entry-index {
-  color: @light_grey;
+  color: var(--light-grey);
   }
 
 .history-now a.history-entry, .history-now a.history-entry-index {
@@ -241,11 +241,11 @@ a.history-entry.filtered-out > * {
   }
   
 .history-past a.history-entry:hover, .history-future a.history-entry:hover {
-  border-bottom: 1px solid @selected_primary;
+  border-bottom: 1px solid var(--selected-primary);
   }
 
 .history-extract-dialog-panel {
-  border: 1px solid @chrome_primary;
+  border: 1px solid var(--chrome-primary);
   height: 400px;
   overflow: auto;
   }

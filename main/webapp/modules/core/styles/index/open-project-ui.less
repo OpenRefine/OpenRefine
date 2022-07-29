@@ -45,8 +45,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #projects-workspace-controls {
   position: absolute;
   padding: @padding_normal;
-  background: @fill_primary;
-  border-top: 1px solid @chrome_primary;
+  background: var(--fill-primary);
+  border-top: 1px solid var(--chrome-primary);
   font-size: 1.3em;
   }
   
@@ -60,13 +60,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   vertical-align: baseline;
   padding: @padding_tighter @padding_tight;
   font-size: 1.1em;
-  color: @metadata_grey;
-  border-bottom: dotted 1px @faint_grey;
+  color: var(--metadata-grey);
+  border-bottom: dotted 1px var(--faint-grey);
   }
   
 #projects-container > table > tbody > tr > th {
   font-weight: bold;
-  background: @chrome_secondary;
+  background: var(--chrome-secondary);
   }
 
 #projects-container .project .project-name {

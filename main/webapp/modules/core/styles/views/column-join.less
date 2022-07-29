@@ -48,7 +48,7 @@ Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the c
 }
 
 .column-join-inner-left-pane,.column-join-inner-right-pane {
-  border: 1px solid @chrome_primary;
+  border: 1px solid var(--chrome-primary);
   height: 24em;
   padding: @padding_loose;
   }
@@ -64,15 +64,15 @@ Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the c
 }
 
 .column-join-column {
-  border: 1px solid @chrome_primary;
-  background: @fill_secondary;
+  border: 1px solid var(--chrome-primary);
+  background: var(--fill-secondary);
   padding: @padding_tighter;
   margin: @padding_tight;
   cursor: move;
   .rounded_corners();
   }
 .column-join-column.selected {
-  background: @chrome_primary;
+  background: var(--chrome-primary);
   font-weight: bold;
   }
 
