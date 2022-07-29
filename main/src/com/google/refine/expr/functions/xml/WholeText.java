@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.xml;
 import java.util.Properties;
 import com.google.refine.expr.functions.Type;
 
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -61,7 +62,7 @@ public class WholeText implements Function {
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.xml_wholetext();
     }
     
     @Override

@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.common.base.CharMatcher;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Trim implements Function {
 
@@ -53,7 +54,7 @@ public class Trim implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns a copy of string s with leading and trailing whitespace removed.";
+        return FunctionDescription.str_trim();
     }
     
     @Override

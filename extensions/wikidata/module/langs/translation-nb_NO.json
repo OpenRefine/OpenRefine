@@ -39,7 +39,6 @@
     "wikibase-schema/commons-media": "filnavn",
     "wikibase-schema/math-expression": "matematisk uttrykk",
     "wikibase-schema/geoshape-with-prefix": "filnavn som begynner med «Data:»",
-    "wikibase-schema/datatype-not-supported-yet": "Denne datatypen støttes ikke ennå.",
     "wikibase-schema/invalid-schema-warning-issues": "Skjemaet ditt er ufullstendig, fiks det for å se problemene.",
     "wikibase-schema/invalid-schema-warning-preview": "Skjemaet ditt er ufullstendig, fiks det for å se forhåndsvisningen.",
     "wikibase-schema/discard-button": "Forkast endringer",

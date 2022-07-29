@@ -617,6 +617,7 @@
     "core-views/edit-cells": "Zellen bearbeiten",
     "core-views/contain-names": "(enthält Namen der Originalspalten)",
     "core-views/sort": "Sortieren…",
+    "core-views/sort/single": "Sortieren",
     "core-views/match-all-cells": "Ordnen Sie dieses Element dieser und allen identischen Zellen zu",
     "core-views/warning-sel-judg": "Bitte wählen Sie mindestens eine Art von Beurteilung aus, das Sie kopieren möchten.",
     "core-views/remove-sort": "Sortierung entfernen",

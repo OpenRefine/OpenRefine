@@ -99,7 +99,7 @@ $(function () {
             id: "wikidata/select-instance",
             label: $.i18n('wikibase-extension/select-wikibase-instance'),
             click: function () {
-              WikibaseDialog.launch()
+              new WikibaseDialog();
             }
           },
           {

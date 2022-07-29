@@ -30,12 +30,12 @@ package com.google.refine.extension.database.mariadb;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mariadb.jdbc.MariaDbResultSetMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +83,7 @@ public class MariaDBDatabaseService extends DatabaseService {
         Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
         try(Statement statement = connection.createStatement();
             ResultSet queryResult = statement.executeQuery(query)) {
-                MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData)queryResult.getMetaData();
+                ResultSetMetaData metadata = queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
                 for (int i = 1; i <= columnCount; i++) {
@@ -153,7 +153,7 @@ public class MariaDBDatabaseService extends DatabaseService {
         Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, true);
         try(Statement statement = connection.createStatement();
             ResultSet queryResult = statement.executeQuery(query)) {
-            MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData) queryResult.getMetaData();
+            ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
             for (int i = 1; i <= columnCount; i++) {
@@ -174,7 +174,7 @@ public class MariaDBDatabaseService extends DatabaseService {
         Connection connection = MariaDBConnectionManager.getInstance().getConnection(dbConfig, false);
         try(Statement statement = connection.createStatement();
             ResultSet queryResult = statement.executeQuery(query)) {
-                MariaDbResultSetMetaData metadata = (MariaDbResultSetMetaData)queryResult.getMetaData();
+                ResultSetMetaData metadata = queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 int index = 0; 
                 List<DatabaseRow> rows = new ArrayList<DatabaseRow>();

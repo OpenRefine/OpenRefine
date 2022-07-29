@@ -61,8 +61,8 @@ public class ConnectionManager {
      */
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
 
-    public static final int CONNECT_TIMEOUT = 5000;
-    public static final int READ_TIMEOUT = 10000;
+    public static final int CONNECT_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 60000;
 
     private Map<String, ApiConnection> endpointToConnection = new HashMap<>();
 

@@ -20,7 +20,7 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to the [Java downloads page](https://java.com/en/download/), and you can simply follow the instructions there.
 
-We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5.
+We recommend you [download](https://adoptium.net/temurin/releases) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5. More recent plugins for OpenRefine require Java 17.
 
 #### Compatible browser {#compatible-browser}
 
@@ -46,16 +46,6 @@ If you need a recently developed function, and are willing to risk some untested
 “Beta” and “release candidate” versions may both have unreported bugs and are most suitable for people who are willing to help us troubleshoot these versions by [creating bug reports](https://github.com/OpenRefine/OpenRefine/issues).  
 
 For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases). These are created with every commit.
-
-#### What’s changed {#whats-changed}
-
-Our [latest version is OpenRefine 3.5.0](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0), released November 7th 2021. The major changes in this version are listed on the [3.5.0 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0) with the downloadable packages.
-
-You can find information about all OpenRefine versions on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
-
-:::info Other distributions
-OpenRefine may also work in other environments, such as [Chromebooks](https://gist.github.com/organisciak/3e12e5138e44a2fed75240f4a4985b4f) where Linux terminals are available. Look at our list of [Other Distributions on the Downloads page](https://openrefine.org/download.html) for other ways of running OpenRefine, and refer to our contributor community to see new environments in development.
-:::
 
 ## Installing or upgrading {#installing-or-upgrading}
 ### Back up your data {#back-up-your-data}
@@ -103,6 +93,14 @@ You can right-click on `openrefine.exe` or `refine.bat` and pin one of those pro
 <TabItem value="mac">
 
 Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon onto the Applications folder icon (just like you would normally install Mac applications).
+
+:::caution
+When you double-click the OpenRefine icon to start the application on your Mac for the first time, you may see the notification "OpenRefine cannot be opened because the developer cannot be verified". If you see this notification, click <span class="buttonLabels">Cancel</span>.
+
+Instead, _right_-click the application's icon and select `Open` from the pop-up menu. You will see a new notification which now contains an <span class="buttonLabels">Open</span> button.
+![A screenshot of the notification containing an 'Open' button.](/img/mac-open-notification.png)
+After clicking <span class="buttonLabels">Open</span> and starting OpenRefine for the first time, you will be able to start the application normally in the future.
+:::
 
 </TabItem>
 

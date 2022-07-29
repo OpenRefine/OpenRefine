@@ -578,6 +578,7 @@
     "core-views/spec-new-val": "Per favore, specifica il nuovo nome della Colonna valore.",
     "core-views/edit-cells": "Modifica celle",
     "core-views/sort": "Ordina…",
+    "core-views/sort/single": "Ordina",
     "core-views/match-all-cells": "Abbina questo elemento con questa e tutte le altre celle identiche",
     "core-views/col-at-most": "colonne al massimo (lascia vuoto per nessun limite)",
     "core-views/warning-sel-judg": "Per favore, seleziona almeno un tipo di risultato da copiare.",

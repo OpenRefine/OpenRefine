@@ -37,6 +37,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -99,7 +100,7 @@ public class Diff implements Function {
     
     @Override
     public String getDescription() {
-        return "For strings, takes two strings and compares them, returning a string. Returns the remainder of o2 starting with the first character where they differ. For dates, returns the difference in given time units. See the time unit table at https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit.";
+        return FunctionDescription.str_diff();
     }
     
     @Override

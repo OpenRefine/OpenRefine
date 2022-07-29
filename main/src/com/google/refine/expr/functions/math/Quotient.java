@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Quotient implements Function {
 
@@ -52,7 +53,7 @@ public class Quotient implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.";
+        return FunctionDescription.math_quotient();
     }
     
     @Override

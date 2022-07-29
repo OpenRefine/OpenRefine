@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -48,6 +49,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -67,6 +69,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -95,6 +98,8 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
+    
+    final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
     
     static public interface Progress {
         public void setProgress(String message, int percent);
@@ -261,6 +266,10 @@ public class ImportingUtilities {
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
+                    
+                    if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
+                        throw new IOException("Unsupported protocol: " + url.getProtocol());
+                    }
                     
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "download");
@@ -615,8 +624,14 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
-                return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
+                TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+                if (archiveInputStream.getNextTarEntry() != null) {
+                    // It's a tar archive
+                    return archiveInputStream;
+                }
+                // It's not a tar archive, so it must be gzip compressed (or something else)
+                return null;
             } else if (fileName.endsWith(".tar.bz2")) {
                 return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
@@ -630,11 +645,20 @@ public class ImportingUtilities {
             } else if (fileName.endsWith(".kmz")) {
                 return new ZipInputStream(new FileInputStream(file));
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         return null;
     }
-    
+
+    private static boolean isFileGZipped(File file) {
+        int magic = 0;
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
+            magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
+        } catch (IOException ignored) {
+        }
+        return magic == GZIPInputStream.GZIP_MAGIC;
+    }
+
     // FIXME: This is wasteful of space and time. We should try to process on the fly
     static private boolean explodeArchive(
         File rawDataDir,
@@ -709,7 +733,8 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".gz") 
+            if (fileName.endsWith(".gz")
+                    || isFileGZipped(file)
                     || "gzip".equals(contentEncoding) 
                     || "x-gzip".equals(contentEncoding)
                     || "application/x-gzip".equals(mimeType)) {                

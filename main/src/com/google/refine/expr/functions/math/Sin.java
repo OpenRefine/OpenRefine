@@ -38,6 +38,7 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Sin implements Function {
 
@@ -51,7 +52,7 @@ public class Sin implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the trigonometric sine of an angle.";
+        return FunctionDescription.math_sin();
     }
     
     @Override

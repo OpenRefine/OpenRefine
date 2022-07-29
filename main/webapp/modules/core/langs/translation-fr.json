@@ -578,6 +578,7 @@
     "core-views/edit-cells": "Éditer les cellules",
     "core-views/contain-names": "(contenant les noms des colonnes d’origine)",
     "core-views/sort": "Trier…",
+    "core-views/sort/single": "Trier",
     "core-views/match-all-cells": "Apparier cet élément et cette cellule et toutes celles identiques",
     "core-views/col-at-most": "colonnes au plus (laisser vide pour ne pas limiter)",
     "core-views/warning-sel-judg": "Merci de choisir au moins une sorte d’avis à copier.",
@@ -815,5 +816,7 @@
     "core-views/expand-right": "Afficher toutes les colonnes à droite",
     "core-dialogs/add-all": "Ajouter toutes",
     "core-dialogs/remove-all": "Supprimer toutes",
-    "core-index-import/invalid-url": "URL incorrecte"
+    "core-index-import/invalid-url": "URL incorrecte",
+    "core-index-import/blank-url": "URL vide",
+    "core-index/rows-loading-failed": "Échec de la lecture des rangées."
 }

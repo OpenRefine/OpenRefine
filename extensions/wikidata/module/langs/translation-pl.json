@@ -36,7 +36,6 @@
     "wikibase-account/invalid-credentials": "Niepoprawne dane logowania",
     "wikibase-account/password-label": "Hasło",
     "wikibase-schema/invalid-schema-warning-issues": "Twój schemat jest niekompletny. Napraw go, aby zobaczyć problemy.",
-    "wikibase-schema/datatype-not-supported-yet": "Przepraszamy, ten typ danych nie jest jeszcze obsługiwany.",
     "wikibase-schema/reference-copied": "Skopiowano",
     "wikibase-schema/discard-button": "Odrzuć zmiany",
     "wikibase-schema/commons-media": "Nazwa pliku",

@@ -155,6 +155,10 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
                         issue.setProperty("inverse_property_entity", missingProperty);
                         issue.setProperty("source_entity", itemLinks.getKey());
                         issue.setProperty("target_entity", idValue);
+                        // we disable faceting for this issue because the required inverse statements
+                        // could be coming from different rows, so our current faceting mechanism would not be able to detect them.
+                        // This is an issue that can normally be diagnosed just by looking at the schema, anyway.
+                        issue.setFacetable(false);
                         addIssue(issue);
                     }
                 }
