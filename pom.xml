@@ -77,7 +77,7 @@
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>2.18.0</log4j.version>
-    <jetty.version>9.4.46.v20220331</jetty.version>
+    <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.5.0</jena.version>
     <poi.version>5.2.2</poi.version>
@@ -113,7 +113,7 @@
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+    <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
