@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
@@ -36,11 +36,17 @@ public class WbStringConstant implements WbExpression<StringValue> {
 
     @JsonCreator
     public WbStringConstant(@JsonProperty("value") String value) {
-        Validate.notNull(value);
-        Validate.isTrue(!value.isEmpty()); // for now we don't accept empty strings
-        // because in the variable counterpart of this expression, they are skipped
-        this.value = value.trim();
+        this.value = value == null ? value : value.trim();
     }
+    
+	@Override
+	public void validate(ValidationState validation) {
+		if (value == null || value.isEmpty()) {
+	        // for now we don't accept empty strings
+	        // because in the variable counterpart of this expression, they are skipped
+			validation.addError("Empty value");
+		}
+	}
 
     @Override
     public StringValue evaluate(ExpressionContext ctxt) {
@@ -64,4 +70,5 @@ public class WbStringConstant implements WbExpression<StringValue> {
     public int hashCode() {
         return value.hashCode();
     }
+
 }

@@ -26,6 +26,7 @@ package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -62,13 +63,55 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
     public void testInvalidSchema() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
+        // schema that is syntactically incorrect
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
                 + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
 
         when(request.getParameter("schema")).thenReturn(schemaJson);
         command.doPost(request, response);
 
-        assertTrue(writer.toString().contains("\"error\""));
+        String string = writer.toString();
+        assertTrue(string.contains("\"error\""));
+    }
+
+    @Test
+    public void testNoSchema() throws ServletException, IOException {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("schema")).thenReturn("null");
+        command.doPost(request, response);
+
+        String string = writer.toString();
+        assertTrue(string.contains("\"error\""));
+    }
+
+    @Test
+    public void testIncompleteSchema() throws IOException, ServletException {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
+        // schema that is syntactically correct but misses some elements
+        String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+
+        command.doPost(request, response);
+
+        String expectedError = "{"
+                + "\"reason\":\"invalid-schema\","
+                + "\"message\":\"Invalid Wikibase schema\","
+                + "\"errors\":["
+                + "{\"path\":["
+                + "{\"type\":\"entity\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
+                + "{\"type\":\"reference\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"value\",\"position\":-1,\"name\":\"reference URL (P854)\"}],"
+                + "\"message\":\"Column 'nonexisting_column_name' does not exist\"},"
+                + "{\"path\":["
+                + "{\"type\":\"entity\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"statement\",\"position\":-1,\"name\":\"inception (P571)\"},"
+                + "{\"type\":\"reference\",\"position\":0,\"name\":null},"
+                + "{\"type\":\"value\",\"position\":-1,\"name\":\"retrieved (P813)\"}"
+                + "],\"message\":\"Empty date field\"}]}";
+
+        assertEquals(writer.toString(), expectedError);
     }
 
     @Test

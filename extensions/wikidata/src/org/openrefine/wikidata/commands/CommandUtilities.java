@@ -1,11 +1,10 @@
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 
@@ -22,15 +21,9 @@ public class CommandUtilities {
      */
     public static void respondError(HttpServletResponse response, String errorMessage)
             throws IOException {
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("code", "error");
-        writer.writeStringField("message", errorMessage);
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+    	ObjectNode jsonObject = ParsingUtilities.mapper.createObjectNode();
+    	jsonObject.put("code", "error");
+    	jsonObject.put("message", errorMessage);
+    	Command.respondJSON(response, jsonObject);
     }
 }

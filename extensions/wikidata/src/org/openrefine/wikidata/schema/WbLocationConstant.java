@@ -25,8 +25,8 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
-import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
@@ -48,12 +48,21 @@ public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
     private GlobeCoordinatesValue parsed;
 
     @JsonCreator
-    public WbLocationConstant(@JsonProperty("value") String origValue) throws ParseException {
+    public WbLocationConstant(@JsonProperty("value") String origValue) {
         this.value = origValue;
-        Validate.notNull(origValue);
-        this.parsed = parse(origValue);
-        Validate.notNull(this.parsed);
     }
+    
+	@Override
+	public void validate(ValidationState validation) {
+		if (value == null) {
+			validation.addError("Empty geographical coordinates value");
+		}
+        try {
+        	parsed = parse(value);
+        } catch(ParseException e) {
+        	validation.addError("Invalid geographical coordinates: '"+value+"'");
+        }
+	}
 
     /**
      * Parses a string to a location.

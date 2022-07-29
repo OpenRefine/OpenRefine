@@ -35,11 +35,12 @@ import java.util.Properties;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -74,6 +75,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         TestingData.reconcileInceptionCells(project);
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+        schema.validate(new ValidationState(project.columnModel));
         project.overlayModels.put("wikibaseSchema", schema);
         Engine engine = new Engine(project);
 

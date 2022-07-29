@@ -1,7 +1,8 @@
 package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedEntityIdValue;
+import org.openrefine.wikidata.schema.validation.ValidationState;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,11 +23,25 @@ public class WbEntityIdValueConstant implements WbExpression<EntityIdValue> {
     public WbEntityIdValueConstant(
     		@JsonProperty("id") String id,
     		@JsonProperty("label") String label) {
-        Validate.notNull(id, "id cannot be null");
         this.id = id;
-        Validate.notNull(label, "label cannot be null");
         this.label = label;
     }
+    
+	@Override
+	public void validate(ValidationState validation) {
+		if (id == null) {
+			validation.addError("No entity id provided");
+		} else {
+			try {
+				EntityIdValueImpl.guessEntityTypeFromId(id);
+			} catch(IllegalArgumentException e) {
+				validation.addError("Invalid entity id format: '"+id+"'");
+			}
+		}
+		if (label == null) {
+			validation.addError("No entity label provided");
+		}
+	}
 
     @Override
     public EntityIdValue evaluate(ExpressionContext ctxt) {
@@ -56,4 +71,5 @@ public class WbEntityIdValueConstant implements WbExpression<EntityIdValue> {
     public int hashCode() {
         return id.hashCode() + label.hashCode();
     }
+
 }

@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.utils.LanguageCodeStore;
 import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
 
@@ -40,15 +40,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WbLanguageConstant implements WbExpression<String> {
 
     protected String _langId;
+    protected String _origLangId; // for error reporting purposes during validation
     protected String _langLabel;
 
     @JsonCreator
     public WbLanguageConstant(@JsonProperty("id") String langId, @JsonProperty("label") String langLabel) {
         _langId = normalizeLanguageCode(langId);
-        Validate.notNull(_langId, "A valid language code must be provided.");
-        Validate.notNull(langLabel);
         _langLabel = langLabel;
+        _origLangId = langId;
     }
+
+	@Override
+	public void validate(ValidationState validation) {
+		if (_origLangId != null && _langId == null) {
+			validation.addError("Invalid language code '" + _origLangId + "'");
+		} else if (_langId == null) {
+			validation.addError("Empty language field");
+		}
+        if (_langLabel == null) {
+        	validation.addError("Empty text field");
+        }
+	}
 
     public static String normalizeLanguageCode(String lang) {
         return normalizeLanguageCode(lang, null);

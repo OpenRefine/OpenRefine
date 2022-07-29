@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -57,6 +58,22 @@ public class WbReferenceExpr implements WbExpression<Reference> {
         Validate.notNull(snakExprs);
         this.snakExprs = snakExprs;
     }
+
+	@Override
+	public void validate(ValidationState validation) {
+		if (snakExprs == null) {
+			validation.addError("No reference snaks provided");
+		} else {
+			// empty reference snaks are allowed
+			snakExprs.forEach(snak -> {
+				if (snak == null) {
+					validation.addError("Null snak in reference");
+				} else {
+					snak.validate(validation);
+				}
+			});
+		}
+	}
 
     @Override
     public Reference evaluate(ExpressionContext ctxt)
@@ -95,4 +112,5 @@ public class WbReferenceExpr implements WbExpression<Reference> {
     public int hashCode() {
         return snakExprs.hashCode();
     }
+
 }
