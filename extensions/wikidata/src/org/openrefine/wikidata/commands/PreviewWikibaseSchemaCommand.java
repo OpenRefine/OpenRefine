@@ -54,12 +54,12 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
-	
-	/**
+
+    /**
      * This command uses POST but is left CSRF-unprotected since it does not incur a side effect or state change in the
      * backend. The reason why it uses POST is to make sure large schemas and engines can be passed as parameters.
-	 */
-    
+     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -87,16 +87,16 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 respondError(response, "No Wikibase schema provided.");
                 return;
             }
-            
+
             ValidationState validation = new ValidationState(project.columnModel);
             schema.validate(validation);
             List<ValidationError> errors = validation.getValidationErrors();
             if (!errors.isEmpty()) {
-            	Map<String, Object> json = new HashMap<>();
-            	json.put("code", "error");
-            	json.put("reason", "invalid-schema");
-            	json.put("message", "Invalid Wikibase schema");
-            	json.put("errors", errors);
+                Map<String, Object> json = new HashMap<>();
+                json.put("code", "error");
+                json.put("reason", "invalid-schema");
+                json.put("message", "Invalid Wikibase schema");
+                json.put("errors", errors);
                 Command.respondJSON(response, json);
                 return;
             }
@@ -125,7 +125,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest);
             inspector.inspect(editBatch, schema);
-            
+
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
             List<EntityEdit> nonNullEdits = scheduler.schedule(editBatch).stream()

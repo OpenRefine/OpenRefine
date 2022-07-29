@@ -67,13 +67,13 @@ public class WikibaseSchema implements OverlayModel {
 
     @JsonProperty("siteIri")
     protected String siteIri;
-    
+
     @JsonProperty("entityTypeSiteIRI")
     protected Map<String, String> entityTypeSiteIri;
 
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
-    
+
     protected boolean validated;
 
     /**
@@ -82,8 +82,8 @@ public class WikibaseSchema implements OverlayModel {
      * TODO remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
-    	entityTypeSiteIri = Collections.emptyMap();
-    	validated = false;
+        entityTypeSiteIri = Collections.emptyMap();
+        validated = false;
     }
 
     /**
@@ -91,40 +91,41 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonCreator
     public WikibaseSchema(@JsonProperty("entityEdits") List<WbExpression<? extends EntityEdit>> exprs,
-    					  @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
-                          @JsonProperty("siteIri") String siteIri,
-                          @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
-                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
+            @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
+            @JsonProperty("siteIri") String siteIri,
+            @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
+            @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.entityEditExprs = new ArrayList<>();
         if (exprs != null) {
-        	entityEditExprs.addAll(exprs);
+            entityEditExprs.addAll(exprs);
         }
         if (legacyItemExprs != null) {
-        	entityEditExprs.addAll(legacyItemExprs);
+            entityEditExprs.addAll(legacyItemExprs);
         }
         this.siteIri = siteIri;
         this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
         validated = false;
     }
-    
+
     /**
      * Checks that this schema is complete.
+     * 
      * @param validationContext
      */
     public void validate(ValidationState validationContext) {
-    	int index = 0;
-    	for (WbExpression<? extends EntityEdit> entityEdit : entityEditExprs) {
-    		if (entityEdit == null) {
-    			validationContext.addError("Empty entity edit");
-    		} else {
-    			validationContext.enter(new PathElement(PathElement.Type.ENTITY, index));
-    			entityEdit.validate(validationContext);
-    			validationContext.leave();
-    		}
-    		index++;
-    	}
-    	validated = validationContext.getValidationErrors().isEmpty();
+        int index = 0;
+        for (WbExpression<? extends EntityEdit> entityEdit : entityEditExprs) {
+            if (entityEdit == null) {
+                validationContext.addError("Empty entity edit");
+            } else {
+                validationContext.enter(new PathElement(PathElement.Type.ENTITY, index));
+                entityEdit.validate(validationContext);
+                validationContext.leave();
+            }
+            index++;
+        }
+        validated = validationContext.getValidationErrors().isEmpty();
     }
 
     /**
@@ -134,7 +135,7 @@ public class WikibaseSchema implements OverlayModel {
     public String getSiteIri() {
         return siteIri;
     }
-    
+
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
@@ -163,7 +164,7 @@ public class WikibaseSchema implements OverlayModel {
      * @param ctxt
      *            the context in which the schema should be evaluated.
      * @return
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) throws QAWarningException {
         List<EntityEdit> result = new ArrayList<>();
@@ -194,9 +195,9 @@ public class WikibaseSchema implements OverlayModel {
      * @return entity updates are stored in their generating order (not merged yet).
      */
     public List<EntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
-    	if (!validated) {
-    		throw new IllegalStateException("The schema has not been validated before being evaluated");
-    	}
+        if (!validated) {
+            throw new IllegalStateException("The schema has not been validated before being evaluated");
+        }
         List<EntityEdit> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
@@ -230,10 +231,10 @@ public class WikibaseSchema implements OverlayModel {
             ExpressionContext ctxt = new ExpressionContext(siteIri, entityTypeSiteIri, mediaWikiApiEndpoint, rowIndex, row,
                     project.columnModel, warningStore);
             try {
-				result.addAll(evaluateEntityDocuments(ctxt));
-			} catch (QAWarningException e) {
-				warningStore.addWarning(e.getWarning());
-			}
+                result.addAll(evaluateEntityDocuments(ctxt));
+            } catch (QAWarningException e) {
+                warningStore.addWarning(e.getWarning());
+            }
             return false;
         }
 
@@ -242,9 +243,9 @@ public class WikibaseSchema implements OverlayModel {
             ;
         }
     }
-    
+
     static public WikibaseSchema reconstruct(String json) throws IOException {
-    	return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
+        return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
     }
 
     static public WikibaseSchema load(Project project, String obj)

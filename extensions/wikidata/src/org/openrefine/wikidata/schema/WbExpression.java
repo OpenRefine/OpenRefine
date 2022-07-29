@@ -58,18 +58,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public interface WbExpression<T> {
 
     /**
-     * Evaluates the value expression in a given context, returns a Wikibase value
-     * suitable to be the target of a claim.
+     * Evaluates the value expression in a given context, returns a Wikibase value suitable to be the target of a claim.
      * 
-     * As a premise to calling that method, we assume that calling {@link #validate(ValidationState)}
-     * did not log any error in the validation state.
+     * As a premise to calling that method, we assume that calling {@link #validate(ValidationState)} did not log any
+     * error in the validation state.
      */
     public T evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException, QAWarningException;
 
-    
     /**
      * Check that this expression is fully formed and ready to be evaluated.
+     * 
      * @param state
      */
     public void validate(ValidationState validation);

@@ -63,7 +63,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             .put(new SimpleDateFormat("yyyy-MM"), 10)
             .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
             .build();
-    
+
     public static Pattern calendarSuffixPattern = Pattern.compile("_(Q[1-9][0-9]*)$");
 
     private TimeValue parsed;
@@ -81,19 +81,19 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         this.origDatestamp = origDatestamp;
         parsed = null;
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (origDatestamp == null) {
-			validation.addError("Empty date field");
-		} else {
-			try {
-	            this.parsed = parse(origDatestamp);
-	        } catch (ParseException e) {
-	            validation.addError(String.format("Invalid date provided: '%s'", origDatestamp));
-	        }
-		}
-	}
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (origDatestamp == null) {
+            validation.addError("Empty date field");
+        } else {
+            try {
+                this.parsed = parse(origDatestamp);
+            } catch (ParseException e) {
+                validation.addError(String.format("Invalid date provided: '%s'", origDatestamp));
+            }
+        }
+    }
 
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
@@ -117,17 +117,17 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         int maxLength = 0; // the maximum length parsed
         boolean bceFlag = false; // judge whether this is a BCE year
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
-        
+
         String trimmedDatestamp = datestamp.trim();
-        
+
         if ("TODAY".equals(trimmedDatestamp)) {
-	        Calendar calendar = Calendar.getInstance();
-	    	TimeValue todaysDate = Datamodel.makeTimeValue(
-	    			calendar.get(Calendar.YEAR),
+            Calendar calendar = Calendar.getInstance();
+            TimeValue todaysDate = Datamodel.makeTimeValue(
+                    calendar.get(Calendar.YEAR),
                     (byte) (calendar.get(Calendar.MONTH) + 1),
                     (byte) calendar.get(Calendar.DAY_OF_MONTH),
                     (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
-	    	return todaysDate;
+            return todaysDate;
         }
 
         if (trimmedDatestamp.startsWith("-")) {
@@ -138,28 +138,28 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
             Date date = entry.getKey().parse(trimmedDatestamp, position);
-            
+
             if (date == null) {
-            	continue;
+                continue;
             }
-            
+
             // Potentially parse the calendar Qid after the date
             int consumedUntil = position.getIndex();
             if (consumedUntil < trimmedDatestamp.length()) {
-            	Matcher matcher = calendarSuffixPattern.matcher(
-            			trimmedDatestamp.subSequence(position.getIndex(), trimmedDatestamp.length()));
+                Matcher matcher = calendarSuffixPattern.matcher(
+                        trimmedDatestamp.subSequence(position.getIndex(), trimmedDatestamp.length()));
                 if (matcher.find()) {
-            		String calendarQid = matcher.group(1);
-            		calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
-            		consumedUntil = trimmedDatestamp.length();
-            	}
+                    String calendarQid = matcher.group(1);
+                    calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
+                    consumedUntil = trimmedDatestamp.length();
+                }
             }
 
             // Ignore parses which failed or do not consume all the input
             if (date != null && position.getIndex() > maxLength
-            		// only allow to partially consume the input if the precision is day and followed by a T (as in ISO)
-            		&& (consumedUntil == trimmedDatestamp.length()
-            		|| (entry.getValue() == 11 && trimmedDatestamp.charAt(consumedUntil) == 'T'))) {
+            // only allow to partially consume the input if the precision is day and followed by a T (as in ISO)
+                    && (consumedUntil == trimmedDatestamp.length()
+                            || (entry.getValue() == 11 && trimmedDatestamp.charAt(consumedUntil) == 'T'))) {
                 precision = entry.getValue();
                 bestDate = date;
                 maxLength = position.getIndex();

@@ -61,22 +61,21 @@ public class WbNameDescExpr {
         this.type = type;
         this.value = value;
     }
-    
+
     /**
-     * Checks that the expression has all its required elements
-     * and can be evaluated.
+     * Checks that the expression has all its required elements and can be evaluated.
      */
     public void validate(ValidationState validation) {
-    	if (type == null) {
-    		validation.addError("Empty term type");
-    	}
-    	if (value == null) {
-    		validation.addError("Empty term value");
-    	} else {
-    		validation.enter();
-    		value.validate(validation);
-    		validation.leave();
-    	}
+        if (type == null) {
+            validation.addError("Empty term type");
+        }
+        if (value == null) {
+            validation.addError("Empty term value");
+        } else {
+            validation.enter();
+            value.validate(validation);
+            validation.leave();
+        }
     }
 
     /**
@@ -86,33 +85,33 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public void contributeTo(ItemEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
-            case LABEL:
-                entity.addLabel(val, true);
-                break;
-            case LABEL_IF_NEW:
-            	entity.addLabel(val, false);
-            	break;
-            case DESCRIPTION:
-                entity.addDescription(val, true);
-                break;
-            case DESCRIPTION_IF_NEW:
-            	entity.addDescription(val, false);
-            	break;
-            case ALIAS:
-                entity.addAlias(val);
-                break;
+                case LABEL:
+                    entity.addLabel(val, true);
+                    break;
+                case LABEL_IF_NEW:
+                    entity.addLabel(val, false);
+                    break;
+                case DESCRIPTION:
+                    entity.addDescription(val, true);
+                    break;
+                case DESCRIPTION_IF_NEW:
+                    entity.addDescription(val, false);
+                    break;
+                case ALIAS:
+                    entity.addAlias(val);
+                    break;
             }
         } catch (SkipSchemaExpressionException e) {
             return;
         }
     }
-    
+
     /**
      * Evaluates the expression and adds the result to the entity update.
      * 
@@ -120,20 +119,20 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public void contributeTo(MediaInfoEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
-            case LABEL:
-                entity.addLabel(val, true);
-                break;
-            case LABEL_IF_NEW:
-            	entity.addLabel(val, false);
-            	break;
-			default:
-				throw new IllegalArgumentException("Term type not supported by MediaInfo entities");
+                case LABEL:
+                    entity.addLabel(val, true);
+                    break;
+                case LABEL_IF_NEW:
+                    entity.addLabel(val, false);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Term type not supported by MediaInfo entities");
             }
         } catch (SkipSchemaExpressionException e) {
             return;
@@ -149,24 +148,24 @@ public class WbNameDescExpr {
     public WbMonolingualExpr getValue() {
         return value;
     }
-    
+
     // for error-reporting purposes, during schema validation
     @JsonIgnore
-	public PathElement.Type getPathElementType() {
-    	switch (getType()) {
-			case ALIAS:
-				return Type.ALIAS;
-			case DESCRIPTION:
-				return Type.DESCRIPTION;
-			case DESCRIPTION_IF_NEW:
-				return Type.DESCRIPTION;
-			case LABEL:
-				return Type.LABEL;
-			case LABEL_IF_NEW:
-				return Type.LABEL;
-    	}
-    	throw new IllegalStateException("Non-exhaustive enumeration of term types");
-	}
+    public PathElement.Type getPathElementType() {
+        switch (getType()) {
+            case ALIAS:
+                return Type.ALIAS;
+            case DESCRIPTION:
+                return Type.DESCRIPTION;
+            case DESCRIPTION_IF_NEW:
+                return Type.DESCRIPTION;
+            case LABEL:
+                return Type.LABEL;
+            case LABEL_IF_NEW:
+                return Type.LABEL;
+        }
+        throw new IllegalStateException("Non-exhaustive enumeration of term types");
+    }
 
     @Override
     public boolean equals(Object other) {

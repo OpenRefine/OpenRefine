@@ -39,15 +39,15 @@ public class WbStringConstant implements WbExpression<StringValue> {
     public WbStringConstant(@JsonProperty("value") String value) {
         this.value = value == null ? value : value.trim();
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (value == null || value.isEmpty()) {
-	        // for now we don't accept empty strings
-	        // because in the variable counterpart of this expression, they are skipped
-			validation.addError("Empty value");
-		}
-	}
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (value == null || value.isEmpty()) {
+            // for now we don't accept empty strings
+            // because in the variable counterpart of this expression, they are skipped
+            validation.addError("Empty value");
+        }
+    }
 
     @Override
     public StringValue evaluate(ExpressionContext ctxt) {
@@ -58,7 +58,7 @@ public class WbStringConstant implements WbExpression<StringValue> {
     public String getValue() {
         return value;
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (other == null || !WbStringConstant.class.isInstance(other)) {
@@ -66,7 +66,7 @@ public class WbStringConstant implements WbExpression<StringValue> {
         }
         return value.equals(((WbStringConstant) other).getValue());
     }
-    
+
     @Override
     public int hashCode() {
         return value.hashCode();

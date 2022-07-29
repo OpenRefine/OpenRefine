@@ -53,18 +53,18 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     public WbVariableExpr() {
         columnName = null;
     }
-    
+
     /**
      * Checks that we have a valid column name.
      */
     @Override
     public void validate(ValidationState validation) {
-    	if (columnName == null) {
-    		validation.addError("No column provided");
-    	}
-    	if (validation.getColumnModel().getColumnByName(columnName) == null) {
-    		validation.addError("Column '"+columnName+"' does not exist");
-    	}
+        if (columnName == null) {
+            validation.addError("No column provided");
+        }
+        if (validation.getColumnModel().getColumnByName(columnName) == null) {
+            validation.addError("Column '" + columnName + "' does not exist");
+        }
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     /**
      * Evaluates the expression in a given context, returning
      * 
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     @Override
     public T evaluate(ExpressionContext ctxt)

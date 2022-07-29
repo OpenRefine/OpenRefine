@@ -58,38 +58,39 @@ public class WbStatementGroupExpr {
         Validate.isTrue(!claimExprs.isEmpty());
         this.statementExprs = claimExprs;
     }
-    
+
     /**
      * Checks that the expression has all its required components and is ready to be evaluated.
+     * 
      * @param validation
      */
-	public void validate(ValidationState validation) {
-		validation.enter(new PathElement(Type.STATEMENT));
-		if (propertyExpr == null) {
-			validation.addError("No property");
-		} else {
-			propertyExpr.validate(validation);
-		}
-		validation.leave();
-		
-		// Extract property name to contribute to further validation paths
-		String propertyName = null;
-		if (propertyExpr instanceof WbPropConstant) {
-			WbPropConstant propConstant = (WbPropConstant)propertyExpr;
-			if (propConstant.getLabel() != null && propConstant.getPid() != null) {
-				propertyName = String.format("%s (%s)", propConstant.getLabel(), propConstant.getPid());
-			}
-		}
-		for (WbStatementExpr statement : statementExprs) {
-			validation.enter(new PathElement(Type.STATEMENT, propertyName));
-			if (statement != null) {
-				statement.validate(validation);
-			} else {
-				validation.addError("Empty statement");
-			}
-			validation.leave();
-		}
-	}
+    public void validate(ValidationState validation) {
+        validation.enter(new PathElement(Type.STATEMENT));
+        if (propertyExpr == null) {
+            validation.addError("No property");
+        } else {
+            propertyExpr.validate(validation);
+        }
+        validation.leave();
+
+        // Extract property name to contribute to further validation paths
+        String propertyName = null;
+        if (propertyExpr instanceof WbPropConstant) {
+            WbPropConstant propConstant = (WbPropConstant) propertyExpr;
+            if (propConstant.getLabel() != null && propConstant.getPid() != null) {
+                propertyName = String.format("%s (%s)", propConstant.getLabel(), propConstant.getPid());
+            }
+        }
+        for (WbStatementExpr statement : statementExprs) {
+            validation.enter(new PathElement(Type.STATEMENT, propertyName));
+            if (statement != null) {
+                statement.validate(validation);
+            } else {
+                validation.addError("Empty statement");
+            }
+            validation.leave();
+        }
+    }
 
     public StatementGroupEdit evaluate(ExpressionContext ctxt, EntityIdValue subject)
             throws SkipSchemaExpressionException, QAWarningException {

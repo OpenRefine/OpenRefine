@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
-	
+
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
@@ -38,12 +38,12 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     private WbExpression<StringValue> fileName;
     private WbExpression<StringValue> wikitext;
     private boolean overrideWikitext;
-    
+
     public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-mediainfo-subject";
-    
+
     @JsonCreator
     public WbMediaInfoEditExpr(
-    		@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
+            @JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs,
             @JsonProperty("filePath") WbExpression<StringValue> filePath,
@@ -65,62 +65,62 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
         this.overrideWikitext = overrideWikitext;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (subject == null) {
-			validation.addError("No subject provided");
-		} else {
-			validation.enter(new PathElement(Type.SUBJECT));
-			subject.validate(validation);
-			validation.leave();
-		}
-		nameDescs.stream().forEach(nde -> {
-			if (nde == null) {
-				validation.addError("Null term in MediaInfo entity");
-			} else if (!(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW)) {
-				validation.addError("Invalid term type for MediaInfo entity: "+nde.getType());
-	    	} else {
-	    		validation.enter(new PathElement(nde.getPathElementType()));
-	    		nde.validate(validation);
-	    		validation.leave();
-	    	}
-		});
-		statementGroups.stream().forEach(statementGroup -> {
-			if (statementGroup == null) {
-				validation.addError("Null statement in MediaInfo entity");
-			} else {
-				statementGroup.validate(validation);
-			}
-		});
-		if (fileName != null) {
-			validation.enter(new PathElement(Type.FILENAME));
-			fileName.validate(validation);
-			validation.leave();
-		}
-		if (filePath != null) {
-			validation.enter(new PathElement(Type.FILEPATH));
-			filePath.validate(validation);
-			validation.leave();
-		}
-		if (wikitext != null) {
-			validation.enter(new PathElement(Type.WIKITEXT));
-			wikitext.validate(validation);
-			validation.leave();
-		}
-	}
+    @Override
+    public void validate(ValidationState validation) {
+        if (subject == null) {
+            validation.addError("No subject provided");
+        } else {
+            validation.enter(new PathElement(Type.SUBJECT));
+            subject.validate(validation);
+            validation.leave();
+        }
+        nameDescs.stream().forEach(nde -> {
+            if (nde == null) {
+                validation.addError("Null term in MediaInfo entity");
+            } else if (!(nde.getType() == NameDescType.LABEL || nde.getType() == NameDescType.LABEL_IF_NEW)) {
+                validation.addError("Invalid term type for MediaInfo entity: " + nde.getType());
+            } else {
+                validation.enter(new PathElement(nde.getPathElementType()));
+                nde.validate(validation);
+                validation.leave();
+            }
+        });
+        statementGroups.stream().forEach(statementGroup -> {
+            if (statementGroup == null) {
+                validation.addError("Null statement in MediaInfo entity");
+            } else {
+                statementGroup.validate(validation);
+            }
+        });
+        if (fileName != null) {
+            validation.enter(new PathElement(Type.FILENAME));
+            fileName.validate(validation);
+            validation.leave();
+        }
+        if (filePath != null) {
+            validation.enter(new PathElement(Type.FILEPATH));
+            filePath.validate(validation);
+            validation.leave();
+        }
+        if (wikitext != null) {
+            validation.enter(new PathElement(Type.WIKITEXT));
+            wikitext.validate(validation);
+            validation.leave();
+        }
+    }
 
-	@Override
-	public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {
+    @Override
+    public MediaInfoEdit evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException, QAWarningException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
         if (!(subjectId instanceof MediaInfoIdValue) && !subjectId.isPlaceholder()) {
-        	QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
-        	warning.setProperty("example", subjectId.getId());
-        	throw new QAWarningException(warning);
+            QAWarning warning = new QAWarning(INVALID_SUBJECT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+            warning.setProperty("example", subjectId.getId());
+            throw new QAWarningException(warning);
         }
-		MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
+        MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
-            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+                StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
                 for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
                     update.addStatement(s);
                 }
@@ -132,45 +132,45 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             expr.contributeTo(update, ctxt);
         }
         if (filePath != null) {
-        	try {
-        		StringValue pathValue = filePath.evaluate(ctxt);
-        		if (pathValue != null && !pathValue.getString().isBlank()) {
-        			update.addFilePath(pathValue.getString());
-        		}
+            try {
+                StringValue pathValue = filePath.evaluate(ctxt);
+                if (pathValue != null && !pathValue.getString().isBlank()) {
+                    update.addFilePath(pathValue.getString());
+                }
             } catch (SkipSchemaExpressionException e) {
-        		;
-        	}
+                ;
+            }
         }
         if (fileName != null) {
-        	try {
-        		StringValue nameValue = fileName.evaluate(ctxt);
-        		if (nameValue != null && !nameValue.getString().isBlank()) {
-        			update.addFileName(nameValue.getString());
-        		}
+            try {
+                StringValue nameValue = fileName.evaluate(ctxt);
+                if (nameValue != null && !nameValue.getString().isBlank()) {
+                    update.addFileName(nameValue.getString());
+                }
             } catch (SkipSchemaExpressionException e) {
-        		;
-        	}
+                ;
+            }
         }
         if (wikitext != null) {
-        	try {
-        		StringValue wikitextValue = wikitext.evaluate(ctxt);
-        		if (wikitextValue != null && !wikitextValue.getString().isBlank()) {
-        			update.addWikitext(wikitextValue.getString());
-        		}
+            try {
+                StringValue wikitextValue = wikitext.evaluate(ctxt);
+                if (wikitextValue != null && !wikitextValue.getString().isBlank()) {
+                    update.addWikitext(wikitextValue.getString());
+                }
             } catch (SkipSchemaExpressionException e) {
-        		;
-        	}
+                ;
+            }
         }
         if (overrideWikitext) {
-        	update.setOverrideWikitext(overrideWikitext);
+            update.setOverrideWikitext(overrideWikitext);
         }
         return update.build();
-	}
-	
-	/**
+    }
+
+    /**
      * The Mid for the entity. If marked as new, a new file will be uploaded, otherwise the existing MediaInfo entity
      * will be edited.
-	 */
+     */
     @JsonProperty("subject")
     public WbExpression<? extends EntityIdValue> getSubject() {
         return subject;
@@ -191,7 +191,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     public List<WbStatementGroupExpr> getStatementGroups() {
         return Collections.unmodifiableList(statementGroups);
     }
-    
+
     /**
      * The path to the file that should be uploaded, either to replace the current file if the subject already exists,
      * or to create a new file on the MediaWiki instance if the subject does not exist yet.
@@ -200,9 +200,9 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
      */
     @JsonProperty("filePath")
     public WbExpression<StringValue> getFilePath() {
-    	return filePath;
+        return filePath;
     }
-    
+
     /**
      * The filename at which the file should be uploaded (if new), or moved (if existing).
      * 
@@ -210,9 +210,9 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
      */
     @JsonProperty("fileName")
     public WbExpression<StringValue> getFileName() {
-    	return fileName;
+        return fileName;
     }
-    
+
     /**
      * The wikitext to be added to the file (or edited)
      * 
@@ -220,15 +220,15 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
      */
     @JsonProperty("wikitext")
     public WbExpression<StringValue> getWikitext() {
-    	return wikitext;
+        return wikitext;
     }
-    
+
     /**
      * Whether the provided wikitext should override any existing wikitext.
      */
     @JsonProperty("overrideWikitext")
     public boolean isOverridingWikitext() {
-    	return overrideWikitext;
+        return overrideWikitext;
     }
 
     @Override

@@ -99,49 +99,49 @@ import com.google.refine.util.ParsingUtilities;
 public class ImportingUtilities {
 
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
-    
+
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
-    
+
     static public interface Progress {
 
         public void setProgress(String message, int percent);
 
         public boolean isCanceled();
     }
-    
+
     static public void loadDataAndPrepareJob(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Properties parameters,
-        final ImportingJob job,
-        ObjectNode config) throws IOException, ServletException {
-        
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Properties parameters,
+            final ImportingJob job,
+            ObjectNode config) throws IOException, ServletException {
+
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
         JSONUtilities.safePut(config, "state", "loading-raw-data");
-        
+
         final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(config, "progress", progress);
         try {
             ImportingUtilities.retrieveContentFromPostRequest(
-                request,
-                parameters,
-                job.getRawDataDir(),
-                retrievalRecord,
-                new Progress() {
+                    request,
+                    parameters,
+                    job.getRawDataDir(),
+                    retrievalRecord,
+                    new Progress() {
 
-                    @Override
-                    public void setProgress(String message, int percent) {
-                        if (message != null) {
-                            JSONUtilities.safePut(progress, "message", message);
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
                         }
-                        JSONUtilities.safePut(progress, "percent", percent);
-                    }
 
-                    @Override
-                    public boolean isCanceled() {
-                        return job.canceled;
-                    }
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
                     });
         } catch (Exception e) {
             JSONUtilities.safePut(config, "state", "error");
@@ -149,49 +149,49 @@ public class ImportingUtilities {
             JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
             throw new IOException(e.getMessage());
         }
-        
+
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
-        
+
         EncodingGuesser.guess(job);
-        
+
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
-        
+
         ArrayNode rankedFormats = ParsingUtilities.mapper.createArrayNode();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
         JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
-        
+
         JSONUtilities.safePut(config, "state", "ready");
         JSONUtilities.safePut(config, "hasData", true);
         config.remove("progress");
     }
-    
+
     static public void updateJobWithNewFileSelection(ImportingJob job, ArrayNode fileSelectionArray) {
         job.setFileSelection(fileSelectionArray);
-        
+
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
-        
+
         ArrayNode rankedFormats = ParsingUtilities.mapper.createArrayNode();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
         job.setRankedFormats(rankedFormats);
     }
-    
+
     static public void retrieveContentFromPostRequest(
-        HttpServletRequest request,
-        Properties parameters,
-        File rawDataDir,
-        ObjectNode retrievalRecord,
+            HttpServletRequest request,
+            Properties parameters,
+            File rawDataDir,
+            ObjectNode retrievalRecord,
             final Progress progress) throws IOException, FileUploadException {
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
-        
+
         int clipboardCount = 0;
         int uploadCount = 0;
         int downloadCount = 0;
         int archiveCount = 0;
-        
+
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
         final SavingUpdate update = new SavingUpdate() {
@@ -206,15 +206,15 @@ public class ImportingUtilities {
                 return progress.isCanceled();
             }
         };
-        
+
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-        
+
         ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
         upload.setProgressListener(new ProgressListener() {
 
             boolean setContentLength = false;
             long lastBytesRead = 0;
-            
+
             @Override
             public void update(long bytesRead, long contentLength, int itemCount) {
                 if (!setContentLength) {
@@ -227,22 +227,22 @@ public class ImportingUtilities {
                 if (setContentLength) {
                     update.totalRetrievedSize += (bytesRead - lastBytesRead);
                     lastBytesRead = bytesRead;
-                    
+
                     update.savedMore();
                 }
             }
         });
 
         List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
-        
+
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
-            
+
             InputStream stream = fileItem.getInputStream();
-            
+
             String name = fileItem.getFieldName().toLowerCase();
             if (fileItem.isFormField()) {
                 if (name.equals("clipboard")) {
@@ -250,9 +250,9 @@ public class ImportingUtilities {
                     if (encoding == null) {
                         encoding = "UTF-8";
                     }
-                    
+
                     File file = allocateFile(rawDataDir, "clipboard.txt");
-                    
+
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "clipboard");
                     JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
@@ -260,33 +260,33 @@ public class ImportingUtilities {
                     JSONUtilities.safePut(fileRecord, "format", "text");
                     JSONUtilities.safePut(fileRecord, "fileName", "(clipboard)");
                     JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
-                    
+
                     progress.setProgress("Uploading pasted clipboard text",
-                        calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
-                    
+                            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
                     JSONUtilities.append(fileRecords, fileRecord);
-                    
+
                     clipboardCount++;
-                    
+
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
-                    
+
                     if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
                         throw new IOException("Unsupported protocol: " + url.getProtocol());
                     }
-                    
+
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "download");
                     JSONUtilities.safePut(fileRecord, "url", urlString);
-                    
+
                     for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
                         Result result = rewriter.rewrite(urlString);
                         if (result != null) {
                             urlString = result.rewrittenUrl;
                             url = new URL(urlString);
-                            
+
                             JSONUtilities.safePut(fileRecord, "url", urlString);
                             JSONUtilities.safePut(fileRecord, "format", result.format);
                             if (!result.download) {
@@ -311,25 +311,25 @@ public class ImportingUtilities {
                                     }
 
                                     try {
-                                    InputStream stream2 = entity.getContent();
+                                        InputStream stream2 = entity.getContent();
 
-                                    String mimeType = null;
-                                    String charset = null;
-                                    ContentType contentType = ContentType.parse(entity.getContentType());
-                                    if (contentType != null) {
-                                        mimeType = contentType.getMimeType();
-                                        Charset cs = contentType.getCharset();
-                                        if (cs != null) {
-                                            charset = cs.toString();
+                                        String mimeType = null;
+                                        String charset = null;
+                                        ContentType contentType = ContentType.parse(entity.getContentType());
+                                        if (contentType != null) {
+                                            mimeType = contentType.getMimeType();
+                                            Charset cs = contentType.getCharset();
+                                            if (cs != null) {
+                                                charset = cs.toString();
+                                            }
                                         }
-                                    }
-                                    JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
-                                    JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
-                                    if (saveStream(stream2, lastUrl, rawDataDir, progress, update,
-                                            fileRecord, fileRecords,
-                                            entity.getContentLength())) {
-                                        return "saved"; // signal to increment archive count
-                                    }
+                                        JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                                        JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                                        if (saveStream(stream2, lastUrl, rawDataDir, progress, update,
+                                                fileRecord, fileRecords,
+                                                entity.getContentLength())) {
+                                            return "saved"; // signal to increment archive count
+                                        }
 
                                     } catch (final IOException ex) {
                                         throw new ClientProtocolException(ex);
@@ -355,12 +355,12 @@ public class ImportingUtilities {
                         urlConnection.setConnectTimeout(5000);
                         urlConnection.connect();
                         InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", 
+                        JSONUtilities.safePut(fileRecord, "declaredEncoding",
                                 urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", 
+                        JSONUtilities.safePut(fileRecord, "declaredMimeType",
                                 urlConnection.getContentType());
                         try {
-                            if (saveStream(stream2, url, rawDataDir, progress, 
+                            if (saveStream(stream2, url, rawDataDir, progress,
                                     update, fileRecord, fileRecords,
                                     urlConnection.getContentLength())) {
                                 archiveCount++;
@@ -381,9 +381,9 @@ public class ImportingUtilities {
                 String fileName = fileItem.getName();
                 if (fileName.length() > 0) {
                     long fileSize = fileItem.getSize();
-                    
+
                     File file = allocateFile(rawDataDir, fileName);
-                    
+
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "upload");
                     JSONUtilities.safePut(fileRecord, "declaredEncoding", request.getCharacterEncoding());
@@ -392,27 +392,27 @@ public class ImportingUtilities {
                     JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
 
                     progress.setProgress(
-                        "Saving file " + fileName + " locally (" + formatBytes(fileSize) + " bytes)",
-                        calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
-                    
+                            "Saving file " + fileName + " locally (" + formatBytes(fileSize) + " bytes)",
+                            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
                     // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
-                    
+
                     uploadCount++;
                 }
             }
-            
+
             stream.close();
         }
-        
+
         // Delete all temp files.
         for (FileItem fileItem : tempFiles) {
             fileItem.delete();
         }
-        
+
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
         JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
@@ -434,8 +434,8 @@ public class ImportingUtilities {
         update.totalExpectedSize += length;
 
         progress.setProgress("Downloading " + url.toString(),
-            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
-        
+                calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+
         long actualLength = saveStreamToFile(stream, file, update);
         JSONUtilities.safePut(fileRecord, "size", actualLength);
         if (actualLength == 0) {
@@ -446,28 +446,28 @@ public class ImportingUtilities {
             update.totalExpectedSize += actualLength;
         }
         progress.setProgress("Saving " + url.toString() + " locally",
-            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+                calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
         return postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress);
     }
-    
+
     static public String getRelativePath(File file, File dir) {
         String location = file.getAbsolutePath().substring(dir.getAbsolutePath().length());
         return (location.startsWith(File.separator)) ? location.substring(1) : location;
     }
-    
+
     static public File allocateFile(File dir, String name) {
         int q = name.indexOf('?');
         if (q > 0) {
             name = name.substring(0, q);
         }
-        
+
         File file = new File(dir, name);
         Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
         if (!normalizedFile.startsWith(dir.toPath().normalize() + File.separator)) {
             throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
-        
+
         Path normalizedParent = normalizedFile.getParent();
         String fileName = normalizedFile.getFileName().toString();
         int dot = fileName.lastIndexOf('.');
@@ -477,22 +477,22 @@ public class ImportingUtilities {
         while (file.exists()) {
             file = normalizedParent.resolve(prefix + "-" + index++ + suffix).toFile();
         }
-        
+
         file.getParentFile().mkdirs();
-        
+
         return file;
     }
-    
+
     static public Reader getFileReader(ImportingJob job, ObjectNode fileRecord, String commonEncoding)
-        throws FileNotFoundException {
-        
+            throws FileNotFoundException {
+
         return getFileReader(getFile(job, JSONUtilities.getString(fileRecord, "location", "")), fileRecord, commonEncoding);
     }
-    
+
     static public Reader getFileReader(File file, ObjectNode fileRecord, String commonEncoding) throws FileNotFoundException {
         return getReaderFromStream(new FileInputStream(file), fileRecord, commonEncoding);
     }
-    
+
     static public Reader getReaderFromStream(InputStream inputStream, ObjectNode fileRecord, String commonEncoding) {
         String encoding = getEncoding(fileRecord);
         if (encoding == null) {
@@ -507,19 +507,19 @@ public class ImportingUtilities {
         }
         return new InputStreamReader(inputStream);
     }
-    
+
     static public File getFile(ImportingJob job, ObjectNode fileRecord) {
         return getFile(job, JSONUtilities.getString(fileRecord, "location", ""));
     }
-    
+
     static public File getFile(ImportingJob job, String location) {
         return new File(job.getRawDataDir(), location);
     }
-    
+
     static public String getFileSource(ObjectNode fileRecord) {
         return JSONUtilities.getString(
-            fileRecord,
-            "url",
+                fileRecord,
+                "url",
                 JSONUtilities.getString(fileRecord, "fileName", "unknown"));
     }
 
@@ -540,7 +540,7 @@ public class ImportingUtilities {
 
         public long totalExpectedSize = 0;
         public long totalRetrievedSize = 0;
-        
+
         abstract public void savedMore();
 
         abstract public boolean isCanceled();
@@ -568,13 +568,13 @@ public class ImportingUtilities {
             fos.close();
         }
     }
-    
+
     static public boolean postProcessRetrievedFile(
             File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) throws IOException {
-        
+
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
-        
+
         InputStream archiveIS = tryOpenAsArchive(file, mimeType, contentEncoding);
         if (archiveIS != null) {
             try {
@@ -590,12 +590,12 @@ public class ImportingUtilities {
                 }
             }
         }
-        
+
         InputStream uncompressedIS = tryOpenAsCompressedFile(file, mimeType, contentEncoding);
         if (uncompressedIS != null) {
             try {
                 File file2 = uncompressFile(rawDataDir, uncompressedIS, fileRecord, progress);
-                
+
                 file.delete();
                 file = file2;
             } catch (IOException e) {
@@ -609,26 +609,26 @@ public class ImportingUtilities {
                 }
             }
         }
-        
+
         postProcessSingleRetrievedFile(file, fileRecord);
         JSONUtilities.append(fileRecords, fileRecord);
-        
+
         return false;
     }
-    
+
     static public void postProcessSingleRetrievedFile(File file, ObjectNode fileRecord) {
         if (!fileRecord.has("format")) {
             JSONUtilities.safePut(fileRecord, "format",
-                ImportingManager.getFormat(
-                    file.getName(),
-                    JSONUtilities.getString(fileRecord, "declaredMimeType", null)));
+                    ImportingManager.getFormat(
+                            file.getName(),
+                            JSONUtilities.getString(fileRecord, "declaredMimeType", null)));
         }
     }
-    
+
     static public InputStream tryOpenAsArchive(File file, String mimeType) {
         return tryOpenAsArchive(file, mimeType, null);
     }
-    
+
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
         String fileName = file.getName();
         try {
@@ -644,9 +644,9 @@ public class ImportingUtilities {
                 return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
                 return new TarArchiveInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".zip") 
+            } else if (fileName.endsWith(".zip")
                     || "application/x-zip-compressed".equals(contentType)
-                    || "application/zip".equals(contentType) 
+                    || "application/zip".equals(contentType)
                     || "application/x-compressed".equals(contentType)
                     || "multipar/x-zip".equals(contentType)) {
                 return new ZipInputStream(new FileInputStream(file));
@@ -669,10 +669,10 @@ public class ImportingUtilities {
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
     static private boolean explodeArchive(
-        File rawDataDir,
-        InputStream archiveIS,
-        ObjectNode archiveFileRecord,
-        ArrayNode fileRecords,
+            File rawDataDir,
+            InputStream archiveIS,
+            ObjectNode archiveFileRecord,
+            ArrayNode fileRecords,
             final Progress progress) throws IOException {
         if (archiveIS instanceof TarArchiveInputStream) {
             TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
@@ -682,9 +682,9 @@ public class ImportingUtilities {
                     if (!te.isDirectory()) {
                         String fileName2 = te.getName();
                         File file2 = allocateFile(rawDataDir, fileName2);
-                        
+
                         progress.setProgress("Extracting " + fileName2, -1);
-                        
+
                         ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
                         JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
                         JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
@@ -695,7 +695,7 @@ public class ImportingUtilities {
 
                         JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(tis, file2, null));
                         postProcessSingleRetrievedFile(file2, fileRecord2);
-                        
+
                         JSONUtilities.append(fileRecords, fileRecord2);
                     }
                 }
@@ -732,26 +732,26 @@ public class ImportingUtilities {
         }
         return false;
     }
-    
+
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType) {
         return tryOpenAsCompressedFile(file, mimeType, null);
     }
-    
+
     static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
         String fileName = file.getName();
         try {
             if (fileName.endsWith(".gz")
                     || isFileGZipped(file)
-                    || "gzip".equals(contentEncoding) 
+                    || "gzip".equals(contentEncoding)
                     || "x-gzip".equals(contentEncoding)
-                    || "application/x-gzip".equals(mimeType)) {                
+                    || "application/x-gzip".equals(mimeType)) {
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
                     || "application/x-bzip2".equals(mimeType)) {
                 InputStream is = new FileInputStream(file);
                 is.mark(4);
                 if (!(is.read() == 'B' && is.read() == 'Z')) {
-                    // No BZ prefix as appended by command line tools.  Reset and hope for the best
+                    // No BZ prefix as appended by command line tools. Reset and hope for the best
                     is.reset();
                 }
                 return new BZip2CompressorInputStream(is);
@@ -761,11 +761,11 @@ public class ImportingUtilities {
         }
         return null;
     }
-    
+
     static public File uncompressFile(
-        File rawDataDir,
-        InputStream uncompressedIS,
-        ObjectNode fileRecord,
+            File rawDataDir,
+            InputStream uncompressedIS,
+            ObjectNode fileRecord,
             final Progress progress) throws IOException {
         String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
         for (String ext : new String[] { ".gz", ".bz2" }) {
@@ -775,26 +775,26 @@ public class ImportingUtilities {
             }
         }
         File file2 = allocateFile(rawDataDir, fileName);
-        
+
         progress.setProgress("Uncompressing " + fileName, -1);
-        
+
         saveStreamToFile(uncompressedIS, file2, null);
-        
+
         JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
         JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
         JSONUtilities.safePut(fileRecord, "location", getRelativePath(file2, rawDataDir));
-        
+
         return file2;
     }
-    
+
     static private int calculateProgressPercent(long totalExpectedSize, long totalRetrievedSize) {
         return totalExpectedSize == 0 ? -1 : (int) (totalRetrievedSize * 100 / totalExpectedSize);
     }
-    
+
     static private String formatBytes(long bytes) {
         return NumberFormat.getIntegerInstance().format(bytes);
     }
-    
+
     static public String getEncoding(ObjectNode firstFileRecord) {
         String encoding = JSONUtilities.getString(firstFileRecord, "encoding", null);
         if (encoding == null || encoding.isEmpty()) {
@@ -818,7 +818,7 @@ public class ImportingUtilities {
     static public String autoSelectFiles(ImportingJob job, ObjectNode retrievalRecord, ArrayNode fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
-        
+
         ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileRecords.size();
         for (int i = 0; i < count; i++) {
@@ -840,7 +840,7 @@ public class ImportingUtilities {
                 return formatToCount.get(o2) - formatToCount.get(o1);
             }
         });
-        
+
         // Default to "text" to to avoid parsing as "binary/excel".
         // "text" is more general than "text/line-based", so a better starting point
         String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
@@ -858,7 +858,7 @@ public class ImportingUtilities {
                     JSONUtilities.append(fileSelectionIndexes, i);
                 }
             }
-            
+
             // If nothing matches the best format but we have some files,
             // then select them all
             if (fileSelectionIndexes.size() == 0 && count > 0) {
@@ -869,13 +869,13 @@ public class ImportingUtilities {
         }
         return bestFormat;
     }
-    
+
     static public String getCommonFormatForSelectedFiles(ImportingJob job, ArrayNode fileSelectionIndexes) {
         ObjectNode retrievalRecord = job.getRetrievalRecord();
-        
+
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
-        
+
         ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileSelectionIndexes.size();
         for (int i = 0; i < count; i++) {
@@ -900,32 +900,32 @@ public class ImportingUtilities {
                 return formatToCount.get(o2) - formatToCount.get(o1);
             }
         });
-        
+
         return formats.size() > 0 ? formats.get(0) : null;
     }
-    
+
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
         ObjectNode retrievalRecord = job.getRetrievalRecord();
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
     }
-    
+
     static String guessBetterFormat(ImportingJob job, ObjectNode retrievalRecord, String bestFormat) {
         ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         return fileRecords != null ? guessBetterFormat(job, fileRecords, bestFormat) : bestFormat;
     }
-    
+
     static String guessBetterFormat(ImportingJob job, ArrayNode fileRecords, String bestFormat) {
         if (bestFormat != null && fileRecords != null && fileRecords.size() > 0) {
             ObjectNode firstFileRecord = JSONUtilities.getObjectElement(fileRecords, 0);
             String encoding = getEncoding(firstFileRecord);
             String location = JSONUtilities.getString(firstFileRecord, "location", null);
-            
+
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);
-                
+
                 while (true) {
                     String betterFormat = null;
-                    
+
                     List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
                     if (guessers != null) {
                         for (FormatGuesser guesser : guessers) {
@@ -935,7 +935,7 @@ public class ImportingUtilities {
                             }
                         }
                     }
-                    
+
                     if (betterFormat != null && !betterFormat.equals(bestFormat)) {
                         bestFormat = betterFormat;
                     } else {
@@ -946,12 +946,12 @@ public class ImportingUtilities {
         }
         return bestFormat;
     }
-    
+
     static void rankFormats(ImportingJob job, final String bestFormat, ArrayNode rankedFormats) {
         final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
-        
+
         boolean download = bestFormat == null ? true : ImportingManager.formatToRecord.get(bestFormat).download;
-        
+
         List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
         for (String format : ImportingManager.formatToRecord.keySet()) {
             Format record = ImportingManager.formatToRecord.get(format);
@@ -960,7 +960,7 @@ public class ImportingUtilities {
                 formatToSegments.put(format, format.split("/"));
             }
         }
-        
+
         if (bestFormat == null) {
             Collections.sort(formats);
         } else {
@@ -976,12 +976,12 @@ public class ImportingUtilities {
                         return compareBySegments(format1, format2);
                     }
                 }
-                
+
                 int compareBySegments(String format1, String format2) {
                     int c = commonSegments(format2) - commonSegments(format1);
                     return c != 0 ? c : format1.compareTo(format2);
                 }
-                
+
                 int commonSegments(String format) {
                     String[] bestSegments = formatToSegments.get(bestFormat);
                     String[] segments = formatToSegments.get(format);
@@ -999,7 +999,7 @@ public class ImportingUtilities {
                 }
             });
         }
-        
+
         for (String format : formats) {
             rankedFormats.add(format);
         }
@@ -1011,22 +1011,22 @@ public class ImportingUtilities {
             // TODO: what to do?
             return;
         }
-        
+
         job.prepareNewProject();
-        
+
         record.parser.parse(
-            job.project,
-            job.metadata,
-            job,
-            job.getSelectedFileRecords(),
-            format,
-            100,
-            optionObj,
+                job.project,
+                job.metadata,
+                job,
+                job.getSelectedFileRecords(),
+                format,
+                100,
+                optionObj,
                 exceptions);
-        
+
         job.project.update(); // update all internal models, indexes, caches, etc.
     }
-    
+
     static public long createProject(
             final ImportingJob job,
             final String format,
@@ -1038,50 +1038,50 @@ public class ImportingUtilities {
             // TODO: what to do?
             return -1;
         }
-        
+
         job.setState("creating-project");
-        
+
         final Project project = new Project();
         if (synchronous) {
             createProjectSynchronously(
-                job, format, optionObj, exceptions, record, project);
+                    job, format, optionObj, exceptions, record, project);
         } else {
             new Thread() {
 
                 @Override
                 public void run() {
                     createProjectSynchronously(
-                        job, format, optionObj, exceptions, record, project);
+                            job, format, optionObj, exceptions, record, project);
                 }
             }.start();
         }
         return project.id;
     }
-    
+
     static private void createProjectSynchronously(
-        final ImportingJob job,
-        final String format,
-        final ObjectNode optionObj,
-        final List<Exception> exceptions,
-        final Format record,
+            final ImportingJob job,
+            final String format,
+            final ObjectNode optionObj,
+            final List<Exception> exceptions,
+            final Format record,
             final Project project) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
         record.parser.parse(
-            project,
-            pm,
-            job,
-            job.getSelectedFileRecords(),
-            format,
-            -1,
-            optionObj,
+                project,
+                pm,
+                job,
+                job.getSelectedFileRecords(),
+                format,
+                -1,
+                optionObj,
                 exceptions);
-        
+
         if (!job.canceled) {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
-                
+
                 ProjectManager.singleton.registerProject(project, pm);
-                
+
                 job.setProjectID(project.id);
                 job.setState("created-project");
             } else {

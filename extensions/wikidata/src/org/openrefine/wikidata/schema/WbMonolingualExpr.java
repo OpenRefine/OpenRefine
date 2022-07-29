@@ -47,19 +47,19 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
         this.valueExpr = valueExpr;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (languageExpr == null) {
-			validation.addError("No language provided");
-		} else {
-			languageExpr.validate(validation);
-		}
-		if (valueExpr == null) {
-			validation.addError("No text value provided");
-		} else {
-			valueExpr.validate(validation);
-		}
-	}
+    @Override
+    public void validate(ValidationState validation) {
+        if (languageExpr == null) {
+            validation.addError("No language provided");
+        } else {
+            languageExpr.validate(validation);
+        }
+        if (valueExpr == null) {
+            validation.addError("No text value provided");
+        } else {
+            valueExpr.validate(validation);
+        }
+    }
 
     @Override
     public MonolingualTextValue evaluate(ExpressionContext ctxt)

@@ -60,7 +60,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities. QuickStatements does not support creating two new entities which refer to each other. Consider uploading your edits directly with OpenRefine.";
     public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikibase first.";
-    
+
     protected final QSSnakPrinter mainSnakPrinter;
     protected final QSSnakPrinter referenceSnakPrinter;
 
@@ -100,36 +100,36 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-    	// Validate the schema
-    	ValidationState validation = new ValidationState(project.columnModel);
-		schema.validate(validation);
-		if (!validation.getValidationErrors().isEmpty()) {
-			throw new IllegalStateException("Schema is incomplete");
-		}
-		// Evaluate the schema
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+        if (!validation.getValidationErrors().isEmpty()) {
+            throw new IllegalStateException("Schema is incomplete");
+        }
+        // Evaluate the schema
         List<EntityEdit> items = schema.evaluate(project, engine);
-        
+
         // First, check the entity edits for any problems, and only start the translation if there are no problems
         String errorMessage = null;
         Optional<EntityEdit> unsupportedEntityTypeEdit = items.stream()
-        		.filter(entityEdit -> !(entityEdit instanceof ItemEdit || entityEdit instanceof MediaInfoEdit))
-        		.findAny();
+                .filter(entityEdit -> !(entityEdit instanceof ItemEdit || entityEdit instanceof MediaInfoEdit))
+                .findAny();
         if (unsupportedEntityTypeEdit.isPresent()) {
             errorMessage = "Unable to export updates on " +
                     unsupportedEntityTypeEdit.get().getEntityId() + " with QuickStatements, not supported for this entity type";
         }
         Optional<EntityEdit> newMediaInfo = items.stream()
-        		.filter(entityEdit -> entityEdit instanceof MediaInfoEdit && entityEdit.isNew())
-        		.findAny();
+                .filter(entityEdit -> entityEdit instanceof MediaInfoEdit && entityEdit.isNew())
+                .findAny();
         if (newMediaInfo.isPresent()) {
             errorMessage = "Unable to create a new mediainfo entity " +
                     unsupportedEntityTypeEdit.get().getEntityId() + " with QuickStatements, not supported";
         }
-        
+
         if (errorMessage != null) {
-        	writer.write(errorMessage);
+            writer.write(errorMessage);
         } else {
-        	translateItemList(items, writer);
+            translateItemList(items, writer);
         }
     }
 
@@ -139,14 +139,14 @@ public class QuickStatementsExporter implements WriterExporter {
         try {
             List<EntityEdit> scheduled = scheduler.schedule(updates);
             for (EntityEdit entityEdit : scheduled) {
-            	if (entityEdit instanceof ItemEdit) {
-            		translateItem((ItemEdit) entityEdit, writer);
-            	} else if (entityEdit instanceof MediaInfoEdit) {
-            		translateMediaInfo((MediaInfoEdit) entityEdit, writer);
-            	} else {
-            		// prevented by the earlier checks above
-            		throw new IllegalStateException();
-            	}
+                if (entityEdit instanceof ItemEdit) {
+                    translateItem((ItemEdit) entityEdit, writer);
+                } else if (entityEdit instanceof MediaInfoEdit) {
+                    translateMediaInfo((MediaInfoEdit) entityEdit, writer);
+                } else {
+                    // prevented by the earlier checks above
+                    throw new IllegalStateException();
+                }
             }
         } catch (ImpossibleSchedulingException e) {
             writer.write(impossibleSchedulingErrorMessage);
@@ -185,7 +185,7 @@ public class QuickStatementsExporter implements WriterExporter {
             translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);
         }
     }
-    
+
     protected void translateMediaInfo(MediaInfoEdit item, Writer writer)
             throws IOException {
         String qid = item.getEntityId().getId();

@@ -51,18 +51,18 @@ public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
     public WbLocationConstant(@JsonProperty("value") String origValue) {
         this.value = origValue;
     }
-    
-	@Override
-	public void validate(ValidationState validation) {
-		if (value == null) {
-			validation.addError("Empty geographical coordinates value");
-		}
-        try {
-        	parsed = parse(value);
-        } catch(ParseException e) {
-        	validation.addError("Invalid geographical coordinates: '"+value+"'");
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (value == null) {
+            validation.addError("Empty geographical coordinates value");
         }
-	}
+        try {
+            parsed = parse(value);
+        } catch (ParseException e) {
+            validation.addError("Invalid geographical coordinates: '" + value + "'");
+        }
+    }
 
     /**
      * Parses a string to a location.

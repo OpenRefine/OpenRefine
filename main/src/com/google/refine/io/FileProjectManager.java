@@ -65,11 +65,11 @@ import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
 
-public class FileProjectManager extends ProjectManager  {
+public class FileProjectManager extends ProjectManager {
 
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
-    protected File                       _workspaceDir;
+    protected File _workspaceDir;
 
     protected static boolean projectRemoved = false;
 
@@ -127,20 +127,20 @@ public class FileProjectManager extends ProjectManager  {
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
-            
+
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 if (_projectsTags == null) {
                     _projectsTags = new HashMap<String, Integer>();
                 }
-                
+
                 if (metadata != null && metadata.getTags() != null) {
                     for (String tag : metadata.getTags()) {
-                      if (_projectsTags.containsKey(tag)) {
-                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                      } else {
-                        _projectsTags.put(tag, 1);
-                      }
+                        if (_projectsTags.containsKey(tag)) {
+                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                        } else {
+                            _projectsTags.put(tag, 1);
+                        }
                     }
                 }
                 return true;
@@ -186,7 +186,7 @@ public class FileProjectManager extends ProjectManager  {
                 }
             }
         }
-        
+
         tin.close();
     }
 
@@ -200,7 +200,7 @@ public class FileProjectManager extends ProjectManager  {
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File file : files) {
-        	if (file == null) continue;
+            if (file == null) continue;
             if (!file.isHidden()) {
                 String path = relative + file.getName();
 
@@ -286,7 +286,7 @@ public class FileProjectManager extends ProjectManager  {
             if (oldFile.exists()) {
                 oldFile.delete();
             }
-            
+
             if (file.exists()) {
                 file.renameTo(oldFile);
             }
@@ -296,13 +296,13 @@ public class FileProjectManager extends ProjectManager  {
             logger.info("Saved workspace");
         }
     }
-    
+
     protected boolean saveNeeded() {
         boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
                 .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
         return projectSaveNeeded || _preferenceStore.isDirty() || projectRemoved;
     }
-    
+
     protected void saveProjectMetadata() throws IOException {
         for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
             ProjectMetadata metadata = entry.getValue();
@@ -340,10 +340,10 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     static protected void deleteDir(File dir) {
-    	File[] files = dir.listFiles();
-    	if (files == null) return;
+        File[] files = dir.listFiles();
+        if (files == null) return;
         for (File file : files) {
-        	if (file == null) continue;
+            if (file == null) continue;
             if (file.isDirectory()) {
                 deleteDir(file);
             } else {
@@ -365,7 +365,7 @@ public class FileProjectManager extends ProjectManager  {
         }
         logger.error("Failed to load workspace from any attempted alternatives.");
     }
-    
+
     protected boolean loadFromFile(File file) {
         logger.info("Loading workspace: {}", file.getAbsolutePath());
 
@@ -374,15 +374,15 @@ public class FileProjectManager extends ProjectManager  {
         boolean found = false;
 
         if (file.exists() || file.canRead()) {
-	        try {
-	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+            try {
+                ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
 
                 LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
 
-	            found = true;
+                found = true;
             } catch (IOException e) {
-	        	logger.warn(e.toString());
-	        }
+                logger.warn(e.toString());
+            }
         }
 
         return found;
@@ -391,9 +391,9 @@ public class FileProjectManager extends ProjectManager  {
     protected void recover() {
         boolean recovered = false;
         File[] files = _workspaceDir.listFiles();
-    	if (files == null) return;
+        if (files == null) return;
         for (File file : files) {
-        	if (file == null) continue;
+            if (file == null) continue;
             if (file.isDirectory() && !file.isHidden()) {
                 String dirName = file.getName();
                 if (file.getName().endsWith(PROJECT_DIR_SUFFIX)) {
@@ -407,7 +407,7 @@ public class FileProjectManager extends ProjectManager  {
 
                     if (id > 0 && !_projectsMetadata.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
-                            logger.info("Recovered project named " 
+                            logger.info("Recovered project named "
                                     + getProjectMetadata(id).getName()
                                     + " in directory " + dirName);
                             recovered = true;
@@ -429,7 +429,7 @@ public class FileProjectManager extends ProjectManager  {
     public HistoryEntryManager getHistoryEntryManager() {
         return new FileHistoryEntryManager();
     }
-    
+
     public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {
         GZIPOutputStream gos = new GZIPOutputStream(os);
         TarArchiveOutputStream tos = new TarArchiveOutputStream(gos);
@@ -440,47 +440,47 @@ public class FileProjectManager extends ProjectManager  {
             gos.close();
         }
     }
-    
+
     @JsonProperty("projectIDs")
     public Set<Long> getProjectIds() {
         return _projectsMetadata.keySet();
     }
-    
+
     @JsonProperty("projectIDs")
     protected void loadProjects(List<Long> projectIDs) {
         for (Long id : projectIDs) {
 
             File projectDir = getProjectDir(id);
             ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
-            
+
             mergeEmptyUserMetadata(metadata);
 
             _projectsMetadata.put(id, metadata);
-            
+
             if (metadata != null && metadata.getTags() != null) {
                 for (String tag : metadata.getTags()) {
-                  if (_projectsTags.containsKey(tag)) {
-                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                  } else {
-                    _projectsTags.put(tag, 1);
-                  }
+                    if (_projectsTags.containsKey(tag)) {
+                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                    } else {
+                        _projectsTags.put(tag, 1);
+                    }
                 }
             }
         }
     }
-    
+
     @JsonProperty("preferences")
     protected void setPreferences(PreferenceStore preferences) {
         if (preferences != null) {
-    		_preferenceStore = preferences;
-    	}
+            _preferenceStore = preferences;
+        }
     }
-    
+
     // backwards compatibility
     @JsonProperty("expressions")
-	protected void setExpressions(TopList newExpressions) {
-    	if (newExpressions != null) {
-    		_preferenceStore.put("scripting.expressions", newExpressions);
-    	}
+    protected void setExpressions(TopList newExpressions) {
+        if (newExpressions != null) {
+            _preferenceStore.put("scripting.expressions", newExpressions);
+        }
     }
 }

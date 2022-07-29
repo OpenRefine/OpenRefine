@@ -51,17 +51,17 @@ public class WbLanguageConstant implements WbExpression<String> {
         _origLangId = langId;
     }
 
-	@Override
-	public void validate(ValidationState validation) {
-		if (_origLangId != null && _langId == null) {
-			validation.addError("Invalid language code '" + _origLangId + "'");
-		} else if (_langId == null) {
-			validation.addError("Empty language field");
-		}
-        if (_langLabel == null) {
-        	validation.addError("Empty text field");
+    @Override
+    public void validate(ValidationState validation) {
+        if (_origLangId != null && _langId == null) {
+            validation.addError("Invalid language code '" + _origLangId + "'");
+        } else if (_langId == null) {
+            validation.addError("Empty language field");
         }
-	}
+        if (_langLabel == null) {
+            validation.addError("Empty text field");
+        }
+    }
 
     public static String normalizeLanguageCode(String lang) {
         return normalizeLanguageCode(lang, null);
@@ -79,13 +79,13 @@ public class WbLanguageConstant implements WbExpression<String> {
      */
     public static String normalizeLanguageCode(String lang, String mediaWikiApiEndpoint) {
         try {
-        	if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
-        		return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
-        	} else {
-        		return null;
-        	}
+            if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
+                return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
+            } else {
+                return null;
+            }
         } catch (IllegalArgumentException e) {
-        	return null;
+            return null;
         }
     }
 

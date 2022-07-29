@@ -67,7 +67,7 @@ import com.google.refine.util.Pool;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
-    
+
     // only used for backwards compatibility, these things are configurable through
     // the manifest now.
     static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
@@ -80,10 +80,10 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonProperty("editGroupsUrlSchema")
     private String editGroupsUrlSchema;
-    
+
     @JsonProperty("maxEditsPerMinute")
     private int maxEditsPerMinute;
-    
+
     @JsonProperty("tag")
     private String tagTemplate;
 
@@ -196,11 +196,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._summary = summary;
             String tag = tagTemplate;
             if (tag.contains("${version}")) {
-	            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-	            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-	            if (matcher.matches()) {
-	                tag = tag.replace("${version}", matcher.group(1));
-	            }
+                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+                if (matcher.matches()) {
+                    tag = tag.replace("${version}", matcher.group(1));
+                }
             }
             this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
@@ -211,13 +211,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
             }
             this._editGroupsUrlSchema = editGroupsUrlSchema;
-            
+
             // validate the schema
             ValidationState validation = new ValidationState(_project.columnModel);
-			_schema.validate(validation);
-			if (!validation.getValidationErrors().isEmpty()) {
-				throw new IllegalStateException("Schema is incomplete");
-			}
+            _schema.validate(validation);
+            if (!validation.getValidationErrors().isEmpty()) {
+                throw new IllegalStateException("Schema is incomplete");
+            }
         }
 
         @Override

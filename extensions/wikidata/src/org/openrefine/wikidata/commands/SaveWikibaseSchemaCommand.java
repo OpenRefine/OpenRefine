@@ -51,9 +51,9 @@ public class SaveWikibaseSchemaCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             Project project = getProject(request);
@@ -65,16 +65,16 @@ public class SaveWikibaseSchemaCommand extends Command {
             }
 
             WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
-            
+
             ValidationState validation = new ValidationState(project.columnModel);
             schema.validate(validation);
             if (!validation.getValidationErrors().isEmpty()) {
-            	Map<String, Object> json = new HashMap<>();
-            	json.put("reason", "invalid-schema");
-            	json.put("message", "Invalid Wikibase schema");
-            	json.put("errors", validation.getValidationErrors());
-				respondJSON(response, json);
-				return;
+                Map<String, Object> json = new HashMap<>();
+                json.put("reason", "invalid-schema");
+                json.put("message", "Invalid Wikibase schema");
+                json.put("errors", validation.getValidationErrors());
+                respondJSON(response, json);
+                return;
             }
 
             AbstractOperation op = new SaveWikibaseSchemaOperation(schema);
