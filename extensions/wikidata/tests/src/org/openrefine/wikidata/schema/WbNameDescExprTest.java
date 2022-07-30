@@ -96,7 +96,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
         WbMonolingualExpr monolingualExpr = TestingData.getTestMonolingualExpr("en", "English", "not sure what");
         WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS, monolingualExpr);
         assertEquals(aliasExpr.getType(), WbNameDescExpr.NameDescType.ALIAS);
-        assertEquals(aliasExpr.getValue(), monolingualExpr); 
+        assertEquals(aliasExpr.getValue(), monolingualExpr);
         assertEquals(aliasExpr.getStaticLanguage(), "English");
     }
 

@@ -93,7 +93,7 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
         }
         nameDescs.stream()
                 .forEach(nameDesc -> {
-				validation.enter(new PathElement(nameDesc.getPathElementType(), nameDesc.getStaticLanguage()));
+                    validation.enter(new PathElement(nameDesc.getPathElementType(), nameDesc.getStaticLanguage()));
                     nameDesc.validate(validation);
                     validation.leave();
                 });

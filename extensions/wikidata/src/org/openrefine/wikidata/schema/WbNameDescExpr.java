@@ -67,10 +67,10 @@ public class WbNameDescExpr {
      */
     public void validate(ValidationState validation) {
         if (type == null) {
-    		validation.addError("Missing type");
+            validation.addError("Missing type");
         }
         if (value == null) {
-    		validation.addError("Missing value");
+            validation.addError("Missing value");
         } else {
             validation.enter();
             value.validate(validation);
@@ -169,15 +169,16 @@ public class WbNameDescExpr {
 
     /**
      * For error-reporting purposes, during schema validation.
+     * 
      * @return the constant language code for this term, if there is one, otherwise null
      */
     @JsonIgnore
     public String getStaticLanguage() {
-    	if (value != null && value.getLanguageExpr() != null && value.getLanguageExpr() instanceof WbLanguageConstant) {
-    		return ((WbLanguageConstant) value.getLanguageExpr()).getLabel();
-    	} else {
-    		return null;
-    	}
+        if (value != null && value.getLanguageExpr() != null && value.getLanguageExpr() instanceof WbLanguageConstant) {
+            return ((WbLanguageConstant) value.getLanguageExpr()).getLabel();
+        } else {
+            return null;
+        }
     }
 
     @Override
