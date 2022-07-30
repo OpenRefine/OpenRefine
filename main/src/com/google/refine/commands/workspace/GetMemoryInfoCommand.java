@@ -10,21 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class GetSystemInfoCommand extends Command {
+public class GetMemoryInfoCommand extends Command {
     private static final SystemInfo systemInfo = new SystemInfo();
     private static final GlobalMemory systemMemory = systemInfo.getHardware().getMemory();
 
 
     public static class SysInfo {
-        @JsonProperty("os_version")
-        protected String os = systemInfo.getOperatingSystem().toString();
-
         @JsonProperty("available_memory")
         protected Long availableMemory = systemMemory.getAvailable();
 
         @JsonProperty("total_memory")
         protected Long totalMemory = systemMemory.getTotal();
-
     }
 
     @Override

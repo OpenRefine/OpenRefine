@@ -149,7 +149,7 @@ function registerCommands() {
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
 
-  RS.registerCommand(module, "get-system-info", new Packages.com.google.refine.commands.workspace.GetSystemInfoCommand());
+  RS.registerCommand(module, "get-memory-info", new Packages.com.google.refine.commands.workspace.GetMemoryInfoCommand());
 }
 
 function registerOperations() {

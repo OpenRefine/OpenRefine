@@ -593,7 +593,6 @@ Refine.getPermanentLink = function() {
 
 (function() {
   const systemInfo = {
-    osVersion: "",
     availableMemory: 0,
     totalMemory: 0,
   };
@@ -609,13 +608,12 @@ Refine.getPermanentLink = function() {
   let intervalId;
   intervalId = setInterval(function() {
     $.ajax({
-      url: "command/core/get-system-info?",
+      url: "command/core/get-memory-info?",
       type: "GET",
       async: false,
       data: {
       },
       success: function(data) {
-        systemInfo.osVersion = data["os_version"];
         systemInfo.availableMemory = data["available_memory"];
         systemInfo.totalMemory = data["total_memory"];
       }
@@ -625,7 +623,8 @@ Refine.getPermanentLink = function() {
     });
 
     if(systemInfo.memoryWarn()) {
-      alert(`Your memory is running out. ${systemInfo.byteToMB(systemInfo.availableMemory)}MB is left.\n`)
+      const message = `Your system is running low on memory (${systemInfo.byteToMB(systemInfo.availableMemory)}/${systemInfo.byteToMB(systemInfo.totalMemory)}). Increase the amount of memory allocated to OpenRefine.`;
+      alert(message)
     }
   }, 1000)
 })();
