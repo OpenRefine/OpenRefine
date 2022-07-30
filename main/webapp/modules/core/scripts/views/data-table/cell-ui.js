@@ -608,15 +608,15 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     var newType = elmts.typeSelect.val();
     if (newType === "date") {
       elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
-      $(elmts.cell_help_text).css({'font-style': 'italic', 'display': ''});
+      $(elmts.cell_help_text).show();
     } else {
-      $(elmts.cell_help_text).css({'display': 'none'});
+      $(elmts.cell_help_text).hide();
     }
   });
 
   if (cellDataType === "date") {
     elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
-    $(elmts.cell_help_text).css({'font-style': 'italic', 'display': ''});
+    $(elmts.cell_help_text).show();
   }
 
   MenuSystem.showMenu(menu, function(){});
