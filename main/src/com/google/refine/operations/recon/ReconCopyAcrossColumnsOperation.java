@@ -187,9 +187,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
             }
         }
 
-        String description = "Copy " + cellChanges.size() + " recon judgments from column " +
-                _fromColumnName + " to " + StringUtils.join(_toColumnNames);
-
+        String description = OperationDescription.recon_copy_across_columns_desc(cellChanges.size(), _fromColumnName, StringUtils.join(_toColumnNames));
         return new HistoryEntry(
                 historyEntryID, project, description, this, new MassChange(cellChanges, false));
     }
