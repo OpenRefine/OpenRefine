@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,7 +56,7 @@ public class ReplaceChars implements Function {
                 return StringUtils.replaceChars(str, (String) o2, (String) o3);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
+        return new EvalError(EvalErrorMessage.expects_three_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

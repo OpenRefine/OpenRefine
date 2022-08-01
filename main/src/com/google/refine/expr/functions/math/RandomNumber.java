@@ -39,6 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -64,8 +65,8 @@ public class RandomNumber implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " expects no arguments or two numbers, the first must be less than the second");
+        // the first must be less than the second");
+        return new EvalError(EvalErrorMessage.expects_no_arg_or_two_numbers_asc(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

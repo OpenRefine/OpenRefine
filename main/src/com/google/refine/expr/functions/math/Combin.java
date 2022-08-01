@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -45,13 +46,15 @@ public class Combin implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length != 2) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+            return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
         }
         if (!(args[0] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
+            // number");
+            return new EvalError(EvalErrorMessage.expects_first_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
         if (!(args[1] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_second_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
 
         return Combin.combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());

@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -58,7 +59,8 @@ public class Inc implements Function {
 
             return date.plus(amount, getField(unit));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        // string");
+        return new EvalError(EvalErrorMessage.expects_date_number_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private TemporalUnit getField(String unit) {
