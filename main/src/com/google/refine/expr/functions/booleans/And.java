@@ -57,14 +57,14 @@ public class And implements Function {
 
     @Override
     public String getDescription() {
-    	return FunctionDescription.bool_and();
+        return FunctionDescription.bool_and();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

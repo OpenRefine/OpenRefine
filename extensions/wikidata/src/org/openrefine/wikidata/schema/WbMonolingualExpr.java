@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
@@ -42,10 +43,22 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     @JsonCreator
     public WbMonolingualExpr(@JsonProperty("language") WbExpression<? extends String> languageExpr,
             @JsonProperty("value") WbExpression<? extends StringValue> valueExpr) {
-        Validate.notNull(languageExpr);
         this.languageExpr = languageExpr;
-        Validate.notNull(valueExpr);
         this.valueExpr = valueExpr;
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (languageExpr == null) {
+            validation.addError("No language provided");
+        } else {
+            languageExpr.validate(validation);
+        }
+        if (valueExpr == null) {
+            validation.addError("No text value provided");
+        } else {
+            valueExpr.validate(validation);
+        }
     }
 
     @Override
@@ -87,4 +100,5 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     public int hashCode() {
         return languageExpr.hashCode() + valueExpr.hashCode();
     }
+
 }

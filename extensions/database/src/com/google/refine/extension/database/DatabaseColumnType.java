@@ -26,18 +26,11 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database;
 
-
 public enum DatabaseColumnType {
-    
-    STRING,
-    NUMBER,
-    DATETIME,
-    LOCATION,
-    BOOLEAN,
-    DATE,
-    DOUBLE,
-    FLOAT
+
+    STRING, NUMBER, DATETIME, LOCATION, BOOLEAN, DATE, DOUBLE, FLOAT
 
 }

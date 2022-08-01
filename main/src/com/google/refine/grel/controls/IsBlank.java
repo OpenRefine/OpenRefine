@@ -37,6 +37,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlDescription;
 
 public class IsBlank extends IsTest {
+
     @Override
     public String getDescription() {
         // return "Returns whether o is null or an empty string";

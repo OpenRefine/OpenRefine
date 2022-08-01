@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.refine.model.AbstractOperation;
 
 public class OperationResolver extends TypeIdResolverBase {
-    
+
     protected TypeFactory factory = TypeFactory.defaultInstance();
 
     @Override
@@ -46,25 +47,25 @@ public class OperationResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValue(Object instance) {
-        return ((AbstractOperation)instance).getOperationId();
+        return ((AbstractOperation) instance).getOperationId();
     }
 
     @Override
     public String idFromValueAndType(Object instance, Class<?> type) {
         String id = OperationRegistry.s_opClassToName.get(type);
         if (id != null) {
-        	return id;
+            return id;
         } else { // this happens for an UnknownOperation
-        	return ((AbstractOperation) instance).getOperationId();
+            return ((AbstractOperation) instance).getOperationId();
         }
     }
-    
+
     @Override
     public JavaType typeFromId(DatabindContext context, String id) throws IOException {
-    	Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
-    	if (opClass == null) {
-    		opClass = UnknownOperation.class;
-    	}
-    	return factory.constructSimpleType(opClass, new JavaType[0]);
+        Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
+        if (opClass == null) {
+            opClass = UnknownOperation.class;
+        }
+        return factory.constructSimpleType(opClass, new JavaType[0]);
     }
 }

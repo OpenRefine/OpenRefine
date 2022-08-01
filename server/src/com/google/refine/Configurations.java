@@ -41,7 +41,7 @@ public class Configurations {
     public static String get(final String name) {
         return System.getProperty(name);
     }
-    
+
     public static String get(final String name, final String def) {
         final String val = get(name);
         return (val == null) ? def : val;
@@ -69,5 +69,5 @@ public class Configurations {
             throw new RuntimeException("Could not parse '" + val + "' as a floating point number.", e);
         }
     }
-    
+
 }

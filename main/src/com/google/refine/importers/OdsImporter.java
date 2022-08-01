@@ -67,16 +67,15 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-
 @SuppressWarnings("deprecation")
-public class OdsImporter extends TabularImportingParserBase { 
+public class OdsImporter extends TabularImportingParserBase {
+
     final static Logger logger = LoggerFactory.getLogger("open office");
 
     public OdsImporter() {
         super(true);
     }
 
-    
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -86,20 +85,20 @@ public class OdsImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            for (int index = 0;index < fileRecords.size();index++) {
+            for (int index = 0; index < fileRecords.size(); index++) {
                 ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
                 List<OdfTable> tables = odfDoc.getTableList();
                 int sheetCount = tables.size();
-    
+
                 for (int i = 0; i < sheetCount; i++) {
                     OdfTable sheet = tables.get(i);
                     int rows = sheet.getRowCount();
-    
+
                     ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
+                    JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
                     if (rows > 0) {
@@ -111,10 +110,10 @@ public class OdsImporter extends TabularImportingParserBase {
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.info("File not found",e);
+            logger.info("File not found", e);
         } catch (Exception e) {
             // ODF throws *VERY* wide exceptions
-            logger.info("Error reading ODF spreadsheet",e);
+            logger.info("Error reading ODF spreadsheet", e);
         } finally {
             if (odfDoc != null) {
                 odfDoc.close();
@@ -122,7 +121,6 @@ public class OdsImporter extends TabularImportingParserBase {
         }
         return options;
     }
-    
 
     @Override
     public void parseOneFile(
@@ -133,8 +131,7 @@ public class OdsImporter extends TabularImportingParserBase {
             InputStream inputStream,
             int limit,
             ObjectNode options,
-            List<Exception> exceptions
-    ) {
+            List<Exception> exceptions) {
         OdfDocument odfDoc;
         try {
             odfDoc = OdfDocument.loadDocument(inputStream);
@@ -146,32 +143,31 @@ public class OdsImporter extends TabularImportingParserBase {
         List<OdfTable> tables = odfDoc.getTableList();
 
         int sheetCount = tables.size();
-        if(sheetCount == 0){
+        if (sheetCount == 0) {
             exceptions.add(
                     new ImportException(
                             "Attempted to parse file as Ods file but failed. " +
                                     "No tables found in Ods file. " +
                                     "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.",
-                            new NullPointerException()
-                    )
-            );
+                            new NullPointerException()));
             return;
         }
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
-        for(int i=0;i<sheets.size();i++)  {
+        for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
-        
+
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
-            
+
             final OdfTable table = tables.get(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = table.getRowCount();
 
             TableDataReader dataReader = new TableDataReader() {
+
                 int nextRow = 0;
                 Map<String, Recon> reconMap = new HashMap<String, Recon>();
 
@@ -212,14 +208,13 @@ public class OdsImporter extends TabularImportingParserBase {
                     fileSource + "#" + table.getTableName(),
                     limit,
                     options,
-                    exceptions
-            );
+                    exceptions);
         }
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {
         // TODO: how can we tell if a cell contains an error?
-        //String formula = cell.getFormula();
+        // String formula = cell.getFormula();
 
         Serializable value = null;
         // "boolean", "currency", "date", "float", "percentage", "string" or "time"

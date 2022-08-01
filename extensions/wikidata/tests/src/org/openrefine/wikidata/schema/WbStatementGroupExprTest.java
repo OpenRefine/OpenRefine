@@ -28,12 +28,16 @@ import java.util.Collections;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 
 public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdit> {
 
@@ -57,6 +61,11 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
         public StatementGroupEdit evaluate(ExpressionContext ctxt)
                 throws SkipSchemaExpressionException, QAWarningException {
             return expr.evaluate(ctxt, subject);
+        }
+
+        @Override
+        public void validate(ValidationState validation) {
+            expr.validate(validation);
         }
     }
 
@@ -95,5 +104,15 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
         expr.getStatements().clear();
+    }
+
+    @Test
+    public void testValidate() throws ModelException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(1, new Column(1, "column B"), true);
+        columnModel.addColumn(2, new Column(2, "column C"), true);
+
+        hasNoValidationError(new Wrapper(expr), columnModel);
     }
 }

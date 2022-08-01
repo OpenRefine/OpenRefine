@@ -49,17 +49,17 @@ public class Round implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.math_round();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

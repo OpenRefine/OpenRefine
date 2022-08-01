@@ -58,17 +58,16 @@ public class ReplaceChars implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.str_replace_chars();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string find, string replace";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

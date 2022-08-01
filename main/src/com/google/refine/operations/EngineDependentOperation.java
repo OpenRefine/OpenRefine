@@ -40,19 +40,19 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 
 abstract public class EngineDependentOperation extends AbstractOperation {
-    
-    transient protected EngineConfig    _engineConfig;
-    
+
+    transient protected EngineConfig _engineConfig;
+
     protected EngineDependentOperation(EngineConfig engineConfig) {
         _engineConfig = engineConfig;
     }
-    
+
     protected Engine createEngine(Project project) throws Exception {
         Engine engine = new Engine(project);
         engine.initializeFromConfig(getEngineConfig());
         return engine;
     }
-    
+
     @JsonProperty("engineConfig")
     protected EngineConfig getEngineConfig() {
         return _engineConfig;

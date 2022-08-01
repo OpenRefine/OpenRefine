@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -43,8 +44,8 @@ import com.google.refine.model.Recon.Judgment;
  *
  */
 public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
-	
-	public static final String INVALID_ITEM_ID_FORMAT_WARNING_TYPE = "invalid-item-id-format";
+
+    public static final String INVALID_ITEM_ID_FORMAT_WARNING_TYPE = "invalid-item-id-format";
 
     @JsonCreator
     public WbItemVariable() {
@@ -52,8 +53,7 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
     }
 
     /**
-     * Constructs a variable and sets the column it is bound to. Mostly used as a
-     * convenience method for testing.
+     * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      * 
      * @param columnName
      *            the name of the column the expression should draw its value from
@@ -73,21 +73,21 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
                 ctxt.addWarning(warning);
                 throw new SkipSchemaExpressionException();
             }
-            
+
             // Check that the id is of the correct format
             if (Judgment.Matched.equals(cell.recon.judgment)) {
-	            try {
-	            	EntityIdValue id = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
-	            	if (!(id instanceof ItemIdValue)) {
-	            		QAWarning warning = new QAWarning(INVALID_ITEM_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
-	            		warning.setProperty("example", cell.recon.match.id);
-	            		throw new QAWarningException(warning);
-	            	}
-	            } catch(IllegalArgumentException e) {
-	            	QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
-	            	warning.setProperty("example", cell.recon.match.id);
-	            	throw new QAWarningException(warning);
-	            }
+                try {
+                    EntityIdValue id = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+                    if (!(id instanceof ItemIdValue)) {
+                        QAWarning warning = new QAWarning(INVALID_ITEM_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+                        warning.setProperty("example", cell.recon.match.id);
+                        throw new QAWarningException(warning);
+                    }
+                } catch (IllegalArgumentException e) {
+                    QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+                    warning.setProperty("example", cell.recon.match.id);
+                    throw new QAWarningException(warning);
+                }
             }
             return new ReconItemIdValue(cell.recon, cell.value.toString());
         }

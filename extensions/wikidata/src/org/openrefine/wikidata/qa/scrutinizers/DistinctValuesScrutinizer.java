@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -36,8 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A scrutinizer that checks for properties using the same value on different
- * entities.
+ * A scrutinizer that checks for properties using the same value on different entities.
  * 
  * @author Antonin Delpeuch
  *
@@ -69,7 +69,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
         PropertyIdValue pid = mainSnak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, distinctValuesConstraintQid);
         if (!statementList.isEmpty() && mainSnak instanceof ValueSnak) {
-            Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
+            Value mainSnakValue = ((ValueSnak) mainSnak).getValue();
             Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {
                 seen = new HashMap<Value, EntityIdValue>();

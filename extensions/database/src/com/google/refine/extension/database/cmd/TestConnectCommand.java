@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database.cmd;
 
 import java.io.IOException;
@@ -45,8 +46,6 @@ import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.util.ParsingUtilities;
 
-
-
 public class TestConnectCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("TestConnectCommand");
@@ -54,42 +53,40 @@ public class TestConnectCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
-        DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
-        if(logger.isDebugEnabled()) {
-            logger.debug("TestConnectCommand::Post::{}", databaseConfiguration); 
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
         }
-        
-        
-        //ProjectManager.singleton.setBusy(true);
+
+        DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
+        if (logger.isDebugEnabled()) {
+            logger.debug("TestConnectCommand::Post::{}", databaseConfiguration);
+        }
+
+        // ProjectManager.singleton.setBusy(true);
         try {
-            
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-           
+
             Writer w = response.getWriter();
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            
+
             try {
-                
+
                 boolean connectionTestResult = DatabaseService.get(databaseConfiguration.getDatabaseType())
                         .testConnection(databaseConfiguration);
-                
+
                 response.setStatus(HttpStatus.SC_OK);
                 writer.writeStartObject();
-                
+
                 writer.writeBooleanField("connectionResult", connectionTestResult);
                 writer.writeStringField("code", "ok");
                 writer.writeEndObject();
-                
+
             } catch (DatabaseServiceException e) {
                 logger.error("TestConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
             } finally {
                 writer.flush();
                 writer.close();
@@ -99,11 +96,9 @@ public class TestConnectCommand extends DatabaseCommand {
             logger.error("TestConnectCommand::Post::Exception::{}", e);
             throw new ServletException(e);
         } finally {
-            //ProjectManager.singleton.setBusy(false);
+            // ProjectManager.singleton.setBusy(false);
         }
 
-        
     }
 
-    
 }

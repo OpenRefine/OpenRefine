@@ -12,6 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
+
 package com.google.util.threads;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -23,8 +24,7 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 /**
- * Jetty {@link ThreadPool} that bridges requests to a
- * {@link ThreadPoolExecutor}.
+ * Jetty {@link ThreadPool} that bridges requests to a {@link ThreadPoolExecutor}.
  */
 public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
 

@@ -36,44 +36,25 @@ package com.google.refine.util;
 import java.util.regex.PatternSyntaxException;
 
 public class PatternSyntaxExceptionParser {
-    /*  Class to translate PatternSyntaxExceptions into more user friendly error messages
-        Currently translates the following error messages from java.util.regex.Pattern
-            "Unclosed character class"
-            "Unmatched closing ')'"
-            "Unexpected internal error"
-            "Dangling meta character '" + ((char)ch) + "'"
-            "Unclosed counted closure"
-            "Illegal repetition"
-            "Illegal repetition range"
-            "Illegal character range"
-        
-        The following messages are not currently translated and are output as per PatternSyntaxException
-            "\\k is not followed by '<' for named capturing group"
-            "(named capturing group <"+ name+"> does not exist"
-            "Illegal/unsupported escape sequence"
-            "Bad class syntax"
-            "Unexpected character '"+((char)ch)+"'"
-            "Unclosed character family"
-            "Empty character family"
-            "Unknown Unicode property {name=<" + name + ">, "+ "value=<" + value + ">}"
-            "Unknown character script name {" + name + "}"
-            "Unknown character block name {" + name + "}"
-            "Unknown character property name {" + name + "}"
-            "named capturing group has 0 length name"
-            "named capturing group is missing trailing '>'"
-            "Named capturing group <" + name + "> is already defined"
-            "Look-behind group does not have " + "an obvious maximum length"
-            "Unknown look-behind group"
-            "Unknown group type"
-            "Unknown inline modifier"
-            "Internal logic error"
-            "Illegal control escape sequence"
-            "Illegal octal escape sequence"
-            "Hexadecimal codepoint is too big"
-            "Unclosed hexadecimal escape sequence"
-            "Illegal hexadecimal escape sequence"
-            "Illegal Unicode escape sequence"
-        */
+
+    /*
+     * Class to translate PatternSyntaxExceptions into more user friendly error messages Currently translates the
+     * following error messages from java.util.regex.Pattern "Unclosed character class" "Unmatched closing ')'"
+     * "Unexpected internal error" "Dangling meta character '" + ((char)ch) + "'" "Unclosed counted closure"
+     * "Illegal repetition" "Illegal repetition range" "Illegal character range"
+     * 
+     * The following messages are not currently translated and are output as per PatternSyntaxException
+     * "\\k is not followed by '<' for named capturing group" "(named capturing group <"+ name+"> does not exist"
+     * "Illegal/unsupported escape sequence" "Bad class syntax" "Unexpected character '"+((char)ch)+"'"
+     * "Unclosed character family" "Empty character family" "Unknown Unicode property {name=<" + name + ">, "+ "value=<"
+     * + value + ">}" "Unknown character script name {" + name + "}" "Unknown character block name {" + name + "}"
+     * "Unknown character property name {" + name + "}" "named capturing group has 0 length name"
+     * "named capturing group is missing trailing '>'" "Named capturing group <" + name + "> is already defined"
+     * "Look-behind group does not have " + "an obvious maximum length" "Unknown look-behind group" "Unknown group type"
+     * "Unknown inline modifier" "Internal logic error" "Illegal control escape sequence"
+     * "Illegal octal escape sequence" "Hexadecimal codepoint is too big" "Unclosed hexadecimal escape sequence"
+     * "Illegal hexadecimal escape sequence" "Illegal Unicode escape sequence"
+     */
     private final PatternSyntaxException exception;
 
     public PatternSyntaxExceptionParser(PatternSyntaxException e) {
@@ -83,8 +64,7 @@ public class PatternSyntaxExceptionParser {
     public String getUserMessage() {
         String msg = "";
         String desc = exception.getDescription();
-        switch(desc)
-        {
+        switch (desc) {
             case "Unclosed character class":
                 msg = "The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.";
                 break;

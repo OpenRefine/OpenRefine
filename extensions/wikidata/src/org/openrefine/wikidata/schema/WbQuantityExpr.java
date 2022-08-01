@@ -21,14 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
@@ -43,20 +46,31 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     private final WbExpression<? extends ItemIdValue> unitExpr;
 
     /**
-     * Creates an expression for a quantity, which contains two sub-expressions: one
-     * for the amount (a string with a particular format) and one for the unit,
-     * which is optional.
+     * Creates an expression for a quantity, which contains two sub-expressions: one for the amount (a string with a
+     * particular format) and one for the unit, which is optional.
      * 
-     * Setting unitExpr to null will give quantities without units. Setting it to a
-     * non-null value will make the unit mandatory: if the unit expression fails to
-     * evaluate, the whole quantity expression will fail too.
+     * Setting unitExpr to null will give quantities without units. Setting it to a non-null value will make the unit
+     * mandatory: if the unit expression fails to evaluate, the whole quantity expression will fail too.
      */
     @JsonCreator
     public WbQuantityExpr(@JsonProperty("amount") WbExpression<? extends StringValue> amountExpr,
             @JsonProperty("unit") WbExpression<? extends ItemIdValue> unitExpr) {
-        Validate.notNull(amountExpr);
         this.amountExpr = amountExpr;
         this.unitExpr = unitExpr;
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (amountExpr == null) {
+            validation.addError("No quantity amount provided");
+        } else {
+            amountExpr.validate(validation);
+        }
+        if (unitExpr != null) {
+            validation.enter(new PathElement(Type.UNIT));
+            unitExpr.validate(validation);
+            validation.leave();
+        }
     }
 
     @Override
@@ -69,16 +83,15 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         BigDecimal lowerBound = null;
         BigDecimal upperBound = null;
         String originalAmount = amount.getString().toUpperCase();
-        try { 
+        try {
             parsedAmount = new BigDecimal(originalAmount);
-            
-            
+
             if (originalAmount.contains("E")) {
                 // engineering notation: we derive the precision from
                 // the expression (feature!)
                 BigDecimal uncertainty = new BigDecimal("0.5").scaleByPowerOfTen(-parsedAmount.scale());
                 lowerBound = new BigDecimal(parsedAmount.subtract(uncertainty).toPlainString());
-                upperBound = new BigDecimal(parsedAmount.add(uncertainty).toPlainString());  
+                upperBound = new BigDecimal(parsedAmount.add(uncertainty).toPlainString());
             }
             // workaround for https://github.com/Wikidata/Wikidata-Toolkit/issues/341
             parsedAmount = new BigDecimal(parsedAmount.toPlainString());
@@ -108,4 +121,5 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     public WbExpression<? extends ItemIdValue> getUnitExpr() {
         return unitExpr;
     }
+
 }

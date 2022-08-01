@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates;
 
 import java.util.Collection;
@@ -39,9 +40,8 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A class to plan an update of an entity, after evaluating the statements but
- * before fetching the current content of the entity (this is why it does not
- * extend StatementsUpdate).
+ * A class to plan an update of an entity, after evaluating the statements but before fetching the current content of
+ * the entity (this is why it does not extend StatementsUpdate).
  * 
  * @author Antonin Delpeuch
  */
@@ -55,8 +55,7 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
      * Constructor.
      * 
      * @param id
-     *            the subject of the document. It can be a reconciled entity value for
-     *            new entities.
+     *            the subject of the document. It can be a reconciled entity value for new entities.
      * @param statements
      *            the statements to change on the entity.
      * @param labels
@@ -68,22 +67,21 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
      * @param descriptionsIfNew
      *            the descriptions to add on the item, only if no description for that language exists
      * @param aliases
-     *            the aliases to add on the item. In theory their order should
-     *            matter but in practice people rarely rely on the order of aliases
-     *            so this is just kept as a set for simplicity.
+     *            the aliases to add on the item. In theory their order should matter but in practice people rarely rely
+     *            on the order of aliases so this is just kept as a set for simplicity.
      */
     public TermedStatementEntityEdit(
-    		EntityIdValue id,
-    		List<StatementEdit> statements,
+            EntityIdValue id,
+            List<StatementEdit> statements,
             Set<MonolingualTextValue> labels,
             Set<MonolingualTextValue> labelsIfNew,
             Set<MonolingualTextValue> descriptions,
             Set<MonolingualTextValue> descriptionsIfNew,
             Set<MonolingualTextValue> aliases) {
         super(id, statements, new HashMap<>(), new HashMap<>());
-		Validate.notNull(id);
+        Validate.notNull(id);
         if (statements == null) {
-        	statements = Collections.emptyList();
+            statements = Collections.emptyList();
         }
         mergeSingleTermMaps(this.labels, this.labelsIfNew, labels, labelsIfNew);
         this.descriptions = new HashMap<>();
@@ -91,19 +89,18 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
         mergeSingleTermMaps(this.descriptions, this.descriptionsIfNew, descriptions, descriptionsIfNew);
         this.aliases = constructTermListMap(aliases != null ? aliases : Collections.emptyList());
     }
-    
+
     /**
-     * Protected constructor to avoid re-constructing term maps when
-     * merging two entity updates.
+     * Protected constructor to avoid re-constructing term maps when merging two entity updates.
      * 
      * No validation is done on the arguments, they all have to be non-null.
      * 
      * @param id
-     * 		the subject of the update
+     *            the subject of the update
      * @param statements
-     *      the statements to add or delete
+     *            the statements to add or delete
      * @param labels
-     *      the labels to add on the entity, overriding any existing one in that language
+     *            the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew
      *            the labels to add on the entity, only if no label for that language exists
      * @param descriptions
@@ -111,34 +108,34 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
      * @param descriptionsIfNew
      *            the descriptions to add on the item, only if no description for that language exists
      * @param aliases
-     *      the aliases to add
+     *            the aliases to add
      */
     protected TermedStatementEntityEdit(
             EntityIdValue id,
-    		List<StatementEdit> statements,
-    		Map<String, MonolingualTextValue> labels,
-    		Map<String, MonolingualTextValue> labelsIfNew,
-    		Map<String, MonolingualTextValue> descriptions,
-    		Map<String, MonolingualTextValue> descriptionsIfNew,
-    		Map<String, List<MonolingualTextValue>> aliases) {
+            List<StatementEdit> statements,
+            Map<String, MonolingualTextValue> labels,
+            Map<String, MonolingualTextValue> labelsIfNew,
+            Map<String, MonolingualTextValue> descriptions,
+            Map<String, MonolingualTextValue> descriptionsIfNew,
+            Map<String, List<MonolingualTextValue>> aliases) {
         super(id, statements, labels, labelsIfNew);
-		this.descriptions = descriptions;
-    	this.descriptionsIfNew = descriptionsIfNew;
-    	this.aliases = aliases;
+        this.descriptions = descriptions;
+        this.descriptionsIfNew = descriptionsIfNew;
+        this.aliases = aliases;
     }
-    
-	/**
-	 * @return true when this change leaves the content of the document untouched
-	 */
-	@Override
-	public boolean isEmpty() {
-	    return (statements.isEmpty() &&
-	    		labels.isEmpty() &&
-	    		descriptions.isEmpty() &&
-	    		aliases.isEmpty() &&
-	    		labelsIfNew.isEmpty() &&
-	    		descriptionsIfNew.isEmpty());
-	}
+
+    /**
+     * @return true when this change leaves the content of the document untouched
+     */
+    @Override
+    public boolean isEmpty() {
+        return (statements.isEmpty() &&
+                labels.isEmpty() &&
+                descriptions.isEmpty() &&
+                aliases.isEmpty() &&
+                labelsIfNew.isEmpty() &&
+                descriptionsIfNew.isEmpty());
+    }
 
     /**
      * @return the list of updated descriptions, overriding existing ones
@@ -147,7 +144,7 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
     public Set<MonolingualTextValue> getDescriptions() {
         return descriptions.values().stream().collect(Collectors.toSet());
     }
-    
+
     /**
      * @return the list of updated descriptions, only added if new
      */
@@ -165,15 +162,15 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
     }
 
     protected Map<String, List<MonolingualTextValue>> constructTermListMap(Collection<MonolingualTextValue> mltvs) {
-    	Map<String,List<MonolingualTextValue>> result = new HashMap<>();
-    	for(MonolingualTextValue mltv : mltvs) {
-    		List<MonolingualTextValue> values = result.get(mltv.getLanguageCode());
-    		if (values == null) {
-    			values = new LinkedList<>();
-    			result.put(mltv.getLanguageCode(), values);
-    		}
-    		values.add(mltv);
-    	}
-    	return result;
+        Map<String, List<MonolingualTextValue>> result = new HashMap<>();
+        for (MonolingualTextValue mltv : mltvs) {
+            List<MonolingualTextValue> values = result.get(mltv.getLanguageCode());
+            if (values == null) {
+                values = new LinkedList<>();
+                result.put(mltv.getLanguageCode(), values);
+            }
+            values.add(mltv);
+        }
+        return result;
     }
 }

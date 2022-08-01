@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     public String itemOfPropertyConstraintPid;
 
     class ItemRequiresConstraint {
+
         final PropertyIdValue itemRequiresPid;
         final List<Value> itemList;
 
@@ -36,16 +38,16 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             PropertyIdValue pid = null;
             this.itemList = new ArrayList<>();
-            for(SnakGroup group : specs) {
+            for (SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (! (snak instanceof ValueSnak)) {
+                    if (!(snak instanceof ValueSnak)) {
                         continue;
                     }
-                    if (group.getProperty().getId().equals(itemRequiresPropertyPid)){
-                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
+                    if (group.getProperty().getId().equals(itemRequiresPropertyPid)) {
+                        pid = (PropertyIdValue) ((ValueSnak) snak).getValue();
                     }
-                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(((ValueSnak)snak).getValue());
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)) {
+                        this.itemList.add(((ValueSnak) snak).getValue());
                     }
                 }
             }
@@ -61,15 +63,15 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         return _fetcher != null && itemRequiresConstraintQid != null
                 && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
-    
+
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
@@ -79,7 +81,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             PropertyIdValue pid = mainSnak.getPropertyId();
             Set<Value> values;
             if (mainSnak instanceof ValueSnak) {
-                Value value = ((ValueSnak)mainSnak).getValue();
+                Value value = ((ValueSnak) mainSnak).getValue();
                 if (propertyIdValueValueMap.containsKey(pid)) {
                     values = propertyIdValueValueMap.get(pid);
                 } else {
@@ -97,13 +99,17 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                 PropertyIdValue itemRequiresPid = constraint.itemRequiresPid;
                 List<Value> itemList = constraint.itemList;
                 if (!propertyIdValueValueMap.containsKey(itemRequiresPid)) {
-                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
+                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType,
+                            propertyId.getId() + itemRequiresPid.getId(),
+                            update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
-                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
+                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType,
+                            propertyId.getId() + itemRequiresPid.getId(),
+                            update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
@@ -113,13 +119,14 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         }
     }
 
-    private boolean raiseWarning(Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap, PropertyIdValue itemRequiresPid, List<Value> itemList) {
-        if (itemList.isEmpty()){
+    private boolean raiseWarning(Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap, PropertyIdValue itemRequiresPid,
+            List<Value> itemList) {
+        if (itemList.isEmpty()) {
             return false;
         }
 
         for (Value value : itemList) {
-            if (propertyIdValueValueMap.get(itemRequiresPid).contains(value)){
+            if (propertyIdValueValueMap.get(itemRequiresPid).contains(value)) {
                 return false;
             }
         }

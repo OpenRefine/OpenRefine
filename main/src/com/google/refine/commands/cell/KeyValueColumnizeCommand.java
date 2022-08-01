@@ -30,6 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+
 package com.google.refine.commands.cell;
 
 import java.io.IOException;
@@ -45,28 +46,28 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
 
-
 public class KeyValueColumnizeCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String keyColumnName = request.getParameter("keyColumnName");
             String valueColumnName = request.getParameter("valueColumnName");
             String noteColumnName = request.getParameter("noteColumnName");
-            
+
             AbstractOperation op = new KeyValueColumnizeOperation(
-                keyColumnName, valueColumnName, noteColumnName);
-            
+                    keyColumnName, valueColumnName, noteColumnName);
+
             Process process = op.createProcess(project, new Properties());
-            
+
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);

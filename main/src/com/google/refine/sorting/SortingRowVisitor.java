@@ -44,10 +44,12 @@ import com.google.refine.model.Row;
 import com.google.refine.sorting.Criterion.KeyMaker;
 
 public class SortingRowVisitor extends BaseSorter implements RowVisitor {
+
     final protected RowVisitor _visitor;
     protected List<IndexedRow> _indexedRows;
 
     static protected class IndexedRow {
+
         final int index;
         final Row row;
 
@@ -73,6 +75,7 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
         _visitor.start(project);
 
         Collections.sort(_indexedRows, new Comparator<IndexedRow>() {
+
             Project project;
 
             Comparator<IndexedRow> init(Project project) {

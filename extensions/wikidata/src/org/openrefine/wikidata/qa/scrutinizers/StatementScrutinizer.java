@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
@@ -37,22 +38,21 @@ public abstract class StatementScrutinizer extends EditScrutinizer {
     public void scrutinize(ItemEdit update) {
         scrutinizeStatementEntityEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
         scrutinizeStatementEntityEdit(update);
     }
-    
+
     public void scrutinizeStatementEntityEdit(StatementEntityEdit update) {
         EntityIdValue currentEntityId = update.getEntityId();
         for (StatementEdit statementEdit : update.getStatementEdits()) {
-        	scrutinize(statementEdit.getStatement(), currentEntityId, !StatementEditingMode.DELETE.equals(statementEdit.getMode()));
+            scrutinize(statementEdit.getStatement(), currentEntityId, !StatementEditingMode.DELETE.equals(statementEdit.getMode()));
         }
     }
 
     /**
-     * The method that should be overridden by subclasses, implementing the checks
-     * on one statement
+     * The method that should be overridden by subclasses, implementing the checks on one statement
      * 
      * @param statement:
      *            the statement to scrutinize

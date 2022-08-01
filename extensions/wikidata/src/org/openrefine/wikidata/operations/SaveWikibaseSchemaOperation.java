@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
@@ -49,8 +50,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     @JsonCreator
     public SaveWikibaseSchemaOperation(
-    		@JsonProperty("schema")
-    		WikibaseSchema schema) {
+            @JsonProperty("schema") WikibaseSchema schema) {
         this._schema = schema;
 
     }

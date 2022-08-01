@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.updates.EntityEdit;
@@ -45,23 +46,23 @@ public abstract class ValueScrutinizer extends SnakScrutinizer {
         super.scrutinize(update);
 
         if (update instanceof LabeledStatementEntityEdit) {
-	        for (MonolingualTextValue label : ((LabeledStatementEntityEdit)update).getLabels()) {
-	            scrutinize(label);
-	        }
-	        for (MonolingualTextValue label : ((LabeledStatementEntityEdit)update).getLabelsIfNew()) {
-	            scrutinize(label);
-	        }
+            for (MonolingualTextValue label : ((LabeledStatementEntityEdit) update).getLabels()) {
+                scrutinize(label);
+            }
+            for (MonolingualTextValue label : ((LabeledStatementEntityEdit) update).getLabelsIfNew()) {
+                scrutinize(label);
+            }
         }
         if (update instanceof TermedStatementEntityEdit) {
-	        for (MonolingualTextValue alias : ((TermedStatementEntityEdit)update).getAliases()) {
-	            scrutinize(alias);
-	        }
-	        for (MonolingualTextValue description : ((TermedStatementEntityEdit)update).getDescriptions()) {
-	            scrutinize(description);
-	        }
-	        for (MonolingualTextValue description : ((TermedStatementEntityEdit)update).getDescriptionsIfNew()) {
-	            scrutinize(description);
-	        }
+            for (MonolingualTextValue alias : ((TermedStatementEntityEdit) update).getAliases()) {
+                scrutinize(alias);
+            }
+            for (MonolingualTextValue description : ((TermedStatementEntityEdit) update).getDescriptions()) {
+                scrutinize(description);
+            }
+            for (MonolingualTextValue description : ((TermedStatementEntityEdit) update).getDescriptionsIfNew()) {
+                scrutinize(description);
+            }
         }
     }
 
@@ -73,7 +74,7 @@ public abstract class ValueScrutinizer extends SnakScrutinizer {
             return;
         }
         if (snak instanceof ValueSnak) {
-            scrutinize(((ValueSnak)snak).getValue());
+            scrutinize(((ValueSnak) snak).getValue());
         }
     }
 

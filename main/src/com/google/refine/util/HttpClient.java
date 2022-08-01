@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.util;
 
 import java.io.IOException;
@@ -70,10 +71,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.RefineServlet;
 
-
 public class HttpClient {
+
     final static Logger logger = LoggerFactory.getLogger("http-client");
-    
+
     final private RequestConfig defaultRequestConfig;
     private HttpClientBuilder httpClientBuilder;
     private CloseableHttpClient httpClient;
@@ -83,23 +84,23 @@ public class HttpClient {
     private int proxyPort;
     private String proxyHost;
     private DefaultProxyRoutePlanner routePlanner;
-    
+
     public HttpClient() {
         this(0);
     }
-    
+
     public HttpClient(int delay) {
         this(delay, Math.max(delay, 200));
     }
-    
+
     public HttpClient(int delay, int retryInterval) {
         _delay = delay;
         _retryInterval = retryInterval;
         // Create a connection manager with a custom socket timeout
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
         final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(60, TimeUnit.SECONDS)
-            .build();
+                .setSoTimeout(60, TimeUnit.SECONDS)
+                .build();
         connManager.setDefaultSocketConfig(socketConfig);
 
         defaultRequestConfig = RequestConfig.custom()
@@ -144,7 +145,6 @@ public class HttpClient {
         if (System.getProperty("http.proxyPort") != null) {
             proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
         }
-
 
         if (proxyHost != null && proxyPort != 0) {
             proxy = new HttpHost("http", proxyHost, proxyPort);
@@ -237,10 +237,9 @@ public class HttpClient {
         }
     }
 
-
     /**
-     * Use binary exponential backoff strategy, instead of the default fixed
-     * retry interval, if the server doesn't provide a Retry-After time.
+     * Use binary exponential backoff strategy, instead of the default fixed retry interval, if the server doesn't
+     * provide a Retry-After time.
      */
     class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStrategy {
 
@@ -259,14 +258,14 @@ public class HttpClient {
             // exponential backoff
             if (interval.compareTo(defaultInterval) == 0) {
                 interval = TimeValue.of(((Double) (Math.pow(2, execCount - 1) * defaultInterval.getDuration())).longValue(),
-                       defaultInterval.getTimeUnit() );
-                logger.warn("Retrying HTTP request after "+interval.toString());
+                        defaultInterval.getTimeUnit());
+                logger.warn("Retrying HTTP request after " + interval.toString());
                 return interval;
             }
-            logger.warn("Retrying HTTP request after "+interval.toString());
+            logger.warn("Retrying HTTP request after " + interval.toString());
             return interval;
         }
-        
+
         /**
          * Even our POST requests should be retried, they are deemed idempotent
          */

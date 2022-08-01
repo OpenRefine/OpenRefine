@@ -36,6 +36,7 @@ package com.google.refine.jython;
 import org.python.core.PyObject;
 
 public class JythonObjectWrapper extends PyObject {
+
     private static final long serialVersionUID = -6608115027151667441L;
 
     public Object _obj;

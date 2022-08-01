@@ -41,29 +41,32 @@ import java.io.Serializable;
  * This is effectively part of the contract for {@link TreeImportingParserBase}.
  */
 public interface TreeReader {
+
     public enum Token {
-        Ignorable,
-        StartEntity,
-        EndEntity,
-        Value
-        //append additional tokens only if necessary (most should be just mapped to Value or Ignorable)
+        Ignorable, StartEntity, EndEntity, Value
+        // append additional tokens only if necessary (most should be just mapped to Value or Ignorable)
     }
 
     public Token current() throws TreeReaderException; // aka getCurrentToken
 
     public boolean hasNext() throws TreeReaderException;
+
     public Token next() throws TreeReaderException;
 
     public String getFieldName() throws TreeReaderException;
+
     public String getPrefix();
-    
+
     @Deprecated
     public String getFieldValue() throws TreeReaderException;
-    
+
     public Serializable getValue() throws TreeReaderException;
-    
+
     public int getAttributeCount();
+
     public String getAttributeValue(int index);
+
     public String getAttributePrefix(int index);
+
     public String getAttributeLocalName(int index);
 }

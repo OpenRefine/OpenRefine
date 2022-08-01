@@ -46,55 +46,53 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
-public class ColumnGroup  {
-    final public int    startColumnIndex;
-    final public int    columnSpan;
-    final public int    keyColumnIndex; // could be -1 if there is no key cell 
-    
-    transient public ColumnGroup        parentGroup;
-    transient public List<ColumnGroup>  subgroups;
-    
+public class ColumnGroup {
+
+    final public int startColumnIndex;
+    final public int columnSpan;
+    final public int keyColumnIndex; // could be -1 if there is no key cell
+
+    transient public ColumnGroup parentGroup;
+    transient public List<ColumnGroup> subgroups;
+
     @JsonCreator
     public ColumnGroup(
-            @JsonProperty("startColumnIndex")
-            int startColumnIndex,
-            @JsonProperty("columnSpan")
-            int columnSpan,
-            @JsonProperty("keyColumnIndex")
-            int keyColumnIndex) {
+            @JsonProperty("startColumnIndex") int startColumnIndex,
+            @JsonProperty("columnSpan") int columnSpan,
+            @JsonProperty("keyColumnIndex") int keyColumnIndex) {
         this.startColumnIndex = startColumnIndex;
         this.columnSpan = columnSpan;
         this.keyColumnIndex = keyColumnIndex;
         internalInitialize();
     }
-    
+
     @JsonProperty("startColumnIndex")
     public int getStartColumnIndex() {
         return startColumnIndex;
     }
-    
+
     @JsonProperty("columnSpan")
     public int getColumnSpan() {
         return columnSpan;
     }
-    
+
     @JsonProperty("keyColumnIndex")
     public int getKeyColumnIndex() {
         return keyColumnIndex;
     }
-    
+
     @JsonProperty("subgroups")
     @JsonView(JsonViews.NonSaveMode.class)
     @JsonInclude(Include.NON_EMPTY)
     public List<ColumnGroup> getSubGroups() {
         return subgroups;
     }
-    
+
     public boolean contains(ColumnGroup g) {
         return (g.startColumnIndex >= startColumnIndex &&
-            g.startColumnIndex < startColumnIndex + columnSpan);
+                g.startColumnIndex < startColumnIndex + columnSpan);
     }
-    
+
     public void save(Writer writer) {
         try {
             ParsingUtilities.defaultWriter.writeValue(writer, this);
@@ -102,17 +100,17 @@ public class ColumnGroup  {
             e.printStackTrace();
         }
     }
-    
+
     static public ColumnGroup load(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, ColumnGroup.class);
     }
-    
+
     protected void internalInitialize() {
         subgroups = new LinkedList<ColumnGroup>();
     }
-    
+
     @Override
     public String toString() {
-        return String.format("%d:%d:k=%d",startColumnIndex,columnSpan,keyColumnIndex);
+        return String.format("%d:%d:k=%d", startColumnIndex, columnSpan, keyColumnIndex);
     }
 }

@@ -42,6 +42,7 @@ import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 abstract class IsTest implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 1) {
@@ -58,19 +59,19 @@ abstract class IsTest implements Control {
             o = args[0].evaluate(bindings);
         } catch (Exception e) {
             o = new EvalError(e.toString());
-        } 
+        }
         return test(o);
     }
-    
+
     @Override
     public String getParams() {
         return "expression o";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";
     }
-    
+
     abstract protected boolean test(Object v);
 }

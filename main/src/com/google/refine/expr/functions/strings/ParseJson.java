@@ -59,17 +59,16 @@ public class ParseJson implements Function {
         return null;
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.str_parse_json();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON object";

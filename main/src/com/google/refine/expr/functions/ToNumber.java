@@ -42,7 +42,7 @@ import com.google.refine.grel.FunctionDescription;
 
 public class ToNumber implements Function {
 
-  @Override
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             if (args[0] instanceof Number) {
@@ -50,7 +50,7 @@ public class ToNumber implements Function {
             } else {
                 String s;
                 if (args[0] instanceof String) {
-                    s = (String)args[0];
+                    s = (String) args[0];
                 } else {
                     s = args[0].toString();
                 }
@@ -77,12 +77,12 @@ public class ToNumber implements Function {
     public String getDescription() {
         return FunctionDescription.fun_to_number();
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

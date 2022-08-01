@@ -54,12 +54,12 @@ public class ASin implements Function {
     public String getDescription() {
         return FunctionDescription.math_asin();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

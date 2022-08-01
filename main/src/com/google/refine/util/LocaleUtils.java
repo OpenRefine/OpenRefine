@@ -38,9 +38,11 @@ import java.util.Map;
 
 /**
  * Utility for setting application locale based on the language code from preferences
+ * 
  * @author Elroy Kanye
  */
 public class LocaleUtils {
+
     public static void setLocale(String code) {
         if (code == null) {
             return;
@@ -49,17 +51,21 @@ public class LocaleUtils {
                 "bn", "ben",
                 "jp", "ja",
                 "zh", "zh_CN",
-                "zh_Hant", "zh_TW"
-        );
+                "zh_Hant", "zh_TW");
 
         String localeCode = languageCodeMap.getOrDefault(code, code);
 
         String[] localeParts = localeCode.split("_");
         Locale.Builder localeBuilder = new Locale.Builder();
         switch (localeParts.length) {
-            case 1: localeBuilder.setLanguage(localeParts[0]); break;
-            case 2: localeBuilder.setLanguage(localeParts[0]).setRegion(localeParts[1]); break;
-            default: return;
+            case 1:
+                localeBuilder.setLanguage(localeParts[0]);
+                break;
+            case 2:
+                localeBuilder.setLanguage(localeParts[0]).setRegion(localeParts[1]);
+                break;
+            default:
+                return;
         }
         Locale.setDefault(localeBuilder.build());
     }

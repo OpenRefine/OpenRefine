@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.lang;
 
 import java.io.BufferedReader;
@@ -53,11 +54,10 @@ import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
-
 public class LoadLanguageCommand extends Command {
 
     public LoadLanguageCommand() {
-    	super();
+        super();
     }
 
     @Override
@@ -65,11 +65,10 @@ public class LoadLanguageCommand extends Command {
             throws ServletException, IOException {
         doPost(request, response);
     }
-    
+
     /**
-     * POST is supported but does not actually change any state so we do
-     * not add CSRF protection to it. This ensures existing extensions will not
-     * have to be updated to add a CSRF token to their requests (2019-11-10)
+     * POST is supported but does not actually change any state so we do not add CSRF protection to it. This ensures
+     * existing extensions will not have to be updated to add a CSRF token to their requests (2019-11-10)
      */
 
     @Override
@@ -84,19 +83,19 @@ public class LoadLanguageCommand extends Command {
         if (langs == null || "".equals(langs[0])) {
             PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
             if (ps != null) {
-                langs = new String[] {(String) ps.get("userLang")};
+                langs = new String[] { (String) ps.get("userLang") };
             }
         }
-        
+
         // Default language is English
-        if (langs.length == 0 || langs[langs.length-1] != "en" ) {
-            langs = Arrays.copyOf(langs, langs.length+1);
-            langs[langs.length-1] = "en";
+        if (langs.length == 0 || langs[langs.length - 1] != "en") {
+            langs = Arrays.copyOf(langs, langs.length + 1);
+            langs[langs.length - 1] = "en";
         }
 
         ObjectNode translations = null;
         String bestLang = null;
-        for (int i = langs.length-1; i >= 0; i--) {
+        for (int i = langs.length - 1; i >= 0; i--) {
             if (langs[i] == null) continue;
             ObjectNode json = loadLanguage(this.servlet, modname, langs[i]);
             if (json != null) {
@@ -108,23 +107,23 @@ public class LoadLanguageCommand extends Command {
                 }
             }
         }
-         
+
         if (translations != null) {
             try {
                 ObjectNode node = ParsingUtilities.mapper.createObjectNode();
                 node.set("dictionary", translations);
                 node.set("lang", new TextNode(bestLang));
-            	respondJSON(response, node);
+                respondJSON(response, node);
             } catch (IOException e) {
                 logger.error("Error writing language labels to response stream");
             }
         } else {
-        	logger.error("Failed to load any language files");
+            logger.error("Failed to load any language files");
         }
     }
-    
+
     static ObjectNode loadLanguage(RefineServlet servlet, String modname, String lang) throws UnsupportedEncodingException {
-        
+
         ButterflyModule module = servlet.getModule(modname);
         File langFile = new File(module.getPath(), "langs" + File.separator + "translation-" + lang + ".json");
         try {
@@ -137,25 +136,26 @@ public class LoadLanguageCommand extends Command {
         }
         return null;
     }
-    
+
     /**
      * Perform a language fallback, server-side
+     * 
      * @param preferred
-     *      the JSON translation for the preferred language
+     *            the JSON translation for the preferred language
      * @param fallback
-     *      the JSON translation for the fallback language
-     * @return
-     *      a JSON object where values are from the preferred
-     *      language if available, and the fallback language otherwise
+     *            the JSON translation for the fallback language
+     * @return a JSON object where values are from the preferred language if available, and the fallback language
+     *         otherwise
      */
     static ObjectNode mergeLanguages(ObjectNode preferred, ObjectNode fallback) {
         ObjectNode results = ParsingUtilities.mapper.createObjectNode();
         Iterator<Entry<String, JsonNode>> iterator = fallback.fields();
-        while(iterator.hasNext()) {
-            Entry<String,JsonNode> entry = iterator.next();
+        while (iterator.hasNext()) {
+            Entry<String, JsonNode> entry = iterator.next();
             String code = entry.getKey();
             JsonNode value = preferred.get(code);
-            if (value == null) {;
+            if (value == null) {
+                ;
                 value = entry.getValue();
             }
             results.set(code, value);
