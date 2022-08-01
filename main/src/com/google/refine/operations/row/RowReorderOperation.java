@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -48,30 +48,29 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowReorderChange;
- import com.google.refine.operations.OperationDescription;
- import com.google.refine.sorting.SortingConfig;
+import com.google.refine.operations.OperationDescription;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 
 public class RowReorderOperation extends AbstractOperation {
+
     final protected Mode _mode;
     final protected SortingConfig _sorting;
 
     @JsonCreator
     public RowReorderOperation(
-            @JsonProperty("mode")
-            Mode mode,
-            @JsonProperty("sorting")
-            SortingConfig sorting) {
+            @JsonProperty("mode") Mode mode,
+            @JsonProperty("sorting") SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
     }
-    
+
     @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
     }
-    
+
     @JsonProperty("sorting")
     public SortingConfig getSortingConfig() {
         return _sorting;
@@ -117,14 +116,14 @@ public class RowReorderOperation extends AbstractOperation {
 
         return new HistoryEntry(
                 historyEntryID,
-                project, 
+                project,
                 getBriefDescription(null),
-                this, 
-                new RowReorderChange(rowIndices)
-        );
+                this,
+                new RowReorderChange(rowIndices));
     }
 
     static protected class IndexingVisitor implements RowVisitor, RecordVisitor {
+
         List<Integer> _indices;
 
         IndexingVisitor(List<Integer> indices) {

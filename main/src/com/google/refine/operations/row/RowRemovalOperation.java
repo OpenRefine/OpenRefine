@@ -47,7 +47,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
 import com.google.refine.operations.EngineDependentOperation;
- import com.google.refine.operations.OperationDescription;
+import com.google.refine.operations.OperationDescription;
 
 public class RowRemovalOperation extends EngineDependentOperation {
 

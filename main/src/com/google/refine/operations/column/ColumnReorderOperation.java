@@ -44,15 +44,15 @@ import com.google.refine.model.changes.ColumnReorderChange;
 import com.google.refine.operations.OperationDescription;
 
 public class ColumnReorderOperation extends AbstractOperation {
+
     final protected List<String> _columnNames;
-    
+
     @JsonCreator
     public ColumnReorderOperation(
-            @JsonProperty("columnNames")
-            List<String> columnNames) {
+            @JsonProperty("columnNames") List<String> columnNames) {
         _columnNames = columnNames;
     }
-    
+
     @JsonProperty("columnNames")
     public List<String> getColumnNames() {
         return _columnNames;
@@ -64,14 +64,13 @@ public class ColumnReorderOperation extends AbstractOperation {
         return OperationDescription.column_reorder_brief();
     }
 
-   @Override
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(null),
-            this, 
-            new ColumnReorderChange(_columnNames)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(null),
+                this,
+                new ColumnReorderChange(_columnNames));
     }
 }

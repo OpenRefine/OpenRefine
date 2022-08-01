@@ -55,15 +55,14 @@ import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationDescription;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
+
     @JsonCreator
     public ReconMatchBestCandidatesOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName) {
         super(engineConfig, columnName, false);
     }
-    
+
     @JsonProperty
     public String getColumnName() {
         return _columnName;
@@ -78,29 +77,30 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
+
         // return "Match each of " + cellChanges.size() +
-        //    " cells to its best candidate in column " + column.getName();
+        // " cells to its best candidate in column " + column.getName();
         return OperationDescription.recon_match_best_candidates_desc(cellChanges.size(), column.getName());
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
-        
+
         return new RowVisitor() {
-            int                 cellIndex;
-            List<CellChange>    cellChanges;
-            Map<Long, Recon>    dupReconMap = new HashMap<Long, Recon>();
-            long                historyEntryID;
-            
+
+            int cellIndex;
+            List<CellChange> cellChanges;
+            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
+            long historyEntryID;
+
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
                 this.historyEntryID = historyEntryID;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -129,14 +129,13 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
                                 newRecon.matchRank = 0;
                                 newRecon.judgment = Judgment.Matched;
                                 newRecon.judgmentAction = "mass";
-                                
+
                                 dupReconMap.put(cell.recon.id, newRecon);
                             }
                             Cell newCell = new Cell(
-                                cell.value,
-                                newRecon
-                            );
-                            
+                                    cell.value,
+                                    newRecon);
+
                             CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                             cellChanges.add(cellChange);
                         }
@@ -146,14 +145,13 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
             }
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }
