@@ -61,7 +61,6 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Fill down cells in column " + _columnName;
         return OperationDescription.cell_fill_down_brief(_columnName);
     }
 
@@ -69,8 +68,6 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        // return "Fill down " + cellChanges.size() +
-        // " cells in column " + column.getName();
         return OperationDescription.cell_fill_down_desc(cellChanges.size(), column.getName());
     }
 

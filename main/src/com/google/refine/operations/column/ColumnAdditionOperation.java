@@ -114,18 +114,10 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Create column " + _newColumnName +
-        // " at index " + _columnInsertIndex +
-        // " based on column " + _baseColumnName +
-        // " using expression " + _expression;
         return OperationDescription.column_addition_brief(_newColumnName, _columnInsertIndex, _baseColumnName, _expression);
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        // return "Create new column " + _newColumnName +
-        // " based on column " + column.getName() +
-        // " by filling " + cellsAtRows.size() +
-        // " rows with " + _expression;
         return OperationDescription.column_addition_desc(_newColumnName, column.getName(), cellsAtRows.size(), _expression);
     }
 

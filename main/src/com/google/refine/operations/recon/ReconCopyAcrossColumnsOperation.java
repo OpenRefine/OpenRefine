@@ -196,8 +196,6 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Copy recon judgments from column " +
-        // _fromColumnName + " to " + StringUtils.join(_toColumnNames);
         return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames));
     }
 }

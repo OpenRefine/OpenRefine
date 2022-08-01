@@ -74,8 +74,6 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Clear recon data for cells containing \"" +
-        // _similarValue + "\" in column " + _columnName;
         return OperationDescription.recon_clear_similar_cells_brief(_similarValue, _columnName);
     }
 
@@ -83,8 +81,6 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        // return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
-        // _similarValue + "\" in column " + _columnName;
         return OperationDescription.recon_clear_similar_cells_desc(cellChanges.size(), _similarValue, _columnName);
     }
 

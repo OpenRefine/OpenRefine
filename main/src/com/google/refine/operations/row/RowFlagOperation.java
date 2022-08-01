@@ -71,7 +71,6 @@ public class RowFlagOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return (_flagged ? "Flag rows" : "Unflag rows");
         return _flagged ? OperationDescription.row_flag_brief() : OperationDescription.row_unflag_brief();
     }
 

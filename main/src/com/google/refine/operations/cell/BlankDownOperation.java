@@ -60,7 +60,6 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Blank down cells in column " + _columnName;
         return OperationDescription.cell_blank_down_brief(_columnName);
     }
 
@@ -68,8 +67,6 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        // return "Blank down " + cellChanges.size() +
-        // " cells in column " + column.getName();
         return OperationDescription.cell_blank_down_desc(cellChanges.size(), column.getName());
     }
 

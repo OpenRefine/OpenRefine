@@ -67,7 +67,6 @@ public class ColumnMoveOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Move column " + _columnName + " to position " + _index;
         return OperationDescription.column_move_brief(_columnName, _index);
     }
 

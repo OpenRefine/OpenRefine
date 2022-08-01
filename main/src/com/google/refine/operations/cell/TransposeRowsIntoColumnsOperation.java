@@ -72,7 +72,6 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
         return OperationDescription.cell_transpose_rows_into_columns_brief(_rowCount, _columnName);
     }
 

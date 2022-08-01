@@ -88,11 +88,6 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-
-        // return (_clearData ?
-        // "Discard recon judgments and clear recon data" :
-        // "Discard recon judgments") +
-        // " for " + cellChanges.size() + " cells in column " + column.getName();
         return _clearData ? OperationDescription.recon_discard_judgments_clear_data_desc(cellChanges.size(), column.getName())
                 : OperationDescription.recon_discard_judgments_desc(cellChanges.size(), column.getName());
     }

@@ -67,7 +67,6 @@ public class ColumnRenameOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Rename column " + _oldColumnName + " to " + _newColumnName;
         return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
     }
 

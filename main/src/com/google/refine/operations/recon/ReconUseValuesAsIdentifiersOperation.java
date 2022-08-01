@@ -78,7 +78,6 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
 
     @Override
     public String getBriefDescription(Project project) {
-        // return "Use values as reconciliation identifiers in column " + _columnName;
         return OperationDescription.recon_use_values_as_identifiers_brief(_columnName);
     }
 
@@ -142,8 +141,6 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
 
     @Override
     protected String createDescription(Column column, List<CellChange> cellChanges) {
-        // return "Use values as reconciliation identifiers for "+ cellChanges.size() +
-        // " cells in column " + column.getName();
         return OperationDescription.recon_use_values_as_identifiers_desc(cellChanges.size(), column.getName());
     }
 

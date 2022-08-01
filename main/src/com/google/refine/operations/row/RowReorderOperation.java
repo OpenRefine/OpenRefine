@@ -78,7 +78,6 @@ public class RowReorderOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Reorder rows";
         return OperationDescription.row_reorder_brief();
     }
 

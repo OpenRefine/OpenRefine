@@ -60,7 +60,6 @@ public class ColumnReorderOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Reorder columns";
         return OperationDescription.column_reorder_brief();
     }
 

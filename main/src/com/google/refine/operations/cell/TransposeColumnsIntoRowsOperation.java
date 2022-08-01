@@ -162,30 +162,16 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     protected String getBriefDescription() {
         if (_combinedColumnName != null) {
             if (_columnCount > 0) {
-                // return "Transpose cells in " + _columnCount +
-                // " column(s) starting with " + _startColumnName +
-                // " into rows in one new column named " + _combinedColumnName;
                 return OperationDescription.cell_transpose_columns_into_rows_combined_pos_brief(_columnCount, _startColumnName,
                         _combinedColumnName);
             } else {
-                // return "Transpose cells in columns starting with " +
-                // _startColumnName +
-                // " into rows in one new column named " + _combinedColumnName;
                 return OperationDescription.cell_transpose_columns_into_rows_combined_neg_brief(_startColumnName, _combinedColumnName);
             }
         } else {
             if (_columnCount > 0) {
-                // return "Transpose cells in " + _columnCount +
-                // " column(s) starting with " + _startColumnName +
-                // " into rows in two new columns named " +
-                // _keyColumnName + " and " + _valueColumnName;
                 return OperationDescription.cell_transpose_columns_into_rows_not_combined_pos_brief(_columnCount, _startColumnName,
                         _keyColumnName, _valueColumnName);
             } else {
-                // return "Transpose cells in columns starting with " +
-                // _startColumnName +
-                // " into rows in two new columns named " +
-                // _keyColumnName + " and " + _valueColumnName;
                 return OperationDescription.cell_transpose_columns_into_rows_not_combined_neg_brief(_startColumnName, _keyColumnName,
                         _valueColumnName);
             }

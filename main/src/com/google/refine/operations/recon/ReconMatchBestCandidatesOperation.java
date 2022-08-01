@@ -70,7 +70,6 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Match each cell to its best recon candidate in column " + _columnName;
         return OperationDescription.recon_match_best_candidates_brief(_columnName);
     }
 
@@ -78,8 +77,6 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        // return "Match each of " + cellChanges.size() +
-        // " cells to its best candidate in column " + column.getName();
         return OperationDescription.recon_match_best_candidates_desc(cellChanges.size(), column.getName());
     }
 

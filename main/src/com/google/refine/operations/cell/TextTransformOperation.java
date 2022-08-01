@@ -102,7 +102,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Text transform on cells in column " + _columnName + " using expression " + _expression;
         return OperationDescription.cell_text_transform_brief(_columnName, _expression);
     }
 
@@ -110,8 +109,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        // return "Text transform on " + cellChanges.size() +
-        // " cells in column " + column.getName() + ": " + _expression;
         return OperationDescription.cell_text_transform_desc(cellChanges.size(), column.getName(), _expression);
     }
 

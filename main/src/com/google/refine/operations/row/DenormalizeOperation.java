@@ -55,7 +55,6 @@ public class DenormalizeOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Denormalize";
         return OperationDescription.row_denormalize_brief();
     }
 

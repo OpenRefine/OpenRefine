@@ -147,7 +147,6 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Split multi-valued cells in column " + _columnName;
         return OperationDescription.cell_multivalued_cell_split_brief(_columnName);
     }
 

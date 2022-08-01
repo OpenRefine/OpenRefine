@@ -60,7 +60,6 @@ public class ColumnRemovalOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return "Remove column " + _columnName;
         return OperationDescription.column_removal_brief(_columnName);
     }
 

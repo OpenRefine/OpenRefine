@@ -71,7 +71,6 @@ public class RowStarOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        // return (_starred ? "Star rows" : "Unstar rows");
         return _starred ? OperationDescription.row_star_brief() : OperationDescription.row_unstar_brief();
     }
 
