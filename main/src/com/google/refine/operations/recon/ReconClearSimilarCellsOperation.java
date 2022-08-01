@@ -47,6 +47,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
 
@@ -73,16 +74,14 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Clear recon data for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+        return OperationDescription.recon_clear_similar_cells_brief(_similarValue, _columnName);
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
 
-        return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+        return OperationDescription.recon_clear_similar_cells_desc(cellChanges.size(), _similarValue, _columnName);
     }
 
     @Override

@@ -45,6 +45,7 @@ import com.google.refine.model.RecordModel.CellDependency;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+import com.google.refine.operations.OperationDescription;
 
 public class DenormalizeOperation extends AbstractOperation {
 
@@ -54,7 +55,7 @@ public class DenormalizeOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Denormalize";
+        return OperationDescription.row_denormalize_brief();
     }
 
     @Override

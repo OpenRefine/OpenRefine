@@ -47,6 +47,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class RowRemovalOperation extends EngineDependentOperation {
 
@@ -58,7 +59,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Remove rows";
+        return OperationDescription.row_removal_brief();
     }
 
     @Override
