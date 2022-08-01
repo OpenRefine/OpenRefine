@@ -57,12 +57,13 @@ public class ScriptText implements Function {
 
             } else {
                 // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '"
-                //        + new Type().call(bindings, args) + "'"
-                //        + " but instead needs a jsoup DataNode from style, script tags, etc. to work with."
-                //        + " See https://jsoup.org/apidocs/org/jsoup/nodes/Element.html#data()"
-                //        + " For arrays, you might select an index or loop over them with forEach()."
-                //        + " dataNodes() is currently not implemented.");
-                return new EvalError(EvalErrorMessage.xml_script_text_cannot_work_with(ControlFunctionRegistry.getFunctionName(this), new Type().call(bindings, args)));
+                // + new Type().call(bindings, args) + "'"
+                // + " but instead needs a jsoup DataNode from style, script tags, etc. to work with."
+                // + " See https://jsoup.org/apidocs/org/jsoup/nodes/Element.html#data()"
+                // + " For arrays, you might select an index or loop over them with forEach()."
+                // + " dataNodes() is currently not implemented.");
+                return new EvalError(EvalErrorMessage.xml_script_text_cannot_work_with(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(bindings, args)));
             }
         }
         // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");

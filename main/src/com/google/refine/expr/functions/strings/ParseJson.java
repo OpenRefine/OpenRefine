@@ -53,7 +53,8 @@ public class ParseJson implements Function {
                 try {
                     return ParsingUtilities.mapper.readTree(o1.toString());
                 } catch (IOException e) {
-                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed: " + e.getMessage());
+                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed: " +
+                    // e.getMessage());
                     return new EvalError(EvalErrorMessage.failed(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
                 }
             }

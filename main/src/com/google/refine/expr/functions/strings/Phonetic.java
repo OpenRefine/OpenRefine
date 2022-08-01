@@ -73,14 +73,14 @@ public class Phonetic implements Function {
                     encoding = ((String) o2).toLowerCase();
                 } else {
                     // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    //        + " expects a string for the second argument");
+                    // + " expects a string for the second argument");
                     return new EvalError(EvalErrorMessage.expects_second_param_string(ControlFunctionRegistry.getFunctionName(this)));
                 }
             } else {
                 // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                //        + " expects a string for the second argument, the phonetic encoding to use.");
+                // + " expects a string for the second argument, the phonetic encoding to use.");
                 return new EvalError(EvalErrorMessage.expects_second_param_string_phonetic(ControlFunctionRegistry.getFunctionName(this)));
-            }     
+            }
         }
         if (args.length < 3) {
             if ("doublemetaphone".equalsIgnoreCase(encoding)) {
@@ -95,27 +95,27 @@ public class Phonetic implements Function {
                 return cologne.key(str);
             } else {
                 // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                //        + " doesn't know how to handle the '"
-                //        + encoding + "' encoding.");
+                // + " doesn't know how to handle the '"
+                // + encoding + "' encoding.");
                 return new EvalError(EvalErrorMessage.unable_to_handle_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
             }
         } else {
             // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-            //        + " expects one or two string arguments");
+            // + " expects one or two string arguments");
             return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_phonetic();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string encoding (optional, defaults to 'metaphone3')";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

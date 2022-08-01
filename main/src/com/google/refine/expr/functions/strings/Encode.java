@@ -40,12 +40,14 @@ public class Encode implements Function {
                     case "base64url":
                         return BaseEncoding.base64Url().encode(string.getBytes());
                     default:
-                        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": Unknown encoding: " + encoding);
+                        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": Unknown encoding: " +
+                        // encoding);
                         return new EvalError(EvalErrorMessage.unknown_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments: a string and an encoding.");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments: a string and an
+        // encoding.");
         return new EvalError(EvalErrorMessage.expects_one_string_and_encoding(ControlFunctionRegistry.getFunctionName(this)));
     }
 

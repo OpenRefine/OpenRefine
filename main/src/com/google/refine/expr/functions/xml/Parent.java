@@ -48,21 +48,22 @@ public class Parent implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
- 
+
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 Element e1 = (Element) o1;
                 return e1.parent();
 
-            }else{
+            } else {
                 // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                //        + "() cannot work with this '"
-                //        + new Type().call(bindings, args)
-                //        + "'"
-                //        + " but instead needs a jsoup XML or HTML Element to work with."
-                //        + " For arrays, you might select an index or loop over them with forEach().");
-                return new EvalError(EvalErrorMessage.xml_parent_cannot_work_with(ControlFunctionRegistry.getFunctionName(this), new Type().call(bindings, args)));
+                // + "() cannot work with this '"
+                // + new Type().call(bindings, args)
+                // + "'"
+                // + " but instead needs a jsoup XML or HTML Element to work with."
+                // + " For arrays, you might select an index or loop over them with forEach().");
+                return new EvalError(EvalErrorMessage.xml_parent_cannot_work_with(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(bindings, args)));
             }
         }
         // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");

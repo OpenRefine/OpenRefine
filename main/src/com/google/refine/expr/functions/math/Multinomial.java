@@ -53,8 +53,9 @@ public class Multinomial implements Function {
         int product = 1;
         for (int i = 0; i < args.length; i++) {
             if (!(args[i] instanceof Number)) {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
-                return new EvalError(EvalErrorMessage.expects_param_i_number(ControlFunctionRegistry.getFunctionName(this), i+1));
+                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1)
+                // + " to be a number");
+                return new EvalError(EvalErrorMessage.expects_param_i_number(ControlFunctionRegistry.getFunctionName(this), i + 1));
             }
             int num = ((Number) args[i]).intValue();
             sum += num;

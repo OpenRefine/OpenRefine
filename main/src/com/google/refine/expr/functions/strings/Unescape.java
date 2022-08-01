@@ -69,7 +69,8 @@ public class Unescape implements Function {
                     } catch (UnsupportedEncodingException e) {
                     }
                 } else {
-                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
+                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '"
+                    // + mode + "'.");
                     return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));
                 }
             }

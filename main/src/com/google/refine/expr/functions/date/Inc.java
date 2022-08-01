@@ -59,7 +59,8 @@ public class Inc implements Function {
 
             return date.plus(amount, getField(unit));
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a
+        // string");
         return new EvalError(EvalErrorMessage.expects_date_number_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

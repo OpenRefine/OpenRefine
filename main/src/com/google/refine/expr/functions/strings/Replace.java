@@ -61,7 +61,8 @@ public class Replace implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings, or 1 string, 1 regex, and 1 string");
+        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings, or 1 string, 1
+        // regex, and 1 string");
         return new EvalError(EvalErrorMessage.expects_three_strings_as_string_regex_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
