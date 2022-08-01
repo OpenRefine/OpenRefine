@@ -40,7 +40,6 @@ public class IsNumeric extends IsTest {
 
     @Override
     public String getDescription() {
-        // return "Returns whether o can represent a number";
         return ControlDescription.is_numeric_desc();
     }
 

@@ -40,7 +40,6 @@ public class IsError extends IsTest {
 
     @Override
     public String getDescription() {
-        // return "Returns whether o is an error";
         return ControlDescription.is_error_desc();
     }
 

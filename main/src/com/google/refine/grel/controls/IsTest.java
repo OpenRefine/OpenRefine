@@ -46,7 +46,6 @@ abstract class IsTest implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 1) {
-            // return ControlFunctionRegistry.getControlName(this) + " expects one argument";
             return ControlEvalError.expects_one_arg(ControlFunctionRegistry.getControlName(this));
         }
         return null;

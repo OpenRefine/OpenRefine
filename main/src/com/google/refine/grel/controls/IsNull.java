@@ -39,7 +39,6 @@ public class IsNull extends IsTest {
 
     @Override
     public String getDescription() {
-        // return "Returns whether o is null";
         return ControlDescription.is_null_desc();
     }
 

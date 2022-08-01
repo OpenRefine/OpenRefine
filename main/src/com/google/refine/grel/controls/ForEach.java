@@ -56,10 +56,8 @@ public class ForEach implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            // return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
             return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            // return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
             return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
@@ -72,7 +70,6 @@ public class ForEach implements Control {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)
                 && !(o instanceof ObjectNode)) {
-            // return new EvalError("First argument to forEach is not an array or JSON object");
             return new EvalError(ControlEvalError.foreach());
         }
 
@@ -160,7 +157,6 @@ public class ForEach implements Control {
 
     @Override
     public String getDescription() {
-        // return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v,
         // evaluates expression e, and pushes the result onto the result array.";
         return ControlDescription.foreach_desc();
     }

@@ -54,10 +54,8 @@ public class Filter implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            // return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
             return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            // return ControlFunctionRegistry.getControlName(this) + " expects second argument to be a variable name";
             return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
@@ -69,7 +67,6 @@ public class Filter implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            // return new EvalError("First argument is not an array");
             return ControlEvalError.filter();
         }
 
@@ -148,7 +145,6 @@ public class Filter implements Control {
 
     @Override
     public String getDescription() {
-        // return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v,
         // evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result
         // array.";
         return ControlDescription.filter_desc();
