@@ -91,12 +91,12 @@ public class Sort implements Function {
     public String getDescription() {
         return FunctionDescription.arr_sort();
     }
-    
+
     @Override
     public String getParams() {
         return "array a of uniform type";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

@@ -49,7 +49,7 @@ public class Type implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof String) {
                     return "string";
@@ -77,12 +77,12 @@ public class Type implements Function {
     public String getDescription() {
         return FunctionDescription.fun_type();
     }
-    
+
     @Override
     public String getParams() {
         return "object o";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

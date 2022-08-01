@@ -44,16 +44,14 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="valueType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "valueType")
 @JsonSubTypes({
-    @Type(value = BooleanCriterion.class, name = "boolean"),
-    @Type(value = DateCriterion.class, name = "date"),
-    @Type(value = NumberCriterion.class, name = "number"),
-    @Type(value = StringCriterion.class, name = "string") })
-abstract public class Criterion  {
+        @Type(value = BooleanCriterion.class, name = "boolean"),
+        @Type(value = DateCriterion.class, name = "date"),
+        @Type(value = NumberCriterion.class, name = "number"),
+        @Type(value = StringCriterion.class, name = "string") })
+abstract public class Criterion {
+
     @JsonProperty("column")
     public String columnName;
     @JsonIgnore
@@ -72,7 +70,7 @@ abstract public class Criterion  {
 
     @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getValueType();
-    
+
     // Returns a cached cell index
     // We delay this fetching because the column might not exist
     // at deserialization (for instance if the column is created by an operation
@@ -90,8 +88,9 @@ abstract public class Criterion  {
 //    abstract public class Key implements Comparable<Key> {
 //        abstract public int compareTo(Key key);
 //    }
-    
+
     abstract public class KeyMaker {
+
         public Object makeKey(Project project, Record record) {
             Object error = null;
             Object finalKey = null;
@@ -140,5 +139,6 @@ abstract public class Criterion  {
 
         abstract protected Object makeKey(Object value);
     }
+
     abstract public KeyMaker createKeyMaker();
 }

@@ -46,14 +46,14 @@ public class Xor implements Function {
 
     @Override
     public String getDescription() {
-    	return FunctionDescription.bool_xor();
+        return FunctionDescription.bool_xor();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

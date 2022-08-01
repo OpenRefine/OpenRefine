@@ -78,12 +78,12 @@ public class Uniques implements Function {
     public String getDescription() {
         return FunctionDescription.arr_uniques();
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

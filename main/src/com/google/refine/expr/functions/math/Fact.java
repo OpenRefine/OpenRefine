@@ -56,12 +56,12 @@ public class Fact implements Function {
     public String getDescription() {
         return FunctionDescription.math_fact();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

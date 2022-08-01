@@ -47,7 +47,7 @@ import com.google.refine.grel.FunctionDescription;
 public class NGramFingerprint implements Function {
 
     static Keyer ngram_fingerprint = new NGramFingerprintKeyer();
-    
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 || args.length == 2) {
@@ -58,7 +58,7 @@ public class NGramFingerprint implements Function {
                 }
                 Object o = args[0];
                 String s = (o instanceof String) ? (String) o : o.toString();
-                return ngram_fingerprint.key(s,ngram_size);
+                return ngram_fingerprint.key(s, ngram_size);
             }
             return null;
         }
@@ -70,21 +70,21 @@ public class NGramFingerprint implements Function {
         TreeSet<String> set = new TreeSet<String>();
         char[] chars = s.toCharArray();
         for (int i = 0; i + size <= chars.length; i++) {
-            set.add(new String(chars,i,size));
+            set.add(new String(chars, i, size));
         }
         return set;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_ngram_fingerprint();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

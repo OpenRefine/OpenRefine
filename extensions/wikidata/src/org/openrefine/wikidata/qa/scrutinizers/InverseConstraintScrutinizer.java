@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -54,6 +55,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
     public String symmetricConstraintQid;
 
     class InverseConstraint {
+
         PropertyIdValue propertyParameterValue;
 
         InverseConstraint(Statement statement) {
@@ -118,10 +120,10 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         }
 
         Snak mainSnak = statement.getClaim().getMainSnak();
-        if (! (mainSnak instanceof ValueSnak)) {
+        if (!(mainSnak instanceof ValueSnak)) {
             return;
         }
-        Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
+        Value mainSnakValue = ((ValueSnak) mainSnak).getValue();
         if (mainSnakValue instanceof ItemIdValue) {
             PropertyIdValue pid = mainSnak.getPropertyId();
             PropertyIdValue inversePid = getInverseConstraint(pid);
@@ -155,6 +157,11 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
                         issue.setProperty("inverse_property_entity", missingProperty);
                         issue.setProperty("source_entity", itemLinks.getKey());
                         issue.setProperty("target_entity", idValue);
+                        // we disable faceting for this issue because the required inverse statements
+                        // could be coming from different rows, so our current faceting mechanism would not be able to
+                        // detect them.
+                        // This is an issue that can normally be diagnosed just by looking at the schema, anyway.
+                        issue.setFacetable(false);
                         addIssue(issue);
                     }
                 }

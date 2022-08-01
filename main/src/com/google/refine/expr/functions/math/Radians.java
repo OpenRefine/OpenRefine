@@ -56,12 +56,12 @@ public class Radians implements Function {
     public String getDescription() {
         return FunctionDescription.math_radians();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

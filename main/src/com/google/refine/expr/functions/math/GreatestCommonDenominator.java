@@ -53,7 +53,7 @@ public class GreatestCommonDenominator implements Function {
         return new EvalError(EvalErrorMessage.expects_two_numbers(this));
     }
 
-    public static double GCD(double a, double b){
+    public static double GCD(double a, double b) {
         return b == 0 ? a : GCD(b, a % b);
     }
 
@@ -61,12 +61,12 @@ public class GreatestCommonDenominator implements Function {
     public String getDescription() {
         return FunctionDescription.math_gcd();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

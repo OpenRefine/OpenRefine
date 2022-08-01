@@ -56,12 +56,12 @@ public class Sinh implements Function {
     public String getDescription() {
         return FunctionDescription.math_sinh();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

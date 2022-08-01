@@ -14,8 +14,16 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
+  - dependency-name: "jetty-*"
+    versions:
+      - ">= 10.0.0"
   target-branch: "master"
     
+# For main webapp
+- package-ecosystem: "npm"
+  directory: "main/webapp"
+  schedule:
+    interval: "daily"
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
   directory: "docs/"

@@ -56,12 +56,12 @@ public class Log implements Function {
     public String getDescription() {
         return FunctionDescription.math_log();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

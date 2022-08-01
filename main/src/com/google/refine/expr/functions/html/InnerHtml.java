@@ -62,17 +62,16 @@ public class InnerHtml implements Function {
         return new EvalError(EvalErrorMessage.html_cannot_work_with_this_expects_one_string(ControlFunctionRegistry.getFunctionName(this), new Type().call(bindings, args)));
     }
 
-
     @Override
     public String getDescription() {
         return FunctionDescription.html_inner_html();
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string innerHtml";

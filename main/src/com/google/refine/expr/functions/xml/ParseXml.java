@@ -49,9 +49,9 @@ public class ParseXml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        return call(bindings,args,"xml");
+        return call(bindings, args, "xml");
     }
-    
+
     public Object call(Properties bindings, Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
@@ -59,7 +59,7 @@ public class ParseXml implements Function {
                 if (mode.equals("html")) {
                     return Jsoup.parse(o1.toString());
                 } else if (mode.equals("xml")) {
-                    return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
+                    return Jsoup.parse(o1.toString(), "", Parser.xmlParser());
                 } else {
                     // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
                     return new EvalError(EvalErrorMessage.unable_to_identify_parser(ControlFunctionRegistry.getFunctionName(this)));
@@ -70,20 +70,18 @@ public class ParseXml implements Function {
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-
     @Override
     public String getDescription() {
-    	return FunctionDescription.xml_parsexml();
+        return FunctionDescription.xml_parsexml();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
-    	return "XML object";
+        return "XML object";
     }
 }
-

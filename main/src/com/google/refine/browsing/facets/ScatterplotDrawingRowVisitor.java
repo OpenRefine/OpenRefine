@@ -64,16 +64,15 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     double max_x;
     double min_y;
     double max_y;
-    
+
     BufferedImage image;
     Graphics2D g2;
-    
+
     AffineTransform r;
-    
+
     public ScatterplotDrawingRowVisitor(
             int col_x, int col_y, double min_x, double max_x, double min_y, double max_y,
-            int size, int dim_x, int dim_y, int rotation, double dot, Color color)  
-    {
+            int size, int dim_x, int dim_y, int rotation, double dot, Color color) {
         this.col_x = col_x;
         this.col_y = col_y;
         this.min_x = min_x;
@@ -83,7 +82,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         this.dot = dot;
         this.dim_x = dim_x;
         this.dim_y = dim_y;
-        
+
         l = size;
         r = ScatterplotFacet.createRotationMatrix(rotation, l);
 
@@ -91,33 +90,33 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         g2 = (Graphics2D) image.getGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(1.0f));
-        
+
         AffineTransform t = AffineTransform.getTranslateInstance(0, l);
         t.scale(1, -1);
-        
+
         g2.setTransform(t);
         g2.setColor(color);
         g2.setPaint(color);
-        
+
         if (r != null) {
             /*
-             *  Fill in the negative quadrants to give a hint of how the plot has been rotated.
+             * Fill in the negative quadrants to give a hint of how the plot has been rotated.
              */
             Graphics2D g2r = (Graphics2D) g2.create();
             g2r.transform(r);
-            
+
             g2r.setPaint(Color.lightGray);
             g2r.fillRect(-size, 0, size, size);
             g2r.fillRect(0, -size, size, size);
             g2r.dispose();
         }
     }
-    
+
     public void setColor(Color color) {
         g2.setColor(color);
         g2.setPaint(color);
     }
-    
+
     @Override
     public void start(Project project) {
         // nothing to do
@@ -127,28 +126,27 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     public void end(Project project) {
         // nothing to do
     }
-    
+
     @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         Cell cellx = row.getCell(col_x);
         Cell celly = row.getCell(col_y);
         if ((cellx != null && cellx.value != null && cellx.value instanceof Number) &&
-            (celly != null && celly.value != null && celly.value instanceof Number)) 
-        {
+                (celly != null && celly.value != null && celly.value instanceof Number)) {
             double xv = ((Number) cellx.value).doubleValue();
             double yv = ((Number) celly.value).doubleValue();
 
-            Point2D.Double p = new Point2D.Double(xv,yv);
-            
+            Point2D.Double p = new Point2D.Double(xv, yv);
+
             p = ScatterplotFacet.translateCoordinates(
                     p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, r);
-            
+
             g2.fill(new Rectangle2D.Double(p.x - dot / 2, p.y - dot / 2, dot, dot));
         }
-        
+
         return false;
     }
-    
+
     @Override
     public boolean visit(Project project, Record record) {
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
@@ -156,9 +154,8 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         }
         return false;
     }
-    
+
     public RenderedImage getImage() {
         return image;
     }
 }
-

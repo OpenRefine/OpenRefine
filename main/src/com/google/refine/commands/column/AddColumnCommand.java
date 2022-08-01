@@ -43,24 +43,24 @@ import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 
 public class AddColumnCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String baseColumnName = request.getParameter("baseColumnName");
         String expression = request.getParameter("expression");
         String newColumnName = request.getParameter("newColumnName");
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         String onError = request.getParameter("onError");
-        
+
         return new ColumnAdditionOperation(
-            engineConfig, 
-            baseColumnName, 
-            expression,
-            TextTransformOperation.stringToOnError(onError),
-            newColumnName,
-            columnInsertIndex
-        );
+                engineConfig,
+                baseColumnName,
+                expression,
+                TextTransformOperation.stringToOnError(onError),
+                newColumnName,
+                columnInsertIndex);
     }
 
 }

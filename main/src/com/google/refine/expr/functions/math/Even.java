@@ -52,21 +52,21 @@ public class Even implements Function {
         return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    public static double roundUpToEven(double d){
+    public static double roundUpToEven(double d) {
         double temp = Math.ceil(d);
-        return ((temp % 2) == 0) ? temp : temp+1;
+        return ((temp % 2) == 0) ? temp : temp + 1;
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.math_even();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

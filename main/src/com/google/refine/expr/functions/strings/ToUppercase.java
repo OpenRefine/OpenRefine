@@ -57,12 +57,12 @@ public class ToUppercase implements Function {
     public String getDescription() {
         return FunctionDescription.str_to_uppercase();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

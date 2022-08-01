@@ -24,12 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class TrackingInputStream extends InputStream {
+
     final private InputStream is;
     protected long bytesRead;
 
@@ -75,7 +77,7 @@ public class TrackingInputStream extends InputStream {
     public boolean markSupported() {
         return is.markSupported();
     }
-    
+
     @Override
     public void close() throws IOException {
         is.close();

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
@@ -32,6 +33,8 @@ import java.util.Map;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +52,7 @@ import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
 /**
- * Main class representing a skeleton of Wikibase edits with OpenRefine columns
- * as variables.
+ * Main class representing a skeleton of Wikibase edits with OpenRefine columns as variables.
  * 
  * @author Antonin Delpeuch
  *
@@ -58,26 +60,30 @@ import com.google.refine.util.ParsingUtilities;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WikibaseSchema implements OverlayModel {
 
-    final static Logger logger = LoggerFactory.getLogger("RdfSchema");
+    final static Logger logger = LoggerFactory.getLogger("WikibaseSchema");
 
     @JsonProperty("entityEdits")
     protected List<WbExpression<? extends EntityEdit>> entityEditExprs = new ArrayList<>();
 
     @JsonProperty("siteIri")
     protected String siteIri;
-    
+
     @JsonProperty("entityTypeSiteIRI")
     protected Map<String, String> entityTypeSiteIri;
 
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
 
+    protected boolean validated;
+
     /**
      * Constructor.
-     * @todo remove this, it does not create a valid schema.
+     * 
+     * TODO remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
-    	entityTypeSiteIri = Collections.emptyMap();
+        entityTypeSiteIri = Collections.emptyMap();
+        validated = false;
     }
 
     /**
@@ -85,20 +91,41 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonCreator
     public WikibaseSchema(@JsonProperty("entityEdits") List<WbExpression<? extends EntityEdit>> exprs,
-    					  @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
-                          @JsonProperty("siteIri") String siteIri,
-                          @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
-                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
+            @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
+            @JsonProperty("siteIri") String siteIri,
+            @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
+            @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.entityEditExprs = new ArrayList<>();
         if (exprs != null) {
-        	entityEditExprs.addAll(exprs);
+            entityEditExprs.addAll(exprs);
         }
         if (legacyItemExprs != null) {
-        	entityEditExprs.addAll(legacyItemExprs);
+            entityEditExprs.addAll(legacyItemExprs);
         }
         this.siteIri = siteIri;
         this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
+        validated = false;
+    }
+
+    /**
+     * Checks that this schema is complete.
+     * 
+     * @param validationContext
+     */
+    public void validate(ValidationState validationContext) {
+        int index = 0;
+        for (WbExpression<? extends EntityEdit> entityEdit : entityEditExprs) {
+            if (entityEdit == null) {
+                validationContext.addError("Empty entity edit");
+            } else {
+                validationContext.enter(new PathElement(PathElement.Type.ENTITY, index));
+                entityEdit.validate(validationContext);
+                validationContext.leave();
+            }
+            index++;
+        }
+        validated = validationContext.getValidationErrors().isEmpty();
     }
 
     /**
@@ -108,7 +135,7 @@ public class WikibaseSchema implements OverlayModel {
     public String getSiteIri() {
         return siteIri;
     }
-    
+
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
@@ -131,14 +158,13 @@ public class WikibaseSchema implements OverlayModel {
     }
 
     /**
-     * Evaluates all entity documents in a particular expression context. This
-     * specifies, among others, a row where the values of the variables will be
-     * read.
+     * Evaluates all entity documents in a particular expression context. This specifies, among others, a row where the
+     * values of the variables will be read.
      * 
      * @param ctxt
      *            the context in which the schema should be evaluated.
      * @return
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) throws QAWarningException {
         List<EntityEdit> result = new ArrayList<>();
@@ -154,12 +180,10 @@ public class WikibaseSchema implements OverlayModel {
     }
 
     /**
-     * Evaluates the schema on a project, returning a list of EntityUpdates generated
-     * by the schema.
+     * Evaluates the schema on a project, returning a list of EntityUpdates generated by the schema.
      * 
-     * Some warnings will be emitted in the warning store: those are only the ones
-     * that are generated at evaluation time (such as invalid formats for dates).
-     * Issues detected on candidate statements (such as constraint violations) are
+     * Some warnings will be emitted in the warning store: those are only the ones that are generated at evaluation time
+     * (such as invalid formats for dates). Issues detected on candidate statements (such as constraint violations) are
      * not included at this stage.
      * 
      * @param project
@@ -171,6 +195,9 @@ public class WikibaseSchema implements OverlayModel {
      * @return entity updates are stored in their generating order (not merged yet).
      */
     public List<EntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
+        if (!validated) {
+            throw new IllegalStateException("The schema has not been validated before being evaluated");
+        }
         List<EntityEdit> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
@@ -201,12 +228,13 @@ public class WikibaseSchema implements OverlayModel {
 
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(siteIri, entityTypeSiteIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
+            ExpressionContext ctxt = new ExpressionContext(siteIri, entityTypeSiteIri, mediaWikiApiEndpoint, rowIndex, row,
+                    project.columnModel, warningStore);
             try {
-				result.addAll(evaluateEntityDocuments(ctxt));
-			} catch (QAWarningException e) {
-				warningStore.addWarning(e.getWarning());
-			}
+                result.addAll(evaluateEntityDocuments(ctxt));
+            } catch (QAWarningException e) {
+                warningStore.addWarning(e.getWarning());
+            }
             return false;
         }
 
@@ -215,9 +243,9 @@ public class WikibaseSchema implements OverlayModel {
             ;
         }
     }
-    
+
     static public WikibaseSchema reconstruct(String json) throws IOException {
-    	return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
+        return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
     }
 
     static public WikibaseSchema load(Project project, String obj)

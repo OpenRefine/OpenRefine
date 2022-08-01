@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers.tree;
 
 import java.util.ArrayList;
@@ -36,25 +37,24 @@ import com.google.refine.model.Cell;
  *
  */
 public class ImportRecord {
+
     public List<List<Cell>> rows = new BasedList<List<Cell>>();
 
-    
     /**
-     * A List implementation to match the characteristics needed by the 
-     * import process.  It's optimized for a relatively small number of 
-     * contiguous records at a potentially large offset from zero.
+     * A List implementation to match the characteristics needed by the import process. It's optimized for a relatively
+     * small number of contiguous records at a potentially large offset from zero.
      * <p>
-     * I suspect it's usually only a single row, but we support more, just
-     * not as efficiently.  Depending on the behavior of the ColumnGroups
-     * this may not be necessary at all, but I don't fully understand what it
-     * does, so we'll just put this hack in place for now.
+     * I suspect it's usually only a single row, but we support more, just not as efficiently. Depending on the behavior
+     * of the ColumnGroups this may not be necessary at all, but I don't fully understand what it does, so we'll just
+     * put this hack in place for now.
      * 
      * @param <T>
      */
     class BasedList<T> extends ArrayList<T> {
+
         private static final long serialVersionUID = 1L;
         int offset = Integer.MAX_VALUE;
-        
+
         public T set(int index, T element) {
             rebase(index);
             extend(index);
@@ -67,7 +67,7 @@ public class ImportRecord {
             }
             return super.get(index - offset);
         }
-        
+
         private void rebase(final int index) {
             if (index < offset) {
                 if (offset < Integer.MAX_VALUE) {
@@ -78,19 +78,19 @@ public class ImportRecord {
                         add(null);
                     }
                     // Shuffle up
-                    for (int i = size(); i > delta; i --) {
-                        set(i,get(i-delta));
+                    for (int i = size(); i > delta; i--) {
+                        set(i, get(i - delta));
                     } // Null unused entries
                     for (int i = 0; i < delta; i++) {
-                        set(i,null);
+                        set(i, null);
                     }
                     offset = new_offset;
                 } else {
                     offset = index;
                 }
             }
-         }
-        
+        }
+
         private void extend(final int index) {
             int i = index - offset;
             while (i >= size()) {

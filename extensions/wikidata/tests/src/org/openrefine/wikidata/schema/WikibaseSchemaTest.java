@@ -25,6 +25,7 @@
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,12 +35,16 @@ import java.util.List;
 
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationError;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -136,6 +141,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+        assertTrue(validation.getValidationErrors().isEmpty());
+
         Engine engine = new Engine(project);
         List<EntityEdit> updates = schema.evaluate(project, engine);
         List<EntityEdit> expected = new ArrayList<>();
@@ -144,6 +155,32 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         TermedStatementEntityEdit update2 = new ItemEditBuilder(qid2).addStatement(statementUpdate2).build();
         expected.add(update2);
         assertEquals(expected, updates);
+    }
+
+    @Test
+    public void testValidate() throws IOException {
+        String serialized = TestingData.jsonFromFile("schema/inception_with_errors.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+
+        List<ValidationError> expectedErrors = new ArrayList<>();
+        expectedErrors.add(new ValidationError(Arrays.asList(
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "reference URL (P854)")),
+                "Column 'nonexisting_column_name' does not exist"));
+        expectedErrors.add(new ValidationError(Arrays.asList(
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "retrieved (P813)")),
+                "Empty date field"));
+
+        assertEquals(validation.getValidationErrors(), expectedErrors);
     }
 
     @Test(expectedExceptions = IOException.class)
@@ -158,6 +195,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+        assertTrue(validation.getValidationErrors().isEmpty());
+
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
                 + "      \"mode\": \"row-based\",\n"

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers;
 
 import java.io.File;
@@ -36,7 +37,7 @@ public class BinaryFormatGuesser implements FormatGuesser {
     public String guess(File file, String encoding, String seedFormat) {
 
         // TODO: Guess based on sniffing magic numbers
-        
+
         return null;
     }
 }

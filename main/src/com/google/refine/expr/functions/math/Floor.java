@@ -51,17 +51,17 @@ public class Floor implements Function {
         // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
         return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.math_floor();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

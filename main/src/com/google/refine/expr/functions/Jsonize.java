@@ -59,17 +59,16 @@ public class Jsonize implements Function {
         return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.fun_jsonize();
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON literal value";

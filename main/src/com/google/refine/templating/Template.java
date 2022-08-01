@@ -47,6 +47,7 @@ import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
 public class Template {
+
     protected String _prefix;
     protected String _suffix;
     protected String _separator;
@@ -82,6 +83,7 @@ public class Template {
     }
 
     protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
+
         final protected int limit;
         final protected Writer writer;
         protected Properties bindings;
@@ -143,7 +145,7 @@ public class Template {
                 writer.write("null");
             } else if (ExpressionUtils.isError(v)) {
                 writer.write("null");
-                //writer.write("[Error: " + ((EvalError) v).message);
+                // writer.write("[Error: " + ((EvalError) v).message);
             } else if (v instanceof String) {
                 writer.write((String) v);
             } else {
@@ -152,9 +154,8 @@ public class Template {
         }
 
         /**
-         * This method is modified for issue 3955
-         * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955
-         * The modification is to use the new variable totalRows instead of total
+         * This method is modified for issue 3955 Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955 The
+         * modification is to use the new variable totalRows instead of total
          */
         public boolean internalVisit(Project project, int rowIndex, Row row) {
             try {

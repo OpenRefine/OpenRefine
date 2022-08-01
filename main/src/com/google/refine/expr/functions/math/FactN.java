@@ -63,14 +63,13 @@ public class FactN implements Function {
     }
 
     /*
-     * Calculates the factorial of an integer, i, for a decreasing step of n.
-     * e.g. A double factorial would have a step of 2.
-     * Returns 1 for zero and negative integers.
+     * Calculates the factorial of an integer, i, for a decreasing step of n. e.g. A double factorial would have a step
+     * of 2. Returns 1 for zero and negative integers.
      */
-    public static long factorial(long i, long step){
+    public static long factorial(long i, long step) {
         if (i < 0) {
             throw new IllegalArgumentException("Can't compute the factorial of a negative number");
-        } else if(i <= 1) {
+        } else if (i <= 1) {
             return 1;
         } else {
             long result = i * FactN.factorial(i - step, step);
@@ -85,12 +84,12 @@ public class FactN implements Function {
     public String getDescription() {
         return FunctionDescription.math_factn();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

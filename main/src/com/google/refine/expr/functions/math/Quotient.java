@@ -57,12 +57,12 @@ public class Quotient implements Function {
     public String getDescription() {
         return FunctionDescription.math_quotient();
     }
-    
+
     @Override
     public String getParams() {
         return "number numerator, number denominator";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

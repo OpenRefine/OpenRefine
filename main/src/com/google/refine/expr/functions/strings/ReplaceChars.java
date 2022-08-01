@@ -60,17 +60,16 @@ public class ReplaceChars implements Function {
         return new EvalError(EvalErrorMessage.expects_three_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.str_replace_chars();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string find, string replace";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

@@ -44,41 +44,41 @@ import com.google.refine.util.Pool;
 
 public class CellAtRowCellIndex {
 
-        final public int row;
-        final public int cellIndex;
-        final public Cell cell;
-        final static private Pattern semicolonPattern = Pattern.compile(";");
+    final public int row;
+    final public int cellIndex;
+    final public Cell cell;
+    final static private Pattern semicolonPattern = Pattern.compile(";");
 
-        public CellAtRowCellIndex(int row, int cellIndex, Cell cell) {
-                this.row = row;
-                this.cell = cell;
-                this.cellIndex = cellIndex;
+    public CellAtRowCellIndex(int row, int cellIndex, Cell cell) {
+        this.row = row;
+        this.cell = cell;
+        this.cellIndex = cellIndex;
+    }
+
+    public void save(Writer writer, Properties options) throws IOException {
+        writer.write(Integer.toString(row));
+        writer.write(';');
+        writer.write(Integer.toString(cellIndex));
+        writer.write(';');
+        if (cell != null) {
+            cell.save(writer, options);
         }
+    }
 
-        public void save(Writer writer, Properties options) throws IOException {
-                writer.write(Integer.toString(row));
-                writer.write(';');
-                writer.write(Integer.toString(cellIndex));
-                writer.write(';');
-                if (cell != null) {
-                        cell.save(writer, options);
-                }
-        }
+    static public CellAtRowCellIndex load(String s, Pool pool) throws Exception {
 
-        static public CellAtRowCellIndex load(String s, Pool pool) throws Exception {
+        Matcher m = semicolonPattern.matcher(s);
 
-                Matcher m = semicolonPattern.matcher(s);
+        m.find();
+        int semicolon = m.start();
+        m.find();
+        int nextSemicolon = m.start();
 
-                m.find();
-                int semicolon = m.start();
-                m.find();
-                int nextSemicolon = m.start();
+        int row = Integer.parseInt(s.substring(0, semicolon));
+        int cellIndex = Integer.parseInt(s.substring(semicolon + 1, nextSemicolon));
+        Cell cell = nextSemicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(nextSemicolon + 1), pool)
+                : null;
 
-                int row = Integer.parseInt(s.substring(0, semicolon));
-                int cellIndex = Integer.parseInt(s.substring(semicolon + 1, nextSemicolon));
-                Cell cell = nextSemicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(nextSemicolon + 1), pool)
-                                : null;
-
-                return new CellAtRowCellIndex(row, cellIndex, cell);
-        }
+        return new CellAtRowCellIndex(row, cellIndex, cell);
+    }
 }

@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.exporters;
 
 import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
@@ -14,12 +15,13 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  *
  */
 public class QSSnakPrinter implements SnakVisitor<String> {
-    
+
     protected final boolean reference;
     protected final ValueVisitor<String> valuePrinter = new QSValuePrinter();
-    
+
     /**
-     * @param reference indicates whether to print snaks as reference, or as main/qualifier snaks
+     * @param reference
+     *            indicates whether to print snaks as reference, or as main/qualifier snaks
      */
     public QSSnakPrinter(boolean reference) {
         this.reference = reference;
@@ -40,7 +42,7 @@ public class QSSnakPrinter implements SnakVisitor<String> {
     public String visit(NoValueSnak snak) {
         return toQS(snak.getPropertyId(), "novalue");
     }
-    
+
     protected String toQS(PropertyIdValue property, String value) {
         String pid = property.getId();
         if (reference) {

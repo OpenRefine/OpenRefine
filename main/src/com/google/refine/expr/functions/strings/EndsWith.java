@@ -60,12 +60,12 @@ public class EndsWith implements Function {
     public String getDescription() {
         return FunctionDescription.str_ends_with();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";
