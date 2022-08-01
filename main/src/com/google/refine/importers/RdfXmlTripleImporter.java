@@ -33,11 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-
 public class RdfXmlTripleImporter extends RdfTripleImporter {
 
     public RdfXmlTripleImporter() {
         super(RdfTripleImporter.Mode.RDFXML);
     }
-    
+
 }

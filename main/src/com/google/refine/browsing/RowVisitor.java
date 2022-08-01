@@ -37,11 +37,11 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Interface for visiting rows one by one. The rows visited are only those that match some
- * particular criteria, such as facets' constraints.
+ * Interface for visiting rows one by one. The rows visited are only those that match some particular criteria, such as
+ * facets' constraints.
  */
 public interface RowVisitor {
-    
+
     /**
      * Called before any visit() call.
      * 
@@ -50,16 +50,18 @@ public interface RowVisitor {
     public void start(Project project);
 
     /**
-     * @param project project
-     * @param rowIndex zero-based row index
-     * @param row row
+     * @param project
+     *            project
+     * @param rowIndex
+     *            zero-based row index
+     * @param row
+     *            row
      * @return true to abort visitation early - no further visit calls will be made
      */
     public boolean visit(
-            Project project, 
-            int     rowIndex, 
-            Row     row
-    );
+            Project project,
+            int rowIndex,
+            Row row);
 
     /**
      * Called after all visit() calls.

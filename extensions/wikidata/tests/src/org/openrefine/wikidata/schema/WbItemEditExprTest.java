@@ -37,6 +37,10 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
+
 public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
 
     public WbItemEditExpr expr;
@@ -60,6 +64,19 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
                 + sgt.jsonRepresentation + "]}";
+    }
+
+    @Test
+    public void testValidate() throws ModelException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), false);
+        columnModel.addColumn(0, new Column(0, "column B"), false);
+        columnModel.addColumn(0, new Column(0, "column C"), false);
+        columnModel.addColumn(0, new Column(0, "column D"), false);
+        columnModel.addColumn(0, new Column(0, "column E"), false);
+
+        hasNoValidationError(expr, columnModel);
+        hasValidationError("No subject item id provided", new WbItemEditExpr(null, null, null), columnModel);
     }
 
     @Test

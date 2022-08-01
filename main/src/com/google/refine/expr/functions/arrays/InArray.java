@@ -53,7 +53,7 @@ public class InArray implements Function {
         if (args.length == 2) {
             Object v = args[0];
             Object s = args[1];
-            
+
             if (v != null && s != null && s instanceof String) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -77,12 +77,12 @@ public class InArray implements Function {
     public String getDescription() {
         return FunctionDescription.arr_in_array();
     }
-    
+
     @Override
     public String getParams() {
         return "array a, string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

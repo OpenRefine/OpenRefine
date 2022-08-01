@@ -42,7 +42,7 @@ public class ColognePhoneticKeyer extends Keyer {
     public ColognePhoneticKeyer() {
         _codec = new ColognePhonetic();
     }
-    
+
     @Override
     public String key(String s, Object... o) {
         return _codec.colognePhonetic(s);

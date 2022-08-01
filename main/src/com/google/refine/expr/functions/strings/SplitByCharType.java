@@ -55,17 +55,17 @@ public class SplitByCharType implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_split_by_char_type();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

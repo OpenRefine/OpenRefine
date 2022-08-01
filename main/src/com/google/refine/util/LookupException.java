@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.util;
 
 /**
@@ -34,12 +35,17 @@ public class LookupException extends Exception {
     /**
      * Default LookupException format exception.
      */
-    public LookupException() { super(); }
+    public LookupException() {
+        super();
+    }
 
     /**
      * LookupException exception.
      *
-     * @param message error message
+     * @param message
+     *            error message
      */
-    public LookupException(String message) { super(message); }
+    public LookupException(String message) {
+        super(message);
+    }
 }

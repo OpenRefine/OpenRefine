@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.utils;
 
 import java.util.ArrayList;
@@ -14,8 +15,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 public class SnakUtils {
 
     /**
-     * Groups snaks into a list of snak groups.
-     * The order of the first snaks in each group is preserved.
+     * Groups snaks into a list of snak groups. The order of the first snaks in each group is preserved.
      * 
      * @param snaks
      * @return
@@ -25,7 +25,7 @@ public class SnakUtils {
         List<PropertyIdValue> propertyOrder = new ArrayList<PropertyIdValue>();
         for (Snak snak : snaks) {
             List<Snak> existingSnaks = snakGroups.get(snak.getPropertyId());
-            if(existingSnaks == null) {
+            if (existingSnaks == null) {
                 existingSnaks = new ArrayList<Snak>();
                 snakGroups.put(snak.getPropertyId(), existingSnaks);
                 propertyOrder.add(snak.getPropertyId());

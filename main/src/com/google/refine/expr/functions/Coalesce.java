@@ -44,8 +44,8 @@ public class Coalesce implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length> 1) {
-            for (int i = 0; i < args.length; i++){
+        if (args.length > 1) {
+            for (int i = 0; i < args.length; i++) {
                 if (args[i] == null) {
                     continue;
                 } else {
@@ -61,16 +61,15 @@ public class Coalesce implements Function {
     public String getDescription() {
         return FunctionDescription.fun_coalesce();
     }
-    
+
     @Override
     public String getParams() {
         return "o1, o2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "object or null";
     }
-  
-    			
+
 }

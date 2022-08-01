@@ -54,12 +54,12 @@ public class Sin implements Function {
     public String getDescription() {
         return FunctionDescription.math_sin();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

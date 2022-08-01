@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -24,22 +25,24 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
     public String itemOfPropertyConstraintPid;
 
     class UseAsQualifierConstraint {
+
         final PropertyIdValue allowedQualifierPid;
         final List<Value> itemList;
+
         UseAsQualifierConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             PropertyIdValue pid = null;
             this.itemList = new ArrayList<>();
-            for(SnakGroup group : specs) {
+            for (SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (! (snak instanceof ValueSnak)) {
+                    if (!(snak instanceof ValueSnak)) {
                         continue;
                     }
-                    if (group.getProperty().getId().equals(property)){
-                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
+                    if (group.getProperty().getId().equals(property)) {
+                        pid = (PropertyIdValue) ((ValueSnak) snak).getValue();
                     }
-                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(((ValueSnak)snak).getValue());
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)) {
+                        this.itemList.add(((ValueSnak) snak).getValue());
                     }
                 }
             }
@@ -57,12 +60,12 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
@@ -71,19 +74,19 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
             Map<PropertyIdValue, List<Value>> qualifiersMap = new HashMap<>();
             List<SnakGroup> qualifiersList = statement.getClaim().getQualifiers();
 
-            for(SnakGroup qualifier : qualifiersList) {
+            for (SnakGroup qualifier : qualifiersList) {
                 PropertyIdValue qualifierPid = qualifier.getProperty();
                 List<Value> itemList;
                 for (Snak snak : qualifier.getSnaks()) {
                     if (!(snak instanceof ValueSnak)) {
                         continue;
                     }
-                    if (qualifiersMap.containsKey(qualifierPid)){
+                    if (qualifiersMap.containsKey(qualifierPid)) {
                         itemList = qualifiersMap.get(qualifierPid);
                     } else {
                         itemList = new ArrayList<>();
                     }
-                    itemList.add(((ValueSnak)snak).getValue());
+                    itemList.add(((ValueSnak) snak).getValue());
                     qualifiersMap.put(qualifierPid, itemList);
                 }
             }
@@ -94,7 +97,8 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
                 if (qualifiersMap.containsKey(constraint.allowedQualifierPid)) {
                     for (Value value : qualifiersMap.get(constraint.allowedQualifierPid)) {
                         if (!constraint.itemList.contains(value)) {
-                            QAWarning issue = new QAWarning(type, pid.getId()+constraint.allowedQualifierPid.getId(), QAWarning.Severity.WARNING, 1);
+                            QAWarning issue = new QAWarning(type, pid.getId() + constraint.allowedQualifierPid.getId(),
+                                    QAWarning.Severity.WARNING, 1);
                             issue.setProperty("statement_entity", pid);
                             issue.setProperty("qualifier_entity", constraint.allowedQualifierPid);
                             issue.setProperty("example_entity", update.getEntityId());

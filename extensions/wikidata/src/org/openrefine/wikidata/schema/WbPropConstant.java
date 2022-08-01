@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -45,11 +46,19 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
     @JsonCreator
     public WbPropConstant(@JsonProperty("pid") String pid, @JsonProperty("label") String label,
             @JsonProperty("datatype") String datatype) {
-        Validate.notNull(pid);
         this.pid = pid;
-        Validate.notNull(label);
         this.label = label;
         this.datatype = datatype;
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (pid == null) {
+            validation.addError("Missing property id");
+        }
+        if (label == null) {
+            validation.addError("Missing property label");
+        }
     }
 
     @Override
@@ -86,4 +95,5 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
     public int hashCode() {
         return pid.hashCode() + label.hashCode();
     }
+
 }

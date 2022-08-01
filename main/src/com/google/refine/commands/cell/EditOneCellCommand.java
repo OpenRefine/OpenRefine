@@ -55,8 +55,9 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class EditOneCellCommand extends Command {
-    
+
     protected static class EditResult {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("historyEntry")
@@ -68,7 +69,7 @@ public class EditOneCellCommand extends Command {
         @JsonProperty("pool")
         @JsonInclude(Include.NON_NULL)
         protected Pool pool;
-        
+
         protected EditResult(
                 String code,
                 HistoryEntry historyEntry,
@@ -80,14 +81,14 @@ public class EditOneCellCommand extends Command {
             this.pool = pool;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -117,21 +118,20 @@ public class EditOneCellCommand extends Command {
             }
 
             EditOneCellProcess process = new EditOneCellProcess(
-                project,
-                "Edit single cell",
-                rowIndex,
-                cellIndex,
-                value
-            );
+                    project,
+                    "Edit single cell",
+                    rowIndex,
+                    cellIndex,
+                    value);
 
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the operation has been done, return the new cell's data
-                 * so the client side can update the cell's rendering right away.
+                 * If the operation has been done, return the new cell's data so the client side can update the cell's
+                 * rendering right away.
                  */
                 Pool pool = new Pool();
-                if(process.newCell != null && process.newCell.recon != null) {
+                if (process.newCell != null && process.newCell.recon != null) {
                     pool.pool(process.newCell.recon);
                 }
                 respondJSON(response, new EditResult("ok", historyEntry, process.newCell, pool));
@@ -144,18 +144,18 @@ public class EditOneCellCommand extends Command {
     }
 
     protected static class EditOneCellProcess extends QuickHistoryEntryProcess {
+
         final int rowIndex;
         final int cellIndex;
         final Serializable value;
         Cell newCell;
 
         EditOneCellProcess(
-            Project project,
-            String briefDescription,
-            int rowIndex,
-            int cellIndex,
-            Serializable value
-        ) {
+                Project project,
+                String briefDescription,
+                int rowIndex,
+                int cellIndex,
+                Serializable value) {
             super(project, briefDescription);
 
             this.rowIndex = rowIndex;
@@ -172,18 +172,16 @@ public class EditOneCellCommand extends Command {
             }
 
             newCell = new Cell(
-                value,
-                cell != null ? cell.recon : null
-            );
+                    value,
+                    cell != null ? cell.recon : null);
 
-            String description =
-                "Edit single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName();
+            String description = "Edit single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName();
 
             Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
 
             return new HistoryEntry(
-                historyEntryID, _project, description, null, change);
+                    historyEntryID, _project, description, null, change);
         }
     }
 }

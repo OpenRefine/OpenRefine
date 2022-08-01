@@ -53,17 +53,17 @@ public class Unicode implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_unicode();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

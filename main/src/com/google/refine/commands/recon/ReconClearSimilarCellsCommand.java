@@ -46,14 +46,13 @@ public class ReconClearSimilarCellsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(
             Project project, HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         String similarValue = request.getParameter("similarValue");
-        
+
         return new ReconClearSimilarCellsOperation(
-            engineConfig, 
-            columnName,
-            similarValue
-        );
+                engineConfig,
+                columnName,
+                similarValue);
     }
 }

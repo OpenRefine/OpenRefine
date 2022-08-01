@@ -48,33 +48,34 @@ import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
 public class ColumnMoveChange extends ColumnChange {
-    final protected String  _columnName;
-    final protected int     _newColumnIndex;
-    protected int           _oldColumnIndex;
+
+    final protected String _columnName;
+    final protected int _newColumnIndex;
+    protected int _oldColumnIndex;
     protected List<ColumnGroup> _oldColumnGroups;
-    
+
     public ColumnMoveChange(String columnName, int index) {
         _columnName = columnName;
         _newColumnIndex = index;
     }
-    
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
             _oldColumnIndex = project.columnModel.getColumnIndexByName(_columnName);
-            
-            if (_oldColumnIndex < 0 || _newColumnIndex < 0 
+
+            if (_oldColumnIndex < 0 || _newColumnIndex < 0
                     || _newColumnIndex > project.columnModel.getMaxCellIndex()) {
                 throw new RuntimeException("Column index out of range");
             }
             if (_oldColumnGroups == null) {
                 _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
             }
-            
+
             Column column = project.columnModel.columns.remove(_oldColumnIndex);
             project.columnModel.columns.add(_newColumnIndex, column);
             project.columnModel.columnGroups.clear();
-            
+
             project.update();
         }
     }
@@ -84,23 +85,29 @@ public class ColumnMoveChange extends ColumnChange {
         synchronized (project) {
             Column column = project.columnModel.columns.remove(_newColumnIndex);
             project.columnModel.columns.add(_oldColumnIndex, column);
-            
+
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
-            
+
             project.update();
         }
     }
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnName="); writer.write(_columnName); writer.write('\n');
-        writer.write("oldColumnIndex="); writer.write(Integer.toString(_oldColumnIndex)); writer.write('\n');
-        writer.write("newColumnIndex="); writer.write(Integer.toString(_newColumnIndex)); writer.write('\n');
+        writer.write("columnName=");
+        writer.write(_columnName);
+        writer.write('\n');
+        writer.write("oldColumnIndex=");
+        writer.write(Integer.toString(_oldColumnIndex));
+        writer.write('\n');
+        writer.write("newColumnIndex=");
+        writer.write(Integer.toString(_newColumnIndex));
+        writer.write('\n');
         writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
-    
+
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String columnName = null;
         int oldColumnIndex = -1;
@@ -111,7 +118,7 @@ public class ColumnMoveChange extends ColumnChange {
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
-            
+
             String value = line.substring(equal + 1);
             if ("oldColumnIndex".equals(field)) {
                 oldColumnIndex = Integer.parseInt(value);
@@ -121,16 +128,15 @@ public class ColumnMoveChange extends ColumnChange {
                 columnName = value;
             } else if ("oldColumnGroupCount".equals(field)) {
                 int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
-                
+
                 oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
-        
+
         ColumnMoveChange change = new ColumnMoveChange(columnName, newColumnIndex);
         change._oldColumnIndex = oldColumnIndex;
-        change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
-        
+        change._oldColumnGroups = oldColumnGroups != null ? oldColumnGroups : new LinkedList<ColumnGroup>();
+
         return change;
     }
 }

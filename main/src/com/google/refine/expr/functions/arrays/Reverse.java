@@ -50,17 +50,15 @@ public class Reverse implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof ArrayNode) {
                     v = JSONUtilities.toArray((ArrayNode) v);
                 }
-                
+
                 if (v.getClass().isArray() || v instanceof List<?>) {
-                    int length = v.getClass().isArray() ? 
-                            ((Object[]) v).length :
-                            ExpressionUtils.toObjectList(v).size();
-                    
+                    int length = v.getClass().isArray() ? ((Object[]) v).length : ExpressionUtils.toObjectList(v).size();
+
                     Object[] r = new Object[length];
                     if (v.getClass().isArray()) {
                         Object[] a = (Object[]) v;
@@ -84,12 +82,12 @@ public class Reverse implements Function {
     public String getDescription() {
         return FunctionDescription.arr_reverse();
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

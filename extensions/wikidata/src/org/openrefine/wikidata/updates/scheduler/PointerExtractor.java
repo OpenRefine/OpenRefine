@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.Collections;
@@ -52,8 +53,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 public class PointerExtractor implements ValueVisitor<Set<ReconEntityIdValue>> {
 
     /**
-     * Extracts all the new entities mentioned by this statement. This does not
-     * include the subject of the statement.
+     * Extracts all the new entities mentioned by this statement. This does not include the subject of the statement.
      * 
      * @param statement
      *            the statement to inspect
@@ -92,9 +92,8 @@ public class PointerExtractor implements ValueVisitor<Set<ReconEntityIdValue>> {
     }
 
     /**
-     * Extracts all new entities mentioned by this snak group. Currently there will
-     * be at most one: the target of the snak (as property ids cannot be new for
-     * now).
+     * Extracts all new entities mentioned by this snak group. Currently there will be at most one: the target of the
+     * snak (as property ids cannot be new for now).
      * 
      * @param snak
      * @return
@@ -103,7 +102,7 @@ public class PointerExtractor implements ValueVisitor<Set<ReconEntityIdValue>> {
         Set<ReconEntityIdValue> result = new HashSet<>();
         result.addAll(extractPointers(snak.getPropertyId()));
         if (snak instanceof ValueSnak) {
-            result.addAll(extractPointers(((ValueSnak)snak).getValue()));
+            result.addAll(extractPointers(((ValueSnak) snak).getValue()));
         }
         return result;
     }

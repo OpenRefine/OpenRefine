@@ -47,7 +47,7 @@ public class HasField implements Function {
         if (args.length > 1 && args.length <= 2) {
             Object v = args[0];
             Object f = args[1];
-            
+
             if (v != null && f != null && f instanceof String) {
                 String name = (String) f;
                 if (v instanceof HasFields) {
@@ -64,12 +64,12 @@ public class HasField implements Function {
     public String getDescription() {
         return FunctionDescription.fun_has_field();
     }
-    
+
     @Override
     public String getParams() {
         return "o, string name";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

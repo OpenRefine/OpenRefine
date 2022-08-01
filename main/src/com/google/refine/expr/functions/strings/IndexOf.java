@@ -58,12 +58,12 @@ public class IndexOf implements Function {
     public String getDescription() {
         return FunctionDescription.str_index_of();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

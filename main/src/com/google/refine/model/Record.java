@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model;
 
 public class Record {
+
     final public int fromRowIndex;
     final public int toRowIndex;
     final public int recordIndex;
@@ -41,8 +42,7 @@ public class Record {
     public Record(
             int fromRowIndex,
             int toRowIndex,
-            int recordIndex
-    ) {
+            int recordIndex) {
         this.fromRowIndex = fromRowIndex;
         this.toRowIndex = toRowIndex;
         this.recordIndex = recordIndex;

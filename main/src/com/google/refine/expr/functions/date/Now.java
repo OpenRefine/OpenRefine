@@ -54,7 +54,7 @@ public class Now implements Function {
     public String getDescription() {
         return FunctionDescription.date_now();
     }
-    
+
     @Override
     public String getReturns() {
         return "date";

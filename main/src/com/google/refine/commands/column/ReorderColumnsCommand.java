@@ -46,13 +46,14 @@ import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.util.ParsingUtilities;
 
 public class ReorderColumnsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnNames = request.getParameter("columnNames");
         return new ColumnReorderOperation(
-                ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {}));
+                ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {
+                }));
     }
 }

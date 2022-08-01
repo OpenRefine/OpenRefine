@@ -64,8 +64,9 @@ public class Unescape implements Function {
                     return StringEscapeUtils.unescapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLDecoder.decode(s,"UTF-8");
-                    } catch (UnsupportedEncodingException e) {}
+                        return URLDecoder.decode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                    }
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
                 }
@@ -73,17 +74,17 @@ public class Unescape implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_unescape();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string mode ['html','xml','csv','url','javascript']";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

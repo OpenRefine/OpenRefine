@@ -42,11 +42,11 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowRemovalOperation;
 
 public class RemoveRowsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         return new RowRemovalOperation(engineConfig);
     }
 }

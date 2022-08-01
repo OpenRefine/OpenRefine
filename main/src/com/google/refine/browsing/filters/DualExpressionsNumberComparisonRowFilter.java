@@ -44,26 +44,25 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Judge if a row matches by evaluating two given expressions on the row, based on two different columns
- * and checking the results. It's a match if the result satisfies some numeric comparisons. 
+ * Judge if a row matches by evaluating two given expressions on the row, based on two different columns and checking
+ * the results. It's a match if the result satisfies some numeric comparisons.
  */
 abstract public class DualExpressionsNumberComparisonRowFilter implements RowFilter {
 
-    final protected Evaluable  _x_evaluable;
-    final protected String     _x_columnName;
-    final protected int        _x_cellIndex;
-    final protected Evaluable  _y_evaluable;
-    final protected String     _y_columnName;
-    final protected int        _y_cellIndex;
-        
-    public DualExpressionsNumberComparisonRowFilter (
-        Evaluable x_evaluable,
-        String x_columnName,
-        int x_cellIndex,
-        Evaluable y_evaluable,
-        String y_columnName,
-        int y_cellIndex
-    ) {
+    final protected Evaluable _x_evaluable;
+    final protected String _x_columnName;
+    final protected int _x_cellIndex;
+    final protected Evaluable _y_evaluable;
+    final protected String _y_columnName;
+    final protected int _y_cellIndex;
+
+    public DualExpressionsNumberComparisonRowFilter(
+            Evaluable x_evaluable,
+            String x_columnName,
+            int x_cellIndex,
+            Evaluable y_evaluable,
+            String y_columnName,
+            int y_cellIndex) {
         _x_evaluable = x_evaluable;
         _x_columnName = x_columnName;
         _x_cellIndex = x_cellIndex;
@@ -78,7 +77,7 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
         Properties x_bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(x_bindings, row, rowIndex, _x_columnName, x_cell);
         Object x_value = _x_evaluable.evaluate(x_bindings);
-        
+
         Cell y_cell = _y_cellIndex < 0 ? null : row.getCell(_y_cellIndex);
         Properties y_bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(y_bindings, row, rowIndex, _y_columnName, y_cell);
@@ -91,10 +90,10 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
                 return false;
             } // else, fall through
         }
-        
-        return checkValue(x_value,y_value);
+
+        return checkValue(x_value, y_value);
     }
-        
+
     protected boolean checkValue(Object vx, Object vy) {
         if (ExpressionUtils.isError(vx) || ExpressionUtils.isError(vy)) {
             return false;
@@ -102,11 +101,11 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
             if (vx instanceof Number && vy instanceof Number) {
                 double dx = ((Number) vx).doubleValue();
                 double dy = ((Number) vy).doubleValue();
-                return (!Double.isInfinite(dx) && 
-                        !Double.isNaN(dx) && 
-                        !Double.isInfinite(dy) && 
-                        !Double.isNaN(dy) && 
-                        checkValues(dx,dy));
+                return (!Double.isInfinite(dx) &&
+                        !Double.isNaN(dx) &&
+                        !Double.isInfinite(dy) &&
+                        !Double.isNaN(dy) &&
+                        checkValues(dx, dy));
             } else {
                 return false;
             }
@@ -114,6 +113,6 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
             return false;
         }
     }
-    
+
     abstract protected boolean checkValues(double dx, double dy);
 }
