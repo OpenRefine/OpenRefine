@@ -41,6 +41,8 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
@@ -49,10 +51,10 @@ public class ForRange implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 5) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 5 arguments";
+            return ControlEvalError.expects_five_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[3] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) +
-                    " expects third argument to be the element's variable name";
+            // variable name";
+            return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -70,7 +72,7 @@ public class ForRange implements Control {
         } else if (ExpressionUtils.isError(stepO)) {
             return stepO;
         } else if (!(fromO instanceof Number) || !(toO instanceof Number) || !(stepO instanceof Number)) {
-            return new EvalError("First, second, and third arguments of forRange must all be numbers");
+            return ControlEvalError.for_range();
         }
 
         String indexName = ((VariableExpr) args[3]).getName();
@@ -131,7 +133,8 @@ public class ForRange implements Control {
 
     @Override
     public String getDescription() {
-        return "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array.";
+        // \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array.";
+        return ControlDescription.for_range_desc();
     }
 
     @Override

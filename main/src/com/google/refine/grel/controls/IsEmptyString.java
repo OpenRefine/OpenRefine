@@ -27,11 +27,13 @@
 
 package com.google.refine.grel.controls;
 
+import com.google.refine.grel.ControlDescription;
+
 public class IsEmptyString extends IsTest {
 
     @Override
     public String getDescription() {
-        return "Returns whether o is an empty string";
+        return ControlDescription.isempty_string_desc();
     }
 
     @Override
