@@ -52,6 +52,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class ForEach implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
@@ -74,16 +75,16 @@ public class ForEach implements Control {
             // return new EvalError("First argument to forEach is not an array or JSON object");
             return new EvalError(ControlEvalError.foreach());
         }
-        
+
         String name = ((VariableExpr) args[1]).getName();
-        
+
         Object oldValue = bindings.get(name);
         try {
             List<Object> results = null;
-            
+
             if (o.getClass().isArray()) {
                 Object[] values = (Object[]) o;
-                
+
                 results = new ArrayList<Object>(values.length);
                 for (Object v : values) {
                     if (v != null) {
@@ -91,27 +92,27 @@ public class ForEach implements Control {
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else if (o instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) o;
                 int l = a.size();
-                
+
                 results = new ArrayList<Object>(l);
                 for (int i = 0; i < l; i++) {
                     Object v = JsonValueConverter.convert(a.get(i));
-                    
+
                     if (v != null) {
                         bindings.put(name, v);
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else if (o instanceof ObjectNode) {
@@ -128,26 +129,26 @@ public class ForEach implements Control {
                 }
             } else {
                 Collection<Object> collection = ExpressionUtils.toObjectCollection(o);
-                
+
                 results = new ArrayList<Object>(collection.size());
-                
+
                 for (Object v : collection) {
                     if (v != null) {
                         bindings.put(name, v);
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             }
-            
-            return results.toArray(); 
+
+            return results.toArray();
         } finally {
             /*
-             *  Restore the old value bound to the variable, if any.
+             * Restore the old value bound to the variable, if any.
              */
             if (oldValue != null) {
                 bindings.put(name, oldValue);
@@ -156,18 +157,19 @@ public class ForEach implements Control {
             }
         }
     }
-    
+
     @Override
     public String getDescription() {
-        // return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+        // return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v,
+        // evaluates expression e, and pushes the result onto the result array.";
         return ControlDescription.foreach_desc();
     }
-    
+
     @Override
     public String getParams() {
         return "expression a, variable v, expression e";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";
