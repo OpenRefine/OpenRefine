@@ -52,7 +52,6 @@ public class SHA1 implements Function {
             String s = (o instanceof String) ? (String) o : o.toString();
             return DigestUtils.sha1Hex(s);
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

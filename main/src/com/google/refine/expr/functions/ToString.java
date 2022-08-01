@@ -60,7 +60,6 @@ public class ToString implements Function {
                     try {
                         return String.format((String) o2, o1);
                     } catch (UnknownFormatConversionException e) {
-                        // return new EvalError("Unknown format conversion: " + e.getMessage());
                         return new EvalError(EvalErrorMessage.unknown_format_conversion(e.getMessage()));
                     }
                 }
@@ -72,7 +71,6 @@ public class ToString implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional
         // second argument containing a Date or Number format string");
         return new EvalError(EvalErrorMessage.fun_to_string(ControlFunctionRegistry.getFunctionName(this)));
     }

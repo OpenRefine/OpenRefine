@@ -49,7 +49,6 @@ public class ToLowercase implements Function {
             Object o = args[0];
             return (o instanceof String ? (String) o : o.toString()).toLowerCase();
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

@@ -55,7 +55,6 @@ public class Jsonize implements Function {
                 throw new RuntimeException(e);
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts a single argument");
         return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 

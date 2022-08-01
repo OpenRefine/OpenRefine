@@ -75,7 +75,6 @@ public class NGram implements Function {
 
             return null;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
         return new EvalError(EvalErrorMessage.expects_one_string_and_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 

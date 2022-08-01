@@ -68,7 +68,6 @@ public class Find implements Function {
 
             return allMatches.toArray(new String[0]);
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regex");
         return new EvalError(EvalErrorMessage.expects_one_string_or_regex(ControlFunctionRegistry.getFunctionName(this)));
     }
 

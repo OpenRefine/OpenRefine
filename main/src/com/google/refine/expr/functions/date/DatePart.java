@@ -67,7 +67,6 @@ public class DatePart implements Function {
                 return getPart((OffsetDateTime) args[0], part);
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
         return new EvalError(EvalErrorMessage.expects_date_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
@@ -97,7 +96,6 @@ public class DatePart implements Function {
         } else if ("time".equals(part)) { // get Time In Millis
             return offsetDateTime.toInstant().toEpochMilli();
         } else {
-            // return new EvalError("Date unit '" + part + "' not recognized.");
             return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }
@@ -139,7 +137,6 @@ public class DatePart implements Function {
         } else if ("time".equals(part)) {
             return c.getTimeInMillis();
         } else {
-            // return new EvalError("Date unit '" + part + "' not recognized.");
             return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }

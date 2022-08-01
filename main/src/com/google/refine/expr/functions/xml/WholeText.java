@@ -55,14 +55,12 @@ public class WholeText implements Function {
                 return e1.wholeText();
 
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" +
                 // new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.
                 // Please first use parseXml() or parseHtml() and select(query) prior to using this function");
                 return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_failed(ControlFunctionRegistry.getFunctionName(this),
                         new Type().call(bindings, args)));
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new
         // Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
         return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_expects(ControlFunctionRegistry.getFunctionName(this),
                 new Type().call(bindings, args)));

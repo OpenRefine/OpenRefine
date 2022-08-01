@@ -40,7 +40,6 @@ public class Xor implements Function {
         if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
             return (Boolean) args[0] ^ (Boolean) args[1];
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or more booleans");
         return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 

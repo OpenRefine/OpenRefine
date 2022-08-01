@@ -69,7 +69,6 @@ public class ToDate implements Function {
 
         // Check there is at least one argument
         if (args.length == 0) {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
             return new EvalError(EvalErrorMessage.expects_at_least_one_arg(ControlFunctionRegistry.getFunctionName(this)));
         } else {
             Object arg0 = args[0];
@@ -82,7 +81,6 @@ public class ToDate implements Function {
                 o1 = (String) arg0;
             } else {
                 // ignore cell values that aren't Date, Calendar, Long or String
-                // return new EvalError("Unable to parse as date");
                 return new EvalError(EvalErrorMessage.unable_to_parse_as_date());
             }
         }
@@ -99,12 +97,10 @@ public class ToDate implements Function {
             } else if (args[1] instanceof String) {
                 formats.add(StringUtils.trim((String) args[1]));
             } else {
-                // return new EvalError("Invalid argument");
                 return new EvalError(EvalErrorMessage.invalid_arg());
             }
             for (int i = 2; i < args.length; i++) {
                 if (!(args[i] instanceof String)) {
-                    // return new EvalError("Invalid non-string format argument " + args[i].toString());
                     return new EvalError(EvalErrorMessage.invalid_non_string_format_arg(args[i].toString()));
                 }
                 formats.add(StringUtils.trim((String) args[i]));
@@ -122,7 +118,6 @@ public class ToDate implements Function {
         if (date != null) {
             return date;
         }
-        // return new EvalError("Unable to convert to a date");
         return new EvalError(EvalErrorMessage.unable_to_convert_to_date());
     }
 

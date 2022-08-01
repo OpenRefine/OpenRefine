@@ -67,11 +67,9 @@ public class ToNumber implements Function {
                     } catch (NumberFormatException e) {
                     }
                 }
-                // return new EvalError("Unable to parse as number");
                 return new EvalError(EvalErrorMessage.unable_to_parse_as_number());
             }
         } else {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
             return new EvalError(EvalErrorMessage.expects_one_non_null_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
     }

@@ -70,7 +70,6 @@ public class Uniques implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
         return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 

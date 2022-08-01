@@ -67,13 +67,10 @@ public class InArray implements Function {
                     List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
                     return a.contains(s);
                 }
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
                 return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
             }
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
             return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two parameters: an array and a
         // string");
         return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }

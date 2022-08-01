@@ -42,7 +42,6 @@ public class TimeSinceUnixEpochToDate implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
         // + " accepts a number and an optional second argument containing a string specifying the units");
         return new EvalError(EvalErrorMessage.fun_time_since_unix_epoch_to_date(ControlFunctionRegistry.getFunctionName(this)));
     }

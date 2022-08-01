@@ -73,7 +73,6 @@ public class Match implements Function {
 
             return null;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects regex");
         return new EvalError(EvalErrorMessage.expects_one_regex(ControlFunctionRegistry.getFunctionName(this)));
     }
 

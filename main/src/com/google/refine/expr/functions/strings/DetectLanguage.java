@@ -39,7 +39,6 @@ public class DetectLanguage implements Function {
                         if (lang.isPresent()) { // if the language is detected
                             return lang.get().getLanguage(); // return the language code
                         } else { // if the language is not detected
-                            // return new EvalError("Language detection failed"); // return an error
                             return new EvalError(EvalErrorMessage.language_detect_failed(ControlFunctionRegistry.getFunctionName(this)));
                         }
                     } catch (IOException e) { // if the language detection failed
@@ -48,7 +47,6 @@ public class DetectLanguage implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " requires one argument");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

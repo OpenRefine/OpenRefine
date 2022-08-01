@@ -61,13 +61,11 @@ public class ParseXml implements Function {
                 } else if (mode.equals("xml")) {
                     return Jsoup.parse(o1.toString(), "", Parser.xmlParser());
                 } else {
-                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which
                     // parser to use");
                     return new EvalError(EvalErrorMessage.unable_to_identify_parser(ControlFunctionRegistry.getFunctionName(this)));
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an
         // argument");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }

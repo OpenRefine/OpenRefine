@@ -52,7 +52,6 @@ public class EndsWith implements Function {
                 return ((String) s1).endsWith((String) s2);
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
         return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 

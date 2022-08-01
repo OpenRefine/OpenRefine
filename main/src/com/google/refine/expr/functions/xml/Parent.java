@@ -56,7 +56,6 @@ public class Parent implements Function {
                 return e1.parent();
 
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 // + "() cannot work with this '"
                 // + new Type().call(bindings, args)
                 // + "'"
@@ -66,7 +65,6 @@ public class Parent implements Function {
                         new Type().call(bindings, args)));
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
         return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 

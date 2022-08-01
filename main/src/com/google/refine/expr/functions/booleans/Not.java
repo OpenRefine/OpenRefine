@@ -48,7 +48,6 @@ public class Not implements Function {
         if (args.length == 1 && args[0] instanceof Boolean) {
             return !objectToBoolean(args[0]);
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
         return new EvalError(EvalErrorMessage.expects_one_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 

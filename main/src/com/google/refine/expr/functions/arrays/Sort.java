@@ -64,7 +64,6 @@ public class Sort implements Function {
                         } else if (a[i] == null) {
                             r[i] = null;
                         } else {
-                            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array
                             // of uniform type");
                             return new EvalError(EvalErrorMessage.expects_one_array_uniform(ControlFunctionRegistry.getFunctionName(this)));
                         }
@@ -84,7 +83,6 @@ public class Sort implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
         return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 

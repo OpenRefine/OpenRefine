@@ -53,7 +53,6 @@ public class Or implements Function {
             }
             return false;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
         return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 

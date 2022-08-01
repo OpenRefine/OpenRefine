@@ -67,7 +67,6 @@ public class SplitByLengths implements Function {
 
             return results;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 string and 1 or more
         // numbers");
         return new EvalError(EvalErrorMessage.expects_one_string_and_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }

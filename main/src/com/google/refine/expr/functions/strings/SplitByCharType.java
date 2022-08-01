@@ -54,7 +54,6 @@ public class SplitByCharType implements Function {
                 return StringUtils.splitByCharacterType(s);
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
         return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 

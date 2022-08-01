@@ -56,13 +56,11 @@ public class SelectXml implements Function {
                     return e1.select(o2.toString());
                 }
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter
                 // is not an XML or HTML Element. Please first use parseXml() or parseHtml()");
                 return new EvalError(
                         EvalErrorMessage.failed_as_param_not_xml_or_html_element(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
         return new EvalError(EvalErrorMessage.expects_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 

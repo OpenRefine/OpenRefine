@@ -48,7 +48,6 @@ public class Floor implements Function {
         if (args.length == 1 && args[0] instanceof Number) {
             return (long) Math.floor(((Number) args[0]).doubleValue());
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
         return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 

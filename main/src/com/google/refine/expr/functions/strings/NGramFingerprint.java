@@ -62,7 +62,6 @@ public class NGramFingerprint implements Function {
             }
             return null;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
         return new EvalError(EvalErrorMessage.expects_at_least_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

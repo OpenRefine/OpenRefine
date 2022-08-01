@@ -93,11 +93,9 @@ public class SmartSplit implements Function {
             try {
                 return parser.parseLine(s);
             } catch (IOException e) {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " error: " + e.getMessage());
                 return new EvalError(EvalErrorMessage.error(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
         return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 

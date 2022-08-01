@@ -56,7 +56,6 @@ public class ScriptText implements Function {
                 return e1.data();
 
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '"
                 // + new Type().call(bindings, args) + "'"
                 // + " but instead needs a jsoup DataNode from style, script tags, etc. to work with."
                 // + " See https://jsoup.org/apidocs/org/jsoup/nodes/Element.html#data()"
@@ -66,7 +65,6 @@ public class ScriptText implements Function {
                         new Type().call(bindings, args)));
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
         return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 

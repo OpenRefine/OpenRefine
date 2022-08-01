@@ -75,7 +75,6 @@ public class Sum implements Function {
                 return total;
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of numbers");
         return new EvalError(EvalErrorMessage.expects_array_of_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 

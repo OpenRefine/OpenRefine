@@ -64,11 +64,9 @@ public class ParseUri implements Function {
                 return uriNode;
 
             } catch (URISyntaxException | MalformedURLException e) {
-                // return new EvalError("Invalid URI: " + s);
                 return new EvalError(EvalErrorMessage.invalid_uri(s));
             }
         }
-        // return new EvalError("ParseUri takes a single string argument.");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 

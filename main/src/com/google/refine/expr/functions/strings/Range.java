@@ -68,7 +68,6 @@ public class Range implements Function {
             return createRangeWithThreeGivenArguments(args);
         }
 
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
         // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
         // + "are the start and the end of the range respectively and c is the step (increment)");
         return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
@@ -110,7 +109,6 @@ public class Range implements Function {
             String[] rangeValues = rangeString.split(SEPARATOR);
 
             if (hasCommaAsLastCharacter(rangeString)) {
-                // return new EvalError("the last character in the input string should not be a comma");
                 return new EvalError(EvalErrorMessage.expects_last_character_not_comma());
             }
 
@@ -129,7 +127,6 @@ public class Range implements Function {
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 }
             } catch (NumberFormatException nfe) {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                 // + "are the start and the end of the range respectively and c is the step (increment)");
                 return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
@@ -148,14 +145,12 @@ public class Range implements Function {
                 rangeEnd = Integer.parseInt(String.valueOf(range));
                 return createRange(DEFAULT_START, rangeEnd, DEFAULT_STEP);
             } catch (NumberFormatException nfe) {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                 // + "are the start and the end of the range respectively and c is the step (increment)");
                 return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
 
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
         // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
         // + "are the start and the end of the range respectively and c is the step (increment)");
         return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
@@ -184,7 +179,6 @@ public class Range implements Function {
         int rangeStep = DEFAULT_STEP;
 
         if (firstArg == null || secondArg == null) {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
             // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
             // + "are the start and the end of the range respectively and c is the step (increment)");
             return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
@@ -215,7 +209,6 @@ public class Range implements Function {
         String thirdArgStringified = "";
 
         if (hasCommaAsLastCharacter(firstArgStringified) || hasCommaAsLastCharacter(secondArgStringified)) {
-            // return new EvalError("the last character in the input string should not be a comma");
             return new EvalError(EvalErrorMessage.expects_last_character_not_comma());
         }
 
@@ -256,13 +249,11 @@ public class Range implements Function {
                 return createRange(rangeStart, rangeEnd, rangeStep);
             }
         } catch (NumberFormatException nfe) {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
             // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
             // + "are the start and the end of the range respectively and c is the step (increment)");
             return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
         }
 
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
         // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
         // + "are the start and the end of the range respectively and c is the step (increment)");
         return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
@@ -299,7 +290,6 @@ public class Range implements Function {
             int rangeStep = Integer.parseInt(String.valueOf(thirdArg).trim());
             return createRange(rangeStart, rangeEnd, rangeStep);
         } catch (NumberFormatException nfe) {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
             // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
             // + "are the start and the end of the range respectively and c is the step (increment)");
             return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));

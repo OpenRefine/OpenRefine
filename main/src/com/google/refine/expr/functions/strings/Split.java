@@ -71,7 +71,6 @@ public class Split implements Function {
                 }
             }
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings, or 1 string and 1
         // regex, followed by an optional boolean");
         return new EvalError(EvalErrorMessage.expects_two_strings_as_string_regex_opt_bool(ControlFunctionRegistry.getFunctionName(this)));
     }

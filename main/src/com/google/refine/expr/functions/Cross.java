@@ -92,7 +92,6 @@ public class Cross implements Function {
             }
         }
 
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or value, a project
         // name to look up (optional), and a column name in that project (optional)");
         return new EvalError(EvalErrorMessage.fun_cross_expects_value_project_column(ControlFunctionRegistry.getFunctionName(this)));
     }

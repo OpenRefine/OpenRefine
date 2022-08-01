@@ -62,7 +62,6 @@ public class Phonetic implements Function {
             Object o1 = args[0];
             str = (o1 instanceof String) ? (String) o1 : o1.toString();
         } else {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
             return new EvalError(EvalErrorMessage.expects_at_least_one_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
         String encoding = "metaphone3";
@@ -72,12 +71,10 @@ public class Phonetic implements Function {
                 if (o2 instanceof String) {
                     encoding = ((String) o2).toLowerCase();
                 } else {
-                    // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                     // + " expects a string for the second argument");
                     return new EvalError(EvalErrorMessage.expects_second_param_string(ControlFunctionRegistry.getFunctionName(this)));
                 }
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 // + " expects a string for the second argument, the phonetic encoding to use.");
                 return new EvalError(EvalErrorMessage.expects_second_param_string_phonetic(ControlFunctionRegistry.getFunctionName(this)));
             }
@@ -94,13 +91,11 @@ public class Phonetic implements Function {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 // + " doesn't know how to handle the '"
                 // + encoding + "' encoding.");
                 return new EvalError(EvalErrorMessage.unable_to_handle_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
             }
         } else {
-            // return new EvalError(ControlFunctionRegistry.getFunctionName(this)
             // + " expects one or two string arguments");
             return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }

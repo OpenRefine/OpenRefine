@@ -53,7 +53,6 @@ public class Mod implements Function {
 
             return a % b;
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
         return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 

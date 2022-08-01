@@ -49,7 +49,6 @@ public class GreatestCommonDenominator implements Function {
                 && args[1] instanceof Number) {
             return GreatestCommonDenominator.GCD(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        // return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
         return new EvalError(EvalErrorMessage.expects_two_numbers(this));
     }
 

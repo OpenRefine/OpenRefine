@@ -52,7 +52,6 @@ public class Trim implements Function {
                 return CharMatcher.whitespace().trimFrom((String) s1);
             }
         }
-        // return new EvalError("Invalid parameters");
         return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
