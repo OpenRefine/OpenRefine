@@ -34,11 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.controls;
 
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.grel.ControlDescription;
 
 public class IsBlank extends IsTest {
+
     @Override
     public String getDescription() {
-        return "Returns whether o is null or an empty string";
+        return ControlDescription.is_blank_desc();
     }
 
     @Override

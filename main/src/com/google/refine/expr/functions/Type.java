@@ -39,7 +39,9 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Type implements Function {
 
@@ -47,7 +49,7 @@ public class Type implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof String) {
                     return "string";
@@ -67,19 +69,19 @@ public class Type implements Function {
             }
             return "undefined";
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string with the data type of o, such as undefined, string, number, boolean, etc.";
+        return FunctionDescription.fun_type();
     }
-    
+
     @Override
     public String getParams() {
         return "object o";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

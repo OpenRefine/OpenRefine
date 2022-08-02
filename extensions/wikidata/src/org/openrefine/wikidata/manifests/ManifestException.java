@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.manifests;
 
 public class ManifestException extends Exception {

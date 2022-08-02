@@ -37,7 +37,7 @@ package com.google.refine.expr.util;
 // Copyright Dave Glowacki. Released under the BSD license.
 
 /**
- * Thrown when an invalid date is encountered in <tt>OffsetDateTimeParser</tt>.
+ * Thrown when an invalid date is encountered in {@link CalendarParser}.
  */
 public class CalendarParserException extends Exception {
 
@@ -46,12 +46,17 @@ public class CalendarParserException extends Exception {
     /**
      * Default date format exception.
      */
-    public CalendarParserException() { super(); }
-    
+    public CalendarParserException() {
+        super();
+    }
+
     /**
      * Date format exception.
      *
-     * @param str error message
+     * @param str
+     *            error message
      */
-    public CalendarParserException(String str) { super(str); }
+    public CalendarParserException(String str) {
+        super(str);
+    }
 }

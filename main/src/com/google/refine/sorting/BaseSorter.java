@@ -40,12 +40,14 @@ import com.google.refine.model.Project;
 import com.google.refine.sorting.Criterion.KeyMaker;
 
 abstract public class BaseSorter {
+
     protected Criterion[] _criteria;
     protected KeyMaker[] _keyMakers;
     protected ComparatorWrapper[] _comparatorWrappers;
     protected List<Object[]> _keys;
 
     public class ComparatorWrapper {
+
         final public int criterionIndex;
         final protected int multiplier;
 

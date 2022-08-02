@@ -39,7 +39,9 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Sum implements Function {
 
@@ -47,14 +49,12 @@ public class Sum implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null && (v.getClass().isArray() || v instanceof List<?>)) {
-                int length = v.getClass().isArray() ? 
-                        ((Object[]) v).length :
-                        ExpressionUtils.toObjectList(v).size();
-                
+                int length = v.getClass().isArray() ? ((Object[]) v).length : ExpressionUtils.toObjectList(v).size();
+
                 double total = 0;
-                
+
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
                     for (int i = 0; i < length; i++) {
@@ -75,19 +75,19 @@ public class Sum implements Function {
                 return total;
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of numbers");
+        return new EvalError(EvalErrorMessage.expects_array_of_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Return the sum of the numbers in the array. Ignores non-number items. Returns 0 if the array does not contain numbers.";
+        return FunctionDescription.math_sum();
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

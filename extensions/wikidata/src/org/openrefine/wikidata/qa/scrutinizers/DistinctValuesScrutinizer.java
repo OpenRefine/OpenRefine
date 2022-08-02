@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -36,8 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A scrutinizer that checks for properties using the same value on different
- * entities.
+ * A scrutinizer that checks for properties using the same value on different entities.
  * 
  * @author Antonin Delpeuch
  *
@@ -69,7 +69,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
         PropertyIdValue pid = mainSnak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, distinctValuesConstraintQid);
         if (!statementList.isEmpty() && mainSnak instanceof ValueSnak) {
-            Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
+            Value mainSnakValue = ((ValueSnak) mainSnak).getValue();
             Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {
                 seen = new HashMap<Value, EntityIdValue>();
@@ -81,6 +81,9 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("item1_entity", entityId);
                 issue.setProperty("item2_entity", otherId);
+                // we disable faceting for this issue because the distinct values are likely
+                // coming from different rows, and our current faceting mechanism is not able to detect those.
+                issue.setFacetable(false);
                 addIssue(issue);
             } else {
                 seen.put(mainSnakValue, entityId);

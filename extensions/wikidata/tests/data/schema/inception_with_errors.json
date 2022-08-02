@@ -1,0 +1,60 @@
+{
+  "itemDocuments": [
+    {
+      "subject": {
+        "type": "wbitemvariable",
+        "columnName": "subject"
+      },
+      "statementGroups": [
+        {
+          "property": {
+            "type": "wbpropconstant",
+            "pid": "P571",
+            "label": "inception",
+            "datatype": "time"
+          },
+          "statements": [
+            {
+              "value": {
+                "type": "wbdatevariable",
+                "columnName": "inception"
+              },
+              "qualifiers": [],
+              "references": [
+                {
+                  "snaks": [
+                    {
+                      "prop": {
+                        "type": "wbpropconstant",
+                        "pid": "P854",
+                        "label": "reference URL",
+                        "datatype": "url"
+                      },
+                      "value": {
+                        "type": "wbstringvariable",
+                        "columnName": "nonexisting_column_name"
+                      }
+                    },
+                    {
+                      "prop": {
+                        "type": "wbpropconstant",
+                        "pid": "P813",
+                        "label": "retrieved",
+                        "datatype": "time"
+                      },
+                      "value": {
+                        "type": "wbdateconstant"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "nameDescs": []
+    }
+  ],
+  "siteIri": "http://www.wikidata.org/entity/"
+}

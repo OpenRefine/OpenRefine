@@ -44,10 +44,10 @@ import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
 /**
- * Visit matched rows or records and slot them into bins based on the numbers computed
- * from a given expression.
+ * Visit matched rows or records and slot them into bins based on the numbers computed from a given expression.
  */
 public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
+
     /*
      * Configuration
      */
@@ -62,7 +62,7 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     public int nonNumericCount;
     public int blankCount;
     public int errorCount;
-    
+
     /*
      * Scratchpad variables
      */
@@ -70,56 +70,56 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
     protected boolean hasBlank;
     protected boolean hasNumeric;
     protected boolean hasNonNumeric;
-    
+
     public ExpressionNumericValueBinner(RowEvaluable rowEvaluable, NumericBinIndex index) {
         _rowEvaluable = rowEvaluable;
         _index = index;
         bins = new int[_index.getBins().length];
     }
-    
+
     @Override
     public void start(Project project) {
         // nothing to do
     }
-    
+
     @Override
     public void end(Project project) {
         // nothing to do
     }
-    
+
     @Override
     public boolean visit(Project project, int rowIndex, Row row) {
         resetFlags();
-        
+
         Properties bindings = ExpressionUtils.createBindings(project);
         processRow(project, rowIndex, row, bindings);
-        
+
         updateCounts();
-        
+
         return false;
     }
-    
+
     @Override
     public boolean visit(Project project, Record record) {
         resetFlags();
-        
+
         Properties bindings = ExpressionUtils.createBindings(project);
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
             processRow(project, r, project.rows.get(r), bindings);
         }
-        
+
         updateCounts();
-        
+
         return false;
     }
-    
+
     protected void resetFlags() {
         hasError = false;
         hasBlank = false;
         hasNumeric = false;
         hasNonNumeric = false;
     }
-    
+
     protected void updateCounts() {
         if (hasError) {
             errorCount++;
@@ -134,7 +134,7 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
             nonNumericCount++;
         }
     }
-    
+
     protected void processRow(Project project, int rowIndex, Row row, Properties bindings) {
         Object value = _rowEvaluable.eval(project, rowIndex, row, bindings);
         if (value != null) {
@@ -151,10 +151,10 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
                 return;
             } // else, fall through
         }
-        
+
         processValue(value);
     }
-    
+
     protected void processValue(Object value) {
         if (ExpressionUtils.isError(value)) {
             hasError = true;
@@ -163,7 +163,7 @@ public class ExpressionNumericValueBinner implements RowVisitor, RecordVisitor {
                 double d = ((Number) value).doubleValue();
                 if (!Double.isInfinite(d) && !Double.isNaN(d)) {
                     hasNumeric = true;
-                    
+
                     int bin = (int) Math.floor((d - _index.getMin()) / _index.getStep());
                     if (bin >= 0 && bin < bins.length) { // as a precaution
                         bins[bin]++;

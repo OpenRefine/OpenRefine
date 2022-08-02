@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Set;
@@ -29,10 +30,10 @@ public abstract class DescriptionScrutinizer extends EditScrutinizer {
             scrutinize(update, descText, description.getLanguageCode());
         }
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	// no descriptions to scrutinize: do nothing
+        // no descriptions to scrutinize: do nothing
     }
 
     public abstract void scrutinize(LabeledStatementEntityEdit update, String descText, String lang);

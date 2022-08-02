@@ -37,20 +37,23 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Multinomial implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length < 1) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one or more numbers");
+            return new EvalError(EvalErrorMessage.expects_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
         }
         int sum = 0;
         int product = 1;
-        for (int i = 0; i < args.length; i++){
+        for (int i = 0; i < args.length; i++) {
             if (!(args[i] instanceof Number)) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
+                // + " to be a number");
+                return new EvalError(EvalErrorMessage.expects_param_i_number(ControlFunctionRegistry.getFunctionName(this), i + 1));
             }
             int num = ((Number) args[i]).intValue();
             sum += num;
@@ -61,14 +64,14 @@ public class Multinomial implements Function {
 
     @Override
     public String getDescription() {
-        return "Calculates the multinomial of one number or a series of numbers.";
+        return FunctionDescription.math_multinomial();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

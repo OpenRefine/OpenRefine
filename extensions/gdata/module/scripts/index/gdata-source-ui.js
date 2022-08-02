@@ -135,44 +135,50 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   
   var renderDocument = function(doc) {
     var tr = table.insertRow(table.rows.length);
-    
-    var td = tr.insertCell(tr.cells.length);
-    if (doc.isStarred) {
-      $('<img>').attr('src', 'images/star.png').appendTo(td);
+
+    try {
+      var td = tr.insertCell(tr.cells.length);
+      if (doc.isStarred) {
+        $('<img>').attr('src', 'images/star.png').appendTo(td);
+      }
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>').text(doc.type).appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<a>')
+          .addClass('gdata-doc-title')
+          .attr('href', 'javascript:{}')
+          .text(doc.title)
+          .appendTo(td)
+          .on('click', function (evt) {
+            self._controller.startImportingDocument(doc);
+          });
+
+      $('<a>')
+          .addClass('gdata-doc-preview')
+          .attr('href', doc.docLink)
+          .attr('target', '_blank')
+          .text('preview')
+          .appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>')
+          .addClass('gdata-doc-authors')
+          .text((doc.authors) ? doc.authors.join(', ') : '<unknown>')
+          .appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>')
+          .addClass('gdata-doc-date')
+          .text((doc.updated) ? formatRelativeDate(doc.updated) : '<unknown>')
+          .attr('title', (doc.updated) ? doc.updated : '<unknown>')
+          .appendTo(td);
+    } catch (e) {
+      console.log(e);
+      console.log('Error rendering Google Document "'+doc.title+'". Skipping...');
+      tr.remove();
     }
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>').text(doc.type).appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<a>')
-    .addClass('gdata-doc-title')
-    .attr('href', 'javascript:{}')
-    .text(doc.title)
-    .appendTo(td)
-    .click(function(evt) {
-      self._controller.startImportingDocument(doc);
-    });
-    
-    $('<a>')
-    .addClass('gdata-doc-preview')
-    .attr('href', doc.docLink)
-    .attr('target', '_blank')
-    .text('preview')
-    .appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>')
-    .addClass('gdata-doc-authors')
-    .text((doc.authors) ? doc.authors.join(', ') : '<unknown>')
-    .appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>')
-    .addClass('gdata-doc-date')
-    .text((doc.updated) ? formatRelativeDate(doc.updated) : '<unknown>')
-    .attr('title', (doc.updated) ? doc.updated : '<unknown>')
-    .appendTo(td);
   };
   
   if (o.status === 'error') {

@@ -62,7 +62,7 @@ public class ImporterUtilities {
                     return Long.parseLong(text2);
                 } catch (NumberFormatException e) {
                 }
-    
+
                 try {
                     double d = Double.parseDouble(text2);
                     if (!Double.isInfinite(d) && !Double.isNaN(d)) {
@@ -123,7 +123,7 @@ public class ImporterUtilities {
             columnNames.add("");
         }
     }
-    
+
     static public Column getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
             int index, boolean hasOurOwnColumnNames) {
         if (index < currentFileColumnNames.size()) {
@@ -140,7 +140,7 @@ public class ImporterUtilities {
                         i++;
                     } else {
                         // Want to update currentFileColumnNames
-                        if(! currentFileColumnNames.contains(columnName)){
+                        if (!currentFileColumnNames.contains(columnName)) {
                             currentFileColumnNames.add(columnName);
                         }
                         return column;
@@ -171,7 +171,7 @@ public class ImporterUtilities {
                 // FIXME: is trimming quotation marks appropriate?
                 cell = cell.substring(1, cell.length() - 1).trim();
             }
-            
+
             if (nameToIndex.containsKey(cell)) {
                 int index = nameToIndex.get(cell);
                 nameToIndex.put(cell, index + 1);
@@ -180,7 +180,7 @@ public class ImporterUtilities {
             } else {
                 nameToIndex.put(cell, 2);
             }
-            
+
             columnNames.set(c, cell);
             if (project.columnModel.getColumnByName(cell) == null) {
                 Column column = new Column(project.columnModel.allocateNewCellIndex(), cell);
@@ -192,13 +192,16 @@ public class ImporterUtilities {
             }
         }
     }
-    
+
     static public interface MultiFileReadingProgress {
+
         public void startFile(String fileSource);
+
         public void readingFile(String fileSource, long bytesRead);
+
         public void endFile(String fileSource, long bytesRead);
     }
-    
+
     static public MultiFileReadingProgress createMultiFileReadingProgress(
             final ImportingJob job, List<ObjectNode> fileRecords) {
         long totalSize = 0;
@@ -206,16 +209,17 @@ public class ImporterUtilities {
             File file = ImportingUtilities.getFile(job, fileRecord);
             totalSize += file.length();
         }
-        
+
         final long totalSize2 = totalSize;
         return new MultiFileReadingProgress() {
+
             long totalBytesRead = 0;
-            
+
             void setProgress(String fileSource, long bytesRead) {
                 job.setProgress(totalSize2 == 0 ? -1 : (int) (100 * (totalBytesRead + bytesRead) / totalSize2),
-                    "Reading " + fileSource);
+                        "Reading " + fileSource);
             }
-            
+
             @Override
             public void startFile(String fileSource) {
                 setProgress(fileSource, 0);
@@ -232,19 +236,20 @@ public class ImporterUtilities {
             }
         };
     }
-    
+
     static public InputStream openAndTrackFile(
             final String fileSource,
             final File file,
             final MultiFileReadingProgress progress) throws FileNotFoundException {
         InputStream inputStream = new FileInputStream(file);
         return progress == null ? inputStream : new TrackingInputStream(inputStream) {
+
             @Override
             protected long track(long bytesRead) {
                 long l = super.track(bytesRead);
-                
+
                 progress.readingFile(fileSource, this.bytesRead);
-                
+
                 return l;
             }
         };

@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.manifests;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.ParsingUtilities;
 
 public class ManifestV2 implements Manifest {
-	
+
     private String version;
     private String name;
     private String siteIri;
@@ -27,11 +28,11 @@ public class ManifestV2 implements Manifest {
     private String mediaWikiApiEndpoint;
     private String editGroupsUrlSchema;
     private String tagTemplate;
-    
+
     private Map<String, EntityTypeSettings> entityTypeSettings;
-    
+
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
-    
+
     public ManifestV2(JsonNode manifest) throws JsonParseException, JsonMappingException, IOException {
         version = manifest.path("version").textValue();
 
@@ -43,7 +44,8 @@ public class ManifestV2 implements Manifest {
         siteIri = wikibase.path("site_iri").textValue();
         maxlag = wikibase.path("maxlag").intValue();
         tagTemplate = wikibase.path("tag").isTextual() ? wikibase.path("tag").asText() : Manifest.DEFAULT_TAG_TEMPLATE;
-        maxEditsPerMinute = wikibase.path("max_edits_per_minute").isNumber() ? wikibase.path("max_edits_per_minute").asInt() : Manifest.DEFAULT_MAX_EDITS_PER_MINUTE;
+        maxEditsPerMinute = wikibase.path("max_edits_per_minute").isNumber() ? wikibase.path("max_edits_per_minute").asInt()
+                : Manifest.DEFAULT_MAX_EDITS_PER_MINUTE;
         JsonNode properties = wikibase.path("properties");
         instanceOfPid = properties.path("instance_of").textValue();
         subclassOfPid = properties.path("subclass_of").textValue();
@@ -59,29 +61,30 @@ public class ManifestV2 implements Manifest {
 
         JsonNode entityTypesJson = manifest.path("entity_types");
         entityTypeSettings = com.google.refine.util.ParsingUtilities.mapper.readValue(
-        		ParsingUtilities.mapper.treeAsTokens(entityTypesJson), 
-        		new TypeReference<Map<String, EntityTypeSettings>>() {});
+                ParsingUtilities.mapper.treeAsTokens(entityTypesJson),
+                new TypeReference<Map<String, EntityTypeSettings>>() {
+                });
         JsonNode editGroups = manifest.path("editgroups");
         editGroupsUrlSchema = editGroups.path("url_schema").textValue();
     }
 
-	private static class EntityTypeSettings {
-		
-		protected String siteIri;
-		protected String reconEndpoint;
-		protected String mediaWikiApi;
-		
-		@JsonCreator
-		protected EntityTypeSettings(
-				@JsonProperty("site_iri") String siteIri,
-				@JsonProperty("reconciliation_endpoint") String reconEndpoint,
-				@JsonProperty("mediawiki_api") String mediawikiEndpoint) {
-			this.siteIri = siteIri;
-			this.reconEndpoint = reconEndpoint;
-			this.mediaWikiApi = mediawikiEndpoint;
-		}
-	}
-	
+    private static class EntityTypeSettings {
+
+        protected String siteIri;
+        protected String reconEndpoint;
+        protected String mediaWikiApi;
+
+        @JsonCreator
+        protected EntityTypeSettings(
+                @JsonProperty("site_iri") String siteIri,
+                @JsonProperty("reconciliation_endpoint") String reconEndpoint,
+                @JsonProperty("mediawiki_api") String mediawikiEndpoint) {
+            this.siteIri = siteIri;
+            this.reconEndpoint = reconEndpoint;
+            this.mediaWikiApi = mediawikiEndpoint;
+        }
+    }
+
     @Override
     public String getVersion() {
         return version;
@@ -132,45 +135,45 @@ public class ManifestV2 implements Manifest {
         return editGroupsUrlSchema;
     }
 
-	@Override
-	public String getReconServiceEndpoint(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.reconEndpoint;
-	}
+    @Override
+    public String getReconServiceEndpoint(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.reconEndpoint;
+    }
 
-	@Override
-	public String getEntityTypeSiteIri(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.siteIri;
-	}
-	
-	@Override
-	public String getMediaWikiApiEndpoint(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.mediaWikiApi != null ? setting.mediaWikiApi : getMediaWikiApiEndpoint();
-	}
+    @Override
+    public String getEntityTypeSiteIri(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.siteIri;
+    }
 
-	@Override
-	public List<String> getAvailableEntityTypes() {
-		return entityTypeSettings.keySet().stream().collect(Collectors.toList());
-	}
+    @Override
+    public String getMediaWikiApiEndpoint(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.mediaWikiApi != null ? setting.mediaWikiApi : getMediaWikiApiEndpoint();
+    }
 
-	@Override
-	public String getTagTemplate() {
-		return tagTemplate;
-	}
+    @Override
+    public List<String> getAvailableEntityTypes() {
+        return entityTypeSettings.keySet().stream().collect(Collectors.toList());
+    }
 
-	@Override
-	public int getMaxEditsPerMinute() {
-		return maxEditsPerMinute;
-	}
+    @Override
+    public String getTagTemplate() {
+        return tagTemplate;
+    }
+
+    @Override
+    public int getMaxEditsPerMinute() {
+        return maxEditsPerMinute;
+    }
 }

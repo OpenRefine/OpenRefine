@@ -37,6 +37,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
@@ -63,26 +65,28 @@ public class Unescape implements Function {
                     return StringEscapeUtils.unescapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLDecoder.decode(s,"UTF-8");
-                    } catch (UnsupportedEncodingException e) {}
+                        return URLDecoder.decode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                    }
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
+                    // + mode + "'.");
+                    return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));
                 }
             }
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
-        return "Unescapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript'. Note that quotes are required around your mode. ";
+        return FunctionDescription.str_unescape();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string mode ['html','xml','csv','url','javascript']";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

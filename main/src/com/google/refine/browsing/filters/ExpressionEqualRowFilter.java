@@ -46,32 +46,32 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Judge if a row matches by evaluating a given expression on the row, based on a particular
- * column, and checking the result. It's a match if the result is any one of a given list of 
- * values, or if the result is blank or error and we want blank or error values. 
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
+ * result. It's a match if the result is any one of a given list of values, or if the result is blank or error and we
+ * want blank or error values.
  */
 public class ExpressionEqualRowFilter implements RowFilter {
-    final protected Evaluable       _evaluable; // the expression to evaluate
-    
-    final protected String          _columnName;
-    final protected int             _cellIndex; // the expression is based on this column;
-                                                // -1 if based on no column in particular,
-                                                // for expression such as "row.starred".
-    
-    final protected Object[]        _matches;
-    final protected boolean         _selectBlank;
-    final protected boolean         _selectError;
-    final protected boolean         _invert;
-    
+
+    final protected Evaluable _evaluable; // the expression to evaluate
+
+    final protected String _columnName;
+    final protected int _cellIndex; // the expression is based on this column;
+                                    // -1 if based on no column in particular,
+                                    // for expression such as "row.starred".
+
+    final protected Object[] _matches;
+    final protected boolean _selectBlank;
+    final protected boolean _selectError;
+    final protected boolean _invert;
+
     public ExpressionEqualRowFilter(
-        Evaluable evaluable,
-        String columnName,
-        int cellIndex, 
-        Object[] matches, 
-        boolean selectBlank, 
-        boolean selectError,
-        boolean invert
-    ) {
+            Evaluable evaluable,
+            String columnName,
+            int cellIndex,
+            Object[] matches,
+            boolean selectBlank,
+            boolean selectError,
+            boolean invert) {
         _evaluable = evaluable;
         _columnName = columnName;
         _cellIndex = cellIndex;
@@ -83,17 +83,15 @@ public class ExpressionEqualRowFilter implements RowFilter {
 
     @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
-        return _invert ?
-                internalInvertedFilterRow(project, rowIndex, row) :
-                internalFilterRow(project, rowIndex, row);
+        return _invert ? internalInvertedFilterRow(project, rowIndex, row) : internalFilterRow(project, rowIndex, row);
     }
-    
+
     public boolean internalFilterRow(Project project, int rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-        
+
         Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-        
+
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
@@ -114,7 +112,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (testValue(JsonValueConverter.convert(a.get(i)))) {
                         return true;
@@ -123,16 +121,16 @@ public class ExpressionEqualRowFilter implements RowFilter {
                 return false;
             } // else, fall through
         }
-        
+
         return testValue(value);
     }
-    
+
     public boolean internalInvertedFilterRow(Project project, int rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-        
+
         Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-        
+
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
@@ -153,7 +151,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (testValue(JsonValueConverter.convert(a.get(i)))) {
                         return false;
@@ -162,10 +160,10 @@ public class ExpressionEqualRowFilter implements RowFilter {
                 return true;
             } // else, fall through
         }
-        
+
         return !testValue(value);
     }
-    
+
     protected boolean testValue(Object v) {
         if (ExpressionUtils.isError(v)) {
             return _selectError;
@@ -180,10 +178,9 @@ public class ExpressionEqualRowFilter implements RowFilter {
             return _selectBlank;
         }
     }
-    
+
     protected boolean testValue(Object v, Object match) {
-        return (v instanceof Number && match instanceof Number) ?
-                ((Number) match).doubleValue() == ((Number) v).doubleValue() :
-                match.equals(v);
+        return (v instanceof Number && match instanceof Number) ? ((Number) match).doubleValue() == ((Number) v).doubleValue()
+                : match.equals(v);
     }
 }

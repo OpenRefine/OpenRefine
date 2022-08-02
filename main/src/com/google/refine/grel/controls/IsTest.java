@@ -38,13 +38,15 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 abstract class IsTest implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 1) {
-            return ControlFunctionRegistry.getControlName(this) + " expects one argument";
+            return ControlEvalError.expects_one_arg(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -56,19 +58,19 @@ abstract class IsTest implements Control {
             o = args[0].evaluate(bindings);
         } catch (Exception e) {
             o = new EvalError(e.toString());
-        } 
+        }
         return test(o);
     }
-    
+
     @Override
     public String getParams() {
         return "expression o";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";
     }
-    
+
     abstract protected boolean test(Object v);
 }

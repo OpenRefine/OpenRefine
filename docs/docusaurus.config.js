@@ -44,7 +44,8 @@ module.exports = {
       ],
     },
     algolia: {
-	    apiKey: '591fc612419d2e5b6bee6822cc17064f',
+	    apiKey: 'c933f37529f61e969dd96b2a0ddd08a4',
+            appId: '2ROSQW3VSY',
 	    indexName: 'openrefine',
 	    contextualSearch: true,
     },
@@ -87,7 +88,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} OpenRefine contributors`,
+      copyright: `<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />OpenRefine's documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.`,
     },
   },
   themes: [],

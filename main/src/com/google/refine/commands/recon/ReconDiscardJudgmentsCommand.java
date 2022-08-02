@@ -42,13 +42,14 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.recon.ReconDiscardJudgmentsOperation;
 
 public class ReconDiscardJudgmentsCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         boolean clearData = Boolean.parseBoolean(request.getParameter("clearData"));
-        
+
         return new ReconDiscardJudgmentsOperation(engineConfig, columnName, clearData);
     }
 }

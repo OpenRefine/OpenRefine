@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.schema.strategies;
 
 import org.wikidata.wdtk.datamodel.interfaces.Value;
@@ -17,14 +18,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = LaxValueMatcher.class, name = "lax"), })
 public interface ValueMatcher {
 
-	/**
-	 * Compare two values and return true if they should be treated as identical.
-	 * 
-	 * @param existing
-	 * 		the existing value on the entity
-	 * @param added
-	 *      the value to add/remove
-	 * @return
-	 */
-	public boolean match(Value existing, Value added);
+    /**
+     * Compare two values and return true if they should be treated as identical.
+     * 
+     * @param existing
+     *            the existing value on the entity
+     * @param added
+     *            the value to add/remove
+     * @return
+     */
+    public boolean match(Value existing, Value added);
 }

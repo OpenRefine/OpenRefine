@@ -28,10 +28,10 @@
  *
  *    Original code:  http://simile.mit.edu/repository/tracer/trunk/
  */
+
 package com.google.util.logging;
 
 import java.nio.charset.Charset;
-
 
 import java.util.Calendar;
 import java.util.Date;
@@ -45,33 +45,31 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.AbstractStringLayout;
 
 /**
- * This is a special Log4j log formatter that is capable of reacting on special log messages
- * and 'indent' the logs accordingly. This is very useful to visually inspect a debug log
- * and see what calls what. An example of logs are "> method()" and "< method()" where > and <
- * are used to indicate respectively "entering" and "exiting".
+ * This is a special Log4j log formatter that is capable of reacting on special log messages and 'indent' the logs
+ * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are
+ * "&gt; method()" and "&lt; method()" where &gt; and &lt; are used to indicate respectively "entering" and "exiting".
  */
 @Plugin(name = "IndentingLayout", elementType = Layout.ELEMENT_TYPE, category = Node.CATEGORY, printObject = true)
 public class IndentingLayout extends AbstractStringLayout {
 
     protected IndentingLayout(Charset charset) {
-		super(charset);
-	}
-    
+        super(charset);
+    }
+
     @PluginFactory
     public static IndentingLayout createLayout(@PluginAttribute(value = "charset", defaultString = "UTF-8") Charset charset) {
         return new IndentingLayout(charset);
     }
 
-	protected static final int CONTEXT_SIZE = 25;
+    protected static final int CONTEXT_SIZE = 25;
     protected static final long MAX_DELTA = 10000;
 
     protected Calendar calendar = Calendar.getInstance();
     protected long previousTime = 0;
     protected int indentation = 0;
 
-
-	@Override
-	public String toSerializable(LogEvent event) {
+    @Override
+    public String toSerializable(LogEvent event) {
         String message = event.getMessage().getFormattedMessage();
         if (message == null) {
             return "";
@@ -79,7 +77,7 @@ public class IndentingLayout extends AbstractStringLayout {
         if (message.length() < 2) {
             return message;
         }
-        
+
         char leader = message.charAt(0);
         char secondLeader = message.charAt(1);
         if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) {

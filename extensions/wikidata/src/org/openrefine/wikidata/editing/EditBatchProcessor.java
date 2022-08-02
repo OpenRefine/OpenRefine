@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
@@ -30,25 +31,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.FullMediaInfoUpdate;
 import org.openrefine.wikidata.updates.ItemEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
 
 /**
  * Schedules and performs a list of updates to entities via the API.
@@ -62,6 +61,7 @@ public class EditBatchProcessor {
 
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
+    private ApiConnection connection;
     private NewEntityLibrary library;
     private List<EntityEdit> scheduled;
     private String summary;
@@ -75,14 +75,15 @@ public class EditBatchProcessor {
     private int batchSize;
 
     /**
-     * Initiates the process of pushing a batch of updates to Wikibase. This
-     * schedules the updates and is a prerequisite for calling
-     * {@link performOneEdit}.
+     * Initiates the process of pushing a batch of updates to Wikibase. This schedules the updates and is a prerequisite
+     * for calling {@link #performEdit()}.
      * 
      * @param fetcher
-     *            the fetcher to use to retrieve the current state of entities
+     *            the data fetcher to fetch the existing state of the entities to edit
      * @param editor
-     *            the object to use to perform the edits
+     *            the editor to perform the edits
+     * @param connection
+     *            the connection to use to retrieve the current state of entities and edit them
      * @param entityDocuments
      *            the list of entity updates to perform
      * @param library
@@ -92,21 +93,22 @@ public class EditBatchProcessor {
      * @param tags
      *            the list of tags to apply to all edits
      * @param batchSize
-     *            the number of entities that should be retrieved in one go from the
-     *            API
+     *            the number of entities that should be retrieved in one go from the API
      * @param maxEditsPerMinute
      *            the maximum number of edits per minute to do
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<EntityEdit> entityDocuments,
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, ApiConnection connection,
+            List<EntityEdit> entityDocuments,
             NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
+        this.connection = connection;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
 
         // edit at 60 edits/min by default. If the Wikibase is overloaded
         // it will slow us down via the maxlag mechanism.
-        editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int)(1000*(maxEditsPerMinute/60.)));
+        editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int) (1000 * (maxEditsPerMinute / 60.)));
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
 
@@ -118,10 +120,10 @@ public class EditBatchProcessor {
         // Schedule the edit batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         try {
-			this.scheduled = scheduler.schedule(entityDocuments);
-		} catch (ImpossibleSchedulingException e) {
-			throw new IllegalArgumentException(e);
-		}
+            this.scheduled = scheduler.schedule(entityDocuments);
+        } catch (ImpossibleSchedulingException e) {
+            throw new IllegalArgumentException(e);
+        }
         this.globalCursor = 0;
 
         this.batchCursor = 0;
@@ -148,35 +150,47 @@ public class EditBatchProcessor {
         // Rewrite mentions to new entities
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
         try {
-        	update = rewriter.rewrite(update);
+            update = rewriter.rewrite(update);
         } catch (NewEntityNotCreatedYetException e) {
-            logger.warn("Failed to rewrite update on entity "+update.getEntityId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
-        	batchCursor++;
-        	return;
+            logger.warn("Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity()
+                    + ". Skipping update.");
+            batchCursor++;
+            return;
         }
 
         try {
-            // New entities
             if (update.isNew()) {
+                // New entities
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
-                // TODO Antonin, 2022-02-11: remove this casting once we have https://github.com/Wikidata/Wikidata-Toolkit/issues/651
-                if (newCell instanceof ItemIdValue) {
-	                ItemDocument itemDocument = (ItemDocument) update.toNewEntity();
-
-	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
-	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
-                } else if (newCell instanceof MediaInfoIdValue) {
-                    throw new NotImplementedException();
+                EntityIdValue createdDocId;
+                if (update instanceof MediaInfoEdit) {
+                    MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                    createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags);
+                } else {
+                    createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
                 }
+                library.setId(newCell.getReconInternalId(), createdDocId.getId());
             } else {
                 // Existing entities
                 EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
                 editor.editEntityDocument(entityUpdate, false, summary, tags);
+                if (entityUpdate instanceof FullMediaInfoUpdate) {
+                    FullMediaInfoUpdate fullMediaInfoUpdate = (FullMediaInfoUpdate) entityUpdate;
+                    if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
+                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                        long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
+                        mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                    } else {
+                        // manually purge the wikitext page associated with this mediainfo
+                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+                        mediaFileUtils.purgePage(Long.parseLong(entityUpdate.getEntityId().getId().substring(1)));
+                    }
+                }
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way
             logger.warn("MediaWiki error while editing [" + e.getErrorCode()
-            + "]: " + e.getErrorMessage());
+                    + "]: " + e.getErrorMessage());
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
@@ -225,10 +239,10 @@ public class EditBatchProcessor {
                 currentDocs = fetcher.getEntityDocuments(idsToFetch);
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
-                                                + "]: " + e.getErrorMessage());
+                        + "]: " + e.getErrorMessage());
             } catch (IOException e) {
                 logger.warn("IO error while fetching documents to edit: " + e.getMessage());
-			}
+            }
             retries--;
             sleepTime *= backoff;
             if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
@@ -237,7 +251,7 @@ public class EditBatchProcessor {
             }
         }
         if (currentDocs == null && !idsToFetch.isEmpty()) {
-            logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
+            logger.warn("Giving up on fetching documents to edit. Skipping " + remainingEdits() + " remaining edits.");
             globalCursor = scheduled.size();
         }
         batchCursor = 0;

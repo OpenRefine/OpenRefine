@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database.pgsql;
 
 import java.sql.Connection;
@@ -39,18 +40,14 @@ import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.SQLType;
 
-
-
 public class PgSQLConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("PgSQLConnectionManager");
-    private Connection connection; 
+    private Connection connection;
     private SQLType type;
 
     private static PgSQLConnectionManager instance;
-    
-  
-    
+
     /**
      * 
      * @param type
@@ -61,10 +58,7 @@ public class PgSQLConnectionManager {
         type = SQLType.forName(PgSQLDatabaseService.DB_NAME);
 
     }
-  
-    
-    
-    
+
     /**
      * Create a new instance of this connection manager.
      *
@@ -74,17 +68,16 @@ public class PgSQLConnectionManager {
      */
     public static PgSQLConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
-            if(logger.isDebugEnabled()) {
-                logger.debug("::Creating new PgSQL ConnectionManager ::"); 
+            if (logger.isDebugEnabled()) {
+                logger.debug("::Creating new PgSQL ConnectionManager ::");
             }
-            
+
             instance = new PgSQLConnectionManager();
 
         }
         return instance;
     }
 
-   
     /**
      * Get the SQL Database type.
      *
@@ -96,28 +89,28 @@ public class PgSQLConnectionManager {
 
     /**
      * testConnection
+     * 
      * @param databaseConfiguration
      * @return
      */
-    public  boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException{
-        
+    public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
+
         try {
-                boolean connResult = false;
-              
-                Connection conn = getConnection(databaseConfiguration, true);
-                if(conn != null) {
-                    connResult = true;
-                    conn.close();
-                }
-                
-                return connResult;
-       
-        }
-        catch (SQLException e) {
+            boolean connResult = false;
+
+            Connection conn = getConnection(databaseConfiguration, true);
+            if (conn != null) {
+                connResult = true;
+                conn.close();
+            }
+
+            return connResult;
+
+        } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
-      
+
     }
 
     /**
@@ -125,16 +118,17 @@ public class PgSQLConnectionManager {
      *
      * @return connection from the pool
      */
-    public  Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection) throws DatabaseServiceException{
+    public Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection)
+            throws DatabaseServiceException {
         try {
 
-           // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
+            // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
 
             if (connection != null && !forceNewConnection) {
-               // logger.info("connection closed::{}", connection.isClosed());
+                // logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
-                    if(logger.isDebugEnabled()){
-                        logger.debug("Returning existing connection::{}", connection); 
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Returning existing connection::{}", connection);
                     }
                     return connection;
                 }
@@ -150,36 +144,32 @@ public class PgSQLConnectionManager {
 
             return connection;
 
-            
         } catch (ClassNotFoundException e) {
             logger.error("Jdbc Driver not found", e);
             throw new DatabaseServiceException(e.getMessage());
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } 
+        }
     }
 
- 
-    public  void shutdown() {
+    public void shutdown() {
 
         if (connection != null) {
             try {
                 connection.close();
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
- 
+
     }
-  
-   
+
     private static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-       
-            int port = dbConfig.getDatabasePort();
-            return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
-                    + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
-        
+
+        int port = dbConfig.getDatabasePort();
+        return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
+                + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
+
     }
 }

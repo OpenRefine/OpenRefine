@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashSet;
@@ -35,11 +36,9 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
- * For now this scrutinizer only checks for uniqueness at the entity level (it
- * ignores qualifiers and references).
+ * For now this scrutinizer only checks for uniqueness at the entity level (it ignores qualifiers and references).
  * 
- * Given that all ranks are currently set to Normal, this also checks for
- * single best values.
+ * Given that all ranks are currently set to Normal, this also checks for single best values.
  * 
  * @author Antonin Delpeuch
  *
@@ -59,12 +58,12 @@ public class SingleValueScrutinizer extends EditScrutinizer {
 
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
@@ -78,8 +77,11 @@ public class SingleValueScrutinizer extends EditScrutinizer {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getEntityId());
+                // disable faceting for this one since multiple values are likely coming from different rows.
+                // if they are not, then this should already be clear from the schema.
+                issue.setFacetable(false);
                 addIssue(issue);
-            } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()){
+            } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()) {
                 seenSingleProperties.add(pid);
             }
         }

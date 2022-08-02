@@ -37,11 +37,13 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ToNumber implements Function {
 
-  @Override
+    @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             if (args[0] instanceof Number) {
@@ -49,7 +51,7 @@ public class ToNumber implements Function {
             } else {
                 String s;
                 if (args[0] instanceof String) {
-                    s = (String)args[0];
+                    s = (String) args[0];
                 } else {
                     s = args[0].toString();
                 }
@@ -65,23 +67,23 @@ public class ToNumber implements Function {
                     } catch (NumberFormatException e) {
                     }
                 }
-                return new EvalError("Unable to parse as number");
+                return new EvalError(EvalErrorMessage.unable_to_parse_as_number());
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
+            return new EvalError(EvalErrorMessage.expects_one_non_null_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.";
+        return FunctionDescription.fun_to_number();
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

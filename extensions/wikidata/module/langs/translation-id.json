@@ -5,7 +5,6 @@
     "wikibase-schema/discard-button": "Buang perubahan",
     "wikibase-schema/invalid-schema-warning-preview": "Skema Anda tidak lengkap, perbaiki untuk melihat pratinjau.",
     "wikibase-schema/invalid-schema-warning-issues": "Skema Anda tidak lengkap, perbaiki untuk melihat masalah.",
-    "wikibase-schema/datatype-not-supported-yet": "Tipe data ini belum didukung, maaf.",
     "wikibase-schema/geoshape-with-prefix": "nama file dimulai dengan \"Data:\"",
     "wikibase-schema/math-expression": "ekspresi matematika",
     "wikibase-schema/commons-media": "nama file",

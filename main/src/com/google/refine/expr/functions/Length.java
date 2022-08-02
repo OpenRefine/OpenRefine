@@ -40,7 +40,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Length implements Function {
 
@@ -48,7 +50,7 @@ public class Length implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -65,19 +67,19 @@ public class Length implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array or a string");
+        return new EvalError(EvalErrorMessage.expects_one_array_or_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
+        return FunctionDescription.fun_length();
     }
-    
+
     @Override
     public String getParams() {
         return "array a or string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

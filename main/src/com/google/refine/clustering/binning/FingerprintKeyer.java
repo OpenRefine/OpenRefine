@@ -40,18 +40,16 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Fingerprint keyer where fingerprint is sorted list of unique words
- * after case and diacritic folding and removing all punctuation. Word boundary
- * is any whitespace character, while output key has words joined with a single
- * ASCII space character.
+ * Fingerprint keyer where fingerprint is sorted list of unique words after case and diacritic folding and removing all
+ * punctuation. Word boundary is any whitespace character, while output key has words joined with a single ASCII space
+ * character.
  *
  */
 public class FingerprintKeyer extends Keyer {
 
     // Punctuation plus C0 & C1 controls (except for whitespace characters which we need for split to work)
     // Added LF, VT, FF, CR, NEL to the control characters not stripped - tfm 2020-10-17
-    static final Pattern punctctrl =
-            Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0E-\\x1F\\x7F\\x80-\\x84\\x86-\\x9F]",
+    static final Pattern punctctrl = Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0E-\\x1F\\x7F\\x80-\\x84\\x86-\\x9F]",
             Pattern.UNICODE_CHARACTER_CLASS);
 
     public static final Pattern DIACRITICS_AND_FRIENDS = Pattern
@@ -61,8 +59,8 @@ public class FingerprintKeyer extends Keyer {
     private static final Pattern WHITESPACE = Pattern.compile("\\s+",
             Pattern.UNICODE_CHARACTER_CLASS);
     // First part of table based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson
-    private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String>builder()
-            //Replace non-diacritics with their equivalent characters
+    private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String> builder()
+            // Replace non-diacritics with their equivalent characters
             .put("ß", "ss")
             .put("æ", "ae")
             .put("ø", "oe")
@@ -72,7 +70,7 @@ public class FingerprintKeyer extends Keyer {
             .put("\u0111", "d") // Small letter D with stroke
             .put("\u0256", "d") // Small letter African D
             .put("\u00FE", "th") // Lower case Icelandic thorn þ
-            .put("ƿ","w") // Lower case Wynn from Old English modernly transliterated to w
+            .put("ƿ", "w") // Lower case Wynn from Old English modernly transliterated to w
             // Visually similar replacements from our private former asciify() method
             // (only need lower case forms since we're already downcased)
             .put("\u0127", "h") // small H with stroke
@@ -88,10 +86,9 @@ public class FingerprintKeyer extends Keyer {
             .put("ẝ", "s")
             .build();
 
-
     @Override
     public String key(String s, Object... o) {
-        if (s == null || o !=null && o.length > 0) {
+        if (s == null || o != null && o.length > 0) {
             throw new IllegalArgumentException("Fingerprint keyer accepts a single string parameter");
         }
         return WHITESPACE.splitAsStream(normalize(s, true)).sorted().distinct().collect(Collectors.joining(" "));
@@ -117,8 +114,7 @@ public class FingerprintKeyer extends Keyer {
     }
 
     /**
-     * @deprecated by tfmorris 2020-07-07 Use {@link #normalize(String)} or
-     *             {{@link #normalize(String, boolean)}
+     * @deprecated by tfmorris 2020-07-07 Use {@link #normalize(String)} or {{@link #normalize(String, boolean)}
      */
     @Deprecated
     protected String asciify(String s) {

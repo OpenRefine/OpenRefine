@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Partition implements Function {
 
@@ -46,7 +47,7 @@ public class Partition implements Function {
         if (args.length >= 2 && args.length <= 3) {
             Object o1 = args[0];
             Object o2 = args[1];
-            
+
             boolean omitFragment = false;
             if (args.length == 3) {
                 Object o3 = args[2];
@@ -54,16 +55,16 @@ public class Partition implements Function {
                     omitFragment = ((Boolean) o3).booleanValue();
                 }
             }
-            
+
             if (o1 != null && o2 != null && o1 instanceof String) {
                 String s = (String) o1;
-                
+
                 int from = -1;
                 int to = -1;
-                
+
                 if (o2 instanceof String) {
                     String frag = (String) o2;
-                    
+
                     from = s.indexOf(frag);
                     to = from + frag.length();
                 } else if (o2 instanceof Pattern) {
@@ -74,7 +75,7 @@ public class Partition implements Function {
                         to = matcher.end();
                     }
                 }
-                
+
                 String[] output = omitFragment ? new String[2] : new String[3];
                 if (from > -1) {
                     output[0] = s.substring(0, from);
@@ -96,18 +97,17 @@ public class Partition implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
-        return 
-            "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. If omitFragment is true, frag is not returned.";
+        return FunctionDescription.str_partition();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string or regex fragment, optional boolean omitFragment";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

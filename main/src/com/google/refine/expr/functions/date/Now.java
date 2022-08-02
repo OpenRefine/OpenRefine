@@ -38,6 +38,7 @@ import java.time.ZoneId;
 import java.util.Properties;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Now implements Function {
 
@@ -51,9 +52,9 @@ public class Now implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the current time according to your system clock, in the ISO 8601 extended format (converted to UTC). For example, 10:53am (and 00 seconds) on November 26th 2020 in EST returns [date 2020-11-26T15:53:00Z].";
+        return FunctionDescription.date_now();
     }
-    
+
     @Override
     public String getReturns() {
         return "date";

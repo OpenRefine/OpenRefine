@@ -47,19 +47,19 @@ import java.util.List;
 public class Parser {
 
     /**
-     * findEndBrace method
-     * Finds the first true ending brace in a cell, ignoring escaped end braces
+     * findEndBrace method Finds the first true ending brace in a cell, ignoring escaped end braces
      *
-     * @param expression string that will be interrogated for first true end brace
-     * @param lowIndex   index from which the interrogation will start
-     * @return index of the first true end brace
-     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
+     * @param expression
+     *            string that will be interrogated for first true end brace
+     * @param lowIndex
+     *            index from which the interrogation will start
+     * @return index of the first true end brace CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
      */
     private static int findEndBrace(final String expression, final int lowIndex) throws ParsingException {
         int closeBrace = expression.indexOf('}', lowIndex);
         if (expression.charAt(closeBrace - 1) == '\\') {
             closeBrace = findEndBrace(expression, closeBrace + 1);
-        } 
+        }
         return closeBrace;
     }
 

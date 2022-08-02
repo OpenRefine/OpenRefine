@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,6 +48,7 @@ import java.util.Map;
  * <p>
  * The connection can be either {@link BasicApiConnection} or {@link OAuthApiConnection}.
  * <p>
+ * 
  * @author Antonin Delpeuch
  * @author Lu Liu
  */
@@ -56,13 +58,13 @@ public class ConnectionManager {
     final static Logger logger = LoggerFactory.getLogger("connection_manager");
 
     /**
-     * We used this key to read/write credentials from/to preferences in the past, which is insecure.
-     * Now this key is kept only to delete those credentials in the preferences.
+     * We used this key to read/write credentials from/to preferences in the past, which is insecure. Now this key is
+     * kept only to delete those credentials in the preferences.
      */
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
 
-    public static final int CONNECT_TIMEOUT = 5000;
-    public static final int READ_TIMEOUT = 10000;
+    public static final int CONNECT_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 60000;
 
     private Map<String, ApiConnection> endpointToConnection = new HashMap<>();
 
@@ -83,9 +85,12 @@ public class ConnectionManager {
      * <p>
      * If failed to login, the connection will be set to null.
      *
-     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
-     * @param username the username to log in with
-     * @param password the password to log in with
+     * @param mediaWikiApiEndpoint
+     *            the api endpoint of the target Wikibase instance
+     * @param username
+     *            the username to log in with
+     * @param password
+     *            the password to log in with
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String username, String password) {
@@ -106,15 +111,20 @@ public class ConnectionManager {
      * <p>
      * If failed to login, the connection will be set to null.
      *
-     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
-     * @param consumerToken  consumer token of an owner-only consumer
-     * @param consumerSecret consumer secret of an owner-only consumer
-     * @param accessToken    access token of an owner-only consumer
-     * @param accessSecret   access secret of an owner-only consumer
+     * @param mediaWikiApiEndpoint
+     *            the api endpoint of the target Wikibase instance
+     * @param consumerToken
+     *            consumer token of an owner-only consumer
+     * @param consumerSecret
+     *            consumer secret of an owner-only consumer
+     * @param accessToken
+     *            access token of an owner-only consumer
+     * @param accessSecret
+     *            access secret of an owner-only consumer
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String consumerToken, String consumerSecret,
-                         String accessToken, String accessSecret) {
+            String accessToken, String accessSecret) {
         OAuthApiConnection connection = new OAuthApiConnection(mediaWikiApiEndpoint,
                 consumerToken, consumerSecret,
                 accessToken, accessSecret);
@@ -130,15 +140,17 @@ public class ConnectionManager {
         }
     }
 
-
     /**
      * Logs in to the Wikibase instance, using cookies.
      * <p>
      * If failed to login, the connection will be set to null.
      *
-     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
-     * @param username the username
-     * @param cookies  the cookies used to login
+     * @param mediaWikiApiEndpoint
+     *            the api endpoint of the target Wikibase instance
+     * @param username
+     *            the username
+     * @param cookies
+     *            the cookies used to login
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String username, List<Cookie> cookies) {
@@ -170,7 +182,6 @@ public class ConnectionManager {
         String json = mapper.writeValueAsString(map);
         return mapper.readValue(json, BasicApiConnection.class);
     }
-
 
     public void logout(String mediaWikiApiEndpoint) {
         ApiConnection connection = endpointToConnection.get(mediaWikiApiEndpoint);

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema.entityvalues;
 
 import java.util.ArrayList;
@@ -37,16 +38,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.model.Recon;
 
 /**
- * An EntityIdValue that holds not just the id but also the label as fetched by
- * either the reconciliation interface or the suggester and its type, both
- * stored as reconciliation candidates.
+ * An EntityIdValue that holds not just the id but also the label as fetched by either the reconciliation interface or
+ * the suggester and its type, both stored as reconciliation candidates.
  * 
- * This label will be localized depending on the language chosen by the user for
- * OpenRefine's interface. Storing it lets us reuse it later on without having
- * to re-fetch it.
+ * This label will be localized depending on the language chosen by the user for OpenRefine's interface. Storing it lets
+ * us reuse it later on without having to re-fetch it.
  * 
- * Storing the types also lets us perform some constraint checks without
- * re-fetching the types of many entities.
+ * Storing the types also lets us perform some constraint checks without re-fetching the types of many entities.
  * 
  * @author Antonin Delpeuch
  *
@@ -127,9 +125,9 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         } else if (ET_PROPERTY.equals(getEntityType())) {
             return "P" + getReconInternalId();
         } else if (ET_MEDIA_INFO.equals(getEntityType())) {
-        	return "M" + getReconInternalId();
+            return "M" + getReconInternalId();
         } else {
-        	throw new IllegalStateException("Unsupported entity type: "+getEntityType());
+            throw new IllegalStateException("Unsupported entity type: " + getEntityType());
         }
     }
 

@@ -37,7 +37,9 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Or implements Function {
 
@@ -51,19 +53,19 @@ public class Or implements Function {
             }
             return false;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
+        return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Uses the logical operator OR on two or more booleans to output a boolean. For example, (1 < 3).or(1 > 7) returns true because at least one of the conditions (the first one) is true.";
+        return FunctionDescription.bool_or();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

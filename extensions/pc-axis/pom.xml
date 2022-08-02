@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.7-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -21,6 +21,7 @@
         <directory>src</directory>
       </resource>
     </resources>
+    <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
     <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>

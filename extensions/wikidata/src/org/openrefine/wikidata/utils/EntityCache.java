@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.utils;
 
 import com.google.common.cache.CacheBuilder;
@@ -39,7 +40,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 
 public class EntityCache {
 
@@ -69,8 +69,9 @@ public class EntityCache {
                     @Override
                     public Map<String, EntityDocument> loadAll(Iterable<? extends String> entityIds)
                             throws Exception {
-                        Map<String, EntityDocument> entityDocumentMap = fetcher.getEntityDocuments(StreamSupport.stream(entityIds.spliterator(), false)
-                                .collect(Collectors.toList()));
+                        Map<String, EntityDocument> entityDocumentMap = fetcher
+                                .getEntityDocuments(StreamSupport.stream(entityIds.spliterator(), false)
+                                        .collect(Collectors.toList()));
                         if (!entityDocumentMap.isEmpty()) {
                             return entityDocumentMap;
                         } else {
@@ -87,6 +88,7 @@ public class EntityCache {
 
     /**
      * Get an entity cache for a given Wikibase instance.
+     * 
      * @param siteIri
      * @param mediaWikiApiEndpoint
      * @return
@@ -99,14 +101,15 @@ public class EntityCache {
         }
         return entityCache;
     }
-    
+
     /**
      * Provided for testability.
+     * 
      * @param siteIri
      * @param cache
      */
     public static void setEntityCache(String siteIri, EntityCache cache) {
-    	entityCacheMap.put(siteIri, cache);
+        entityCacheMap.put(siteIri, cache);
     }
 
     public List<EntityDocument> getMultipleDocuments(List<EntityIdValue> entityIds) throws ExecutionException {
@@ -118,7 +121,7 @@ public class EntityCache {
         return getEntityCache(entityPrefix, mediaWikiApiEndpoint).get(id);
     }
 
-	public static void removeEntityCache(String siteIri) {
-		entityCacheMap.remove(siteIri);
-	}
+    public static void removeEntityCache(String siteIri) {
+        entityCacheMap.remove(siteIri);
+    }
 }

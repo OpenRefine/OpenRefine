@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -41,8 +41,8 @@ import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.EntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -67,7 +67,7 @@ import com.google.refine.util.Pool;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
-    
+
     // only used for backwards compatibility, these things are configurable through
     // the manifest now.
     static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
@@ -80,27 +80,21 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonProperty("editGroupsUrlSchema")
     private String editGroupsUrlSchema;
-    
+
     @JsonProperty("maxEditsPerMinute")
     private int maxEditsPerMinute;
-    
+
     @JsonProperty("tag")
     private String tagTemplate;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
-    		@JsonProperty("engineConfig")
-    		EngineConfig engineConfig,
-    		@JsonProperty("summary")
-    		String summary,
-            @JsonProperty("maxlag")
-            Integer maxlag,
-            @JsonProperty("editGroupsUrlSchema")
-            String editGroupsUrlSchema,
-            @JsonProperty("maxEditsPerMinute")
-    		Integer maxEditsPerMinute,
-    		@JsonProperty("tag")
-    		String tag) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("summary") String summary,
+            @JsonProperty("maxlag") Integer maxlag,
+            @JsonProperty("editGroupsUrlSchema") String editGroupsUrlSchema,
+            @JsonProperty("maxEditsPerMinute") Integer maxEditsPerMinute,
+            @JsonProperty("tag") String tag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -202,11 +196,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._summary = summary;
             String tag = tagTemplate;
             if (tag.contains("${version}")) {
-	            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-	            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-	            if (matcher.matches()) {
-	                tag = tag.replace("${version}", matcher.group(1));
-	            }
+                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+                if (matcher.matches()) {
+                    tag = tag.replace("${version}", matcher.group(1));
+                }
             }
             this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
@@ -217,6 +211,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
             }
             this._editGroupsUrlSchema = editGroupsUrlSchema;
+
+            // validate the schema
+            ValidationState validation = new ValidationState(_project.columnModel);
+            _schema.validate(validation);
+            if (!validation.getValidationErrors().isEmpty()) {
+                throw new IllegalStateException("Schema is incomplete");
+            }
         }
 
         @Override
@@ -229,9 +230,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 return;
             }
             ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
-
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
+            WikibaseDataFetcher fetcher = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor editor = new WikibaseDataEditor(connection, _schema.getSiteIri());
 
             String summary;
             if (StringUtils.isBlank(_editGroupsUrlSchema)) {
@@ -243,7 +243,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 // Because commas and colons are used by Wikibase to separate the auto-generated summaries
                 // from the user-supplied ones, we replace these separators by similar unicode characters to
                 // make sure they can be told apart.
-                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                String summaryWithoutCommas = _summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
                 summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
             }
 
@@ -252,7 +252,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             // Prepare the edits
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
+            EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, entityDocuments, newEntityLibrary, summary,
                     maxlag, _tags, 50, maxEditsPerMinute);
 
             // Perform edits

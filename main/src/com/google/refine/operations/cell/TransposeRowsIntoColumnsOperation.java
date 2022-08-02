@@ -45,27 +45,26 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.operations.OperationDescription;
 
 public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
-    final protected String  _columnName;
-    final protected int     _rowCount;
+
+    final protected String _columnName;
+    final protected int _rowCount;
 
     @JsonCreator
     public TransposeRowsIntoColumnsOperation(
-        @JsonProperty("columnName")
-        String  columnName,
-        @JsonProperty("rowCount")
-        int     rowCount
-    ) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("rowCount") int rowCount) {
         _columnName = columnName;
         _rowCount = rowCount;
     }
-    
+
     @JsonProperty("rowCount")
     public int getRowCount() {
         return _rowCount;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -73,20 +72,20 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
+        return OperationDescription.cell_transpose_rows_into_columns_brief(_rowCount, _columnName);
     }
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> oldColumns = project.columnModel.columns;
-        
+
         int columnIndex = project.columnModel.getColumnIndexByName(_columnName);
         int columnCount = oldColumns.size();
-        
+
         for (int i = 0; i < columnCount; i++) {
             Column column = oldColumns.get(i);
-            
+
             if (i == columnIndex) {
                 int newIndex = 1;
                 for (int n = 0; n < _rowCount; n++) {
@@ -94,7 +93,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
                     while (project.columnModel.getColumnByName(columnName) != null) {
                         columnName = _columnName + " " + newIndex++;
                     }
-                    
+
                     newColumns.add(new Column(i + n, columnName));
                 }
             } else if (i < columnIndex) {
@@ -103,21 +102,21 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
                 newColumns.add(new Column(i + _rowCount - 1, column.getName()));
             }
         }
-        
+
         List<Row> oldRows = project.rows;
         List<Row> newRows = new ArrayList<Row>(oldRows.size() / _rowCount);
         for (int r = 0; r < oldRows.size(); r += _rowCount) {
             Row firstNewRow = new Row(newColumns.size());
-            
+
             for (int r2 = 0; r2 < _rowCount && r + r2 < oldRows.size(); r2++) {
                 Row oldRow = oldRows.get(r + r2);
                 Row newRow = r2 == 0 ? firstNewRow : new Row(newColumns.size());
                 boolean hasData = r2 == 0;
-                
+
                 for (int c = 0; c < oldColumns.size(); c++) {
                     Column column = oldColumns.get(c);
                     Cell cell = oldRow.getCell(column.getCellIndex());
-                    
+
                     if (cell != null && cell.value != null) {
                         if (c == columnIndex) {
                             firstNewRow.setCell(columnIndex + r2, cell);
@@ -130,19 +129,18 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
                         }
                     }
                 }
-                
+
                 if (hasData) {
                     newRows.add(newRow);
                 }
             }
         }
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(null), 
-            this, 
-            new MassRowColumnChange(newColumns, newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(null),
+                this,
+                new MassRowColumnChange(newColumns, newRows));
     }
 }

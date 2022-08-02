@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -46,17 +47,16 @@ import com.google.refine.model.Recon.Judgment;
  */
 
 public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
-	
-	public static final String INVALID_ENTITY_ID_FORMAT_WARNING_TYPE = "invalid-entity-id-format";
+
+    public static final String INVALID_ENTITY_ID_FORMAT_WARNING_TYPE = "invalid-entity-id-format";
 
     @JsonCreator
     public WbEntityVariable() {
 
     }
 
-	/**
-     * Constructs a variable and sets the column it is bound to. Mostly used as a
-     * convenience method for testing.
+    /**
+     * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      *
      * @param columnName
      *            the name of the column the expression should draw its value from
@@ -73,30 +73,30 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
             if (Judgment.New.equals(cell.recon.judgment)) {
                 return new ReconItemIdValue(cell.recon, cell.value.toString());
             }
-            
+
             EntityIdValue reconEntityIdValue = null;
             String entityType = null;
             try {
-            	EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
-	            if (entityIdValue instanceof ItemIdValue) {
-	                reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
-	                entityType = "item";
-	            } else if (entityIdValue instanceof MediaInfoIdValue) {
-	                reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
-	                entityType = "mediainfo";
-	            } else if (entityIdValue instanceof PropertyIdValue) {
-	                reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
-	                entityType = "property";
-	            }
-            } catch(IllegalArgumentException e) {
-            	QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
-            	warning.setProperty("example", cell.recon.match.id);
-            	throw new QAWarningException(warning);
+                EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+                if (entityIdValue instanceof ItemIdValue) {
+                    reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
+                    entityType = "item";
+                } else if (entityIdValue instanceof MediaInfoIdValue) {
+                    reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
+                    entityType = "mediainfo";
+                } else if (entityIdValue instanceof PropertyIdValue) {
+                    reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
+                    entityType = "property";
+                }
+            } catch (IllegalArgumentException e) {
+                QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
+                warning.setProperty("example", cell.recon.match.id);
+                throw new QAWarningException(warning);
             }
             if (reconEntityIdValue == null) {
-            	throw new SkipSchemaExpressionException();
+                throw new SkipSchemaExpressionException();
             }
-            
+
             if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRIForEntityType(entityType))) {
                 QAWarning warning = new QAWarning("invalid-identifier-space", null, QAWarning.Severity.INFO, 1);
                 warning.setProperty("example_cell", cell.value.toString());
@@ -104,7 +104,7 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
                 ctxt.addWarning(warning);
                 throw new SkipSchemaExpressionException();
             }
-            
+
             return reconEntityIdValue;
         }
         throw new SkipSchemaExpressionException();

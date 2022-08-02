@@ -101,7 +101,7 @@ DataTableCellUI.prototype._render = function() {
     } else {
       var arr = cell.v.split(" ");
       var spanArr = [];
-      for (var i=0; i<arr.length; i++){
+      for (var i=0; i<arr.length; i++) {
         if (URL.looksLikeUrl(arr[i])) {
           if (spanArr.length != 0) {
             var span = document.createElement('span');
@@ -109,17 +109,27 @@ DataTableCellUI.prototype._render = function() {
             divContent.appendChild(span).appendChild(document.createTextNode('\u00A0'));
             spanArr = [];
           }
+          var [realURL, extra] = (() => {
+            var parts = arr[i].split('\n');
+            return parts.length > 1 ? [parts[0], parts.slice(1).map((s) => ("\n" + s))] : [parts[0], []];
+          })();
+
           var url = document.createElement('a');
-          url.textContent = arr[i];
-          url.setAttribute('href', arr[i]);
+          url.textContent = realURL;
+          url.setAttribute('href', realURL);
           url.setAttribute('target', '_blank');
-          if (i == arr.length-1){
+          if (i === arr.length-1){
             divContent.appendChild(url)
           } else {
             divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
           }
+          if (extra.length > 0) {
+            for (var j=0; j<extra.length; j++) {
+              spanArr.push(extra[j]);
+            }
+          }
         } else {
-          spanArr.push(arr[i]);
+           spanArr.push(arr[i]);
         }
       }
       if (spanArr.length != 0) {
@@ -151,7 +161,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
-        a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(match.id)));
+        a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       }
 
       if (DataTableCellUI.previewMatchedCells) {
@@ -198,7 +208,7 @@ DataTableCellUI.prototype._render = function() {
             .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(candidate.id)));
+              a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             }
 
             self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
@@ -438,15 +448,25 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     suggestOptions2.key = null;
     suggestOptions2.query_param_name = "prefix";
   }
-  elmts.input
+  var suggest = elmts.input
   .val(this._cell.v)
-  .suggest(suggestOptions2)
-  .on("fb-select", function(e, data) {
+  .suggest(suggestOptions2);
+
+  suggest.on("fb-pane-show", function(e, data) {
+    DialogSystem.pauseEscapeKeyHandling();
+  });
+
+  suggest.on("fb-pane-hide", function(e, data) {
+    DialogSystem.setupEscapeKeyHandling();
+  });
+
+  suggest.on("fb-select", function(e, data) {
     match = data;
     commit();
   })
-  .trigger('focus')
-  .data("suggest").textchange();
+      .trigger('focus')
+      .data("suggest").textchange();
+
 };
 
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {
@@ -494,7 +514,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   }
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = preview.url.replace("{{id}}", encodeURIComponent(id));
+    var url = encodeURI(preview.url.replace("{{id}}", id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)
@@ -583,6 +603,21 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   var cellDataType = typeof originalContent === "string" ? "text" : typeof originalContent;
   cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
   elmts.typeSelect.val(cellDataType);
+
+  elmts.typeSelect.on('change', function() {
+    var newType = elmts.typeSelect.val();
+    if (newType === "date") {
+      elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+      $(elmts.cell_help_text).show();
+    } else {
+      $(elmts.cell_help_text).hide();
+    }
+  });
+
+  if (cellDataType === "date") {
+    elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+    $(elmts.cell_help_text).show();
+  }
 
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));

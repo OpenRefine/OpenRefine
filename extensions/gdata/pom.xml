@@ -11,8 +11,12 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.7-SNAPSHOT</version>
   </parent>
+
+  <properties>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+  </properties>
 
   <build>
     <finalName>openrefine-gdata</finalName>
@@ -21,6 +25,7 @@
         <directory>src</directory>
       </resource>
     </resources>
+    <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
     <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
@@ -80,12 +85,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20220508-1.32.1</version>
+      <version>v3-rev20220709-1.32.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20220411-1.32.1</version>
+      <version>v4-rev20220620-1.32.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

@@ -44,19 +44,26 @@ import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager.ImportingConfiguration;
 
 public class GetImportingConfigurationCommand extends Command {
-    
+
     public static class ConfigurationResponse {
+
         @JsonProperty("config")
         ImportingConfiguration config = new ImportingConfiguration();
     }
+
     /**
-     * This command uses POST but does not actually modify any state so
-     * it is not CSRF-protected.
+     * Deprecated. This command uses POST but does not actually modify any state so it is not CSRF-protected.
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         respondJSON(response, new ConfigurationResponse());
+    }
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 }

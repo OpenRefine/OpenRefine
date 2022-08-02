@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.grel.Function;
@@ -52,17 +53,17 @@ public class Chomp implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
-        return "Returns a copy of string s with string sep remoed from the end if s ends with sep; otherwies, returns s.";
+        return FunctionDescription.str_chomp();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

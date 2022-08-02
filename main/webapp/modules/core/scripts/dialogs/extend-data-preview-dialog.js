@@ -42,6 +42,9 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.html($.i18n('core-views/add-col-recon-col')+" "+column.name);
+  this._elmts.okButton.html($.i18n('core-buttons/ok'));
+  this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  this._elmts.resetButton.html($.i18n('core-buttons/reset'));
   this._elmts.resetButton.on('click',function() {
     self._extension.properties = [];
     self._update();

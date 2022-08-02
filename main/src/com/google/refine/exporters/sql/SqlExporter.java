@@ -48,19 +48,18 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class SqlExporter implements WriterExporter {
-    
+
     private static final Logger logger = LoggerFactory.getLogger("SqlExporter");
     public static final String NO_COL_SELECTED_ERROR = "****NO COLUMNS SELECTED****";
     public static final String NO_OPTIONS_PRESENT_ERROR = "****NO OPTIONS PRESENT****";
-    //JSON Property names
+    // JSON Property names
     public static final String JSON_INCLUDE_STRUCTURE = "includeStructure";
     public static final String JSON_INCLUDE_CONTENT = "includeContent";
     public static final String JSON_TABLE_NAME = "tableName";
- 
+
     private List<String> columnNames = new ArrayList<String>();
     private List<ArrayList<SqlData>> sqlDataList = new ArrayList<ArrayList<SqlData>>();
     private JsonNode sqlOptions;
- 
 
     @Override
     public String getContentType() {
@@ -70,16 +69,16 @@ public class SqlExporter implements WriterExporter {
     @Override
     public void export(final Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("export sql with params: {}", params);
         }
-       
+
         TabularSerializer serializer = new TabularSerializer() {
 
             @Override
             public void startFile(JsonNode options) {
                 sqlOptions = options;
-                //logger.info("setting options::{}", sqlOptions);
+                // logger.info("setting options::{}", sqlOptions);
             }
 
             @Override
@@ -88,12 +87,12 @@ public class SqlExporter implements WriterExporter {
                     if (columnNames.isEmpty()) {
                         logger.error("No Columns Selected!!");
                         throw new SqlExporterException(NO_COL_SELECTED_ERROR);
-                 
+
                     }
                     if (sqlOptions == null) {
                         logger.error("No Options Selected!!");
                         throw new SqlExporterException(NO_OPTIONS_PRESENT_ERROR);
-                       
+
                     }
                     String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
 
@@ -148,11 +147,11 @@ public class SqlExporter implements WriterExporter {
                     for (CellData cellData : cells) {
 
                         if (cellData != null) {
-                           if(cellData.text == null || cellData.text.isEmpty()) {
-                               values.add(new SqlData(cellData.columnName, "", ""));
-                           }else {
-                               values.add(new SqlData(cellData.columnName, cellData.value, cellData.text)); 
-                           }
+                            if (cellData.text == null || cellData.text.isEmpty()) {
+                                values.add(new SqlData(cellData.columnName, "", ""));
+                            } else {
+                                values.add(new SqlData(cellData.columnName, cellData.value, cellData.text));
+                            }
 
                         }
 
@@ -165,6 +164,5 @@ public class SqlExporter implements WriterExporter {
 
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
     }
-  
 
 }
