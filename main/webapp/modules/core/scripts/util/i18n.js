@@ -6,7 +6,7 @@ var dictionary = "";
 /*
    Initialize i18n and load message translation file from the server.
 
-   Note that the language is set by the 'userLang' user preference setting.  You can chnage that by
+   Note that the language is set by the 'userLang' user preference setting.  You can change that by
    clicking on 'Language Settings' on the landing page.
 */
 I18NUtil.init = function (module) {
@@ -15,8 +15,7 @@ I18NUtil.init = function (module) {
         type: "POST",
         async: false,
         data: {
-            module: module,
-            lang: lang
+            module: module
         },
         success: function (data) {
             dictionary = data['dictionary'];
