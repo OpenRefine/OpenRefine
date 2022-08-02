@@ -623,7 +623,8 @@ Refine.getPermanentLink = function() {
     });
 
     if(systemInfo.memoryWarn()) {
-      alert(`Your memory is running out. ${systemInfo.byteToMB(systemInfo.availableMemory)}MB is left.\n`)
+      var container = $('<div id="notification-container">').appendTo(document.body);
+      $('<div id="notification">').text($.i18n('core-project/memory-warn')).appendTo(container);
     }
   }, 1000)
 })();
