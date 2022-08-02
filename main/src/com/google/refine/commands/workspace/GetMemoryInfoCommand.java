@@ -10,14 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class GetSystemInfoCommand extends Command {
-    private static final SystemInfo systemInfo = new SystemInfo();
-    private static final GlobalMemory systemMemory = systemInfo.getHardware().getMemory();
+public class GetMemoryInfoCommand extends Command {
+    private static final GlobalMemory systemMemory = new SystemInfo().getHardware().getMemory();
 
-
-    public static class SysInfo {
-        @JsonProperty("os_version")
-        protected String os = systemInfo.getOperatingSystem().toString();
+    public static class MemoryInfo {
 
         @JsonProperty("available_memory")
         protected Long availableMemory = systemMemory.getAvailable();
@@ -29,7 +25,7 @@ public class GetSystemInfoCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        respondJSON(response, new SysInfo());
+        respondJSON(response, new MemoryInfo());
     }
 
     @Override

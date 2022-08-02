@@ -593,7 +593,6 @@ Refine.getPermanentLink = function() {
 
 (function() {
   const systemInfo = {
-    osVersion: "",
     availableMemory: 0,
     totalMemory: 0,
   };
@@ -609,13 +608,12 @@ Refine.getPermanentLink = function() {
   let intervalId;
   intervalId = setInterval(function() {
     $.ajax({
-      url: "command/core/get-system-info?",
+      url: "command/core/get-memory-info?",
       type: "GET",
       async: false,
       data: {
       },
       success: function(data) {
-        systemInfo.osVersion = data["os_version"];
         systemInfo.availableMemory = data["available_memory"];
         systemInfo.totalMemory = data["total_memory"];
       }
