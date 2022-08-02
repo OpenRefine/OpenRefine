@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.workspace;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class GetMemoryInfoCommand extends Command {
+
     private static final GlobalMemory systemMemory = new SystemInfo().getHardware().getMemory();
 
     public static class MemoryInfo {
