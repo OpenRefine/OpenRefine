@@ -67,7 +67,7 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
    });
 };
 
-I18NUtil.init();
+I18NUtil.init("core");
 
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){

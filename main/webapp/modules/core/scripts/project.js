@@ -35,7 +35,7 @@ var theProject;
 var thePreferences;
 var ui = {};
 
-I18NUtil.init();
+I18NUtil.init("core");
 
 var Refine = {};
 

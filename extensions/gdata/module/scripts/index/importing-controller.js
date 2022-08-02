@@ -31,25 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-//Internationalization init
-var lang = navigator.language.split("-")[0]
-		|| navigator.userLanguage.split("-")[0];
-var dictionary = "";
-$.ajax({
-	url : "command/core/load-language?",
-	type : "POST",
-	async : false,
-	data : {
-	  module : "gdata",
-//		lang : lang
-	},
-	success : function(data) {
-		dictionary = data['dictionary'];
-                lang = data['lang'];
-	}
-});
-$.i18n().load(dictionary, lang);
-// End internationalization
+I18NUtil.init("gdata");
 
 Refine.GDataImportingController = function(createProjectUI) {
   this._createProjectUI = createProjectUI;

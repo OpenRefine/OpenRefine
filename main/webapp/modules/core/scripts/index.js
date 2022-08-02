@@ -68,7 +68,7 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
    });
 };
 
-I18NUtil.init();
+I18NUtil.init("core");
 
 Refine.selectActionArea = function(id) {
   $('.action-area-tab').removeClass('selected');

@@ -1,6 +1,6 @@
 I18NUtil = {};
 
-var lang = (navigator.language || navigator.userLanguage).split("-")[0];
+var lang = (navigator.language).split("-")[0];
 var dictionary = "";
 
 /*
@@ -9,13 +9,14 @@ var dictionary = "";
    Note that the language is set by the 'userLang' user preference setting.  You can chnage that by
    clicking on 'Language Settings' on the landing page.
 */
-I18NUtil.init = function () {
+I18NUtil.init = function (module) {
     $.ajax({
         url: "command/core/load-language?",
         type: "POST",
         async: false,
         data: {
-            module: "core"
+            module: module,
+            lang: lang
         },
         success: function (data) {
             dictionary = data['dictionary'];
