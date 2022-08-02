@@ -45,12 +45,12 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Judge if a row matches by evaluating a given expression on the row, based on a particular
- * column, and checking the result. It's a match if the result satisfies some numeric comparisons, 
- * or if the result is non-numeric or blank or error and we want non-numeric or blank or error 
- * values. 
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
+ * result. It's a match if the result satisfies some numeric comparisons, or if the result is non-numeric or blank or
+ * error and we want non-numeric or blank or error values.
  */
 abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
+
     final protected RowEvaluable _rowEvaluable;
     final protected boolean _selectNumeric;
     final protected boolean _selectNonNumeric;
@@ -62,8 +62,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             boolean selectNumeric,
             boolean selectNonNumeric,
             boolean selectBlank,
-            boolean selectError
-    ) {
+            boolean selectError) {
         _rowEvaluable = rowEvaluable;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
@@ -74,7 +73,7 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     @Override
     public boolean filterRow(Project project, int rowIndex, Row row) {
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         Object value = _rowEvaluable.eval(project, rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
@@ -95,19 +94,19 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (checkValue(JsonValueConverter.convert(a.get(i)))) {
-                    	return true;
+                        return true;
                     }
                 }
                 return false;
             } // else, fall through
         }
-        
+
         return checkValue(value);
     }
-        
+
     protected boolean checkValue(Object v) {
         if (ExpressionUtils.isError(v)) {
             return _selectError;
@@ -126,6 +125,6 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             return _selectBlank;
         }
     }
-    
+
     abstract protected boolean checkValue(double d);
 }

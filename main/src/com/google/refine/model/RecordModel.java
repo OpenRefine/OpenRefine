@@ -46,10 +46,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
 
-public class RecordModel  {
+public class RecordModel {
+
     final static Logger logger = LoggerFactory.getLogger("RecordModel");
 
     final static public class CellDependency {
+
         final public int rowIndex;
         final public int cellIndex;
 
@@ -57,21 +59,22 @@ public class RecordModel  {
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
         }
-        
+
         @Override
         public String toString() {
-            return rowIndex+","+cellIndex;
+            return rowIndex + "," + cellIndex;
         }
     }
-    
+
     final static public class RowDependency {
+
         public int recordIndex;
         public CellDependency[] cellDependencies;
         public List<Integer> contextRows;
-        
+
         @Override
         public String toString() {
-            return "Idx: "+recordIndex+" CellDeps: "+Arrays.toString(cellDependencies)+" Rows:"+contextRows;
+            return "Idx: " + recordIndex + " CellDeps: " + Arrays.toString(cellDependencies) + " Rows:" + contextRows;
         }
     }
 
@@ -79,8 +82,7 @@ public class RecordModel  {
     protected List<Record> _records;
 
     public RowDependency getRowDependency(int rowIndex) {
-        return _rowDependencies != null && rowIndex >= 0 && rowIndex < _rowDependencies.size() ?
-                _rowDependencies.get(rowIndex) : null;
+        return _rowDependencies != null && rowIndex >= 0 && rowIndex < _rowDependencies.size() ? _rowDependencies.get(rowIndex) : null;
     }
 
     @JsonIgnore
@@ -89,8 +91,7 @@ public class RecordModel  {
     }
 
     public Record getRecord(int recordIndex) {
-        return _records != null && recordIndex >= 0 && recordIndex < _records.size() ?
-                _records.get(recordIndex) : null;
+        return _records != null && recordIndex >= 0 && recordIndex < _records.size() ? _records.get(recordIndex) : null;
     }
 
     public Record getRecordOfRow(int rowIndex) {
@@ -103,7 +104,7 @@ public class RecordModel  {
         }
         return null;
     }
-    
+
     @JsonProperty("hasRecords")
     public boolean hasRecords() {
         return _records != null && _rowDependencies != null &&
@@ -111,13 +112,14 @@ public class RecordModel  {
     }
 
     static protected class KeyedGroup {
-        int[]   cellIndices;
-        int     keyCellIndex;
-        
+
+        int[] cellIndices;
+        int keyCellIndex;
+
         @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            for (int i:cellIndices) {
+            for (int i : cellIndices) {
                 sb.append(i).append(',');
             }
             return "key: " + keyCellIndex + " cells: " + sb.toString();
@@ -149,7 +151,7 @@ public class RecordModel  {
                     KeyedGroup group = keyedGroups.get(g);
 
                     if (!ExpressionUtils.isNonBlankData(row.getCellValue(keyedGroups.get(0).keyCellIndex)) &&
-                        !ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
+                            !ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
                         int contextRowIndex = lastNonBlankRowsByGroup[g];
                         if (contextRowIndex >= 0) {
                             for (int dependentCellIndex : group.cellIndices) {
@@ -159,8 +161,7 @@ public class RecordModel  {
                                             rowDependency,
                                             dependentCellIndex,
                                             contextRowIndex,
-                                            group.keyCellIndex
-                                    );
+                                            group.keyCellIndex);
                                 }
                             }
                         }
@@ -230,6 +231,7 @@ public class RecordModel  {
         }
 
         Collections.sort(keyedGroups, new Comparator<KeyedGroup>() {
+
             @Override
             public int compare(KeyedGroup o1, KeyedGroup o2) {
                 return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
@@ -237,10 +239,10 @@ public class RecordModel  {
         });
 
         dumpKeyedGroups(keyedGroups, columnModel); // for debug
-        
+
         return keyedGroups;
     }
-    
+
     // debugging helper
     private void dumpKeyedGroups(List<KeyedGroup> groups, ColumnModel columnModel) {
         for (KeyedGroup g : groups) {
@@ -277,20 +279,18 @@ public class RecordModel  {
     }
 
     protected void setRowDependency(
-            Project project, 
-            RowDependency rowDependency, 
-            int cellIndex, 
-            int contextRowIndex, 
-            int contextCellIndex
-    ) {
+            Project project,
+            RowDependency rowDependency,
+            int cellIndex,
+            int contextRowIndex,
+            int contextCellIndex) {
         if (rowDependency.cellDependencies == null) {
             int count = project.columnModel.getMaxCellIndex() + 1;
 
             rowDependency.cellDependencies = new CellDependency[count];
         }
 
-        rowDependency.cellDependencies[cellIndex] = 
-            new CellDependency(contextRowIndex, contextCellIndex);
+        rowDependency.cellDependencies[cellIndex] = new CellDependency(contextRowIndex, contextCellIndex);
     }
 
 }

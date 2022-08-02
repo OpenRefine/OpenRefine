@@ -40,6 +40,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Project;
@@ -64,15 +65,15 @@ public class Cross implements Function {
                 targetProjectName = args[1];
             }
             // if 3rd argument is omitted or set to "", use the index column
-            Object targetColumnName = args.length < 3 || args[2].equals("") ? INDEX_COLUMN_NAME: args[2];
+            Object targetColumnName = args.length < 3 || args[2].equals("") ? INDEX_COLUMN_NAME : args[2];
 
             long targetProjectID;
             ProjectLookup lookup;
 
             if (v != null && targetProjectName instanceof String && targetColumnName instanceof String) {
                 try {
-                    targetProjectID = isCurrentProject ? ((Project) bindings.get("project")).id :
-                            ProjectManager.singleton.getProjectID((String) targetProjectName);
+                    targetProjectID = isCurrentProject ? ((Project) bindings.get("project")).id
+                            : ProjectManager.singleton.getProjectID((String) targetProjectName);
                 } catch (GetProjectIDException e) {
                     return new EvalError(e.getMessage());
                 }
@@ -91,7 +92,8 @@ public class Cross implements Function {
             }
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
+        // name to look up (optional), and a column name in that project (optional)");
+        return new EvalError(EvalErrorMessage.fun_cross_expects_value_project_column(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

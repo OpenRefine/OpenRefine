@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -34,10 +35,10 @@ public class ReconMediaInfoIdValue extends ReconEntityIdValue implements MediaIn
         super(recon, cellValue);
     }
 
-	@Override
-	public boolean isPlaceholder() {
-		return isNew();
-	}
+    @Override
+    public boolean isPlaceholder() {
+        return isNew();
+    }
 
     @Override
     public String getEntityType() {

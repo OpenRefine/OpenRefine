@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -52,19 +53,19 @@ public class And implements Function {
             }
             return true;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
+        return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-    	return FunctionDescription.bool_and();
+        return FunctionDescription.bool_and();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

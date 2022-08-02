@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
@@ -46,42 +47,46 @@ public class InnerXml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        return call(bindings,args,"xml");
+        return call(bindings, args, "xml");
     }
-    
+
     public Object call(Properties bindings, Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                if(mode.equals("xml")) {
+                Element e1 = (Element) o1;
+                if (mode.equals("xml")) {
                     return e1.children().toString();
                 } else if (mode.equals("html")) {
                     return e1.html();
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to determine whether XML or HTML is being used.");
+                    // whether XML or HTML is being used.");
+                    return new EvalError(
+                            EvalErrorMessage.unable_to_determine_if_xml_or_html(ControlFunctionRegistry.getFunctionName(this)));
                 }
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+                // is not an XML or HTML Element. Please first use parseXml() or parseHtml() and select(query) prior to
+                // using this function");
+                return new EvalError(
+                        EvalErrorMessage.failed_as_param_not_xml_or_html_element(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
+        // as an argument");
+        return new EvalError(EvalErrorMessage.expects_one_xml_or_html_element(ControlFunctionRegistry.getFunctionName(this)));
     }
-
 
     @Override
     public String getDescription() {
-    	return FunctionDescription.xml_innerxml();
+        return FunctionDescription.xml_innerxml();
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string innerXml";
     }
 }
-

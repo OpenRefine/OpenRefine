@@ -50,8 +50,7 @@ import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
-
-public class FileHistoryEntryManager implements HistoryEntryManager{
+public class FileHistoryEntryManager implements HistoryEntryManager {
 
     @Override
     public void delete(HistoryEntry historyEntry) {
@@ -64,11 +63,11 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
     @Override
     public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
         try {
-        	if("save".equals(options.getProperty("mode"))) {
-        		ParsingUtilities.saveWriter.writeValue(writer, historyEntry);
-        	} else {
-        		ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);
-        	}
+            if ("save".equals(options.getProperty("mode"))) {
+                ParsingUtilities.saveWriter.writeValue(writer, historyEntry);
+            } else {
+                ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +91,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
             ZipEntry poolEntry = zipFile.getEntry("pool.txt");
             if (poolEntry != null) {
                 pool.load(new InputStreamReader(
-                    zipFile.getInputStream(poolEntry)));
+                        zipFile.getInputStream(poolEntry)));
             } // else, it's a legacy project file
 
             historyEntry.setChange(History.readOneChange(
@@ -118,7 +117,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
             out.putNextEntry(new ZipEntry("change.txt"));
             try {
                 History.writeOneChange(out, historyEntry.getChange(), pool);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 out.closeEntry();
@@ -140,7 +139,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
     }
 
     protected File getHistoryDir(HistoryEntry historyEntry) {
-        File dir = new File(((FileProjectManager)ProjectManager.singleton)
+        File dir = new File(((FileProjectManager) ProjectManager.singleton)
                 .getProjectDir(historyEntry.projectID),
                 "history");
         dir.mkdirs();

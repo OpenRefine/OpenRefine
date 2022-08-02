@@ -44,7 +44,8 @@ module.exports = {
       ],
     },
     algolia: {
-	    apiKey: '591fc612419d2e5b6bee6822cc17064f',
+	    apiKey: 'c933f37529f61e969dd96b2a0ddd08a4',
+            appId: '2ROSQW3VSY',
 	    indexName: 'openrefine',
 	    contextualSearch: true,
     },

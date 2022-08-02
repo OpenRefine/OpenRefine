@@ -50,13 +50,13 @@ import com.google.refine.model.Row;
 /**
  * Faceted browsing engine.
  */
-public class Engine  {
+public class Engine {
+
     static public enum Mode {
         @JsonProperty("row-based")
-        RowBased,
-        @JsonProperty("record-based")
+        RowBased, @JsonProperty("record-based")
         RecordBased
-       
+
     }
 
     public final static String INCLUDE_DEPENDENT = "includeDependent";
@@ -74,18 +74,20 @@ public class Engine  {
     static public String modeToString(Mode mode) {
         return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
     }
+
     static public Mode stringToMode(String s) {
         return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
     }
 
     public Engine(Project project) {
-        _project  = project;
+        _project = project;
     }
 
     @JsonProperty("engine-mode")
     public Mode getMode() {
         return _config.getMode();
     }
+
     public void setMode(Mode mode) {
         _config = new EngineConfig(_config.getFacetConfigs(), mode);
     }
@@ -93,6 +95,7 @@ public class Engine  {
     @JsonIgnore
     public FilteredRows getAllRows() {
         return new FilteredRows() {
+
             @Override
             public void accept(Project project, RowVisitor visitor) {
                 try {
@@ -138,6 +141,7 @@ public class Engine  {
     @JsonIgnore
     public FilteredRecords getAllRecords() {
         return new FilteredRecords() {
+
             @Override
             public void accept(Project project, RecordVisitor visitor) {
                 try {
@@ -174,7 +178,7 @@ public class Engine  {
         }
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
-    
+
     public void initializeFromConfig(EngineConfig config) {
         _config = config;
         _facets = config.getFacetConfigs().stream()

@@ -33,12 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.controls;
 
+import com.google.refine.grel.ControlDescription;
 import org.apache.commons.lang.StringUtils;
 
 public class IsNumeric extends IsTest {
+
     @Override
     public String getDescription() {
-        return "Returns whether o can represent a number";
+        return ControlDescription.is_numeric_desc();
     }
 
     @Override
@@ -46,9 +48,9 @@ public class IsNumeric extends IsTest {
         if (o instanceof Number) {
             return true;
         }
-        
+
         String s = (o instanceof String) ? (String) o : o.toString();
-        
+
         return StringUtils.isNumeric(s);
     }
 }

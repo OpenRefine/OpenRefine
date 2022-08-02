@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,19 +54,19 @@ public class SplitByCharType implements Function {
                 return StringUtils.splitByCharacterType(s);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_split_by_char_type();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

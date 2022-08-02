@@ -77,7 +77,7 @@
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>2.18.0</log4j.version>
-    <jetty.version>9.4.46.v20220331</jetty.version>
+    <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.5.0</jena.version>
     <poi.version>5.2.2</poi.version>
@@ -113,7 +113,7 @@
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+    <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
@@ -278,8 +278,6 @@
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>
             <source>11</source>
-            <!-- disable error checks for now (TODO: clean up those errors) -->
-            <doclint>none</doclint>
         </configuration>
         <executions>
           <execution>
@@ -296,6 +294,9 @@
         <version>2.17.1</version>
         <configuration>
           <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
+          <excludes> <!-- file should not be linted because it was copied from a dependency (sigh) -->
+            <exclude>**/Metaphone3.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>

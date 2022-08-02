@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
@@ -50,17 +51,15 @@ public class Reverse implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof ArrayNode) {
                     v = JSONUtilities.toArray((ArrayNode) v);
                 }
-                
+
                 if (v.getClass().isArray() || v instanceof List<?>) {
-                    int length = v.getClass().isArray() ? 
-                            ((Object[]) v).length :
-                            ExpressionUtils.toObjectList(v).size();
-                    
+                    int length = v.getClass().isArray() ? ((Object[]) v).length : ExpressionUtils.toObjectList(v).size();
+
                     Object[] r = new Object[length];
                     if (v.getClass().isArray()) {
                         Object[] a = (Object[]) v;
@@ -77,19 +76,19 @@ public class Reverse implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+        return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.arr_reverse();
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

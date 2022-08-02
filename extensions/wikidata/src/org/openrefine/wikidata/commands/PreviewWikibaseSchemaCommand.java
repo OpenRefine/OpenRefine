@@ -27,7 +27,9 @@ package org.openrefine.wikidata.commands;
 import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -40,23 +42,24 @@ import org.openrefine.wikidata.manifests.ManifestParser;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.schema.validation.ValidationError;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.EntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
-	
-	/**
-	 * This command uses POST but is left CSRF-unprotected since it does not
-	 * incur a side effect or state change in the backend.
-	 * The reason why it uses POST is to make sure large schemas and engines
-	 * can be passed as parameters.
-	 */
-    
+
+    /**
+     * This command uses POST but is left CSRF-unprotected since it does not incur a side effect or state change in the
+     * backend. The reason why it uses POST is to make sure large schemas and engines can be passed as parameters.
+     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -74,7 +77,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     schema = WikibaseSchema.reconstruct(schemaJson);
                 } catch (IOException e) {
-                    respondError(response, "Wikibase schema could not be parsed. Error message: "+e.getMessage());
+                    respondError(response, "Wikibase schema could not be parsed. Error message: " + e.getMessage());
                     return;
                 }
             } else {
@@ -82,6 +85,19 @@ public class PreviewWikibaseSchemaCommand extends Command {
             }
             if (schema == null) {
                 respondError(response, "No Wikibase schema provided.");
+                return;
+            }
+
+            ValidationState validation = new ValidationState(project.columnModel);
+            schema.validate(validation);
+            List<ValidationError> errors = validation.getValidationErrors();
+            if (!errors.isEmpty()) {
+                Map<String, Object> json = new HashMap<>();
+                json.put("code", "error");
+                json.put("reason", "invalid-schema");
+                json.put("message", "Invalid Wikibase schema");
+                json.put("errors", errors);
+                Command.respondJSON(response, json);
                 return;
             }
 
@@ -109,7 +125,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest);
             inspector.inspect(editBatch, schema);
-            
+
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
             List<EntityEdit> nonNullEdits = scheduler.schedule(editBatch).stream()

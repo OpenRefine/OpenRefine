@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFieldsList {
+
     private static final long serialVersionUID = -8635194387420305802L;
 
     @Override
@@ -69,12 +70,12 @@ public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFields
         int c = size();
         return (c > 0 && get(0).fieldAlsoHasFields(name));
     }
-    
+
     @Override
     public HasFieldsList getSubList(int fromIndex, int toIndex) {
         HasFieldsListImpl subList = new HasFieldsListImpl();
         subList.addAll(this.subList(fromIndex, toIndex));
-        
+
         return subList;
     }
 }

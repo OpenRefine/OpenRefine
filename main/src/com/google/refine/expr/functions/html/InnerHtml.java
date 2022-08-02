@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.html;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
@@ -52,27 +53,30 @@ public class InnerHtml implements Function {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(bindings, args, "html");
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+            } else {
+                // new Type().call(bindings, args) + "'. The first parameter is not an HTML Element. Please first use
+                // parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(EvalErrorMessage.html_cannot_work_with_this_use_parse_html(
+                        ControlFunctionRegistry.getFunctionName(this), new Type().call(bindings, args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single String as an argument");
+        // Type().call(bindings, args) + "' and expects a single String as an argument");
+        return new EvalError(EvalErrorMessage.html_cannot_work_with_this_expects_one_string(ControlFunctionRegistry.getFunctionName(this),
+                new Type().call(bindings, args)));
     }
-
 
     @Override
     public String getDescription() {
         return FunctionDescription.html_inner_html();
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string innerHtml";
     }
 }
-

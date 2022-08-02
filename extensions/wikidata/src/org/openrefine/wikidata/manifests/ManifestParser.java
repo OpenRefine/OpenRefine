@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.manifests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +26,7 @@ public final class ManifestParser {
         }
         return parse(root);
     }
-    
+
     public static Manifest parse(JsonNode manifestJson) throws ManifestException {
         String version = manifestJson.path("version").textValue();
         if (StringUtils.isBlank(version)) {
@@ -40,11 +41,11 @@ public final class ManifestParser {
         if ("1".equals(majorVersion)) {
             return new ManifestV1(manifestJson);
         } else if ("2".equals(majorVersion)) {
-        	try {
-				return new ManifestV2(manifestJson);
-			} catch (IOException e) {
-				throw new ManifestException("invalid manifest format: " + e.getMessage());
-			}
+            try {
+                return new ManifestV2(manifestJson);
+            } catch (IOException e) {
+                throw new ManifestException("invalid manifest format: " + e.getMessage());
+            }
         } else {
             throw new ManifestException("unsupported manifest version: " + version);
         }

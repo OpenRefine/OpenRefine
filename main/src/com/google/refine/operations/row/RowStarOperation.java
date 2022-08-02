@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -49,20 +49,21 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
+import com.google.refine.operations.OperationHistoryEntry;
 
 public class RowStarOperation extends EngineDependentOperation {
+
     final protected boolean _starred;
 
     @JsonCreator
     public RowStarOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("starred")
-            boolean starred) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("starred") boolean starred) {
         super(engineConfig);
         _starred = starred;
     }
-    
+
     @JsonProperty("starred")
     public boolean getStarred() {
         return _starred;
@@ -70,36 +71,37 @@ public class RowStarOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return (_starred ? "Star rows" : "Unstar rows");
+        return _starred ? OperationDescription.row_star_brief() : OperationDescription.row_unstar_brief();
     }
 
-   @Override
-protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+    @Override
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         List<Change> changes = new ArrayList<Change>(project.rows.size());
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, changes));
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
-            this, 
-            new MassChange(changes, false)
-        );
+                historyEntryID,
+                project,
+                // (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows",
+                _starred ? OperationHistoryEntry.row_star(changes.size()) : OperationHistoryEntry.row_unstar(changes.size()),
+                this,
+                new MassChange(changes, false));
     }
 
     protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
         return new RowVisitor() {
+
             List<Change> changes;
-            
+
             public RowVisitor init(List<Change> changes) {
                 this.changes = changes;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -109,12 +111,12 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.starred != _starred) {
                     RowStarChange change = new RowStarChange(rowIndex, _starred);
-                    
+
                     changes.add(change);
                 }
                 return false;

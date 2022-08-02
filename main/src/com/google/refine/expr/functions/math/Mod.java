@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -44,27 +45,27 @@ public class Mod implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && 
+        if (args.length == 2 &&
                 args[0] instanceof Number &&
                 args[1] instanceof Number) {
             int a = ((Number) args[0]).intValue();
             int b = ((Number) args[1]).intValue();
-            
+
             return a % b;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.math_mod();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

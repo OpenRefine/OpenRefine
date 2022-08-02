@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
@@ -50,31 +51,31 @@ public class SelectXml implements Function {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                if(o2 != null && o2 instanceof String){
+                Element e1 = (Element) o1;
+                if (o2 != null && o2 instanceof String) {
                     return e1.select(o2.toString());
                 }
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml()");
+            } else {
+                // is not an XML or HTML Element. Please first use parseXml() or parseHtml()");
+                return new EvalError(
+                        EvalErrorMessage.failed_as_param_not_xml_or_html_element(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
+        return new EvalError(EvalErrorMessage.expects_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
-
 
     @Override
     public String getDescription() {
         return FunctionDescription.xml_selectxml();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "HTML Elements";
     }
 }
-

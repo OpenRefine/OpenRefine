@@ -223,7 +223,7 @@
     "core-dialogs/row-fields": "Nykyinen rivi. Siinä on 5 kenttää: \"flagged\", \"starred\", \"index\", \"cells\" ja \"record\".",
     "core-dialogs/row-index": "Nykyisen rivin indeksi. Tämä on lyhenne sanalle 'row.index'.",
     "clustering-keyers/cologne-phonetic": "Köln-foneettinen",
-    "clustering-distances/levenshtein": "",
+    "clustering-distances/levenshtein": "levenshtein",
     "core-dialogs/ngram-size": "Ngram&nbsp;koko&nbsp;",
     "core-dialogs/ngram-radius": "Säde&nbsp;",
     "core-dialogs/block-chars": "Lohko&nbsp;merkit&nbsp;",
@@ -253,5 +253,14 @@
     "core-dialogs/content": "Sisältö",
     "core-dialogs/download": "Lataa",
     "core-dialogs/upload": "Lähetä",
-    "core-dialogs/opt-code": "Optiokoodi"
+    "core-dialogs/opt-code": "Optiokoodi",
+    "core-index-import/invalid-url": "URL ei kelpaa",
+    "core-index-import/blank-url": "Tyhjä URL",
+    "core-index-parser/update-format-failed": "Pyyntö jäsentää ja formatoida dataa epäonnistui",
+    "core-index/rows-loading-failed": "Rivien lataaminen epäonnistui.",
+    "core-index-import/match-count": "$1 {{plural:$1|osuma|osumaa}}",
+    "core-index-import/file-count": "$1 {{plural:$1|tiedosto|tiedostoa}}",
+    "core-index-import/load-json-rows-error": "JSON-datan jäsentäminen epäonnistui",
+    "core-index-import/load-xml-rows-error": "XML-datan jäsentäminen epäonnistui",
+    "core-index-import/remove-row": "Poista tämä rivi"
 }

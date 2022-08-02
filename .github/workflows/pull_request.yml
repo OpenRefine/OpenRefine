@@ -77,7 +77,7 @@ jobs:
     - name: Check Java linting
       id: java_linting
       run: |
-        mvn formatter:validate
+        mvn compile formatter:validate javadoc:javadoc -Ddoclint=all
 
     - name: Configure connections to databases
       id: configure_db_connections

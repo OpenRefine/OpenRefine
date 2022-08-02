@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine;
 
 import com.google.refine.expr.ExpressionUtils;
@@ -47,11 +48,12 @@ public class LookupCacheManager {
     protected final Map<String, ProjectLookup> _lookups = new HashMap<>();
 
     /**
-     * Computes the ProjectLookup based on combination key,
-     * returns the cached one from the HashMap if already computed.
+     * Computes the ProjectLookup based on combination key, returns the cached one from the HashMap if already computed.
      *
-     * @param targetProject the project to look up
-     * @param targetColumn  the column of the target project to look up
+     * @param targetProject
+     *            the project to look up
+     * @param targetColumn
+     *            the column of the target project to look up
      * @return a {@link ProjectLookup} instance of the lookup result
      */
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
@@ -70,7 +72,7 @@ public class LookupCacheManager {
 
     public void flushLookupsInvolvingProject(long projectID) {
         synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext();) {
                 Map.Entry<String, ProjectLookup> entry = it.next();
                 ProjectLookup lookup = entry.getValue();
                 if (lookup.targetProjectID == projectID) {
@@ -82,7 +84,7 @@ public class LookupCacheManager {
 
     public void flushLookupsInvolvingProjectColumn(long projectID, String columnName) {
         synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext();) {
                 Map.Entry<String, ProjectLookup> entry = it.next();
                 ProjectLookup lookup = entry.getValue();
                 if (lookup.targetProjectID == projectID && lookup.targetColumnName.equals(columnName)) {
@@ -106,14 +108,15 @@ public class LookupCacheManager {
         // if this is a lookup on the index column
         if (lookup.targetColumnName.equals(Cross.INDEX_COLUMN_NAME)) {
             for (int r = 0; r < targetProject.rows.size(); r++) {
-                lookup.valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
+                lookup.valueToRowIndices.put(String.valueOf(r), Collections.singletonList(r));
             }
             return; // return directly
         }
 
         Column targetColumn = targetProject.columnModel.getColumnByName(lookup.targetColumnName);
         if (targetColumn == null) {
-            throw new LookupException("Unable to find column " + lookup.targetColumnName + " in project " + targetProjectMetadata.getName());
+            throw new LookupException(
+                    "Unable to find column " + lookup.targetColumnName + " in project " + targetProjectMetadata.getName());
         }
 
         // We can't use for-each here, because we'll need the row index when creating WrappedRow

@@ -39,16 +39,17 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 
 public class WrappedCell implements HasFields {
+
     final public Project project;
     final public String columnName;
     final public Cell cell;
-    
+
     public WrappedCell(Project project, String columnName, Cell cell) {
         this.project = project;
         this.columnName = columnName;
         this.cell = cell;
     }
-    
+
     @Override
     public Object getField(String name, Properties bindings) {
         return cell.getField(name, bindings);

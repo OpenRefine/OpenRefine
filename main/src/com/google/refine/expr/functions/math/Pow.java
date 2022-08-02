@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -46,23 +47,22 @@ public class Pow implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
             return Math.pow(
-                ((Number) args[0]).doubleValue(),
-                ((Number) args[1]).doubleValue()
-            );
+                    ((Number) args[0]).doubleValue(),
+                    ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.math_pow();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database.cmd;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseServiceException;
 
 public abstract class DatabaseCommand extends Command {
-    
+
     private static final Logger logger = LoggerFactory.getLogger("DatabaseCommand");
 
     /**
@@ -55,59 +56,60 @@ public abstract class DatabaseCommand extends Command {
         jdbcConfig.setConnectionName(request.getParameter("connectionName"));
         jdbcConfig.setDatabaseType(request.getParameter("databaseType"));
         jdbcConfig.setDatabaseHost(request.getParameter("databaseServer"));
-        
+
         String dbPort = request.getParameter("databasePort");
-        if(dbPort != null) {
+        if (dbPort != null) {
             try {
                 jdbcConfig.setDatabasePort(Integer.parseInt(dbPort));
-            }catch(NumberFormatException nfe) {}
+            } catch (NumberFormatException nfe) {
+            }
         }
-      
+
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
         jdbcConfig.setDatabasePassword(request.getParameter("databasePassword"));
         jdbcConfig.setDatabaseName(request.getParameter("initialDatabase"));
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
-        
-        if(logger.isDebugEnabled()) {
+
+        if (logger.isDebugEnabled()) {
             logger.debug("JDBC Configuration: {}", jdbcConfig);
         }
         return jdbcConfig;
     }
+
     /**
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */
     protected void sendError(int status, HttpServletResponse response, Exception e)
-            throws  IOException {
-        
-       //logger.info("sendError::{}", writer);
-       response.sendError(status, e.getMessage());
+            throws IOException {
+
+        // logger.info("sendError::{}", writer);
+        response.sendError(status, e.getMessage());
 
     }
+
     /**
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */
     protected void sendError(int status, HttpServletResponse response, DatabaseServiceException e)
             throws IOException {
-        
+
         String message = "";
-        
-        if(e.getSqlState() != null) {
-            
+
+        if (e.getSqlState() != null) {
+
             message = message + "SqlCode:" + e.getSqlCode() + "SqlState" + e.getSqlState();
         }
-        
+
         message = message + e.getMessage();
-    
+
         response.sendError(status, e.getMessage());
 
     }

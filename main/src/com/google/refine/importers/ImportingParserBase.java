@@ -60,17 +60,19 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class ImportingParserBase implements ImportingParser {
+
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
     final protected boolean useInputStream;
-    
+
     /**
-     * @param useInputStream true if parser takes an InputStream, false if it takes a Reader.
+     * @param useInputStream
+     *            true if parser takes an InputStream, false if it takes a Reader.
      */
     protected ImportingParserBase(boolean useInputStream) {
         this.useInputStream = useInputStream;
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ObjectNode> fileRecords, String format) {
@@ -80,7 +82,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         EncodingGuesser.guessInitialEncoding(fileRecords, options);
         return options;
     }
-    
+
     @Override
     public void parse(Project project, ProjectMetadata metadata,
             final ImportingJob job, List<ObjectNode> fileRecords, String format,
@@ -90,37 +92,36 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (job.canceled) {
                 break;
             }
-            
+
             try {
                 parseOneFile(project, metadata, job, fileRecord, limit, options, exceptions, progress);
             } catch (IOException e) {
                 exceptions.add(e);
             }
-            
+
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
         }
     }
-    
+
     // TODO: Make private? At least protected?
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        ObjectNode fileRecord,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions,
-        final MultiFileReadingProgress progress
-    ) throws IOException {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            ObjectNode fileRecord,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions,
+            final MultiFileReadingProgress progress) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
         int filenameColumnIndex = -1;
         int archiveColumnIndex = -1;
         int startingRowCount = project.rows.size();
-        
+
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
@@ -131,7 +132,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                     archiveColumnIndex = addArchiveColumn(project);
                 }
                 if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
-                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
+                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >= 0);
                 }
 
                 if (useInputStream) {
@@ -173,11 +174,9 @@ abstract public class ImportingParserBase implements ImportingParser {
             progress.endFile(fileSource, file.length());
         }
     }
-    
-    
+
     /**
-     * Parsing method to be implemented by Reader-based parsers.
-     * ie those initialized with useInputStream == false
+     * Parsing method to be implemented by Reader-based parsers. ie those initialized with useInputStream == false
      * 
      * @param project
      * @param metadata
@@ -189,28 +188,26 @@ abstract public class ImportingParserBase implements ImportingParser {
      * @param exceptions
      */
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         throw new NotImplementedException();
     }
 
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        InputStream inputStream,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         throw new NotImplementedException();
     }
 
@@ -219,8 +216,8 @@ abstract public class ImportingParserBase implements ImportingParser {
      */
     @Deprecated
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
-        String fileNameColumnName = "File";  // TODO: Localize?
-        int columnId = archiveColumnAdded? 1 : 0;
+        String fileNameColumnName = "File"; // TODO: Localize?
+        int columnId = archiveColumnAdded ? 1 : 0;
         return addColumn(project, fileNameColumnName, columnId);
     }
 
@@ -237,13 +234,12 @@ abstract public class ImportingParserBase implements ImportingParser {
                 return columnId;
             } catch (ModelException e) {
                 // Shouldn't happen: We already checked for duplicate name.
-                logger.error("ModelException adding Filename column",e);
+                logger.error("ModelException adding Filename column", e);
             }
             return -1;
         } else {
             return columnId;
         }
     }
-
 
 }

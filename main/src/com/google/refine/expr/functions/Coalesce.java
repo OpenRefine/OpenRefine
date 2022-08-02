@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -44,8 +45,8 @@ public class Coalesce implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length> 1) {
-            for (int i = 0; i < args.length; i++){
+        if (args.length > 1) {
+            for (int i = 0; i < args.length; i++) {
                 if (args[i] == null) {
                     continue;
                 } else {
@@ -54,23 +55,22 @@ public class Coalesce implements Function {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least two arguments");
+        return new EvalError(EvalErrorMessage.expects_at_least_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.fun_coalesce();
     }
-    
+
     @Override
     public String getParams() {
         return "o1, o2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "object or null";
     }
-  
-    			
+
 }

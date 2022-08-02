@@ -24,20 +24,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.util;
 
+package com.google.refine.util;
 
 /**
  * Set of classes which define JSON visibility of certain fields.
+ * 
  * @author Antonin Delpeuch
  *
  */
 public class JsonViews {
-    
+
     public static class SaveMode {
         ;
     }
-    
+
     public static class NonSaveMode {
         ;
     }

@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -41,8 +42,8 @@ public class TimeSinceUnixEpochToDate implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " accepts a number and an optional second argument containing a string specifying the units");
+        // + " accepts a number and an optional second argument containing a string specifying the units");
+        return new EvalError(EvalErrorMessage.fun_time_since_unix_epoch_to_date(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

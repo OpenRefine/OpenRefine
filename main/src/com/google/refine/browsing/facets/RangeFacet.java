@@ -57,58 +57,50 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
 public class RangeFacet implements Facet {
-    
+
     public static final String ERR_NO_NUMERIC_VALUE_PRESENT = "No numeric value present.";
-    
+
     /*
      * Configuration, from the client side
      */
     public static class RangeFacetConfig implements FacetConfig {
+
         @JsonProperty("name")
-        protected String     _name;       // name of facet
+        protected String _name; // name of facet
         @JsonProperty("expression")
-        protected String     _expression; // expression to compute numeric value(s) per row
+        protected String _expression; // expression to compute numeric value(s) per row
         @JsonProperty("columnName")
-        protected String     _columnName; // column to base expression on, if any
-        
+        protected String _columnName; // column to base expression on, if any
+
         @JsonProperty(FROM)
-        protected double    _from; // the numeric selection
+        protected double _from; // the numeric selection
         @JsonProperty(TO)
-        protected double    _to;
-        
+        protected double _to;
+
         @JsonProperty("selectNumeric")
-        protected boolean   _selectNumeric; // whether the numeric selection applies, default true
+        protected boolean _selectNumeric; // whether the numeric selection applies, default true
         @JsonProperty("selectNonNumeric")
-        protected boolean   _selectNonNumeric;
+        protected boolean _selectNonNumeric;
         @JsonProperty("selectBlank")
-        protected boolean   _selectBlank;
+        protected boolean _selectBlank;
         @JsonProperty("selectError")
-        protected boolean   _selectError;
-        
+        protected boolean _selectError;
+
         @JsonIgnore
-        protected boolean    _selected; // false if we're certain that all rows will match
-                        // and there isn't any filtering to do
-        
+        protected boolean _selected; // false if we're certain that all rows will match
+        // and there isn't any filtering to do
+
         @JsonCreator
         public RangeFacetConfig(
-                @JsonProperty("name")
-                String name,
-                @JsonProperty("expression")
-                String expression,
-                @JsonProperty("columnName")
-                String columnName,
-                @JsonProperty(FROM)
-                Double from,
-                @JsonProperty(TO)
-                Double to,
-                @JsonProperty("selectNumeric")
-                Boolean selectNumeric,
-                @JsonProperty("selectNonNumeric")
-                Boolean selectNonNumeric,
-                @JsonProperty("selectBlank")
-                Boolean selectBlank,
-                @JsonProperty("selectError")
-                Boolean selectError) {
+                @JsonProperty("name") String name,
+                @JsonProperty("expression") String expression,
+                @JsonProperty("columnName") String columnName,
+                @JsonProperty(FROM) Double from,
+                @JsonProperty(TO) Double to,
+                @JsonProperty("selectNumeric") Boolean selectNumeric,
+                @JsonProperty("selectNonNumeric") Boolean selectNonNumeric,
+                @JsonProperty("selectBlank") Boolean selectBlank,
+                @JsonProperty("selectError") Boolean selectError) {
             _name = name;
             _expression = expression;
             _columnName = columnName;
@@ -120,7 +112,7 @@ public class RangeFacet implements Facet {
             _selectError = selectError == null ? true : selectError;
             _selected = !_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError || from != null || to != null;
         }
-        
+
         @Override
         public RangeFacet apply(Project project) {
             RangeFacet facet = new RangeFacet();
@@ -133,41 +125,42 @@ public class RangeFacet implements Facet {
             return "range";
         }
     }
+
     RangeFacetConfig _config = null;
-    
+
     /*
      * Derived configuration data
      */
-    protected int        _cellIndex;
-    protected Evaluable  _eval;
-    protected String     _errorMessage;
-    
+    protected int _cellIndex;
+    protected Evaluable _eval;
+    protected String _errorMessage;
+
     /*
      * Computed data, to return to the client side
      */
-    protected double    _min;
-    protected double    _max;
-    protected double    _step;
-    protected int[]     _baseBins;
-    protected int[]     _bins;
-    
+    protected double _min;
+    protected double _max;
+    protected double _step;
+    protected int[] _baseBins;
+    protected int[] _bins;
+
     @JsonProperty("baseNumericCount")
-    protected int       _baseNumericCount;
+    protected int _baseNumericCount;
     @JsonProperty("baseNonNumericCount")
-    protected int       _baseNonNumericCount;
+    protected int _baseNonNumericCount;
     @JsonProperty("baseBlankCount")
-    protected int       _baseBlankCount;
+    protected int _baseBlankCount;
     @JsonProperty("baseErrorCount")
-    protected int       _baseErrorCount;
-    
+    protected int _baseErrorCount;
+
     @JsonProperty("numericCount")
-    protected int       _numericCount;
+    protected int _numericCount;
     @JsonProperty("nonNumericCount")
-    protected int       _nonNumericCount;
+    protected int _nonNumericCount;
     @JsonProperty("blankCount")
-    protected int       _blankCount;
+    protected int _blankCount;
     @JsonProperty("errorCount")
-    protected int       _errorCount;
+    protected int _errorCount;
 
     public RangeFacet() {
     }
@@ -176,22 +169,22 @@ public class RangeFacet implements Facet {
     protected static final String MAX = "max";
     protected static final String TO = "to";
     protected static final String FROM = "from";
-    
+
     @JsonProperty("name")
     public String getName() {
         return _config._name;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _config._expression;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _config._columnName;
     }
-    
+
     @JsonProperty("error")
     @JsonInclude(Include.NON_NULL)
     public String getError() {
@@ -202,12 +195,12 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonIgnore
     public boolean isFiniteRange() {
         return !Double.isInfinite(_min) && !Double.isInfinite(_max);
     }
-    
+
     @JsonProperty(MIN)
     @JsonInclude(Include.NON_NULL)
     public Double getMin() {
@@ -216,7 +209,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty(MAX)
     @JsonInclude(Include.NON_NULL)
     public Double getMax() {
@@ -225,7 +218,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("step")
     @JsonInclude(Include.NON_NULL)
     public Double getStep() {
@@ -234,7 +227,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("bins")
     @JsonInclude(Include.NON_NULL)
     public int[] getBins() {
@@ -243,7 +236,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("baseBins")
     @JsonInclude(Include.NON_NULL)
     public int[] getBaseBins() {
@@ -252,7 +245,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty(FROM)
     @JsonInclude(Include.NON_NULL)
     public Double getFrom() {
@@ -261,7 +254,7 @@ public class RangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty(TO)
     @JsonInclude(Include.NON_NULL)
     public Double getTo() {
@@ -269,11 +262,11 @@ public class RangeFacet implements Facet {
             return _config._to;
         }
         return null;
-    }    
+    }
 
     public void initializeFromConfig(RangeFacetConfig config, Project project) {
         _config = config;
-        
+
         if (_config._columnName.length() > 0) {
             Column column = project.columnModel.getColumnByName(_config._columnName);
             if (column != null) {
@@ -284,7 +277,7 @@ public class RangeFacet implements Facet {
         } else {
             _cellIndex = -1;
         }
-        
+
         try {
             _eval = MetaParser.parse(_config._expression);
         } catch (ParsingException e) {
@@ -296,7 +289,8 @@ public class RangeFacet implements Facet {
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _config._selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    getRowEvaluable(project), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank, _config._selectError) {
+                    getRowEvaluable(project), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank,
+                    _config._selectError) {
 
                 @Override
                 protected boolean checkValue(double d) {
@@ -318,7 +312,7 @@ public class RangeFacet implements Facet {
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
-            
+
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:row-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
@@ -326,22 +320,21 @@ public class RangeFacet implements Facet {
                 index = new NumericBinRowIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
-            
+
             retrieveDataFromBaseBinIndex(index);
-            
-            ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(rowEvaluable, index);
-            
+
+            ExpressionNumericValueBinner binner = new ExpressionNumericValueBinner(rowEvaluable, index);
+
             filteredRows.accept(project, binner);
             retrieveDataFromBinner(binner);
         }
     }
-    
+
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
-            
+
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:record-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
@@ -349,33 +342,32 @@ public class RangeFacet implements Facet {
                 index = new NumericBinRecordIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
-            
+
             retrieveDataFromBaseBinIndex(index);
-            
-            ExpressionNumericValueBinner binner = 
-                new ExpressionNumericValueBinner(rowEvaluable, index);
-            
+
+            ExpressionNumericValueBinner binner = new ExpressionNumericValueBinner(rowEvaluable, index);
+
             filteredRecords.accept(project, binner);
-            
+
             retrieveDataFromBinner(binner);
         }
     }
-    
+
     protected RowEvaluable getRowEvaluable(Project project) {
         return new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _eval);
     }
-    
+
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
         _min = index.getMin();
         _max = index.getMax();
         _step = index.getStep();
         _baseBins = index.getBins();
-        
+
         _baseNumericCount = index.getNumericRowCount();
         _baseNonNumericCount = index.getNonNumericRowCount();
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
-        
+
         if (_config._selected) {
             _config._from = Math.max(_config._from, _min);
             _config._to = Math.min(_config._to, _max);
@@ -384,7 +376,7 @@ public class RangeFacet implements Facet {
             _config._to = _max;
         }
     }
-    
+
     protected void retrieveDataFromBinner(ExpressionNumericValueBinner binner) {
         _bins = binner.bins;
         _numericCount = binner.numericCount;

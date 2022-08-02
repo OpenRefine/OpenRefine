@@ -45,17 +45,18 @@ import com.google.refine.model.ColumnGroup;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class ColumnChange implements Change {
-    
+
     static public void writeOldColumnGroups(Writer writer, Properties options,
             List<ColumnGroup> oldColumnGroups) throws IOException {
         writer.write("oldColumnGroupCount=");
-        writer.write(Integer.toString(oldColumnGroups.size())); writer.write('\n');
-        for (ColumnGroup cg : oldColumnGroups) {     
+        writer.write(Integer.toString(oldColumnGroups.size()));
+        writer.write('\n');
+        for (ColumnGroup cg : oldColumnGroups) {
             ParsingUtilities.saveWriter.writeValue(writer, cg);
             writer.write('\n');
         }
     }
-    
+
     static public List<ColumnGroup> readOldColumnGroups(
             LineNumberReader reader, int oldColumnGroupCount) throws Exception {
         List<ColumnGroup> oldColumnGroups = new ArrayList<ColumnGroup>(oldColumnGroupCount);

@@ -24,30 +24,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.importers.tree;
 
+package com.google.refine.importers.tree;
 
 /**
  * A column is used to describe a branch-terminating element in a tree structure
  *
  */
 public class ImportColumn extends ImportVertical {
+
     /**
      * Index of this column.
      */
-    public int      cellIndex;
+    public int cellIndex;
     /**
      * Index of next row to allocate.
      */
-    public int      nextRowIndex;  // TODO: this can be hoisted into superclass
+    public int nextRowIndex; // TODO: this can be hoisted into superclass
     /**
      * ??? - this field is never written to
      */
-    public boolean  blankOnFirstRow;
+    public boolean blankOnFirstRow;
 
-    public ImportColumn() {}
+    public ImportColumn() {
+    }
 
-    public ImportColumn(String name) { //required for testing
+    public ImportColumn(String name) { // required for testing
         super.name = name;
     }
 

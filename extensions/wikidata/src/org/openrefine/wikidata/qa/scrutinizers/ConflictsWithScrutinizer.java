@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
     public String itemOfPropertyConstraintPid;
 
     class ConflictsWithConstraint {
+
         final PropertyIdValue conflictingPid;
         final List<Value> itemList;
 
@@ -33,13 +35,13 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             PropertyIdValue pid = null;
             this.itemList = new ArrayList<>();
-            for(SnakGroup group : specs) {
+            for (SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
                     if (group.getProperty().getId().equals(conflictsWithPropertyPid) && snak instanceof ValueSnak) {
-                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
+                        pid = (PropertyIdValue) ((ValueSnak) snak).getValue();
                     }
                     if (group.getProperty().getId().equals(itemOfPropertyConstraintPid) && snak instanceof ValueSnak) {
-                        this.itemList.add(((ValueSnak)snak).getValue());
+                        this.itemList.add(((ValueSnak) snak).getValue());
                     }
                 }
             }
@@ -56,15 +58,15 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         return _fetcher != null && conflictsWithConstraintQid != null
                 && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
-    
+
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
@@ -74,7 +76,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             Value value = null;
             Snak mainSnak = statement.getClaim().getMainSnak();
             if (mainSnak instanceof ValueSnak) {
-                value = ((ValueSnak)mainSnak).getValue();
+                value = ((ValueSnak) mainSnak).getValue();
             }
             Set<Value> values;
             if (value != null) {
@@ -89,14 +91,15 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             }
         }
 
-        for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
+        for (PropertyIdValue propertyId : propertyIdValueValueMap.keySet()) {
             List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, conflictsWithConstraintQid);
             for (Statement statement : statementList) {
                 ConflictsWithConstraint constraint = new ConflictsWithConstraint(statement);
                 PropertyIdValue conflictingPid = constraint.conflictingPid;
                 List<Value> itemList = constraint.itemList;
-                if (propertyIdValueValueMap.containsKey(conflictingPid) && raiseWarning(propertyIdValueValueMap, conflictingPid, itemList)) {
-                    QAWarning issue = new QAWarning(type, propertyId.getId()+conflictingPid.getId(), QAWarning.Severity.WARNING, 1);
+                if (propertyIdValueValueMap.containsKey(conflictingPid)
+                        && raiseWarning(propertyIdValueValueMap, conflictingPid, itemList)) {
+                    QAWarning issue = new QAWarning(type, propertyId.getId() + conflictingPid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", conflictingPid);
                     issue.setProperty("example_entity", update.getEntityId());
@@ -111,13 +114,14 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         }
     }
 
-    private boolean raiseWarning(Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap, PropertyIdValue conflictingPid, List<Value> itemList) {
-        if (itemList.isEmpty()){
+    private boolean raiseWarning(Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap, PropertyIdValue conflictingPid,
+            List<Value> itemList) {
+        if (itemList.isEmpty()) {
             return true;
         }
 
         for (Value value : itemList) {
-            if (propertyIdValueValueMap.get(conflictingPid).contains(value)){
+            if (propertyIdValueValueMap.get(conflictingPid).contains(value)) {
                 return true;
             }
         }

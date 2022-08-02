@@ -24,14 +24,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.importers.tree;
 
+package com.google.refine.importers.tree;
 
 /**
  * @deprecated 2020-07-23 Use the method signatures which take individual parameters instead of this
  */
 @Deprecated
 public class ImportParameters {
+
     protected boolean trimStrings;
     protected boolean storeEmptyStrings;
     protected boolean guessDataType;

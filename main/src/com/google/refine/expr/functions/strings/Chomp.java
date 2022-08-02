@@ -53,17 +53,17 @@ public class Chomp implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_chomp();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

@@ -21,6 +21,7 @@
         <directory>src</directory>
       </resource>
     </resources>
+    <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
     <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
@@ -89,7 +90,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.29</version>
+      <version>8.0.30</version>
     </dependency>
     <dependency>
       <groupId>org.jasypt</groupId>

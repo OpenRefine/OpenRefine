@@ -40,13 +40,14 @@ import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
 public class NGramFingerprint implements Function {
 
     static Keyer ngram_fingerprint = new NGramFingerprintKeyer();
-    
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 || args.length == 2) {
@@ -57,32 +58,32 @@ public class NGramFingerprint implements Function {
                 }
                 Object o = args[0];
                 String s = (o instanceof String) ? (String) o : o.toString();
-                return ngram_fingerprint.key(s,ngram_size);
+                return ngram_fingerprint.key(s, ngram_size);
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
+        return new EvalError(EvalErrorMessage.expects_at_least_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {
         TreeSet<String> set = new TreeSet<String>();
         char[] chars = s.toCharArray();
         for (int i = 0; i + size <= chars.length; i++) {
-            set.add(new String(chars,i,size));
+            set.add(new String(chars, i, size));
         }
         return set;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_ngram_fingerprint();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

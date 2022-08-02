@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -51,10 +52,10 @@ public class Join implements Function {
         if (args.length == 2) {
             Object v = args[0];
             Object s = args[1];
-            
+
             if (v != null && s != null && s instanceof String) {
                 String separator = (String) s;
-                
+
                 if (v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode) {
                     StringBuffer sb = new StringBuffer();
                     if (v.getClass().isArray()) {
@@ -69,7 +70,7 @@ public class Join implements Function {
                     } else if (v instanceof ArrayNode) {
                         ArrayNode a = (ArrayNode) v;
                         int l = a.size();
-                        
+
                         for (int i = 0; i < l; i++) {
                             if (sb.length() > 0) {
                                 sb.append(separator);
@@ -86,24 +87,24 @@ public class Join implements Function {
                             }
                         }
                     }
-                    
+
                     return sb.toString();
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array and a string");
+        return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.arr_join();
     }
-    
+
     @Override
     public String getParams() {
         return "array a, string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";
