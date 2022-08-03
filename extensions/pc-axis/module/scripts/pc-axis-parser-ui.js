@@ -31,23 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-//Internationalization init
-
-var dictionary = {};
-$.ajax({
-url : "command/core/load-language?",
-type : "POST",
-async : false,
-data : {
-module : "pc-axis",
-},
-success : function(data) {
-dictionary = data['dictionary'];
-lang = data['lang'];
-}
-});
-$.i18n().load(dictionary, lang);
-// End internationalization
+I18NUtil.init("pc-axis");
 
 Refine.PCAxisParserUI = function(controller, jobID, job, format, config,
     dataContainerElmt, progressContainerElmt, optionContainerElmt) {
