@@ -184,7 +184,7 @@
     "core-dialogs/no-cluster-found": "No clusters were found with the selected method",
     "core-dialogs/try-another-method": "Try selecting another method above or changing its parameters",
     "core-dialogs/clustering": "Clustering…",
-    "core-dialogs/warning-check-boxes": "You must check some Edit? checkboxes for your edits to be applied.",
+    "core-dialogs/warning-check-boxes": "You must check some 'Merge?' checkboxes for your edits to be applied.",
     "core-dialogs/choices-in-cluster": "# Choices in cluster",
     "core-dialogs/rows-in-cluster": "# Rows in cluster",
     "core-dialogs/choice-avg-length": "Average length of choices",
