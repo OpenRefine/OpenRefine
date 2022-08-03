@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.lang;
 
 import java.io.BufferedReader;
@@ -53,11 +54,10 @@ import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
-
 public class LoadLanguageCommand extends Command {
 
     public LoadLanguageCommand() {
-    	super();
+        super();
     }
 
     @Override
@@ -67,9 +67,8 @@ public class LoadLanguageCommand extends Command {
     }
 
     /**
-     * POST is supported but does not actually change any state so we do
-     * not add CSRF protection to it. This ensures existing extensions will not
-     * have to be updated to add a CSRF token to their requests (2019-11-10)
+     * POST is supported but does not actually change any state so we do not add CSRF protection to it. This ensures
+     * existing extensions will not have to be updated to add a CSRF token to their requests (2019-11-10)
      */
 
     @Override
@@ -87,6 +86,7 @@ public class LoadLanguageCommand extends Command {
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
         if (ps != null) {
             String strLang = (String) ps.get("userLang");
+            // If user preference language exists...
             if ( strLang != null && ! strLang.isEmpty() ) {
 
                 // CORRECTOR...
@@ -102,15 +102,16 @@ public class LoadLanguageCommand extends Command {
         }
 
         // Add default English language as least favored...
-        if (langs.length == 0 || langs[langs.length-1] != "en" ) {
-            langs = Arrays.copyOf(langs, langs.length+1);
-            langs[langs.length-1] = "en";
+        if (langs.length == 0 || langs[langs.length - 1] != "en" ) {
+            langs = Arrays.copyOf(langs, langs.length + 1);
+            langs[langs.length - 1] = "en";
         }
 
         ObjectNode translations = null;
         String bestLang = null;
+
         // Process from least favored to best language...
-        for (int i = langs.length-1; i >= 0; i--) {
+        for (int i = langs.length - 1; i >= 0; i--) {
             if (langs[i] == null) continue;
 
             ObjectNode json = LoadLanguageCommand.loadLanguage(this.servlet, modname, langs[i]);
@@ -147,26 +148,12 @@ public class LoadLanguageCommand extends Command {
         String strMessage = "[" + strModule + ":" + strLangFile + "]";
         File langFile = new File(module.getPath(), "langs" + File.separator + strLangFile);
         FileInputStream fisLang = null;
+
         try {
             fisLang = new FileInputStream(langFile);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
             logger.warn("Language file " + strMessage + " not found", e);
-
-            // CORRECTOR...
-            // TODO: This code may be removed sometime after the 3.7 release has been circulated.
-            if ( "ja".equals(strLang) ) {
-                String strLangFileJP = "translation-jp.json";
-                strMessage = "[" + strModule + ":" + strLangFileJP + "]";
-                langFile = new File(module.getPath(), "langs" + File.separator + strLangFile);
-                try {
-                    fisLang = new FileInputStream(langFile);
-                    logger.warn("An alternate file " + strMessage + " was found -- rename to [" + strLangFile + "]");
-                } catch (FileNotFoundException ex) {
-                    // ...continue...
-                }
-            }
-            // End CORRECTOR
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
         }
@@ -184,21 +171,20 @@ public class LoadLanguageCommand extends Command {
     /**
      * Update the language content to the preferred language, server-side
      * @param preferred
-     *      the JSON translation for the preferred language
+     *            the JSON translation for the preferred language
      * @param fallback
-     *      the JSON translation for the fallback language
-     * @return
-     *      a JSON object where values are from the preferred
-     *      language if available, and the fallback language otherwise
+     *            the JSON translation for the fallback language
+     * @return a JSON object where values are from the preferred language if available, and the fallback language
+     *         otherwise
      */
     static ObjectNode mergeLanguages(ObjectNode preferred, ObjectNode fallback) {
         ObjectNode results = ParsingUtilities.mapper.createObjectNode();
         Iterator<Entry<String, JsonNode>> iterator = fallback.fields();
-        while(iterator.hasNext()) {
-            Entry<String,JsonNode> entry = iterator.next();
+        while (iterator.hasNext()) {
+            Entry<String, JsonNode> entry = iterator.next();
             String code = entry.getKey();
             JsonNode value = preferred.get(code); // ...new value
-            if (value == null) {;
+            if (value == null) {
                 value = entry.getValue(); // ...reuse existing value
             }
             results.set(code, value);

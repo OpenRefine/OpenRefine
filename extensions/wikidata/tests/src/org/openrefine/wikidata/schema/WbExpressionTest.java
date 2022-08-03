@@ -27,16 +27,14 @@ package org.openrefine.wikidata.schema;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
-
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.Assert;
@@ -45,10 +43,17 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 
 public class WbExpressionTest<T> extends WikidataRefineTest {
 
@@ -100,6 +105,9 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
      *            the expression to evaluate
      */
     public void evaluatesTo(T expected, WbExpression<T> expression) {
+        ValidationState validation = new ValidationState(ctxt.getColumnModel());
+        expression.validate(validation);
+
         try {
             T result = expression.evaluate(ctxt);
             Assert.assertEquals(expected, result);
@@ -138,6 +146,63 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
             Assert.fail("The value was skipped by the evaluator");
         } catch (QAWarningException e) {
             Assert.assertEquals(e.getWarning(), warning);
+        }
+    }
+
+    /**
+     * Tests that an expression has a validation error. Used when the column model is irrelevant to the validation
+     * problem.
+     */
+    public void hasValidationError(String errorMessage, WbExpression<T> expression) {
+        ColumnModel columnModel = new ColumnModel();
+        try {
+            columnModel.addColumn(0, new Column(0, "column"), true);
+        } catch (ModelException e) {
+        }
+        hasValidationError(errorMessage, expression, columnModel);
+    }
+
+    /**
+     * Tests that an expression has a validation error. Used when the column model is relevant to the validation
+     * problem.
+     */
+    public void hasValidationError(String errorMessage, WbExpression<T> expression, ColumnModel columnModel) {
+        ValidationState validationState = new ValidationState(columnModel);
+        expression.validate(validationState);
+        List<String> validationMessages = validationState.getValidationErrors()
+                .stream()
+                .map(e -> e.getMessage())
+                .collect(Collectors.toList());
+        if (!Collections.singletonList(errorMessage).equals(validationMessages)) {
+            Assert.fail("Unexpected validation status: expected error '"
+                    + errorMessage + "', but found errors: " + validationMessages.toString());
+        }
+    }
+
+    /**
+     * Tests that an expression has no validation error.
+     */
+    public void hasNoValidationError(WbExpression<T> expression) {
+        ColumnModel columnModel = new ColumnModel();
+        try {
+            columnModel.addColumn(0, new Column(0, "column"), true);
+        } catch (ModelException e) {
+        }
+        hasNoValidationError(expression, columnModel);
+    }
+
+    /**
+     * Tests that an expression has no validation error.
+     */
+    public void hasNoValidationError(WbExpression<T> expression, ColumnModel columnModel) {
+        ValidationState validationState = new ValidationState(columnModel);
+        expression.validate(validationState);
+        List<String> validationMessages = validationState.getValidationErrors()
+                .stream()
+                .map(e -> e.getMessage())
+                .collect(Collectors.toList());
+        if (!validationMessages.isEmpty()) {
+            Assert.fail("Unexpected validation status: expected no error, but found errors: " + validationMessages.toString());
         }
     }
 

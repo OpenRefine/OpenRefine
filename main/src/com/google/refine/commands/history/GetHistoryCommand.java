@@ -43,10 +43,11 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class GetHistoryCommand extends Command {
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = getProject(request);
         respondJSON(response, project.history);
     }

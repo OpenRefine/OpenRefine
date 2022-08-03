@@ -42,12 +42,13 @@ import com.google.refine.model.Project;
 /**
  * Interface of facets.
  */
-public interface Facet  {
+public interface Facet {
+
     public RowFilter getRowFilter(Project project);
-    
+
     public RecordFilter getRecordFilter(Project project);
-    
+
     public void computeChoices(Project project, FilteredRows filteredRows);
-    
+
     public void computeChoices(Project project, FilteredRecords filteredRecords);
 }

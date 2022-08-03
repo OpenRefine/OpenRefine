@@ -43,16 +43,17 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * Encapsulate logic for visiting rows that match all give row filters. Also visit
- * context rows and dependent rows if configured so.
+ * Encapsulate logic for visiting rows that match all give row filters. Also visit context rows and dependent rows if
+ * configured so.
  */
 public class ConjunctiveFilteredRows implements FilteredRows {
+
     final protected List<RowFilter> _rowFilters = new LinkedList<RowFilter>();
-    
+
     public void add(RowFilter rowFilter) {
         _rowFilters.add(rowFilter);
     }
-    
+
     @Override
     public void accept(Project project, RowVisitor visitor) {
         try {
@@ -71,11 +72,11 @@ public class ConjunctiveFilteredRows implements FilteredRows {
             visitor.end(project);
         }
     }
-    
+
     protected boolean visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {
         return visitor.visit(project, rowIndex, row);
     }
-    
+
     protected boolean matchRow(Project project, int rowIndex, Row row) {
         for (RowFilter rowFilter : _rowFilters) {
             if (!rowFilter.filterRow(project, rowIndex, row)) {

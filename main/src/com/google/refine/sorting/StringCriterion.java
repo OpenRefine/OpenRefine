@@ -41,11 +41,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
 
 public class StringCriterion extends Criterion {
+
     @JsonProperty("caseSensitive")
     public boolean caseSensitive;
     @JsonIgnore
     Collator collator;
-    
+
     /**
      * 
      */
@@ -55,19 +56,20 @@ public class StringCriterion extends Criterion {
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
         collator.setStrength(Collator.SECONDARY);
     }
-    
+
     @Override
     public KeyMaker createKeyMaker() {
         return new KeyMaker() {
+
             @Override
             protected Object makeKey(Object value) {
-                return collator.getCollationKey((ExpressionUtils.isNonBlankData(value) 
+                return collator.getCollationKey((ExpressionUtils.isNonBlankData(value)
                         && !(value instanceof String)) ? value.toString() : (String) value);
             }
 
             @Override
             public int compareKeys(Object key1, Object key2) {
-                return ((CollationKey)key1).compareTo((CollationKey)key2);
+                return ((CollationKey) key1).compareTo((CollationKey) key2);
             }
         };
     }

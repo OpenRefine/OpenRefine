@@ -52,15 +52,15 @@ public class LeastCommonMultiple implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
     }
 
-    public static double LCM(double a, double b){
+    public static double LCM(double a, double b) {
         double largerValue = a;
         double smallerValue = b;
-        if(b > a){
+        if (b > a) {
             largerValue = b;
             smallerValue = a;
         }
-        for(int i = 1; i <= largerValue; i++){
-            if((largerValue*i) % smallerValue == 0) {
+        for (int i = 1; i <= largerValue; i++) {
+            if ((largerValue * i) % smallerValue == 0) {
                 return largerValue * i;
             }
         }
@@ -71,12 +71,12 @@ public class LeastCommonMultiple implements Function {
     public String getDescription() {
         return FunctionDescription.math_lcm();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -24,12 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Converts the a JSON value
+ * 
  * @author antonin
  *
  */
@@ -84,6 +86,5 @@ public class JsonValueConverter {
             return null;
         }
     }
-
 
 }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers;
 
 import java.io.IOException;
@@ -42,37 +43,37 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class LineBasedImporter extends TabularImportingParserBase {
+
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
-    
+
     public LineBasedImporter() {
         super(false);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
+
         JSONUtilities.safePut(options, "linesPerRow", 1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        
+
         return options;
     }
 
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         final int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
-        
+
         final List<Object> columnNames;
         if (options.has("columnNames")) {
             columnNames = new ArrayList<Object>();
@@ -85,9 +86,9 @@ public class LineBasedImporter extends TabularImportingParserBase {
             columnNames = null;
             JSONUtilities.safePut(options, "headerLines", 0);
         }
-        
+
         final LineNumberReader lnReader = new LineNumberReader(reader);
-        
+
         try {
             int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
             while (skip > 0) {
@@ -98,10 +99,11 @@ public class LineBasedImporter extends TabularImportingParserBase {
             logger.error("Error reading line-based file", e);
         }
         JSONUtilities.safePut(options, "ignoreLines", -1);
-        
+
         TableDataReader dataReader = new TableDataReader() {
+
             boolean usedColumnNames = false;
-            
+
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
                 if (columnNames != null && !usedColumnNames) {
@@ -128,7 +130,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
                 }
             }
         };
-        
+
         TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
     }
 }

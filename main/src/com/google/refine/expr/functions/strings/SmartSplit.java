@@ -46,43 +46,40 @@ import com.google.refine.grel.FunctionDescription;
 public class SmartSplit implements Function {
 
     static final protected CSVParser s_tabParser = new CSVParser(
-        '\t',
-        CSVParser.DEFAULT_QUOTE_CHARACTER,
-        CSVParser.DEFAULT_ESCAPE_CHARACTER,
-        CSVParser.DEFAULT_STRICT_QUOTES,
-        CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-        false
-    );
+            '\t',
+            CSVParser.DEFAULT_QUOTE_CHARACTER,
+            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+            CSVParser.DEFAULT_STRICT_QUOTES,
+            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+            false);
 
     static final protected CSVParser s_commaParser = new CSVParser(
-        ',',
-        CSVParser.DEFAULT_QUOTE_CHARACTER,
-        CSVParser.DEFAULT_ESCAPE_CHARACTER,
-        CSVParser.DEFAULT_STRICT_QUOTES,
-        CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-        false
-    );    
+            ',',
+            CSVParser.DEFAULT_QUOTE_CHARACTER,
+            CSVParser.DEFAULT_ESCAPE_CHARACTER,
+            CSVParser.DEFAULT_STRICT_QUOTES,
+            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+            false);
 
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1 && args.length <= 2) {
             CSVParser parser = null;
-            
+
             Object v = args[0];
             String s = v.toString();
-            
+
             if (args.length > 1) {
                 String sep = args[1].toString();
                 parser = new CSVParser(
-                    sep,
-                    CSVParser.DEFAULT_QUOTE_CHARACTER,
-                    CSVParser.DEFAULT_ESCAPE_CHARACTER,
-                    CSVParser.DEFAULT_STRICT_QUOTES,
-                    CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                    false
-                );
+                        sep,
+                        CSVParser.DEFAULT_QUOTE_CHARACTER,
+                        CSVParser.DEFAULT_ESCAPE_CHARACTER,
+                        CSVParser.DEFAULT_STRICT_QUOTES,
+                        CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                        false);
             }
-            
+
             if (parser == null) {
                 int tab = s.indexOf('\t');
                 if (tab >= 0) {
@@ -91,7 +88,7 @@ public class SmartSplit implements Function {
                     parser = s_commaParser;
                 }
             }
-            
+
             try {
                 return parser.parseLine(s);
             } catch (IOException e) {
@@ -100,17 +97,17 @@ public class SmartSplit implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_smart_split();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, optional string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

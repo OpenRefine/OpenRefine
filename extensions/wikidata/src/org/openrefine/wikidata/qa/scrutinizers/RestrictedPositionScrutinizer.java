@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -61,7 +62,9 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
 
     class RestrictedPositionConstraint {
+
         boolean isAllowedAsValue, isAllowedAsQualifier, isAllowedAsReference;
+
         RestrictedPositionConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
@@ -71,7 +74,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
                 List<Value> snakValues = findValues(specs, scopeConstraintPid);
                 isAllowedAsValue = snakValues.contains(targetValue);
                 isAllowedAsQualifier = snakValues.contains(targetQualifier);
-                isAllowedAsReference =  snakValues.contains(targetReference);
+                isAllowedAsReference = snakValues.contains(targetReference);
             }
         }
     }
@@ -112,7 +115,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
             addIssue(issue);
         }
     }
-    
+
     public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
         List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, scopeConstraintQid);
         if (!constraintDefinitions.isEmpty()) {

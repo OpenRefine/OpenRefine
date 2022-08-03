@@ -54,12 +54,12 @@ public class Ln implements Function {
     public String getDescription() {
         return FunctionDescription.math_ln();
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

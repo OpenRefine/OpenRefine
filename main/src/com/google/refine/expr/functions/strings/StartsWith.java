@@ -53,16 +53,17 @@ public class StartsWith implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_starts_with();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

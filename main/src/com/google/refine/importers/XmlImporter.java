@@ -64,18 +64,20 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class XmlImporter extends TreeImportingParserBase {
+
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
-    
+
     public XmlImporter() {
         super(true);
     }
-    
+
     static private class PreviewParsingState {
+
         int tokenCount;
     }
-    
+
     final static private int PREVIEW_PARSING_LIMIT = 1000;
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -85,7 +87,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 InputStream is = new FileInputStream(file);
-                
+
                 try {
                     XMLStreamReader parser = createXMLStreamReader(is);
                     PreviewParsingState state = new PreviewParsingState();
@@ -115,13 +117,13 @@ public class XmlImporter extends TreeImportingParserBase {
 
         return options;
     }
-    
+
     final static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         {
             String name = parser.getLocalName();
             JSONUtilities.safePut(result, "n", name);
-            
+
             String prefix = parser.getPrefix();
             if (prefix != null) {
                 JSONUtilities.safePut(result, "p", prefix);
@@ -131,11 +133,11 @@ public class XmlImporter extends TreeImportingParserBase {
                 JSONUtilities.safePut(result, "uri", nsUri);
             }
         }
-        
+
         int namespaceCount = parser.getNamespaceCount();
         if (namespaceCount > 0) {
             ArrayNode namespaces = result.putArray("ns");
-            
+
             for (int i = 0; i < namespaceCount; i++) {
                 ObjectNode namespace = ParsingUtilities.mapper.createObjectNode();
                 namespaces.add(namespace);
@@ -143,11 +145,11 @@ public class XmlImporter extends TreeImportingParserBase {
                 JSONUtilities.safePut(namespace, "uri", parser.getNamespaceURI(i));
             }
         }
-        
+
         int attributeCount = parser.getAttributeCount();
         if (attributeCount > 0) {
             ArrayNode attributes = result.putArray("a");
-            
+
             for (int i = 0; i < attributeCount; i++) {
                 ObjectNode attribute = ParsingUtilities.mapper.createObjectNode();
                 attributes.add(attribute);
@@ -159,7 +161,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 }
             }
         }
-        
+
         ArrayNode children = ParsingUtilities.mapper.createArrayNode();
         try {
             while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
@@ -173,8 +175,8 @@ public class XmlImporter extends TreeImportingParserBase {
                         children.add(childElement);
                     }
                 } else if (tokenType == XMLStreamConstants.CHARACTERS ||
-                           tokenType == XMLStreamConstants.CDATA ||
-                           tokenType == XMLStreamConstants.SPACE) {
+                        tokenType == XMLStreamConstants.CDATA ||
+                        tokenType == XMLStreamConstants.SPACE) {
                     ObjectNode childElement = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(childElement, "t", parser.getText());
                     children.add(childElement);
@@ -185,37 +187,38 @@ public class XmlImporter extends TreeImportingParserBase {
         } catch (XMLStreamException e) {
             logger.error("Error generating parser UI initialization data for XML file", e);
         }
-        
+
         if (children.size() > 0) {
-        	result.set("c", children);
+            result.set("c", children);
         }
         return result;
     }
-    
+
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
             ImportingJob job, String fileSource, InputStream inputStream,
             ImportColumnGroup rootColumnGroup, int limit, ObjectNode options,
             List<Exception> exceptions) {
-        
+
         try {
             parseOneFile(project, metadata, job, fileSource,
-                new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
+                    new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
         } catch (XMLStreamException e) {
             exceptions.add(e);
         } catch (IOException e) {
             exceptions.add(e);
         }
     }
-    
+
     static public class XmlParser implements TreeReader {
+
         final protected XMLStreamReader parser;
         static final int WHITESPACE_CHARACTERS_TOKEN = 15;
 
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
             parser = createXMLStreamReader(inputStream);
         }
-        
+
         @Override
         public Token next() throws TreeReaderException {
             try {
@@ -225,7 +228,7 @@ public class XmlImporter extends TreeImportingParserBase {
             } catch (XMLStreamException e) {
                 throw new TreeReaderException(e);
             }
-            
+
             int currentToken = -1;
             try {
                 currentToken = parser.next();
@@ -243,34 +246,49 @@ public class XmlImporter extends TreeImportingParserBase {
             }
             return mapToToken(currentToken);
         }
-        
+
         protected Token mapToToken(int token) {
-            switch(token){
-                case XMLStreamConstants.START_ELEMENT: return Token.StartEntity;
-                case XMLStreamConstants.END_ELEMENT: return Token.EndEntity;
-                case XMLStreamConstants.CHARACTERS: return Token.Value;
-                case XMLStreamConstants.START_DOCUMENT: return Token.Ignorable;
-                case XMLStreamConstants.END_DOCUMENT: return Token.Ignorable;
-                case XMLStreamConstants.SPACE: return Token.Value;
-                case XMLStreamConstants.PROCESSING_INSTRUCTION: return Token.Ignorable;
-                case XMLStreamConstants.NOTATION_DECLARATION: return Token.Ignorable;
-                case XMLStreamConstants.NAMESPACE: return Token.Ignorable;
-                case XMLStreamConstants.ENTITY_REFERENCE: return Token.Ignorable;
-                case XMLStreamConstants.DTD: return Token.Ignorable;
-                case XMLStreamConstants.COMMENT: return Token.Ignorable;
-                case XMLStreamConstants.CDATA: return Token.Ignorable;
-                case XMLStreamConstants.ATTRIBUTE: return Token.Ignorable;
-                case WHITESPACE_CHARACTERS_TOKEN: return Token.Ignorable;
+            switch (token) {
+                case XMLStreamConstants.START_ELEMENT:
+                    return Token.StartEntity;
+                case XMLStreamConstants.END_ELEMENT:
+                    return Token.EndEntity;
+                case XMLStreamConstants.CHARACTERS:
+                    return Token.Value;
+                case XMLStreamConstants.START_DOCUMENT:
+                    return Token.Ignorable;
+                case XMLStreamConstants.END_DOCUMENT:
+                    return Token.Ignorable;
+                case XMLStreamConstants.SPACE:
+                    return Token.Value;
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                    return Token.Ignorable;
+                case XMLStreamConstants.NOTATION_DECLARATION:
+                    return Token.Ignorable;
+                case XMLStreamConstants.NAMESPACE:
+                    return Token.Ignorable;
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                    return Token.Ignorable;
+                case XMLStreamConstants.DTD:
+                    return Token.Ignorable;
+                case XMLStreamConstants.COMMENT:
+                    return Token.Ignorable;
+                case XMLStreamConstants.CDATA:
+                    return Token.Ignorable;
+                case XMLStreamConstants.ATTRIBUTE:
+                    return Token.Ignorable;
+                case WHITESPACE_CHARACTERS_TOKEN:
+                    return Token.Ignorable;
                 default:
                     return Token.Ignorable;
             }
         }
-        
+
         @Override
         public Token current() throws TreeReaderException {
             return this.mapToToken(parser.getEventType());
         }
-        
+
         @Override
         public boolean hasNext() throws TreeReaderException {
             try {
@@ -279,7 +297,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 throw new TreeReaderException(e);
             }
         }
-        
+
         @Override
         public String getFieldName() throws TreeReaderException {
             try {
@@ -288,17 +306,17 @@ public class XmlImporter extends TreeImportingParserBase {
                 return null;
             }
         }
-        
+
         @Override
-        public String getPrefix(){
+        public String getPrefix() {
             return parser.getPrefix();
         }
-        
+
         @Override
-        public String getFieldValue(){
+        public String getFieldValue() {
             return parser.getText();
         }
-    
+
         @Override
         public Serializable getValue() {
             // XML parser only does string types
@@ -306,35 +324,35 @@ public class XmlImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public int getAttributeCount(){
+        public int getAttributeCount() {
             return parser.getAttributeCount();
         }
-        
+
         @Override
-        public String getAttributeValue(int index){
+        public String getAttributeValue(int index) {
             return parser.getAttributeValue(index);
         }
-        
+
         @Override
-        public String getAttributePrefix(int index){
+        public String getAttributePrefix(int index) {
             return parser.getAttributePrefix(index);
         }
-        
+
         @Override
-        public String getAttributeLocalName(int index){
+        public String getAttributeLocalName(int index) {
             return parser.getAttributeLocalName(index);
         }
     }
-    
+
     final static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException, IOException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, true);
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        
+
         return factory.createXMLStreamReader(wrapPrefixRemovingInputStream(inputStream));
     }
-    
+
     final static private InputStream wrapPrefixRemovingInputStream(InputStream inputStream)
             throws XMLStreamException, IOException {
         PushbackInputStream pis = new PushbackInputStream(inputStream);
@@ -343,7 +361,7 @@ public class XmlImporter extends TreeImportingParserBase {
         while (count < 100 && (b = pis.read()) >= 0) {
             if (++count > 100) {
                 throw new XMLStreamException(
-                    "File starts with too much non-XML content to skip over");
+                        "File starts with too much non-XML content to skip over");
             } else if (b == '<') {
                 pis.unread(b);
                 break;

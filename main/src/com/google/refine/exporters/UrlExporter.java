@@ -40,10 +40,8 @@ import java.util.Properties;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
-
 public interface UrlExporter extends Exporter {
 
-    
     public void export(Project project, Properties options, Engine engine, URL url) throws IOException;
 
 }

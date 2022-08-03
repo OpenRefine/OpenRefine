@@ -36,13 +36,13 @@ package com.google.refine.browsing;
 import com.google.refine.model.Project;
 
 /**
- * Interface for anything that can decide which records match and which don't
- * based on some particular criteria.
+ * Interface for anything that can decide which records match and which don't based on some particular criteria.
  */
 public interface FilteredRecords {
+
     /**
-     * Go through the records of the given project, determine which match and which don't,
-     * and call visitor.visit() on those that match
+     * Go through the records of the given project, determine which match and which don't, and call visitor.visit() on
+     * those that match
      * 
      * @param project
      * @param visitor

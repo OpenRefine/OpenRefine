@@ -39,8 +39,9 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.Project;
 
 public class FilteredRecordsAsFilteredRows implements FilteredRows {
+
     final protected FilteredRecords _filteredRecords;
-    
+
     public FilteredRecordsAsFilteredRows(FilteredRecords filteredRecords) {
         _filteredRecords = filteredRecords;
     }

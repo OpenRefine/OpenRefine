@@ -52,13 +52,13 @@ public class CreateImportingJobCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         long id = ImportingManager.createJob().id;
-        
+
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         respond(response, "{ \"jobID\" : " + id + " }");

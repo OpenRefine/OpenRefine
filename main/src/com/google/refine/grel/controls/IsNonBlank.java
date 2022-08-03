@@ -36,6 +36,7 @@ package com.google.refine.grel.controls;
 import com.google.refine.expr.ExpressionUtils;
 
 public class IsNonBlank extends IsTest {
+
     @Override
     public String getDescription() {
         return "Returns whether o is not null and not an empty string";
