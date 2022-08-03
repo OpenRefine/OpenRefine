@@ -51,7 +51,7 @@ WarningsRenderer._replaceIssueProperties = function (template, properties, plain
 
 WarningsRenderer._createFacetForWarning = function (warning) {
   var warningRaised = $.i18n('wikibase-issues/warning-raised');
-  var noWarning = $('wikibase-issues/no-warning');
+  var noWarning = $.i18n('wikibase-issues/no-warning');
   var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/title'), warning.properties, true);
   ui.browsingEngine.addFacet(
       'list',
