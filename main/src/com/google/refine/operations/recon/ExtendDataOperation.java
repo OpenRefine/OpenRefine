@@ -61,6 +61,7 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
@@ -100,14 +101,11 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Extend data at index " + _columnInsertIndex +
-                " based on column " + _baseColumnName;
+        return OperationDescription.recon_extend_data_brief(_columnInsertIndex, _baseColumnName);
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Extend data at index " + _columnInsertIndex +
-                " based on column " + column.getName() +
-                " by filling " + cellsAtRows.size();
+        return OperationDescription.recon_extend_data_desc(_columnInsertIndex, column.getName(), cellsAtRows.size());
     }
 
     @Override

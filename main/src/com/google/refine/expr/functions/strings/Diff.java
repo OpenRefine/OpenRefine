@@ -37,6 +37,8 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -87,15 +89,16 @@ public class Diff implements Function {
                             if ("years".equals(unit)) {
                                 return ChronoUnit.YEARS.between(c2, c1);
                             }
-                            return new EvalError("Unknown time unit " + unit);
+                            return new EvalError(EvalErrorMessage.unknown_time_unit(unit));
                         } catch (ArithmeticException arithmeticException) {
-                            return new EvalError("Number of " + unit + " between given dates causes long overflow.");
+                            return new EvalError(EvalErrorMessage.string_diff_long_overflow(unit));
                         }
                     }
                 }
             }
         }
-        return new EvalError("Unexpected arguments - expecting either 2 strings or 2 dates and a unit string");
+        return new EvalError(
+                EvalErrorMessage.expects_two_strings_or_two_dates_and_unit_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

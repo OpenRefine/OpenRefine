@@ -48,6 +48,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.operations.OperationDescription;
 
 public class KeyValueColumnizeOperation extends AbstractOperation {
 
@@ -82,9 +83,8 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Columnize by key column " +
-                _keyColumnName + " and value column " + _valueColumnName +
-                (_noteColumnName != null ? (" with note column " + _noteColumnName) : "");
+        return _noteColumnName == null ? OperationDescription.cell_key_value_columnize_brief(_keyColumnName, _valueColumnName)
+                : OperationDescription.cell_key_value_columnize_note_column_brief(_keyColumnName, _valueColumnName, _noteColumnName);
     }
 
     @Override

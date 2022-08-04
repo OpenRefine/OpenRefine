@@ -49,6 +49,8 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
+import com.google.refine.operations.OperationHistoryEntry;
 
 public class RowFlagOperation extends EngineDependentOperation {
 
@@ -69,7 +71,7 @@ public class RowFlagOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return (_flagged ? "Flag rows" : "Unflag rows");
+        return _flagged ? OperationDescription.row_flag_brief() : OperationDescription.row_unflag_brief();
     }
 
     @Override
@@ -84,7 +86,8 @@ public class RowFlagOperation extends EngineDependentOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows",
+                // (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows",
+                _flagged ? OperationHistoryEntry.row_flag(changes.size()) : OperationHistoryEntry.row_unflag(changes.size()),
                 this,
                 new MassChange(changes, false));
     }

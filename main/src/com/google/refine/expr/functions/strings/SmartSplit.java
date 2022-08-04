@@ -38,6 +38,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 
 import au.com.bytecode.opencsv.CSVParser;
@@ -92,10 +93,10 @@ public class SmartSplit implements Function {
             try {
                 return parser.parseLine(s);
             } catch (IOException e) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " error: " + e.getMessage());
+                return new EvalError(EvalErrorMessage.error(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
+        return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

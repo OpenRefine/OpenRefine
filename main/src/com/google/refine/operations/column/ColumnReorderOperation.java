@@ -41,6 +41,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnReorderChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnReorderOperation extends AbstractOperation {
 
@@ -59,7 +60,7 @@ public class ColumnReorderOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Reorder columns";
+        return OperationDescription.column_reorder_brief();
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ColumnReorderOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                "Reorder columns",
+                getBriefDescription(null),
                 this,
                 new ColumnReorderChange(_columnNames));
     }

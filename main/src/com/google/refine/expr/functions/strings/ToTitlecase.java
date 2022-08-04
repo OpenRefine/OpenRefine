@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.WordUtils;
 
@@ -59,7 +60,7 @@ public class ToTitlecase implements Function {
             String delims = o instanceof String ? (String) o : o.toString();
             return WordUtils.capitalizeFully(s, delims.toCharArray());
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a one or two strings");
+            return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 

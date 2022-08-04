@@ -37,6 +37,8 @@ import java.util.Properties;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
 
@@ -45,10 +47,9 @@ public class With implements Control {
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) +
-                    " expects second argument to be a variable name";
+            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -81,7 +82,7 @@ public class With implements Control {
 
     @Override
     public String getDescription() {
-        return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+        return ControlDescription.with_desc();
     }
 
     @Override
