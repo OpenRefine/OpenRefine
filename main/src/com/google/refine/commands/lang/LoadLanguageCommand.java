@@ -136,7 +136,7 @@ public class LoadLanguageCommand extends Command {
                 Command.respondException(response, e);
             }
         } else {
-        	logger.error("Failed to load any language files");
+            logger.error("Failed to load any language files");
             Command.respondException(response, new IOException("No language files") );
         }
     }
