@@ -81,13 +81,16 @@ public class LoadLanguageCommand extends Command {
 
         // Suggested languages from request, if given...
         String[] langs = request.getParameterValues("lang");
+        if (langs == null) {
+            langs = new String[] {};
+        }
 
         // Always replace suggested with user preference language, if available...
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
         if (ps != null) {
             String strLang = (String) ps.get("userLang");
             // If user preference language exists...
-            if (strLang != null && !strLang.isEmpty()) {
+            if (! (strLang == null || strLang.isEmpty())) {
 
                 // CORRECTOR...
                 // TODO: This code may be removed sometime after the 3.7 release has been circulated.
@@ -153,7 +156,7 @@ public class LoadLanguageCommand extends Command {
             fisLang = new FileInputStream(langFile);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
-            logger.warn("Language file " + strMessage + " not found", e);
+            logger.info("Language file " + strMessage + " not found", e);
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
         }
