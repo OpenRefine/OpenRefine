@@ -90,7 +90,7 @@ public class LoadLanguageCommand extends Command {
         if (ps != null) {
             String strLang = (String) ps.get("userLang");
             // If user preference language exists...
-            if (! (strLang == null || strLang.isEmpty())) {
+            if (!(strLang == null || strLang.isEmpty())) {
 
                 // CORRECTOR...
                 // TODO: This code may be removed sometime after the 3.7 release has been circulated.

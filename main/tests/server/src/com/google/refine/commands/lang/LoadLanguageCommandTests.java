@@ -79,7 +79,7 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     @Test
     public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
         when(request.getParameter("module")).thenReturn("core");
-        //when(request.getParameter("lang")).thenReturn("");
+        // when(request.getParameter("lang")).thenReturn("");
         when(request.getParameterValues("lang")).thenReturn(new String[] { "" });
 
         command.doPost(request, response);
