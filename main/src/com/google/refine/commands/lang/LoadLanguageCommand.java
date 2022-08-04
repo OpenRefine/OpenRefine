@@ -87,11 +87,11 @@ public class LoadLanguageCommand extends Command {
         if (ps != null) {
             String strLang = (String) ps.get("userLang");
             // If user preference language exists...
-            if ( strLang != null && ! strLang.isEmpty() ) {
+            if (strLang != null && !strLang.isEmpty()) {
 
                 // CORRECTOR...
                 // TODO: This code may be removed sometime after the 3.7 release has been circulated.
-                if ( "jp".equals(strLang) ) {
+                if ("jp".equals(strLang)) {
                     strLang = "ja";
                     ps.put("userLang", strLang);
                 }
@@ -102,7 +102,7 @@ public class LoadLanguageCommand extends Command {
         }
 
         // Add default English language as least favored...
-        if (langs.length == 0 || langs[langs.length - 1] != "en" ) {
+        if (langs.length == 0 || langs[langs.length - 1] != "en") {
             langs = Arrays.copyOf(langs, langs.length + 1);
             langs[langs.length - 1] = "en";
         }
@@ -115,7 +115,7 @@ public class LoadLanguageCommand extends Command {
             if (langs[i] == null) continue;
 
             ObjectNode json = LoadLanguageCommand.loadLanguage(this.servlet, modname, langs[i]);
-            if (json == null)  continue;
+            if (json == null) continue;
 
             bestLang = langs[i];
             if (translations == null) {
@@ -130,14 +130,14 @@ public class LoadLanguageCommand extends Command {
                 ObjectNode node = ParsingUtilities.mapper.createObjectNode();
                 node.set("dictionary", translations);
                 node.set("lang", new TextNode(bestLang));
-            	Command.respondJSON(response, node);
+                Command.respondJSON(response, node);
             } catch (IOException e) {
                 logger.error("Error writing language labels to response stream");
                 Command.respondException(response, e);
             }
         } else {
             logger.error("Failed to load any language files");
-            Command.respondException(response, new IOException("No language files") );
+            Command.respondException(response, new IOException("No language files"));
         }
     }
 
@@ -170,6 +170,7 @@ public class LoadLanguageCommand extends Command {
 
     /**
      * Update the language content to the preferred language, server-side
+     * 
      * @param preferred
      *            the JSON translation for the preferred language
      * @param fallback
