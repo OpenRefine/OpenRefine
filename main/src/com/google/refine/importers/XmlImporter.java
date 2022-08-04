@@ -51,6 +51,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,12 +226,18 @@ public class XmlImporter extends TreeImportingParserBase {
         }
 
         private InputStream removeInvalidCharacters(InputStream inputStream) throws IOException {
-            var reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            // TODO do replacement using the reader object
-            String in = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            XmlStreamReader reader = new XmlStreamReader(inputStream);
+            StringBuilder sb = new StringBuilder();
             Pattern p = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
-            String result = p.matcher(in).replaceAll("");
-            return IOUtils.toInputStream(result, StandardCharsets.UTF_8);
+            int c;
+            while ((c = reader.read()) != -1) {
+                var character = (char) c;
+                if (p.matcher(String.valueOf(character)).matches()) {
+                    continue;
+                }
+                sb.append(character);
+            }
+            return IOUtils.toInputStream(sb.toString(), StandardCharsets.UTF_8);
         }
 
         @Override
