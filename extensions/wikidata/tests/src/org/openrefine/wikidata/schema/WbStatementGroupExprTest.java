@@ -80,9 +80,10 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
                 + "\"statements\":[" + statementTest.jsonRepresentation + "]}";
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testCreate() {
-        new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+    @Test
+    public void testEmptyStatements() {
+        WbStatementGroupExpr emptyStatements = new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+        hasValidationError("No statements", new Wrapper(emptyStatements), new ColumnModel());
     }
 
     @Test

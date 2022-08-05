@@ -70,6 +70,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             schema.validate(validation);
             if (!validation.getValidationErrors().isEmpty()) {
                 Map<String, Object> json = new HashMap<>();
+                json.put("code", "error");
                 json.put("reason", "invalid-schema");
                 json.put("message", "Invalid Wikibase schema");
                 json.put("errors", validation.getValidationErrors());

@@ -77,6 +77,9 @@ public class WbStatementGroupExpr {
                 propertyName = String.format("%s (%s)", propConstant.getLabel(), propConstant.getPid());
             }
         }
+        if (statementExprs == null || statementExprs.isEmpty()) {
+            validation.addError("No statements");
+        }
         for (WbStatementExpr statement : statementExprs) {
             validation.enter(new PathElement(Type.STATEMENT, propertyName));
             if (statement != null) {
