@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,7 +39,7 @@ import com.google.refine.grel.FunctionDescription;
 
 /**
  * Implements the logic behind the range function.
- * 
+ *
  * The range function can take in a single string of the form 'a, b, c' or three integers a, b, c where a and b
  * represents the first (inclusive) and last (exclusive) numbers in the range respectively. If b is not given, a
  * defaults to the range end and 0 becomes the range start. c is optional and represents the step (increment) for the
@@ -75,7 +75,7 @@ public class Range implements Function {
 
     /**
      * Checks if a given string has a comma as the last character.
-     * 
+     *
      * This is primarily used to detect edge cases like doing range("1,").
      */
     private boolean hasCommaAsLastCharacter(String test) {
@@ -86,14 +86,14 @@ public class Range implements Function {
     /**
      * Processes the single argument given to determine if the argument is (i) a valid string, (ii) a valid integer, or
      * (iii) an invalid argument.
-     * 
+     *
      * If the argument is a valid string, it can either be in the form 'a', or 'a, b' or 'a, b, c' where a and b are the
      * start and end of the range respectively, and c is the optional step argument. In the case where 'a' is the only
      * argument, 'a' becomes the range end (exclusive) and 0 becomes the default range start.
-     * 
+     *
      * If the argument is a valid integer, it can will default to become the range end, and 0 defaults to become the
      * range start.
-     * 
+     *
      * In all other cases, the argument is considered invalid.
      */
     private Object createRangeWithOneGivenArgument(Object[] args) {
@@ -159,15 +159,15 @@ public class Range implements Function {
     /**
      * Processes the two arguments given to determine if the arguments are (i) two valid strings, (ii) two valid
      * integers or (iii) a valid string and an integer or (iv) invalid arguments.
-     * 
+     *
      * If the arguments are valid strings, the strings can either be such that (i) each string contains single arguments
      * (i.e. two arguments in total), or (ii) one string contains one argument and the other string contains two
      * argument (i.e. three arguments in total).
-     * 
+     *
      * If the arguments are a valid string and a valid integer, the string can be such that (i) the string contains a
      * single argument (i.e. two arguments in total) or (ii) the string contains two arguments (i.e. three arguments in
      * total).
-     * 
+     *
      * In all other cases, the arguments are considered invalid.
      */
     private Object createRangeWithTwoGivenArguments(Object[] args) {
@@ -263,7 +263,7 @@ public class Range implements Function {
      * Processes the three arguments given to determine if the arguments are (i) three valid strings, (ii) three valid
      * integers, (iii) two valid strings and a valid integer, (iv) a valid string and two valid integers or (v) invalid
      * arguments.
-     * 
+     *
      * In this case, all valid strings can only contain a single argument.
      */
     private Object createRangeWithThreeGivenArguments(Object[] args) {
@@ -298,7 +298,7 @@ public class Range implements Function {
 
     /**
      * Creates a range from the given range values with the given step.
-     * 
+     *
      * The generated range is either an increasing sequence or a decreasing sequence, and each number in the sequence
      * differs from the next number by the step value.
      */

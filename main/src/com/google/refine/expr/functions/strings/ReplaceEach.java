@@ -15,7 +15,7 @@ public class ReplaceEach implements Function {
 
     /**
      * Replace each occurrence of a substring in a string with another substring.
-     * 
+     *
      * @param bindings
      *            bindings
      * @param args

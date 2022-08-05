@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The representation of an item edit, which can contain variables both for its own id and in its contents.
- * 
+ *
  * @author Antonin Delpeuch
  *
  */
@@ -195,7 +195,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     /**
      * The path to the file that should be uploaded, either to replace the current file if the subject already exists,
      * or to create a new file on the MediaWiki instance if the subject does not exist yet.
-     * 
+     *
      * Can be null if editing existing entities only (in which case the files' contents are not changed)
      */
     @JsonProperty("filePath")
@@ -205,7 +205,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
 
     /**
      * The filename at which the file should be uploaded (if new), or moved (if existing).
-     * 
+     *
      * Can be null if editing existing entities only (in which case the files will not be moved)
      */
     @JsonProperty("fileName")
@@ -215,7 +215,7 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
 
     /**
      * The wikitext to be added to the file (or edited)
-     * 
+     *
      * @return
      */
     @JsonProperty("wikitext")

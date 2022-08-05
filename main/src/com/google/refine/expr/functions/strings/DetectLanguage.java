@@ -20,7 +20,7 @@ public class DetectLanguage implements Function {
 
     /**
      * Detects the language of the given string and provides the language code.
-     * 
+     *
      * @param bindings
      *            bindings
      * @param args

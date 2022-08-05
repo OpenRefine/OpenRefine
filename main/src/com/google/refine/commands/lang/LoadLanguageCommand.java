@@ -173,7 +173,7 @@ public class LoadLanguageCommand extends Command {
 
     /**
      * Update the language content to the preferred language, server-side
-     * 
+     *
      * @param preferred
      *            the JSON translation for the preferred language
      * @param fallback
