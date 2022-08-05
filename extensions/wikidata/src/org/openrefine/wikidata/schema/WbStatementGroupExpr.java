@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.schema.validation.PathElement;
@@ -52,11 +51,8 @@ public class WbStatementGroupExpr {
     @JsonCreator
     public WbStatementGroupExpr(@JsonProperty("property") WbExpression<? extends PropertyIdValue> propertyExpr,
             @JsonProperty("statements") List<WbStatementExpr> claimExprs) {
-        Validate.notNull(propertyExpr);
         this.propertyExpr = propertyExpr;
-        Validate.notNull(claimExprs);
-        Validate.isTrue(!claimExprs.isEmpty());
-        this.statementExprs = claimExprs;
+        this.statementExprs = claimExprs != null ? claimExprs : Collections.emptyList();
     }
 
     /**
