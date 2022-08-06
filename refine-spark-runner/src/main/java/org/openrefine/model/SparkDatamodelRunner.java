@@ -56,9 +56,6 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         this.sparkMasterURI = configuration.getParameter("sparkMasterURI", String.format("local[%d]", defaultParallelism));
 
-        ClassLoader classLoader = JavaSparkContext.class.getClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
-
         // set up Hadoop on Windows
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
@@ -74,12 +71,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         context = new JavaSparkContext(
                 new SparkConf()
                         .setAppName("OpenRefine")
-                        .setMaster(sparkMasterURI)
-                        .set("spark.io.compression.codec", "snappy")
-                        .set("spark.driver.extraClassPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib/*.jar")
-                        .set("spark.driver.extraLibraryPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib")
-                        .set("spark.executor.extraClassPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib/*.jar")
-                        .set("spark.executor.extraLibraryPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib"));
+                        .setMaster(sparkMasterURI));
         context.setLogLevel("WARN");
         context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
 
