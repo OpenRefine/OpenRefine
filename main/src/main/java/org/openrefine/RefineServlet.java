@@ -176,6 +176,13 @@ public class RefineServlet extends Butterfly {
             String commandKey = getCommandKey(request);
             Command command = commands.get(commandKey);
             if (command != null) {
+                ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+                try {
+                    // Set the classloader to the ButterflyClassLoader so that commands can
+                    // access classes from other butterfly modules. This was introduced to make
+                    // the datamodel runner pluggable, so that runners can be provided
+                    // by extensions.
+                    Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
                 if (request.getMethod().equals("GET")) {
                     if (!logger.isTraceEnabled() && command.logRequests()) {
                         logger.info("GET {}", request.getPathInfo());
@@ -207,6 +214,10 @@ public class RefineServlet extends Butterfly {
                 } else {
                     response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                 }
+                } finally {
+                    Thread.currentThread().setContextClassLoader(oldClassLoader);
+                }
+
             } else {
                 response.sendError(HttpStatus.SC_NOT_FOUND);
             }
@@ -303,13 +314,10 @@ public class RefineServlet extends Butterfly {
     /**
      * Register a single command. Used by extensions.
      *
-     * @param module
-     *            the module the command belongs to
-     * @param name
-     *            command verb for command
-     * @param commandObject
-     *            object implementing the command
-     * 
+     * @param module the module the command belongs to
+     * @param commandName command verb for command
+     * @param commandObject object implementing the command
+     *            
      * @return true if command was loaded and registered successfully
      */
     static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {
@@ -329,7 +337,7 @@ public class RefineServlet extends Butterfly {
     }
 
     /**
-     * @deprecated use {@link RefineModel.getUserAgent()} instead.
+     * @deprecated use {@link RefineModel#getUserAgent()} instead.
      */
     @Deprecated
     static public String getUserAgent() {
