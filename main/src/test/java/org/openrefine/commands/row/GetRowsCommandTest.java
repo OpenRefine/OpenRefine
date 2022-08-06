@@ -27,45 +27,33 @@
 
 package org.openrefine.commands.row;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ListFacet;
-import org.openrefine.commands.Command;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 
-public class GetRowsCommandTest extends RefineTest {
+public class GetRowsCommandTest extends CommandTestBase {
 
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    Command command = null;
     Project project = null;
     Project longerProject = null;
-    StringWriter writer = null;
     EngineConfig engineConfigWithFacet = null;
 
     @BeforeMethod
     public void setUp() {
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
         project = createProject(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
@@ -75,14 +63,8 @@ public class GetRowsCommandTest extends RefineTest {
                         { "g", "h" }
                 });
         command = new GetRowsCommand();
-        writer = new StringWriter();
 
         when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         FacetConfigResolver.registerFacetConfig("core", "list", ListFacet.ListFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }

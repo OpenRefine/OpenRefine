@@ -33,19 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.project;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Serializable;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -57,66 +53,42 @@ import org.testng.annotations.Test;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
-public class SetProjectMetadataCommandTests {
+public class SetProjectMetadataCommandTests extends CommandTestBase {
 
     // System Under Test
     SetProjectMetadataCommand SUT = null;
+
+    // dependencies
+    Project proj;
 
     // variables
     long PROJECT_ID_LONG = 1234;
     String PROJECT_ID = "1234";
     String SUBJECT = "subject for project";
 
-    // mocks
-    DatamodelRunner runner = null;
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    ProjectManager projMan = null;
-    Project proj = null;
-    PrintWriter pw = null;
-
     @BeforeMethod
-    public void SetUp() throws IOException {
-        runner = mock(DatamodelRunner.class);
-        projMan = mock(ProjectManager.class);
-        ProjectManager.singleton = projMan;
-        proj = mock(Project.class);
-        pw = mock(PrintWriter.class);
+    public void SetUp() throws Exception {
 
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
         SUT = new SetProjectMetadataCommand();
 
-        ProjectMetadata metadata = new ProjectMetadata();
+        proj = createProject(new String[] { "column 1", "column 2" }, new Serializable[][] { { "foo", "bar" }, { "test", "data" } });
+
+        ProjectMetadata metadata = proj.getMetadata();
         metadata.setUserMetadata((ArrayNode) ParsingUtilities.mapper.readTree("[ {name: \"clientID\", display: true} ]"));
+        ProjectManager.singleton.saveMetadata(metadata, proj.getId());
 
         // mock dependencies
-        when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(request.getParameter("project")).thenReturn(Long.toString(proj.getId()));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
-        when(proj.getMetadata()).thenReturn(metadata);
-
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
     }
 
     @AfterMethod
     public void TearDown() {
         SUT = null;
-
-        projMan = null;
-        ProjectManager.singleton = null;
-        proj = null;
-        pw = null;
-        request = null;
-        response = null;
     }
 
     /**
@@ -141,15 +113,9 @@ public class SetProjectMetadataCommandTests {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        assertEquals(writer.toString(), "{ \"code\" : \"ok\" }");
 
-        Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
+        assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
 
     /**
@@ -174,17 +140,11 @@ public class SetProjectMetadataCommandTests {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        assertEquals(writer.toString(), "{ \"code\" : \"ok\" }");
 
         ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
-        Assert.assertEquals(obj.get("name").asText(), "clientID");
-        Assert.assertEquals(obj.get("value").asText(), "IBM");
+        assertEquals(obj.get("name").asText(), "clientID");
+        assertEquals(obj.get("value").asText(), "IBM");
     }
 
     @Test

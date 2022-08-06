@@ -358,8 +358,8 @@ public class RefineServlet extends Butterfly {
 
     // introduced for testing purposes (to avoid stubbing a static method)
     // TODO To be refactored.
-    public DatamodelRunner getCurrentDatamodelRunner() {
-        return getDatamodelRunner();
+    public static void setDatamodelRunner(DatamodelRunner runner) {
+        s_runner = runner;
     }
 
     private static class ServletRunnerConfiguration extends RunnerConfiguration {

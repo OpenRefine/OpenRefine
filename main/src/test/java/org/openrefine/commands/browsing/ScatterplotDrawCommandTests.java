@@ -5,14 +5,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -20,22 +16,19 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.RefineTest;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ScatterplotFacet.Dimension;
 import org.openrefine.browsing.facets.ScatterplotFacet.Rotation;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import org.openrefine.commands.Command;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
-public class ScatterplotDrawCommandTests extends RefineTest {
+public class ScatterplotDrawCommandTests extends CommandTestBase {
 
-    protected HttpServletRequest request = null;
-    protected HttpServletResponse response = null;
-    protected StringWriter writer = null;
     protected Command command = null;
     protected Project project = null;
     protected ServletOutputStream outputStream;
@@ -44,13 +37,9 @@ public class ScatterplotDrawCommandTests extends RefineTest {
     public void setUp() {
         FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
         command = new GetScatterplotCommand();
-        writer = new StringWriter();
         outputStream = mock(ServletOutputStream.class);
         try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
             when(response.getOutputStream()).thenReturn(outputStream);
         } catch (IOException e) {
             e.printStackTrace();

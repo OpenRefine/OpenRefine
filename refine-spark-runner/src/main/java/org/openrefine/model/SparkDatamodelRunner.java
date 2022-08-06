@@ -18,6 +18,8 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.io.CompressionCodec;
+import org.apache.spark.io.SnappyCompressionCodec;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.util.ShutdownHookManager;
 import org.slf4j.Logger;
@@ -54,7 +56,8 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         this.sparkMasterURI = configuration.getParameter("sparkMasterURI", String.format("local[%d]", defaultParallelism));
 
-        Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
+        ClassLoader classLoader = JavaSparkContext.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
 
         // set up Hadoop on Windows
         String os = System.getProperty("os.name").toLowerCase();
@@ -65,11 +68,18 @@ public class SparkDatamodelRunner implements DatamodelRunner {
                 logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
             }
         }
+        SnappyCompressionCodec e;
+        CompressionCodec t;
 
         context = new JavaSparkContext(
                 new SparkConf()
                         .setAppName("OpenRefine")
-                        .setMaster(sparkMasterURI));
+                        .setMaster(sparkMasterURI)
+                        .set("spark.io.compression.codec", "snappy")
+                        .set("spark.driver.extraClassPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib/*.jar")
+                        .set("spark.driver.extraLibraryPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib")
+                        .set("spark.executor.extraClassPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib/*.jar")
+                        .set("spark.executor.extraLibraryPath", "/home/antonin/ORspark/extensions/spark/module/MOD-INF/lib"));
         context.setLogLevel("WARN");
         context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
 
