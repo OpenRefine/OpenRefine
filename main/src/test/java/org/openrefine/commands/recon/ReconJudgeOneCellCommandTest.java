@@ -30,18 +30,13 @@ package org.openrefine.commands.recon;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Collections;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
@@ -55,13 +50,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class ReconJudgeOneCellCommandTest extends RefineTest {
+public class ReconJudgeOneCellCommandTest extends CommandTestBase {
 
     Project project = null;
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    Command command = null;
-    PrintWriter writer = null;
 
     @BeforeMethod
     public void setUp() {
@@ -85,18 +76,8 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         meta.setName("test project");
         ProjectManager.singleton.registerProject(project, meta);
 
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-
         when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-
-        writer = mock(PrintWriter.class);
-        try {
-            when(response.getWriter()).thenReturn(writer);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
 
         command = new ReconJudgeOneCellCommand();
     }

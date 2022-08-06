@@ -41,15 +41,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.commands.history.CancelProcessesCommand;
 import org.openrefine.model.Project;
 import org.openrefine.process.ProcessManager;
@@ -59,7 +56,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class CancelProcessesCommandTests {
+public class CancelProcessesCommandTests extends CommandTestBase {
 
     // System Under Test
     CancelProcessesCommand SUT = null;
@@ -69,25 +66,15 @@ public class CancelProcessesCommandTests {
     String PROJECT_ID = "1234";
 
     // mocks
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
     ProjectManager projMan = null;
     Project proj = null;
     ProcessManager processMan = null;
-    StringWriter sw = null;
-    PrintWriter pw = null;
-
     @BeforeMethod
     public void SetUp() {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
         processMan = mock(ProcessManager.class);
-        sw = new StringWriter();
-        pw = new PrintWriter(sw);
-
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
         SUT = new CancelProcessesCommand();
     }
 
@@ -97,9 +84,6 @@ public class CancelProcessesCommandTests {
 
         projMan = null;
         proj = null;
-        sw = null;
-        request = null;
-        response = null;
     }
 
     @Test
@@ -153,11 +137,6 @@ public class CancelProcessesCommandTests {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong(), any())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
 
         // run
         try {
@@ -181,7 +160,7 @@ public class CancelProcessesCommandTests {
         } catch (IOException e) {
             Assert.fail();
         }
-        TestUtils.assertEqualsAsJson(sw.toString(), "{ \"code\" : \"ok\" }");
+        TestUtils.assertEqualsAsJson(writer.toString(), "{ \"code\" : \"ok\" }");
     }
 
     @Test
@@ -191,11 +170,6 @@ public class CancelProcessesCommandTests {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong(), any()))
                 .thenReturn(null);
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
 
         // run
         try {
@@ -218,29 +192,23 @@ public class CancelProcessesCommandTests {
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
             when(projMan.getProject(anyLong(), any())).thenReturn(proj);
-        when(proj.getProcessManager()).thenReturn(processMan);
-        try {
-            when(response.getWriter()).thenThrow(new IllegalStateException(ERROR_MESSAGE))
-                    .thenReturn(pw);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+            when(proj.getProcessManager()).thenReturn(processMan);
 
-        // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+            // run
+            try {
+                SUT.doPost(request, response);
+            } catch (ServletException e) {
+                Assert.fail();
+            } catch (IOException e) {
+                Assert.fail();
+            }
 
-        verify(request, times(1)).getParameter("project");
+            verify(request, times(1)).getParameter("project");
 
-        verify(processMan, times(1)).cancelAll();
-        verify(response, times(2)).setCharacterEncoding("UTF-8");
-        // omitted other verifications for brevity.
-        // assumption is that expecting response.setCharacterEncoding times(3)
-        // implies it has Command.respondException has been called as expected
-    }
+            verify(processMan, times(1)).cancelAll();
+            verify(response).setCharacterEncoding("UTF-8");
+            //omitted other verifications for brevity.
+            //assumption is that expecting response.setCharacterEncoding times(3)
+            //implies it has Command.respondException has been called as expected
+     }
 }

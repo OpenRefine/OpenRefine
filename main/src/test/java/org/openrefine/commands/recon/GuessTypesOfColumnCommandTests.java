@@ -1,20 +1,15 @@
 
 package org.openrefine.commands.recon;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -26,26 +21,14 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-public class GuessTypesOfColumnCommandTests extends RefineTest {
+public class GuessTypesOfColumnCommandTests extends CommandTestBase {
 
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    GuessTypesOfColumnCommand command = null;
-    StringWriter writer = null;
     Project project = null;
 
     @BeforeMethod
     public void setUpCommand() {
         command = new GuessTypesOfColumnCommand();
-        command.setSampleSize(2);
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		((GuessTypesOfColumnCommand)command).setSampleSize(2);
         project = createProject(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -59,7 +42,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+		TestUtils.assertEqualsAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 
     @Test
@@ -148,7 +131,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
 
             command.doPost(request, response);
 
-            TestUtils.assertEqualAsJson(guessedTypes, writer.toString());
+            TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
             RecordedRequest request = server.takeRequest();
             Assert.assertEquals(request.getBody().readUtf8(), expectedQuery);
