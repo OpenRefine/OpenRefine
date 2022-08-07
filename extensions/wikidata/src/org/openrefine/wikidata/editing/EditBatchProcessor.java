@@ -172,8 +172,17 @@ public class EditBatchProcessor {
                 library.setId(newCell.getReconInternalId(), createdDocId.getId());
             } else {
                 // Existing entities
-                EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
-                editor.editEntityDocument(entityUpdate, false, summary, tags);
+                EntityUpdate entityUpdate;
+                if (update.requiresFetchingExistingState()) {
+                    entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                } else {
+                    entityUpdate = update.toEntityUpdate(null);
+                }
+
+                if (!entityUpdate.isEmpty()) { // skip updates which do not change anything
+                    editor.editEntityDocument(entityUpdate, false, summary, tags);
+                }
+                // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase
                 if (entityUpdate instanceof FullMediaInfoUpdate) {
                     FullMediaInfoUpdate fullMediaInfoUpdate = (FullMediaInfoUpdate) entityUpdate;
                     if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
@@ -224,7 +233,9 @@ public class EditBatchProcessor {
         } else {
             currentBatch = remainingUpdates.subList(0, batchSize);
         }
-        List<String> idsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getEntityId().getId())
+        List<String> idsToFetch = currentBatch.stream()
+                .filter(u -> u.requiresFetchingExistingState())
+                .map(u -> u.getEntityId().getId())
                 .collect(Collectors.toList());
 
         // Get the current documents for this batch of updates
@@ -233,8 +244,7 @@ public class EditBatchProcessor {
         int retries = 5;
         int backoff = 2;
         int sleepTime = 5000;
-        // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
-        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
+        while (currentDocs == null && retries > 0 && !idsToFetch.isEmpty()) {
             try {
                 currentDocs = fetcher.getEntityDocuments(idsToFetch);
             } catch (MediaWikiApiErrorException e) {
