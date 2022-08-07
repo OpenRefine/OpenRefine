@@ -3,6 +3,8 @@ package org.openrefine.wikidata.manifests;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -57,6 +59,7 @@ public class ManifestTest {
         assertEquals("https://commons.wikimedia.org/entity/", manifest.getEntityTypeSiteIri(Manifest.MEDIAINFO_TYPE));
         assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));
         assertEquals("([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])", manifest.getEditGroupsUrlSchema());
+        assertFalse(manifest.hideStructuredFieldsInMediaInfo());
     }
 
     @Test

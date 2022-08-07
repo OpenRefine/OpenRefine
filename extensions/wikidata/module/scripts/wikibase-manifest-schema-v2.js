@@ -144,6 +144,10 @@ const WikibaseManifestSchemaV2 = {
         },
       },
       "required": ["url_schema"]
+    },
+    "hide_structured_fields_in_mediainfo": {
+      "type": "boolean",
+      "description": "Boolean set to true when the Wikibase instance supports file uploads but does not have structured data associated to them in the form of MediaInfo entities"
     }
   },
   "required": ["version", "mediawiki", "wikibase", "entity_types"]

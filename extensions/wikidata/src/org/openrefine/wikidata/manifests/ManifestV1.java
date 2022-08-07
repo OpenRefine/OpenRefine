@@ -135,6 +135,11 @@ public class ManifestV1 implements Manifest {
     }
 
     @Override
+    public boolean hideStructuredFieldsInMediaInfo() {
+        return false;
+    }
+
+    @Override
     public String getTagTemplate() {
         return tagTemplate;
     }
