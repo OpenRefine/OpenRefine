@@ -625,6 +625,7 @@ Refine.getPermanentLink = function() {
     if(systemInfo.memoryWarn()) {
       var container = $('<div id="notification-container">').appendTo(document.body);
       $('<div id="notification">').text($.i18n('core-project/memory-warn')).appendTo(container);
+      setTimeout(() => container.hide(), 15000);
     }
   }, 1000)
 })();
