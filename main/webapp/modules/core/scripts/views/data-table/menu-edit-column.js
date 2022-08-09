@@ -78,7 +78,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
     
     elmts.cancelButton.on('click',dismiss);
-    elmts.okButton.on('click',function() {
+    elmts.form.on('submit',function(event) {
+      event.preventDefault();
       var columnName = jQueryTrim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
