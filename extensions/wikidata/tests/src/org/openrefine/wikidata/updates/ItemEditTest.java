@@ -57,16 +57,23 @@ import com.google.refine.util.TestUtils;
 public class ItemEditTest {
 
     private ItemIdValue existingSubject = Datamodel.makeWikidataItemIdValue("Q34");
+    private ItemIdValue otherExistingSubject = Datamodel.makeWikidataItemIdValue("Q56");
     private ItemIdValue newSubject = TestingData.makeNewItemIdValue(1234L, "new item");
 
     private PropertyIdValue pid1 = Datamodel.makeWikidataPropertyIdValue("P348");
     private PropertyIdValue pid2 = Datamodel.makeWikidataPropertyIdValue("P52");
     private Claim claim1 = Datamodel.makeClaim(existingSubject, Datamodel.makeNoValueSnak(pid1),
             Collections.emptyList());
+    private Claim claim1WithOtherSubject = Datamodel.makeClaim(otherExistingSubject, Datamodel.makeNoValueSnak(pid1),
+            Collections.emptyList());
     private Claim claim2 = Datamodel.makeClaim(existingSubject, Datamodel.makeValueSnak(pid2, newSubject),
             Collections.emptyList());
+    private Claim claim2WithOtherSubject = Datamodel.makeClaim(otherExistingSubject, Datamodel.makeValueSnak(pid2, newSubject),
+            Collections.emptyList());
     private Statement statement1 = Datamodel.makeStatement(claim1, Collections.emptyList(), StatementRank.NORMAL, "");
+    private Statement statement1WithOtherSubject = Datamodel.makeStatement(claim1WithOtherSubject, Collections.emptyList(), StatementRank.NORMAL, "");
     private Statement statement2 = Datamodel.makeStatement(claim2, Collections.emptyList(), StatementRank.NORMAL, "");
+    private Statement statement2WithOtherSubject = Datamodel.makeStatement(claim2WithOtherSubject, Collections.emptyList(), StatementRank.NORMAL, "");
     private StatementMerger strategy = new PropertyOnlyStatementMerger();
     private StatementEdit statementUpdate1 = new StatementEdit(statement1, strategy, StatementEditingMode.ADD_OR_MERGE);
     private StatementEdit statementUpdate2 = new StatementEdit(statement2, strategy, StatementEditingMode.DELETE);
@@ -252,20 +259,21 @@ public class ItemEditTest {
                 .addAlias(Datamodel.makeMonolingualTextValue("alias", "en"))
                 .addStatement(statementUpdate1)
                 .build();
-        ItemDocument itemDocument = ItemDocumentBuilder.forItemId(existingSubject)
-                .withStatement(statement2)
+        ItemDocument itemDocument = ItemDocumentBuilder.forItemId(otherExistingSubject)
+                .withStatement(statement2WithOtherSubject)
                 .withLabel(Datamodel.makeMonolingualTextValue("label", "en"))
                 .build();
 
         ItemUpdate update = (ItemUpdate) edit.toEntityUpdate(itemDocument);
-        assertEquals(update.getEntityId(), existingSubject);
+        assertEquals(update.getEntityId(), otherExistingSubject); // note the difference between the subjects:
+        // the subject from the document is fresher, in case of redirects.
         assertEquals(update.getAliases(), Collections.singletonMap("en",
                 Datamodel.makeAliasUpdate(Collections.singletonList(Datamodel.makeMonolingualTextValue("alias", "en")),
                         Collections.emptyList())));
         assertTrue(update.getDescriptions().isEmpty());
         assertTrue(update.getLabels().isEmpty());
         assertEquals(update.getStatements(),
-                Datamodel.makeStatementUpdate(Collections.singletonList(statement1), Collections.emptyList(), Collections.emptySet()));
+                Datamodel.makeStatementUpdate(Collections.singletonList(statement1WithOtherSubject), Collections.emptyList(), Collections.emptySet()));
     }
 
     @Test

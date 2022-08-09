@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -63,6 +66,22 @@ public class StatementEdit {
     }
 
     /**
+     * Translates the StatementEdit to apply to a new subject id.
+     * This is useful when a statement was planned on an entity which
+     * was redirected in the meantime.
+     *
+     * @param entityId
+     *      the new entity id on which the statement should be edited
+     * @return
+     *      a copy of the current StatementEdit, just changing the entity id
+     */
+    public StatementEdit withSubjectId(EntityIdValue entityId) {
+        Claim newClaim = Datamodel.makeClaim(entityId, statement.getMainSnak(), statement.getQualifiers());
+        Statement newStatement = Datamodel.makeStatement(newClaim, statement.getReferences(), statement.getRank(), statement.getStatementId());
+        return new StatementEdit(newStatement, merger, mode);
+    }
+
+    /**
      * Convenience method to directly access the property of the statement.
      */
     @JsonIgnore
@@ -96,4 +115,5 @@ public class StatementEdit {
     public int hashCode() {
         return Objects.hash(statement, merger, mode);
     }
+
 }
