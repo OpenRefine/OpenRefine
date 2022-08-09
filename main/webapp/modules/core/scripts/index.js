@@ -39,6 +39,9 @@ var Refine = {
 
 I18NUtil.init("core");
 
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
+
 Refine.selectActionArea = function(id) {
   $('.action-area-tab').removeClass('selected');
   $('.action-area-tab-body').css('visibility', 'hidden').css('z-index', '50');

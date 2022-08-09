@@ -35,9 +35,12 @@ var theProject;
 var thePreferences;
 var ui = {};
 
+var Refine = {};
+
 I18NUtil.init("core");
 
-var Refine = {};
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
 
 Refine.reportException = function(e) {
   if (window.console) {

@@ -38,6 +38,9 @@ var Refine = {
 
 I18NUtil.init("core");
 
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
+
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;

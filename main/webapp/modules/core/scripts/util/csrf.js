@@ -1,6 +1,8 @@
+CSRFUtil = {};
+
 // Requests a CSRF token and calls the supplied callback
 // with the token
-Refine.wrapCSRF = function(onCSRF) {
+CSRFUtil.wrapCSRF = function(onCSRF) {
     $.get(
         "command/core/get-csrf-token",
         {},
@@ -14,8 +16,8 @@ Refine.wrapCSRF = function(onCSRF) {
 // Performs a POST request where an additional CSRF token
 // is supplied in the POST data. The arguments match those
 // of $.post().
-Refine.postCSRF = function(url, data, success, dataType, failCallback) {
-    return Refine.wrapCSRF(function(token) {
+CSRFUtil.postCSRF = function(url, data, success, dataType, failCallback) {
+    return CSRFUtil.wrapCSRF(function(token) {
         var fullData = data || {};
         if (typeof fullData == 'string') {
             fullData = fullData + "&" + $.param({csrf_token: token});
