@@ -71,9 +71,11 @@ public class ItemEditTest {
     private Claim claim2WithOtherSubject = Datamodel.makeClaim(otherExistingSubject, Datamodel.makeValueSnak(pid2, newSubject),
             Collections.emptyList());
     private Statement statement1 = Datamodel.makeStatement(claim1, Collections.emptyList(), StatementRank.NORMAL, "");
-    private Statement statement1WithOtherSubject = Datamodel.makeStatement(claim1WithOtherSubject, Collections.emptyList(), StatementRank.NORMAL, "");
+    private Statement statement1WithOtherSubject = Datamodel.makeStatement(claim1WithOtherSubject, Collections.emptyList(),
+            StatementRank.NORMAL, "");
     private Statement statement2 = Datamodel.makeStatement(claim2, Collections.emptyList(), StatementRank.NORMAL, "");
-    private Statement statement2WithOtherSubject = Datamodel.makeStatement(claim2WithOtherSubject, Collections.emptyList(), StatementRank.NORMAL, "");
+    private Statement statement2WithOtherSubject = Datamodel.makeStatement(claim2WithOtherSubject, Collections.emptyList(),
+            StatementRank.NORMAL, "");
     private StatementMerger strategy = new PropertyOnlyStatementMerger();
     private StatementEdit statementUpdate1 = new StatementEdit(statement1, strategy, StatementEditingMode.ADD_OR_MERGE);
     private StatementEdit statementUpdate2 = new StatementEdit(statement2, strategy, StatementEditingMode.DELETE);
@@ -273,7 +275,8 @@ public class ItemEditTest {
         assertTrue(update.getDescriptions().isEmpty());
         assertTrue(update.getLabels().isEmpty());
         assertEquals(update.getStatements(),
-                Datamodel.makeStatementUpdate(Collections.singletonList(statement1WithOtherSubject), Collections.emptyList(), Collections.emptySet()));
+                Datamodel.makeStatementUpdate(Collections.singletonList(statement1WithOtherSubject), Collections.emptyList(),
+                        Collections.emptySet()));
     }
 
     @Test
