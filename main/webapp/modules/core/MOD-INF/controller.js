@@ -439,6 +439,7 @@ function init() {
       "externals/suggest/suggest-4_3a.js",
       "3rdparty/date.js",
       "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/project.js",
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -542,6 +543,7 @@ function init() {
     module,
     commonModules.concat([
       "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/preferences.js",
     ])
   );
