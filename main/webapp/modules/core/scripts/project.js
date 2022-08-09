@@ -457,8 +457,6 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
   }, 500);
 };
 
-CSRFUtil();
-
 Refine.setAjaxInProgress = function() {
   $(document.body).attr("ajax_in_progress", "true");
 };

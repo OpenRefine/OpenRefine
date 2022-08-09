@@ -37,8 +37,6 @@ var Refine = {
   actionAreas: []
 };
 
-CSRFUtil();
-
 I18NUtil.init("core");
 
 Refine.selectActionArea = function(id) {

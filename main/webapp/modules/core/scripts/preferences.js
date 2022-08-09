@@ -36,8 +36,6 @@ var preferenceUIs = [];
 var Refine = {
 };
 
-CSRFUtil();
-
 I18NUtil.init("core");
 
 function deDupUserMetaData(arrObj)  {

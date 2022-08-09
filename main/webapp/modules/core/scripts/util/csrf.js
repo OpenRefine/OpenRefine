@@ -1,5 +1,3 @@
-CSRFUtil = {};
-
 // Requests a CSRF token and calls the supplied callback
 // with the token
 Refine.wrapCSRF = function(onCSRF) {
