@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @import-less url("theme.less");
 
 :root {
+  --text-primary: black;
+  --text-secondary: #222;
   --link-primary: #11c;
   --link-secondary: #4272db;
   --chrome-primary: #bcf;
@@ -56,6 +58,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   --dialog-footer: #eee;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: white;
+    --text-secondary: #e3e3e3;
+    --background-primary: #0e2439;
+    --chrome-primary: #015ca3;
+    --chrome-secondary: #037ede;
+    --fill-primary: #06325d;
+    --fill-secondary: #0a4f8e;
+    --link-primary: #bdbdff;
+    --link-secondary: #8b8bff;
+    --dialog-header: #072038;
+    --dialog-border: #0a2136;
+    --dialog-footer: #09233b;
+  }
+
+  textarea,
+  input[type="text"],
+  input[type="number"],
+  input[type="url"] {
+    background-color: var(--fill-primary);
+    border-color: var(--chrome-primary);
+  }
+}
+
+
 
 html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
 article, aside, figure, footer, header, hgroup, nav, section { display: block; }
@@ -64,11 +92,12 @@ a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background
 table { border-collapse: collapse; border-spacing: 0; }
 input, select { vertical-align: middle; }
 
-body { 
+body {
+  color: var(--text-primary);
   font-size: 62.5%; 
   font-family: Arial, sans-serif; 
   background: var(--background-primary);
-  }
+}
 
 h1 { 
   font-size: 1.8em; 

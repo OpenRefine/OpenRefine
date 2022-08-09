@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .ui-tabs .ui-tabs-nav li a span.count {
-  color: #666;
+  color: var(--near-black);
   font-weight: normal;
   font-size: 80%;
   }
@@ -85,7 +85,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ui-tabs .ui-tabs-nav .ui-state-active a, 
 .ui-tabs .ui-tabs-nav .ui-state-active a:link, 
 .ui-tabs .ui-tabs-nav .ui-state-active a:visited {
-  color: black;
+  color: var(--text-primary);
   font-weight: bold;
   }
 
@@ -104,3 +104,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ui-widget-content a {
   color: var(--link-primary);
   }
+
+.ui-widget.ui-widget-content {
+  border: none;
+}
