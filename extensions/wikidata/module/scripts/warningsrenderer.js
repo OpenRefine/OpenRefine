@@ -80,7 +80,7 @@ WarningsRenderer._createFacetForWarning = function (warning) {
   SchemaAlignment.switchTab('#view-panel');
 };
 
-WarningsRenderer._renderWarning = function (warning) {
+WarningsRenderer._renderWarning = function (warning, onLocateRows) {
   var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/title'), warning.properties);
   var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/body'), warning.properties);
   var tr = $('<tr></tr>').addClass('wb-warning');
@@ -103,10 +103,14 @@ WarningsRenderer._renderWarning = function (warning) {
         .text($.i18n('wikibase-issues/locate-offending-rows'))
         .appendTo(bodyTd);
     facetingButton.on('click', function(evt) {
+        if (onLocateRows) {
+          onLocateRows();
+        }
+
+        // the faceting relies on having an up to date schema
         var onSaved = function() {
           WarningsRenderer._createFacetForWarning(warning);
         };
-        // the faceting relies on having an up to date schema
         if (SchemaAlignment._hasUnsavedChanges) {
            SchemaAlignment._save(onSaved);
         } else {
