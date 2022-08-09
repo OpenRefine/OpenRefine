@@ -35,9 +35,12 @@ var theProject;
 var thePreferences;
 var ui = {};
 
+var Refine = {};
+
 I18NUtil.init("core");
 
-var Refine = {};
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
 
 Refine.reportException = function(e) {
   if (window.console) {
@@ -455,34 +458,6 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       dismissBusy = DialogSystem.showBusy();
     }
   }, 500);
-};
-
-// Requests a CSRF token and calls the supplied callback
-// with the token
-Refine.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
-};
-
-// Performs a POST request where an additional CSRF token
-// is supplied in the POST data. The arguments match those
-// of $.post().
-Refine.postCSRF = function(url, data, success, dataType) {
-   Refine.wrapCSRF(function(token) {
-      var fullData = data || {};
-      if (typeof fullData == 'string') {
-         fullData = fullData + "&" + $.param({csrf_token: token});
-      } else {
-         fullData['csrf_token'] = token;
-      }
-      $.post(url, fullData, success, dataType);
-   });
 };
 
 Refine.setAjaxInProgress = function() {
