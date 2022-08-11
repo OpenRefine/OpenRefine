@@ -28,7 +28,7 @@
                                 $(settings.tagSelector).removeClass(settings.selectedTagClass);
                                 $(settings.tagSelector + '[href="' + tagToShow + '"]').addClass(settings.selectedTagClass);
                         }
-                        $(this).trigger("filterMyList", [ tagToShow.substr(1) ]);
+                        $(this).trigger("filterMyList", [ tagToShow.substring(1) ]);
                 });
         
                 /* FILTERPORTFOLIO: pass in a class to show, all others will be hidden */

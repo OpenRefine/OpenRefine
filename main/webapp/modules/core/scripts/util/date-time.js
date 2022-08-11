@@ -203,7 +203,7 @@ DateTimeUtil.setIso8601 = function (dateObject, string){
                 offset = (Number(d[3]) * 60) + Number(d[5]);
                 offset *= ((d[2] == '-') ? 1 : -1);
             }
-            comps[1] = comps[1].substr(0, comps[1].length - d[0].length);
+            comps[1] = comps[1].substring(0, comps[1].length - d[0].length);
         }
 
         DateTimeUtil.setIso8601Time(dateObject, comps[1]); 
