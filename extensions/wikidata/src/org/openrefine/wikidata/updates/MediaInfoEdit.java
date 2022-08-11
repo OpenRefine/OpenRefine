@@ -160,7 +160,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         StatementUpdate statementUpdate = toStatementUpdate(mediaInfoDocument);
 
         return new FullMediaInfoUpdate(
-                (MediaInfoIdValue) id,
+                // important: use the id from the document, not from the update, as
+                // they might not be the same if a redirect has happened
+                mediaInfoDocument.getEntityId(),
                 entityDocument.getRevisionId(),
                 labelUpdate,
                 statementUpdate,
