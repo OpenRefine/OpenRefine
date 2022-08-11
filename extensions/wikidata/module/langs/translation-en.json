@@ -285,5 +285,5 @@
     "wikibase-statement-settings/strategy-options/property/description": "Compare statements by their main property only.",
     "wikibase-issues/no-warning": "No warning",
     "wikibase-issues/warning-raised": "Warning raised",
-    "wikibase-issues/locate-offending-rows": "Locate offending rows"
+    "wikibase-issues/locate-offending-rows": "Locate rows"
 }
