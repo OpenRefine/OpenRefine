@@ -33,11 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +55,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.XmlStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,23 +224,22 @@ public class XmlImporter extends TreeImportingParserBase {
         static final int WHITESPACE_CHARACTERS_TOKEN = 15;
 
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
-            inputStream = removeInvalidCharacters(inputStream);
-            parser = createXMLStreamReader(inputStream);
+            parser = createXMLStreamReader(removeInvalidCharacters(inputStream));
         }
 
         private InputStream removeInvalidCharacters(InputStream inputStream) throws IOException {
-            XmlStreamReader reader = new XmlStreamReader(inputStream);
-            StringBuilder sb = new StringBuilder();
-            Pattern p = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
-            int c;
-            while ((c = reader.read()) != -1) {
-                var character = (char) c;
-                if (p.matcher(String.valueOf(character)).matches()) {
-                    continue;
+            OutputStream outputStream = new ByteArrayOutputStream();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader((inputStream)));
+                 OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+                 ) {
+                Pattern pattern = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
+                for (int c; (c = reader.read()) != -1; ) {
+                    if (!pattern.matcher(String.valueOf((char) c)).matches()) {
+                        writer.write(c);
+                    }
                 }
-                sb.append(character);
             }
-            return IOUtils.toInputStream(sb.toString(), StandardCharsets.UTF_8);
+            return IOUtils.toInputStream(outputStream.toString(), StandardCharsets.UTF_8);
         }
 
         @Override
