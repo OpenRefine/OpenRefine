@@ -457,6 +457,7 @@ function init() {
 
       "scripts/project/browsing-engine.js",
       "scripts/project/history-panel.js",
+      "scripts/project/process-notification.js",
       "scripts/project/process-panel.js",
       "scripts/project/extension-bar.js",
       "scripts/project/summary-bar.js",
