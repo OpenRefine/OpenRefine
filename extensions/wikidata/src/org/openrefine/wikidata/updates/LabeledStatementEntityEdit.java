@@ -187,7 +187,12 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
         StatementUpdateBuilder builder = StatementUpdateBuilder.create(currentDocument.getEntityId());
 
         for (Entry<PropertyIdValue, List<StatementEdit>> entry : groupedEdits.entrySet()) {
-            StatementGroupEdit statementGroupEdit = new StatementGroupEdit(entry.getValue());
+            // the id of the current document might be different from the id used to create the statements,
+            // in the case of a redirect.
+            List<StatementEdit> statementEdits = entry.getValue().stream()
+                    .map(statementEdit -> statementEdit.withSubjectId(currentDocument.getEntityId()))
+                    .collect(Collectors.toList());
+            StatementGroupEdit statementGroupEdit = new StatementGroupEdit(statementEdits);
             StatementGroup statementGroup = currentDocument.findStatementGroup(entry.getKey().getId());
             statementGroupEdit.contributeToStatementUpdate(builder, statementGroup);
         }

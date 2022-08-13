@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.refine.operations.OperationDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -186,16 +187,14 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
             }
         }
 
-        String description = "Copy " + cellChanges.size() + " recon judgments from column " +
-                _fromColumnName + " to " + StringUtils.join(_toColumnNames);
-
+        String description = OperationDescription.recon_copy_across_columns_desc(cellChanges.size(), _fromColumnName,
+                StringUtils.join(_toColumnNames));
         return new HistoryEntry(
                 historyEntryID, project, description, this, new MassChange(cellChanges, false));
     }
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Copy recon judgments from column " +
-                _fromColumnName + " to " + StringUtils.join(_toColumnNames);
+        return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames));
     }
 }

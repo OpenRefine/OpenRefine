@@ -40,6 +40,7 @@ import java.util.UnknownFormatConversionException;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.StringUtils;
@@ -59,7 +60,7 @@ public class ToString implements Function {
                     try {
                         return String.format((String) o2, o1);
                     } catch (UnknownFormatConversionException e) {
-                        return new EvalError("Unknown format conversion: " + e.getMessage());
+                        return new EvalError(EvalErrorMessage.unknown_format_conversion(e.getMessage()));
                     }
                 }
             } else if (args.length == 1) {
@@ -70,8 +71,8 @@ public class ToString implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " accepts an object and an optional second argument containing a Date or Number format string");
+        // second argument containing a Date or Number format string");
+        return new EvalError(EvalErrorMessage.fun_to_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

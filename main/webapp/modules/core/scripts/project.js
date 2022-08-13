@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -35,26 +35,12 @@ var theProject;
 var thePreferences;
 var ui = {};
 
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
-var dictionary = "";
-$.ajax({
-	url : "command/core/load-language?",
-	type : "POST",
-	async : false,
-	data : {
-	  module : "core",
-//		lang : lang
-	},
-	success : function(data) {
-		dictionary = data['dictionary'];
-        lang = data['lang'];
-	}
-});
-$.i18n().load(dictionary, lang);
-$.i18n({ locale: lang });
-// End internationalization
-
 var Refine = {};
+
+I18NUtil.init("core");
+
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
 
 Refine.reportException = function(e) {
   if (window.console) {
@@ -64,14 +50,14 @@ Refine.reportException = function(e) {
 
 function resize() {
   var leftPanelWidth = JSON.parse(Refine.getPreference("ui.browsing.facetsHistoryPanelWidth", 300));
-  if(typeof leftPanelWidth != "number" || leftPanelWidth < 200 || leftPanelWidth > 500) { 
-    leftPanelWidth = 300; 
+  if(typeof leftPanelWidth != "number" || leftPanelWidth < 200 || leftPanelWidth > 500) {
+    leftPanelWidth = 300;
   }
 
   var width = $(window).width();
   var top = $("#header").outerHeight();
   var height = $(window).height() - top;
-  
+
   if (ui.leftPanelDiv.css('display') == "none") { leftPanelWidth = 0; }
 
   var leftPanelPaddings = ui.leftPanelDiv.outerHeight(true) - ui.leftPanelDiv.height();
@@ -127,7 +113,7 @@ function initializeUI(uiState) {
   $("#project-title").show();
   $("#project-controls").show();
   $("#body").show();
-  
+
   $("#or-proj-open").text($.i18n('core-project/open')+"...");
   $("#project-permalink-button").text($.i18n('core-project/permalink'));
   $("#project-name-button").attr("title",$.i18n('core-project/proj-name'));
@@ -163,7 +149,7 @@ function initializeUI(uiState) {
     .addClass("visibility-panel-button")
     .on('click',function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.toolPanelDiv);
-  
+
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
   ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
   ui.processPanel = new ProcessPanel(ui.processPanelDiv);
@@ -254,13 +240,13 @@ Refine.reinitializeProjectData = function(f, fError) {
   );
 };
 
-Refine.getPreference = function(key, defaultValue) { 
+Refine.getPreference = function(key, defaultValue) {
   if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
 
   return thePreferences[key];
 }
 
-Refine.setPreference = function(key, newValue) { 
+Refine.setPreference = function(key, newValue) {
   thePreferences[key] = newValue;
 
   Refine.wrapCSRF(function(token) {
@@ -269,7 +255,7 @@ Refine.setPreference = function(key, newValue) {
       type: "POST",
       url: "command/core/set-preference?" + $.param({ name: key }),
       data: {
-        "value" : JSON.stringify(newValue), 
+        "value" : JSON.stringify(newValue),
         csrf_token: token
       },
       success: function(data) { },
@@ -351,7 +337,7 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
 /*
  * Registers a callback function to be called after each update.
  * This is provided for extensions which need to run some code when
- * the project is updated. This was introduced for the Wikidata 
+ * the project is updated. This was introduced for the Wikidata
  * extension as a means to avoid monkey-patching Refine's core
  * methods (which was the solution adopted for GOKb, as they had
  * no way to change Refine's code directly).
@@ -472,34 +458,6 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       dismissBusy = DialogSystem.showBusy();
     }
   }, 500);
-};
-
-// Requests a CSRF token and calls the supplied callback
-// with the token
-Refine.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
-};
-
-// Performs a POST request where an additional CSRF token
-// is supplied in the POST data. The arguments match those
-// of $.post().
-Refine.postCSRF = function(url, data, success, dataType) {
-   Refine.wrapCSRF(function(token) {
-      var fullData = data || {};
-      if (typeof fullData == 'string') {
-         fullData = fullData + "&" + $.param({csrf_token: token});
-      } else {
-         fullData['csrf_token'] = token;
-      }
-      $.post(url, fullData, success, dataType);
-   });
 };
 
 Refine.setAjaxInProgress = function() {

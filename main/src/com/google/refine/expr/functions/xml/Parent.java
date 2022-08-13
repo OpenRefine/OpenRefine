@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
@@ -55,16 +56,16 @@ public class Parent implements Function {
                 return e1.parent();
 
             } else {
-
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + "() cannot work with this '"
-                        + new Type().call(bindings, args)
-                        + "'"
-                        + " but instead needs a jsoup XML or HTML Element to work with."
-                        + " For arrays, you might select an index or loop over them with forEach().");
+                // + "() cannot work with this '"
+                // + new Type().call(bindings, args)
+                // + "'"
+                // + " but instead needs a jsoup XML or HTML Element to work with."
+                // + " For arrays, you might select an index or loop over them with forEach().");
+                return new EvalError(EvalErrorMessage.xml_parent_cannot_work_with(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(bindings, args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

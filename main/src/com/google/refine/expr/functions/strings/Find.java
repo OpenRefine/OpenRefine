@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -67,7 +68,7 @@ public class Find implements Function {
 
             return allMatches.toArray(new String[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regex");
+        return new EvalError(EvalErrorMessage.expects_one_string_or_regex(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

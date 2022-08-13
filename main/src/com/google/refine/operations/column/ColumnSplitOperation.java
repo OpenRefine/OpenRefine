@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.google.refine.operations.OperationDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -189,8 +190,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Split column " + _columnName +
-                ("separator".equals(_mode) ? " by separator" : " by field lengths");
+        return ("separator".equals(_mode)) ? OperationDescription.column_split_separator_brief(_columnName)
+                : OperationDescription.column_split_brief(_columnName);
     }
 
     @Override

@@ -51,6 +51,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
 
@@ -77,16 +78,18 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 
     @Override
     protected String getBriefDescription(Project project) {
-        return _clearData ? "Discard recon judgments and clear recon data for cells in column " + _columnName
-                : "Discard recon judgments for cells in column " + _columnName;
+        return _clearData ?
+        // "Discard recon judgments and clear recon data for cells in column " + _columnName :
+                OperationDescription.recon_discard_judgments_clear_data_brief(_columnName) :
+                // "Discard recon judgments for cells in column " + _columnName
+                OperationDescription.recon_discard_judgments_brief(_columnName);
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-
-        return (_clearData ? "Discard recon judgments and clear recon data" : "Discard recon judgments") +
-                " for " + cellChanges.size() + " cells in column " + column.getName();
+        return _clearData ? OperationDescription.recon_discard_judgments_clear_data_desc(cellChanges.size(), column.getName())
+                : OperationDescription.recon_discard_judgments_desc(cellChanges.size(), column.getName());
     }
 
     @Override

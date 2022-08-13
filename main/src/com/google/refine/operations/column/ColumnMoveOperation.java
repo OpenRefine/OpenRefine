@@ -40,6 +40,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnMoveChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnMoveOperation extends AbstractOperation {
 
@@ -66,7 +67,7 @@ public class ColumnMoveOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Move column " + _columnName + " to position " + _index;
+        return OperationDescription.column_move_brief(_columnName, _index);
     }
 
     @Override

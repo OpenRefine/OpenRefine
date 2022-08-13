@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -60,7 +61,8 @@ public class Replace implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings, or 1 string, 1 regex, and 1 string");
+        // regex, and 1 string");
+        return new EvalError(EvalErrorMessage.expects_three_strings_as_string_regex_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
