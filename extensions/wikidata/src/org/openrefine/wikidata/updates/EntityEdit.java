@@ -36,6 +36,10 @@ public interface EntityEdit {
     /**
      * In case the subject id is not new, returns the corresponding update given the current state of the entity. Throws
      * a validation exception otherwise.
+     *
+     * @param entityDocument
+     *            The current state of the entity. If {@link #requiresFetchingExistingState()} returns false, then this
+     *            parameter may be null, as it should not be required to compute the {@link EntityUpdate}.
      */
     EntityUpdate toEntityUpdate(EntityDocument entityDocument);
 
@@ -102,4 +106,13 @@ public interface EntityEdit {
         return isEmpty() && !isNew();
     }
 
+    /**
+     * @return true when performing this edit requires fetching the current contents of the entity before making the
+     *         edit. By default, this is true when making non-empty edits on existing entities. But implementations may
+     *         override this, to spare the request to fetch the current entity, if that information is not necessary to
+     *         compute the update.
+     */
+    public default boolean requiresFetchingExistingState() {
+        return !isEmpty() && !isNew();
+    }
 }

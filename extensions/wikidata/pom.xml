@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <wdtk.version>0.14.0</wdtk.version>
+    <wdtk.version>0.14.1</wdtk.version>
   </properties>
 
   <build>

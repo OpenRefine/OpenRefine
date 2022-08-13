@@ -604,50 +604,52 @@ SchemaAlignment._addMediaInfo = function(json) {
     SchemaAlignment._hasChanged();
   });
 
-  // Captions
-  $('<span></span>').addClass('wbs-namedesc-header')
-       .text($.i18n('wikibase-schema/captions-header')).appendTo(right);
-  $('<div></div>').addClass('wbs-namedesc-container')
-        .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-captions'))
-        .appendTo(right);
-  var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
-  .on('click',function(e) {
-     SchemaAlignment._addNameDesc(item, {name_type: 'LABEL_IF_NEW', value: null});
-     e.preventDefault();
-  }).appendTo(termToolbar);
-  SchemaAlignment._plusButton(
-         $.i18n('wikibase-schema/add-caption'), addNamedescButton);
+  if (!WikibaseManager.areStructuredMediaInfoFieldsDisabledForSelectedWikibase()) {
+    // Captions
+    $('<span></span>').addClass('wbs-namedesc-header')
+        .text($.i18n('wikibase-schema/captions-header')).appendTo(right);
+    $('<div></div>').addClass('wbs-namedesc-container')
+            .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-captions'))
+            .appendTo(right);
+    var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+    var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
+    .on('click',function(e) {
+        SchemaAlignment._addNameDesc(item, {name_type: 'LABEL_IF_NEW', value: null});
+        e.preventDefault();
+    }).appendTo(termToolbar);
+    SchemaAlignment._plusButton(
+            $.i18n('wikibase-schema/add-caption'), addNamedescButton);
 
-  // Clear the float
-  $('<div></div>').attr('style', 'clear: right').appendTo(right);
+    // Clear the float
+    $('<div></div>').attr('style', 'clear: right').appendTo(right);
 
-  // Statements
-  $('<div></div>').addClass('wbs-statements-header')
-        .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
-  $('<div></div>').addClass('wbs-statement-group-container')
-        .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-statements'))
-        .appendTo(right);
-  var statementToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  var addStatementButton = $('<a></a>').addClass('wbs-add-statement-group')
-        .on('click',function(e) {
-     SchemaAlignment._addStatementGroup(item, null);
-     e.preventDefault();
-  }).appendTo(statementToolbar);
+    // Statements
+    $('<div></div>').addClass('wbs-statements-header')
+            .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
+    $('<div></div>').addClass('wbs-statement-group-container')
+            .attr('data-emptyplaceholder', $.i18n('wikibase-schema/empty-statements'))
+            .appendTo(right);
+    var statementToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+    var addStatementButton = $('<a></a>').addClass('wbs-add-statement-group')
+            .on('click',function(e) {
+        SchemaAlignment._addStatementGroup(item, null);
+        e.preventDefault();
+    }).appendTo(statementToolbar);
 
-  SchemaAlignment._plusButton(
-         $.i18n('wikibase-schema/add-statement'), addStatementButton);
-   
-  if (statementGroups) {
-     for(var i = 0; i != statementGroups.length; i++) {
-        SchemaAlignment._addStatementGroup(item, statementGroups[i]);
-     }
-  }
-  
-  if (nameDescs) {
-     for(var i = 0; i != nameDescs.length; i++) {
-        SchemaAlignment._addNameDesc(item, nameDescs[i]);
-     }
+    SchemaAlignment._plusButton(
+            $.i18n('wikibase-schema/add-statement'), addStatementButton);
+    
+    if (statementGroups) {
+        for(var i = 0; i != statementGroups.length; i++) {
+            SchemaAlignment._addStatementGroup(item, statementGroups[i]);
+        }
+    }
+    
+    if (nameDescs) {
+        for(var i = 0; i != nameDescs.length; i++) {
+            SchemaAlignment._addNameDesc(item, nameDescs[i]);
+        }
+    }
   }
 };
 
