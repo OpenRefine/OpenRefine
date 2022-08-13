@@ -156,7 +156,8 @@ SchemaAlignment._rerenderTabs = function() {
   this._issuesPanel.empty();
   var issuesTab = $(DOM.loadHTML("wikidata", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
-  issuesElmts.invalidSchemaWarningIssues.text($.i18n('wikibase-schema/invalid-schema-warning-issues'));
+  issuesElmts.invalidSchemaWarningIssues.text($.i18n('wikibase-schema/invalid-schema-warning'));
+  this.schemaValidationErrorsInIssues = issuesElmts.schemaValidationErrors;
 
   /**
    * Init the preview tab
@@ -165,7 +166,8 @@ SchemaAlignment._rerenderTabs = function() {
   var previewTab = $(DOM.loadHTML("wikidata", "scripts/preview-tab.html")).appendTo(this._previewPanel);
   var previewElmts = this._previewElmts = DOM.bind(previewTab);
   SchemaAlignment.updateNbEdits(0);
-  previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning-preview'));
+  previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning'));
+  this.schemaValidationErrorsInPreview = previewElmts.schemaValidationErrors;
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
   // add all recon services for all the entity types of the Wikibase instance
@@ -315,6 +317,7 @@ SchemaAlignment._save = function(onDone) {
 
   if (schema === null) {
     alert($.i18n('wikibase-schema/incomplete-schema-could-not-be-saved'));
+    return;
   }
 
   Refine.postProcess(
@@ -328,12 +331,18 @@ SchemaAlignment._save = function(onDone) {
         theProject.overlayModels.wikibaseSchema = schema;
 
         $('.invalid-schema-warning').hide();
+        self.schemaValidationErrorsInPreview.empty();
+        self.schemaValidationErrorsInIssues.empty();
         self._changesCleared();
 
         if (onDone) onDone();
       },
       onError: function(e) {
-        alert($.i18n('wikibase-schema/incomplete-schema-could-not-be-saved'));
+        if (e.reason == 'invalid-schema') {
+           alert($.i18n('wikibase-schema/incomplete-schema-could-not-be-saved'));
+        } else {
+           alert(e.message);
+        }
       },
     }
   );
@@ -495,31 +504,22 @@ SchemaAlignment._itemToJSON = function (item) {
     var statementsDom = item.find('.wbs-statement-group');
     statementsDom.each(function () {
         var statementGroupJSON = SchemaAlignment._statementGroupToJSON($(this));
-        if (statementGroupJSON !== null) {
-          statementGroupLst.push(statementGroupJSON);
-        }
+        statementGroupLst.push(statementGroupJSON);
     });
     var nameDescLst = new Array();
     var nameDescsDom = item.find('.wbs-namedesc');
     nameDescsDom.each(function () {
         var nameDescJSON = SchemaAlignment._nameDescToJSON($(this));
-        if (nameDescJSON !== null) {
-           nameDescLst.push(nameDescJSON);
-        }
+        nameDescLst.push(nameDescJSON);
     });
     var inputContainer = item.find(".wbs-entity-input").first();
     var subjectJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
-    if (subjectJSON !== null &&
-        statementGroupLst.length === statementsDom.length &&
-        nameDescLst.length === nameDescsDom.length) {
-      return {
-	        type: 'wbitemeditexpr',
-	        subject: subjectJSON,
-            statementGroups: statementGroupLst,
-            nameDescs: nameDescLst}; 
-    } else {
-      return null;
-    }
+    return {
+      type: 'wbitemeditexpr',
+      subject: subjectJSON,
+      statementGroups: statementGroupLst,
+      nameDescs: nameDescLst
+    }; 
 };
 
 /***********************
@@ -656,17 +656,13 @@ SchemaAlignment._mediaInfoToJSON = function (mediainfo) {
     var statementsDom = mediainfo.find('.wbs-statement-group');
     statementsDom.each(function () {
         var statementGroupJSON = SchemaAlignment._statementGroupToJSON($(this));
-        if (statementGroupJSON !== null) {
-          statementGroupLst.push(statementGroupJSON);
-        }
+        statementGroupLst.push(statementGroupJSON);
     });
     var nameDescLst = new Array();
     var nameDescsDom = mediainfo.find('.wbs-namedesc');
     nameDescsDom.each(function () {
         var nameDescJSON = SchemaAlignment._nameDescToJSON($(this));
-        if (nameDescJSON !== null) {
-           nameDescLst.push(nameDescJSON);
-        }
+        nameDescLst.push(nameDescJSON);
     });
     var inputContainer = mediainfo.find(".wbs-entity-input").first();
     var subjectJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
@@ -678,21 +674,16 @@ SchemaAlignment._mediaInfoToJSON = function (mediainfo) {
     var wikitext = SchemaAlignment._inputContainerToJSON(
 		  mediainfo.find('.wbs-wikitext-input').first());
     var overrideWikitext = mediainfo.find('input[type=checkbox].wbs-wikitext-override').first().prop('checked');
-    if (subjectJSON !== null &&
-        statementGroupLst.length === statementsDom.length &&
-        nameDescLst.length === nameDescsDom.length) {
-      return {
-            type: "wbmediainfoeditexpr",
-            subject: subjectJSON,
-            filePath: filePath,
-            fileName: fileName,
-            wikitext: wikitext,
-            overrideWikitext: overrideWikitext,
-            statementGroups: statementGroupLst,
-            nameDescs: nameDescLst};
-    } else {
-      return null;
-    }
+    return {
+      type: "wbmediainfoeditexpr",
+      subject: subjectJSON,
+      filePath: filePath,
+      fileName: fileName,
+      wikitext: wikitext,
+      overrideWikitext: overrideWikitext,
+      statementGroups: statementGroupLst,
+      nameDescs: nameDescLst
+    };
 };
 
 /**************************
@@ -830,18 +821,14 @@ SchemaAlignment._statementGroupToJSON = function (statementGroup) {
     var domStatements = statementGroup.find('.wbs-statement-container').first().children('.wbs-statement');
     domStatements.each(function () {
        var statementJSON = SchemaAlignment._statementToJSON($(this));
-       if (statementJSON !== null) {
-          lst.push(statementJSON);
-       } 
+       lst.push(statementJSON);
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
     var propertyJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
-    if (propertyJSON !== null && domStatements.length === lst.length && lst.length > 0) {
-       return {property: propertyJSON,
-              statements: lst};
-    } else {
-       return null;
-    }
+    return {
+      property: propertyJSON,
+      statements: lst
+    };
 };
 
 /**************
@@ -1000,36 +987,26 @@ SchemaAlignment._statementToJSON = function (statement) {
     var qualifiersDom = statement.find('.wbs-qualifier-container').first().children();
     qualifiersDom.each(function () {
         var qualifierJSON = SchemaAlignment._qualifierToJSON($(this));
-        if (qualifierJSON !== null) {
-           qualifiersList.push(qualifierJSON);
-        }
+        qualifiersList.push(qualifierJSON);
     });
     var referencesDom = statement.find('.wbs-reference-container').first().children();
     if (editingMode !== 'delete') {
         referencesDom.each(function () {
             var referenceJSON = SchemaAlignment._referenceToJSON($(this));
-            if (referenceJSON !== null) {
             referencesList.push(referenceJSON);
-            }
         });
     }
     var valueJSON = null;
     if (!(editingMode === 'delete' && mergingStrategyType === 'property')) {
       valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
     }
-    if ((editingMode === 'delete' || referencesList.length === referencesDom.length) &&
-        ((editingMode === 'delete' && (mergingStrategyType === 'snak' || mergingStrategy === 'property')) || qualifiersList.length === qualifiersDom.length) &&
-        ((editingMode === 'delete' && mergingStrategyType === 'property') || valueJSON !== null)) {
-      return {
-        value: valueJSON,
-        qualifiers: qualifiersList,
-        references: referencesList,
-        mode: editingMode,
-        mergingStrategy: mergingStrategy
-      };
-    } else {
-      return null;
-    }
+    return {
+      value: valueJSON,
+      qualifiers: qualifiersList,
+      references: referencesList,
+      mode: editingMode,
+      mergingStrategy: mergingStrategy
+    };
 };
 
 /**************
@@ -1069,14 +1046,10 @@ SchemaAlignment._qualifierToJSON = function(elem) {
   var target = elem.find(".wbs-target-input").first();
   var propJSON = SchemaAlignment._inputContainerToJSON(prop);
   var valueJSON = SchemaAlignment._inputContainerToJSON(target);
-  if (propJSON !== null && valueJSON !== null) {
-    return {
-        prop: propJSON,
-        value: valueJSON,
-    };
-  } else {
-    return null;
-  }
+  return {
+    prop: propJSON,
+    value: valueJSON,
+  };
 };
 
 /**************
@@ -1136,15 +1109,11 @@ SchemaAlignment._referenceToJSON = function(reference) {
   var snaksList = new Array();
   snaks.each(function () {
       var qualifier = SchemaAlignment._qualifierToJSON($(this));
-      if (qualifier !== null) {
-         snaksList.push(qualifier);
-      }
+      snaksList.push(qualifier);
   });
-  if (snaksList.length === snaks.length) {
-      return {snaks:snaksList};
-  } else {
-      return null;
-  }
+  return {
+    snaks:snaksList
+  };
 };
 
 SchemaAlignment._updateReferencesNumber = function(container) {
@@ -1602,15 +1571,19 @@ SchemaAlignment.preview = function() {
   var self = this;
 
   $('.invalid-schema-warning').hide();
+  self.schemaValidationErrorsInPreview.empty();
+  self.schemaValidationErrorsInIssues.empty();
   this._previewPanes.empty();
+  self._issuesElmts.warningsArea.empty();
+  self._issuesElmts.schemaValidationErrors.empty();
   this.updateNbEdits(0);
-  this.issueSpinner.show();
-  this.previewSpinner.show();
   var schema = this.getJSON();
   if (schema === null) {
     $('.invalid-schema-warning').show();
     return;
   }
+  this.issueSpinner.show();
+  this.previewSpinner.show();
   Refine.postCSRF(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
@@ -1629,11 +1602,19 @@ SchemaAlignment.preview = function() {
           self._updateWarnings([], 0);
       }
 
-      if ("code" in data && data.code === "error") {
+      if ("code" in data && data.code === "error" && data.reason == 'invalid-schema') {
          $('.invalid-schema-warning').show();
+         SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInPreview, data.errors);
+         SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInIssues, data.errors);
       }
     },
-    "json"
+    "json",
+    function(error) {
+      self.issueSpinner.hide();
+      self.previewSpinner.hide();
+      console.log("Error while previewing the schema:");
+      console.log(error);
+    }
   );
 };
 
@@ -1657,14 +1638,14 @@ SchemaAlignment.onProjectUpdate = function(options) {
  *************************/
 
 SchemaAlignment._updateWarnings = function(warnings, totalCount) {
-   var mainDiv = $('#wikibase-issues-panel');
+   var self = this;
    var countsElem = this.issuesTabCount;
 
    // clear everything
-   mainDiv.empty();
    countsElem.hide();
+   self._issuesElmts.warningsArea.empty();
 
-   var table = $('<table></table>').appendTo(mainDiv);
+   var table = $('<table></table>').appendTo(self._issuesElmts.warningsArea);
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
@@ -1676,3 +1657,35 @@ SchemaAlignment._updateWarnings = function(warnings, totalCount) {
         countsElem.show();
    }
 };
+
+/************************************
+ * VALIDATION ERRORS FOR THE SCHEMA *
+ ************************************/
+
+SchemaAlignment._renderSchemaValidationErrors = function(container, errors) {
+  let ul = $('<ul></ul>')
+        .addClass('schema-validation-error-list')
+        .appendTo(container);
+  for (const error of errors) {
+    let li = $('<li></li>').appendTo(ul);
+    for (const pathElement of error.path) {
+      let span = $('<span></span>')
+        .addClass('schema-validation-path-element')
+        .appendTo(li);
+      let localizationKey = 'wikibase-schema/schema-validation/path-element/'+pathElement.type;
+      let pathElementText = '';
+      if (pathElement.position !== -1 && pathElement.position !== undefined) {
+        pathElementText = $.i18n(localizationKey+'/with-position', pathElement.position + 1);
+      } else if (pathElement.name) {
+        pathElementText = $.i18n(localizationKey+'/with-name', pathElement.name);
+      } else {
+        pathElementText = $.i18n(localizationKey);
+      }
+      span.text(pathElementText); 
+    }
+    var message = $('<span></span>')
+        .addClass('schema-validation-error')
+        .text(error.message)
+        .appendTo(li);
+  }
+}

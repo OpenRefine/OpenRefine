@@ -95,6 +95,7 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
 
         String expectedError = "{"
+                + "\"code\":\"error\","
                 + "\"reason\":\"invalid-schema\","
                 + "\"message\":\"Invalid Wikibase schema\","
                 + "\"errors\":["
@@ -111,7 +112,7 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
                 + "{\"type\":\"value\",\"position\":-1,\"name\":\"retrieved (P813)\"}"
                 + "],\"message\":\"Empty date field\"}]}";
 
-        assertEquals(writer.toString(), expectedError);
+        TestUtils.assertEqualsAsJson(writer.toString(), expectedError);
     }
 
     @Test
@@ -120,6 +121,6 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 }
