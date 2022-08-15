@@ -45,26 +45,28 @@ import com.google.refine.model.RecordModel.CellDependency;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+import com.google.refine.operations.OperationDescription;
 
 public class DenormalizeOperation extends AbstractOperation {
+
     @JsonCreator
     public DenormalizeOperation() {
     }
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Denormalize";
+        return OperationDescription.row_denormalize_brief();
     }
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         List<Row> newRows = new ArrayList<Row>();
-        
+
         List<Row> oldRows = project.rows;
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = oldRows.get(r);
             Row newRow = null;
-            
+
             RowDependency rd = project.recordModel.getRowDependency(r);
             if (rd.cellDependencies != null) {
                 newRow = oldRow.dup();
@@ -83,16 +85,15 @@ public class DenormalizeOperation extends AbstractOperation {
                     }
                 }
             }
-            
+
             newRows.add(newRow != null ? newRow : oldRow);
         }
-        
+
         return new HistoryEntry(
-            historyEntryID, 
-            project,
-            getBriefDescription(project),
-            DenormalizeOperation.this,
-            new MassRowChange(newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(project),
+                DenormalizeOperation.this,
+                new MassRowChange(newRows));
     }
 }

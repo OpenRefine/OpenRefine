@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.workspace;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,21 +12,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class GetMemoryInfoCommand extends Command {
-    private static final SystemInfo systemInfo = new SystemInfo();
-    private static final GlobalMemory systemMemory = systemInfo.getHardware().getMemory();
 
+    private static final GlobalMemory systemMemory = new SystemInfo().getHardware().getMemory();
 
-    public static class SysInfo {
+    public static class MemoryInfo {
+
         @JsonProperty("available_memory")
         protected Long availableMemory = systemMemory.getAvailable();
 
         @JsonProperty("total_memory")
         protected Long totalMemory = systemMemory.getTotal();
+
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        respondJSON(response, new SysInfo());
+        respondJSON(response, new MemoryInfo());
     }
 
     @Override

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -38,8 +39,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A scrutinizer that checks the compatibility of the qualifiers and the
- * property of a statement, and looks for mandatory qualifiers.
+ * A scrutinizer that checks the compatibility of the qualifiers and the property of a statement, and looks for
+ * mandatory qualifiers.
  * 
  * @author Antonin Delpeuch
  */
@@ -55,7 +56,9 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
     public String mandatoryQualifiersConstraintPid;
 
     class AllowedQualifierConstraint {
+
         Set<PropertyIdValue> allowedProperties;
+
         AllowedQualifierConstraint(Statement statement) {
             allowedProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
@@ -71,7 +74,9 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
     }
 
     class MandatoryQualifierConstraint {
+
         Set<PropertyIdValue> mandatoryProperties;
+
         MandatoryQualifierConstraint(Statement statement) {
             mandatoryProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
@@ -109,7 +114,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             allowed = _allowedQualifiers.get(statementProperty);
         } else {
             List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, allowedQualifiersConstraintQid);
-            if (!statementList.isEmpty()){
+            if (!statementList.isEmpty()) {
                 AllowedQualifierConstraint allowedQualifierConstraint = new AllowedQualifierConstraint(statementList.get(0));
                 allowed = allowedQualifierConstraint.allowedProperties;
             }
@@ -124,7 +129,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             mandatory = _mandatoryQualifiers.get(statementProperty);
         } else {
             List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, mandatoryQualifiersConstraintQid);
-            if (!statementList.isEmpty()){
+            if (!statementList.isEmpty()) {
                 MandatoryQualifierConstraint mandatoryQualifierConstraint = new MandatoryQualifierConstraint(statementList.get(0));
                 mandatory = mandatoryQualifierConstraint.mandatoryProperties;
             }

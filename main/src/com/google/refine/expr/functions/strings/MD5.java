@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -51,19 +52,19 @@ public class MD5 implements Function {
             String s = (o instanceof String) ? (String) o : o.toString();
             return DigestUtils.md5Hex(s);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_md5();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

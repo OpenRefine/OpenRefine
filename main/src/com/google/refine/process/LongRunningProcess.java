@@ -38,17 +38,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 
 abstract public class LongRunningProcess extends Process {
+
     @JsonProperty("description")
-    final protected String       _description;
+    final protected String _description;
     @JsonIgnore
-    protected ProcessManager     _manager;
+    protected ProcessManager _manager;
     @JsonIgnore
-    protected Thread             _thread;
+    protected Thread _thread;
     @JsonProperty("progress")
-    protected int                _progress; // out of 100
+    protected int _progress; // out of 100
     @JsonIgnore
-    protected boolean            _canceled;
-    
+    protected boolean _canceled;
+
     protected LongRunningProcess(String description) {
         _description = description;
     }
@@ -60,7 +61,7 @@ abstract public class LongRunningProcess extends Process {
             _thread.interrupt();
         }
     }
-    
+
     @JsonProperty("status")
     public String getStatus() {
         return _thread == null ? "pending" : (_thread.isAlive() ? "running" : "done");
@@ -70,12 +71,12 @@ abstract public class LongRunningProcess extends Process {
     public boolean isImmediate() {
         return false;
     }
-    
+
     @Override
     public boolean isRunning() {
         return _thread != null && _thread.isAlive();
     }
-    
+
     @Override
     public boolean isDone() {
         return _thread != null && !_thread.isAlive();
@@ -90,11 +91,11 @@ abstract public class LongRunningProcess extends Process {
     public void startPerforming(ProcessManager manager) {
         if (_thread == null) {
             _manager = manager;
-            
+
             _thread = new Thread(getRunnable());
             _thread.start();
         }
     }
-    
+
     abstract protected Runnable getRunnable();
 }

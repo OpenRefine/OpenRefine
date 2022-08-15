@@ -38,13 +38,16 @@ import java.util.Properties;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
+import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 
 public class If implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -60,18 +63,18 @@ public class If implements Control {
             return args[2].evaluate(bindings);
         }
     }
-    
+
     @Override
     public String getDescription() {
-            return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-            "Otherwise, evaluates expression eFalse and returns that result instead.";
+        // "Otherwise, evaluates expression eFalse and returns that result instead.";
+        return ControlDescription.if_desc();
     }
-    
+
     @Override
     public String getParams() {
         return "expression o, expression eTrue, expression eFalse";
     }
-    
+
     @Override
     public String getReturns() {
         return "Depends on actual arguments";

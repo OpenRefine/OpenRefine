@@ -48,32 +48,31 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
-public class Column  {
-    final private int       _cellIndex;
-    final private String    _originalName;
-    private String          _name;
-    private ReconConfig     _reconConfig;
-    private ReconStats      _reconStats;
-    
+public class Column {
+
+    final private int _cellIndex;
+    final private String _originalName;
+    private String _name;
+    private ReconConfig _reconConfig;
+    private ReconStats _reconStats;
+
     // from data package metadata Field.java:
     private String type = "";
     private String format = "default";
     private String title = "";
     private String description = "";
     private Map<String, Object> constraints = Collections.emptyMap();
-    
+
     transient protected Map<String, Object> _precomputes;
-    
+
     @JsonCreator
     public Column(
-            @JsonProperty("cellIndex")
-            int cellIndex,
-            @JsonProperty("originalName")
-            String originalName) {
+            @JsonProperty("cellIndex") int cellIndex,
+            @JsonProperty("originalName") String originalName) {
         _cellIndex = cellIndex;
         _originalName = _name = originalName;
     }
-    
+
     @JsonProperty("cellIndex")
     public int getCellIndex() {
         return _cellIndex;
@@ -83,7 +82,7 @@ public class Column  {
     public String getOriginalHeaderLabel() {
         return _originalName;
     }
-    
+
     @JsonProperty("name")
     public void setName(String name) {
         this._name = name;
@@ -115,35 +114,34 @@ public class Column  {
     public ReconStats getReconStats() {
         return _reconStats;
     }
-    
+
     /**
      * Clear all cached precomputed values.
      * <p>
-     * If you are modifying something that requires this to be called, you
-     * probably also need to call
-     * {@link com.google.refine.LookupCacheManager#flushLookupsInvolvingProjectColumn(long, String)}
-     * e.g. ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, column.getName())
+     * If you are modifying something that requires this to be called, you probably also need to call
+     * {@link com.google.refine.LookupCacheManager#flushLookupsInvolvingProjectColumn(long, String)} e.g.
+     * ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, column.getName())
      */
     public void clearPrecomputes() {
         if (_precomputes != null) {
             _precomputes.clear();
         }
     }
-    
+
     public Object getPrecompute(String key) {
         if (_precomputes != null) {
             return _precomputes.get(key);
         }
         return null;
     }
-    
+
     public void setPrecompute(String key, Object value) {
         if (_precomputes == null) {
             _precomputes = new HashMap<String, Object>();
         }
         _precomputes.put(key, value);
     }
-    
+
     @JsonProperty("type")
     public String getType() {
         return type;
@@ -154,7 +152,6 @@ public class Column  {
         this.type = type;
     }
 
-    
     @JsonProperty("format")
     public String getFormat() {
         return format;
@@ -165,7 +162,6 @@ public class Column  {
         this.format = format;
     }
 
-    
     @JsonProperty("title")
     public String getTitle() {
         return title;
@@ -175,7 +171,7 @@ public class Column  {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     @JsonProperty("description")
     public String getDescription() {
         return description;
@@ -195,21 +191,21 @@ public class Column  {
             return "{}";
         }
     }
-    
+
     @JsonProperty("constraints")
     public void setConstraintsJson(String json) {
         try {
-            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String,Object>>() {}));
+            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+            }));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     public Map<String, Object> getConstraints() {
         return constraints;
     }
 
-    
     public void setConstraints(Map<String, Object> constraints) {
         this.constraints = constraints;
     }
@@ -221,11 +217,11 @@ public class Column  {
             e.printStackTrace();
         }
     }
-    
+
     static public Column load(String s) throws Exception {
         return ParsingUtilities.mapper.readValue(s, Column.class);
     }
-    
+
     @Override
     public String toString() {
         return _name;

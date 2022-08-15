@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -10,9 +11,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import java.util.List;
 
-
 public class EntityTypeScrutinizer extends SnakScrutinizer {
-    
+
     public final static String type = "invalid-entity-type";
     public String allowedEntityTypesQid;
     public String wikibaseItemQid;
@@ -25,7 +25,7 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
         }
         PropertyIdValue pid = snak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, allowedEntityTypesQid);
-        if(!statementList.isEmpty()) {
+        if (!statementList.isEmpty()) {
             List<SnakGroup> constraint = statementList.get(0).getClaim().getQualifiers();
             boolean isUsable = true;
             if (constraint != null) {

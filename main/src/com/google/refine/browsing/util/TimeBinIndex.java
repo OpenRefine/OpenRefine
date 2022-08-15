@@ -44,85 +44,83 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * A utility class for computing the base bins that form the base histograms of 
- * temporal range facets. It evaluates an expression on all the rows of a project to
- * get temporal values, determines how many bins to distribute those values in, and 
- * bins the rows accordingly.
+ * A utility class for computing the base bins that form the base histograms of temporal range facets. It evaluates an
+ * expression on all the rows of a project to get temporal values, determines how many bins to distribute those values
+ * in, and bins the rows accordingly.
  * 
- * This class processes all rows rather than just the filtered rows because it
- * needs to compute the base bins of a temporal range facet, which remain unchanged 
- * as the user interacts with the facet.
+ * This class processes all rows rather than just the filtered rows because it needs to compute the base bins of a
+ * temporal range facet, which remain unchanged as the user interacts with the facet.
  */
 abstract public class TimeBinIndex {
-    
+
     protected int _totalValueCount;
     protected int _timeValueCount;
     protected long _min;
     protected long _max;
     protected long _step;
     protected int[] _bins;
-    
+
     protected int _timeRowCount;
     protected int _nonTimeRowCount;
     protected int _blankRowCount;
     protected int _errorRowCount;
-    
+
     protected boolean _hasError = false;
     protected boolean _hasNonTime = false;
     protected boolean _hasTime = false;
     protected boolean _hasBlank = false;
-    
-    protected long[] steps = { 
-            1,                  // msec
-            1000,               // sec
-            1000*60,            // min
-            1000*60*60,         // hour
-            1000*60*60*24,      // day
-            1000*60*60*24*7,    // week
-            1000l*2629746l,       // month (average Gregorian year / 12)
-            1000l*31556952l,      // year (average Gregorian year)
-            1000l*31556952l*10l,   // decade 
-            1000l*31556952l*100l,  // century 
-            1000l*31556952l*1000l, // millennium 
+
+    protected long[] steps = {
+            1, // msec
+            1000, // sec
+            1000 * 60, // min
+            1000 * 60 * 60, // hour
+            1000 * 60 * 60 * 24, // day
+            1000 * 60 * 60 * 24 * 7, // week
+            1000l * 2629746l, // month (average Gregorian year / 12)
+            1000l * 31556952l, // year (average Gregorian year)
+            1000l * 31556952l * 10l, // decade
+            1000l * 31556952l * 100l, // century
+            1000l * 31556952l * 1000l, // millennium
     };
-                      
+
     abstract protected void iterate(Project project, RowEvaluable rowEvaluable, List<Long> allValues);
-    
+
     public TimeBinIndex(Project project, RowEvaluable rowEvaluable) {
         _min = Long.MAX_VALUE;
         _max = Long.MIN_VALUE;
-        
+
         List<Long> allValues = new ArrayList<Long>();
-        
+
         iterate(project, rowEvaluable, allValues);
-        
+
         _timeValueCount = allValues.size();
-        
+
         if (_min >= _max) {
             _step = 1;
             _min = Math.min(_min, _max);
             _max = _step;
             _bins = new int[1];
-            
+
             return;
         }
-        
+
         long diff = _max - _min;
 
         for (long step : steps) {
             _step = step;
             if (diff / _step <= 100) {
                 break;
-            } 
+            }
         }
 
         _bins = new int[(int) (diff / _step) + 1];
         for (long d : allValues) {
-            int bin = (int) Math.max((d - _min) / _step,0);
+            int bin = (int) Math.max((d - _min) / _step, 0);
             _bins[bin]++;
         }
     }
-    
+
     public boolean isTemporal() {
         return _timeValueCount > _totalValueCount / 2;
     }
@@ -142,7 +140,7 @@ abstract public class TimeBinIndex {
     public int[] getBins() {
         return _bins;
     }
-    
+
     public int getTimeRowCount() {
         return _timeRowCount;
     }
@@ -160,15 +158,14 @@ abstract public class TimeBinIndex {
     }
 
     protected void processRow(
-        Project         project, 
-        RowEvaluable    rowEvaluable,
-        List<Long>     allValues,
-        int             rowIndex,
-        Row             row,
-        Properties         bindings
-    ) {
+            Project project,
+            RowEvaluable rowEvaluable,
+            List<Long> allValues,
+            int rowIndex,
+            Row row,
+            Properties bindings) {
         Object value = rowEvaluable.eval(project, rowIndex, row, bindings);
-        
+
         if (ExpressionUtils.isError(value)) {
             _hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
@@ -176,7 +173,7 @@ abstract public class TimeBinIndex {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
                     _totalValueCount++;
-                    
+
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
@@ -193,7 +190,7 @@ abstract public class TimeBinIndex {
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     _totalValueCount++;
-                    
+
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
@@ -221,14 +218,14 @@ abstract public class TimeBinIndex {
             _hasBlank = true;
         }
     }
-    
+
     protected void preprocessing() {
         _hasBlank = false;
         _hasError = false;
         _hasNonTime = false;
         _hasTime = false;
     }
-    
+
     protected void postprocessing() {
         if (_hasError) {
             _errorRowCount++;

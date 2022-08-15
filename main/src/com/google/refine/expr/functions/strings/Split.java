@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,7 +50,7 @@ public class Split implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args.length <= 3) {
             boolean preserveAllTokens = false;
-            
+
             Object v = args[0];
             Object split = args[1];
             if (args.length == 3) {
@@ -58,32 +59,32 @@ public class Split implements Function {
                     preserveAllTokens = ((Boolean) preserve);
                 }
             }
-            
+
             if (v != null && split != null) {
                 String str = (v instanceof String ? (String) v : v.toString());
                 if (split instanceof String) {
-                    return preserveAllTokens ?
-                        StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split) :
-                        StringUtils.splitByWholeSeparator(str, (String) split);
+                    return preserveAllTokens ? StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split)
+                            : StringUtils.splitByWholeSeparator(str, (String) split);
                 } else if (split instanceof Pattern) {
                     Pattern pattern = (Pattern) split;
                     return pattern.split(str);
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings, or 1 string and 1 regex, followed by an optional boolean");
+        // regex, followed by an optional boolean");
+        return new EvalError(EvalErrorMessage.expects_two_strings_as_string_regex_opt_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_split();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string or regex sep, optional boolean preserveTokens";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

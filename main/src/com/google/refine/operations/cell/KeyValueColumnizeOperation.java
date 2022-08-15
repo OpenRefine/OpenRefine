@@ -48,36 +48,34 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.operations.OperationDescription;
 
 public class KeyValueColumnizeOperation extends AbstractOperation {
-    final protected String  _keyColumnName;
-    final protected String  _valueColumnName;
-    final protected String  _noteColumnName;
+
+    final protected String _keyColumnName;
+    final protected String _valueColumnName;
+    final protected String _noteColumnName;
 
     @JsonCreator
     public KeyValueColumnizeOperation(
-        @JsonProperty("keyColumnName")
-        String keyColumnName,
-        @JsonProperty("valueColumnName")
-        String valueColumnName,
-        @JsonProperty("noteColumnName")
-        String noteColumnName
-    ) {
+            @JsonProperty("keyColumnName") String keyColumnName,
+            @JsonProperty("valueColumnName") String valueColumnName,
+            @JsonProperty("noteColumnName") String noteColumnName) {
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
         _noteColumnName = noteColumnName;
     }
-    
+
     @JsonProperty("keyColumnName")
     public String getKeyColumnName() {
         return _keyColumnName;
     }
-    
+
     @JsonProperty("valueColumnName")
     public String getValueColumnName() {
         return _valueColumnName;
     }
-    
+
     @JsonProperty("noteColumnName")
     public String getNoteColumnName() {
         return _noteColumnName;
@@ -85,38 +83,35 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Columnize by key column " +
-            _keyColumnName + " and value column " + _valueColumnName +
-            (_noteColumnName != null ? (" with note column " + _noteColumnName) : "");
+        return _noteColumnName == null ? OperationDescription.cell_key_value_columnize_brief(_keyColumnName, _valueColumnName)
+                : OperationDescription.cell_key_value_columnize_note_column_brief(_keyColumnName, _valueColumnName, _noteColumnName);
     }
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         int keyColumnIndex = project.columnModel.getColumnIndexByName(_keyColumnName);
         int valueColumnIndex = project.columnModel.getColumnIndexByName(_valueColumnName);
-        int noteColumnIndex = _noteColumnName == null ? -1 :
-            project.columnModel.getColumnIndexByName(_noteColumnName);
+        int noteColumnIndex = _noteColumnName == null ? -1 : project.columnModel.getColumnIndexByName(_noteColumnName);
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         Column valueColumn = project.columnModel.getColumnByName(_valueColumnName);
-        Column noteColumn = _noteColumnName == null ? null :
-            project.columnModel.getColumnByName(_noteColumnName);
-        
+        Column noteColumn = _noteColumnName == null ? null : project.columnModel.getColumnByName(_noteColumnName);
+
         List<Column> unchangedColumns = new ArrayList<Column>();
         List<Column> oldColumns = project.columnModel.columns;
         for (int i = 0; i < oldColumns.size(); i++) {
             if (i != keyColumnIndex &&
-                i != valueColumnIndex &&
-                i != noteColumnIndex) {
+                    i != valueColumnIndex &&
+                    i != noteColumnIndex) {
                 unchangedColumns.add(oldColumns.get(i));
             }
         }
-        
+
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> newNoteColumns = new ArrayList<Column>();
         Map<String, Column> keyValueToColumn = new HashMap<String, Column>();
         Map<String, Column> keyValueToNoteColumn = new HashMap<String, Column>();
         Map<String, Row> groupByCellValuesToRow = new HashMap<String, Row>();
-        
+
         List<Row> newRows = new ArrayList<Row>();
         List<Row> oldRows = project.rows;
         Row reusableRow = null;
@@ -131,11 +126,11 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
 
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = oldRows.get(r);
-            
+
             Object key = oldRow.getCellValue(keyColumn.getCellIndex());
             if (!ExpressionUtils.isNonBlankData(key)) {
                 if (unchangedColumns.isEmpty()) {
-                    // For degenerate 2 column case (plus optional note column), 
+                    // For degenerate 2 column case (plus optional note column),
                     // start a new row when we hit a blank line
                     reusableRow = new Row(newColumns.size());
                     newRows.add(reusableRow);
@@ -145,9 +140,9 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     // Copy rows with no key
                     newRows.add(buildNewRow(unchangedColumns, oldRow, unchangedColumns.size()));
                 }
-                continue; 
+                continue;
             }
-            
+
             String keyString = key.toString();
             // Start a new row on our beginning of record key
             // TODO: Add support for processing in record mode instead of just by rows
@@ -161,8 +156,8 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             if (newColumn == null) {
                 // Allocate new column
                 newColumn = new Column(
-                    project.columnModel.allocateNewCellIndex(),
-                    project.columnModel.getUnduplicatedColumnName(keyString));
+                        project.columnModel.allocateNewCellIndex(),
+                        project.columnModel.getUnduplicatedColumnName(keyString));
                 keyValueToColumn.put(keyString, newColumn);
                 newColumns.add(newColumn);
 
@@ -172,10 +167,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     recordKey = keyString;
                 }
             }
-            
+
             /*
-             * NOTE: If we have additional columns, we currently merge all rows that
-             * have identical values in those columns and then add our new columns.
+             * NOTE: If we have additional columns, we currently merge all rows that have identical values in those
+             * columns and then add our new columns.
              */
             if (unchangedColumns.size() > 0) {
                 StringBuffer sb = new StringBuffer();
@@ -199,7 +194,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     newRows.add(reusableRow);
                 }
             }
-            
+
             Cell cell = oldRow.getCell(valueColumn.getCellIndex());
             if (unchangedColumns.size() == 0) {
                 int index = newColumn.getCellIndex();
@@ -209,7 +204,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                 // TODO: support repeating keys in this mode too
                 reusableRow.setCell(newColumn.getCellIndex(), cell);
             }
-            
+
             if (noteColumn != null) {
                 Object noteValue = oldRow.getCellValue(noteColumn.getCellIndex());
                 if (ExpressionUtils.isNonBlankData(noteValue)) {
@@ -217,18 +212,18 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     if (newNoteColumn == null) {
                         // Allocate new column
                         newNoteColumn = new Column(
-                            project.columnModel.allocateNewCellIndex(),
-                            project.columnModel.getUnduplicatedColumnName(
-                                noteColumn.getName() + " : " + keyString));
+                                project.columnModel.allocateNewCellIndex(),
+                                project.columnModel.getUnduplicatedColumnName(
+                                        noteColumn.getName() + " : " + keyString));
                         keyValueToNoteColumn.put(keyString, newNoteColumn);
                         newNoteColumns.add(newNoteColumn);
                     }
-                    
+
                     int newNoteCellIndex = newNoteColumn.getCellIndex();
                     Object existingNewNoteValue = reusableRow.getCellValue(newNoteCellIndex);
                     if (ExpressionUtils.isNonBlankData(existingNewNoteValue)) {
                         Cell concatenatedNoteCell = new Cell(
-                            existingNewNoteValue.toString() + ";" + noteValue.toString(), null);
+                                existingNewNoteValue.toString() + ";" + noteValue.toString(), null);
                         reusableRow.setCell(newNoteCellIndex, concatenatedNoteCell);
                     } else {
                         reusableRow.setCell(newNoteCellIndex, oldRow.getCell(noteColumn.getCellIndex()));
@@ -236,24 +231,23 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                 }
             }
         }
-        
+
         List<Column> allColumns = new ArrayList<Column>(unchangedColumns);
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
-        
-        // clean up the empty rows 
-        for (int i = newRows.size() - 1;i>=0;i--) {
+
+        // clean up the empty rows
+        for (int i = newRows.size() - 1; i >= 0; i--) {
             if (newRows.get(i).isEmpty())
                 newRows.remove(i);
         }
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(null), 
-            this, 
-            new MassRowColumnChange(allColumns, newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(null),
+                this,
+                new MassRowColumnChange(allColumns, newRows));
     }
 
     private Row getAvailableRow(List<Row> currentRows, List<Row> newRows, int index) {

@@ -42,8 +42,9 @@ import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
 public class ChangeSequence implements Change {
+
     final protected Change[] _changes;
-    
+
     public ChangeSequence(Change[] changes) {
         _changes = changes;
     }
@@ -60,7 +61,7 @@ public class ChangeSequence implements Change {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            for (int i = _changes.length - 1; i >= 0 ; i--) {
+            for (int i = _changes.length - 1; i >= 0; i--) {
                 _changes[i].revert(project);
             }
         }
@@ -68,32 +69,34 @@ public class ChangeSequence implements Change {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("count="); writer.write(Integer.toString(_changes.length)); writer.write('\n');
+        writer.write("count=");
+        writer.write(Integer.toString(_changes.length));
+        writer.write('\n');
         for (Change change : _changes) {
             History.writeOneChange(writer, change, options);
         }
         writer.write("/ec/\n"); // end of change marker
     }
-    
+
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String line = reader.readLine();
         if (line == null) {
             line = "";
         }
         int equal = line.indexOf('=');
-        
+
         assert "count".equals(line.substring(0, equal));
-        
+
         int count = Integer.parseInt(line.substring(equal + 1));
         Change[] changes = new Change[count];
-        
+
         for (int i = 0; i < count; i++) {
             changes[i] = History.readOneChange(reader, pool);
         }
-        
+
         line = reader.readLine();
         assert "/ec/".equals(line);
-        
+
         return new ChangeSequence(changes);
     }
 }

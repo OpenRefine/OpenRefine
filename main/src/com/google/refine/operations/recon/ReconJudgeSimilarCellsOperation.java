@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
- import java.util.HashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,79 +56,66 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
-    final protected String           _similarValue;
-    final protected Judgment         _judgment;
-    final protected ReconCandidate   _match;
-    final protected boolean          _shareNewTopics;
+
+    final protected String _similarValue;
+    final protected Judgment _judgment;
+    final protected ReconCandidate _match;
+    final protected boolean _shareNewTopics;
 
     @JsonCreator
     public ReconJudgeSimilarCellsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig         engineConfig,
-        @JsonProperty("columnName")
-        String             columnName,
-        @JsonProperty("similarValue")
-        String             similarValue,
-        @JsonProperty("judgment")
-        Judgment        judgment,
-        @JsonProperty("match")
-        ReconCandidate     match,
-        @JsonProperty("shareNewTopics")
-        Boolean            shareNewTopics
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("similarValue") String similarValue,
+            @JsonProperty("judgment") Judgment judgment,
+            @JsonProperty("match") ReconCandidate match,
+            @JsonProperty("shareNewTopics") Boolean shareNewTopics) {
         super(engineConfig, columnName, false);
         this._similarValue = similarValue;
         this._judgment = judgment;
         this._match = match;
         this._shareNewTopics = shareNewTopics == null ? false : shareNewTopics;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("similarValue")
     public String getSimilarValue() {
         return _similarValue;
     }
-    
+
     @JsonProperty("judgment")
     public Judgment getJudgment() {
         return _judgment;
     }
-    
+
     @JsonProperty("match")
     @JsonInclude(Include.NON_NULL)
     public ReconCandidate getMatch() {
         return _match;
     }
-    
+
     @JsonProperty("shareNewTopics")
     public boolean getShareNewTopics() {
         return _shareNewTopics;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
         if (_judgment == Judgment.None) {
-            return "Discard recon judgments for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_none_brief(_similarValue, _columnName);
         } else if (_judgment == Judgment.New) {
-            if (_shareNewTopics) {
-                return "Mark to create one single new item for all cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
-            } else {
-                return "Mark to create one new item for each cell containing \"" +
-                    _similarValue + "\" in column " + _columnName;
-            }
+            return _shareNewTopics ? OperationDescription.recon_judge_similar_cells_new_share_brief(_similarValue, _columnName)
+                    : OperationDescription.recon_judge_similar_cells_new_brief(_similarValue, _columnName);
+
         } else if (_judgment == Judgment.Matched) {
-            return "Match item " + 
-                _match.name +  " (" +
-                _match.id + ") for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_matched_brief(_match.name, _match.id, _similarValue, _columnName);
         }
         throw new InternalError("Can't get here");
     }
@@ -136,24 +123,18 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
+
         if (_judgment == Judgment.None) {
-            return "Discard recon judgments for " + cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_none_desc(cellChanges.size(), _similarValue, _columnName);
         } else if (_judgment == Judgment.New) {
             if (_shareNewTopics) {
-                return "Mark to create one single new item for " + cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                return OperationDescription.recon_judge_similar_cells_new_share_desc(cellChanges.size(), _similarValue, _columnName);
             } else {
-                return "Mark to create one new item for each of " + cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                return OperationDescription.recon_judge_similar_cells_new_desc(cellChanges.size(), _similarValue, _columnName);
             }
         } else if (_judgment == Judgment.Matched) {
-            return "Match item " + 
-                _match.name + " (" +
-                _match.id + ") for " +
-                cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            return OperationDescription.recon_judge_similar_cells_matched_desc(_match.name, _match.id, cellChanges.size(), _similarValue,
+                    _columnName);
         }
         throw new InternalError("Can't get here");
     }
@@ -164,36 +145,36 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         ReconConfig reconConfig = column.getReconConfig();
 
         return new RowVisitor() {
-            int                 _cellIndex;
-            List<CellChange>    _cellChanges;
-            Recon               _sharedNewRecon = null;
-            Map<Long, Recon>    _dupReconMap = new HashMap<Long, Recon>();
-            long                _historyEntryID;
-            
+
+            int _cellIndex;
+            List<CellChange> _cellChanges;
+            Recon _sharedNewRecon = null;
+            Map<Long, Recon> _dupReconMap = new HashMap<Long, Recon>();
+            long _historyEntryID;
+
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 _cellIndex = cellIndex;
                 _cellChanges = cellChanges;
                 _historyEntryID = historyEntryID;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(_cellIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                    String value = cell.value instanceof String ? 
-                            ((String) cell.value) : cell.value.toString();
-                            
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
                     if (_similarValue.equals(value)) {
                         Recon recon = null;
                         if (_judgment == Judgment.New && _shareNewTopics) {
@@ -212,7 +193,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                                 _sharedNewRecon.judgmentAction = "similar";
                             }
                             _sharedNewRecon.judgmentBatchSize++;
-                            
+
                             recon = _sharedNewRecon;
                         } else {
                             if (_dupReconMap.containsKey(cell.recon.id)) {
@@ -223,11 +204,11 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                                 recon.judgmentBatchSize = 1;
                                 recon.matchRank = -1;
                                 recon.judgmentAction = "similar";
-                                
+
                                 if (_judgment == Judgment.Matched) {
                                     recon.judgment = Recon.Judgment.Matched;
                                     recon.match = _match;
-                                    
+
                                     if (recon.candidates != null) {
                                         for (int m = 0; m < recon.candidates.size(); m++) {
                                             if (recon.candidates.get(m).id.equals(_match.id)) {
@@ -243,13 +224,13 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                                     recon.judgment = Recon.Judgment.None;
                                     recon.match = null;
                                 }
-                                
+
                                 _dupReconMap.put(cell.recon.id, recon);
                             }
                         }
-                        
+
                         Cell newCell = new Cell(cell.value, recon);
-                        
+
                         CellChange cellChange = new CellChange(rowIndex, _cellIndex, cell, newCell);
                         _cellChanges.add(cellChange);
                     }
@@ -258,15 +239,13 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             }
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
-    
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }

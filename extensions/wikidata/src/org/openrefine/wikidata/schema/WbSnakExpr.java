@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.FullyPropertySerializingValueSnak;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
@@ -52,10 +54,31 @@ public class WbSnakExpr implements WbExpression<Snak> {
     @JsonCreator
     public WbSnakExpr(@JsonProperty("prop") WbExpression<? extends PropertyIdValue> propExpr,
             @JsonProperty("value") WbExpression<? extends Value> valueExpr) {
-        Validate.notNull(propExpr);
         this.prop = propExpr;
-        Validate.notNull(valueExpr);
         this.value = valueExpr;
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (prop == null) {
+            validation.addError("Missing property");
+        } else {
+            validation.enter(new PathElement(PathElement.Type.PROPERTY));
+            prop.validate(validation);
+            validation.leave();
+        }
+        if (value == null) {
+            validation.addError("Missing value");
+        } else {
+            String propertyId = null;
+            if (prop instanceof WbPropConstant) {
+                WbPropConstant propConstant = (WbPropConstant) prop;
+                propertyId = propConstant.getLabel() + " (" + propConstant.getPid() + ")";
+            }
+            validation.enter(new PathElement(PathElement.Type.VALUE, propertyId));
+            value.validate(validation);
+            validation.leave();
+        }
     }
 
     @Override
@@ -89,4 +112,5 @@ public class WbSnakExpr implements WbExpression<Snak> {
     public int hashCode() {
         return prop.hashCode() + value.hashCode();
     }
+
 }

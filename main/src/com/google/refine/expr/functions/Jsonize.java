@@ -38,6 +38,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.FunctionDescription;
@@ -54,21 +55,19 @@ public class Jsonize implements Function {
                 throw new RuntimeException(e);
             }
         }
-        String errorMessage = " accepts a single argument";
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + errorMessage);
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.fun_jsonize();
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON literal value";

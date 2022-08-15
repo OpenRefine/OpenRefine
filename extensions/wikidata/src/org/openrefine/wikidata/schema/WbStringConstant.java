@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
@@ -36,10 +37,16 @@ public class WbStringConstant implements WbExpression<StringValue> {
 
     @JsonCreator
     public WbStringConstant(@JsonProperty("value") String value) {
-        Validate.notNull(value);
-        Validate.isTrue(!value.isEmpty()); // for now we don't accept empty strings
-        // because in the variable counterpart of this expression, they are skipped
-        this.value = value.trim();
+        this.value = value == null ? value : value.trim();
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (value == null || value.isEmpty()) {
+            // for now we don't accept empty strings
+            // because in the variable counterpart of this expression, they are skipped
+            validation.addError("Empty value");
+        }
     }
 
     @Override
@@ -51,17 +58,18 @@ public class WbStringConstant implements WbExpression<StringValue> {
     public String getValue() {
         return value;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-        if(other == null || !WbStringConstant.class.isInstance(other)) {
+        if (other == null || !WbStringConstant.class.isInstance(other)) {
             return false;
         }
-        return value.equals(((WbStringConstant)other).getValue());
+        return value.equals(((WbStringConstant) other).getValue());
     }
-    
+
     @Override
     public int hashCode() {
         return value.hashCode();
     }
+
 }

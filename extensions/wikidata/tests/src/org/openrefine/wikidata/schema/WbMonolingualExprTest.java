@@ -40,6 +40,13 @@ public class WbMonolingualExprTest extends WbExpressionTest<MonolingualTextValue
     }
 
     @Test
+    public void testValidate() {
+        hasNoValidationError(new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringConstant("hello")));
+        hasValidationError("No language provided", new WbMonolingualExpr(null, new WbStringConstant("hello")));
+        hasValidationError("No text value provided", new WbMonolingualExpr(new WbLanguageConstant("en", "English"), null));
+    }
+
+    @Test
     public void testEvaluateVariable() {
         setRow("en", "hello");
         evaluatesTo(Datamodel.makeMonolingualTextValue("hello", "en"), expr);

@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -49,18 +50,18 @@ public class LeastCommonMultiple implements Function {
                 && args[1] instanceof Number) {
             return LeastCommonMultiple.LCM(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    public static double LCM(double a, double b){
+    public static double LCM(double a, double b) {
         double largerValue = a;
         double smallerValue = b;
-        if(b > a){
+        if (b > a) {
             largerValue = b;
             smallerValue = a;
         }
-        for(int i = 1; i <= largerValue; i++){
-            if((largerValue*i) % smallerValue == 0) {
+        for (int i = 1; i <= largerValue; i++) {
+            if ((largerValue * i) % smallerValue == 0) {
                 return largerValue * i;
             }
         }
@@ -71,12 +72,12 @@ public class LeastCommonMultiple implements Function {
     public String getDescription() {
         return FunctionDescription.math_lcm();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

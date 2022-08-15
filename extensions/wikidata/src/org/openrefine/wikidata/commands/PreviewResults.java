@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.commands;
 
 import java.util.List;
@@ -18,32 +19,32 @@ public class PreviewResults {
     protected int nbWarnings;
     protected int editCount;
     protected List<EntityEdit> editsPreview;
-    
+
     @JsonProperty("warnings")
     public List<QAWarning> getWarnings() {
-    	return warnings;
+        return warnings;
     }
-    
+
     @JsonProperty("max_severity")
     public Severity getMaxSeverity() {
-    	return maxSeverity;
+        return maxSeverity;
     }
-    
+
     @JsonProperty("nb_warnings")
     public int getNbWarnings() {
-    	return nbWarnings;
+        return nbWarnings;
     }
-    
+
     @JsonProperty("edit_count")
     public int getEditCount() {
-    	return editCount;
+        return editCount;
     }
-    
+
     @JsonProperty("edits_preview")
     public List<EntityEdit> getEditsPreview() {
-    	return editsPreview;
+        return editsPreview;
     }
-    
+
     protected PreviewResults(
             List<QAWarning> warnings,
             Severity maxSeverity,
@@ -56,14 +57,14 @@ public class PreviewResults {
         this.editCount = editCount;
         this.editsPreview = firstEdits;
     }
-    
+
     @Override
     public String toString() {
-    	try {
-    		ObjectMapper mapper = new ObjectMapper();
-			return mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-			return super.toString();
-		}
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return super.toString();
+        }
     }
 }

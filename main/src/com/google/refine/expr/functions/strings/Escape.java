@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -73,26 +74,28 @@ public class Escape implements Function {
                     return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLEncoder.encode(s,"UTF-8");
-                    } catch (UnsupportedEncodingException e) {}
+                        return URLEncoder.encode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                    }
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
+                    // + mode + "'.");
+                    return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));
                 }
             }
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_escape();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string mode ['html','xml','csv','url','javascript']";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

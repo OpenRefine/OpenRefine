@@ -1,3 +1,4 @@
+
 package com.google.refine.util;
 
 import com.google.common.base.Optional;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetectLanguageUtils {
+
     private static List<LanguageProfile> languageProfiles = new ArrayList<>();
 
     public static Optional<LdLocale> detect(String text) throws IOException {
@@ -26,7 +28,8 @@ public class DetectLanguageUtils {
         }
 
         // build language detector
-        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard()).withProfiles(languageProfiles).build();
+        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard()).withProfiles(languageProfiles)
+                .build();
 
         // create a text object factory
         TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();

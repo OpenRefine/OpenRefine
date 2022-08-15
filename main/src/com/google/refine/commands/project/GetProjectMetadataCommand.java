@@ -44,10 +44,11 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class GetProjectMetadataCommand extends Command {
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project;
         try {
             project = getProject(request);
@@ -55,7 +56,7 @@ public class GetProjectMetadataCommand extends Command {
             respond(response, "error", e.getLocalizedMessage());
             return;
         }
-        
+
         respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
     }
 }

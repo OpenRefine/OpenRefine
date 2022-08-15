@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -47,24 +48,23 @@ public class Not implements Function {
         if (args.length == 1 && args[0] instanceof Boolean) {
             return !objectToBoolean(args[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
+        return new EvalError(EvalErrorMessage.expects_one_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     public static boolean objectToBoolean(Object o) {
-        return o == null ? false : (
-            (o instanceof Boolean) ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
+        return o == null ? false : ((o instanceof Boolean) ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.bool_not();
     }
-    
+
     @Override
     public String getParams() {
         return "boolean b";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -44,26 +45,27 @@ public class Combin implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if(args.length != 2) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        if (args.length != 2) {
+            return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
         }
-        if(!(args[0] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
+        if (!(args[0] instanceof Number)) {
+            // number");
+            return new EvalError(EvalErrorMessage.expects_first_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
-        if(!(args[1] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
+        if (!(args[1] instanceof Number)) {
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_second_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
 
         return Combin.combination(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
     }
 
     /*
-     * Compute binomial coefficient using dynamic programming which takes 
-     * advantage of Pascal's identity as described in:
-     * http://introcs.cs.princeton.edu/java/96optimization/
+     * Compute binomial coefficient using dynamic programming which takes advantage of Pascal's identity as described
+     * in: http://introcs.cs.princeton.edu/java/96optimization/
      */
     public static long combination(int n, int k) {
-        long[][] binomial = new long[n+1][k+1];
+        long[][] binomial = new long[n + 1][k + 1];
 
         for (int j = 1; j <= k; j++) {
             binomial[0][j] = 0;
@@ -74,7 +76,7 @@ public class Combin implements Function {
 
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= k; j++) {
-                binomial[i][j] = binomial[i-1][j-1] + binomial[i-1][j];
+                binomial[i][j] = binomial[i - 1][j - 1] + binomial[i - 1][j];
                 if (binomial[i][j] > Long.MAX_VALUE || binomial[i][j] < 0) {
                     throw new RuntimeException("Range limit exceeded");
                 }
@@ -88,12 +90,12 @@ public class Combin implements Function {
     public String getDescription() {
         return FunctionDescription.math_ceil();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

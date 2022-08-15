@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -48,10 +49,10 @@ public class GreatestCommonDenominator implements Function {
                 && args[1] instanceof Number) {
             return GreatestCommonDenominator.GCD(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(this));
     }
 
-    public static double GCD(double a, double b){
+    public static double GCD(double a, double b) {
         return b == 0 ? a : GCD(b, a % b);
     }
 
@@ -59,12 +60,12 @@ public class GreatestCommonDenominator implements Function {
     public String getDescription() {
         return FunctionDescription.math_gcd();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -42,6 +42,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
@@ -63,7 +64,8 @@ public class Sort implements Function {
                         } else if (a[i] == null) {
                             r[i] = null;
                         } else {
-                            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of uniform type");
+                            // of uniform type");
+                            return new EvalError(EvalErrorMessage.expects_one_array_uniform(ControlFunctionRegistry.getFunctionName(this)));
                         }
                     }
                     Arrays.sort(r, Comparator.nullsLast(Comparator.naturalOrder()));
@@ -81,19 +83,19 @@ public class Sort implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+        return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.arr_sort();
     }
-    
+
     @Override
     public String getParams() {
         return "array a of uniform type";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

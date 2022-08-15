@@ -56,19 +56,20 @@ import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 /**
- * This is the metadata of a Change. It's small, so we can load it in order to
- * obtain information about a change without actually loading the change.
+ * This is the metadata of a Change. It's small, so we can load it in order to obtain information about a change without
+ * actually loading the change.
  */
 public class HistoryEntry {
+
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     @JsonProperty("id")
-    final public long   id;
+    final public long id;
     @JsonIgnore
-    final public long   projectID;
+    final public long projectID;
     @JsonProperty("description")
     final public String description;
     @JsonProperty("time")
-    final public OffsetDateTime   time;
+    final public OffsetDateTime time;
 
     // the manager (deals with IO systems or databases etc.)
     @JsonIgnore
@@ -97,22 +98,18 @@ public class HistoryEntry {
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
     }
-    
+
     @JsonCreator
     protected HistoryEntry(
-    		@JsonProperty("id")
-    		long id,
-    		@JacksonInject("projectID")
-    		long projectID,
-    		@JsonProperty("description")
-    		String description,
-    		@JsonProperty(OPERATION)
-    		AbstractOperation operation) {
-    	this(id,projectID,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
+            @JsonProperty("id") long id,
+            @JacksonInject("projectID") long projectID,
+            @JsonProperty("description") String description,
+            @JsonProperty(OPERATION) AbstractOperation operation) {
+        this(id, projectID, description, operation, OffsetDateTime.now(ZoneId.of("Z")));
     }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
-        this(id,project.id,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
+        this(id, project.id, description, operation, OffsetDateTime.now(ZoneId.of("Z")));
         setChange(change);
     }
 
@@ -124,20 +121,21 @@ public class HistoryEntry {
         this.time = time;
         this._manager = ProjectManager.singleton.getHistoryEntryManager();
         if (this._manager == null) {
-            logger.error("Failed to get history entry manager from project manager: " 
-                    + ProjectManager.singleton );
+            logger.error("Failed to get history entry manager from project manager: "
+                    + ProjectManager.singleton);
         }
     }
 
-    public void save(Writer writer, Properties options){
+    public void save(Writer writer, Properties options) {
         _manager.save(this, writer, options);
     }
 
     /**
-     * Apply a change to a project.  In most cases you should already hold the Project lock
-     * before calling this method to prevent deadlocks.
+     * Apply a change to a project. In most cases you should already hold the Project lock before calling this method to
+     * prevent deadlocks.
      * 
-     * @param project the project the change should be applied to
+     * @param project
+     *            the project the change should be applied to
      */
     public void apply(Project project) {
         if (getChange() == null) {
@@ -170,15 +168,15 @@ public class HistoryEntry {
     }
 
     static public HistoryEntry load(Project project, String s) throws IOException {
-    	ObjectMapper mapper = ParsingUtilities.mapper.copy();
-    	InjectableValues injection = new InjectableValues.Std()
-				.addValue("projectID", project.id);
-    	mapper.setInjectableValues(injection);
-    	
-    	return mapper.readValue(s, HistoryEntry.class);
+        ObjectMapper mapper = ParsingUtilities.mapper.copy();
+        InjectableValues injection = new InjectableValues.Std()
+                .addValue("projectID", project.id);
+        mapper.setInjectableValues(injection);
+
+        return mapper.readValue(s, HistoryEntry.class);
     }
 
-    public void delete(){
+    public void delete() {
         _manager.delete(this);
     }
 

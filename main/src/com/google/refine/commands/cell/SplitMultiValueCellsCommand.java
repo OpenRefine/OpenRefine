@@ -49,17 +49,18 @@ import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
 public class SplitMultiValueCellsCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String columnName = request.getParameter("columnName");
             String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
@@ -70,19 +71,20 @@ public class SplitMultiValueCellsCommand extends Command {
 
             if ("lengths".equals(mode)) {
                 String s = request.getParameter("fieldLengths");
-                
-                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
-                
+
+                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {
+                });
+
                 op = new MultiValuedCellSplitOperation(columnName,
-                                                       keyColumnName,
-                                                       fieldLengths);
-                
+                        keyColumnName,
+                        fieldLengths);
+
             } else {
-                op = new MultiValuedCellSplitOperation(columnName, 
-                                                       keyColumnName,
-                                                       separator, 
-                                                       regex);
-            } 
+                op = new MultiValuedCellSplitOperation(columnName,
+                        keyColumnName,
+                        separator,
+                        regex);
+            }
             Process process = op.createProcess(project, new Properties());
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

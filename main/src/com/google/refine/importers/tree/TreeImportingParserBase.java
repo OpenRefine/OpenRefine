@@ -54,8 +54,7 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 /**
- * Abstract class for importer parsers which handle tree-shaped data
- * (currently XML & JSON).
+ * Abstract class for importer parsers which handle tree-shaped data (currently XML &amp; JSON).
  */
 abstract public class TreeImportingParserBase extends ImportingParserBase {
 
@@ -73,7 +72,6 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         return options;
     }
-
 
     @Override
     public void parse(Project project, ProjectMetadata metadata,
@@ -101,16 +99,15 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     }
 
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        ObjectNode fileRecord,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions,
-        final MultiFileReadingProgress progress
-    ) throws IOException {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            ObjectNode fileRecord,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions,
+            final MultiFileReadingProgress progress) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
@@ -128,7 +125,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                     archiveColumnIndex = addArchiveColumn(project);
                 }
                 if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
-                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
+                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >= 0);
                 }
 
                 if (useInputStream) {
@@ -174,40 +171,36 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     /**
      * Parse a single file from a Reader.
      *
-     * The default implementation just throws a NotImplementedException.
-     * Override in subclasses to implement.
+     * The default implementation just throws a NotImplementedException. Override in subclasses to implement.
      */
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         throw new NotImplementedException();
     }
 
     /**
      * Parse a single file from an InputStream.
      *
-     * The default implementation just throws a NotImplementedException.
-     * Override in subclasses to implement.
+     * The default implementation just throws a NotImplementedException. Override in subclasses to implement.
      */
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        InputStream inputStream,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         throw new NotImplementedException();
     }
 
@@ -216,16 +209,15 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
      *
      */
     protected void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        TreeReader treeParser,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            TreeReader treeParser,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         String[] recordPath = JSONUtilities.getStringArray(options, "recordPath");
         int limit2 = JSONUtilities.getInt(options, "limit", -1);
         if (limit > 0) {
@@ -248,7 +240,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         try {
             XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2,
                     trimStrings, storeEmptyStrings, guessCellValueTypes);
-        } catch (Exception e){
+        } catch (Exception e) {
             exceptions.add(e);
         }
     }

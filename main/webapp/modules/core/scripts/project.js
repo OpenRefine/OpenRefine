@@ -623,8 +623,9 @@ Refine.getPermanentLink = function() {
     });
 
     if(systemInfo.memoryWarn()) {
-      const message = `Your system is running low on memory (${systemInfo.byteToMB(systemInfo.availableMemory)}/${systemInfo.byteToMB(systemInfo.totalMemory)}). Increase the amount of memory allocated to OpenRefine.`;
-      alert(message)
+      const msg = $.i18n('core-project/memory-warn');
+      var notification = new ProcessNotification(msg, 10000);
+      notification.display();
     }
   }, 1000)
 })();

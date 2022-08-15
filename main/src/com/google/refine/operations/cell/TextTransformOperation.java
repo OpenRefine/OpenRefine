@@ -52,17 +52,19 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
+
     @JsonProperty("expression")
-    final protected String  _expression;
+    final protected String _expression;
     @JsonProperty("onError")
     final protected OnError _onError;
     @JsonProperty("repeat")
     final protected boolean _repeat;
     @JsonProperty("repeatCount")
-    final protected int     _repeatCount;
-    
+    final protected int _repeatCount;
+
     static public OnError stringToOnError(String s) {
         if ("set-to-blank".equalsIgnoreCase(s)) {
             return OnError.SetToBlank;
@@ -72,6 +74,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             return OnError.KeepOriginal;
         }
     }
+
     static public String onErrorToString(OnError onError) {
         if (onError == OnError.SetToBlank) {
             return "set-to-blank";
@@ -81,22 +84,15 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             return "keep-original";
         }
     }
-    
+
     @JsonCreator
     public TextTransformOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig, 
-            @JsonProperty("columnName")
-            String columnName, 
-            @JsonProperty("expression")
-            String expression,
-            @JsonProperty("onError")
-            OnError onError,
-            @JsonProperty("repeat")
-            boolean repeat,
-            @JsonProperty("repeatCount")
-            int repeatCount
-        ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("expression") String expression,
+            @JsonProperty("onError") OnError onError,
+            @JsonProperty("repeat") boolean repeat,
+            @JsonProperty("repeatCount") int repeatCount) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _onError = onError;
@@ -106,30 +102,30 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Text transform on cells in column " + _columnName + " using expression " + _expression;
+        return OperationDescription.cell_text_transform_brief(_columnName, _expression);
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
-        return "Text transform on " + cellChanges.size() + 
-            " cells in column " + column.getName() + ": " + _expression;
+
+        return OperationDescription.cell_text_transform_desc(cellChanges.size(), column.getName(), _expression);
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
-        
+
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         return new RowVisitor() {
-            int                 cellIndex;
-            Properties             bindings;
-            List<CellChange>     cellChanges;
-            Evaluable             eval;
-            
+
+            int cellIndex;
+            Properties bindings;
+            List<CellChange> cellChanges;
+            Evaluable eval;
+
             public RowVisitor init(int cellIndex, Properties bindings, List<CellChange> cellChanges, Evaluable eval) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
@@ -137,7 +133,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                 this.eval = eval;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -177,33 +173,33 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                                 newValue = null;
                             }
                         }
-                        
+
                         if (!ExpressionUtils.sameValue(oldValue, newValue)) {
                             newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
-                            
+
                             if (_repeat) {
                                 for (int i = 0; i < _repeatCount; i++) {
                                     ExpressionUtils.bind(bindings, row, rowIndex, _columnName, newCell);
-                                    
+
                                     newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                                     if (ExpressionUtils.isError(newValue)) {
                                         break;
                                     } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
                                         break;
                                     }
-                                    
+
                                     newCell = new Cell(newValue, newCell.recon);
                                 }
                             }
                         }
                     }
-                    
+
                     if (newCell != null) {
                         CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                         cellChanges.add(cellChange);
                     }
                 }
-                
+
                 return false;
             }
         }.init(column.getCellIndex(), bindings, cellChanges, eval);

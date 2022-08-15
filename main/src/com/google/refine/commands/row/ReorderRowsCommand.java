@@ -46,7 +46,7 @@ import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.sorting.SortingConfig;
 
 public class ReorderRowsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
@@ -54,7 +54,7 @@ public class ReorderRowsCommand extends EngineDependentCommand {
         String mode = request.getParameter("mode");
         SortingConfig sorting = null;
 
-        try{
+        try {
             String json = request.getParameter("sorting");
 
             sorting = (json == null) ? null : SortingConfig.reconstruct(json);

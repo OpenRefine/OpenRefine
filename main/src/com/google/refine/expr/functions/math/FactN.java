@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -45,13 +46,15 @@ public class FactN implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length != 2) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+            return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
         }
         if (!(args[0] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_first_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
         if (!(args[1] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_second_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
 
         return FactN.factorial(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
@@ -59,14 +62,13 @@ public class FactN implements Function {
     }
 
     /*
-     * Calculates the factorial of an integer, i, for a decreasing step of n.
-     * e.g. A double factorial would have a step of 2.
-     * Returns 1 for zero and negative integers.
+     * Calculates the factorial of an integer, i, for a decreasing step of n. e.g. A double factorial would have a step
+     * of 2. Returns 1 for zero and negative integers.
      */
-    public static long factorial(long i, long step){
+    public static long factorial(long i, long step) {
         if (i < 0) {
             throw new IllegalArgumentException("Can't compute the factorial of a negative number");
-        } else if(i <= 1) {
+        } else if (i <= 1) {
             return 1;
         } else {
             long result = i * FactN.factorial(i - step, step);
@@ -81,12 +83,12 @@ public class FactN implements Function {
     public String getDescription() {
         return FunctionDescription.math_factn();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

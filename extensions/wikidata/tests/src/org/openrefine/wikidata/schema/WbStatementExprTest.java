@@ -36,6 +36,7 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.testng.annotations.Test;
@@ -53,6 +54,9 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 import com.google.refine.util.ParsingUtilities;
 
 public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
@@ -126,6 +130,11 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
                 throws SkipSchemaExpressionException, QAWarningException {
             return expr.evaluate(ctxt, subject, property);
         }
+
+        @Override
+        public void validate(ValidationState validation) {
+            expr.validate(validation);
+        }
     }
 
     public String jsonRepresentation = "{"
@@ -164,16 +173,6 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         WbStatementExpr withNulls = new WbStatementExpr(
                 q5, null, null, null, null);
         assertEquals(empty, withNulls);
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testNoMainValue() {
-        new WbStatementExpr(
-                null,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                StatementMerger.FORMER_DEFAULT_STRATEGY,
-                StatementEditingMode.ADD_OR_MERGE);
     }
 
     @Test
@@ -271,5 +270,32 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableReferencesList() {
         statementExpr.getReferences().clear();
+    }
+
+    @Test
+    public void testValidate() throws ModelException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(1, new Column(1, "column B"), true);
+        columnModel.addColumn(2, new Column(2, "column C"), true);
+
+        hasNoValidationError(new Wrapper(statementExpr), columnModel);
+        hasNoValidationError(new Wrapper(statementDeleteExpr), columnModel);
+
+        WbStatementExpr missingMainValue = new WbStatementExpr(
+                null,
+                Collections.singletonList(qualifierExpr),
+                Collections.singletonList(refExpr),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE);
+        hasValidationError("Missing main statement value", new Wrapper(missingMainValue), columnModel);
+
+        WbStatementExpr nullQualifier = new WbStatementExpr(
+                mainValueExpr,
+                Collections.singletonList(null),
+                Collections.singletonList(refExpr),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE);
+        hasValidationError("Empty qualifier in statement", new Wrapper(nullQualifier), columnModel);
     }
 }

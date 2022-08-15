@@ -57,22 +57,22 @@ import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
 
 public class JythonEvaluable implements Evaluable {
-    
+
     static public LanguageSpecificParser createParser() {
         return new LanguageSpecificParser() {
-            
+
             @Override
             public Evaluable parse(String s) throws ParsingException {
                 return new JythonEvaluable(s);
             }
         };
     }
-    
+
     private final String s_functionName;
-    
-    private static PythonInterpreter _engine; 
-    
-    // FIXME(SM): this initialization logic depends on the fact that the JVM's 
+
+    private static PythonInterpreter _engine;
+
+    // FIXME(SM): this initialization logic depends on the fact that the JVM's
     // current working directory is the root of the OpenRefine distributions
     // or the development checkouts. While this works in practice, it would
     // be preferable to have a more reliable address space, but since we
@@ -86,13 +86,13 @@ public class JythonEvaluable implements Evaluable {
                 libPath = null;
             }
         }
-        
+
         if (libPath != null) {
             Properties props = new Properties();
             props.setProperty("python.path", libPath.getAbsolutePath());
             PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
         }
-        
+
         _engine = new PythonInterpreter();
     }
 
@@ -101,7 +101,7 @@ public class JythonEvaluable implements Evaluable {
 
         // indent and create a function out of the code
         String[] lines = s.split("\r\n|\r|\n");
-        
+
         StringBuffer sb = new StringBuffer(1024);
         sb.append("def ");
         sb.append(s_functionName);
@@ -113,20 +113,19 @@ public class JythonEvaluable implements Evaluable {
 
         _engine.exec(sb.toString());
     }
-    
+
     @Override
     public Object evaluate(Properties bindings) {
         try {
             // call the temporary PyFunction directly
-            Object result = ((PyFunction)_engine.get(s_functionName)).__call__(
-                new PyObject[] {
-                    Py.java2py( bindings.get("value") ),
-                    new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
-                    new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
-                    new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
-                    Py.java2py( bindings.get("rowIndex") )
-                }
-            );
+            Object result = ((PyFunction) _engine.get(s_functionName)).__call__(
+                    new PyObject[] {
+                            Py.java2py(bindings.get("value")),
+                            new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
+                            new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
+                            new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
+                            Py.java2py(bindings.get("rowIndex"))
+                    });
 
             return unwrap(result);
         } catch (PyException e) {
@@ -134,7 +133,6 @@ public class JythonEvaluable implements Evaluable {
         }
     }
 
-    
     protected Object unwrap(Object result) {
         if (result != null) {
             if (result instanceof JythonObjectWrapper) {
@@ -153,10 +151,10 @@ public class JythonEvaluable implements Evaluable {
                 return unwrap((PyObject) result);
             }
         }
-        
-        return result;      
+
+        return result;
     }
-    
+
     protected Object unwrap(PyObject po) {
         if (po instanceof PyNone) {
             return null;
@@ -164,12 +162,12 @@ public class JythonEvaluable implements Evaluable {
             return po.asDouble();
         } else if (po.isSequenceType()) {
             Iterator<PyObject> i = po.asIterable().iterator();
-            
+
             List<Object> list = new ArrayList<Object>();
             while (i.hasNext()) {
                 list.add(unwrap((Object) i.next()));
             }
-            
+
             return list.toArray();
         } else {
             return po;

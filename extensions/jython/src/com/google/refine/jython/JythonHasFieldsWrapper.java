@@ -41,6 +41,7 @@ import org.python.core.PyObject;
 import com.google.refine.expr.HasFields;
 
 public class JythonHasFieldsWrapper extends PyObject {
+
     private static final long serialVersionUID = -1275353513262385099L;
 
     public HasFields _obj;

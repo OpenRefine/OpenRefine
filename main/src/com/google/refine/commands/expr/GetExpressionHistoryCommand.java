@@ -50,25 +50,27 @@ import com.google.refine.commands.Command;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
-    
-    public static class ExpressionState  {
+
+    public static class ExpressionState {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("global")
         protected boolean global = false;
         @JsonProperty("starred")
         protected boolean starred;
-        
+
         protected ExpressionState(String code, boolean starred) {
             this.code = code;
             this.starred = starred;
         }
     }
-    
-    public static class ExpressionsList  {
+
+    public static class ExpressionsList {
+
         @JsonProperty("expressions")
         List<ExpressionState> expressions;
-        
+
         protected ExpressionsList(List<ExpressionState> states) {
             this.expressions = states;
         }
@@ -81,18 +83,18 @@ public class GetExpressionHistoryCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             List<String> expressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
-            TopList topList = (TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
+            TopList topList = (TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
             if (topList == null) {
-            	topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
+                topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
             }
-			Set<String> starredExpressions = new HashSet<String>(topList.getList());
+            Set<String> starredExpressions = new HashSet<String>(topList.getList());
             ExpressionsList expressionsList = new ExpressionsList(expressions.stream()
                     .map(s -> new ExpressionState(s, starredExpressions.contains(s)))
                     .collect(Collectors.toList()));
-      
+
             respondJSON(response, expressionsList);
         } catch (Exception e) {
             respondException(response, e);

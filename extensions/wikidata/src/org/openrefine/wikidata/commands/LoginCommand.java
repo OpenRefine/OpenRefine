@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import com.google.refine.commands.Command;
@@ -53,8 +54,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * <p>
  * This command also manages cookies of login credentials.
  * <p>
- * Cookies for different MediaWiki API endpoint are stored,
- * but only one connection is kept at the same time.
+ * Cookies for different MediaWiki API endpoint are stored, but only one connection is kept at the same time.
  */
 public class LoginCommand extends Command {
 
@@ -69,9 +69,9 @@ public class LoginCommand extends Command {
     static final String CONSUMER_SECRET = "wb-consumer-secret";
     static final String ACCESS_TOKEN = "wb-access-token";
     static final String ACCESS_SECRET = "wb-access-secret";
-    
+
     static final Pattern cookieKeyDisallowedCharacters = Pattern.compile("[^a-zA-Z0-9\\-!#$%&'*+.?\\^_`|~]");
-    
+
     protected ConnectionManager manager = null;
 
     @Override
@@ -83,7 +83,7 @@ public class LoginCommand extends Command {
         }
 
         if (manager == null) {
-        	manager = ConnectionManager.getInstance();
+            manager = ConnectionManager.getInstance();
         }
 
         String mediawikiApiEndpoint = removeCRLF(request.getParameter(API_ENDPOINT));
@@ -191,7 +191,7 @@ public class LoginCommand extends Command {
             CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
         }
-        
+
         if (manager == null) {
             manager = ConnectionManager.getInstance();
         }
@@ -210,10 +210,8 @@ public class LoginCommand extends Command {
         respondJSON(response, jsonResponse);
     }
 
-
     /**
-     * 1. Filters cookies with the given prefix
-     * 2. Removes the prefix
+     * 1. Filters cookies with the given prefix 2. Removes the prefix
      */
     private static Map<String, String> processCookiesWithPrefix(String prefix, Cookie[] cookies) throws UnsupportedEncodingException {
         Map<String, String> result = new HashMap<>();
@@ -227,7 +225,8 @@ public class LoginCommand extends Command {
         return result;
     }
 
-    private static void removeUsernamePasswordCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request, HttpServletResponse response) {
+    private static void removeUsernamePasswordCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request,
+            HttpServletResponse response) {
         String toRemovePrefix = wikibaseApiEndpointPrefix + WIKIBASE_COOKIE_PREFIX;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
@@ -238,7 +237,8 @@ public class LoginCommand extends Command {
         removeCookie(response, wikibaseApiEndpointPrefix + USERNAME);
     }
 
-    private static void removeOwnerOnlyConsumerCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request, HttpServletResponse response) {
+    private static void removeOwnerOnlyConsumerCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request,
+            HttpServletResponse response) {
         removeCookie(response, wikibaseApiEndpointPrefix + CONSUMER_TOKEN);
         removeCookie(response, wikibaseApiEndpointPrefix + CONSUMER_SECRET);
         removeCookie(response, wikibaseApiEndpointPrefix + ACCESS_TOKEN);
@@ -279,17 +279,16 @@ public class LoginCommand extends Command {
             return str.replaceAll("[\n\r]", "");
         }
     }
-    
+
     /**
-     * Removes special characters from cookie keys,
-     * replacing them by hyphens.
+     * Removes special characters from cookie keys, replacing them by hyphens.
      */
     static String sanitizeCookieKey(String key) {
         Matcher matcher = cookieKeyDisallowedCharacters.matcher(key);
         return matcher.replaceAll("-");
     }
 
-	protected void setConnectionManager(ConnectionManager connectionManager) {
-		this.manager = connectionManager;
-	}
+    protected void setConnectionManager(ConnectionManager connectionManager) {
+        this.manager = connectionManager;
+    }
 }
