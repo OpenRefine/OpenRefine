@@ -364,6 +364,9 @@ Returns the inner XML elements of an XML element. Does not return the text direc
 ###### ownText(element) {#owntextelement}
 Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.
 
+###### parent(element) {#parentelement}
+Returns the parent node or null if no parent. Use it in conjunction with parseHtml() and select() to provide an element.
+
 ### URI parsing {#uri-parsing}
 
 ###### parseUri(s) {#parseUris}

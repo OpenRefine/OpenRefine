@@ -71,6 +71,7 @@ Here is the manifest of Wikimedia Commons:
        "reconciliation_endpoint": "https://commonsreconcile.toolforge.org/${lang}/api"
     }
   },
+  "hide_structured_fields_in_mediainfo": false,
   "editgroups": {
     "url_schema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])"
   }
@@ -155,7 +156,7 @@ The Wikibase instance must have at least a reconciliation service endpoint linke
 
 ##### reconciliation_endpoint {#reconciliation_endpoint}
 
-The default reconciliation service endpoint for entities of this type. The endpoint must contain the "${lang}" variable such as "https://wikidata.reconci.link/${lang}/api", since the reconciliation service is expected to work for different languages. For the `item` entity type, you can get such a reconciliation service with [openrefine-wikibase](https://github.com/wetneb/openrefine-wikibase).
+The default reconciliation service endpoint for entities of this type. The endpoint must contain the "${lang}" variable such as "https://wikidata.reconci.link/${lang}/api", since the reconciliation service is expected to work for different languages. For the `item` entity type, you can get such a reconciliation service with [openrefine-wikibase](https://github.com/wetneb/openrefine-wikibase). For the `mediainfo` entity type, you can use the [commons-recon-service](https://gerrit.wikimedia.org/g/labs/tools/commons-recon-service) which can be configured to run for other Wikibase instances.
 
 This parameter is optional: you do not need to run a reconciliation for all entity types available in your Wikibase instance. However, it is a prerequisite for being able to do edits to those entity types via OpenRefine.
 
@@ -166,6 +167,11 @@ The base IRI for the entities of this type. This property is required. By defaul
 ##### mediawiki_api {#mediawiki_api}
 
 The URL of the MediaWiki API to use with entities of this type. If not provided, it is expected to be the same as the MediaWiki API endpoint for this instance, but if entities of this type are federated from another instance, then this should be set to the MediaWiki API endpoint of that Wikibase instance.
+
+#### hide_structured_fields_in_mediainfo
+
+Not required. Set this flag to true if your Wikibase instance supports file uploads (in which case it should have a `mediainfo` section in the `entity_types` object above), but it does not support adding captions and statements directly on the files themselves (unlike
+Wikimedia Commons).
 
 #### editgroups {#editgroups}
 

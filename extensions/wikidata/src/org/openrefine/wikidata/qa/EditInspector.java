@@ -177,7 +177,9 @@ public class EditInspector {
         }
 
         if (warningStore.getNbWarnings() == 0) {
-            warningStore.addWarning(new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0));
+            QAWarning warning = new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0);
+            warning.setFacetable(false);
+            warningStore.addWarning(warning);
         }
     }
 }

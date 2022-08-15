@@ -286,7 +286,7 @@
     "warnings-messages/invalid-item-subject/title": "アイテム編集のIdentifierが無効です",
     "warnings-messages/invalid-mediainfo-subject/title": "メディアファイル編集でIdentifierが無効です",
     "warnings-messages/invalid-mediainfo-subject/body": "1<span class=\"wb-issue-preformat\">{example}2</span> のようなIdentifierは、メディアファイルの編集でsubjectとして使用できません。subjectはMidでなければなりません.",
-    "warnings-messages/invalid-entity-id-format/title": "照会カラムに <span class=\"wb-issue-preformat\">{example}</span> のような無効identifierが含まれています.",
+    "warnings-messages/invalid-entity-id-format/title": "無効なidentifierが含まれています.",
     "warnings-messages/invalid-item-subject/body": "1<span class=\"wb-issue-preformat\">{example}2</span> のようなIdentifierは、アイテムの編集でsubjectに使用できません。subjectはQidでなければなりません.",
     "warnings-messages/invalid-item-id-format/title": "照会カラムに <span class=\"wb-issue-preformat\">{example}</span> のような無効なidentifierが含まれています。アイテムのidentifierはQidでなければなりません.",
     "warnings-messages/new-media-created/title": "新しいメディアがアップロードされました",
@@ -313,5 +313,6 @@
     "wikibase-issues/warning-raised": "警告あり",
     "wikibase-issues/locate-offending-rows": "違反行を示す",
     "wikibase-management/cancel": "キャンセル",
-    "wikibase-management/ok": "OK"
+    "wikibase-management/ok": "OK",
+    "wikibase-schema/invalid-schema-warning": "スキーマが不完全:"
 }

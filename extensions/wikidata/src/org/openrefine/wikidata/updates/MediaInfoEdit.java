@@ -148,6 +148,18 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 
     @Override
     public FullMediaInfoUpdate toEntityUpdate(EntityDocument entityDocument) {
+        if (entityDocument == null) {
+            Validate.isFalse(requiresFetchingExistingState(), "No existing entity state provided");
+            return new FullMediaInfoUpdate(
+                    (MediaInfoIdValue) id,
+                    0L,
+                    Datamodel.makeTermUpdate(Collections.emptyList(), Collections.emptyList()),
+                    Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()),
+                    filePath,
+                    fileName,
+                    wikitext,
+                    overrideWikitext);
+        }
         MediaInfoDocument mediaInfoDocument = (MediaInfoDocument) entityDocument;
 
         // Labels (captions)
@@ -160,7 +172,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         StatementUpdate statementUpdate = toStatementUpdate(mediaInfoDocument);
 
         return new FullMediaInfoUpdate(
-                (MediaInfoIdValue) id,
+                // important: use the id from the document, not from the update, as
+                // they might not be the same if a redirect has happened
+                mediaInfoDocument.getEntityId(),
                 entityDocument.getRevisionId(),
                 labelUpdate,
                 statementUpdate,
@@ -269,6 +283,17 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
                 filePath == null &&
                 fileName == null &&
                 wikitext == null);
+    }
+
+    @Override
+    public boolean requiresFetchingExistingState() {
+        /*
+         * If all the Wikibase-related fields are empty, then we can skip fetching the current entity from the wiki.
+         * This makes it possible to use the wikitext editing feature for Wikibases which do not use MediaInfo.
+         */
+        return !(statements.isEmpty() &&
+                labels.isEmpty() &&
+                labelsIfNew.isEmpty());
     }
 
     @Override

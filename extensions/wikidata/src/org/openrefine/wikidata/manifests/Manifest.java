@@ -105,6 +105,13 @@ public interface Manifest {
     List<String> getAvailableEntityTypes();
 
     /**
+     * Only useful for Wikibase instances to which one can upload files: this is set to true when the Wikibase instance
+     * does not support structured data in the form of MediaInfo entities. In this case, OpenRefine will still offer
+     * editing those files, but hide the Captions and Statements fields.
+     */
+    boolean hideStructuredFieldsInMediaInfo();
+
+    /**
      * Returns an entity or property id used in the WikibaseQualityConstraints extension.
      * 
      * @param name

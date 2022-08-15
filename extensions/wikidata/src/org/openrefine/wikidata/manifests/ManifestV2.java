@@ -28,6 +28,7 @@ public class ManifestV2 implements Manifest {
     private String mediaWikiApiEndpoint;
     private String editGroupsUrlSchema;
     private String tagTemplate;
+    private boolean hideStructuredFieldsInMediaInfo;
 
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
@@ -66,6 +67,7 @@ public class ManifestV2 implements Manifest {
                 });
         JsonNode editGroups = manifest.path("editgroups");
         editGroupsUrlSchema = editGroups.path("url_schema").textValue();
+        hideStructuredFieldsInMediaInfo = editGroups.path("hide_structured_fields_in_mediainfo").asBoolean(false);
     }
 
     private static class EntityTypeSettings {
@@ -165,6 +167,11 @@ public class ManifestV2 implements Manifest {
     @Override
     public List<String> getAvailableEntityTypes() {
         return entityTypeSettings.keySet().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean hideStructuredFieldsInMediaInfo() {
+        return hideStructuredFieldsInMediaInfo;
     }
 
     @Override
