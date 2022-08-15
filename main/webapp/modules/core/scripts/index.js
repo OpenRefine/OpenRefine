@@ -99,7 +99,7 @@ $(function() {
                   var thisVersion = OpenRefineVersion.version;
 
                   if (latestVersion.startsWith("v")) {
-                    latestVersion = latestVersion.substr(1);
+                    latestVersion = latestVersion.substring(1);
                   }
 
                   if (isThereNewRelease(thisVersion, latestVersion)) {
