@@ -158,12 +158,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-col-name'));
         return;
       }
-     var delay = elmts.throttleDelayInput[0].value
-      if (delay < 200) {
+     var delay = elmts.throttleDelayInput[0].value;
+      if (delay < 200 || Number.isNaN(delay)) {
         alert($.i18n('core-views/warning-throttle-delay-input'));
         return;
-      } else if (isNaN(delay)) {
-        delay = 500;
       }
       Refine.postCoreProcess(
         "add-column-by-fetching-urls",
