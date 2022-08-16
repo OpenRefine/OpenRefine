@@ -305,7 +305,7 @@ Libraries using the [OpenRefine API](openrefine-api):
 
 ### Java {#java}
 * [refine-java](https://github.com/ancore/refine-java)
-* [ontorefine-cli](https://github.com/Ontotext-AD/ontorefine-cli) that is a fork of the above for Ontotext's OntoRefine
+* [ontorefine-cli](https://github.com/Ontotext-AD/ontorefine-cli) that is a fork of the above for [Ontotext Refine](https://www.ontotext.com/products/ontotext-refine/). This is a proprietary data transformation tool based on OpenRefine, specially tailored for the transformation of any machine readable data into RDF. The tool has a visual RDF mapping interface and is used for Knowledge Graph building with SPARQL queries. This is done by means of exposing the existing OpenRefine projects as virtual SPARQL endpoints.
 
 ### Bash {#bash}
 * [bash-refine.sh](https://gist.github.com/felixlohmeier/d76bd27fbc4b8ab6d683822cdf61f81d) (templates for shell scripts)
