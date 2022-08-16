@@ -57,7 +57,7 @@ public class EvalErrorTests extends RefineTest {
 
         EvalError evalError = (EvalError) invoke("innerHtml", "test");
         Assert.assertEquals(evalError.toString(),
-                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element. Please first use parseHtml(string) and select(query) prior to using this function");
     }
 
     @Test

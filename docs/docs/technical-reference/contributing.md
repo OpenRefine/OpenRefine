@@ -15,28 +15,32 @@ If you need to file a bug or request a feature, [create an Issue in the OpenRefi
 
 ## Contributing to the documentation {#contributing-to-the-documentation}
 
-We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. But it is also
-possible to preview your changes locally. Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
+We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. 
 
-You will need to install [Yarn](https://yarnpkg.com/getting-started/install) before you can build the site.
+But it is also possible to preview your changes locally.
+We used Yarn to install Docusaurus, see `docs/yarn.lock`; 
+or see [Docusaurus installation](https://docusaurus.io/docs/installation) for how to seed a new docusaurus project.
+
+You need to have [Node.js](https://nodejs.org/en/download/) installed, which includes npm.
+You also need to install [Yarn](https://yarnpkg.com/getting-started/install) before you can build the site:
 ```sh
 npm install -g yarn
 ```
 
-Once you have installed yarn, navigate to docs directory & set-up the dependencies.
-
+Once you have installed yarn, navigate to the `docs` directory & set-up the dependencies.
 ```sh
 cd docs
 yarn
 ```
 
 Once this is done, generate the docs with:
-
 ```sh
 yarn build
 ```
 
-You can also spin a local web server to serve the docs for you, with auto-refresh when you edit the source files, with:
+You can also spin a local web server to serve the docs for you.
+A browser window will open at http://localhost:3000
+and will auto-refresh when you edit the source files:
 ```sh
 yarn start
 ```

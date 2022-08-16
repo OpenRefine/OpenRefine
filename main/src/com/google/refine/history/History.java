@@ -53,13 +53,13 @@ import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
 /**
- * Track done and undone changes. Done changes can be undone; undone changes can be redone.
- * Each change is actually not tracked directly but through a history entry. The history
- * entry stores only the metadata, while the change object stores the actual data. Thus
- * the history entries are much smaller and can be kept in memory, while the change objects
+ * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
+ * tracked directly but through a history entry. The history entry stores only the metadata, while the change object
+ * stores the actual data. Thus the history entries are much smaller and can be kept in memory, while the change objects
  * are only loaded into memory on demand.
  */
-public class History  {
+public class History {
+
     static public Change readOneChange(InputStream in, Pool pool) throws Exception {
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
         try {
@@ -98,8 +98,10 @@ public class History  {
     }
 
     static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(RefineServlet.VERSION); writer.write('\n');
-        writer.write(change.getClass().getName()); writer.write('\n');
+        writer.write(RefineServlet.VERSION);
+        writer.write('\n');
+        writer.write(change.getClass().getName());
+        writer.write('\n');
 
         change.save(writer, options);
     }
@@ -109,9 +111,9 @@ public class History  {
         return (Class<? extends Change>) RefineServlet.getClass(className);
     }
 
-    protected long               _projectID;
+    protected long _projectID;
     @JsonProperty("past")
-    protected List<HistoryEntry> _pastEntries;   // done changes, can be undone
+    protected List<HistoryEntry> _pastEntries; // done changes, can be undone
     @JsonProperty("future")
     protected List<HistoryEntry> _futureEntries; // undone changes, can be redone
 
@@ -122,14 +124,14 @@ public class History  {
     }
 
     /**
-     * Adds a HistoryEntry to the list of past histories
-     * Adding a new entry clears all currently held future histories
+     * Adds a HistoryEntry to the list of past histories Adding a new entry clears all currently held future histories
+     * 
      * @param entry
      */
     public void addEntry(HistoryEntry entry) {
         Project project = ProjectManager.singleton.getProject(_projectID);
         synchronized (project) {
-            // NOTE: project lock must be acquired *first* to prevent deadlocks, so we use a 
+            // NOTE: project lock must be acquired *first* to prevent deadlocks, so we use a
             // synchronized block instead of synchronizing the entire method.
             synchronized (this) {
                 entry.apply(project);
@@ -259,20 +261,25 @@ public class History  {
     }
 
     /*
-     * NOTE: this method is called from the autosave thread with the Project
-     * lock already held, so no other synchronized method here can aquire that
-     * Project lock or a deadlock will result.be careful of thread synchronization to avoid
+     * NOTE: this method is called from the autosave thread with the Project lock already held, so no other synchronized
+     * method here can aquire that Project lock or a deadlock will result.be careful of thread synchronization to avoid
      * deadlocks.
      */
     synchronized public void save(Writer writer, Properties options) throws IOException {
-        writer.write("pastEntryCount="); writer.write(Integer.toString(_pastEntries.size())); writer.write('\n');
+        writer.write("pastEntryCount=");
+        writer.write(Integer.toString(_pastEntries.size()));
+        writer.write('\n');
         for (HistoryEntry entry : _pastEntries) {
-            entry.save(writer, options); writer.write('\n');
+            entry.save(writer, options);
+            writer.write('\n');
         }
 
-        writer.write("futureEntryCount="); writer.write(Integer.toString(_futureEntries.size())); writer.write('\n');
+        writer.write("futureEntryCount=");
+        writer.write(Integer.toString(_futureEntries.size()));
+        writer.write('\n');
         for (HistoryEntry entry : _futureEntries) {
-            entry.save(writer, options); writer.write('\n');
+            entry.save(writer, options);
+            writer.write('\n');
         }
 
         writer.write("/e/\n");

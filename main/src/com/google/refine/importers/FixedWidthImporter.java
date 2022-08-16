@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers;
 
 import java.io.File;
@@ -47,10 +48,11 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporter extends TabularImportingParserBase {
+
     public FixedWidthImporter() {
         super(false);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -79,17 +81,16 @@ public class FixedWidthImporter extends TabularImportingParserBase {
 
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
-        
+
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
@@ -101,7 +102,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                         retrievedColumnNames.add(s);
                     }
                 }
-                
+
                 if (retrievedColumnNames.size() > 0) {
                     JSONUtilities.safePut(options, "headerLines", 1);
                 } else {
@@ -109,13 +110,14 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                 }
             }
         }
-        
+
         final List<Object> columnNames = retrievedColumnNames;
         final LineNumberReader lnReader = new LineNumberReader(reader);
-        
+
         TableDataReader dataReader = new TableDataReader() {
+
             boolean usedColumnNames = false;
-            
+
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
                 if (columnNames != null && !usedColumnNames) {
@@ -131,49 +133,52 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                 }
             }
         };
-        
+
         TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
     }
-    
+
     /**
      * Splits the line into columns
-     * @param line Line to be split
-     * @param widths array of integers with field sizes
+     * 
+     * @param line
+     *            Line to be split
+     * @param widths
+     *            array of integers with field sizes
      * @return
      */
     static private ArrayList<Object> getCells(String line, int[] widths) {
         ArrayList<Object> cells = new ArrayList<Object>();
-        
+
         int columnStartCursor = 0;
         int columnEndCursor = 0;
         for (int width : widths) {
             if (columnStartCursor >= line.length()) {
-                cells.add(null); //FIXME is adding a null cell (to represent no data) OK?
+                cells.add(null); // FIXME is adding a null cell (to represent no data) OK?
                 continue;
             }
-            
+
             columnEndCursor = columnStartCursor + width;
-            
+
             if (columnEndCursor > line.length()) {
                 columnEndCursor = line.length();
             }
             if (columnEndCursor <= columnStartCursor) {
-                cells.add(null); //FIXME is adding a null cell (to represent no data, or a zero width column) OK? 
+                cells.add(null); // FIXME is adding a null cell (to represent no data, or a zero width column) OK?
                 continue;
             }
-            
+
             cells.add(line.substring(columnStartCursor, columnEndCursor));
-            
+
             columnStartCursor = columnEndCursor;
         }
-        
+
         // Residual text
         if (columnStartCursor < line.length()) {
             cells.add(line.substring(columnStartCursor));
         }
         return cells;
     }
-    
+
     static public int[] guessColumnWidths(File file, String encoding) {
         try {
             InputStream is = new FileInputStream(file);
@@ -186,22 +191,22 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                 int lineCount = 0;
                 String s;
                 while (totalBytes < 64 * 1024 &&
-                       lineCount < 100 &&
-                       (s = lineNumberReader.readLine()) != null) {
-                    
+                        lineCount < 100 &&
+                        (s = lineNumberReader.readLine()) != null) {
+
                     totalBytes += s.length() + 1; // count the new line character
                     if (s.length() == 0) {
                         continue;
                     }
                     lineCount++;
-                    
+
                     if (counts == null) {
                         counts = new int[s.length()];
                         for (int c = 0; c < counts.length; c++) {
                             counts[c] = 0;
                         }
                     }
-                    
+
                     for (int c = 0; c < counts.length && c < s.length(); c++) {
                         char ch = s.charAt(c);
                         if (ch == ' ') {
@@ -209,10 +214,10 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                         }
                     }
                 }
-                
+
                 if (counts != null && lineCount > 2) {
                     List<Integer> widths = new ArrayList<Integer>();
-                    
+
                     int startIndex = 0;
                     for (int c = 0; c < counts.length; c++) {
                         int count = counts[c];
@@ -221,14 +226,14 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                             startIndex = c + 1;
                         }
                     }
-                    
+
                     for (int i = widths.size() - 2; i >= 0; i--) {
                         if (widths.get(i) == 1) {
                             widths.set(i + 1, widths.get(i + 1) + 1);
                             widths.remove(i);
                         }
                     }
-                    
+
                     int[] widthA = new int[widths.size()];
                     for (int i = 0; i < widthA.length; i++) {
                         widthA[i] = widths.get(i);

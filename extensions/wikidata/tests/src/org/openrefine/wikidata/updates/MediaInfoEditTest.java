@@ -105,6 +105,8 @@ public class MediaInfoEditTest {
                 .addFileName("Foo.png")
                 .addFilePath("C:\\Foo.png")
                 .build();
+        assertTrue(edit.requiresFetchingExistingState());
+
         FullMediaInfoUpdate update = edit.toEntityUpdate(Datamodel.makeMediaInfoDocument(existingSubject));
         assertEquals(update.getStatements().getAdded(), Arrays.asList(statement1));
         assertEquals(update.getFileName(), "Foo.png");
@@ -117,7 +119,9 @@ public class MediaInfoEditTest {
                 .addWikitext("my new wikitext")
                 .setOverrideWikitext(true)
                 .build();
-        FullMediaInfoUpdate update = edit.toEntityUpdate(Datamodel.makeMediaInfoDocument(existingSubject));
+        assertFalse(edit.requiresFetchingExistingState());
+
+        FullMediaInfoUpdate update = edit.toEntityUpdate(null);
         assertEquals(update.getStatements().getAdded(), Collections.emptyList());
         assertEquals(update.getFileName(), null);
         assertEquals(update.getFilePath(), null);
@@ -134,6 +138,7 @@ public class MediaInfoEditTest {
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
                 .build();
+        assertTrue(edit.requiresFetchingExistingState());
 
         // set up dependencies
         WikibaseDataEditor editor = mock(WikibaseDataEditor.class);

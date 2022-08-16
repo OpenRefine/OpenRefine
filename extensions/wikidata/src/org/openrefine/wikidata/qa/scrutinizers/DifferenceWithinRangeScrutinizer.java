@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     public String maximumValuePid;
 
     class DifferenceWithinRangeConstraint {
+
         PropertyIdValue lowerPropertyIdValue;
         QuantityValue minRangeValue, maxRangeValue;
 
@@ -60,39 +62,39 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
-    }    
-    
+        scrutinizeStatementEdit(update);
+    }
+
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
-        for (Statement statement : update.getAddedStatements()){
+        for (Statement statement : update.getAddedStatements()) {
             Snak mainSnak = statement.getClaim().getMainSnak();
             if (mainSnak instanceof ValueSnak) {
                 PropertyIdValue pid = mainSnak.getPropertyId();
-                Value value = ((ValueSnak)mainSnak).getValue();
+                Value value = ((ValueSnak) mainSnak).getValue();
                 propertyIdValueValueMap.put(pid, value);
             }
         }
 
-        for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
+        for (PropertyIdValue propertyId : propertyIdValueValueMap.keySet()) {
             List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, differenceWithinRangeConstraintQid);
-            if (!statementList.isEmpty()){
+            if (!statementList.isEmpty()) {
                 DifferenceWithinRangeConstraint constraint = new DifferenceWithinRangeConstraint(statementList.get(0));
                 PropertyIdValue lowerPropertyId = constraint.lowerPropertyIdValue;
                 QuantityValue minRangeValue = constraint.minRangeValue;
                 QuantityValue maxRangeValue = constraint.maxRangeValue;
 
-                if (propertyIdValueValueMap.containsKey(lowerPropertyId)){
+                if (propertyIdValueValueMap.containsKey(lowerPropertyId)) {
                     Value startingValue = propertyIdValueValueMap.get(lowerPropertyId);
                     Value endingValue = propertyIdValueValueMap.get(propertyId);
-                    if (startingValue instanceof TimeValue && endingValue instanceof TimeValue){
-                        TimeValue lowerDate = (TimeValue)startingValue;
-                        TimeValue upperDate = (TimeValue)endingValue;
+                    if (startingValue instanceof TimeValue && endingValue instanceof TimeValue) {
+                        TimeValue lowerDate = (TimeValue) startingValue;
+                        TimeValue upperDate = (TimeValue) endingValue;
 
                         long differenceInYears = upperDate.getYear() - lowerDate.getYear();
                         long differenceInMonths = upperDate.getMonth() - lowerDate.getMonth();
@@ -100,7 +102,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
                         if (minRangeValue != null && (differenceInYears < minRangeValue.getNumericValue().longValue()
                                 || differenceInYears == 0 && differenceInMonths < 0
-                                || differenceInYears == 0 && differenceInMonths == 0 && differenceInDays < 0)){
+                                || differenceInYears == 0 && differenceInMonths == 0 && differenceInDays < 0)) {
                             QAWarning issue = new QAWarning(type, propertyId.getId(), QAWarning.Severity.WARNING, 1);
                             issue.setProperty("source_entity", lowerPropertyId);
                             issue.setProperty("target_entity", propertyId);
@@ -114,7 +116,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                             addIssue(issue);
                         }
 
-                        if (maxRangeValue != null && differenceInYears > maxRangeValue.getNumericValue().longValue()){
+                        if (maxRangeValue != null && differenceInYears > maxRangeValue.getNumericValue().longValue()) {
                             QAWarning issue = new QAWarning(type, propertyId.getId(), QAWarning.Severity.WARNING, 1);
                             issue.setProperty("source_entity", lowerPropertyId);
                             issue.setProperty("target_entity", propertyId);

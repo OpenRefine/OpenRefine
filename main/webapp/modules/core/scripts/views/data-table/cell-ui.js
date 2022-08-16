@@ -604,6 +604,21 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
   elmts.typeSelect.val(cellDataType);
 
+  elmts.typeSelect.on('change', function() {
+    var newType = elmts.typeSelect.val();
+    if (newType === "date") {
+      elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+      $(elmts.cell_help_text).show();
+    } else {
+      $(elmts.cell_help_text).hide();
+    }
+  });
+
+  if (cellDataType === "date") {
+    elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+    $(elmts.cell_help_text).show();
+  }
+
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
 
@@ -628,9 +643,6 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       value = ("true" == text);
     } else if (type == "date") {
       value = Date.parse(text);
-      if (!value) {
-        value = DateTimeUtil.parseIso8601DateTime(text);
-      }
       if (!value) {
         alert($.i18n('core-views/not-valid-date'));
         return;

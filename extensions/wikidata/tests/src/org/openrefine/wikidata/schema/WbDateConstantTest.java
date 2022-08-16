@@ -147,18 +147,18 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         evaluatesTo(expectedDate, new WbDateConstant("TODAY"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void testInvalid() {
-        new WbDateConstant("invalid format");
+        hasValidationError("Invalid date provided: 'invalid format'", new WbDateConstant("invalid format"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void testPartlyValid() {
-        new WbDateConstant("2018-partly valid");
+        hasValidationError("Invalid date provided: '2018-partly valid'", new WbDateConstant("2018-partly valid"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void testInvalidCalendar() {
-        new WbDateConstant("2018-01-02_P234");
+        hasValidationError("Invalid date provided: '2018-01-02_P234'", new WbDateConstant("2018-01-02_P234"));
     }
 }

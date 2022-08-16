@@ -40,7 +40,6 @@ import java.util.Properties;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
-
 public interface StreamExporter extends Exporter {
 
     public void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException;

@@ -43,4 +43,9 @@ public class WbPropConstantTest extends WbExpressionTest<PropertyIdValue> {
         JacksonSerializationTest.canonicalSerialization(WbExpression.class, constant,
                 "{\"type\":\"wbpropconstant\",\"pid\":\"P48\",\"label\":\"my ID\",\"datatype\":\"external-id\"}");
     }
+
+    @Test
+    public void testValidate() {
+        hasNoValidationError(constant);
+    }
 }

@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -36,70 +36,16 @@ var preferenceUIs = [];
 var Refine = {
 };
 
-// Requests a CSRF token and calls the supplied callback
-// with the token
-Refine.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
-};
+I18NUtil.init("core");
 
-// Performs a POST request where an additional CSRF token
-// is supplied in the POST data. The arguments match those
-// of $.post().
-Refine.postCSRF = function(url, data, success, dataType, failCallback) {
-   return Refine.wrapCSRF(function(token) {
-      var fullData = data || {};
-      if (typeof fullData == 'string') {
-         fullData = fullData + "&" + $.param({csrf_token: token});
-      } else {
-         fullData['csrf_token'] = token;
-      }
-      var req = $.post(url, fullData, success, dataType);
-      if (failCallback !== undefined) {
-         req.fail(failCallback);
-      }
-   });
-};
-
-
-var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
-var dictionary = "";
-$.ajax({
-  url : "command/core/load-language?",
-  type : "POST",
-  async : false,
-  data : {
-    module : "core",
-    //lang : lang
-  },
-  success : function(data) {
-    dictionary = data['dictionary'];
-    lang = data['lang'];
-  }
-}).fail(function( jqXhr, textStatus, errorThrown ) {
-  var errorMessage = $.i18n('core-index/prefs-loading-failed');
-  if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-    alert(errorMessage); 
-  } else {
-    alert( textStatus + ':' + errorThrown );
-  }
-});
-
-$.i18n().load(dictionary, lang);
-$.i18n().locale = lang;
-//End internationalization
+Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+Refine.postCSRF = CSRFUtil.postCSRF;
 
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
-    
+
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
@@ -122,7 +68,7 @@ function PreferenceUI(tr, key, initialValue) {
           newValue = deDupUserMetaData(newValue);
       }
       $(td1).text(newValue);
-      
+
       Refine.postCSRF(
         "command/core/set-preference",
         {
@@ -195,11 +141,11 @@ function populatePreferences(prefs) {
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));
-        
+
         if (key === "userMetadata")  {
             value = deDupUserMetaData(value);
         }
-        
+
         Refine.postCSRF(
           "command/core/set-preference",
           {

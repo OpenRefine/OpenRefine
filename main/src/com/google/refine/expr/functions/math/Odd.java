@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
@@ -47,10 +48,10 @@ public class Odd implements Function {
         if (args.length == 1 && args[0] instanceof Number) {
             return Odd.roundUpToOdd(((Number) args[0]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    public static double roundUpToOdd(double d){
+    public static double roundUpToOdd(double d) {
         double temp = Math.ceil(d);
         return ((temp % 2) == 0) ? temp + 1 : temp;
     }
@@ -59,12 +60,12 @@ public class Odd implements Function {
     public String getDescription() {
         return FunctionDescription.math_odd();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

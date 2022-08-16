@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands;
 
 import java.io.IOException;
@@ -45,11 +46,12 @@ import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class HttpUtilities {
+
     final static protected Logger logger = LoggerFactory.getLogger("command");
 
     static public void respond(HttpServletResponse response, String content)
-        throws IOException, ServletException {
-    
+            throws IOException, ServletException {
+
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Writer w = response.getWriter();
@@ -63,8 +65,8 @@ abstract public class HttpUtilities {
     }
 
     static public void respond(HttpServletResponse response, String status, String message)
-        throws IOException {
-    
+            throws IOException {
+
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         writer.writeStartObject();
@@ -78,18 +80,18 @@ abstract public class HttpUtilities {
     }
 
     static public void respondJSON(HttpServletResponse response, Object o)
-        throws IOException  {
-    
+            throws IOException {
+
         respondJSON(response, o, new Properties());
     }
 
     static public void respondJSON(
             HttpServletResponse response, Object o, Properties options)
             throws IOException {
-    
+
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-    
+
         Writer w = response.getWriter();
         ParsingUtilities.defaultWriter.writeValue(w, o);
         w.flush();
@@ -97,20 +99,20 @@ abstract public class HttpUtilities {
     }
 
     static public void respondException(HttpServletResponse response, Exception e)
-        throws IOException, ServletException {
-    
+            throws IOException, ServletException {
+
         logger.warn("Exception caught", e);
-    
+
         if (response == null) {
             throw new ServletException("Response object can't be null");
         }
-    
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         pw.flush();
         sw.flush();
-        
+
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
 
@@ -144,44 +146,42 @@ abstract public class HttpUtilities {
     }
 
     static public void respondWithErrorPage(
-        RefineServlet servlet,
-        HttpServletRequest request, 
-        HttpServletResponse response, 
-        String message, 
-        Throwable e
-    ) {
+            RefineServlet servlet,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String message,
+            Throwable e) {
         respondWithErrorPage(servlet, request, response, message,
-            HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
 
     static public void respondWithErrorPage(
-        RefineServlet servlet,
-        HttpServletRequest request, 
-        HttpServletResponse response, 
-        String message,
-        int status,
-        Throwable e
-    ) {
+            RefineServlet servlet,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String message,
+            int status,
+            Throwable e) {
         VelocityContext context = new VelocityContext();
-        
+
         context.put("message", message);
-        
+
         if (e != null) {
             StringWriter writer = new StringWriter();
-            
+
             e.printStackTrace(new PrintWriter(writer));
-            
+
             context.put("stack", writer.toString());
         } else {
             context.put("stack", "");
         }
-        
+
         try {
             response.setStatus(status);
-            
+
             servlet.getModule("core").sendTextFromTemplate(
-                request, response, context, "error.vt", "UTF-8", "text/html", true);
-            
+                    request, response, context, "error.vt", "UTF-8", "text/html", true);
+
         } catch (Exception e1) {
             e1.printStackTrace();
         }

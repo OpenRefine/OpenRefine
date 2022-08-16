@@ -40,6 +40,7 @@ import java.util.UnknownFormatConversionException;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.StringUtils;
@@ -53,13 +54,13 @@ public class ToString implements Function {
             if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
                 if (o1 instanceof OffsetDateTime) {
-                    OffsetDateTime odt = (OffsetDateTime)o1;
-                    return odt.format(DateTimeFormatter.ofPattern((String)o2));
+                    OffsetDateTime odt = (OffsetDateTime) o1;
+                    return odt.format(DateTimeFormatter.ofPattern((String) o2));
                 } else if (o1 instanceof Number) {
                     try {
-                        return String.format((String)o2, o1);
+                        return String.format((String) o2, o1);
                     } catch (UnknownFormatConversionException e) {
-                        return new EvalError("Unknown format conversion: " + e.getMessage());
+                        return new EvalError(EvalErrorMessage.unknown_format_conversion(e.getMessage()));
                     }
                 }
             } else if (args.length == 1) {
@@ -67,23 +68,23 @@ public class ToString implements Function {
                     return (String) o1;
                 } else {
                     return StringUtils.toString(o1);
-                } 
+                }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a Date or Number format string");
+        // second argument containing a Date or Number format string");
+        return new EvalError(EvalErrorMessage.fun_to_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.fun_to_string();
     }
-    
+
     @Override
     public String getParams() {
         return "object o, string format (optional)";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

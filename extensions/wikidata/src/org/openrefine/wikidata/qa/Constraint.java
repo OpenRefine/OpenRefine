@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -14,8 +15,8 @@ import java.util.Set;
 /**
  * Constraint class is defined to parse the common parameters of property constraints
  *
- * Most of the scrutinizer will have inner class defining the structure of
- * that constraint will extend this Constraint class
+ * Most of the scrutinizer will have inner class defining the structure of that constraint will extend this Constraint
+ * class
  *
  * @author Ekta Mishra
  */
@@ -30,13 +31,12 @@ public class Constraint {
     public Constraint(Statement statement) {
         constraintExceptions = new HashSet<>();
         List<SnakGroup> snakGroupList = statement.getClaim().getQualifiers();
-        for(SnakGroup group : snakGroupList) {
+        for (SnakGroup group : snakGroupList) {
             for (Snak snak : group.getSnaks()) {
                 if (group.getProperty().getId().equals(CONSTRAINT_STATUS) && snak instanceof ValueSnak) {
-                    constraintStatus = (ItemIdValue) ((ValueSnak)snak).getValue();
-                }
-                else if (group.getProperty().getId().equals(CONSTRAINT_EXCEPTIONS) && snak instanceof ValueSnak) {
-                    constraintExceptions.add((EntityIdValue) ((ValueSnak)snak).getValue());
+                    constraintStatus = (ItemIdValue) ((ValueSnak) snak).getValue();
+                } else if (group.getProperty().getId().equals(CONSTRAINT_EXCEPTIONS) && snak instanceof ValueSnak) {
+                    constraintExceptions.add((EntityIdValue) ((ValueSnak) snak).getValue());
                 }
             }
         }

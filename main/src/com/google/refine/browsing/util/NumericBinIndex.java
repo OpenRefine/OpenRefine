@@ -43,58 +43,56 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 /**
- * A utility class for computing the base bins that form the base histograms of 
- * numeric range facets. It evaluates an expression on all the rows of a project to
- * get numeric values, determines how many bins to distribute those values in, and 
- * bins the rows accordingly.
+ * A utility class for computing the base bins that form the base histograms of numeric range facets. It evaluates an
+ * expression on all the rows of a project to get numeric values, determines how many bins to distribute those values
+ * in, and bins the rows accordingly.
  * 
- * This class processes all rows rather than just the filtered rows because it
- * needs to compute the base bins of a numeric range facet, which remain unchanged 
- * as the user interacts with the facet.
+ * This class processes all rows rather than just the filtered rows because it needs to compute the base bins of a
+ * numeric range facet, which remain unchanged as the user interacts with the facet.
  */
 abstract public class NumericBinIndex {
-    
+
     protected int _totalValueCount;
     protected int _numbericValueCount;
     protected double _min;
     protected double _max;
     protected double _step;
-    protected int[]  _bins;
-    
+    protected int[] _bins;
+
     protected int _numericRowCount;
     protected int _nonNumericRowCount;
     protected int _blankRowCount;
     protected int _errorRowCount;
-    
+
     protected boolean _hasError = false;
     protected boolean _hasNonNumeric = false;
     protected boolean _hasNumeric = false;
     protected boolean _hasBlank = false;
-    
+
     abstract protected void iterate(Project project, RowEvaluable rowEvaluable, List<Double> allValues);
-    
+
     public NumericBinIndex(Project project, RowEvaluable rowEvaluable) {
         _min = Double.POSITIVE_INFINITY;
         _max = Double.NEGATIVE_INFINITY;
-        
+
         // TODO: An array of doubles would be more memmory efficient - double[] allValues
         List<Double> allValues = new ArrayList<Double>();
-        
+
         iterate(project, rowEvaluable, allValues);
-        
+
         _numbericValueCount = allValues.size();
-        
+
         if (_min >= _max) {
             _step = 1;
             _min = Math.min(_min, _max);
-            _max = _min+_step;
+            _max = _min + _step;
             _bins = new int[1];
-            
+
             return;
         }
-        
+
         double diff = _max - _min;
-        
+
         _step = 1;
         if (diff > 10) {
             while (_step * 100 < diff) {
@@ -105,29 +103,29 @@ abstract public class NumericBinIndex {
                 _step /= 10;
             }
         }
-        
+
         double originalMax = _max;
         _min = (Math.floor(_min / _step) * _step);
         _max = (Math.ceil(_max / _step) * _step);
-        
+
         double binCount = (_max - _min) / _step;
         if (binCount > 100) {
             _step *= 2;
             binCount = (binCount + 1) / 2;
         }
-        
+
         if (_max <= originalMax) {
             _max += _step;
             binCount++;
         }
-        
+
         _bins = new int[(int) Math.round(binCount)];
         for (double d : allValues) {
-            int bin = Math.max((int) Math.floor((d - _min) / _step),0);
+            int bin = Math.max((int) Math.floor((d - _min) / _step), 0);
             _bins[bin]++;
         }
     }
-    
+
     public boolean isNumeric() {
         return _numbericValueCount > _totalValueCount / 2;
     }
@@ -147,7 +145,7 @@ abstract public class NumericBinIndex {
     public int[] getBins() {
         return _bins;
     }
-    
+
     public int getNumericRowCount() {
         return _numericRowCount;
     }
@@ -165,15 +163,14 @@ abstract public class NumericBinIndex {
     }
 
     protected void processRow(
-        Project         project, 
-        RowEvaluable    rowEvaluable,
-        List<Double>     allValues,
-        int             rowIndex,
-        Row             row,
-        Properties         bindings
-    ) {
+            Project project,
+            RowEvaluable rowEvaluable,
+            List<Double> allValues,
+            int rowIndex,
+            Row row,
+            Properties bindings) {
         Object value = rowEvaluable.eval(project, rowIndex, row, bindings);
-        
+
         if (ExpressionUtils.isError(value)) {
             _hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
@@ -181,7 +178,7 @@ abstract public class NumericBinIndex {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
                     _totalValueCount++;
-                    
+
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
@@ -201,7 +198,7 @@ abstract public class NumericBinIndex {
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     _totalValueCount++;
-                    
+
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
@@ -220,7 +217,7 @@ abstract public class NumericBinIndex {
                 }
             } else {
                 _totalValueCount++;
-                
+
                 if (value instanceof Number) {
                     if (processValue(((Number) value).doubleValue(), allValues)) {
                         _hasNumeric = true;
@@ -235,14 +232,14 @@ abstract public class NumericBinIndex {
             _hasBlank = true;
         }
     }
-    
+
     protected void preprocessing() {
         _hasBlank = false;
         _hasError = false;
         _hasNonNumeric = false;
         _hasNumeric = false;
     }
-    
+
     protected void postprocessing() {
         if (_hasError) {
             _errorRowCount++;

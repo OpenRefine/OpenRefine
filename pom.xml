@@ -108,7 +108,7 @@
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>4.6.1</mockito.version>
+    <mockito.version>4.7.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -273,13 +273,11 @@
         <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
         <configuration>
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>
             <source>11</source>
-            <!-- disable error checks for now (TODO: clean up those errors) -->
-            <doclint>none</doclint>
         </configuration>
         <executions>
           <execution>
@@ -296,6 +294,9 @@
         <version>2.17.1</version>
         <configuration>
           <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
+          <excludes> <!-- file should not be linted because it was copied from a dependency (sigh) -->
+            <exclude>**/Metaphone3.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>

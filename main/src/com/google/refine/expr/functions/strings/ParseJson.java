@@ -38,6 +38,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.ParsingUtilities;
@@ -52,24 +53,24 @@ public class ParseJson implements Function {
                 try {
                     return ParsingUtilities.mapper.readTree(o1.toString());
                 } catch (IOException e) {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed: " + e.getMessage());
+                    // e.getMessage());
+                    return new EvalError(EvalErrorMessage.failed(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
                 }
             }
         }
         return null;
     }
 
-    
     @Override
     public String getDescription() {
         return FunctionDescription.str_parse_json();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON object";

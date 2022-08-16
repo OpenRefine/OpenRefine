@@ -21,23 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An expression that represent a term (label, description or alias). The
- * structure is slightly different from other expressions because we need to
- * call different methods on {@link ItemEditBuilder}.
+ * An expression that represent a term (label, description or alias). The structure is slightly different from other
+ * expressions because we need to call different methods on {@link ItemEditBuilder}.
  * 
  * @author Antonin Delpeuch
  *
@@ -55,10 +58,24 @@ public class WbNameDescExpr {
     @JsonCreator
     public WbNameDescExpr(@JsonProperty("name_type") NameDescType type,
             @JsonProperty("value") WbMonolingualExpr value) {
-        Validate.notNull(type);
         this.type = type;
-        Validate.notNull(value);
         this.value = value;
+    }
+
+    /**
+     * Checks that the expression has all its required elements and can be evaluated.
+     */
+    public void validate(ValidationState validation) {
+        if (type == null) {
+            validation.addError("Missing type");
+        }
+        if (value == null) {
+            validation.addError("Missing value");
+        } else {
+            validation.enter();
+            value.validate(validation);
+            validation.leave();
+        }
     }
 
     /**
@@ -68,33 +85,33 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public void contributeTo(ItemEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
-            case LABEL:
-                entity.addLabel(val, true);
-                break;
-            case LABEL_IF_NEW:
-            	entity.addLabel(val, false);
-            	break;
-            case DESCRIPTION:
-                entity.addDescription(val, true);
-                break;
-            case DESCRIPTION_IF_NEW:
-            	entity.addDescription(val, false);
-            	break;
-            case ALIAS:
-                entity.addAlias(val);
-                break;
+                case LABEL:
+                    entity.addLabel(val, true);
+                    break;
+                case LABEL_IF_NEW:
+                    entity.addLabel(val, false);
+                    break;
+                case DESCRIPTION:
+                    entity.addDescription(val, true);
+                    break;
+                case DESCRIPTION_IF_NEW:
+                    entity.addDescription(val, false);
+                    break;
+                case ALIAS:
+                    entity.addAlias(val);
+                    break;
             }
         } catch (SkipSchemaExpressionException e) {
             return;
         }
     }
-    
+
     /**
      * Evaluates the expression and adds the result to the entity update.
      * 
@@ -102,20 +119,20 @@ public class WbNameDescExpr {
      *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
-     * @throws QAWarningException 
+     * @throws QAWarningException
      */
     public void contributeTo(MediaInfoEditBuilder entity, ExpressionContext ctxt) throws QAWarningException {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
-            case LABEL:
-                entity.addLabel(val, true);
-                break;
-            case LABEL_IF_NEW:
-            	entity.addLabel(val, false);
-            	break;
-			default:
-				throw new IllegalArgumentException("Term type not supported by MediaInfo entities");
+                case LABEL:
+                    entity.addLabel(val, true);
+                    break;
+                case LABEL_IF_NEW:
+                    entity.addLabel(val, false);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Term type not supported by MediaInfo entities");
             }
         } catch (SkipSchemaExpressionException e) {
             return;
@@ -132,6 +149,38 @@ public class WbNameDescExpr {
         return value;
     }
 
+    // for error-reporting purposes, during schema validation
+    @JsonIgnore
+    public PathElement.Type getPathElementType() {
+        switch (getType()) {
+            case ALIAS:
+                return Type.ALIAS;
+            case DESCRIPTION:
+                return Type.DESCRIPTION;
+            case DESCRIPTION_IF_NEW:
+                return Type.DESCRIPTION;
+            case LABEL:
+                return Type.LABEL;
+            case LABEL_IF_NEW:
+                return Type.LABEL;
+        }
+        throw new IllegalStateException("Non-exhaustive enumeration of term types");
+    }
+
+    /**
+     * For error-reporting purposes, during schema validation.
+     * 
+     * @return the constant language code for this term, if there is one, otherwise null
+     */
+    @JsonIgnore
+    public String getStaticLanguage() {
+        if (value != null && value.getLanguageExpr() != null && value.getLanguageExpr() instanceof WbLanguageConstant) {
+            return ((WbLanguageConstant) value.getLanguageExpr()).getLabel();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == null || !WbNameDescExpr.class.isInstance(other)) {
@@ -145,4 +194,5 @@ public class WbNameDescExpr {
     public int hashCode() {
         return type.hashCode() + value.hashCode();
     }
+
 }

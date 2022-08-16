@@ -41,14 +41,14 @@ import java.util.Map;
  */
 public class KeyerFactory {
 
-	static final private Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
-	// We cannot derive this from the hashmap as the order matters
-	static final private List<String> _keyerNames = new LinkedList<>();
+    static final private Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
+    // We cannot derive this from the hashmap as the order matters
+    static final private List<String> _keyerNames = new LinkedList<>();
 
     static {
-    	// Some keyers are disabled as they are super-seeded by others
-    	// See https://github.com/OpenRefine/OpenRefine/pull/1906
-    	
+        // Some keyers are disabled as they are super-seeded by others
+        // See https://github.com/OpenRefine/OpenRefine/pull/1906
+
         put("fingerprint", new FingerprintKeyer());
         put("ngram-fingerprint", new NGramFingerprintKeyer());
         // put("metaphone", new MetaphoneKeyer());
@@ -57,27 +57,26 @@ public class KeyerFactory {
         // put("soundex", new SoundexKeyer());
         put("cologne-phonetic", new ColognePhoneticKeyer());
     }
-    
+
     /**
      * Returns the keyer registered under a given name, or null if it does not exist.
      */
     public static Keyer get(String name) {
-    	return _keyers.get(name);
+        return _keyers.get(name);
     }
-    
+
     /**
      * Registers a keyer under a code name.
      */
     public static void put(String name, Keyer keyer) {
-    	_keyers.put(name, keyer);
-    	_keyerNames.add(name);
+        _keyers.put(name, keyer);
+        _keyerNames.add(name);
     }
-    
+
     /**
-     * Set of available keyer, by names.
-     * The first keyer is considered the default one.
+     * Set of available keyer, by names. The first keyer is considered the default one.
      */
     public static List<String> getKeyerNames() {
-    	return Collections.unmodifiableList(_keyerNames);
+        return Collections.unmodifiableList(_keyerNames);
     }
 }

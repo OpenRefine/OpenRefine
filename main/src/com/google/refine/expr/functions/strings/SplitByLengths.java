@@ -37,47 +37,50 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 
 public class SplitByLengths implements Function {
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2 && args[0] != null) {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();
-            
+
             String[] results = new String[args.length - 1];
-            
+
             int lastIndex = 0;
-            
+
             for (int i = 1; i < args.length; i++) {
                 int thisIndex = lastIndex;
-                
+
                 Object o2 = args[i];
                 if (o2 instanceof Number) {
                     thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o2).intValue()));
                 }
-                
+
                 results[i - 1] = s.substring(lastIndex, thisIndex);
                 lastIndex = thisIndex;
             }
-            
+
             return results;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 string and 1 or more numbers");
+        // numbers");
+        return new EvalError(EvalErrorMessage.expects_one_string_and_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_split_by_lengths();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n1, number n2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

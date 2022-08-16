@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,16 +50,16 @@ public class NGram implements Function {
         if (args.length == 2) {
             Object s = args[0];
             Object n = args[1];
-            
+
             if (s != null && s instanceof String && n != null && n instanceof Number) {
-                
+
                 String[] tokens = StringUtils.split((String) s);
-                
+
                 int count = ((Number) n).intValue();
                 if (count >= tokens.length) {
                     return new String[] { (String) s };
                 }
-                
+
                 int len = tokens.length - count + 1;
                 String[] ngrams = new String[len];
                 for (int i = 0; i < len; i++) {
@@ -66,27 +67,27 @@ public class NGram implements Function {
                     for (int j = 0; j < count; j++) {
                         ss[j] = tokens[i + j];
                     }
-                    ngrams[i] = StringUtils.join(ss,' ');
+                    ngrams[i] = StringUtils.join(ss, ' ');
                 }
-                               
+
                 return ngrams;
             }
-            
+
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
+        return new EvalError(EvalErrorMessage.expects_one_string_and_number(ControlFunctionRegistry.getFunctionName(this)));
     }
-    
+
     @Override
     public String getDescription() {
         return FunctionDescription.str_ngram();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "array of strings";

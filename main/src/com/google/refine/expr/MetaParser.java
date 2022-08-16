@@ -49,70 +49,70 @@ import clojure.lang.RT;
 abstract public class MetaParser {
 
     static public class LanguageInfo {
+
         @JsonProperty("name")
-        final public String                 name;
+        final public String name;
         @JsonIgnore
         final public LanguageSpecificParser parser;
         @JsonProperty("defaultExpression")
-        final public String                 defaultExpression;
-        
+        final public String defaultExpression;
+
         LanguageInfo(String name, LanguageSpecificParser parser, String defaultExpression) {
             this.name = name;
             this.parser = parser;
             this.defaultExpression = defaultExpression;
         }
     }
-    
+
     static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
 
-    // TODO: We should switch from using the internal compiler class 
+    // TODO: We should switch from using the internal compiler class
 //    final static private Var CLOJURE_READ_STRING = RT.var("clojure.core", "read-string");
 //    final static private Var CLOJURE_EVAL = RT.var("clojure.core", "eval");
-    
+
     static {
         registerLanguageParser("grel", "General Refine Expression Language (GREL)", new LanguageSpecificParser() {
-            
+
             @Override
             public Evaluable parse(String s) throws ParsingException {
                 return parseGREL(s);
             }
         }, "value");
-        
+
         registerLanguageParser("clojure", "Clojure", new LanguageSpecificParser() {
-            
+
             @Override
             public Evaluable parse(String s) throws ParsingException {
                 try {
 //                    RT.load("clojure/core"); // Make sure RT is initialized
                     Object foo = RT.CURRENT_NS; // Make sure RT is initialized
                     IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                            "(fn [value cell cells row rowIndex] " + s + ")"
-                        ));
+                            "(fn [value cell cells row rowIndex] " + s + ")"));
 
                     // TODO: We should to switch from using Compiler.load
                     // because it's technically an internal interface
 //                    Object code = CLOJURE_READ_STRING.invoke(
 //                            "(fn [value cell cells row rowIndex] " + s + ")"
 //                            );
-                    
+
                     return new Evaluable() {
+
                         private IFn _fn;
-                        
+
                         public Evaluable init(IFn fn) {
                             _fn = fn;
                             return this;
                         }
-                        
+
                         @Override
                         public Object evaluate(Properties bindings) {
                             try {
                                 return _fn.invoke(
-                                    bindings.get("value"),
-                                    bindings.get("cell"),
-                                    bindings.get("cells"),
-                                    bindings.get("row"),
-                                    bindings.get("rowIndex")
-                                );
+                                        bindings.get("value"),
+                                        bindings.get("cell"),
+                                        bindings.get("cells"),
+                                        bindings.get("row"),
+                                        bindings.get("rowIndex"));
                             } catch (Exception e) {
                                 return new EvalError(e.getMessage());
                             }
@@ -124,10 +124,11 @@ abstract public class MetaParser {
             }
         }, "value");
     }
-    
+
     /**
-     * languagePrefix will be stored in the meta model as an identifier. 
-     * so be careful when change it as it will break the backward compatibility for the old project 
+     * languagePrefix will be stored in the meta model as an identifier. so be careful when change it as it will break
+     * the backward compatibility for the old project
+     * 
      * @param languagePrefix
      * @param name
      * @param parser
@@ -136,19 +137,18 @@ abstract public class MetaParser {
     static public void registerLanguageParser(String languagePrefix, String name, LanguageSpecificParser parser, String defaultExpression) {
         s_languages.put(languagePrefix, new LanguageInfo(name, parser, defaultExpression));
     }
-    
+
     static public LanguageInfo getLanguageInfo(String languagePrefix) {
         return s_languages.get(languagePrefix.toLowerCase());
     }
-    
+
     static public Set<String> getLanguagePrefixes() {
         return s_languages.keySet();
     }
-    
+
     /**
-     * Parse an expression that might have a language prefix into an Evaluable.
-     * Expressions without valid prefixes or without any prefix are assumed to be
-     * GREL expressions.
+     * Parse an expression that might have a language prefix into an Evaluable. Expressions without valid prefixes or
+     * without any prefix are assumed to be GREL expressions.
      * 
      * @param s
      * @return
@@ -156,7 +156,7 @@ abstract public class MetaParser {
      */
     static public Evaluable parse(String s) throws ParsingException {
         String language = "grel";
-        
+
         int colon = s.indexOf(':');
         if (colon >= 0) {
             language = s.substring(0, colon).toLowerCase();
@@ -164,7 +164,7 @@ abstract public class MetaParser {
                 language = "grel";
             }
         }
-        
+
         LanguageInfo info = s_languages.get(language.toLowerCase());
         if (info != null) {
             return info.parser.parse(s.substring(colon + 1));
@@ -172,10 +172,10 @@ abstract public class MetaParser {
             return parseGREL(s);
         }
     }
-    
+
     static protected Evaluable parseGREL(String s) throws ParsingException {
         Parser parser = new Parser(s);
-        
+
         return parser.getExpression();
     }
 }

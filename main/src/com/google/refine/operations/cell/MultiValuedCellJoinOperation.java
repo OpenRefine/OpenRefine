@@ -46,44 +46,42 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+import com.google.refine.operations.OperationDescription;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
-    final protected String    _columnName;
-    final protected String    _keyColumnName;
-    final protected String    _separator;
+
+    final protected String _columnName;
+    final protected String _keyColumnName;
+    final protected String _separator;
 
     @JsonCreator
     public MultiValuedCellJoinOperation(
-        @JsonProperty("columnName")
-        String      columnName,
-        @JsonProperty("keyColumnName")
-        String      keyColumnName,
-        @JsonProperty("separator")
-        String    separator
-    ) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("keyColumnName") String keyColumnName,
+            @JsonProperty("separator") String separator) {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("keyColumnName")
     public String getKeyColumnName() {
         return _keyColumnName;
     }
-    
+
     @JsonProperty("separator")
     public String getSeparator() {
         return _separator;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
-        return "Join multi-valued cells in column " + _columnName;
+        return OperationDescription.cell_multivalued_cell_join_brief(_columnName);
     }
 
     @Override
@@ -93,34 +91,34 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
             throw new Exception("No column named " + _columnName);
         }
         int cellIndex = column.getCellIndex();
-        
+
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
-        
+
         List<Row> newRows = new ArrayList<Row>();
-        
+
         int oldRowCount = project.rows.size();
         for (int r = 0; r < oldRowCount; r++) {
             Row oldRow = project.rows.get(r);
-            
+
             if (oldRow.isCellBlank(keyCellIndex)) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             int r2 = r + 1;
             while (r2 < oldRowCount && project.rows.get(r2).isCellBlank(keyCellIndex)) {
                 r2++;
             }
-            
+
             if (r2 == r + 1) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             StringBuffer sb = new StringBuffer();
             for (int r3 = r; r3 < r2; r3++) {
                 Object value = project.rows.get(r3).getCellValue(cellIndex);
@@ -131,7 +129,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
                     sb.append(value.toString());
                 }
             }
-            
+
             for (int r3 = r; r3 < r2; r3++) {
                 Row newRow = project.rows.get(r3).dup();
                 if (r3 == r) {
@@ -139,22 +137,21 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
                 } else {
                     newRow.setCell(cellIndex, null);
                 }
-                
+
                 if (!newRow.isEmpty()) {
                     newRows.add(newRow);
                 }
             }
-            
+
             r = r2 - 1; // r will be incremented by the for loop anyway
         }
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(null), 
-            this, 
-            new MassRowChange(newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(null),
+                this,
+                new MassRowChange(newRows));
     }
 
 }

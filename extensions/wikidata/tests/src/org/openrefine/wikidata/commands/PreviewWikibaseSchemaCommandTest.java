@@ -68,7 +68,23 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
         ArrayNode edits = (ArrayNode) response.get("edits_preview");
-        assertEquals(3, edits.size());
+        assertEquals(edits.size(), 3);
+        ArrayNode issues = (ArrayNode) response.get("warnings");
+        assertEquals(issues.size(), 4);
+    }
+
+    @Test
+    public void testIncompleteSchema() throws IOException, ServletException {
+        String schemaJson = jsonFromFile("schema/inception_with_errors.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode validationErrors = (ArrayNode) response.get("errors");
+        assertEquals(validationErrors.size(), 2);
     }
 
     @Test

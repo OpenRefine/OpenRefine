@@ -1,3 +1,4 @@
+
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
@@ -21,10 +22,11 @@ import com.google.api.services.sheets.v4.model.RowData;
 import com.google.refine.exporters.TabularSerializer;
 
 class SpreadsheetSerializer implements TabularSerializer {
+
     static final Logger logger = LoggerFactory.getLogger("SpreadsheetSerializer");
-    
+
     private static final int BATCH_SIZE = 500;
-    
+
     private Sheets service;
     private String spreadsheetId;
     private List<Exception> exceptions;
@@ -40,29 +42,28 @@ class SpreadsheetSerializer implements TabularSerializer {
         this.spreadsheetId = spreadsheetId;
         this.exceptions = exceptions;
     }
-    
+
     @Override
     public void startFile(JsonNode options) {
     }
-    
-    
+
     @Override
     public void endFile() {
         if (rows.size() > 0) {
             sendBatch(rows);
-            }
+        }
     }
 
     @Override
     public void addRow(List<CellData> cells, boolean isHeader) {
         List<com.google.api.services.sheets.v4.model.CellData> cellDatas = new ArrayList<>();
         RowData rowData = new RowData();
-        
+
         for (int c = 0; c < cells.size(); c++) {
             CellData cellData = cells.get(c);
             cellDatas.add(cellData2sheetCellData(cellData));
         }
-        
+
         rowData.setValues(cellDatas);
         rows.add(rowData);
 
@@ -73,10 +74,10 @@ class SpreadsheetSerializer implements TabularSerializer {
             }
         }
     }
-    
+
     private com.google.api.services.sheets.v4.model.CellData cellData2sheetCellData(CellData cellData) {
         com.google.api.services.sheets.v4.model.CellData sheetCellData = new com.google.api.services.sheets.v4.model.CellData();
-        
+
         ExtendedValue ev = new ExtendedValue();
         if (cellData != null) {
             if (cellData.value instanceof String) {
@@ -104,10 +105,10 @@ class SpreadsheetSerializer implements TabularSerializer {
 
         return sheetCellData;
     }
-    
+
     private void sendBatch(List<RowData> rows) {
         List<Request> requests = prepareBatch(rows);
-        
+
         // FIXME: We have a 10MB cap on the request size, but I'm not sure we've got a good
         // way to quickly tell how big our request is. Just reduce row count for now.
         BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
@@ -155,7 +156,7 @@ class SpreadsheetSerializer implements TabularSerializer {
         requests.add(request);
         return requests;
     }
-    
+
     public String getUrl() throws UnsupportedEncodingException {
         String urlString = "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit#gid=0";
         return urlString;

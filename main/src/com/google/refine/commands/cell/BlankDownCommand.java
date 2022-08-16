@@ -42,15 +42,15 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.cell.BlankDownOperation;
 
 public class BlankDownCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
-        
+
         return new BlankDownOperation(
-            engineConfig, 
-            columnName
-        );
+                engineConfig,
+                columnName);
     }
 }

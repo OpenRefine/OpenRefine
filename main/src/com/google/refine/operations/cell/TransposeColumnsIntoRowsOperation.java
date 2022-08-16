@@ -48,56 +48,49 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.operations.OperationDescription;
 
 public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
+
     @JsonProperty("startColumnName")
-    final protected String  _startColumnName;
+    final protected String _startColumnName;
     @JsonProperty("columnCount")
-    final protected int     _columnCount;
+    final protected int _columnCount;
     @JsonProperty("ignoreBlankCells")
     final protected boolean _ignoreBlankCells;
     @JsonProperty("fillDown")
     final protected boolean _fillDown;
-    
+
     @JsonProperty("combinedColumnName")
     @JsonInclude(Include.NON_NULL)
-    final protected String  _combinedColumnName;
+    final protected String _combinedColumnName;
     @JsonIgnore
     final protected boolean _prependColumnName;
     @JsonProperty("separator")
-    final protected String  _separator;
-    
+    final protected String _separator;
+
     @JsonProperty("keyColumnName")
-    final protected String  _keyColumnName;
+    final protected String _keyColumnName;
     @JsonProperty("valueColumnName")
-    final protected String  _valueColumnName;
-    
+    final protected String _valueColumnName;
+
     @JsonProperty("prependColumnName")
     @JsonInclude(Include.NON_NULL)
     public Boolean getPrependColumnName() {
-        return _combinedColumnName == null ? null : _prependColumnName; 
+        return _combinedColumnName == null ? null : _prependColumnName;
     }
 
     @JsonCreator
     static public TransposeColumnsIntoRowsOperation deserialize(
-            @JsonProperty("combinedColumnName")
-            String combinedColumnName,
-            @JsonProperty("startColumnName")
-            String startColumnName,
-            @JsonProperty("columnCount")
-            int columnCount,
-            @JsonProperty("ignoreBlankCells")
-            Boolean ignoreBlankCells,
-            @JsonProperty("fillDown")
-            Boolean fillDown,
-            @JsonProperty("prependColumnName")
-            boolean prependColumnName,
-            @JsonProperty("separator")
-            String separator,
-            @JsonProperty("keyColumnName")
-            String keyColumnName,
-            @JsonProperty("valueColumnName")
-            String valueColumnName) {
+            @JsonProperty("combinedColumnName") String combinedColumnName,
+            @JsonProperty("startColumnName") String startColumnName,
+            @JsonProperty("columnCount") int columnCount,
+            @JsonProperty("ignoreBlankCells") Boolean ignoreBlankCells,
+            @JsonProperty("fillDown") Boolean fillDown,
+            @JsonProperty("prependColumnName") boolean prependColumnName,
+            @JsonProperty("separator") String separator,
+            @JsonProperty("keyColumnName") String keyColumnName,
+            @JsonProperty("valueColumnName") String valueColumnName) {
         ignoreBlankCells = ignoreBlankCells == null ? true : ignoreBlankCells;
         fillDown = fillDown == null ? false : fillDown;
         if (combinedColumnName != null) {
@@ -119,46 +112,44 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                     valueColumnName);
         }
     }
-    
+
     public TransposeColumnsIntoRowsOperation(
-        String  startColumnName,
-        int     columnCount,
-        boolean ignoreBlankCells,
-        boolean fillDown,
-        String  combinedColumnName,
-        boolean prependColumnName,
-        String  separator
-    ) {
+            String startColumnName,
+            int columnCount,
+            boolean ignoreBlankCells,
+            boolean fillDown,
+            String combinedColumnName,
+            boolean prependColumnName,
+            String separator) {
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
         _fillDown = fillDown;
-        
+
         _combinedColumnName = combinedColumnName;
         _prependColumnName = prependColumnName;
         _separator = separator;
-        
+
         _keyColumnName = null;
         _valueColumnName = null;
     }
-    
+
     public TransposeColumnsIntoRowsOperation(
-        String  startColumnName,
-        int     columnCount,
-        boolean ignoreBlankCells,
-        boolean fillDown,
-        String  keyColumnName,
-        String  valueColumnName
-    ) {
+            String startColumnName,
+            int columnCount,
+            boolean ignoreBlankCells,
+            boolean fillDown,
+            String keyColumnName,
+            String valueColumnName) {
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
         _fillDown = fillDown;
-        
+
         _combinedColumnName = null;
         _prependColumnName = false;
         _separator = null;
-        
+
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
     }
@@ -167,29 +158,22 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     protected String getBriefDescription(Project project) {
         return getBriefDescription();
     }
-    
+
     protected String getBriefDescription() {
         if (_combinedColumnName != null) {
             if (_columnCount > 0) {
-                return "Transpose cells in " + _columnCount +
-                    " column(s) starting with " + _startColumnName +
-                    " into rows in one new column named " + _combinedColumnName;
+                return OperationDescription.cell_transpose_columns_into_rows_combined_pos_brief(_columnCount, _startColumnName,
+                        _combinedColumnName);
             } else {
-                return "Transpose cells in columns starting with " +
-                    _startColumnName +
-                    " into rows in one new column named " + _combinedColumnName;
+                return OperationDescription.cell_transpose_columns_into_rows_combined_neg_brief(_startColumnName, _combinedColumnName);
             }
         } else {
             if (_columnCount > 0) {
-                return "Transpose cells in " + _columnCount +
-                    " column(s) starting with " + _startColumnName +
-                    " into rows in two new columns named " +
-                    _keyColumnName + " and " + _valueColumnName;
+                return OperationDescription.cell_transpose_columns_into_rows_not_combined_pos_brief(_columnCount, _startColumnName,
+                        _keyColumnName, _valueColumnName);
             } else {
-                return "Transpose cells in columns starting with " +
-                    _startColumnName +
-                    " into rows in two new columns named " +
-                    _keyColumnName + " and " + _valueColumnName;
+                return OperationDescription.cell_transpose_columns_into_rows_not_combined_neg_brief(_startColumnName, _keyColumnName,
+                        _valueColumnName);
             }
         }
     }
@@ -208,10 +192,10 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 throw new Exception("Another column already named " + _valueColumnName);
             }
         }
-        
+
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> oldColumns = project.columnModel.columns;
-        
+
         int startColumnIndex = oldColumns.size();
         int columnCount = _columnCount;
         if (_columnCount > 0) {
@@ -220,35 +204,35 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 Column column = oldColumns.get(c);
                 if (columnsLeftToTranspose == 0) {
                     // This column is beyond the columns to transpose
-                    
+
                     Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
                     newColumn.setName(column.getName());
-                    
+
                     newColumns.add(newColumn);
                 } else if (columnsLeftToTranspose < _columnCount) {
                     // This column is a column to transpose, but not the first
                     // nothing to do
-                    
+
                     columnsLeftToTranspose--;
                 } else if (_startColumnName.equals(column.getName())) {
                     // This is the first column to transpose
-                    
+
                     startColumnIndex = c;
-                    
+
                     if (_combinedColumnName != null) {
                         newColumns.add(new Column(newColumns.size(), _combinedColumnName));
                     } else {
                         newColumns.add(new Column(newColumns.size(), _keyColumnName));
                         newColumns.add(new Column(newColumns.size(), _valueColumnName));
                     }
-                    
+
                     columnsLeftToTranspose--;
                 } else {
                     // This column is before all columns to transpose
-                    
+
                     Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
                     newColumn.setName(column.getName());
-                    
+
                     newColumns.add(newColumn);
                 }
             }
@@ -257,9 +241,9 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 Column column = oldColumns.get(c);
                 if (_startColumnName.equals(column.getName())) {
                     // This is the first column to transpose
-                    
+
                     startColumnIndex = c;
-                    
+
                     if (_combinedColumnName != null) {
                         newColumns.add(new Column(newColumns.size(), _combinedColumnName));
                     } else {
@@ -269,30 +253,30 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                     break;
                 } else {
                     // This column is before all columns to transpose
-                    
+
                     Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
                     newColumn.setName(column.getName());
-                    
+
                     newColumns.add(newColumn);
                 }
             }
             columnCount = oldColumns.size() - startColumnIndex;
         }
-        
+
         List<Row> oldRows = project.rows;
         List<Row> newRows = new ArrayList<Row>(oldRows.size() * columnCount);
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = project.rows.get(r);
             Row firstNewRow = new Row(newColumns.size());
             int firstNewRowIndex = newRows.size();
-            
+
             newRows.add(firstNewRow);
-            
+
             int transposedCells = 0;
             for (int c = 0; c < oldColumns.size(); c++) {
                 Column column = oldColumns.get(c);
                 Cell cell = oldRow.getCell(column.getCellIndex());
-                
+
                 if (c < startColumnIndex) {
                     firstNewRow.setCell(c, cell);
                 } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
@@ -309,7 +293,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                         } else {
                             newCell = cell;
                         }
-                        
+
                         Row rowToModify;
                         if (transposedCells == 0) {
                             rowToModify = firstNewRow;
@@ -318,13 +302,13 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                             newRows.add(rowToModify);
                         }
                         rowToModify.setCell(startColumnIndex, newCell);
-                        
+
                         transposedCells++;
                     } else {
                         if (_ignoreBlankCells && (cell == null || cell.value == null)) {
                             continue;
                         }
-                        
+
                         Row rowToModify;
                         if (transposedCells == 0) {
                             rowToModify = firstNewRow;
@@ -334,28 +318,26 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                         }
                         rowToModify.setCell(startColumnIndex, new Cell(column.getName(), null));
                         rowToModify.setCell(startColumnIndex + 1, cell);
-                        
+
                         transposedCells++;
                     }
-                    
+
                 } else {
                     firstNewRow.setCell(
-                        c - columnCount + (_combinedColumnName != null ? 1 : 2),
-                        cell);
+                            c - columnCount + (_combinedColumnName != null ? 1 : 2),
+                            cell);
                 }
             }
-            
+
             if (_fillDown) {
                 for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
                     Row newRow = newRows.get(r2);
                     for (int c = 0; c < newColumns.size(); c++) {
                         if (c < startColumnIndex ||
-                            (_combinedColumnName != null ?
-                                c > startColumnIndex :
-                                c > startColumnIndex + 1)) {
+                                (_combinedColumnName != null ? c > startColumnIndex : c > startColumnIndex + 1)) {
                             Column column = newColumns.get(c);
                             int cellIndex = column.getCellIndex();
-                            
+
                             Cell cellToCopy = firstNewRow.getCell(cellIndex);
                             if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
                                 newRow.setCell(cellIndex, cellToCopy);
@@ -365,13 +347,12 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 }
             }
         }
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(), 
-            this, 
-            new MassRowColumnChange(newColumns, newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(),
+                this,
+                new MassRowColumnChange(newColumns, newRows));
     }
 }

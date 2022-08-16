@@ -42,6 +42,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Column;
@@ -59,7 +60,7 @@ public class FacetCount implements Function {
             Project project = (Project) bindings.get("project");
             Column column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
-                return new EvalError("No such column named " + columnName);
+                return new EvalError(EvalErrorMessage.no_such_column_with_name(columnName));
             }
 
             String key = "nominal-bin:" + facetExpression;
@@ -74,26 +75,26 @@ public class FacetCount implements Function {
 
                     column.setPrecompute(key, grouper);
                 } catch (ParsingException e) {
-                    return new EvalError("Error parsing facet expression " + facetExpression);
+                    return new EvalError(EvalErrorMessage.fun_facet_count_error_parsing_facet(facetExpression));
                 }
             }
 
             return grouper.getChoiceValueCountMultiple(choiceValue);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
-            " expects a choice value, an expression as a string, and a column name");
+        // " expects a choice value, an expression as a string, and a column name");
+        return new EvalError(EvalErrorMessage.fun_facet_expects_value_expression_column(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         return FunctionDescription.fun_facet_count();
     }
-    
+
     @Override
     public String getParams() {
         return "choiceValue, string facetExpression, string columnName";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

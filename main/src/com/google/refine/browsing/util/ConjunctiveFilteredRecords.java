@@ -46,12 +46,13 @@ import com.google.refine.model.Record;
  * Encapsulate logic for visiting records that match all given record filters.
  */
 public class ConjunctiveFilteredRecords implements FilteredRecords {
+
     final protected List<RecordFilter> _recordFilters = new LinkedList<RecordFilter>();
-    
+
     public void add(RecordFilter recordFilter) {
         _recordFilters.add(recordFilter);
     }
-    
+
     @Override
     public void accept(Project project, RecordVisitor visitor) {
         try {
@@ -70,7 +71,7 @@ public class ConjunctiveFilteredRecords implements FilteredRecords {
             visitor.end(project);
         }
     }
-    
+
     protected boolean matchRecord(Project project, Record record) {
         for (RecordFilter recordFilter : _recordFilters) {
             if (!recordFilter.filterRecord(project, record)) {
