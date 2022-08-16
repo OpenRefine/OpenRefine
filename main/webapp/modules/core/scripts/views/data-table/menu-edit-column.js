@@ -158,8 +158,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-col-name'));
         return;
       }
-     var delay = elmts.throttleDelayInput[0].value;
-      if (delay < 200 || Number.isNaN(delay)) {
+      let delay = Number.parseInt(elmts.throttleDelayInput[0].value);
+      if (Number.isNaN(delay) || delay < 200) {
         alert($.i18n('core-views/warning-throttle-delay-input'));
         return;
       }
