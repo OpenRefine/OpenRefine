@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -48,7 +48,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 	      callbacks
 	    );
 	  };
-	  
+
   var doAddColumn = function() {
     var frame = $(
         DOM.loadHTML("core", "scripts/views/data-table/add-column-dialog.html")
@@ -56,7 +56,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-views/add-col-col')+" " + column.name);
-    
+
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
     elmts.or_views_onErr.text($.i18n('core-views/on-error'));
     elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
@@ -70,13 +70,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var o = DataTableView.sampleVisibleRows(column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts, 
+      elmts,
       column.cellIndex,
       o.rowIndices,
       o.values,
       null
     );
-    
+
     elmts.cancelButton.on('click',dismiss);
     elmts.form.on('submit',function(event) {
       event.preventDefault();
@@ -87,10 +87,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       Refine.postCoreProcess(
-        "add-column", 
+        "add-column",
         {
-          baseColumnName: column.name,  
-          newColumnName: columnName, 
+          baseColumnName: column.name,
+          newColumnName: columnName,
           columnInsertIndex: columnIndex + 1,
           onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
         },
@@ -114,7 +114,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-views/add-col-fetch')+" " + column.name);
-    
+
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
     elmts.or_views_throttle.text($.i18n('core-views/throttle-delay'));
     elmts.or_views_milli.text($.i18n('core-views/milli'));
@@ -142,7 +142,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var o = DataTableView.sampleVisibleRows(column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts, 
+      elmts,
       column.cellIndex,
       o.rowIndices,
       o.values,
@@ -158,15 +158,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-col-name'));
         return;
       }
-      
+     var delay = elmts.throttleDelayInput[0].value
+      if (delay < 200) {
+        alert($.i18n('core-views/warning-throttle-delay-input'));
+        return;
+      } else if (isNaN(delay)) {
+        delay = 500;
+      }
       Refine.postCoreProcess(
-        "add-column-by-fetching-urls", 
+        "add-column-by-fetching-urls",
         {
-          baseColumnName: column.name, 
-          urlExpression: previewWidget.getExpression(true), 
-          newColumnName: columnName, 
+          baseColumnName: column.name,
+          urlExpression: previewWidget.getExpression(true),
+          newColumnName: columnName,
           columnInsertIndex: columnIndex + 1,
-          delay: elmts.throttleDelayInput[0].value,
+          delay: delay,
           onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
           httpHeaders: JSON.stringify(elmts.setHttpHeadersContainer.find("input").serializeArray())
@@ -182,13 +188,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var columnIndex = Refine.columnNameToColumnIndex(column.name);
     var o = DataTableView.sampleVisibleRows(column);
     new ExtendReconciledDataPreviewDialog(
-      column, 
-      columnIndex, 
+      column,
+      columnIndex,
       o.rowIndices,
       function(extension, endpoint, identifierSpace, schemaSpace) {
         Refine.postProcess(
             "core",
-            "extend-data", 
+            "extend-data",
             {
               baseColumnName: column.name,
 	      endpoint: endpoint,
@@ -207,7 +213,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doRemoveColumn = function() {
     Refine.postCoreProcess(
-      "remove-column", 
+      "remove-column",
       {
         columnName: column.name
       },
@@ -255,11 +261,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
     });
   };
-  
+
 
   var doMoveColumnTo = function(index) {
     Refine.postCoreProcess(
-      "move-column", 
+      "move-column",
       {
         columnName: column.name,
         index: index
@@ -273,7 +279,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var newidx = Refine.columnNameToColumnIndex(column.name) + change;
     if (newidx >= 0) {
       Refine.postCoreProcess(
-          "move-column", 
+          "move-column",
           {
             columnName: column.name,
             index: newidx
@@ -288,7 +294,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-column-dialog.html"));
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-views/split-col', column.name));
-    
+
     elmts.or_views_howSplit.text($.i18n('core-views/how-split'));
     elmts.or_views_bySep.text($.i18n('core-views/by-sep'));
     elmts.or_views_separator.text($.i18n('core-views/separator'));
@@ -305,7 +311,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
-    
+
     elmts.separatorInput.trigger('focus').trigger('select');
 
     elmts.cancelButton.on('click',dismiss);
@@ -339,9 +345,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           var a = JSON.parse(s);
 
           var lengths = [];
-          $.each(a, function(i,n) { 
+          $.each(a, function(i,n) {
             if (typeof n == "number") {
-              lengths.push(n); 
+              lengths.push(n);
             }
           });
 
@@ -351,7 +357,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           }
 
           config.fieldLengths = JSON.stringify(lengths);
-          
+
         } catch (e) {
           alert($.i18n('core-views/warning-format'));
           return;
@@ -359,15 +365,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       Refine.postCoreProcess(
-        "split-column", 
+        "split-column",
         config,
         null,
         { modelsChanged: true }
       );
       dismiss();
     });
-  }; 
-  
+  };
+
   var doJoinColumns = function() {
     var self = this;
     var dialog = $(DOM.loadHTML("core","scripts/views/data-table/column-join.html"));
@@ -386,10 +392,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         temp = temp.replace(/\\\n/g, '\\n').replace(/\\\t/g, '\\t');
         // replace ' with \'
         temp = temp.replace(/'/g, "\\'");
-      } 
+      }
       else {
      // escape \ and '
-        temp = s.replace(/\\/g, '\\\\').replace(/'/g, "\\'") ; 
+        temp = s.replace(/\\/g, '\\\\').replace(/'/g, "\\'") ;
         // useless : .replace(/"/g, '\\"')
       }
       return temp;
@@ -411,11 +417,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             return (
                 (columnsToJoin.indexOf (colName) == -1) ||
                 ((writeOrCopy !="copy-to-new-column") && (colName == column.name)));
-            }); 
+            });
           Refine.postCoreProcess(
               "reorder-columns",
               null,
-              { "columnNames" : JSON.stringify(columnsToKeep) }, 
+              { "columnNames" : JSON.stringify(columnsToKeep) },
               { modelsChanged: true },
               { includeEngine: false }
           );
@@ -441,7 +447,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       if (nullSubstitute != "") {
           manageNulls ="replace-nulls";
-      }   
+      }
       // build GREL expression
       var columnsToJoin = [];
       elmts.column_join_columnPicker
@@ -461,10 +467,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // apply expression to selected column or new column
       if (writeOrCopy =="copy-to-new-column") {
         Refine.postCoreProcess(
-          "add-column", 
+          "add-column",
           {
-          baseColumnName: column.name,  
-          newColumnName: newColumnName, 
+          baseColumnName: column.name,
+          newColumnName: newColumnName,
           columnInsertIndex: columnIndex + 1,
           onError: onError
           },
@@ -472,7 +478,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           { modelsChanged: true },
           { onFinallyDone: deleteColumns}
         );
-      } 
+      }
       else {
         doTextTransform(
             column.name,
