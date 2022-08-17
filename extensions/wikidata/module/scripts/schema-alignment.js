@@ -148,6 +148,33 @@ SchemaAlignment._rerenderTabs = function() {
       .addClass('disabled')
       .on('click',function() { SchemaAlignment._discardChanges(); });
 
+  // Init template loading UI
+  schemaElmts.templateLabel.text($.i18n('wikibase-schema/start-from-a-schema-template'));
+  schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-new-template'));
+  WikibaseTemplateManager.loadTemplates(function() {
+    SchemaAlignment.updateAvailableTemplates();
+  });
+  schemaElmts.saveNewTemplateButton.on('click', function(e) {
+    SaveNewTemplateDialog.launch();
+    e.preventDefault();
+  });
+  schemaElmts.templateSelect.on('change', function(e) {
+    // check if the schema is empty: if so, ask for confirmation before erasing
+    let templateName = $(this).val();
+    let wikibaseName = WikibaseManager.getSelectedWikibaseName();
+    let template = WikibaseTemplateManager.getTemplate(wikibaseName, templateName);
+    let currentJson = SchemaAlignment.getJSON();
+    if (currentJson === undefined || currentJson.entityEdits.length === 0 || 
+      !SchemaAlignment._hasUnsavedChanges ||
+      confirm($.i18n('wikibase-schema/template-load-erases-schema'))) {
+      SchemaAlignment._reset(template.schema);
+      SchemaAlignment.preview();
+      SchemaAlignment._hasUnsavedChanges = true;
+    } else {
+      schemaElmts.templateSelect.val('__placeholder__');
+    }
+  });
+
   // Init the column area
   this.updateColumns();
   /**
@@ -225,6 +252,25 @@ SchemaAlignment.updateColumns = function() {
      snap: ".wbs-target-input input",
      zIndex: 100,
   });
+};
+
+SchemaAlignment.updateAvailableTemplates = function() {
+  let selectedWikibase = WikibaseManager.getSelectedWikibaseName();
+  let templates = WikibaseTemplateManager.getTemplates(selectedWikibase);
+  let templateSelect = $('#wikibase-template-select');
+  templateSelect.empty();
+  $('<option></option>')
+    .attr('selected', 'selected')
+    .attr('value', '__placeholder__')
+    .addClass('placeholder')
+    .text($.i18n('wikibase-save-new-template/select-template'))
+    .appendTo(templateSelect);
+  for (let template of templates) {
+     $('<option></option>')
+        .attr('value', template.name)
+        .text(template.name)
+        .appendTo(templateSelect);
+  }   
 };
 
 SchemaAlignment.switchTab = function(targetTab) {

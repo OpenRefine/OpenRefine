@@ -170,11 +170,17 @@ WikibaseManager.getAllWikibaseManifests = function () {
 
 WikibaseManager.addWikibase = function (manifest) {
   WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
+  if (manifest.schema_templates !== undefined) {
+    for (let template of manifest.schema_templates) {
+      WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
+    }
+  }
   WikibaseManager.saveWikibases();
 };
 
 WikibaseManager.removeWikibase = function (wikibaseName) {
   delete WikibaseManager.wikibases[wikibaseName];
+  // we do not delete templates associated with this wikibase because some of them might be user-defined
   WikibaseManager.saveWikibases();
 };
 

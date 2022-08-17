@@ -66,6 +66,7 @@ function init() {
         "scripts/wikibase-manifest-schema-v1.js",
         "scripts/wikibase-manifest-schema-v2.js",
         "scripts/wikibase-manager.js",
+        "scripts/template-manager.js",
         "scripts/menu-bar-extension.js",
         "scripts/warnings-renderer.js",
         "scripts/lang-suggest.js",
@@ -79,6 +80,7 @@ function init() {
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
         "scripts/dialogs/statement-configuration-dialog.js",
+        "scripts/dialogs/save-new-template-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 
