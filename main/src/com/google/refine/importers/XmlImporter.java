@@ -37,12 +37,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -55,6 +57,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,6 +242,33 @@ public class XmlImporter extends TreeImportingParserBase {
                 }
             }
             return IOUtils.toInputStream(outputStream.toString(), StandardCharsets.UTF_8);
+        }
+
+        static class InvalidXmlFilterReader extends FilterReader {
+
+            /**
+             * Creates a new filtered reader.
+             *
+             * @param in a Reader object providing the underlying stream.
+             * @throws NullPointerException if {@code in} is {@code null}
+             */
+            protected InvalidXmlFilterReader(@NotNull Reader in) {
+                super(in);
+            }
+
+            @Override
+            public int read() throws IOException {
+                int c = (char) super.read();
+                Pattern pattern = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
+                if (!pattern.matcher(String.valueOf((char) c)).matches()) {
+                    return 0;
+                }
+                return c;
+            }
+        }
+        private InputStream removeInvalidCharacters2(InputStream inputStream) throws IOException {
+            var reader = new InvalidXmlFilterReader(new InputStreamReader(inputStream));
+            return IOUtils.toInputStream(reader.toString(), StandardCharsets.UTF_8);
         }
 
         @Override
