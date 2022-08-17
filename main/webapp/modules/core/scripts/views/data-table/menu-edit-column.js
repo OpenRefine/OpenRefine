@@ -158,7 +158,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-col-name'));
         return;
       }
-      
+      let delay = Number.parseInt(elmts.throttleDelayInput[0].value);
+      if (Number.isNaN(delay) || delay < 200) {
+        alert($.i18n('core-views/warning-throttle-delay-input'));
+        return;
+      }
       Refine.postCoreProcess(
         "add-column-by-fetching-urls", 
         {
@@ -166,7 +170,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           urlExpression: previewWidget.getExpression(true), 
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
-          delay: elmts.throttleDelayInput[0].value,
+          delay: delay,
           onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
           httpHeaders: JSON.stringify(elmts.setHttpHeadersContainer.find("input").serializeArray())
