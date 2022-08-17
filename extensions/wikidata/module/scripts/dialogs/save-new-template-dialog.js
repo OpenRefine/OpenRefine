@@ -40,6 +40,7 @@ SaveNewTemplateDialog.launch = function() {
      SaveNewTemplateDialog._elmts.nameInput.val($(this).val());
   });
 
+  elmts.nameInput.focus();
   elmts.nameInput.on('change', function(e) {
      SaveNewTemplateDialog._elmts.templateSelect.val('__placeholder__');
   });
@@ -48,9 +49,14 @@ SaveNewTemplateDialog.launch = function() {
      dismiss();
   });
 
-  elmts.form.on('submit',function() {
+  elmts.form.on('submit',function(e) {
+    e.preventDefault();
     let wikibaseName = WikibaseManager.getSelectedWikibaseName();
     let templateName = elmts.nameInput.val();
+    if (templateName.trim().length === 0) {
+      alert($.i18n('wikibase-save-new-template/empty-name'));
+      return;
+    }
     let schema = SchemaAlignment.getJSON();
     WikibaseTemplateManager.addTemplate(wikibaseName, templateName, schema);
     WikibaseTemplateManager.saveTemplates();

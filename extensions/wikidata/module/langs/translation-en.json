@@ -310,5 +310,6 @@
     "wikibase-save-new-template/existing-template-label": "Or select an existing template to override",
     "wikibase-save-new-template/select-template": "Select template...",
     "wikibase-save-new-template/save": "Save",
+    "wikibase-save-new-template/empty-name": "Please provide a name for the schema template.",
     "wikibase-schema/template-load-erases-schema": "This will discard the current schema, which has unsaved changes."
 }
