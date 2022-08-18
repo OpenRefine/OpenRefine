@@ -1153,8 +1153,9 @@ SchemaAlignment._getPropertyType = function(pid, callback) {
         format: "json",
         ids: pid,
         props: "datatype",
+        origin: "*",
      },
-     dataType: "jsonp",
+     dataType: "json",
      success: function(data) {
         callback(data.entities[pid].datatype);
      }});
