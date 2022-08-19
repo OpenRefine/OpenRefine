@@ -159,7 +159,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return;
       }
       let delay = Number.parseInt(elmts.throttleDelayInput[0].value);
-      if (Number.isNaN(delay) || delay < 200) {
+      if (Number.isNaN(delay) || delay < 0) {
         alert($.i18n('core-views/warning-throttle-delay-input'));
         return;
       }

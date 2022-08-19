@@ -567,7 +567,7 @@
     "core-views/store-err": "store error",
     "core-views/cache-responses": "Cache responses",
     "core-views/copy-val": "copy value from original column",
-    "core-views/warning-throttle-delay-input": "Throttle delay must be 200ms or greater.",
+    "core-views/warning-throttle-delay-input": "Throttle delay must be 0ms or greater.",
     "core-views/warning-col-name": "You must enter a column name.",
     "core-views/add-col-recon-val": "Add columns from reconciled values…",
     "core-views/add-col-recon-col": "Add columns from reconciled column",
