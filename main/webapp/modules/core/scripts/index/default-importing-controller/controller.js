@@ -72,66 +72,85 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 };
 
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
-  var self = this;
-  
-  Refine.wrapCSRF(function(token) {
-    $.post(
-        "command/core/create-importing-job",
-        { csrf_token: token },
-        function(data) {
-            var jobID = self._jobID = data.jobID;
+    var self = this;
 
-            form.attr("method", "post")
-            .attr("enctype", "multipart/form-data")
-            .attr("accept-charset", "UTF-8")
-            .attr("target", "create-project-iframe")
-            .attr("action", "command/core/importing-controller?" + $.param({
-            "controller": "core/default-importing-controller",
-            "jobID": jobID,
-            "subCommand": "load-raw-data",
-            "csrf_token": token
-            }));
-            form[0].submit();
+    Refine.wrapCSRF(function(token) {
+        $.post(
+            "command/core/create-importing-job",
+            { csrf_token: token },
+            function(data) {
+                var jobID = self._jobID = data.jobID;
+                self._createProjectUI.showImportProgressPanel(progressMessage, function() {
 
-            var start = new Date();
-            var timerID = window.setInterval(
-            function() {
-                self._createProjectUI.pollImportJob(
-                start, jobID, timerID,
-                function(job) {
-                    return job.config.hasData;
-                },
-                function(jobID, job) {
-                    self._job = job;
-                    self._onImportJobReady();
-                    if (callback) {
-                    callback(jobID, job);
+                    // stop the timed polling
+                    window.clearInterval(timerID);
+
+                    // explicitly cancel the import job
+                    Refine.CreateProjectUI.cancelImportingJob(jobID);
+
+                    self._createProjectUI.showSourceSelectionPanel();
+                });
+
+                var url =  "command/core/importing-controller?" + $.param({
+                    "controller": "core/default-importing-controller",
+                    "jobID": jobID,
+                    "subCommand": "load-raw-data",
+                    "csrf_token": token
+                });
+                var formData = new FormData(form[0]);
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(result){
+                        if (result.status === "ok") {
+                            self._getPreviewData(function(projectData) {
+                                self._parsingPanelElmts.progressPanel.hide();
+                                self._parsingPanelElmts.dataPanel.show();
+
+                                new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.off().empty());
+                            });
+                        } else {
+                            self._parsingPanelElmts.progressPanel.hide();
+                            alert('Errors:\n' +
+                            (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
+                        }
+                    },
+                    error: function(er){
+                        console.log("er ="+er);
                     }
-                },
-                function(job) {
-                    alert(job.config.error + '\n' + job.config.errorDetails);
-                    self._startOver();
-                }
+                });
+
+                var start = new Date();
+                var timerID = window.setInterval(
+                    function() {
+                        self._createProjectUI.pollImportJob(
+                            start, jobID, timerID,
+                            function(job) {
+                                return job.config.hasData;
+                            },
+                            function(jobID, job) {
+                                self._job = job;
+                                self._onImportJobReady();
+                                if (callback) {
+                                    callback(jobID, job);
+                                }
+                            },
+                            function(job) {
+                                alert(job.config.error + '\n' + job.config.errorDetails);
+                                self._startOver();
+                            }
+                        );
+                    },
+                    1000
                 );
             },
-            1000
-            );
-            self._createProjectUI.showImportProgressPanel(progressMessage, function() {
-            // stop the iframe
-            $('#create-project-iframe')[0].contentWindow.stop();
-
-            // stop the timed polling
-            window.clearInterval(timerID);
-
-            // explicitly cancel the import job
-            Refine.CreateProjectUI.cancelImportingJob(jobID);
-
-            self._createProjectUI.showSourceSelectionPanel();
-            });
-        },
-        "json"
-    );
-  });
+            "json"
+        );
+    });
 };
 
 Refine.DefaultImportingController.prototype._onImportJobReady = function() {
