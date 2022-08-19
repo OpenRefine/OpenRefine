@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.google.refine.messages.OpenRefineMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +145,7 @@ public class ReconOperation extends EngineDependentOperation {
                 "  \"columnName\" : \"" + _columnName + "\",\n" +
                 "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
                 +
-                "    \"name\" : \"" + _columnName + ": judgment\"\n" +
+                "    \"name\" : \"" + _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name() + "\"\n" +
                 "    },\n" +
                 "    \"facetOptions\" : {\n" +
                 "      \"scroll\" : false\n" +
@@ -157,7 +158,7 @@ public class ReconOperation extends EngineDependentOperation {
                 "    \"columnName\" : \"" + _columnName + "\",\n" +
                 "    \"expression\" : \"cell.recon.best.score\",\n" +
                 "    \"mode\" : \"range\",\n" +
-                "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" +
+                "    \"name\" : \"" + _columnName + ": " + OpenRefineMessage.recon_operation_score_facet_name() + "\"\n" +
                 "         },\n" +
                 "         \"facetType\" : \"range\"\n" +
                 "}";
