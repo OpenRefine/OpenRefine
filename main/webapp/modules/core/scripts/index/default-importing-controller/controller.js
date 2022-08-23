@@ -80,16 +80,6 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
             { csrf_token: token },
             function(data) {
                 var jobID = self._jobID = data.jobID;
-                self._createProjectUI.showImportProgressPanel(progressMessage, function() {
-
-                    // stop the timed polling
-                    window.clearInterval(timerID);
-
-                    // explicitly cancel the import job
-                    Refine.CreateProjectUI.cancelImportingJob(jobID);
-
-                    self._createProjectUI.showSourceSelectionPanel();
-                });
 
                 var url =  "command/core/importing-controller?" + $.param({
                     "controller": "core/default-importing-controller",
@@ -105,22 +95,9 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                     cache: false,
                     contentType: false,
                     processData: false,
-                    success: function(result){
-                        if (result.status === "ok") {
-                            self._getPreviewData(function(projectData) {
-                                self._parsingPanelElmts.progressPanel.hide();
-                                self._parsingPanelElmts.dataPanel.show();
-
-                                new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.off().empty());
-                            });
-                        } else {
-                            self._parsingPanelElmts.progressPanel.hide();
-                            alert('Errors:\n' +
-                            (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
-                        }
-                    },
-                    error: function(er){
-                        console.log("er ="+er);
+                    dataType: "text",
+                    error: function( jqXHR, textStatus, errorThrown){
+                        console.log('Error calling load-raw-data: '+textStatus);
                     }
                 });
 
@@ -147,6 +124,16 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                     },
                     1000
                 );
+                self._createProjectUI.showImportProgressPanel(progressMessage, function() {
+
+                    // stop the timed polling
+                    window.clearInterval(timerID);
+
+                    // explicitly cancel the import job
+                    Refine.CreateProjectUI.cancelImportingJob(jobID);
+
+                    self._createProjectUI.showSourceSelectionPanel();
+                });
             },
             "json"
         );
