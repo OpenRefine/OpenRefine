@@ -382,7 +382,6 @@
     "core-util-enc/invalid-date": "無効な日付文字列",
     "core-util-enc/days-ago": "日前",
     "core-util-enc/common": "一般的な文字コード",
-    "core-util-enc/year-ago": "1年前",
     "core-util-enc/select-enc": "文字コードを選択する",
     "core-util-enc/weeks-ago": "週間前",
     "core-util-enc/today": "今日: $1",

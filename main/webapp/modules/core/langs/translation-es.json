@@ -366,7 +366,6 @@
     "core-recon/against-type": "Cotejar contra la clase:",
     "core-recon/recon-col": "Cotejar columna",
     "core-recon/pick-service": "Seleccione un servicio o extensión a la izquierda",
-    "core-recon/service-api": "API del servicio",
     "core-recon/max-candidates": "Máximo número de candidatos a devolver",
     "core-recon/no-type": "Cotejar contra ninguna clase en particular",
     "core-recon/col-detail": "También use detalles relevantes de otras columnas:",

@@ -14,7 +14,6 @@
     "wikibase-schema/unsaved-changes-alt": "Udělali jste změny ve schématu Wikibase, které nejsou uložené.",
     "wikibase-schema/close-button": "Zavřít",
     "wikibase-schema/save-button": "Uložit schéma",
-    "wikibase-schema/invalid-schema-warning-issues": "Vaše schéma není kompletní. Dokončete jej a uvidíte problémy.",
     "wikibase-schema/geoshape-with-prefix": "název souboru začínající na \"Data:\"",
     "wikibase-schema/math-expression": "matematický vzorec",
     "wikibase-schema/commons-media": "Název souboru",

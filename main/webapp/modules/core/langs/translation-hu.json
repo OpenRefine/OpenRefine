@@ -625,7 +625,6 @@
     "core-util-enc/invalid-date": "Érvénytelen dátum",
     "core-util-enc/days-ago": "napja",
     "core-util-enc/common": "Gyakori karakterkódolások",
-    "core-util-enc/year-ago": "egy évvel ezelőtt",
     "core-util-enc/select-enc": "Karakterkódolás kiválasztása",
     "core-util-enc/weeks-ago": "hete",
     "core-util-enc/today": "ma",

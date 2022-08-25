@@ -365,7 +365,6 @@
     "core-util-enc/invalid-date": "Baliwala ang string sa petsa",
     "core-util-enc/days-ago": "mga adlaw ang milabay",
     "core-util-enc/common": "Komon nga mga encoding",
-    "core-util-enc/year-ago": "tuig ang milabay",
     "core-util-enc/select-enc": "Pilia ang encoding",
     "core-util-enc/weeks-ago": "mga semana ang milabay",
     "core-util-enc/today": "karon",

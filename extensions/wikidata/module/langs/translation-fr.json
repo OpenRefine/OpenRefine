@@ -42,7 +42,6 @@
     "wikibase-schema/commons-media": "nom de fichier",
     "wikibase-schema/math-expression": "expression mathématique",
     "wikibase-schema/geoshape-with-prefix": "nom de fichier commençant par \"Data:\"",
-    "wikibase-schema/invalid-schema-warning-preview": "Votre schéma est incomplet, complétez-le pour la prévisualisation.",
     "wikibase-schema/discard-button": "Annuler les modifications",
     "wikibase-schema/save-button": "Enregistrer le schéma",
     "wikibase-schema/close-button": "Fermer",

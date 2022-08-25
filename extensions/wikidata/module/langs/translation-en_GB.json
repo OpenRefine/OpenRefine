@@ -130,7 +130,6 @@
     "wikibase-schema/close-button": "Close",
     "wikibase-schema/save-button": "Save schema",
     "wikibase-schema/discard-button": "Discard changes",
-    "wikibase-schema/invalid-schema-warning-issues": "Your schema is incomplete, fix it to see the issues.",
     "wikibase-schema/geoshape-with-prefix": "filename starting with \"Data:\"",
     "wikibase-schema/math-expression": "mathematical expression",
     "wikibase-schema/commons-media": "filename",

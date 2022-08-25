@@ -348,7 +348,6 @@
     "core-recon/against-type": "I-rekonsila laban sa tipo",
     "core-recon/recon-col": "Irekonsila ang kolum",
     "core-recon/pick-service": "Pumili ng Serbisyo o Ekstensiyon sa kaliwa",
-    "core-recon/service-api": "Ang service API",
     "core-recon/max-candidates": "Pinakamataas na bilang ng mga kandidato para maibalik",
     "core-recon/no-type": "I-rekonsila laban sa hindi partikular na tipo",
     "core-recon/col-detail": "At saka gumamit ng nauugnay na mga detalye mula sa ibang mga kolum",

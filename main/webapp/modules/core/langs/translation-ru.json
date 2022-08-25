@@ -400,7 +400,6 @@
     "core-util-enc/invalid-date": "Неверная строка даты",
     "core-util-enc/days-ago": "дней назад",
     "core-util-enc/common": "Общие кодировки",
-    "core-util-enc/year-ago": "год назад",
     "core-util-enc/select-enc": "Выберите кодировку",
     "core-util-enc/weeks-ago": "недель назад",
     "core-util-enc/today": "сегодня",

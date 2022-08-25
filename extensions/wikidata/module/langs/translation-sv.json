@@ -29,7 +29,6 @@
     "wikibase-schema/commons-media": "filnamn",
     "wikibase-schema/math-expression": "matematiskt uttryck",
     "wikibase-schema/geoshape-with-prefix": "filnamn som börjar med «Data:»",
-    "wikibase-schema/invalid-schema-warning-preview": "Schemat är ofullständigt, fixa detta för att se förhandsvisningen.",
     "wikibase-schema/save-button": "Spara schema",
     "wikibase-schema/close-button": "Stäng",
     "wikibase-schema/save-schema-alt": "Spara schemat i OpenRefine. Ändringarna kommer inte laddas upp till Wikidata ännu.",

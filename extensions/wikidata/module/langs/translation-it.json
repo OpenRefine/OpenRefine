@@ -35,7 +35,6 @@
     "wikibase-schema/commons-media": "nome del file",
     "wikibase-schema/math-expression": "espressione matematica",
     "wikibase-schema/geoshape-with-prefix": "nome del file (compreso \"Data:\")",
-    "wikibase-schema/invalid-schema-warning-preview": "Il tuo schema è incompleto, per favore correggilo per vedere l'anteprima.",
     "wikibase-schema/discard-button": "Non salvare le modifiche",
     "wikibase-schema/save-button": "Salva lo schema",
     "wikibase-schema/close-button": "Chiudi",
