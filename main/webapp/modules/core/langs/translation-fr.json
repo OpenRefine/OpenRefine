@@ -818,5 +818,9 @@
     "core-dialogs/remove-all": "Supprimer toutes",
     "core-index-import/invalid-url": "URL incorrecte",
     "core-index-import/blank-url": "URL vide",
-    "core-index/rows-loading-failed": "Échec de la lecture des rangées."
+    "core-index/rows-loading-failed": "Échec de la lecture des rangées.",
+    "core-index-import/load-xml-rows-error": "Échec de l'analyse syntaxique des données XML",
+    "core-index-import/load-json-rows-error": "Échec de l'analyse syntaxique des données JSON",
+    "core-index-parser/update-format-failed": "La requête d'analyser la syntaxe et de formater les données a échoué",
+    "core-index-import/remove-row": "Supprimer cette ligne"
 }
