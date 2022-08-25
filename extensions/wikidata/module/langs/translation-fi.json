@@ -1,7 +1,6 @@
 {
     "wikibase-schema/unit": "yksikkö",
     "wikibase-schema/amount": "määrä",
-    "wikibase-schema/item-or-reconciled-column": "kirjoita kohteen nimi tai raahaa yhdistetty sarake",
     "wikibase-schema/alias": "Alias",
     "wikibase-schema/override-term": "tallenna olemassaolevan päälle",
     "wikibase-schema/description-override": "Kuvaus (tallenna olemassaolevan päällä)",
@@ -88,7 +87,6 @@
     "wikibase-schema/close-button": "Sulje",
     "wikibase-schema/save-button": "Tallenna skeema",
     "wikibase-schema/discard-button": "Hylkää muutokset",
-    "wikibase-schema/invalid-schema-warning-preview": "Skeemasi on keskeneräinen, täydentämällä näet esikatselun.",
     "wikibase-schema/invalid-schema-warning-issues": "Skeemasi on keskeneräinen, täydentämällä saat nähtäväksi ongelmakohdat.",
     "wikibase-schema/geoshape-with-prefix": "tiedoston nimi (sisältäen \"Data:\")",
     "wikibase-schema/math-expression": "matemaattinen lauseke",

@@ -29,7 +29,6 @@
     "wikibase-schema/amount": "পরিমাণ",
     "wikibase-schema/unit": "একক",
     "wikibase-schema/commons-media": "ফাইলের নাম",
-    "wikibase-schema/invalid-schema-warning-issues": "আপনার স্কিমা অসম্পূর্ণ, সমস্যাগুলি দেখতে সেটি ঠিক করুন।",
     "wikibase-schema/invalid-schema-warning-preview": "আপনার স্কিমা অসম্পূর্ণ, প্রাকদর্শন করতে সেটি ঠিক করুন।",
     "wikibase-schema/discard-button": "পরিবর্তন বাতিল করুন",
     "wikibase-schema/save-button": "স্কিমা সংরক্ষণ করুন",
