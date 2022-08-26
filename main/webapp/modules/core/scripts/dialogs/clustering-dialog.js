@@ -610,18 +610,18 @@ ClusteringDialog.Facet.prototype.update = function(clusters) {
 
     var bins = this._computeDistribution(clusters);
 
+    this._histogram.update(
+        this._min,
+        this._max,
+        this._step,
+        [ this._baseBins, bins ]
+    );
     this._sliderWidget.update(
         this._min,
         this._max,
         this._step,
         this._from,
         this._to
-    );
-    this._histogram.update(
-        this._min,
-        this._max,
-        this._step,
-        [ this._baseBins, bins ]
     );
 };
 
