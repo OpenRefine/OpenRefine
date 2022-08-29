@@ -171,7 +171,6 @@
     "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "{source_entity}と{target_entity}が不正です",
     "warnings-messages/having-conflicts-with-statements/body": "{example_entity}のような項目で、競合するプロパティ {property_entity} を削除する.",
     "warnings-messages/having-conflicts-with-statements/title": "{property_entity} はステートメント {added_property_entity} と競合します.",
-    "wikidata-account/explain-password-login": "<a>ユーザー名/パスワード</a>でもログインできます",
     "wikibase-account/owner-only-consumer-remember-me-title": "Consumer証明書はクッキーに保存さます。共有PCでは使用しないでください.",
     "wikibase-account/password-remember-me-title": "パスワードは保存されません。共有PCでは使用しないでください.",
     "wikibase-account/remember-me": "ログイン情報を記憶",
