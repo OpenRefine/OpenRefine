@@ -55,5 +55,9 @@
     "wikibase-management/dialog-header": "Wybierz instancję Wikibase",
     "wikibase-extension/wikibase-edits": "Edycje Wikibase…",
     "wikibase-schema/empty-terms": "nie dodano żadnych etykiet, opisów ani aliasów",
-    "wikibase-schema/add-qualifier": "dodaj kwalifikator"
+    "wikibase-schema/add-qualifier": "dodaj kwalifikator",
+    "wikibase-schema/label": "Etykieta",
+    "wikibase-schema/alias": "Alias",
+    "wikibase-schema/amount": "kwota",
+    "wikibase-schema/unit": "jednostka"
 }
