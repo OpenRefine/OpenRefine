@@ -2,6 +2,11 @@
     <div bind="schemaHeader">
         <div class="schema-alignment-save"><button class="button button-primary" bind="saveButton"></button><button class="button button-primary" bind="discardButton"></button></div>
         <p class="panel-explanation" bind="dialogExplanation"></p>
+        <div class="panel-explanation">
+          <label bind="templateLabel" for="wikibase-template-select"></label>
+          <select bind="templateSelect" name="wikibase-template-select" id="wikibase-template-select"></select>
+          <button bind="saveNewTemplateButton" class="button button-primary"></button>
+        </div>
         <div style="clear: right"></div>
         <div class="schema-alignment-dialog-columns-area" bind="columnsArea">
         </div>
