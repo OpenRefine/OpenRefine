@@ -55,7 +55,7 @@ function SqlExporterDialog(options) {
     this._elmts.fieldNameHeader.html($.i18n('core-dialogs/sql-exporter-field-name-header'));
     this._elmts.sqlTypeHeader.html($.i18n('core-dialogs/sql-exporter-sql-type-header'));
     this._elmts.sizeHeader.html($.i18n('core-dialogs/sql-exporter-size-header'));
-    this._elmts.allowNullHeader.html($.i18n('core-dialogs/sql-exporter-allow-null-header'));
+    this._elmts.allowNullToggleCheckboxLabel.html($.i18n('core-dialogs/sql-exporter-allow-null-header'));
     this._elmts.defaultHeader.html($.i18n('core-dialogs/sql-exporter-default-header'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
@@ -267,16 +267,24 @@ function SqlExporterDialog(options) {
        self._updateOptionCode();
     });
 
-    this._elmts.includeStructureCheckbox.on('click',function() {
-        self._elmts.includeDropStatementsCheckbox.prop("disabled", !this.checked);
-        self._elmts.includeIfExistWithDropStatementCheckbox.prop("disabled", !this.checked);
+    this._elmts.includeStructureCheckbox.on('click', function() {
+        self._elmts.includeDropStatementCheckbox.prop("disabled", !this.checked);
+
+        if (this.checked) {
+            if (self._elmts.includeDropStatementCheckbox.prop("checked")) {
+                self._elmts.includeIfExistDropStatementCheckbox.prop("disabled", !this.checked);
+            }
+        } else {
+            self._elmts.includeIfExistDropStatementCheckbox.prop("disabled", !this.checked);
+        }
     });
 
-    this._elmts.includeDropStatementLabel.on('click',function() {
-    self._elmts.includeIfExistWithDropStatementCheckbox.prop("disabled", !this.checked);
+    this._elmts.includeDropStatementCheckbox.on('click',function () {
+        self._elmts.includeIfExistDropStatementCheckbox.prop("disabled", !this.checked);
     });
+
     this._elmts.includeContentCheckbox.on('click',function() {
-        $('#nullCellValueToEmptyStringCheckboxId').prop("disabled", !this.checked);
+        self._elmts.nullCellValueToEmptyStringCheckbox.prop("disabled", !this.checked);
     });
 
 
