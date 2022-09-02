@@ -138,7 +138,7 @@ public class MediaInfoEditTest {
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
                 .build();
-        assertTrue(edit.requiresFetchingExistingState());
+        assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
         // set up dependencies
         WikibaseDataEditor editor = mock(WikibaseDataEditor.class);

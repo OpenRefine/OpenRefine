@@ -291,7 +291,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
          * If all the Wikibase-related fields are empty, then we can skip fetching the current entity from the wiki.
          * This makes it possible to use the wikitext editing feature for Wikibases which do not use MediaInfo.
          */
-        return !(statements.isEmpty() &&
+        return !isNew() && !(statements.isEmpty() &&
                 labels.isEmpty() &&
                 labelsIfNew.isEmpty());
     }
