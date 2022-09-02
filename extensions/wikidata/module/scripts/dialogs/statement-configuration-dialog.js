@@ -81,7 +81,7 @@ class QualifiersStrategy {
         .appendTo(parentElem);
      let pidInput = $('<input></input>')
         .attr('type', 'text')
-        .attr('style','margin-top: 0.5em')
+        .attr('style','margin: 0.5em 0 0 0.5em')
         .attr('name', 'discriminatingQualifiers')
         .attr('id', 'discriminatingQualifiersId')
         .val(currentState.pids ? currentState.pids.join(',') : '')
