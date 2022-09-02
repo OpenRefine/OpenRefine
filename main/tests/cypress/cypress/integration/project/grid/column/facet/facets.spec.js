@@ -389,7 +389,7 @@ describe(__filename, function () {
     cy.getCell(2, 'Water').should('to.contain', 0.24);
   });
 
-  it.only('Test opening the clustering from a facet', function () {
+  it('Test opening the clustering from a facet', function () {
     cy.loadAndVisitProject('food.mini');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
     cy.getFacetContainer('Shrt_Desc')
