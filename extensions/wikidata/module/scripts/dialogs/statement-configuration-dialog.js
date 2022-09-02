@@ -34,10 +34,11 @@ class SnakStrategy {
      var self = this;
      const checkbox = $('<input></input>')
         .attr('name', 'laxValueMatching')
+        .attr('id', 'laxValueMatchingId')
         .attr('type', 'checkbox')
         .appendTo(parentElem);
      $('<label></label>').text($.i18n('wikibase-statement-settings/lax-value-matching'))
-        .attr('for', 'laxValueMatching')
+        .attr('for', 'laxValueMatchingId')
         .appendTo(parentElem);
      checkbox.attr('checked', (!currentState.valueMatcher) || currentState.valueMatcher.type == 'lax');
      checkbox.on('change',function() {
@@ -66,6 +67,7 @@ class QualifiersStrategy {
      var self = this;
      const checkbox = $('<input></input>')
         .attr('name', 'laxValueMatching')
+        .attr('id', 'laxValueMatchingId')
         .attr('type', 'checkbox')
         .appendTo(parentElem);
      $('<label></label>').text($.i18n('wikibase-statement-settings/lax-value-matching'))
@@ -75,17 +77,20 @@ class QualifiersStrategy {
 
      parentElem.append($('<br />'));
      $('<label></label>').text($.i18n('wikibase-statement-settings/discriminating-qualifiers-label'))
-        .attr('for', 'discriminatingQualifiers')
+        .attr('for', 'discriminatingQualifiersId')
         .appendTo(parentElem);
      let pidInput = $('<input></input>')
         .attr('type', 'text')
+        .attr('style','margin-top: 0.5em')
         .attr('name', 'discriminatingQualifiers')
+        .attr('id', 'discriminatingQualifiersId')
         .val(currentState.pids ? currentState.pids.join(',') : '')
         .appendTo(parentElem);
      parentElem.append($('<br />'));
      $('<p></p>').text($.i18n('wikibase-statement-settings/discriminating-qualifiers-description'))
+        .attr('style','margin-top: 0.5em')
         .appendTo(parentElem);
-     
+
      let pidRegex = /^P[1-9]\d*/;
      let onOptionsChange = function() {
         let lax = checkbox.prop('checked');
