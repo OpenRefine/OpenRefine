@@ -12,7 +12,7 @@ You will see a command line window open when you run OpenRefine. Ignore that win
 
 No matter how you start OpenRefine, it will load its interface in your computer’s default browser. If you would like to use another browser instead, start OpenRefine and then point your chosen browser at the home screen: [http://127.0.0.1:3333/](http://127.0.0.1:3333/).
 
-OpenRefine works best on browsers based on Webkit, such as:
+OpenRefine works best on browsers based on WebKit, such as:
 *   [Google Chrome](https://www.google.com/chrome/)
 *   [Chromium](https://ungoogled-software.github.io/)
 *   [Opera](https://www.opera.com/)

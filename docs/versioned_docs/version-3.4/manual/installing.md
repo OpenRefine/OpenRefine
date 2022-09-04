@@ -24,7 +24,7 @@ We recommend you [download](https://java.com/en/download/) and install Java befo
 
 #### Compatible browser {#compatible-browser}
 
-OpenRefine works best on browsers based on Webkit, such as:
+OpenRefine works best on browsers based on WebKit, such as:
 
 *   [Google Chrome](https://www.google.com/chrome/)
 *   [Chromium](https://ungoogled-software.github.io/)

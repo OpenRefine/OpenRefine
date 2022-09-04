@@ -24,7 +24,7 @@ If you install and start OpenRefine on a Windows computer without Java, it will 
 
 #### Compatible browser {#compatible-browser}
 
-OpenRefine works best on browsers based on Webkit, such as:
+OpenRefine works best on browsers based on WebKit, such as:
 
 *   [Google Chrome](https://www.google.com/chrome/)
 *   [Chromium](https://ungoogled-software.github.io/)
