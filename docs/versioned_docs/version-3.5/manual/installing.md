@@ -26,10 +26,10 @@ We recommend you [download](https://adoptium.net/temurin/releases) and install J
 
 OpenRefine works best on browsers based on Webkit, such as:
 
-*   Google Chrome
-*   Chromium
-*   Opera
-*   Microsoft Edge
+*   [Google Chrome](https://www.google.com/chrome/)
+*   [Chromium](https://ungoogled-software.github.io/)
+*   [Opera](https://www.opera.com/)
+*   [Microsoft Edge](https://www.microsoft.com/edge)
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer. If you are having issues running OpenRefine, see the [section on Running](running.md#troubleshooting).
 
