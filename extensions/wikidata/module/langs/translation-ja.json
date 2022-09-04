@@ -302,5 +302,6 @@
     "wikibase-schema/schema-validation/path-element/entity/with-position": "Entity #$1",
     "wikibase-schema/schema-validation/path-element/label/with-name": "ラベル ($1)",
     "wikibase-schema/schema-validation/path-element/wikitext": "Wikitext",
-    "wikibase-schema/schema-validation/path-element/filepath": "ファイルパス"
+    "wikibase-schema/schema-validation/path-element/filepath": "ファイルパス",
+    "wikibase-schema/template-load-erases-schema": "変更が保存されていないスキーマを破棄します."
 }
