@@ -11,7 +11,7 @@
     "database-import/preparing": "Przygotowanie wyników …",
     "database-import/title": "Serwis bazy danych",
     "database-import/importer-name": "Baza danych",
-    "database-parsing/store-cell": "Zachowaj puste komórki jako null",
+    "database-parsing/store-cell": "Przechowuj puste komórki jako wartości null",
     "database-parsing/store-row": "Zachowaj puste wiersze",
     "database-parsing/limit": "Wiersz(e) danych",
     "database-parsing/discard": "Wiersz(e) danych",
