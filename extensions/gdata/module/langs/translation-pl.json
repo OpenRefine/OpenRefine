@@ -36,5 +36,7 @@
     "gdata-parsing/proj-name": "Nazwa&nbsp;projektu",
     "gdata-parsing/worksheet": "Arkusze robocze",
     "gdata-parsing/disable-auto-preview": "Wyłącz automatyczny podgląd",
-    "gdata-source/type": "Typ"
+    "gdata-source/type": "Typ",
+    "gdata-parsing/discard-next": "Odrzuć inicjał",
+    "gdata-exporter/google-sheets": "Arkusze Google…"
 }
