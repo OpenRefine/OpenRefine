@@ -18,6 +18,7 @@ architectures:
 parts:
   openrefine:
     plugin: dump
+    source-type: tar
     source: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=$SNAPCRAFT_PROJECT_VERSION&c=linux&p=tar.gz
     build-packages:
       - ca-certificates-java
