@@ -48,7 +48,7 @@ You can export any schema you create, and import an existing schema for use with
 
 Once you select <span class="menuItems">Edit Wikidata schema</span> under the <span class="menuItems">Extensions</span> dropdown menu, your project interface will change. You’ll see new tabs added to the right of “X rows/records" in the grid header: “Schema,” “Issues,” and “Preview.” You can now switch between the tabular grid format of your dataset and the screens that allow you to prepare data for uploading.
 
-OpenRefine presents you with an easy visual way to map out the relationships in your dataset. Each of the columns of your project will appear at the top of the sceren, and you can simply drag and drop them into the appropriate slots. To get start, select one column as an item.
+OpenRefine presents you with an easy visual way to map out the relationships in your dataset. Each of the columns of your project will appear at the top of the screen, and you can simply drag and drop them into the appropriate slots. To get start, select one column as an item.
 
 ![A screenshot of the schema construction window in OpenRefine.](/img/wikidata-schema.png)
 
@@ -56,7 +56,7 @@ You may wish to refer to [this Wikidata tutorial on how OpenRefine handles Wikid
 
 #### Editing terms with your schema {#editing-terms-with-your-schema}
 
-With OpenRefine, you can edit the terms (labels, aliases, descriptions, or sitelinks) of Wikidata entities as well as establish relationships between entities. For example, you may wish to upload pseudonyms, pen names, maiden names, or married names for authors.
+With OpenRefine, you can edit the terms (labels, aliases, descriptions) of Wikidata entities as well as establish relationships between entities. For example, you may wish to upload pseudonyms, pen names, maiden names, or married names for authors.
 
 ![An author with a number of aliases indicating pseudonyms.](/img/wikidata-terms.png)
 
@@ -78,6 +78,13 @@ Terms must always have an associated language. You can select the term's languag
 You could upload the “Translated titles” to “Label” with the language specified by “Translation language.” You may wish to fetch the two-letter language code and use that instead for better language matches.
 
 ![Constructing a schema with aliases and languages.](/img/wikidata-translated.png)
+
+#### Unsupported field types
+
+With OpenRefine, it is not yet possible to edit:
+* sitelinks (links to Wikipedia or other Wikimedia projects, in the case of Wikidata);
+* any field on Wikibase properties;
+* lexemes, forms or senses.
 
 ### Manage Wikidata account {#manage-wikidata-account}
 
