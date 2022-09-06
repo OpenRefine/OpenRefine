@@ -141,6 +141,7 @@
     "core-recon/enter-url": "Digite a URL do serviço",
     "core-index-open/contributors": "Contribuidores",
     "core-views/sort": "Ordenar…",
+    "core-views/sort/single": "Ordenar",
     "core-views/judg-hist": "Data e hora da ação de julgamento",
     "core-recon/error-contact": "Erro ao entrar em contato com o serviço de reconciliação",
     "core-buttons/dont-reconcile": "Não reconciliar célula",

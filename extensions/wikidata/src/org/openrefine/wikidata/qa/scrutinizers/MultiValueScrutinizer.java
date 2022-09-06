@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
@@ -22,15 +23,15 @@ public class MultiValueScrutinizer extends EditScrutinizer {
         multiValueConstraintQid = getConstraintsRelatedId("multi_value_constraint_qid");
         return _fetcher != null && multiValueConstraintQid != null;
     }
-    
+
     @Override
     public void scrutinize(ItemEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
-    
+
     @Override
     public void scrutinize(MediaInfoEdit update) {
-    	scrutinizeStatementEdit(update);
+        scrutinizeStatementEdit(update);
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {

@@ -49,35 +49,41 @@ import com.google.refine.process.QuickHistoryEntryProcess;
  *  An abstract operation can be applied to different but similar
  *  projects.
  */
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.CUSTOM,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="op",
-        visible=true) // for UnknownOperation, which needs to read its own id
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true) // for
+                                                                                                                 // UnknownOperation,
+                                                                                                                 // which
+                                                                                                                 // needs
+                                                                                                                 // to
+                                                                                                                 // read
+                                                                                                                 // its
+                                                                                                                 // own
+                                                                                                                 // id
 @JsonTypeIdResolver(OperationResolver.class)
-abstract public class AbstractOperation  {
+abstract public class AbstractOperation {
+
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
+
             @Override
             protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
                 return AbstractOperation.this.createHistoryEntry(_project, historyEntryID);
             }
         };
     }
-    
+
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         throw new UnsupportedOperationException();
     }
-    
+
     protected String getBriefDescription(Project project) {
         throw new UnsupportedOperationException();
     }
-    
+
     @JsonIgnore // the operation id is already added as "op" by the JsonTypeInfo annotation
     public String getOperationId() {
         return OperationRegistry.s_opClassToName.get(this.getClass());
     }
-    
+
     @JsonProperty("description")
     public String getJsonDescription() {
         return getBriefDescription(null);

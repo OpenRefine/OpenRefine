@@ -25,6 +25,8 @@
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,12 +36,16 @@ import java.util.List;
 
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationError;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -56,6 +62,7 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
@@ -136,6 +143,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+        assertTrue(validation.getValidationErrors().isEmpty());
+
         Engine engine = new Engine(project);
         List<EntityEdit> updates = schema.evaluate(project, engine);
         List<EntityEdit> expected = new ArrayList<>();
@@ -146,11 +159,40 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         assertEquals(expected, updates);
     }
 
-    @Test(expectedExceptions = IOException.class)
+    @Test
+    public void testValidate() throws IOException {
+        String serialized = TestingData.jsonFromFile("schema/inception_with_errors.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+
+        List<ValidationError> expectedErrors = new ArrayList<>();
+        expectedErrors.add(new ValidationError(Arrays.asList(
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "reference URL (P854)")),
+                "Column 'nonexisting_column_name' does not exist"));
+        expectedErrors.add(new ValidationError(Arrays.asList(
+                new PathElement(Type.ENTITY, 0),
+                new PathElement(Type.STATEMENT, "inception (P571)"),
+                new PathElement(Type.REFERENCE, 0),
+                new PathElement(Type.VALUE, "retrieved (P813)")),
+                "Empty date field"));
+
+        assertEquals(validation.getValidationErrors(), expectedErrors);
+    }
+
+    @Test
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
                 + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
-        WikibaseSchema.reconstruct(schemaJson);
+        WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
+        ValidationState validationContext = new ValidationState(new ColumnModel());
+        schema.validate(validationContext);
+        assertFalse(validationContext.getValidationErrors().isEmpty());
     }
 
     @Test
@@ -158,6 +200,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+
+        // Validate the schema
+        ValidationState validation = new ValidationState(project.columnModel);
+        schema.validate(validation);
+        assertTrue(validation.getValidationErrors().isEmpty());
+
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
                 + "      \"mode\": \"row-based\",\n"

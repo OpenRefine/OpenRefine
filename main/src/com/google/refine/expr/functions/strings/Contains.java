@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Contains implements Function {
 
@@ -48,28 +49,29 @@ public class Contains implements Function {
             Object s2 = args[1];
             if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof String) {
                 return ((String) s1).indexOf((String) s2) > -1;
-            } else if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof Pattern){
+            } else if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof Pattern) {
                 String s = (String) s1;
                 Pattern pattern = (Pattern) s2;
                 Matcher matcher = pattern.matcher(s);
                 if (matcher.find()) {
                     return true;
-                }else
+                } else
                     return false;
             }
         }
         return null;
     }
+
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true.";
+        return FunctionDescription.str_contains();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string or pattern sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

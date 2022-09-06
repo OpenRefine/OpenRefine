@@ -53,22 +53,25 @@ import com.google.refine.commands.Command;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class GetLanguagesCommand extends Command {
-    
+
     public static class LanguageRecord {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("label")
         protected String label;
+
         public LanguageRecord(String code, String label) {
             this.code = code;
             this.label = label;
         }
     }
-    
+
     public class LanguagesResponse {
+
         @JsonProperty("languages")
         List<LanguageRecord> languages;
-        
+
         public LanguagesResponse(ButterflyModule module) throws UnsupportedEncodingException {
             languages = new ArrayList<>();
             languages.add(new LanguageRecord("en", "English"));
@@ -85,11 +88,11 @@ public class GetLanguagesCommand extends Command {
             }
         }
     }
-    
+
     public GetLanguagesCommand() {
         super();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -98,7 +101,7 @@ public class GetLanguagesCommand extends Command {
         if (modname == null) {
             modname = "core";
         }
-        
+
         ButterflyModule module = this.servlet.getModule(modname);
 
         respondJSON(response, new LanguagesResponse(module));

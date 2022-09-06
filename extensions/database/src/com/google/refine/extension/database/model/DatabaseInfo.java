@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database.model;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class DatabaseInfo {
     private int dbMinorVersion;
     private String dbProductVersion;
     private String dbProductName;
-    
+
     private ArrayList<DatabaseColumn> columns;
     private List<DatabaseRow> rows;
 
@@ -120,12 +121,10 @@ public class DatabaseInfo {
         return columns;
     }
 
-    
     public List<DatabaseRow> getRows() {
         return rows;
     }
-    
-    
+
     @Override
     public String toString() {
         return "DatabaseInfo [tables=" + tables + ", dbMajorVersion=" + dbMajorVersion + ", dbMinorVersion="

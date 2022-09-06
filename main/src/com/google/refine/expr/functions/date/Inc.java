@@ -40,24 +40,27 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Inc implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 3 && 
-                args[0] != null && (args[0] instanceof OffsetDateTime) && 
-                args[1] != null && args[1] instanceof Number && 
+        if (args.length == 3 &&
+                args[0] != null && (args[0] instanceof OffsetDateTime) &&
+                args[1] != null && args[1] instanceof Number &&
                 args[2] != null && args[2] instanceof String) {
-            OffsetDateTime date = (OffsetDateTime)args[0];
-            
+            OffsetDateTime date = (OffsetDateTime) args[0];
+
             int amount = ((Number) args[1]).intValue();
             String unit = (String) args[2];
-            
+
             return date.plus(amount, getField(unit));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        // string");
+        return new EvalError(EvalErrorMessage.expects_date_number_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private TemporalUnit getField(String unit) {
@@ -69,7 +72,8 @@ public class Inc implements Function {
             return ChronoUnit.YEARS;
         } else if ("months".equals(unit) || "month".equals(unit)) { // avoid 'm' to avoid confusion with minute
             return ChronoUnit.MONTHS;
-        } else if ("minutes".equals(unit) || "minute".equals(unit) || "min".equals(unit)) { // avoid 'm' to avoid confusion with month
+        } else if ("minutes".equals(unit) || "minute".equals(unit) || "min".equals(unit)) { // avoid 'm' to avoid
+                                                                                            // confusion with month
             return ChronoUnit.MINUTES;
         } else if ("weeks".equals(unit) || "week".equals(unit) || "w".equals(unit)) {
             return ChronoUnit.WEEKS;
@@ -83,17 +87,17 @@ public class Inc implements Function {
             throw new RuntimeException("Unit '" + unit + "' not recognized.");
         }
     }
-    
+
     @Override
     public String getDescription() {
-    	return "Returns a date changed by the given amount in the given unit of time, in quotes. See https://docs.openrefine.org/manual/grelfunctions/#incd-n-s-timeunit for a table. The default unit is 'hour'. A positive value increases the date, and a negative value moves it back in time.";
+        return FunctionDescription.date_inc();
     }
-    
+
     @Override
     public String getParams() {
         return "date d, number n, string unit";
     }
-    
+
     @Override
     public String getReturns() {
         return "date";

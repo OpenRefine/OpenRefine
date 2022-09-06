@@ -33,10 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.controls;
 
+import com.google.refine.grel.ControlDescription;
+
 public class IsNull extends IsTest {
+
     @Override
     public String getDescription() {
-        return "Returns whether o is null";
+        return ControlDescription.is_null_desc();
     }
 
     @Override

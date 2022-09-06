@@ -41,7 +41,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.JSONUtilities;
 
 public class InArray implements Function {
@@ -52,7 +54,7 @@ public class InArray implements Function {
         if (args.length == 2) {
             Object v = args[0];
             Object s = args[1];
-            
+
             if (v != null && s != null && s instanceof String) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -65,23 +67,24 @@ public class InArray implements Function {
                     List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
                     return a.contains(s);
                 }
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+                return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
             }
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+            return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two parameters: an array and a string");
+        // string");
+        return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns true if the array contains the desired string, and false otherwise. Will not convert data types.";
+        return FunctionDescription.arr_in_array();
     }
-    
+
     @Override
     public String getParams() {
         return "array a, string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

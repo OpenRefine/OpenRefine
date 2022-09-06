@@ -49,6 +49,12 @@ function init() {
     RefineServlet.registerCommand(module, "login", new LoginCommand());
 
     /*
+     * GREL functions
+     */
+    var CFR = Packages.com.google.refine.grel.ControlFunctionRegistry;
+    CFR.registerFunction("wikibaseIssues", new Packages.org.openrefine.wikidata.functions.WikibaseIssuesFunction());
+
+    /*
      * Resources
      */
     ClientSideResourceManager.addPaths(
@@ -60,11 +66,12 @@ function init() {
         "scripts/wikibase-manifest-schema-v1.js",
         "scripts/wikibase-manifest-schema-v2.js",
         "scripts/wikibase-manager.js",
+        "scripts/template-manager.js",
         "scripts/menu-bar-extension.js",
-        "scripts/warningsrenderer.js",
-        "scripts/langsuggest.js",
-        "scripts/bettersuggest.js",
-        "scripts/previewrenderer.js",
+        "scripts/warnings-renderer.js",
+        "scripts/lang-suggest.js",
+        "scripts/better-suggest.js",
+        "scripts/preview-renderer.js",
         "scripts/wikibase-suggest.js",
         "scripts/schema-alignment.js",
         "scripts/wikidata-extension-manager.js",
@@ -73,6 +80,7 @@ function init() {
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
         "scripts/dialogs/statement-configuration-dialog.js",
+        "scripts/dialogs/save-new-template-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 

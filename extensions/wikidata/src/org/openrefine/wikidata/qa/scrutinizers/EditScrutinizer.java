@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -77,12 +78,12 @@ public abstract class EditScrutinizer {
      * @return false if any necessary dependency is missing, true otherwise.
      */
     public abstract boolean prepareDependencies();
-    
+
     /**
      * Called before an edit batch is scrutinized.
      */
     public void batchIsBeginning() {
-        
+
     }
 
     /**
@@ -92,15 +93,15 @@ public abstract class EditScrutinizer {
      *            the {@link EntityEdit} to scrutinize
      */
     public void scrutinize(EntityEdit edit) {
-    	if (edit instanceof ItemEdit) {
-    		scrutinize((ItemEdit) edit);
-    	} else if (edit instanceof MediaInfoEdit) {
-    		scrutinize((MediaInfoEdit) edit);
-    	} else {
-    		throw new IllegalArgumentException("Scrutinizing this type of entity edit is not supported yet");
-    	}
+        if (edit instanceof ItemEdit) {
+            scrutinize((ItemEdit) edit);
+        } else if (edit instanceof MediaInfoEdit) {
+            scrutinize((MediaInfoEdit) edit);
+        } else {
+            throw new IllegalArgumentException("Scrutinizing this type of entity edit is not supported yet");
+        }
     }
-    
+
     /**
      * Reads the candidate edit and emits warnings in the store
      * 
@@ -108,7 +109,7 @@ public abstract class EditScrutinizer {
      *            the {@link ItemEdit} to scrutinize
      */
     public abstract void scrutinize(ItemEdit edit);
-    
+
     /**
      * Reads the candidate edit and emits warnings in the store
      * 
@@ -116,56 +117,63 @@ public abstract class EditScrutinizer {
      *            the {@link ItemEdit} to scrutinize
      */
     public abstract void scrutinize(MediaInfoEdit edit);
-    
+
     /**
      * Method called once the edit batch has been read entirely
      */
     public void batchIsFinished() {
-        
+
     }
-    
+
     /**
-     * Emits an issue that will be reported to the user,
-     * after merging with other issues of the same kind.
+     * Emits an issue that will be reported to the user, after merging with other issues of the same kind.
      * 
      * @param warning
-     *    the issue to report
+     *            the issue to report
      */
     protected void addIssue(QAWarning warning) {
         _store.addWarning(warning);
     }
 
-    protected void addIssue(String type, String aggregationId, Severity severity, int count) {
-        addIssue(new QAWarning(type, aggregationId, severity, count));
+    protected void addIssue(String type, String aggregationId, Severity severity, int count, boolean facetable) {
+        QAWarning warning = new QAWarning(type, aggregationId, severity, count);
+        warning.setFacetable(facetable);
+        addIssue(warning);
     }
 
     /**
      * Helper to be used by subclasses to emit simple INFO warnings
      */
     protected void info(String type) {
-        addIssue(type, null, QAWarning.Severity.INFO, 1);
+        addIssue(type, null, QAWarning.Severity.INFO, 1, true);
+    }
 
+    /**
+     * Helper to be used by subclasses to emit simple INFO warnings, which are not facetable
+     */
+    protected void infoNotFacetable(String type) {
+        addIssue(type, null, QAWarning.Severity.INFO, 1, false);
     }
 
     /**
      * Helper to be used by subclasses to emit simple warnings
      */
     protected void warning(String type) {
-        addIssue(type, null, QAWarning.Severity.WARNING, 1);
+        addIssue(type, null, QAWarning.Severity.WARNING, 1, true);
     }
 
     /**
      * Helper to be used by subclasses to emit simple important warnings
      */
     protected void important(String type) {
-        addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
+        addIssue(type, null, QAWarning.Severity.IMPORTANT, 1, true);
     }
 
     /**
      * Helper to be used by subclasses to emit simple critical warnings
      */
     protected void critical(String type) {
-        addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
+        addIssue(type, null, QAWarning.Severity.CRITICAL, 1, true);
     }
 
     /**
@@ -183,7 +191,7 @@ public abstract class EditScrutinizer {
             if (group.getProperty().getId().equals(pid)) {
                 for (Snak snak : group.getSnaks())
                     if (snak instanceof ValueSnak) {
-                        results.add(((ValueSnak)snak).getValue());
+                        results.add(((ValueSnak) snak).getValue());
                     }
             }
         }

@@ -44,6 +44,7 @@ import com.google.refine.model.Record;
 import com.google.refine.sorting.Criterion.KeyMaker;
 
 public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
+
     final protected RecordVisitor _visitor;
     protected List<Record> _records;
 
@@ -63,6 +64,7 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
         _visitor.start(project);
 
         Collections.sort(_records, new Comparator<Record>() {
+
             Project project;
 
             Comparator<Record> init(Project project) {

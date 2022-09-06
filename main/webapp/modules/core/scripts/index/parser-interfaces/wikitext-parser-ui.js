@@ -227,7 +227,7 @@ Refine.WikitextParserUI.prototype._updatePreview = function() {
     if (result.status === "ok") {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
-        var container = self._dataContainer.unbind().empty();
+        var container = self._dataContainer.off().empty();
         if (projectData.rowModel.rows.length === 0) {
            $('<div>').addClass("wikitext-parser-ui-message")
                 .text($.i18n('core-index-parser/invalid-wikitext')).appendTo(container);

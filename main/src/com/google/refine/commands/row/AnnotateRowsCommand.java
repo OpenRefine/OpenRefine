@@ -43,22 +43,22 @@ import com.google.refine.operations.row.RowFlagOperation;
 import com.google.refine.operations.row.RowStarOperation;
 
 public class AnnotateRowsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String starredString = request.getParameter("starred");
         if (starredString != null) {
             boolean starred = "true".endsWith(starredString);
-            
+
             return new RowStarOperation(engineConfig, starred);
         }
-        
+
         String flaggedString = request.getParameter("flagged");
         if (flaggedString != null) {
             boolean flagged = "true".endsWith(flaggedString);
-            
+
             return new RowFlagOperation(engineConfig, flagged);
         }
         return null;

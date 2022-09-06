@@ -200,15 +200,17 @@
 
 .wbs-mediainfo-file-fields {
 	display: grid;
-	grid-template-columns: max-content min(450px, 50%);
+	grid-template-columns: max-content min(450px, 50%) max-content;
 	grid-gap: 0.8em;
 	align-items: center;
 	margin: 1em 0em;
 }
 
+.schema-alignment-dialog-preview .wbs-mediainfo-file-fields {
+	grid-template-columns: max-content min(450px, 50%);
+}
 
 /* Fix input rendering for Firefox */
-
 
 .wbs-entity-input input, .wbs-prop-input input, .wbs-target-input input,
 .wbs-monolingual-container input, .wbs-mediainfo-file-fields input {
@@ -216,6 +218,15 @@
     border: solid #b5b5b5 1px;
     padding: 2px;
 }
+
+// fix rendering of checkbox
+
+input[type="checkbox"].wbs-wikitext-override {
+   width: auto;
+   vertical-align: middle;
+}
+
+
 
 .wbs-draggable-column img {
     float: right;
@@ -609,4 +620,29 @@ div.schema-alignment-dialog-preview {
 
 .schema-alignment-dialog-columns-area div:hover{
     cursor: grabbing;
+}
+
+/** Errors in schema validation **/
+
+.schema-validation-errors {
+    margin-left: 1em;
+}
+
+.schema-validation-path-element {
+    border: 1px solid #bcf;
+    border-radius: 3px;
+    background: #ebeef8;
+    padding: 2px;
+    margin: 2px;
+    display: inline-block;
+}
+
+.schema-validation-error {
+    margin-left: 2px;
+}
+
+/** Template selection **/
+
+select:focus option.placeholder {
+  display: none;
 }

@@ -28,17 +28,22 @@ import java.util.Collections;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 
 public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdit> {
 
     private WbPropConstant propertyExpr = new WbPropConstant("P908", "myprop", "time");
     public WbStatementGroupExpr expr;
+    public WbStatementGroupExpr noPropertyExpr;
 
     private EntityIdValue subject;
     public StatementGroupEdit statementGroupUpdate;
@@ -58,20 +63,27 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
                 throws SkipSchemaExpressionException, QAWarningException {
             return expr.evaluate(ctxt, subject);
         }
+
+        @Override
+        public void validate(ValidationState validation) {
+            expr.validate(validation);
+        }
     }
 
     public WbStatementGroupExprTest() {
         WbStatementExprTest statementTest = new WbStatementExprTest();
         expr = new WbStatementGroupExpr(propertyExpr, Collections.singletonList(statementTest.statementExpr));
+        noPropertyExpr = new WbStatementGroupExpr(null, Collections.singletonList(statementTest.statementExpr));
         subject = statementTest.subject;
         statementGroupUpdate = new StatementGroupEdit(Collections.singletonList(statementTest.fullStatementUpdate));
         jsonRepresentation = "{\"property\":{\"type\":\"wbpropconstant\",\"pid\":\"P908\",\"label\":\"myprop\",\"datatype\":\"time\"},"
                 + "\"statements\":[" + statementTest.jsonRepresentation + "]}";
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testCreate() {
-        new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+    @Test
+    public void testEmptyStatements() {
+        WbStatementGroupExpr emptyStatements = new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+        hasValidationError("No statements", new Wrapper(emptyStatements), new ColumnModel());
     }
 
     @Test
@@ -95,5 +107,16 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
         expr.getStatements().clear();
+    }
+
+    @Test
+    public void testValidate() throws ModelException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        columnModel.addColumn(1, new Column(1, "column B"), true);
+        columnModel.addColumn(2, new Column(2, "column C"), true);
+
+        hasNoValidationError(new Wrapper(expr), columnModel);
+        hasValidationError("No property", new Wrapper(noPropertyExpr), columnModel);
     }
 }

@@ -21,10 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedItemIdValue;
+import org.openrefine.wikidata.schema.validation.ValidationState;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,10 +42,24 @@ public class WbItemConstant implements WbExpression<ItemIdValue> {
 
     @JsonCreator
     public WbItemConstant(@JsonProperty("qid") String qid, @JsonProperty("label") String label) {
-        Validate.notNull(qid);
         this.qid = qid;
-        Validate.notNull(label);
         this.label = label;
+    }
+
+    @Override
+    public void validate(ValidationState validation) {
+        if (qid == null) {
+            validation.addError("No entity id provided");
+        } else {
+            try {
+                EntityIdValueImpl.guessEntityTypeFromId(qid);
+            } catch (IllegalArgumentException e) {
+                validation.addError("Invalid entity id format: '" + qid + "'");
+            }
+        }
+        if (label == null) {
+            validation.addError("No entity label provided");
+        }
     }
 
     @Override

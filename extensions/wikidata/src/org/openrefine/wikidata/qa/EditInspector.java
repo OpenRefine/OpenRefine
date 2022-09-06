@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa;
 
 import java.util.HashMap;
@@ -151,32 +152,34 @@ public class EditInspector {
         }
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         try {
-			editBatch = scheduler.schedule(editBatch);
-		} catch (ImpossibleSchedulingException e) {
-			throw new ExecutionException(e);
-		}
+            editBatch = scheduler.schedule(editBatch);
+        } catch (ImpossibleSchedulingException e) {
+            throw new ExecutionException(e);
+        }
 
         Map<EntityIdValue, EntityEdit> updates = EntityEdit.groupBySubject(editBatch);
         List<EntityEdit> mergedUpdates = updates.values().stream().collect(Collectors.toList());
-        
+
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsBeginning();
         }
-        
-        for(EntityEdit update : mergedUpdates) {
-            if(!update.isNull()) {
+
+        for (EntityEdit update : mergedUpdates) {
+            if (!update.isNull()) {
                 for (EditScrutinizer scrutinizer : scrutinizers.values()) {
                     scrutinizer.scrutinize(update);
                 }
             }
         }
-        
-        for(EditScrutinizer scrutinizer : scrutinizers.values()) {
+
+        for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsFinished();
         }
 
         if (warningStore.getNbWarnings() == 0) {
-            warningStore.addWarning(new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0));
+            QAWarning warning = new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0);
+            warning.setFacetable(false);
+            warningStore.addWarning(warning);
         }
     }
 }

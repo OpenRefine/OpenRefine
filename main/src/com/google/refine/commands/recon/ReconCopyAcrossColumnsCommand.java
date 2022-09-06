@@ -42,16 +42,17 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation;
 
 public class ReconCopyAcrossColumnsCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String fromColumnName = request.getParameter("fromColumnName");
         String[] toColumnNames = request.getParameterValues("toColumnName[]");
         String[] judgments = request.getParameterValues("judgment[]");
         boolean applyToJudgedCells = Boolean.parseBoolean(request.getParameter("applyToJudgedCells"));
-        
+
         return new ReconCopyAcrossColumnsOperation(
-            engineConfig, fromColumnName, toColumnNames, judgments, applyToJudgedCells);
+                engineConfig, fromColumnName, toColumnNames, judgments, applyToJudgedCells);
     }
 }

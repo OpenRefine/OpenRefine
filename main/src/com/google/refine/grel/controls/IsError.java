@@ -34,11 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.controls;
 
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.grel.ControlDescription;
 
 public class IsError extends IsTest {
+
     @Override
     public String getDescription() {
-        return "Returns whether o is an error";
+        return ControlDescription.is_error_desc();
     }
 
     @Override

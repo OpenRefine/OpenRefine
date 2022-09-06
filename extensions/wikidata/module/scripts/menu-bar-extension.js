@@ -1,20 +1,4 @@
-// Load the localization file
-var dictionary = {};
-$.ajax({
-  url: "command/core/load-language?",
-  type: "POST",
-  async: false,
-  data: {
-    module: "wikidata",
-//		lang : lang
-  },
-  success: function (data) {
-    dictionary = data['dictionary'];
-    lang = data['lang'];
-  }
-});
-$.i18n().load(dictionary, lang);
-
+I18NUtil.init("wikidata");
 
 ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push({
@@ -99,7 +83,7 @@ $(function () {
             id: "wikidata/select-instance",
             label: $.i18n('wikibase-extension/select-wikibase-instance'),
             click: function () {
-              WikibaseDialog.launch()
+              new WikibaseDialog();
             }
           },
           {

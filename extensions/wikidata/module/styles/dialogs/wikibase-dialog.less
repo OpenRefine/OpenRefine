@@ -5,7 +5,7 @@
 }
 
 .wikibase-list-wrapper {
-  max-height: 300px; overflow-y: auto
+  max-height: 500px; overflow-y: auto
 }
 
 .wikibase-list {
@@ -65,11 +65,15 @@
   color: gray;
 }
 
-.wikibase-list li a {
+.wikibase-list li a, .wikibase-list li span {
   margin: 10px;
   flex: 0 0;
 }
 
-.wikibase-list li.selected a {
+.wikibase-list li.selected a, .wikibase-list li.active a {
   display:none;
+}
+
+.wikibase-list li.active span {
+  display:block !important;
 }

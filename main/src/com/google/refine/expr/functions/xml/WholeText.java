@@ -36,6 +36,8 @@ package com.google.refine.expr.functions.xml;
 import java.util.Properties;
 import com.google.refine.expr.functions.Type;
 
+import com.google.refine.grel.EvalErrorMessage;
+import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -49,26 +51,31 @@ public class WholeText implements Function {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
+                Element e1 = (Element) o1;
                 return e1.wholeText();
 
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+                // new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.
+                // Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_failed(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(bindings, args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
+        // Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_expects(ControlFunctionRegistry.getFunctionName(this),
+                new Type().call(bindings, args)));
     }
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.xml_wholetext();
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

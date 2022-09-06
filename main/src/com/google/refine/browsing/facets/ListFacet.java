@@ -59,40 +59,44 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
 public class ListFacet implements Facet {
+
     public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
-    
+
     /**
      * Wrapper to respect the serialization format
      */
     public static class DecoratedValueWrapper {
+
         @JsonProperty("v")
         public final DecoratedValue value;
+
         @JsonCreator
         public DecoratedValueWrapper(
                 @JsonProperty("v") DecoratedValue value) {
             this.value = value;
         }
     }
-    
+
     /*
      * Configuration
      */
     public static class ListFacetConfig implements FacetConfig {
+
         @JsonProperty("name")
-        public String     name;
+        public String name;
         @JsonProperty("expression")
-        public String     expression;
+        public String expression;
         @JsonProperty("columnName")
-        public String     columnName;
+        public String columnName;
         @JsonProperty("invert")
-        public boolean    invert;
-        
+        public boolean invert;
+
         // If true, then facet won't show the blank and error choices
         @JsonProperty("omitBlank")
         public boolean omitBlank;
         @JsonProperty("omitError")
         public boolean omitError;
-        
+
         @JsonIgnore
         public List<DecoratedValue> selection = new LinkedList<>();
         @JsonProperty("selectBlank")
@@ -106,14 +110,14 @@ public class ListFacet implements Facet {
                     .map(e -> new DecoratedValueWrapper(e))
                     .collect(Collectors.toList());
         }
-        
+
         @JsonProperty("selection")
         public void setSelection(List<DecoratedValueWrapper> wrapped) {
             selection = wrapped.stream()
                     .map(e -> e.value)
                     .collect(Collectors.toList());
         }
-        
+
         @Override
         public Facet apply(Project project) {
             ListFacet facet = new ListFacet();
@@ -126,15 +130,17 @@ public class ListFacet implements Facet {
             return "list";
         }
     }
-    
+
     /**
      * Wrapper class for choice counts and selection status for blank and error
      */
     public static class OtherChoice {
+
         @JsonProperty("s")
         boolean selected;
         @JsonProperty("c")
         int count;
+
         public OtherChoice(
                 @JsonProperty("s") boolean selected,
                 @JsonProperty("c") int count) {
@@ -142,46 +148,46 @@ public class ListFacet implements Facet {
             this.count = count;
         }
     }
-    
+
     ListFacetConfig _config = new ListFacetConfig();
-    
+
     /*
      * Derived configuration
      */
-    protected int        _cellIndex;
-    protected Evaluable  _eval;
-    protected String     _errorMessage;
-    
+    protected int _cellIndex;
+    protected Evaluable _eval;
+    protected String _errorMessage;
+
     /*
      * Computed results
      */
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
     protected int _blankCount;
     protected int _errorCount;
-    
+
     public ListFacet() {
     }
-    
+
     @JsonProperty("name")
     public String getName() {
         return _config.name;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _config.columnName;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _config.expression;
     }
-    
+
     @JsonProperty("invert")
     public boolean getInvert() {
         return _config.invert;
     }
-    
+
     @JsonProperty("error")
     @JsonInclude(Include.NON_NULL)
     public String getError() {
@@ -190,7 +196,7 @@ public class ListFacet implements Facet {
         }
         return _errorMessage;
     }
-    
+
     @JsonProperty("choiceCount")
     @JsonInclude(Include.NON_NULL)
     public Integer getChoiceCount() {
@@ -199,7 +205,7 @@ public class ListFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("choices")
     @JsonInclude(Include.NON_NULL)
     public List<NominalFacetChoice> getChoices() {
@@ -208,7 +214,7 @@ public class ListFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("blankChoice")
     @JsonInclude(Include.NON_NULL)
     public OtherChoice getBlankChoice() {
@@ -217,7 +223,7 @@ public class ListFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("errorChoice")
     @JsonInclude(Include.NON_NULL)
     public OtherChoice getErrorChoice() {
@@ -226,7 +232,7 @@ public class ListFacet implements Facet {
         }
         return null;
     }
-    
+
     protected int getLimit() {
         Object v = ProjectManager.singleton.getPreferenceStore().get("ui.browsing.listFacet.limit");
         if (v != null) {
@@ -243,7 +249,7 @@ public class ListFacet implements Facet {
         }
         return 2000;
     }
-        
+
     public void initializeFromConfig(ListFacetConfig config, Project project) {
         _config = config;
         if (_config.columnName.length() > 0) {
@@ -256,7 +262,7 @@ public class ListFacet implements Facet {
         } else {
             _cellIndex = -1;
         }
-        
+
         try {
             _eval = MetaParser.parse(_config.expression);
         } catch (ParsingException e) {
@@ -266,73 +272,64 @@ public class ListFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        return 
-            _eval == null || 
-            _errorMessage != null ||
-            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? 
-                null :
-                new ExpressionEqualRowFilter(
-                    _eval, 
-                    _config.columnName,
-                    _cellIndex, 
-                    createMatches(), 
-                    _config.selectBlank, 
-                    _config.selectError,
-                    _config.invert);
+        return _eval == null ||
+                _errorMessage != null ||
+                (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? null
+                        : new ExpressionEqualRowFilter(
+                                _eval,
+                                _config.columnName,
+                                _cellIndex,
+                                createMatches(),
+                                _config.selectBlank,
+                                _config.selectError,
+                                _config.invert);
     }
-    
+
     @Override
     public RecordFilter getRecordFilter(Project project) {
         RowFilter rowFilter = getRowFilter(project);
-        return rowFilter == null ? null :
-            (_config.invert ?
-                    new AllRowsRecordFilter(rowFilter) :
-                        new AnyRowRecordFilter(rowFilter));
+        return rowFilter == null ? null : (_config.invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter));
     }
 
     @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
-            ExpressionNominalValueGrouper grouper = 
-                new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
-            
+            ExpressionNominalValueGrouper grouper = new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
+
             filteredRows.accept(project, grouper);
-            
+
             postProcessGrouper(grouper);
         }
     }
-    
+
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
-            ExpressionNominalValueGrouper grouper = 
-                new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
-            
+            ExpressionNominalValueGrouper grouper = new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
+
             filteredRecords.accept(project, grouper);
-            
+
             postProcessGrouper(grouper);
         }
     }
-    
+
     protected void postProcessGrouper(ExpressionNominalValueGrouper grouper) {
         _choices.clear();
         _choices.addAll(grouper.choices.values());
-        
+
         for (DecoratedValue decoratedValue : _config.selection) {
             String valueString = decoratedValue.value.toString();
-            
+
             if (grouper.choices.containsKey(valueString)) {
                 grouper.choices.get(valueString).selected = true;
             } else {
                 /*
-                 *  A selected choice can have zero count if it is selected together
-                 *  with other choices, and some other facets' constraints eliminate
-                 *  all rows projected to this choice altogether. For example, if you
-                 *  select both "car" and "bicycle" in the "type of vehicle" facet, and
-                 *  then constrain the "wheels" facet to more than 2, then the "bicycle"
-                 *  choice now has zero count even if it's still selected. The grouper 
-                 *  won't be able to detect the "bicycle" choice, so we need to inject
-                 *  that choice into the choice list ourselves.
+                 * A selected choice can have zero count if it is selected together with other choices, and some other
+                 * facets' constraints eliminate all rows projected to this choice altogether. For example, if you
+                 * select both "car" and "bicycle" in the "type of vehicle" facet, and then constrain the "wheels" facet
+                 * to more than 2, then the "bicycle" choice now has zero count even if it's still selected. The grouper
+                 * won't be able to detect the "bicycle" choice, so we need to inject that choice into the choice list
+                 * ourselves.
                  */
                 NominalFacetChoice choice = new NominalFacetChoice(decoratedValue);
                 choice.count = 0;
@@ -340,11 +337,11 @@ public class ListFacet implements Facet {
                 _choices.add(choice);
             }
         }
-        
+
         _blankCount = grouper.blankCount;
         _errorCount = grouper.errorCount;
     }
-    
+
     protected Object[] createMatches() {
         Object[] a = new Object[_config.selection.size()];
         for (int i = 0; i < a.length; i++) {

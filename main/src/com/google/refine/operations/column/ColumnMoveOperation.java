@@ -40,27 +40,26 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnMoveChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnMoveOperation extends AbstractOperation {
+
     final protected String _columnName;
-    final protected int    _index;
+    final protected int _index;
 
     @JsonCreator
     public ColumnMoveOperation(
-        @JsonProperty("columnName")
-        String columnName,
-        @JsonProperty("index")
-        int index
-    ) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("index") int index) {
         _columnName = columnName;
         _index = index;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("index")
     public int getIndex() {
         return _index;
@@ -68,7 +67,7 @@ public class ColumnMoveOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Move column " + _columnName + " to position " + _index;
+        return OperationDescription.column_move_brief(_columnName, _index);
     }
 
     @Override
@@ -79,9 +78,9 @@ public class ColumnMoveOperation extends AbstractOperation {
         if (_index < 0 || _index >= project.columnModel.columns.size()) {
             throw new Exception("New column index out of range " + _index);
         }
-        
+
         Change change = new ColumnMoveChange(_columnName, _index);
-        
+
         return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnMoveOperation.this, change);
     }
 }

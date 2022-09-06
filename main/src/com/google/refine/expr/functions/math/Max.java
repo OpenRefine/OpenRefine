@@ -37,7 +37,9 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Max implements Function {
 
@@ -47,22 +49,22 @@ public class Max implements Function {
                 args[0] instanceof Number &&
                 args[1] instanceof Number) {
             return Math.max(
-                ((Number) args[0]).doubleValue(),
-                ((Number) args[1]).doubleValue());
+                    ((Number) args[0]).doubleValue(),
+                    ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the greater of two numbers.";
+        return FunctionDescription.math_max();
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

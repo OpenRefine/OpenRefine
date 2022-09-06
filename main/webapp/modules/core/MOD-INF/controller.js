@@ -365,10 +365,11 @@ function init() {
       "scripts/util/url.js",
       "scripts/util/string.js",
       "scripts/util/ajax.js",
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
-      "scripts/util/date-time.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
       "scripts/util/filter-lists.js",
@@ -436,9 +437,9 @@ function init() {
     commonModules.concat([
       "externals/suggest/suggest-4_3a.js",
       "3rdparty/date.js",
-
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/project.js",
-
       "scripts/util/misc.js",
       "scripts/util/url.js",
       "scripts/util/string.js",
@@ -446,7 +447,6 @@ function init() {
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
-      "scripts/util/date-time.js",
       "scripts/util/custom-suggest.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
@@ -500,7 +500,7 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
@@ -540,6 +540,8 @@ function init() {
     "preferences/scripts",
     module,
     commonModules.concat([
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/preferences.js",
     ])
   );
@@ -547,7 +549,7 @@ function init() {
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",

@@ -37,13 +37,13 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 
-public abstract class Clusterer  {
+public abstract class Clusterer {
 
     protected Project _project;
     protected int _colindex;
 
     public abstract void computeClusters(Engine engine);
-    
+
     protected void initializeFromConfig(Project project, ClustererConfig c) {
         _project = project;
 

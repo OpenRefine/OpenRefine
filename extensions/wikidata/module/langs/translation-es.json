@@ -126,9 +126,6 @@
     "wikibase-schema/close-button": "Cerrar",
     "wikibase-schema/save-button": "Guardar esquema",
     "wikibase-schema/discard-button": "Descartar cambios",
-    "wikibase-schema/invalid-schema-warning-preview": "El esquema está incompleto. Corríjalo para ver la previsualización.",
-    "wikibase-schema/invalid-schema-warning-issues": "El esquema está incompleto. Corríjalo para ver los problemas.",
-    "wikibase-schema/datatype-not-supported-yet": "Aún no se admite este tipo de dato.",
     "wikibase-schema/geoshape-with-prefix": "nombre de archivo que comienza por «Data:»",
     "wikibase-schema/math-expression": "expresión matemática",
     "wikibase-schema/commons-media": "nombre de archivo",
@@ -136,7 +133,6 @@
     "wikibase-schema/full-url": "URL completo, el protocolo incluido",
     "wikibase-schema/unit": "unidad",
     "wikibase-schema/amount": "cantidad",
-    "wikibase-schema/item-or-reconciled-column": "digite un elemento o arrastre una columna cotejada aquí",
     "wikibase-schema/alias": "Alias",
     "wikibase-schema/override-term": "anular si existe",
     "wikibase-schema/description-override": "Descripción (anular si existe)",
@@ -224,5 +220,8 @@
     "wikibase-management/add-wikibase": "Agregar Wikibase",
     "wikibase-management/current-selected-wikibase": "Wikibase seleccionado actualmente: <a href=\"$1\" target=\"_blank\">$2</a>",
     "wikibase-management/explain-select-wikibase": "Haga clic en un elemento a continuación para seleccionarlo como el Wikibase de destino con el que trabajar. Esto borrará cualquier esquema existente. Después de cambiar al Wikibase de destino, debe conciliar sus datos con él antes de editar el esquema.",
-    "wikibase-management/dialog-header": "Seleccionar instancia de Wikibase"
+    "wikibase-management/dialog-header": "Seleccionar instancia de Wikibase",
+    "wikibase-management/discover-manifests": "Descubrir instancias de Wikibase…",
+    "wikibase-management/cancel": "Cancelar",
+    "wikibase-management/ok": "OK"
 }

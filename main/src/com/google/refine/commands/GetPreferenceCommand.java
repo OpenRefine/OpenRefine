@@ -45,10 +45,12 @@ import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
 public class GetPreferenceCommand extends Command {
-    protected static class PreferenceValue  {
+
+    protected static class PreferenceValue {
+
         @JsonProperty("value")
         protected Object value;
-        
+
         protected PreferenceValue(Object pref) {
             if (pref == null || pref instanceof String || pref instanceof Number || pref instanceof Boolean || pref instanceof TopList) {
                 value = pref;
@@ -57,16 +59,16 @@ public class GetPreferenceCommand extends Command {
             }
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
-                
+
         String prefName = request.getParameter("name");
         Object pref = ps.get(prefName);
-        
+
         respondJSON(response, new PreferenceValue(pref));
     }
 

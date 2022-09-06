@@ -440,8 +440,8 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         return false;
       };
       var mouseUp = function(evt) {
-        container.unbind('mousemove', mouseMove);
-        container.unbind('mouseup', mouseUp);
+        container.off('mousemove', mouseMove);
+        container.off('mouseup', mouseUp);
 
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -453,8 +453,8 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         evt.stopPropagation();
         return false;
       };
-      container.bind('mousemove', mouseMove);
-      container.bind('mouseup', mouseUp);
+      container.on('mousemove', mouseMove);
+      container.on('mouseup', mouseUp);
     });
 
     close.on('click',function() {

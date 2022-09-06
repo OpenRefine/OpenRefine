@@ -21,17 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.StatementGroupEdit;
+import org.openrefine.wikidata.schema.validation.PathElement;
+import org.openrefine.wikidata.schema.validation.PathElement.Type;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
@@ -48,11 +51,44 @@ public class WbStatementGroupExpr {
     @JsonCreator
     public WbStatementGroupExpr(@JsonProperty("property") WbExpression<? extends PropertyIdValue> propertyExpr,
             @JsonProperty("statements") List<WbStatementExpr> claimExprs) {
-        Validate.notNull(propertyExpr);
         this.propertyExpr = propertyExpr;
-        Validate.notNull(claimExprs);
-        Validate.isTrue(!claimExprs.isEmpty());
-        this.statementExprs = claimExprs;
+        this.statementExprs = claimExprs != null ? claimExprs : Collections.emptyList();
+    }
+
+    /**
+     * Checks that the expression has all its required components and is ready to be evaluated.
+     * 
+     * @param validation
+     */
+    public void validate(ValidationState validation) {
+        validation.enter(new PathElement(Type.STATEMENT));
+        if (propertyExpr == null) {
+            validation.addError("No property");
+        } else {
+            propertyExpr.validate(validation);
+        }
+        validation.leave();
+
+        // Extract property name to contribute to further validation paths
+        String propertyName = null;
+        if (propertyExpr instanceof WbPropConstant) {
+            WbPropConstant propConstant = (WbPropConstant) propertyExpr;
+            if (propConstant.getLabel() != null && propConstant.getPid() != null) {
+                propertyName = String.format("%s (%s)", propConstant.getLabel(), propConstant.getPid());
+            }
+        }
+        if (statementExprs == null || statementExprs.isEmpty()) {
+            validation.addError("No statements");
+        }
+        for (WbStatementExpr statement : statementExprs) {
+            validation.enter(new PathElement(Type.STATEMENT, propertyName));
+            if (statement != null) {
+                statement.validate(validation);
+            } else {
+                validation.addError("Empty statement");
+            }
+            validation.leave();
+        }
     }
 
     public StatementGroupEdit evaluate(ExpressionContext ctxt, EntityIdValue subject)

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
@@ -53,8 +54,7 @@ public class ItemEditBuilder {
      * Constructor.
      * 
      * @param id
-     *            the subject of the document. It can be a reconciled entity value for
-     *            new entities.
+     *            the subject of the document. It can be a reconciled entity value for new entities.
      */
     public ItemEditBuilder(EntityIdValue id) {
         Validate.notNull(id);
@@ -103,9 +103,9 @@ public class ItemEditBuilder {
     public ItemEditBuilder addLabel(MonolingualTextValue label, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	labels.add(label);
+            labels.add(label);
         } else {
-        	labelsIfNew.add(label);
+            labelsIfNew.add(label);
         }
         return this;
     }
@@ -121,9 +121,9 @@ public class ItemEditBuilder {
     public ItemEditBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	this.labels.addAll(labels);
+            this.labels.addAll(labels);
         } else {
-        	labelsIfNew.addAll(labels);
+            labelsIfNew.addAll(labels);
         }
         return this;
     }
@@ -139,9 +139,9 @@ public class ItemEditBuilder {
     public ItemEditBuilder addDescription(MonolingualTextValue description, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	descriptions.add(description);
+            descriptions.add(description);
         } else {
-        	descriptionsIfNew.add(description);
+            descriptionsIfNew.add(description);
         }
         return this;
     }
@@ -157,16 +157,15 @@ public class ItemEditBuilder {
     public ItemEditBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	this.descriptions.addAll(descriptions);
+            this.descriptions.addAll(descriptions);
         } else {
-        	descriptionsIfNew.addAll(descriptions);
+            descriptionsIfNew.addAll(descriptions);
         }
         return this;
     }
 
     /**
-     * Adds an alias to the item. It will be added to any existing aliases in that
-     * language.
+     * Adds an alias to the item. It will be added to any existing aliases in that language.
      * 
      * @param alias
      *            the alias to add
@@ -178,8 +177,7 @@ public class ItemEditBuilder {
     }
 
     /**
-     * Adds a list of aliases to the item. They will be added to any existing
-     * aliases in each language.
+     * Adds a list of aliases to the item. They will be added to any existing aliases in each language.
      * 
      * @param aliases
      *            the aliases to add

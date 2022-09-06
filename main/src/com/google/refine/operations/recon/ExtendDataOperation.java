@@ -61,43 +61,36 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
 public class ExtendDataOperation extends EngineDependentOperation {
+
     @JsonProperty("baseColumnName")
-    final protected String              _baseColumnName;
+    final protected String _baseColumnName;
     @JsonProperty("endpoint")
-    final protected String              _endpoint;
+    final protected String _endpoint;
     @JsonProperty("identifierSpace")
-    final protected String              _identifierSpace;
+    final protected String _identifierSpace;
     @JsonProperty("schemaSpace")
-    final protected String              _schemaSpace;
+    final protected String _schemaSpace;
     @JsonProperty("extension")
     final protected DataExtensionConfig _extension;
     @JsonProperty("columnInsertIndex")
-    final protected int                 _columnInsertIndex;
+    final protected int _columnInsertIndex;
 
-    
     @JsonCreator
     public ExtendDataOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig        engineConfig,
-        @JsonProperty("baseColumnName")
-        String              baseColumnName,
-        @JsonProperty("endpoint")
-        String              endpoint,
-        @JsonProperty("identifierSpace")
-        String              identifierSpace,
-        @JsonProperty("schemaSpace")
-        String              schemaSpace,
-        @JsonProperty("extension")
-        DataExtensionConfig extension,
-        @JsonProperty("columnInsertIndex")
-        int                 columnInsertIndex 
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("baseColumnName") String baseColumnName,
+            @JsonProperty("endpoint") String endpoint,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace,
+            @JsonProperty("extension") DataExtensionConfig extension,
+            @JsonProperty("columnInsertIndex") int columnInsertIndex) {
         super(engineConfig);
-        
+
         _baseColumnName = baseColumnName;
         _endpoint = endpoint;
         _identifierSpace = identifierSpace;
@@ -108,65 +101,62 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Extend data at index " + _columnInsertIndex + 
-            " based on column " + _baseColumnName;
+        return OperationDescription.recon_extend_data_brief(_columnInsertIndex, _baseColumnName);
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Extend data at index " + _columnInsertIndex + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size();
+        return OperationDescription.recon_extend_data_desc(_columnInsertIndex, column.getName(), cellsAtRows.size());
     }
-    
+
     @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         return new ExtendDataProcess(
-            project, 
-            getEngineConfig(),
-            getBriefDescription(null)
-        );
+                project,
+                getEngineConfig(),
+                getBriefDescription(null));
     }
-    
+
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
-        final protected Project     _project;
-        final protected EngineConfig  _engineConfig;
-        final protected long        _historyEntryID;
-        protected int               _cellIndex;
+
+        final protected Project _project;
+        final protected EngineConfig _engineConfig;
+        final protected long _historyEntryID;
+        protected int _cellIndex;
         protected ReconciledDataExtensionJob _job;
 
         public ExtendDataProcess(
-            Project project, 
-            EngineConfig engineConfig, 
-            String description
-        ) {
+                Project project,
+                EngineConfig engineConfig,
+                String description) {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
-            
+
             _job = new ReconciledDataExtensionJob(_extension, _endpoint);
         }
-        
+
         @Override
         protected Runnable getRunnable() {
             return this;
         }
-        
+
         protected void populateRowsWithMatches(List<Integer> rowIndices) throws Exception {
             Engine engine = new Engine(_project);
             engine.initializeFromConfig(_engineConfig);
-            
+
             Column column = _project.columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 throw new Exception("No column named " + _baseColumnName);
             }
-            
+
             _cellIndex = column.getCellIndex();
-            
+
             FilteredRows filteredRows = engine.getAllFilteredRows();
             filteredRows.accept(_project, new RowVisitor() {
+
                 List<Integer> _rowIndices;
-                
+
                 public RowVisitor init(List<Integer> rowIndices) {
                     _rowIndices = rowIndices;
                     return this;
@@ -181,79 +171,78 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 public void end(Project project) {
                     // nothing to do
                 }
-                
+
                 @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(_cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         _rowIndices.add(rowIndex);
                     }
-                    
+
                     return false;
                 }
             }.init(rowIndices));
         }
-        
+
         protected int extendRows(
-            List<Integer> rowIndices, 
-            List<DataExtension> dataExtensions, 
-            int from, 
-            int limit,
-            Map<String, ReconCandidate> reconCandidateMap
-        ) {
+                List<Integer> rowIndices,
+                List<DataExtension> dataExtensions,
+                int from,
+                int limit,
+                Map<String, ReconCandidate> reconCandidateMap) {
             Set<String> ids = new HashSet<String>();
-            
+
             int end;
             for (end = from; end < limit && ids.size() < 10; end++) {
                 int index = rowIndices.get(end);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
-                
+
                 ids.add(cell.recon.match.id);
             }
-            
+
             Map<String, DataExtension> map = null;
             try {
                 map = _job.extend(ids, reconCandidateMap);
             } catch (Exception e) {
                 map = new HashMap<String, DataExtension>();
             }
-            
+
             for (int i = from; i < end; i++) {
                 int index = rowIndices.get(i);
                 Row row = _project.rows.get(index);
                 Cell cell = row.getCell(_cellIndex);
                 String guid = cell.recon.match.id;
-                
+
                 if (map.containsKey(guid)) {
                     dataExtensions.add(map.get(guid));
                 } else {
                     dataExtensions.add(null);
                 }
             }
-            
+
             return end;
         }
-        
+
         @Override
         public void run() {
             List<Integer> rowIndices = new ArrayList<Integer>();
             List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
-            
+
             try {
                 populateRowsWithMatches(rowIndices);
             } catch (Exception e2) {
                 // TODO : Not sure what to do here?
                 e2.printStackTrace();
             }
-            
+
             int start = 0;
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            
+
             while (start < rowIndices.size()) {
                 int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
                 start = end;
-                
+
                 _progress = end * 100 / rowIndices.size();
                 try {
                     Thread.sleep(200);
@@ -263,36 +252,35 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     }
                 }
             }
-            
+
             if (!_canceled) {
                 List<String> columnNames = new ArrayList<String>();
                 for (ColumnInfo info : _job.columns) {
                     columnNames.add(info.name);
                 }
-                
+
                 List<ReconType> columnTypes = new ArrayList<ReconType>();
                 for (ColumnInfo info : _job.columns) {
                     columnTypes.add(info.expectedType);
                 }
-                
+
                 HistoryEntry historyEntry = new HistoryEntry(
-                    _historyEntryID,
-                    _project, 
-                    _description, 
-                    ExtendDataOperation.this, 
-                    new DataExtensionChange(
-                        _baseColumnName,
-                        _endpoint,
-                        _identifierSpace,
-                        _schemaSpace,
-                        _columnInsertIndex,
-                        columnNames,
-                        columnTypes,
-                        rowIndices,
-                        dataExtensions,
-                        _historyEntryID)
-                );
-                
+                        _historyEntryID,
+                        _project,
+                        _description,
+                        ExtendDataOperation.this,
+                        new DataExtensionChange(
+                                _baseColumnName,
+                                _endpoint,
+                                _identifierSpace,
+                                _schemaSpace,
+                                _columnInsertIndex,
+                                columnNames,
+                                columnTypes,
+                                rowIndices,
+                                dataExtensions,
+                                _historyEntryID));
+
                 _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }

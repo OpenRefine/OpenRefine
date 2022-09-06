@@ -25,6 +25,7 @@
 package org.openrefine.wikidata.qa;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
@@ -34,7 +35,8 @@ public class QAWarningTest {
     public static QAWarning exampleWarning = new QAWarning("add-statements-with-invalid-format", "P2427",
             QAWarning.Severity.IMPORTANT, 1);
     public static String exampleJson = "{\"severity\":\"IMPORTANT\","
-            + "\"count\":1,\"bucketId\":\"P2427\",\"type\":\"add-statements-with-invalid-format\"}";
+            + "\"count\":1,\"bucketId\":\"P2427\",\"type\":\"add-statements-with-invalid-format\","
+            + "\"aggregationId\":\"add-statements-with-invalid-format_P2427\",\"facetable\":true}";
 
     @Test
     public void testSerialize() {
@@ -46,6 +48,7 @@ public class QAWarningTest {
         QAWarning firstWarning = new QAWarning("add-statements-with-invalid-format", "P2427", QAWarning.Severity.INFO,
                 1);
         firstWarning.setProperty("foo", "bar");
+        firstWarning.setFacetable(false);
         assertEquals(exampleWarning.getAggregationId(), firstWarning.getAggregationId());
         QAWarning merged = firstWarning.aggregate(exampleWarning);
         assertEquals(2, merged.getCount());
@@ -53,6 +56,7 @@ public class QAWarningTest {
         assertEquals(exampleWarning.getType(), merged.getType());
         assertEquals(exampleWarning.getSeverity(), merged.getSeverity());
         assertEquals("bar", merged.getProperties().get("foo"));
+        assertFalse(merged.isFacetable());
     }
 
     @Test

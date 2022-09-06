@@ -20,16 +20,17 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to the [Java downloads page](https://java.com/en/download/), and you can simply follow the instructions there.
 
-We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5.
+We recommend you [download](https://adoptium.net/temurin/releases) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5. More recent plugins for OpenRefine require Java 17.
 
 #### Compatible browser {#compatible-browser}
 
-OpenRefine works best on browsers based on Webkit, such as:
+OpenRefine works best on browsers based on WebKit, such as:
 
-*   Google Chrome
-*   Chromium
-*   Opera
-*   Microsoft Edge
+*   [Google Chrome](https://www.google.com/chrome/)
+*   [Chromium](https://ungoogled-software.github.io/)
+*   [Opera](https://www.opera.com/)
+*   [Microsoft Edge](https://www.microsoft.com/edge)
+*   [Safari](https://www.apple.com/safari/)
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer. If you are having issues running OpenRefine, see the [section on Running](running.md#troubleshooting).
 

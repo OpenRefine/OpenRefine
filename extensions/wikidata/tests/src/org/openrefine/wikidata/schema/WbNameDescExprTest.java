@@ -29,13 +29,19 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collections;
 
 import org.openrefine.wikidata.schema.exceptions.QAWarningException;
+import org.openrefine.wikidata.schema.validation.ValidationState;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
 
 public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
@@ -89,12 +95,22 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testGetters() {
         WbMonolingualExpr monolingualExpr = TestingData.getTestMonolingualExpr("en", "English", "not sure what");
         WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS, monolingualExpr);
-        assertEquals(WbNameDescExpr.NameDescType.ALIAS, aliasExpr.getType());
-        assertEquals(monolingualExpr, aliasExpr.getValue());
+        assertEquals(aliasExpr.getType(), WbNameDescExpr.NameDescType.ALIAS);
+        assertEquals(aliasExpr.getValue(), monolingualExpr);
+        assertEquals(aliasExpr.getStaticLanguage(), "English");
     }
 
     @Test
     public void testSerialization() {
         JacksonSerializationTest.canonicalSerialization(WbNameDescExpr.class, expr, jsonRepresentation);
+    }
+
+    @Test
+    public void testValidate() throws ModelException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        ValidationState validationState = new ValidationState(columnModel);
+        expr.validate(validationState);
+        Assert.assertTrue(validationState.getValidationErrors().isEmpty());
     }
 }

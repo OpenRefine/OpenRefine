@@ -44,10 +44,11 @@ import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
 public class RowStarChange implements Change {
+
     final int rowIndex;
     final boolean newStarred;
     Boolean oldStarred = null;
-    
+
     public RowStarChange(int rowIndex, boolean newStarred) {
         this.rowIndex = rowIndex;
         this.newStarred = newStarred;
@@ -65,29 +66,35 @@ public class RowStarChange implements Change {
     @Override
     public void revert(Project project) {
         Row row = project.rows.get(rowIndex);
-        
+
         row.starred = oldStarred;
     }
-    
+
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("row="); writer.write(Integer.toString(rowIndex)); writer.write('\n');
-        writer.write("newStarred="); writer.write(Boolean.toString(newStarred)); writer.write('\n');
-        writer.write("oldStarred="); writer.write(Boolean.toString(oldStarred)); writer.write('\n');
+        writer.write("row=");
+        writer.write(Integer.toString(rowIndex));
+        writer.write('\n');
+        writer.write("newStarred=");
+        writer.write(Boolean.toString(newStarred));
+        writer.write('\n');
+        writer.write("oldStarred=");
+        writer.write(Boolean.toString(oldStarred));
+        writer.write('\n');
         writer.write("/ec/\n"); // end of change marker
     }
-    
+
     static public RowStarChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
         boolean oldStarred = false;
         boolean newStarred = false;
-        
+
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
             String value = line.substring(equal + 1);
-            
+
             if ("row".equals(field)) {
                 row = Integer.parseInt(value);
             } else if ("oldStarred".equals(field)) {
@@ -96,10 +103,10 @@ public class RowStarChange implements Change {
                 newStarred = Boolean.parseBoolean(value);
             }
         }
-        
+
         RowStarChange change = new RowStarChange(row, newStarred);
         change.oldStarred = oldStarred;
-        
+
         return change;
     }
 }

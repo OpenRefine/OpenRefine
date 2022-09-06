@@ -5,8 +5,6 @@
     "core-index/about": "관하여",
     "core-index/version": "버전",
     "core-index/new-version": "신규 버전",
-    "core-index/download": "다운로드",
-    "core-index/now": "지금",
     "core-index/change-value": "참조키 값을 변경하세요",
     "core-index/delete-key": "참조키를 삭제하세요",
     "core-index/preferences": "참조",

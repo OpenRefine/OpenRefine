@@ -39,6 +39,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 
 public class AllRowsRecordFilter implements RecordFilter {
+
     final protected RowFilter _rowFilter;
 
     public AllRowsRecordFilter(RowFilter rowFilter) {

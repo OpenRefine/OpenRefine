@@ -47,19 +47,20 @@ import com.google.refine.operations.cell.MassEditOperation.Edit;
 import com.google.refine.util.ParsingUtilities;
 
 public class MassEditCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         String expression = request.getParameter("expression");
         String editsString = request.getParameter("edits");
-        
+
         return new MassEditOperation(
-            engineConfig,
-            columnName,
-            expression,
-            ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {})
-        );
+                engineConfig,
+                columnName,
+                expression,
+                ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+                }));
     }
 }

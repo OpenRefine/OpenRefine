@@ -220,7 +220,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
               parent.find("input[type='text']").val(value);
               var checkbox = parent.find("input[type='checkbox']");
-              checkbox.prop('checked', true).on('change');
+              checkbox.prop('checked', true).trigger('change');
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
@@ -610,18 +610,18 @@ ClusteringDialog.Facet.prototype.update = function(clusters) {
 
     var bins = this._computeDistribution(clusters);
 
+    this._histogram.update(
+        this._min,
+        this._max,
+        this._step,
+        [ this._baseBins, bins ]
+    );
     this._sliderWidget.update(
         this._min,
         this._max,
         this._step,
         this._from,
         this._to
-    );
-    this._histogram.update(
-        this._min,
-        this._max,
-        this._step,
-        [ this._baseBins, bins ]
     );
 };
 

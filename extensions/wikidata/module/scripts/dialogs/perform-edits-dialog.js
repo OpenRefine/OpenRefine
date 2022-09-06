@@ -69,7 +69,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
    .text(logged_in_username)
    .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
-  frame.find('.cancel-button').on('click',function() {
+  elmts.cancelButton.on('click',function() {
     dismiss();
   });
 
@@ -98,6 +98,7 @@ PerformEditsDialog.updateEditCount = function(edit_count) {
 };
 
 PerformEditsDialog._updateWarnings = function(data) {
+   var self = this;
    var warnings = data.warnings;
    var mainDiv = this._elmts.warningsArea;
 
@@ -106,8 +107,11 @@ PerformEditsDialog._updateWarnings = function(data) {
    PerformEditsDialog.updateEditCount(data.edit_count);
 
    var table = $('<table></table>').appendTo(mainDiv);
+   var onLocateRows = function() {
+      DialogSystem.dismissUntil(self._level - 1);
+   };
    for (var i = 0; i < warnings.length; i++) {
-      var rendered = WarningsRenderer._renderWarning(warnings[i]);
+      var rendered = WarningsRenderer._renderWarning(warnings[i], onLocateRows);
       rendered.appendTo(table);
    }
 };

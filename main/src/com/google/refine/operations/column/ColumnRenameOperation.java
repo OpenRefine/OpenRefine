@@ -40,22 +40,21 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRenameChange;
+import com.google.refine.operations.OperationDescription;
 
 public class ColumnRenameOperation extends AbstractOperation {
+
     final protected String _oldColumnName;
     final protected String _newColumnName;
 
     @JsonCreator
     public ColumnRenameOperation(
-        @JsonProperty("oldColumnName")
-        String oldColumnName,
-        @JsonProperty("newColumnName")
-        String newColumnName
-    ) {
+            @JsonProperty("oldColumnName") String oldColumnName,
+            @JsonProperty("newColumnName") String newColumnName) {
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
-    
+
     @JsonProperty("oldColumnName")
     public String getOldColumnName() {
         return _oldColumnName;
@@ -68,7 +67,7 @@ public class ColumnRenameOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Rename column " + _oldColumnName + " to " + _newColumnName;
+        return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
     }
 
     @Override
@@ -79,9 +78,9 @@ public class ColumnRenameOperation extends AbstractOperation {
         if (project.columnModel.getColumnByName(_newColumnName) != null) {
             throw new Exception("Another column already named " + _newColumnName);
         }
-        
+
         Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
-        
+
         return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
     }
 }

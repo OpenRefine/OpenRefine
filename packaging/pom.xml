@@ -303,6 +303,12 @@
                     <arg line="-r"/>
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/legal&quot;"/>
                 </exec>
+                <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
+                <exec dir="${project.build.directory}" executable="chmod">
+                    <arg line="-R" />
+                    <arg line="o+r" />
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
+                </exec>
 
                 <!-- Create DMG (Mac OS X) -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
@@ -492,7 +498,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.4.2</version>
           <executions>
             <execution>
               <id>package-distributions</id>

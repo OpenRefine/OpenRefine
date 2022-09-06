@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <wdtk.version>0.13.3</wdtk.version>
+    <wdtk.version>0.14.1</wdtk.version>
   </properties>
 
   <build>
@@ -25,6 +25,7 @@
         <directory>src</directory>
       </resource>
     </resources>
+    <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
     <testResources>
       <testResource>

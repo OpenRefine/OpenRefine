@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -44,8 +45,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * A scrutinizer that detects incorrect formats in text values (mostly
- * identifiers).
+ * A scrutinizer that detects incorrect formats in text values (mostly identifiers).
  * 
  * @author Antonin Delpeuch
  *
@@ -61,6 +61,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
     private Map<PropertyIdValue, Set<Pattern>> _patterns;
 
     class FormatConstraint {
+
         String regularExpressionFormat = null;
 
         FormatConstraint(Statement statement) {
@@ -73,6 +74,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
             }
         }
     }
+
     public FormatScrutinizer() {
         _patterns = new HashMap<>();
     }
@@ -85,8 +87,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
     }
 
     /**
-     * Loads the regex for a property and compiles it to a pattern (this is cached
-     * upstream, plus we are doing it only once per property and batch).
+     * Loads the regex for a property and compiles it to a pattern (this is cached upstream, plus we are doing it only
+     * once per property and batch).
      * 
      * @param pid
      *            the id of the property to fetch the constraints for
@@ -98,7 +100,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
         } else {
             List<Statement> statementList = _fetcher.getConstraintsByType(pid, formatConstraintQid);
             Set<Pattern> patterns = new HashSet<>();
-            for (Statement statement: statementList) {
+            for (Statement statement : statementList) {
                 FormatConstraint constraint = new FormatConstraint(statement);
                 String regex = constraint.regularExpressionFormat;
                 Pattern pattern = null;
@@ -106,7 +108,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
                     try {
                         pattern = Pattern.compile(regex);
                         patterns.add(pattern);
-                    } catch(PatternSyntaxException e) {
+                    } catch (PatternSyntaxException e) {
                         logger.info(String.format("Ignoring invalid format constraint for property %s. Regex %s is invalid: %s",
                                 pid.getId(), regex, e.getMessage()));
                     }
@@ -119,8 +121,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-        if (snak instanceof ValueSnak && ((ValueSnak)snak).getValue() instanceof StringValue) {
-            String value = ((StringValue) ((ValueSnak)snak).getValue()).getString();
+        if (snak instanceof ValueSnak && ((ValueSnak) snak).getValue() instanceof StringValue) {
+            String value = ((StringValue) ((ValueSnak) snak).getValue()).getString();
             PropertyIdValue pid = snak.getPropertyId();
             Set<Pattern> patterns = getPattern(pid);
             for (Pattern pattern : patterns) {

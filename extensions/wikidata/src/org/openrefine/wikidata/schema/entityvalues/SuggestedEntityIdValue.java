@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema.entityvalues;
 
 import java.util.ArrayList;
@@ -35,8 +36,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An EntityIdValue that we have obtained from a suggest widget in the schema
- * alignment dialog.
+ * An EntityIdValue that we have obtained from a suggest widget in the schema alignment dialog.
  * 
  * @author Antonin Delpeuch
  *
@@ -52,25 +52,25 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
         _siteIRI = siteIRI;
         _label = label;
     }
-    
+
     public static SuggestedEntityIdValue build(String id, String siteIRI, String label) {
-    	String entityType = EntityIdValueImpl.guessEntityTypeFromId(id);
-    	if (DatatypeIdValue.DT_ITEM.equals(entityType)) {
-    		return new SuggestedItemIdValue(id, siteIRI, label);
-    	} else if (DatatypeIdValue.DT_PROPERTY.equals(entityType)) {
-    		return new SuggestedPropertyIdValue(id, siteIRI, label);
-    	} else if (DatatypeIdValue.DT_MEDIA_INFO.equals(entityType)) {
-    		return new SuggestedMediaInfoIdValue(id, siteIRI, label);
-    	} else if (DatatypeIdValue.DT_LEXEME.equals(entityType)) {
-    		return new SuggestedLexemeIdValue(id, siteIRI, label);
-    	} else if (DatatypeIdValue.DT_FORM.equals(entityType)) {
-    		return new SuggestedFormIdValue(id, siteIRI, label);
-    	} else if (DatatypeIdValue.DT_SENSE.equals(entityType)) {
-    		return new SuggestedSenseIdValue(id, siteIRI, label);
-    	} else {
-    		throw new IllegalArgumentException(
-    				String.format("Unsupported datatype for suggested entity values: %s", entityType));
-    	}
+        String entityType = EntityIdValueImpl.guessEntityTypeFromId(id);
+        if (DatatypeIdValue.DT_ITEM.equals(entityType)) {
+            return new SuggestedItemIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_PROPERTY.equals(entityType)) {
+            return new SuggestedPropertyIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_MEDIA_INFO.equals(entityType)) {
+            return new SuggestedMediaInfoIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_LEXEME.equals(entityType)) {
+            return new SuggestedLexemeIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_FORM.equals(entityType)) {
+            return new SuggestedFormIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_SENSE.equals(entityType)) {
+            return new SuggestedSenseIdValue(id, siteIRI, label);
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Unsupported datatype for suggested entity values: %s", entityType));
+        }
     }
 
     @Override
@@ -102,11 +102,11 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     public String getIri() {
         return getSiteIri() + getId();
     }
-    
-	@Override
-	public boolean isPlaceholder() {
-		return false;
-	}
+
+    @Override
+    public boolean isPlaceholder() {
+        return false;
+    }
 
     @Override
     public <T> T accept(ValueVisitor<T> valueVisitor) {
@@ -126,10 +126,10 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     public int hashCode() {
         return Hash.hashCode(this);
     }
-    
+
     @Override
     public String toString() {
-    	return getIri();
+        return getIri();
     }
 
 }

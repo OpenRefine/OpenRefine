@@ -26,13 +26,11 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.google.refine.extension.database;
-
-
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public final class SQLType {
 
@@ -65,7 +63,6 @@ public final class SQLType {
         }
         return null;
     }
-    
 
     public String getClassPath() {
         return this.driverContainer.classpath;
@@ -79,7 +76,6 @@ public final class SQLType {
         return this.driverContainer.useJDBCManager;
     }
 
-    
     private static class DriverContainer {
 
         public final String classpath;

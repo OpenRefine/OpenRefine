@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class Unicode implements Function {
 
@@ -52,17 +53,17 @@ public class Unicode implements Function {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
-        return "Returns an array of strings describing each character of s in their full unicode notation.";
+        return FunctionDescription.str_unicode();
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

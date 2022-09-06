@@ -9,6 +9,8 @@ import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +30,16 @@ public class StatementEditTest {
         assertEquals(SUT.getMerger(), strategy);
         assertEquals(SUT.getMode(), mode);
         assertEquals(SUT.getPropertyId(), statement.getMainSnak().getPropertyId());
+    }
+
+    @Test
+    public void testWithSubjectId() {
+        ItemIdValue otherId = Datamodel.makeWikidataItemIdValue("Q898");
+        StatementEdit translated = SUT.withSubjectId(otherId);
+
+        assertEquals(translated.getMerger(), SUT.getMerger());
+        assertEquals(translated.getMode(), SUT.getMode());
+        assertEquals(translated.getStatement().getClaim().getSubject(), otherId);
     }
 
     @Test

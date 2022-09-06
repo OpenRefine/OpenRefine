@@ -43,15 +43,16 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class GetProcessesCommand extends Command {
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = getProject(request);
-        
+
         respondJSON(response, project.processManager);
     }
-    
+
     @Override
     public boolean logRequests() {
         return false;

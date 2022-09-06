@@ -43,28 +43,28 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionCon
 import com.google.refine.operations.recon.ExtendDataOperation;
 
 public class ExtendDataCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String baseColumnName = request.getParameter("baseColumnName");
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         String endpoint = request.getParameter("endpoint");
         String identifierSpace = request.getParameter("identifierSpace");
         String schemaSpace = request.getParameter("schemaSpace");
-        
+
         String jsonString = request.getParameter("extension");
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(jsonString);
-        
+
         return new ExtendDataOperation(
-            engineConfig, 
-            baseColumnName, 
-            endpoint,
-            identifierSpace,
-            schemaSpace,
-            extension,
-            columnInsertIndex
-        );
+                engineConfig,
+                baseColumnName,
+                endpoint,
+                identifierSpace,
+                schemaSpace,
+                extension,
+                columnInsertIndex);
     }
 
 }

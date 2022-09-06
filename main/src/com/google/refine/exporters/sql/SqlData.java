@@ -29,9 +29,8 @@
 
 package com.google.refine.exporters.sql;
 
-
 public class SqlData {
-    
+
     private String columnName;
     private Object value;
     private String text;
@@ -43,31 +42,25 @@ public class SqlData {
     public static final String SQL_TYPE_NUMERIC = "NUMERIC";
     public static final String SQL_TYPE_DATE = "DATE";
     public static final String SQL_TYPE_TIMESTAMP = "TIMESTAMP";
-    
-    
-    
+
     public SqlData(String columnName, Object value, String text) {
         this.columnName = columnName;
         this.value = value;
         this.text = text;
-       
+
     }
 
-    
     public String getColumnName() {
         return columnName;
     }
 
-    
     public Object getValue() {
         return value;
     }
 
-    
     public String getText() {
         return text;
     }
-
 
     @Override
     public String toString() {

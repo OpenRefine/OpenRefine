@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  *
  */
 public class QuantityScrutinizer extends SnakScrutinizer {
-    
+
     public static final String boundsDisallowedType = "bounds-disallowed";
     public static final String integerConstraintType = "values-should-be-integers";
     public static final String invalidUnitType = "invalid-unit";
@@ -45,7 +46,9 @@ public class QuantityScrutinizer extends SnakScrutinizer {
     }
 
     class AllowedUnitsConstraint {
+
         Set<ItemIdValue> allowedUnits;
+
         AllowedUnitsConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
@@ -62,18 +65,19 @@ public class QuantityScrutinizer extends SnakScrutinizer {
         if (!added) {
             return;
         }
-        if (snak instanceof ValueSnak && ((ValueSnak)snak).getValue() instanceof QuantityValue && added) {
+        if (snak instanceof ValueSnak && ((ValueSnak) snak).getValue() instanceof QuantityValue && added) {
             PropertyIdValue pid = snak.getPropertyId();
-            QuantityValue value = (QuantityValue)((ValueSnak)snak).getValue();
+            QuantityValue value = (QuantityValue) ((ValueSnak) snak).getValue();
 
-            if(!_fetcher.getConstraintsByType(pid, noBoundsConstraintQid).isEmpty() && (value.getUpperBound() != null || value.getLowerBound() != null)) {
+            if (!_fetcher.getConstraintsByType(pid, noBoundsConstraintQid).isEmpty()
+                    && (value.getUpperBound() != null || value.getLowerBound() != null)) {
                 QAWarning issue = new QAWarning(boundsDisallowedType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_value", value.getNumericValue().toString());
                 issue.setProperty("example_item_entity", entityId);
                 addIssue(issue);
             }
-            if(!_fetcher.getConstraintsByType(pid, integerValuedConstraintQid).isEmpty() && value.getNumericValue().scale() > 0) {
+            if (!_fetcher.getConstraintsByType(pid, integerValuedConstraintQid).isEmpty() && value.getNumericValue().scale() > 0) {
                 QAWarning issue = new QAWarning(integerConstraintType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_value", value.getNumericValue().toString());
@@ -90,7 +94,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
             if (value.getUnitItemId() != null) {
                 currentUnit = value.getUnitItemId();
             }
-            if(allowedUnits != null &&
+            if (allowedUnits != null &&
                     !allowedUnits.contains(currentUnit)) {
                 String issueType = currentUnit == null ? noUnitProvidedType : invalidUnitType;
                 QAWarning issue = new QAWarning(issueType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);

@@ -40,7 +40,9 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 import com.google.refine.model.Project;
 
 public class Reinterpret implements Function {
@@ -66,7 +68,8 @@ public class Reinterpret implements Function {
                 return reinterpret(str, decoder, encoder);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects String to reinterpret with a given target encoding and optional source encoding");
+        // given target encoding and optional source encoding");
+        return new EvalError(EvalErrorMessage.expects_string_to_reinterpret(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private Object reinterpret(String str, String decoder, String encoder) {
@@ -79,7 +82,8 @@ public class Reinterpret implements Function {
             try {
                 bytes = str.getBytes(decoder);
             } catch (UnsupportedEncodingException e) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": source encoding '" + decoder + "' is not available or recognized.");
+                // + "' is not available or recognized.");
+                return new EvalError(EvalErrorMessage.unrecognized_source_encoding(ControlFunctionRegistry.getFunctionName(this), decoder));
             }
         }
         try {
@@ -89,22 +93,23 @@ public class Reinterpret implements Function {
                 result = new String(bytes, encoder);
             }
         } catch (UnsupportedEncodingException e) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": target encoding '" + encoder + "' is not available or recognized.");
+            // is not available or recognized.");
+            return new EvalError(EvalErrorMessage.unrecognized_target_encoding(ControlFunctionRegistry.getFunctionName(this), encoder));
         }
-                        
+
         return result;
     }
-    
+
     @Override
     public String getDescription() {
-        return "Returns s reinterpreted through the given character encoders. You must supply one of the supported encodings for each of the original source and the target output: https://docs.oracle.com/javase/1.5.0/docs/guide/intl/encoding.doc.html. Note that quotes are required around character encoders.";
+        return FunctionDescription.str_reinterpret();
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string target encoding, string source encoding";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";
