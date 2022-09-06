@@ -1,6 +1,6 @@
 name: openrefine
 base: core20
-version: "3.5.2"
+version: "3.6.1"
 summary: A free, open source, powerful tool for working with messy data
 description: |
   OpenRefine (previously Google Refine) is a powerful tool for working with messy data:
@@ -18,7 +18,7 @@ architectures:
 parts:
   openrefine:
     plugin: dump
-    source: https://github.com/OpenRefine/OpenRefine/releases/download/$SNAPCRAFT_PROJECT_VERSION/openrefine-linux-$SNAPCRAFT_PROJECT_VERSION.tar.gz
+    source: https://oss.sonatype.org/service/local/artifact/maven/content?r=releases&g=org.openrefine&a=openrefine&v=$SNAPCRAFT_PROJECT_VERSION&c=linux&p=tar.gz
     build-packages:
       - ca-certificates-java
     stage-packages:
