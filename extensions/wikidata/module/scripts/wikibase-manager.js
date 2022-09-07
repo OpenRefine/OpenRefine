@@ -124,11 +124,7 @@ WikibaseManager.getSelectedWikibaseAvailableEntityTypes = function () {
 
 
 /**
- * TODO temporary function to be removed once we have proper support
- * for multiple entity types. This one just guesses which item-like
- * entity type we should let the user edit, based on the manifest.
- * - for Wikidata it returns 'item'
- * - for Commons it returns 'mediainfo'
+ * Returns the entity types that can be edited on the current Wikibase instance.
  */
 WikibaseManager.getSelectedWikibaseEditableEntityTypes = function () {
   let manifest = WikibaseManager.getSelectedWikibase();
@@ -146,6 +142,11 @@ WikibaseManager.getSelectedWikibaseEditableEntityTypes = function () {
     return editable;
   }
 };
+
+WikibaseManager.areStructuredMediaInfoFieldsDisabledForSelectedWikibase = function() {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  return manifest.hide_structured_fields_in_mediainfo === true;
+}
 
 WikibaseManager.selectWikibase = function (wikibaseName) {
   if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
@@ -169,11 +170,17 @@ WikibaseManager.getAllWikibaseManifests = function () {
 
 WikibaseManager.addWikibase = function (manifest) {
   WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
+  if (manifest.schema_templates !== undefined) {
+    for (let template of manifest.schema_templates) {
+      WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
+    }
+  }
   WikibaseManager.saveWikibases();
 };
 
 WikibaseManager.removeWikibase = function (wikibaseName) {
   delete WikibaseManager.wikibases[wikibaseName];
+  // we do not delete templates associated with this wikibase because some of them might be user-defined
   WikibaseManager.saveWikibases();
 };
 
@@ -342,4 +349,5 @@ WikibaseManager.getSelectedWikibaseLogoURL = function(onDone, wikibaseName) {
     onDone("extension/wikidata/images/Wikibase_logo.png");
   }, wikibaseName);
 };
+
 

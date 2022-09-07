@@ -61,7 +61,10 @@ public class FullMediaInfoUpdate extends MediaInfoUpdateImpl implements MediaInf
 
     @Override
     public boolean isEmpty() {
-        return (filePath == null && fileName == null && wikitext == null && super.isEmpty());
+        // intentionally ignoring our custom fields filePath, fileName and wikitext,
+        // because we want to preserve the meaning of isEmpty to only cover the wikibase part of
+        // the update.
+        return super.isEmpty();
     }
 
     /**

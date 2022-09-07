@@ -25,6 +25,7 @@
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
@@ -183,11 +185,14 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         assertEquals(validation.getValidationErrors(), expectedErrors);
     }
 
-    @Test(expectedExceptions = IOException.class)
+    @Test
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
                 + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
-        WikibaseSchema.reconstruct(schemaJson);
+        WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
+        ValidationState validationContext = new ValidationState(new ColumnModel());
+        schema.validate(validationContext);
+        assertFalse(validationContext.getValidationErrors().isEmpty());
     }
 
     @Test

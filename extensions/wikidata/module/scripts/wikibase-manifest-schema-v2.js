@@ -144,6 +144,28 @@ const WikibaseManifestSchemaV2 = {
         },
       },
       "required": ["url_schema"]
+    },
+    "schema_templates": {
+      "type": "array",
+      "description": "A list of predefined schema templates to be offered to the user",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the template to be displayed to the user"
+          },
+          "schema": {
+            "type": "object",
+            "description": "The schema, potentially incomplete, to be loaded with this template"
+          }
+        },
+        "required": ["name", "schema"]
+      }
+    },
+    "hide_structured_fields_in_mediainfo": {
+      "type": "boolean",
+      "description": "Boolean set to true when the Wikibase instance supports file uploads but does not have structured data associated to them in the form of MediaInfo entities"
     }
   },
   "required": ["version", "mediawiki", "wikibase", "entity_types"]

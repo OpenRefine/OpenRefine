@@ -389,6 +389,20 @@ describe(__filename, function () {
     cy.getCell(2, 'Water').should('to.contain', 0.24);
   });
 
+  it('Test opening the clustering from a facet', function () {
+    cy.loadAndVisitProject('food.mini');
+    cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
+    cy.getFacetContainer('Shrt_Desc')
+        .find('button')
+        .contains('Cluster')
+        .click();
+
+    cy.get('.dialog-container .dialog-header').should(
+        'to.contain',
+        'Cluster & edit column "Shrt_Desc"'
+    );
+  });
+
   // // This test is unstable, mouseover behavior is unpredictable
   // // This might be because the element is detached from the DOM in the middle
   // // it('Test include/exlude toggle', function () {

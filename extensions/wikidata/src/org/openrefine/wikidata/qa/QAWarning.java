@@ -103,6 +103,7 @@ public class QAWarning implements Comparable<QAWarning> {
             newSeverity = other.getSeverity();
         }
         QAWarning merged = new QAWarning(getType(), getBucketId(), newSeverity, newCount);
+        merged.setFacetable(facetable && other.isFacetable());
         for (Entry<String, Object> entry : properties.entrySet()) {
             merged.setProperty(entry.getKey(), entry.getValue());
         }

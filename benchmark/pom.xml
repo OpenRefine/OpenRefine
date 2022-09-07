@@ -133,7 +133,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.4.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -141,7 +141,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.0</version>
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>

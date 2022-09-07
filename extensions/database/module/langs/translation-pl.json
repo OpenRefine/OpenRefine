@@ -60,5 +60,6 @@
     "database-parsing/option": "Opcje",
     "database-parsing/ignore-first": "Ignoruj pierwsze",
     "database-parsing/worksheet": "Arkusze",
-    "database-source/alert-connection-name": "Musisz określić nazwę połączenia"
+    "database-source/alert-connection-name": "Musisz określić nazwę połączenia",
+    "database-parsing/disable-auto-preview": "Wyłącz automatyczny podgląd"
 }

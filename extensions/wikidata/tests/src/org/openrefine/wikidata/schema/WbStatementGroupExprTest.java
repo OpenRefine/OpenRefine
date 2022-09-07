@@ -43,6 +43,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
 
     private WbPropConstant propertyExpr = new WbPropConstant("P908", "myprop", "time");
     public WbStatementGroupExpr expr;
+    public WbStatementGroupExpr noPropertyExpr;
 
     private EntityIdValue subject;
     public StatementGroupEdit statementGroupUpdate;
@@ -72,15 +73,17 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
     public WbStatementGroupExprTest() {
         WbStatementExprTest statementTest = new WbStatementExprTest();
         expr = new WbStatementGroupExpr(propertyExpr, Collections.singletonList(statementTest.statementExpr));
+        noPropertyExpr = new WbStatementGroupExpr(null, Collections.singletonList(statementTest.statementExpr));
         subject = statementTest.subject;
         statementGroupUpdate = new StatementGroupEdit(Collections.singletonList(statementTest.fullStatementUpdate));
         jsonRepresentation = "{\"property\":{\"type\":\"wbpropconstant\",\"pid\":\"P908\",\"label\":\"myprop\",\"datatype\":\"time\"},"
                 + "\"statements\":[" + statementTest.jsonRepresentation + "]}";
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testCreate() {
-        new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+    @Test
+    public void testEmptyStatements() {
+        WbStatementGroupExpr emptyStatements = new WbStatementGroupExpr(propertyExpr, Collections.emptyList());
+        hasValidationError("No statements", new Wrapper(emptyStatements), new ColumnModel());
     }
 
     @Test
@@ -114,5 +117,6 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
         columnModel.addColumn(2, new Column(2, "column C"), true);
 
         hasNoValidationError(new Wrapper(expr), columnModel);
+        hasValidationError("No property", new Wrapper(noPropertyExpr), columnModel);
     }
 }

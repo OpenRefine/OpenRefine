@@ -158,7 +158,10 @@ public class ItemEdit extends TermedStatementEntityEdit {
         // Statements
         StatementUpdate statementUpdate = toStatementUpdate(itemDocument);
 
-        return Datamodel.makeItemUpdate((ItemIdValue) getEntityId(),
+        return Datamodel.makeItemUpdate(
+                // important: use the id from the document, not from the update, as
+                // they might not be the same if a redirect has happened
+                itemDocument.getEntityId(),
                 entityDocument.getRevisionId(),
                 labelUpdate,
                 descriptionUpdate,

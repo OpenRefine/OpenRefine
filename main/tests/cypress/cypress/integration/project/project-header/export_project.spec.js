@@ -109,7 +109,7 @@ describe(__filename, function () {
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
-      .contains('Custom tabular exporter')
+      .contains('Custom tabular')
       .click();
     cy.get('a[bind="or_dialog_download"]').click();
     cy.get('button[bind="downloadButton"]').click();
@@ -125,7 +125,7 @@ describe(__filename, function () {
 
     cy.get('#export-button').click();
     cy.get('.menu-container a')
-      .contains('SQL Exporter')
+      .contains('SQL')
       .click();
     cy.get('a[bind="or_dialog_download"]').click();
     cy.get('button[bind="downloadButton"]').click();
