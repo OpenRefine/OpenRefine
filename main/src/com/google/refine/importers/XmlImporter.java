@@ -33,20 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilterReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
-import java.io.Reader;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -56,7 +49,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.google.common.base.CharMatcher;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,48 +219,45 @@ public class XmlImporter extends TreeImportingParserBase {
         static final int WHITESPACE_CHARACTERS_TOKEN = 15;
 
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
-            parser = createXMLStreamReader(removeInvalidCharacters(inputStream));
+            parser = createXMLStreamReader(new InvalidXmlFilterInputStream(inputStream));
         }
 
-        private InputStream removeInvalidCharacters(InputStream inputStream) throws IOException {
-            OutputStream outputStream = new ByteArrayOutputStream();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader((inputStream)));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
-                Pattern pattern = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
-                for (int c; (c = reader.read()) != -1;) {
-                    if (!pattern.matcher(String.valueOf((char) c)).matches()) {
-                        writer.write(c);
-                    }
-                }
-            }
-            return IOUtils.toInputStream(outputStream.toString(), StandardCharsets.UTF_8);
-        }
+        static class InvalidXmlFilterInputStream extends BufferedInputStream {
 
-        static class InvalidXmlFilterReader extends FilterReader {
+            private final Pattern pattern = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
 
             /**
              * Creates a new filtered reader.
              *
-             * @param in a Reader object providing the underlying stream.
-             * @throws NullPointerException if {@code in} is {@code null}
+             * @param in
+             *            an input stream object.
+             * @throws NullPointerException
+             *             if {@code in} is {@code null}
              */
-            protected InvalidXmlFilterReader(@NotNull Reader in) {
+            protected InvalidXmlFilterInputStream(@NotNull InputStream in) {
                 super(in);
             }
 
             @Override
             public int read() throws IOException {
-                int c = (char) super.read();
-                Pattern pattern = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFF]+");
-                if (!pattern.matcher(String.valueOf((char) c)).matches()) {
-                    return 0;
+                int c = super.read();
+                if (c == -1) return c;
+                while (pattern.matcher(String.valueOf((char) c)).matches()) {
+                    c = super.read();
                 }
                 return c;
             }
-        }
-        private InputStream removeInvalidCharacters2(InputStream inputStream) throws IOException {
-            var reader = new InvalidXmlFilterReader(new InputStreamReader(inputStream));
-            return IOUtils.toInputStream(reader.toString(), StandardCharsets.UTF_8);
+
+            @Override
+            public int read(@NotNull byte[] b, int off, int len) throws IOException {
+                int size = super.read(b, off, len);
+                for (int i = 0; i < size; i++) {
+                    if (pattern.matcher(String.valueOf((char) b[i])).matches()) {
+                        b[i] = '?';
+                    }
+                }
+                return size;
+            }
         }
 
         @Override
