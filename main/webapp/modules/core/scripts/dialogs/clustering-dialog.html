@@ -8,34 +8,34 @@
         </div>
         <div class="clustering-dialog-control-row">
             <div>
-                <span bind="or_dialog_method"></span><select bind="methodSelector">
+                <label for="methodSelectorId" bind="or_dialog_method"></label><select bind="methodSelector" id="methodSelectorId">
                 <option selected="true" bind="or_dialog_keyCollision"></option>
                 <option bind="or_dialog_neighbor"></option>
             </select>
             </div>
             <div>
-                <div class="binning-controls"><span bind="or_dialog_keying"></span>
-                    <select bind="keyingFunctionSelector"></select>
+                <div class="binning-controls"><label for="keyingFunctionSelectorId" bind="or_dialog_keying"></label>
+                    <select bind="keyingFunctionSelector" id="keyingFunctionSelectorId"></select>
                 </div>
-                <div class="knn-controls hidden"><span bind="or_dialog_distance"></span>
-                    <select bind="distanceFunctionSelector"></select>
+                <div class="knn-controls hidden"><label for="distanceFunctionSelectorId" bind="or_dialog_distance"></label>
+                    <select bind="distanceFunctionSelector" id="distanceFunctionSelectorId"></select>
                 </div>
             </div>
             <div>
                 <div id="ngram-fingerprint-params" class="function-params hidden">
-                    <span bind="or_dialog_ngramSize"></span>
-                    <input spellcheck="false" type="text" value="2" bind="ngramSize" name="ngram-size" size="2"
+                    <label for="ngramSizeId" bind="or_dialog_ngramSize"></label>
+                    <input spellcheck="false" type="text" value="2" bind="ngramSize" id="ngramSizeId" name="ngram-size" size="2"
                            class="param" datatype="int">
                 </div>
                 <div class="knn-controls hidden">
                     <span style="margin-right: 1em">
-                        <span bind="or_dialog_radius"></span>
-                        <input spellcheck="false" type="text" value="1.0" bind="radius" name="radius" size="2"
+                        <label for="radiusId" bind="or_dialog_radius"></label>
+                        <input spellcheck="false" type="text" value="1.0" bind="radius" id="radiusId" name="radius" size="2"
                                class="param" datatype="float">
                     </span>
                     <span>
-                        <span bind="or_dialog_blockChars"></span>
-                        <input spellcheck="false" type="text" value="6" bind="ngramBlock" name="blocking-ngram-size"
+                        <label for="ngramBlockId" bind="or_dialog_blockChars"></label>
+                        <input spellcheck="false" type="text" value="6" bind="ngramBlock" id="ngramBlockId" name="blocking-ngram-size"
                                size="2" class="param" datatype="int">
                     </span>
                 </div>
