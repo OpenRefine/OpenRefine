@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,10 +37,10 @@ Refine.GDataSourceUI = function(controller) {
 
 Refine.GDataSourceUI.prototype.attachUI = function(body) {
   this._body = body;
-  
+
   this._body.html(DOM.loadHTML("gdata", "scripts/index/import-from-gdata-form.html"));
   this._elmts = DOM.bind(this._body);
-  
+
   $('#gdata-title').text($.i18n('gdata-import/title'));
   $('#gdata-import').html($.i18n('gdata-import/import-by-url'));
   $('#gdata-next').html($.i18n('gdata-import/next->'));
@@ -51,7 +51,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-signout').text($.i18n('gdata-import/sign-out'));
   $('#gdata-resignin').text($.i18n('gdata-import/sign-in'));
   $('#gdata-re-signin-another').text($.i18n('gdata-import/re-sign-in-another'));
-  
+
   var self = this;
   this._body.find('.gdata-signin.button').on('click',function() {
     GdataExtension.showAuthorizationDialog(
@@ -69,7 +69,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       self._body.find('.gdata-page').hide();
       self._elmts.signinPage.show();
   });
-  
+
   this._elmts.urlNextButton.on('click',function(evt) {
     var url = jQueryTrim(self._elmts.urlInput[0].value);
     if (url.length === 0) {
@@ -77,7 +77,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
     } else {
       var doc = {};
       doc.docSelfLink = url;
-      if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
+      if (doc.docSelfLink.includes('spreadsheet')) { // TODO: fragile?
         doc.type = 'spreadsheet';
       } else {
         doc.type = 'table';
@@ -85,10 +85,10 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       self._controller.startImportingDocument(doc);
     }
   });
-   
+
   this._body.find('.gdata-page').hide();
   this._elmts.signinPage.show();
-  
+
   if (GdataExtension.isAuthorized()) {
     this._listDocuments();
   }
@@ -100,7 +100,7 @@ Refine.GDataSourceUI.prototype.focus = function() {
 Refine.GDataSourceUI.prototype._listDocuments = function() {
   this._body.find('.gdata-page').hide();
   this._elmts.progressPage.show();
-  
+
   var self = this;
   Refine.wrapCSRF(function(token) {
     $.post(
@@ -120,9 +120,9 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
 
 Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   var self = this;
-  
+
   this._elmts.listingContainer.empty();
-  
+
   var table = $(
     '<table><tr>' +
       '<th></th>' + // starred
@@ -132,7 +132,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
       '<th>'+$.i18n('gdata-source/updated')+'</th>' +
     '</tr></table>'
   ).appendTo(this._elmts.listingContainer)[0];
-  
+
   var renderDocument = function(doc) {
     var tr = table.insertRow(table.rows.length);
 
@@ -180,7 +180,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
       tr.remove();
     }
   };
-  
+
   if (o.status === 'error') {
     // We're probably not logged in, even though we thought we were. Show signin page
     this._body.find('.gdata-page').hide();
