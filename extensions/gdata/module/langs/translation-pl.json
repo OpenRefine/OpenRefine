@@ -36,5 +36,13 @@
     "gdata-parsing/proj-name": "Nazwa&nbsp;projektu",
     "gdata-parsing/worksheet": "Arkusze robocze",
     "gdata-parsing/disable-auto-preview": "Wyłącz automatyczny podgląd",
-    "gdata-source/type": "Typ"
+    "gdata-source/type": "Typ",
+    "gdata-parsing/discard-next": "Odrzuć inicjał",
+    "gdata-exporter/google-sheets": "Arkusze Google…",
+    "gdata-import/import-by-url": "Importuj <em>publiczny </em> Arkusz kalkulacyjny Google za pomocą jego adresu URL:",
+    "gdata-parsing/ignore": "linia(e) na początku pliku",
+    "gdata-parsing/parse": "linia(e) jako nagłówki kolumn",
+    "gdata-source/alert-url": "Należy określić adres internetowy (URL) do zaimportowania.",
+    "gdata-exporter/export-to-google-drive": "Archiwum projektu OpenRefine na Dysk Google…",
+    "gdata-exporter/enter-filename": "Wpisz nazwę pliku do eksportu projektu na Dysk Google"
 }
