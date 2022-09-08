@@ -592,17 +592,8 @@ Refine.getPermanentLink = function() {
 };
 
 (function() {
-  const systemInfo = {
-    availableMemory: 0,
-    totalMemory: 0,
-  };
-
-  systemInfo.byteToMB = function (bytes) {
-    return (bytes / 1024 / 1024).toFixed(2);
-  };
-
-  systemInfo.memoryWarn = function() {
-    return (this.availableMemory/this.totalMemory) * 100 < 5;
+  const memoryWarn = (free, total) => {
+    return (free/total) * 100 < 5;
   }
 
   let intervalId;
@@ -614,19 +605,19 @@ Refine.getPermanentLink = function() {
       data: {
       },
       success: function(data) {
-        systemInfo.availableMemory = data["available_memory"];
-        systemInfo.totalMemory = data["total_memory"];
+        const freeMem = data["available_memory"];
+        const totalMem = data["total_memory"];
+
+        if(memoryWarn(freeMem, totalMem)) {
+          const msg = $.i18n('core-project/memory-warn');
+          const notification = new ProcessNotification(msg, 10000);
+          notification.display();
+        }
       }
     }).fail(function(jqXhr, textStatus, errorThrown ) {
       alert( textStatus + ':' + errorThrown );
       clearInterval(intervalId);
     });
-
-    if(systemInfo.memoryWarn()) {
-      const msg = $.i18n('core-project/memory-warn');
-      var notification = new ProcessNotification(msg, 10000);
-      notification.display();
-    }
   }, 1000)
 })();
 
