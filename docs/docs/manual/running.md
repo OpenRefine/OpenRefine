@@ -92,6 +92,36 @@ To exit, close all the browser tabs, and then press `control` and `C` in the ter
 
 If you see this error, you need to [install and configure a JDK package](installing#linux), including setting up `JAVA_HOME`.
 :::
+  
+#### Running unsigned apps {#running-unsigned-apps}
+
+When you first attempt to run OpenRefine, you may receive a warning that OpenRefine is unrecognized and cannot be verified. 
+
+This warning is to be expected when attempting to start newly installed applications. This warning requires users to acknowledge opening applications from unverified sources, or unsigned applications. 
+
+If you installed OpenRefine on a machine running MacOS and double-click to open the application, the message will read "OpenRefine cannot be opened because the developer cannot be verified." If this notification appears, click "Cancel."
+
+<img src="../../../graphics/MacOSWarning.png" width=300>
+
+Now, right-click on the application icon and select "Open." 
+
+<img src="../../../graphics/RightClickOpenRefine.png" width=600>
+
+A new message will appear that states "macOS cannot verify the developer of OpenRefine. Are you sure you want to open it?" You should select "Open" which will start OpenRefine running.
+
+<img src="../../../graphics/VerifyOpen.png" width=300>
+
+You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Mac machine.
+
+If you installed OpenRefine on a machine running Windows 10 or Windows 11 and double-click to open the application, the message will read “Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.” If this notification appears, click “More info.”
+
+<img src="../../../graphics/WindowsWarning.PNG" width=600>
+
+There should be an option to “Run anyway”, you should select this option.
+
+<img src="../../../graphics/RunAnyway.PNG" width=600>
+
+You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Windows machine.
 
 </TabItem>
 
