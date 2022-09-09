@@ -2,11 +2,11 @@
   <div class="dialog-header" bind="dialogHeader"></div>
   <form bind="form">
     <div class="dialog-body" bind="dialogBody">
-        <label for="name-input" bind="nameLabel"></label><br/>
-        <input type="text" name="name-input" bind="nameInput" style="width: 100%"></input><br />
+        <label for="nameInputId" bind="nameLabel"></label><br/>
+        <input type="text" name="name-input" bind="nameInput" id="nameInputId" style="width: 100%"><br />
         <div bind="existingTemplateArea">
-        <label for="existing-template-select" bind="existingTemplateLabel"></label><br />
-        <select name="existing-template-select" bind="templateSelect"></select>
+        <label for="templateSelectId" bind="existingTemplateLabel"></label><br />
+        <select name="existing-template-select" bind="templateSelect" id="templateSelectId"></select>
         </div>
     </div>
     <div class="dialog-footer">
