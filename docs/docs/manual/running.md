@@ -101,25 +101,25 @@ This warning is to be expected when attempting to start newly installed applicat
 
 If you installed OpenRefine on a machine running MacOS and double-click to open the application, the message will read "OpenRefine cannot be opened because the developer cannot be verified." If this notification appears, click "Cancel."
 
-<img src="../../../graphics/MacOSWarning.png" width=300>
+<img src="../../../graphics/MacOSWarning.png">
 
 Now, right-click on the application icon and select "Open." 
 
-<img src="../../../graphics/RightClickOpenRefine.png" width=600>
+<img src="../../../graphics/RightClickOpenRefine.png">
 
 A new message will appear that states "macOS cannot verify the developer of OpenRefine. Are you sure you want to open it?" You should select "Open" which will start OpenRefine running.
 
-<img src="../../../graphics/VerifyOpen.png" width=300>
+<img src="../../../graphics/VerifyOpen.png">
 
 You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Mac machine.
 
 If you installed OpenRefine on a machine running Windows 10 or Windows 11 and double-click to open the application, the message will read “Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.” If this notification appears, click “More info.”
 
-<img src="../../../graphics/WindowsWarning.PNG" width=600>
+<img src="../../../graphics/WindowsWarning.PNG">
 
 There should be an option to “Run anyway”, you should select this option.
 
-<img src="../../../graphics/RunAnyway.PNG" width=600>
+<img src="../../../graphics/RunAnyway.PNG">
 
 You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Windows machine.
 
