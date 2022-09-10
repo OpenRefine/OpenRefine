@@ -45,6 +45,9 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._elmts.okButton.html($.i18n('core-buttons/ok'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   this._elmts.resetButton.html($.i18n('core-buttons/reset'));
+  this._elmts.addPropertyHeader.html($.i18n('core-dialogs/add-property'));
+  this._elmts.suggestedPropertyHeader.html($.i18n('core-dialogs/suggested-properties'));
+  this._elmts.previewHeader.html($.i18n('core-dialogs/preview'));
   this._elmts.resetButton.on('click',function() {
     self._extension.properties = [];
     self._update();

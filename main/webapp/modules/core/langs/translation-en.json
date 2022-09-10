@@ -253,6 +253,8 @@
     "core-dialogs/internal-err": "Internal error",
     "core-dialogs/language": "Language",
     "core-dialogs/preview": "Preview",
+    "core-dialogs/add-property": "Add property",
+    "core-dialogs/suggested-properties": "Suggested properties",
     "core-dialogs/history": "History",
     "core-dialogs/starred": "Starred",
     "core-dialogs/help": "Help",
