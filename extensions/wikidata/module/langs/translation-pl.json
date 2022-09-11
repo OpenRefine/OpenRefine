@@ -199,5 +199,7 @@
     "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "Niespójne {source_entity} i {target_entity}",
     "wikibase-schema/caption-override": "Podpis (nadpisuj, jeśli jest)",
     "wikibase-schema/invalid-schema-warning": "Twój schemat jest niekompletny:",
-    "wikibase-save-new-template/dialog-header": "Zapisz nowy szablon schematu"
+    "wikibase-save-new-template/dialog-header": "Zapisz nowy szablon schematu",
+    "warnings-messages/missing-mandatory-qualifiers/title": "W {statement_property_entity} brakuje kwalifikatora {missing_property_entity}.",
+    "warnings-messages/values-should-be-integers/title": "Wartości inne niż liczby całkowite {property_entity}"
 }

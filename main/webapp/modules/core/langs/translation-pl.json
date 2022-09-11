@@ -820,5 +820,9 @@
     "core-views/judg-hist": "Znacznik czasowy działania rozstrzygnięcia",
     "core-views/clear-recon2": "Wyczyść dane uzgodnienia w tej kolumnie dla wszystkich bieżących filtrowanych wierszy",
     "core-views/http-headers": "Nagłówki HTTP, które mają być używane podczas pobierania adresów URL:",
-    "core-views/warning-sel-judg": "Wybierz co najmniej jeden rodzaj rozstrzygnięcia do skopiowania."
+    "core-views/warning-sel-judg": "Wybierz co najmniej jeden rodzaj rozstrzygnięcia do skopiowania.",
+    "core-views/unescape-html/header": "Uwolnij encje HTML",
+    "core-views/unescape-html/single": "Uwolnij encje HTML",
+    "core-views/log-length-facet": "Dziennik długości tekstu aspektu",
+    "core-index-parser/escape": "Ucieczka od znaków specjalnych za pomocą \\"
 }
