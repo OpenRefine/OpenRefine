@@ -39,7 +39,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._extension = { properties: [] };
 
   var self = this;
-  this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
+  this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/add-column-by-reconciliation.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.html($.i18n('core-views/add-col-recon-col')+" "+column.name);
   this._elmts.okButton.html($.i18n('core-buttons/ok'));
