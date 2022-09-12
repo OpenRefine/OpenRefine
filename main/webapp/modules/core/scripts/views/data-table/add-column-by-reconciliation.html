@@ -13,10 +13,12 @@
         <td style="vertical-align: top;" rowspan="3" colspan="2"><div class="preview-container" bind="previewContainer"></div></td>
       </tr>
       <tr>
-        <td height="1"><span bind="suggestedPropertyHeader"></span></td>
+        <td height="1"><label for="suggestedPropertyContainerId" bind="suggestedPropertyHeader"></label></td>
       </tr>
       <tr>
-        <td><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>
+        <td>
+          <div class="suggested-property-container" bind="suggestedPropertyContainer" id="suggestedPropertyContainerId">
+          </div></td>
       </tr>
     </table></div>
   </div>
