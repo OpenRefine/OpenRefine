@@ -483,7 +483,7 @@ function init() {
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",
-      "scripts/dialogs/extend-data-preview-dialog.js",
+      "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
