@@ -4,23 +4,27 @@
     <div class="dialog-body" bind="dialogBody">
       <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
         <tr>
-          <td bind="or_views_copyToCol"></td>
+          <td><label for="toColumnSelectId" bind="or_views_copyToCol"></label></td>
           <td bind="or_views_copyOpt"></td>
         </tr>
         <tr>
-          <td><select bind="toColumnSelect" multiple size="20" style="width: 100%;"></select></td>
+          <td><select bind="toColumnSelect" id="toColumnSelectId" multiple size="20" style="width: 100%;"></select></td>
           <td><div class="grid-layout layout-normal"><table>
             <tr>
-              <td><input type="checkbox" bind="applyToJudgedCellsCheckbox" checked /></td><td bind="or_views_applyToCell"></td>
+              <td>
+                <input type="checkbox" bind="applyToJudgedCellsCheckbox" id="applyToJudgedCellsCheckboxId" checked />
+              </td><td><label for="applyToJudgedCellsCheckboxId" bind="or_views_applyToCell"></label></td>
             </tr>
             <tr>
               <td colspan="2" bind="or_views_whatToCopy"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" bind="newCheckbox" checked /></td><td bind="or_views_newRecon"></td>
+              <td><input type="checkbox" bind="newCheckbox" id="newCheckboxId" checked /></td>
+              <td><label for="newCheckboxId" bind="or_views_newRecon"></label></td>
             </tr>
             <tr>
-              <td><input type="checkbox" bind="matchCheckbox" checked /></td><td bind="or_views_matchRecon"></td>
+              <td><input type="checkbox" bind="matchCheckbox" id="matchCheckboxId" checked /></td>
+              <td><label for="matchCheckboxId" bind="or_views_matchRecon"></label></td>
             </tr>
           </table></div></td>
         </tr>

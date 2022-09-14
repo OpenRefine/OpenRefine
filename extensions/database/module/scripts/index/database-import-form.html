@@ -26,12 +26,12 @@
                                       <legend class="new-connection-legend pure-input-1-2" id="new-connection-legend"></legend>
                                   
                                       <div class="pure-control-group">
-                                           <label id="connectionNameLabel" for="name"></label>
+                                           <label id="connectionNameLabel" for="connectionName"></label>
                                            <input spellcheck="false" bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="" class="pure-input-1-3" required>
                                        </div>
                                
                                        <div class="pure-control-group">
-                                           <label id="databaseTypeLabel" for="databaseType"></label>
+                                           <label id="databaseTypeLabel" for="databaseTypeSelect"></label>
                                             <select name="selection" id="databaseTypeSelect" bind="databaseTypeSelect" class="pure-input-1-3" required>
                                             	  <option value="postgresql">PostgreSQL</option>  
                                                <option value="mysql" selected="selected">MySQL</option>
@@ -98,7 +98,7 @@
                                 		<input type="hidden" id="currentInitialDatabaseInput" name="currentInitialDatabase">
                                 		
 									<div class="panel panel-info pure-input-3-4">
-										<div class="panel-heading">Query Editor </div>
+										<div class="panel-heading"><label for="queryTextArea">Query Editor </label></div>
 										<div class="panel-body">
 											<fieldset style="padding:2px; margin-top:5px;">
 											    <textarea id="queryTextArea" bind="queryTextArea" class="pure-input-1 no-resize" placeholder="Enter your query" rows="10" >SELECT * FROM</textarea>
@@ -139,4 +139,3 @@
     
     
 </div><!-- End databaseContainer -->
- 

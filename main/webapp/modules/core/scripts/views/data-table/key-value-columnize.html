@@ -4,14 +4,14 @@
     <div class="dialog-body" bind="dialogBody">
       <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table style="table-layout: fixed">
         <tr>
-          <td bind="or_views_keyCol"></td>
-          <td bind="or_views_valCol"></td>
-          <td bind="or_views_noteCol"></td>
+          <td><label for="keyColumnSelectId" bind="or_views_keyCol"></label></td>
+          <td><label for="valueColumnSelectId" bind="or_views_valCol"></label></td>
+          <td><label for="noteColumnSelectId" bind="or_views_noteCol"></label></td>
         </tr>
         <tr>
-          <td><select bind="keyColumnSelect" size="15" style="width: 100%; overflow: auto;"></select></td>
-          <td><select bind="valueColumnSelect" size="15" style="width: 100%; overflow: auto;"></select></td>
-          <td><select bind="noteColumnSelect" size="15" style="width: 100%; overflow: auto;"></select></td>
+          <td><select bind="keyColumnSelect" id="keyColumnSelectId" size="15" style="width: 100%; overflow: auto;"></select></td>
+          <td><select bind="valueColumnSelect" id="valueColumnSelectId" size="15" style="width: 100%; overflow: auto;"></select></td>
+          <td><select bind="noteColumnSelect" id="noteColumnSelectId" size="15" style="width: 100%; overflow: auto;"></select></td>
         </tr>
       </table></div>
     </div>
