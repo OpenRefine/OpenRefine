@@ -61,7 +61,7 @@ function init() {
       "project/scripts",
       module,
       [
-        "scripts/ajv.js",
+        "scripts/ajv.min.js",
         "scripts/wikidata-manifest-v1.0.js",
         "scripts/wikibase-manifest-schema-v1.js",
         "scripts/wikibase-manifest-schema-v2.js",
