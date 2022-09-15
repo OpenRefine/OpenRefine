@@ -1,21 +1,24 @@
-<div class="dialog-frame extend-data-preview-dialog" style="width: 800px;">
+<div class="dialog-frame add-column-by-reconciliation-dialog" style="width: 800px;">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
     <div class="grid-layout layout-normal layout-full"><table rows="4">
       <tr>
-        <td width="300" height="1" bind="addPropertyHeader"></td>
-        <td height="1" bind="previewHeader"></td>
-        <td height="1" width="1%"><button class="button" bind="resetButton">Reset</button></td>
+        <td width="300" height="1"><label for="addPropertyInputId" bind="addPropertyHeader"></label></td>
+        <td height="1"><span bind="previewHeader"></span></td>
+        <td height="1" style="text-align: right"><button class="button" bind="resetButton"></button></td>
       </tr>
       <tr>
-        <td style="vertical-align: top;" height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>
+        <td style="vertical-align: top;" height="1"><div class="input-container">
+          <input bind="addPropertyInput" id="addPropertyInputId" /></div></td>
         <td style="vertical-align: top;" rowspan="3" colspan="2"><div class="preview-container" bind="previewContainer"></div></td>
       </tr>
       <tr>
-        <td height="1" bind="suggestedPropertyHeader"></td>
+        <td height="1"><label for="suggestedPropertyContainerId" bind="suggestedPropertyHeader"></label></td>
       </tr>
       <tr>
-        <td><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>
+        <td>
+          <div class="suggested-property-container" bind="suggestedPropertyContainer" id="suggestedPropertyContainerId">
+          </div></td>
       </tr>
     </table></div>
   </div>
@@ -24,4 +27,3 @@
     <button class="button" bind="cancelButton"></button>
   </div>
 </div>
-
