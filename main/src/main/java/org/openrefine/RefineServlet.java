@@ -182,7 +182,9 @@ public class RefineServlet extends Butterfly {
                     // access classes from other butterfly modules. This was introduced to make
                     // the datamodel runner pluggable, so that runners can be provided
                     // by extensions.
-                    Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
+                    if (s_singleton != null) {
+                        Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
+                    }
                 if (request.getMethod().equals("GET")) {
                     if (!logger.isTraceEnabled() && command.logRequests()) {
                         logger.info("GET {}", request.getPathInfo());
