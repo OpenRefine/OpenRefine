@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -45,8 +46,8 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
     @Test
     public void testReconciledItemCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Recon.Judgment.Matched)
-        		.withMatch(new ReconCandidate("Q123", "some item", null, 100.0));
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("Q123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
@@ -54,8 +55,8 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
     @Test
     public void testReconciledMediaInfoCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Recon.Judgment.Matched)
-        		.withMatch(new ReconCandidate("M123", "some item", null, 100.0));
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("M123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconMediaInfoIdValue(recon, "some value"), cell);
     }
@@ -63,8 +64,8 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
     @Test
     public void testReconciledPropertyCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Recon.Judgment.Matched)
-        		.withMatch(new ReconCandidate("P123", "some item", null, 100.0));
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("P123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconPropertyIdValue(recon, "some value"), cell);
     }
@@ -72,8 +73,8 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
     @Test
     public void testNewItemCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Recon.Judgment.New)
-        		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
+                .withJudgment(Recon.Judgment.New)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
@@ -81,18 +82,20 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
     @Test
     public void testUnmatchedCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Recon.Judgment.None)
-        		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
+                .withJudgment(Recon.Judgment.None)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
 
     @Test
     public void testInvalidSpace() {
+        ReconCandidate reconCandidate = new ReconCandidate("Q123", "some item", null, 100.0);
         Recon recon = Recon.makeWikidataRecon(34989L)
-        		.withIdentifierSpace("http://my.own.wikiba.se/")
-        		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)))
-        		.withJudgment(Recon.Judgment.Matched);
+                .withIdentifierSpace("http://my.own.wikiba.se/")
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)))
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(reconCandidate);
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }

@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,91 +53,92 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
-	
-	private GridState initialState;
-	
+
+    private GridState initialState;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
     }
-    
+
     @Test
     public void serializeReconMatchSpecificTopicOperation() throws Exception {
-        String json = "{\n" + 
-                "    \"op\": \"core/recon-match-specific-topic-to-cells\",\n" + 
-                "    \"description\": \"Match specific item Gangnam (Q489941) to cells in column researcher\",\n" + 
-                "    \"engineConfig\": {\n" + 
-                "      \"mode\": \"record-based\",\n" + 
-                "      \"facets\": []\n" + 
-                "    },\n" + 
-                "    \"columnName\": \"researcher\",\n" + 
-                "    \"match\": {\n" + 
-                "      \"id\": \"Q489941\",\n" + 
-                "      \"name\": \"Gangnam\",\n" + 
-                "      \"types\": [\n" + 
-                "        \"Q5\"\n" + 
-                "      ]\n" + 
-                "    },\n" + 
-                "    \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
-                "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" + 
+        String json = "{\n" +
+                "    \"op\": \"core/recon-match-specific-topic-to-cells\",\n" +
+                "    \"description\": \"Match specific item Gangnam (Q489941) to cells in column researcher\",\n" +
+                "    \"engineConfig\": {\n" +
+                "      \"mode\": \"record-based\",\n" +
+                "      \"facets\": []\n" +
+                "    },\n" +
+                "    \"columnName\": \"researcher\",\n" +
+                "    \"match\": {\n" +
+                "      \"id\": \"Q489941\",\n" +
+                "      \"name\": \"Gangnam\",\n" +
+                "      \"types\": [\n" +
+                "        \"Q5\"\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" +
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @BeforeTest
     public void setupInitialState() throws ModelException {
-    	initialState = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched))},
-    				{"c", "h"},
-    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
-    			});
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", "h" },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
     }
-    
+
     @Test
     public void testMatchSpecificTopicOperation() throws DoesNotApplyException, ModelException {
-    	ReconItem reconItem = new ReconItem("hello", "world", new String[] {"human"});
-		Change change = new ReconMatchSpecificTopicOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar", reconItem,
-    			"http://identifier.space", "http://schema.space").createChange();
-    	
-    	ChangeContext context = mock(ChangeContext.class);
-    	when(context.getHistoryEntryId()).thenReturn(2891L);
-    	
-    	GridState applied = change.apply(initialState, context);
-    	
-    	long reconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
- 	
-    	GridState expected = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
-    						.withJudgmentHistoryEntry(2891L)
-    						.withMatch(reconItem.getCandidate())
-    						.withMatchRank(-1)
-    						.withJudgmentAction("mass"))},
-    				{"c", new Cell("h", new Recon(2891L, "http://identifier.space", "http://schema.space")
-    						.withId(reconId)
-    						.withMatch(reconItem.getCandidate())
-    						.withMatchRank(-1)
-    						.withJudgmentAction("mass")
-    						.withJudgment(Recon.Judgment.Matched))},
-    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
-    						.withJudgmentHistoryEntry(2891L)
-    						.withMatch(reconItem.getCandidate())
-    						.withMatchRank(-1)
-    						.withJudgmentAction("mass")
-    						.withJudgment(Recon.Judgment.Matched))}
-    			});
-    	
-    	// Make sure recon stats are updated too
-    	ReconStats reconStats = ReconStats.create(3, 0, 3);
-    	ColumnModel columnModel = expected.getColumnModel();
-    	ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
-    	expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
-    	
-    	assertGridEquals(applied, expected);
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+        Change change = new ReconMatchSpecificTopicOperation(
+                EngineConfig.ALL_ROWS,
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space").createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        long reconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")) },
+                        { "c", new Cell("h", new Recon(2891L, "http://identifier.space", "http://schema.space")
+                                .withId(reconId)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 0, 3);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
     }
 }

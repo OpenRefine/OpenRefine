@@ -75,7 +75,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
@@ -96,14 +95,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
             + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
             + "]}";
-    
+
     private String processJson = ""
-            +"{\n" + 
-            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n" + 
-            "    \"id\" : %d,\n" + 
-            "    \"immediate\" : false,\n" + 
-            "    \"progress\" : 0,\n" + 
-            "    \"status\" : \"pending\"\n" + 
+            + "{\n" +
+            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n"
+            +
+            "    \"id\" : %d,\n" +
+            "    \"immediate\" : false,\n" +
+            "    \"progress\" : 0,\n" +
+            "    \"status\" : \"pending\"\n" +
             " }";
 
     @Override
@@ -121,7 +121,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");     
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
     private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
@@ -129,24 +129,25 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Process process = op.createProcess(project);
         runAndWait(pm, process, timeout);
     }
-    
+
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
-    	project = createProject("UrlFetchingTests",
-        		new String[] {"foo"},
-        		new Serializable[][] {
-        	{"bar"}
-        });
+        project = createProject("UrlFetchingTests",
+                new String[] { "foo" },
+                new Serializable[][] {
+                        { "bar" }
+                });
         Operation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
-    
+
     /**
      * Test for caching
      */
@@ -157,17 +158,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             HttpUrl url = server.url("/random");
 
             project = createProject("UrlFetchingTests",
-                            new String[] {"fruits"},
-                            new Serializable[][] {
-                    {"apple"},
-                    {"apple"},
-                    {"orange"},
-                    {"orange"},
-                    {"orange"},
-                    {"orange"}
-            });
-
-
+                    new String[] { "fruits" },
+                    new Serializable[][] {
+                            { "apple" },
+                            { "apple" },
+                            { "orange" },
+                            { "orange" },
+                            { "orange" },
+                            { "orange" }
+                    });
 
             Random rand = new Random();
             for (int i = 0; i < 6; i++) {
@@ -192,16 +191,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-            String refVal = (String)rows.get(0).getRow().getCellValue(1).toString();
+            String refVal = (String) rows.get(0).getRow().getCellValue(1).toString();
             Assert.assertEquals(rows.get(1).getRow().getCellValue(1).toString(), refVal);
             server.shutdown();
         }
     }
 
-    
     /**
-     * Fetch invalid URLs
-     * https://github.com/OpenRefine/OpenRefine/issues/1219
+     * Fetch invalid URLs https://github.com/OpenRefine/OpenRefine/issues/1219
      */
     @Test
     public void testInvalidUrl() throws Exception {
@@ -213,12 +210,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.enqueue(new MockResponse().setResponseCode(404).setBody("not found").setStatus("NOT FOUND"));
 
             project = createProject("UrlFetchingTests",
-                            new String[] {"fruits"},
-                            new Serializable[][] {
-                    {"malformed"}, // malformed -> null
-                    {url.toString()}, // fine
-                    {url404.toString()} // well-formed but invalid
-            });
+                    new String[] { "fruits" },
+                    new Serializable[][] {
+                            { "malformed" }, // malformed -> null
+                            { url.toString() }, // fine
+                            { url404.toString() } // well-formed but invalid
+                    });
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -250,12 +247,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             HttpUrl url = server.url("/checkheader");
 
             project = createProject("UrlFetchingTests",
-                            new String[] {"fruits"},
-                            new Serializable[][] {
-                    {url.toString()}
-            });
+                    new String[] { "fruits" },
+                    new Serializable[][] {
+                            { url.toString() }
+                    });
 
-            String userAgentValue =  "OpenRefine";
+            String userAgentValue = "OpenRefine";
             String authorizationValue = "Basic";
             String acceptValue = "*/*";
             List<HttpHeader> headers = new ArrayList<>();
@@ -267,14 +264,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.enqueue(new MockResponse().setBody("second"));
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-                "fruits",
-                "value",
-                OnError.StoreError,
-                "junk",
-                1,
-                50,
-                true,
-                headers);
+                    "fruits",
+                    "value",
+                    OnError.StoreError,
+                    "junk",
+                    1,
+                    50,
+                    true,
+                    headers);
             LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
@@ -286,7 +283,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
             Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
             Assert.assertEquals(request.getHeader("accept"), acceptValue);
-                server.shutdown();
+            server.shutdown();
         }
     }
 
@@ -296,17 +293,17 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.start();
             HttpUrl url = server.url("/retries");
 
-            project = createProject(new String[] {"fruits"},
-            		new Serializable[][] {
-            	{"test1"}, {"test2"}, {"test3"}
-            });
+            project = createProject(new String[] { "fruits" },
+                    new Serializable[][] {
+                            { "test1" }, { "test2" }, { "test3" }
+                    });
 
             // Queue 5 error responses with 1 sec. Retry-After interval
             for (int i = 0; i < 5; i++) {
                 server.enqueue(new MockResponse()
                         .setHeader("Retry-After", 1)
                         .setResponseCode(429)
-                        .setBody(Integer.toString(i,10)));
+                        .setBody(Integer.toString(i, 10)));
             }
 
             server.enqueue(new MockResponse().setBody("success"));
@@ -328,7 +325,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed );
+            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
             List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
@@ -345,16 +342,16 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.start();
             HttpUrl url = server.url("/retries");
 
-            project = createProject(new String[] {"fruits"},
-            		new Serializable[][] {
-            	{"test1"}, {"test2"}, {"test3"}
-            });
+            project = createProject(new String[] { "fruits" },
+                    new Serializable[][] {
+                            { "test1" }, { "test2" }, { "test3" }
+                    });
 
             // Use 503 Server Unavailable with no Retry-After header this time
             for (int i = 0; i < 5; i++) {
                 server.enqueue(new MockResponse()
                         .setResponseCode(503)
-                        .setBody(Integer.toString(i,10)));
+                        .setBody(Integer.toString(i, 10)));
             }
             server.enqueue(new MockResponse().setBody("success"));
 
@@ -383,11 +380,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
             assertTrue(rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
             assertEquals(rows.get(1).getCellValue(1).toString(), "success");
-            assertTrue(rows.get(2).getCellValue(1).toString().contains("HTTP error 404"),"Missing 404 error");
+            assertTrue(rows.get(2).getCellValue(1).toString().contains("HTTP error 404"), "Missing 404 error");
 
             server.shutdown();
         }
     }
-
 
 }

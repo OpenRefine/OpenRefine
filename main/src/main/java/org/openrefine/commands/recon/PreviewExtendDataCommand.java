@@ -66,12 +66,14 @@ import org.openrefine.sorting.SortingConfig;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PreviewExtendDataCommand extends Command {
-    
+
     protected static class PreviewResponse {
+
         public PreviewResponse(List<ColumnInfo> columns2, List<List<Object>> rows2) {
             columns = columns2;
             rows = rows2;
         }
+
         @JsonProperty("code")
         protected String code = "ok";
         @JsonProperty("columns")
@@ -79,31 +81,31 @@ public class PreviewExtendDataCommand extends Command {
         @JsonProperty("rows")
         protected List<List<Object>> rows;
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
-            
+
             String jsonString = request.getParameter("extension");
             DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
-            
+
             EngineConfig engineConfig = getEngineConfig(request);
             String limitString = request.getParameter("limit");
             int limit = 10;
             try {
-            	if (limitString != null) {
-            		limit = Integer.parseInt(limitString);
-            	}
-            } catch(NumberFormatException e) {
-            	throw new IllegalArgumentException("Invalid limit specified", e);
+                if (limitString != null) {
+                    limit = Integer.parseInt(limitString);
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid limit specified", e);
             }
             SortingConfig sortingConfig = getSortingConfig(request);
             ColumnModel model = project.getColumnModel();
@@ -114,23 +116,23 @@ public class PreviewExtendDataCommand extends Command {
             String endpoint = null;
             String identifierSpace = null;
             String schemaSpace = null;
-		    ReconConfig cfg = column.getReconConfig();
-		    if (cfg != null &&
-				cfg instanceof StandardReconConfig) {
-				StandardReconConfig scfg = (StandardReconConfig)cfg;
-				endpoint = scfg.service;
-				identifierSpace = scfg.identifierSpace;
-				schemaSpace = scfg.schemaSpace;
-		    } else {
-	                respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
-	                return;
-		    }
-		
-            
+            ReconConfig cfg = column.getReconConfig();
+            if (cfg != null &&
+                    cfg instanceof StandardReconConfig) {
+                StandardReconConfig scfg = (StandardReconConfig) cfg;
+                endpoint = scfg.service;
+                identifierSpace = scfg.identifierSpace;
+                schemaSpace = scfg.schemaSpace;
+            } else {
+                respond(response,
+                        "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
+                return;
+            }
+
             List<String> topicNames = new ArrayList<String>();
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
-            
+
             GridState state = project.getCurrentGridState();
             Engine engine = new Engine(state, engineConfig);
             List<IndexedRow> previewRows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
@@ -147,11 +149,11 @@ public class PreviewExtendDataCommand extends Command {
                         topicIds.add(null);
                         ids.add(null);
                     }
-                } catch(IndexOutOfBoundsException e) {
-                	; // skip row
+                } catch (IndexOutOfBoundsException e) {
+                    ; // skip row
                 }
             }
-            
+
             ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint, identifierSpace, schemaSpace);
             Map<String, DataExtension> map = job.extend(ids);
             List<List<Object>> rows = new ArrayList<>();
@@ -159,11 +161,11 @@ public class PreviewExtendDataCommand extends Command {
             for (int r = 0; r < topicNames.size(); r++) {
                 String id = topicIds.get(r);
                 String topicName = topicNames.get(r);
-                
+
                 if (id != null && map.containsKey(id)) {
                     DataExtension ext = map.get(id);
                     boolean first = true;
-                    
+
                     if (ext.data.size() > 0) {
                         for (List<Cell> row : ext.data) {
                             List<Object> jsonRow = new ArrayList<>();
@@ -173,22 +175,22 @@ public class PreviewExtendDataCommand extends Command {
                             } else {
                                 jsonRow.add(null);
                             }
-                            
+
                             for (Cell cell : row) {
-                            	if (cell == null) {
-                            		jsonRow.add(null);
-                            	} else if (cell.recon != null && cell.recon.match != null) {
-                            		jsonRow.add(cell.recon.match);
-                            	} else {
-                            		jsonRow.add(cell.value);
-                            	}
+                                if (cell == null) {
+                                    jsonRow.add(null);
+                                } else if (cell.recon != null && cell.recon.match != null) {
+                                    jsonRow.add(cell.recon.match);
+                                } else {
+                                    jsonRow.add(cell.value);
+                                }
                             }
                             rows.add(jsonRow);
                         }
                         continue;
                     }
                 }
-                
+
                 List<Object> supplement = new ArrayList<>();
                 if (id != null) {
                     supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
@@ -197,7 +199,7 @@ public class PreviewExtendDataCommand extends Command {
                 }
                 rows.add(supplement);
             }
-            
+
             respondJSON(response, new PreviewResponse(job.columns, rows));
         } catch (Exception e) {
             respondException(response, e);

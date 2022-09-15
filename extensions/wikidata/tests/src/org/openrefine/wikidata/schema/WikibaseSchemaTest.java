@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -42,7 +43,7 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -91,10 +92,11 @@ public class WikibaseSchemaTest extends RefineTest {
     @BeforeMethod
     public void setUpProject() {
         grid = this.createGrid(
-        		new String[] { "subject", "inception", "reference" },
-        		new Serializable[][] {
-			{TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919", "http://www.ljubljana-slovenia.com/university-ljubljana" },
-			{TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", ""}});
+                new String[] { "subject", "inception", "reference" },
+                new Serializable[][] {
+                        { TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
+                                "http://www.ljubljana-slovenia.com/university-ljubljana" },
+                        { TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "" } });
         FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
     }
 
@@ -103,7 +105,8 @@ public class WikibaseSchemaTest extends RefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(), ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(),
+                ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -125,17 +128,17 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         List<TermedStatementEntityUpdate> updates = schema.evaluate(grid, engine);
         List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
+                + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -145,7 +148,7 @@ public class WikibaseSchemaTest extends RefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
-                + "      \"mode\": \"row-based\",\n" 
+                + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"
                 + "          \"mode\": \"text\",\n"
@@ -162,8 +165,7 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, engineConfig);
         List<TermedStatementEntityUpdate> updates = schema.evaluate(grid, engine);
         List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
-
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }

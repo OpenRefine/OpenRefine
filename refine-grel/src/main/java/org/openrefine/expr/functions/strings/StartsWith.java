@@ -53,16 +53,17 @@ public class StartsWith extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
+
     @Override
     public String getDescription() {
         return "Returns a boolean indicating whether s starts with sub. For example, \"food\".startsWith(\"foo\") returns true, whereas \"food\".startsWith(\"bar\") returns false.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

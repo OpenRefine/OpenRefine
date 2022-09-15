@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
@@ -33,15 +34,15 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class NumberCriterionTest {
+
     @Test
     public void serializeNumberCriterion() throws IOException {
-        String json = 
-                "        {\n" + 
-                "          \"errorPosition\": 2,\n" + 
-                "          \"valueType\": \"number\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": 1,\n" + 
-                "          \"reverse\": true\n" + 
+        String json = "        {\n" +
+                "          \"errorPosition\": 2,\n" +
+                "          \"valueType\": \"number\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 1,\n" +
+                "          \"reverse\": true\n" +
                 "        }\n";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json, ParsingUtilities.defaultWriter);
     }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -32,12 +33,12 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class SplitTests extends FunctionTestBase {
+
     @Test
     public void testSplit() {
-        assertEquals(invoke("split", "a,,b,c,d", ","), new String[] {"a", "b", "c", "d"});
-        assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] {"a", "", "b", "c", "d"});
+        assertEquals(invoke("split", "a,,b,c,d", ","), new String[] { "a", "b", "c", "d" });
+        assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] { "a", "", "b", "c", "d" });
         assertEquals(invoke("split", "", ","), new String[] {});
-        assertEquals(invoke("split", ",,,", ","), new String[] {""}); // TODO: Should this return an empty array?
+        assertEquals(invoke("split", ",,,", ","), new String[] { "" }); // TODO: Should this return an empty array?
     }
 }
-

@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.facets;
 
 import java.util.List;
@@ -10,19 +11,16 @@ public abstract class RowInRecordAggregator<T extends FacetState> implements Row
     private static final long serialVersionUID = 6555131464318864260L;
 
     /**
-     * Adds statistics obtained from a single row to the facet state.
-     * Given that facet states are expected to be immutable, this 
-     * returns a new facet state object.
+     * Adds statistics obtained from a single row to the facet state. Given that facet states are expected to be
+     * immutable, this returns a new facet state object.
      * 
      * @param rowId
-     *      the row id of the row to ingest
+     *            the row id of the row to ingest
      * @param row
-     *      the row to ingest
+     *            the row to ingest
      * @param record
-     *      the enclosing record of the row, if available (in records mode),
-     *      null otherwise
-     * @return
-     *      the facet state updated with this row
+     *            the enclosing record of the row, if available (in records mode), null otherwise
+     * @return the facet state updated with this row
      */
     public abstract T withRow(T state, long rowId, Row row, Record record);
 
@@ -30,7 +28,7 @@ public abstract class RowInRecordAggregator<T extends FacetState> implements Row
     public T withRow(T state, long rowId, Row row) {
         return withRow(state, rowId, row, null);
     }
-    
+
     @Override
     public T withRecord(T state, Record record) {
         T finalState = state;

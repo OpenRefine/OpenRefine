@@ -48,18 +48,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TreeImportUtilities {
+
     final static Logger logger = LoggerFactory.getLogger("TreeImportUtilities");
-    
+
     public static class ColumnIndexAllocator {
-    	int nextIndex = 0;
-    	
-    	int allocateColumnIndex() {
-    		return nextIndex++;
-    	}
+
+        int nextIndex = 0;
+
+        int allocateColumnIndex() {
+            return nextIndex++;
+        }
     }
 
     static protected void sortRecordElementCandidates(List<RecordElementCandidate> list) {
         Collections.sort(list, new Comparator<RecordElementCandidate>() {
+
             @Override
             public int compare(RecordElementCandidate o1, RecordElementCandidate o2) {
                 return o2.count - o1.count;
@@ -70,10 +73,10 @@ public abstract class TreeImportUtilities {
     static public ColumnModel createColumnsFromImport(
             ColumnModel columnModel,
             ImportColumnGroup columnGroup,
-            List<Integer> columnIndexTranslation
-    ) {
+            List<Integer> columnIndexTranslation) {
         List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
         Collections.sort(columns, new Comparator<ImportColumn>() {
+
             @Override
             public int compare(ImportColumn o1, ImportColumn o2) {
                 if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
@@ -95,15 +98,16 @@ public abstract class TreeImportUtilities {
         // The LinkedHashMap iterator will guaranteed that the list is arranged in order found
         List<ImportColumnGroup> subgroups = new ArrayList<>(columnGroup.subgroups.values());
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
+
             @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
-                // TODO: We really want the column/group with the highest % of 
+                // TODO: We really want the column/group with the highest % of
                 // records with at least one row populated, so popular optional
-                // elements with multiple instances per record don't 
+                // elements with multiple instances per record don't
                 // outweigh mandatory elements with a single occurrence per record
                 // TODO: From a human factors point of view, we probably want
                 // to try to preserve the order that we found things in the XML
-                
+
                 // Sort by most populated first, but leave order unchanged if they're equal
                 return o2.nonBlankCount - o1.nonBlankCount;
             }
@@ -112,7 +116,7 @@ public abstract class TreeImportUtilities {
         for (ImportColumnGroup g : subgroups) {
             columnModel = createColumnsFromImport(columnModel, g, columnIndexTranslation);
         }
-        
+
         return columnModel;
     }
 
@@ -122,11 +126,10 @@ public abstract class TreeImportUtilities {
             ImportColumnGroup columnGroup,
             ImportRecord record,
             String columnLocalName,
-            String text
-    ) {
+            String text) {
         addCell(columnIndexAllocator, columnGroup, record, columnLocalName, text, true, true);
     }
-    
+
     static protected void addCell(
             ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
@@ -134,14 +137,13 @@ public abstract class TreeImportUtilities {
             String columnLocalName,
             String text,
             boolean storeEmptyString,
-            boolean guessDataType
-    ) {
+            boolean guessDataType) {
         Serializable value = text;
         if (!storeEmptyString && (text == null || (text).isEmpty())) {
             return;
         }
         if (guessDataType) {
-            value = ImporterUtilities.parseCellValue(text); 
+            value = ImporterUtilities.parseCellValue(text);
         }
         addCell(columnIndexAllocator, columnGroup, record, columnLocalName, value);
     }
@@ -158,7 +160,7 @@ public abstract class TreeImportUtilities {
             row = new ArrayList<Cell>();
             record.rows.set(rowIndex, row);
         }
-        
+
         while (cellIndex >= row.size()) {
             row.add(null);
         }
@@ -169,12 +171,10 @@ public abstract class TreeImportUtilities {
         column.nonBlankCount++; // TODO: Only increment for first instance in record?
     }
 
-
     static protected ImportColumn getColumn(
             ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
-            String localName
-    ) {
+            String localName) {
         if (columnGroup.columns.containsKey(localName)) {
             return columnGroup.columns.get(localName);
         }
@@ -188,13 +188,11 @@ public abstract class TreeImportUtilities {
     static protected ImportColumn createColumn(
             ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
-            String localName
-    ) {
+            String localName) {
         ImportColumn newColumn = new ImportColumn();
 
-        newColumn.name = columnGroup.name.length() == 0 ?
-                (localName == null ? "Text" : localName) :
-                    (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
+        newColumn.name = columnGroup.name.length() == 0 ? (localName == null ? "Text" : localName)
+                : (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
         newColumn.cellIndex = columnIndexAllocator.allocateColumnIndex();
         newColumn.nextRowIndex = columnGroup.nextRowIndex;
@@ -204,8 +202,7 @@ public abstract class TreeImportUtilities {
 
     static protected ImportColumnGroup getColumnGroup(
             ImportColumnGroup columnGroup,
-            String localName
-    ) {
+            String localName) {
         if (columnGroup.subgroups.containsKey(localName)) {
             return columnGroup.subgroups.get(localName);
         }
@@ -218,18 +215,15 @@ public abstract class TreeImportUtilities {
 
     static protected ImportColumnGroup createColumnGroup(
             ImportColumnGroup columnGroup,
-            String localName
-    ) {
+            String localName) {
         ImportColumnGroup newGroup = new ImportColumnGroup();
 
-        newGroup.name =
-            columnGroup.name.length() == 0 ?
-                    (localName == null ? "Text" : localName) :
-                        (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
+        newGroup.name = columnGroup.name.length() == 0 ? (localName == null ? "Text" : localName)
+                : (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
         newGroup.nextRowIndex = columnGroup.nextRowIndex;
 
         return newGroup;
     }
-        
+
 }

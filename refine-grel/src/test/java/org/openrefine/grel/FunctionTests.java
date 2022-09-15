@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
- 
+
 package org.openrefine.grel;
 
 import static org.testng.Assert.assertEquals;
@@ -52,7 +52,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
 public class FunctionTests extends FunctionTestBase {
 
     Project project;
@@ -62,7 +61,6 @@ public class FunctionTests extends FunctionTestBase {
     public void SetUp() throws IOException, ModelException {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
     }
-
 
     @AfterMethod
     public void TearDown() {
@@ -76,8 +74,7 @@ public class FunctionTests extends FunctionTestBase {
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
                 "fingerprint", "get", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
-                "unicode", "unicodeType"
-                ));
+                "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
 
         for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
@@ -99,16 +96,15 @@ public class FunctionTests extends FunctionTestBase {
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "coalesce", "escape", "unescape",
                 "exp", "fingerprint", "get", "now", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
-                "unicode", "unicodeType"
-                ));
+                "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
         Set<String> exempt = new HashSet<>(Arrays.asList(
                 "jsonize" // returns literal string "null"
-                ));
+        ));
         for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
             Function func = entry.getValue();
             // No functions take 8 arguments, so they should all error
-            Object result = func.call(bindings, new Object[] {null, null, null, null, null, null, null, null});
+            Object result = func.call(bindings, new Object[] { null, null, null, null, null, null, null, null });
             if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 assertNull(result, ControlFunctionRegistry.getFunctionName(func) + " didn't return null on 8 args");
             } else if (returnsFalse.contains(ControlFunctionRegistry.getFunctionName(func))) {

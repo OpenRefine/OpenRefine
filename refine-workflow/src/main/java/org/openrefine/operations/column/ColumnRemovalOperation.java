@@ -48,58 +48,56 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnRemovalOperation extends ImmediateRowMapOperation {
+
     final protected String _columnName;
 
     @JsonCreator
     public ColumnRemovalOperation(
-        @JsonProperty("columnName")
-        String columnName
-    ) {
-    	super(EngineConfig.ALL_ROWS);
+            @JsonProperty("columnName") String columnName) {
+        super(EngineConfig.ALL_ROWS);
         _columnName = columnName;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
 
-
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Remove column " + _columnName;
     }
 
-	@Override
-	public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
-		ColumnModel model = state.getColumnModel();
-		int columnIndex = columnIndex(model, _columnName);
-		return model.removeColumn(columnIndex);
-	}
+    @Override
+    public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel model = state.getColumnModel();
+        int columnIndex = columnIndex(model, _columnName);
+        return model.removeColumn(columnIndex);
+    }
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-		int columnIndex = columnIndex(state.getColumnModel(), _columnName);
-		return mapper(columnIndex);
-	}
-	
-	protected static RowInRecordMapper mapper(int columnIndex) {
-		return new RowInRecordMapper() {
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        int columnIndex = columnIndex(state.getColumnModel(), _columnName);
+        return mapper(columnIndex);
+    }
 
-			private static final long serialVersionUID = -120614551816915787L;
+    protected static RowInRecordMapper mapper(int columnIndex) {
+        return new RowInRecordMapper() {
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				return row.removeCell(columnIndex);
-			}
-			
-		};
-	}
-	
-	// engine config is never useful, so we remove it from the JSON serialization
-	@Override
-	@JsonIgnore
-	public EngineConfig getEngineConfig() {
-		return super.getEngineConfig();
-	}
+            private static final long serialVersionUID = -120614551816915787L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return row.removeCell(columnIndex);
+            }
+
+        };
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
+    }
 }

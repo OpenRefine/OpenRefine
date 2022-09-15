@@ -62,4 +62,4 @@ was acquired by Google, Inc. in July 2010 and the product was renamed Google Ref
 In October 2012, it was renamed OpenRefine as it transitioned to a
 community-supported product.
 
-See [AUTHORS.md](./AUTHORS.md) for the list of OpenRefine contributors and [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute yourself.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute yourself.

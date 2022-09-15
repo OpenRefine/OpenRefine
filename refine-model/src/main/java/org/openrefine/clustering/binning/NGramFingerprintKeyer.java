@@ -39,17 +39,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-
 /**
- * Fingerprint keyer which generates a fingerprint from a sorted list of
- * unique character N-grams after removing all whitespace, control characters,
- * and punctuation. N-grams are concatenated to form a single output key.
+ * Fingerprint keyer which generates a fingerprint from a sorted list of unique character N-grams after removing all
+ * whitespace, control characters, and punctuation. N-grams are concatenated to form a single output key.
  *
  */
 public class NGramFingerprintKeyer extends FingerprintKeyer {
 
     static final Pattern ctrlspace = Pattern.compile("\\p{Cntrl}|\\p{Space}", Pattern.UNICODE_CHARACTER_CLASS);
-    
+
     @Override
     public String key(String s, Object... o) {
         int ngram_size = 2;
@@ -64,15 +62,17 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
     /**
      * Generate a stream of sorted unique character N-grams from a string
      * 
-     * @param s String to generate N-grams from
-     * @param size number of characters per N-gram
+     * @param s
+     *            String to generate N-grams from
+     * @param size
+     *            number of characters per N-gram
      * @return a stream of sorted unique N-gram Strings
      */
     protected Stream<String> sorted_ngrams(String s, int size) {
         return IntStream.rangeClosed(0, s.length() - size)
-        .mapToObj(i -> s.substring(i,  i+size))
-        .sorted()
-        .distinct();
+                .mapToObj(i -> s.substring(i, i + size))
+                .sorted()
+                .distinct();
     }
 
     /**

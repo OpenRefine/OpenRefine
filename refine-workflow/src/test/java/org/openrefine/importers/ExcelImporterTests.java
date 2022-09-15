@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
@@ -71,31 +70,31 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class ExcelImporterTests extends ImporterTest {
-    
+
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 5;
     private static final int COLUMNS = 6;
-    
-    //private static final File xlsxFile = createSpreadsheet(true);
+
+    // private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     private static final File xlsxFile = createSpreadsheet(true);
 
     private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
     private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //System Under Test
+    // System Under Test
     ExcelImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         DatamodelRunner runner = new TestingDatamodelRunner();
         SUT = new ExcelImporter(runner);
@@ -103,19 +102,20 @@ public class ExcelImporterTests extends ImporterTest {
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         SUT = null;
         super.tearDown();
     }
-    
-    //---------------------read tests------------------------
+
+    // ---------------------read tests------------------------
     @Test
     public void readXls() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         options.set("sheets", sheets);
-        
+
         options.put("ignoreLines", 0);
         options.put("headerLines", 0);
         options.put("skipDataLines", 0);
@@ -123,66 +123,67 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("storeBlankCellsAsNulls", true);
 
         InputStream stream = new FileInputStream(xlsFile);
-        
+
         GridState grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-        
+
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS);
         Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
-        
-        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)rows.get(1).getCellValue(5));
+        Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
+
+        Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) rows.get(1).getCellValue(5));
 
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
     }
 
     @Test
-    public void readXlsx() throws FileNotFoundException, IOException{
+    public void readXlsx() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         options.set("sheets", sheets);
-        
+
         options.put("ignoreLines", 0);
         options.put("headerLines", 0);
         options.put("skipDataLines", 0);
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
-        
+
         InputStream stream = new FileInputStream(xlsxFile);
-        
+
         GridState grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-        
+
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS);
         Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
+        Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
 
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
-        
-        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)rows.get(1).getCellValue(5));
+
+        Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) rows.get(1).getCellValue(5));
     }
 
     @Test(expectedExceptions = Exception.class)
@@ -192,11 +193,12 @@ public class ExcelImporterTests extends ImporterTest {
 
         parseOneFile(SUT, stream);
     }
-    
+
     @Test
     public void readExcelDates() throws Exception {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         options.set("sheets", sheets);
         options.put("ignoreLines", 0);
         options.put("headerLines", 0);
@@ -207,7 +209,7 @@ public class ExcelImporterTests extends ImporterTest {
         InputStream stream = ClassLoader.getSystemResourceAsStream("dates.xls");
 
         GridState grid = parseOneFile(SUT, stream);
-        
+
         // The original value reads 2021-04-18 in the Excel file.
         // We make sure it is not shifted by a day because of timezone handling
         Object cellValue = grid.getRow(0).getCellValue(0);
@@ -229,9 +231,12 @@ public class ExcelImporterTests extends ImporterTest {
     public void readMultiSheetXls() throws Exception {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         options.set("sheets", sheets);
 
         options.put("ignoreLines", 0);
@@ -249,29 +254,32 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals(rows.get(1).cells.size(), COLUMNS + SHEETS - 1);
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), COLUMNS + SHEETS - 1);
 
-        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
         // Check the value read from the second sheet.
-        Assert.assertEquals(((Number)rows.get(ROWS).getCellValue(0)).doubleValue(),0.0, EPSILON);
-        Assert.assertEquals(((Number)rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(),1.0, EPSILON);
+        Assert.assertEquals(((Number) rows.get(ROWS).getCellValue(0)).doubleValue(), 0.0, EPSILON);
+        Assert.assertEquals(((Number) rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(), 1.0, EPSILON);
 
-        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
+        Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
 
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
 
-        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)rows.get(1).getCellValue(5));
+        Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) rows.get(1).getCellValue(5));
     }
 
     @Test
-    public void readMultiSheetXlsx() throws Exception{
+    public void readMultiSheetXlsx() throws Exception {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         options.set("sheets", sheets);
 
         options.put("ignoreLines", 0);
@@ -289,20 +297,20 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals(rows.get(1).cells.size(), COLUMNS + SHEETS - 1);
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), COLUMNS + SHEETS - 1);
 
-        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
         // Check the value read from the second sheet.
-        Assert.assertEquals(((Number)rows.get(ROWS).getCellValue(0)).doubleValue(),0.0, EPSILON);
-        Assert.assertEquals(((Number)rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(),1.0, EPSILON);
+        Assert.assertEquals(((Number) rows.get(ROWS).getCellValue(0)).doubleValue(), 0.0, EPSILON);
+        Assert.assertEquals(((Number) rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(), 1.0, EPSILON);
 
-        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
+        Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
 
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
 
-        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)rows.get(1).getCellValue(5));
+        Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) rows.get(1).getCellValue(5));
     }
 
     private static File createSpreadsheet(boolean xml) {
@@ -320,7 +328,6 @@ public class ExcelImporterTests extends ImporterTest {
             }
         }
 
-
         File file = null;
         try {
             file = File.createTempFile("openrefine-importer-test", xml ? ".xlsx" : ".xls");
@@ -336,7 +343,7 @@ public class ExcelImporterTests extends ImporterTest {
         return file;
     }
 
-   private static File createSheetsWithDifferentColumns(boolean xml) {
+    private static File createSheetsWithDifferentColumns(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
 
@@ -366,41 +373,40 @@ public class ExcelImporterTests extends ImporterTest {
         return file;
     }
 
-private static void createDataRow(Sheet sheet, int row, CellStyle dateCellStyle, int extra_columns) {
-    int col = 0;
-    org.apache.poi.ss.usermodel.Row r = sheet.createRow(row);
-    Cell c;
+    private static void createDataRow(Sheet sheet, int row, CellStyle dateCellStyle, int extra_columns) {
+        int col = 0;
+        org.apache.poi.ss.usermodel.Row r = sheet.createRow(row);
+        Cell c;
 
+        c = r.createCell(col++);
+        c.setCellValue(row * 1.1); // double
 
-    c = r.createCell(col++);
-    c.setCellValue(row * 1.1); // double
+        c = r.createCell(col++);
+        c.setCellValue(row % 2 == 0); // boolean
 
-    c = r.createCell(col++);
-    c.setCellValue(row % 2 == 0); // boolean
+        c = r.createCell(col++);
+        c.setCellValue(Calendar.getInstance()); // calendar
+        c.setCellStyle(dateCellStyle);
 
-    c = r.createCell(col++);
-    c.setCellValue(Calendar.getInstance()); // calendar
-    c.setCellStyle(dateCellStyle);
+        c = r.createCell(col++);
+        c.setCellValue(new Date()); // date
+        c.setCellStyle(dateCellStyle);
 
-    c = r.createCell(col++);
-    c.setCellValue(new Date()); // date
-    c.setCellStyle(dateCellStyle);
+        c = r.createCell(col++);
+        c.setCellValue(" Row " + row + " Col " + col); // string
 
-    c = r.createCell(col++);
-    c.setCellValue(" Row " + row + " Col " + col); // string
-
-    c = r.createCell(col++);
-    c.setCellValue(""); // string
+        c = r.createCell(col++);
+        c.setCellValue(""); // string
 
 //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
 //    hl.setLabel(cellData.text);
 //    hl.setAddress(cellData.link);
 
-    // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
-    for(int i = 0; i < extra_columns; i++){
-        c = r.createCell(col++);
-        c.setCellValue(i + extra_columns);
+        // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
+        for (int i = 0; i < extra_columns; i++) {
+            c = r.createCell(col++);
+            c.setCellValue(i + extra_columns);
+        }
     }
-}
 
 }

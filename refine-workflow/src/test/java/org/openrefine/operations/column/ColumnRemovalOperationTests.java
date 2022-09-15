@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
@@ -52,52 +53,52 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-
 public class ColumnRemovalOperationTests extends RefineTest {
-	
-	protected GridState initialState;
-	
-	@BeforeMethod
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		initialState = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a", "d" },
-			{ "v3", "a", "f" },
-			{ "", "a", "g" },
-			{ "", "b", "h" },
-			{ new EvalError("error"), "a", "i"},
-			{ "v1", "b", "j" }
-		});
-	}
-    
+
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-removal", ColumnRemovalOperation.class);
     }
-    
+
     @Test
     public void serializeColumnRemovalOperation() throws Exception {
         String json = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
-	@Test
-	public void testRemoval() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnRemovalOperation("foo").createChange();
-		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
-		List<IndexedRow> rows = applied.collectRows();
-		Assert.assertEquals(applied.getColumnModel().getColumns(),
-				Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("hello")));
-		Assert.assertEquals(rows.get(0).getRow().getCells(),
-				Arrays.asList(new Cell("a", null), new Cell("d", null)));
-	}
-	
-	@Test(expectedExceptions = DoesNotApplyException.class)
-	public void testColumnNotFound() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnRemovalOperation("not_found").createChange();
-		SUT.apply(initialState, mock(ChangeContext.class));
-	}
+
+    @Test
+    public void testRemoval() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnRemovalOperation("foo").createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("a", null), new Cell("d", null)));
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testColumnNotFound() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnRemovalOperation("not_found").createChange();
+        SUT.apply(initialState, mock(ChangeContext.class));
+    }
 }

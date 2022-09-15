@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local.partitioning;
 
 import java.util.Comparator;
@@ -17,11 +18,10 @@ public class LongRangePartitioner extends RangePartitioner<Long> implements Part
     }
 
     /**
-     * Returns a new version of this partitioner assuming that all keys
-     * have been shifted by the given offset.
+     * Returns a new version of this partitioner assuming that all keys have been shifted by the given offset.
      * 
      * @param offset
-     *    the summand applied to all keys
+     *            the summand applied to all keys
      */
     public LongRangePartitioner shiftKeys(long offset) {
         return new LongRangePartitioner(numPartitions(),

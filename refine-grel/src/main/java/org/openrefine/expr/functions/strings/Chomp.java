@@ -51,17 +51,17 @@ public class Chomp extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns a copy of string s with string sep remoed from the end if s ends with sep; otherwies, returns s.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

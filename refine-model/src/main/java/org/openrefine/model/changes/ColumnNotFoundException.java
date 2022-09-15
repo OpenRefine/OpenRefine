@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -9,5 +10,5 @@ public class ColumnNotFoundException extends DoesNotApplyException {
     public ColumnNotFoundException(String columnName) {
         super(String.format("Column '%s' is required by the change and does not exist", columnName));
     }
-    
+
 }

@@ -45,49 +45,51 @@ import org.openrefine.model.RowCellMapper;
 import org.openrefine.model.RowInRecordMapper;
 
 public abstract class ColumnAdditionChange extends RowMapChange {
-    final protected String          _columnName;
-    final protected int             _columnIndex;
-    
+
+    final protected String _columnName;
+    final protected int _columnIndex;
+
     public ColumnAdditionChange(String columnName, int columnIndex, EngineConfig config) {
-    	super(config);
+        super(config);
         _columnName = columnName;
         _columnIndex = columnIndex;
     }
-    
+
     public abstract RowCellMapper getRowCellMapper(ColumnModel columnModel);
 
-	@Override
-	public boolean isImmediate() {
-		return true;
-	}
-	
-	@Override
-	public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
-		ColumnMetadata column = new ColumnMetadata(_columnName);
-		try {
-			return grid.getColumnModel().insertColumn(_columnIndex, column);
-		} catch(ModelException e) {
-			throw new Change.DoesNotApplyException(
-					String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
-		}
-	}
+    @Override
+    public boolean isImmediate() {
+        return true;
+    }
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) {
-		return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex);
-	}
-	
-	public static RowInRecordMapper wrapMapper(RowCellMapper mapper, int columnIndex) {
-		return new RowInRecordMapper() {
-			private static final long serialVersionUID = 1L;
+    @Override
+    public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
+        ColumnMetadata column = new ColumnMetadata(_columnName);
+        try {
+            return grid.getColumnModel().insertColumn(_columnIndex, column);
+        } catch (ModelException e) {
+            throw new Change.DoesNotApplyException(
+                    String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
+        }
+    }
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Cell cell = mapper.apply(rowId, row);
-				return row.insertCell(columnIndex, cell);
-			}
-			
-		};
-	}
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) {
+        return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex);
+    }
+
+    public static RowInRecordMapper wrapMapper(RowCellMapper mapper, int columnIndex) {
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Cell cell = mapper.apply(rowId, row);
+                return row.insertCell(columnIndex, cell);
+            }
+
+        };
+    }
 
 }

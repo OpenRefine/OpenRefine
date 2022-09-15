@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers;
 
 import java.io.File;
@@ -56,7 +57,7 @@ public class FixedWidthImporter extends LineBasedImporterBase {
     public FixedWidthImporter(DatamodelRunner datamodelRunner) {
         super(datamodelRunner);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
@@ -65,15 +66,15 @@ public class FixedWidthImporter extends LineBasedImporterBase {
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);
             try {
-            	File file = firstFileRecord.getFile(job.getRawDataDir());
+                File file = firstFileRecord.getFile(job.getRawDataDir());
                 int[] columnWidthsA = guessColumnWidths(file, firstFileRecord.getEncoding());
                 if (columnWidthsA != null) {
                     for (int w : columnWidthsA) {
                         JSONUtilities.append(columnWidths, w);
                     }
                 }
-            } catch(IllegalArgumentException e) {
-            	// the file is not stored in the import directory, skipping
+            } catch (IllegalArgumentException e) {
+                // the file is not stored in the import directory, skipping
             }
 
             JSONUtilities.safePut(options, "headerLines", 0);
@@ -82,7 +83,6 @@ public class FixedWidthImporter extends LineBasedImporterBase {
         }
         return options;
     }
-    
 
     @Override
     public RowMapper getRowMapper(ObjectNode options) {
@@ -90,63 +90,67 @@ public class FixedWidthImporter extends LineBasedImporterBase {
 
         return parseCells(columnWidths);
     }
-    
+
     static private RowMapper parseCells(int[] widths) {
-		return new RowMapper() {
-			private static final long serialVersionUID = 1L;
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 1L;
 
             @Override
             public Row call(long rowId, Row row) {
-                String line = (String)row.getCellValue(0);
+                String line = (String) row.getCellValue(0);
                 List<Cell> cellValues = getCells(line, widths)
                         .stream()
                         .map(v -> new Cell(v, null))
                         .collect(Collectors.toList());
                 return new Row(cellValues);
             }
-			
-		};
+
+        };
     }
-    
+
     /**
      * Splits the line into columns
-     * @param line Line to be split
-     * @param widths array of integers with field sizes
+     * 
+     * @param line
+     *            Line to be split
+     * @param widths
+     *            array of integers with field sizes
      * @return
      */
     static private List<Serializable> getCells(String line, int[] widths) {
         ArrayList<Serializable> cells = new ArrayList<>();
-        
+
         int columnStartCursor = 0;
         int columnEndCursor = 0;
         for (int width : widths) {
             if (columnStartCursor >= line.length()) {
-                cells.add(null); //FIXME is adding a null cell (to represent no data) OK?
+                cells.add(null); // FIXME is adding a null cell (to represent no data) OK?
                 continue;
             }
-            
+
             columnEndCursor = columnStartCursor + width;
-            
+
             if (columnEndCursor > line.length()) {
                 columnEndCursor = line.length();
             }
             if (columnEndCursor <= columnStartCursor) {
-                cells.add(null); //FIXME is adding a null cell (to represent no data, or a zero width column) OK? 
+                cells.add(null); // FIXME is adding a null cell (to represent no data, or a zero width column) OK?
                 continue;
             }
-            
+
             cells.add(line.substring(columnStartCursor, columnEndCursor));
-            
+
             columnStartCursor = columnEndCursor;
         }
-        
+
         // Residual text
         if (columnStartCursor < line.length()) {
             cells.add(line.substring(columnStartCursor));
         }
         return cells;
     }
-    
+
     static public int[] guessColumnWidths(File file, String encoding) {
         try {
             InputStream is = new FileInputStream(file);
@@ -159,22 +163,22 @@ public class FixedWidthImporter extends LineBasedImporterBase {
                 int lineCount = 0;
                 String s;
                 while (totalBytes < 64 * 1024 &&
-                       lineCount < 100 &&
-                       (s = lineNumberReader.readLine()) != null) {
-                    
+                        lineCount < 100 &&
+                        (s = lineNumberReader.readLine()) != null) {
+
                     totalBytes += s.length() + 1; // count the new line character
                     if (s.length() == 0) {
                         continue;
                     }
                     lineCount++;
-                    
+
                     if (counts == null) {
                         counts = new int[s.length()];
                         for (int c = 0; c < counts.length; c++) {
                             counts[c] = 0;
                         }
                     }
-                    
+
                     for (int c = 0; c < counts.length && c < s.length(); c++) {
                         char ch = s.charAt(c);
                         if (ch == ' ') {
@@ -182,10 +186,10 @@ public class FixedWidthImporter extends LineBasedImporterBase {
                         }
                     }
                 }
-                
+
                 if (counts != null && lineCount > 2) {
                     List<Integer> widths = new ArrayList<Integer>();
-                    
+
                     int startIndex = 0;
                     for (int c = 0; c < counts.length; c++) {
                         int count = counts[c];
@@ -194,14 +198,14 @@ public class FixedWidthImporter extends LineBasedImporterBase {
                             startIndex = c + 1;
                         }
                     }
-                    
+
                     for (int i = widths.size() - 2; i >= 0; i--) {
                         if (widths.get(i) == 1) {
                             widths.set(i + 1, widths.get(i + 1) + 1);
                             widths.remove(i);
                         }
                     }
-                    
+
                     int[] widthA = new int[widths.size()];
                     for (int i = 0; i < widthA.length; i++) {
                         widthA[i] = widths.get(i);

@@ -42,6 +42,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 
 public class If implements Control {
+
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 3) {
@@ -61,18 +62,18 @@ public class If implements Control {
             return args[2].evaluate(bindings);
         }
     }
-    
+
     @Override
     public String getDescription() {
-            return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-            "Otherwise, evaluates expression eFalse and returns that result instead.";
+        return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
+                "Otherwise, evaluates expression eFalse and returns that result instead.";
     }
-    
+
     @Override
     public String getParams() {
         return "expression o, expression eTrue, expression eFalse";
     }
-    
+
     @Override
     public String getReturns() {
         return "Depends on actual arguments";

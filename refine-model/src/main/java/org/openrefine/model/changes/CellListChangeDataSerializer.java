@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -24,7 +25,8 @@ public class CellListChangeDataSerializer implements ChangeDataSerializer<List<C
 
     @Override
     public List<Cell> deserialize(String serialized) throws IOException {
-        TypeReference<List<Cell>> typeRef = new TypeReference<List<Cell>>() {};
+        TypeReference<List<Cell>> typeRef = new TypeReference<List<Cell>>() {
+        };
         return ParsingUtilities.mapper.readValue(serialized, typeRef);
     }
 

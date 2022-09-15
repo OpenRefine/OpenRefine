@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.recon;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,23 +46,24 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ReconStatsImplTests {
-    
+
     @Test
     public void serializeReconStats() {
         ReconStats rs = new ReconStatsImpl(3, 1, 2);
         TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}", ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testCreateFromColumn() {
         ReconStats rs = new ReconStatsImpl(3, 1, 2);
         GridState state = mock(GridState.class);
-        when(state.aggregateRowsApprox(any(), eq(ReconStats.ZERO), eq(ReconStats.SAMPLING_SIZE))).thenReturn(new PartialAggregation<ReconStats>(rs, 34L, true));
+        when(state.aggregateRowsApprox(any(), eq(ReconStats.ZERO), eq(ReconStats.SAMPLING_SIZE)))
+                .thenReturn(new PartialAggregation<ReconStats>(rs, 34L, true));
         when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
-        
+
         Assert.assertEquals(ReconStatsImpl.create(state, "some column"), rs);
     }
-    
+
     @Test
     public void testCreateMultipleColumns() {
         ReconConfig reconConfig = mock(ReconConfig.class);
@@ -70,39 +72,39 @@ public class ReconStatsImplTests {
                 new ColumnMetadata("bar"),
                 new ColumnMetadata("hey").withReconConfig(reconConfig)));
         GridState state = mock(GridState.class);
-        when(state.<ReconStatsImpl.MultiReconStats>aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(
-        	 new PartialAggregation<ReconStatsImpl.MultiReconStats>(
-        		new ReconStatsImpl.MultiReconStats(
-                  Arrays.asList(
-                    new ReconStatsImpl(3, 1, 2),
-                    new ReconStatsImpl(8, 3, 4))
-                ), 34L, true));
+        when(state.<ReconStatsImpl.MultiReconStats> aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(
+                new PartialAggregation<ReconStatsImpl.MultiReconStats>(
+                        new ReconStatsImpl.MultiReconStats(
+                                Arrays.asList(
+                                        new ReconStatsImpl(3, 1, 2),
+                                        new ReconStatsImpl(8, 3, 4))),
+                        34L, true));
         when(state.getColumnModel()).thenReturn(initialColumnModel);
-        
+
         ColumnModel expectedColumnModel = initialColumnModel
                 .withReconStats(0, new ReconStatsImpl(3, 1, 2))
                 .withReconStats(2, new ReconStatsImpl(8, 3, 4));
         GridState expectedGridState = mock(GridState.class);
         when(expectedGridState.getColumnModel()).thenReturn(expectedColumnModel);
         when(state.withColumnModel(expectedColumnModel))
-            .thenReturn(expectedGridState);
-        
+                .thenReturn(expectedGridState);
+
         GridState updatedGrid = ReconStatsImpl.updateReconStats(state);
         ColumnModel columnModel = updatedGrid.getColumnModel();
         Assert.assertEquals(columnModel, expectedColumnModel);
     }
-    
+
     @Test
     public void testEquals() {
         ReconStats reconA = new ReconStatsImpl(10, 8, 1);
         ReconStats reconB = new ReconStatsImpl(10, 8, 1);
         ReconStats reconC = new ReconStatsImpl(10, 8, 2);
-        
+
         Assert.assertEquals(reconA, reconB);
         Assert.assertNotEquals(reconA, reconC);
         Assert.assertNotEquals(reconA, 18);
     }
-    
+
     @Test
     public void testToString() {
         ReconStats recon = new ReconStatsImpl(10, 8, 1);

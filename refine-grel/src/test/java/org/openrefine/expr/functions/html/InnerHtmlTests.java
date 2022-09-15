@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.html;
 
 import org.openrefine.expr.EvalError;
@@ -39,7 +40,7 @@ public class InnerHtmlTests extends FunctionTestBase {
         Assert.assertTrue(invoke("innerHtml", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("innerHtml", "test");
-        Assert.assertEquals(evalError.toString(), "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(),
+                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
     }
 }
-

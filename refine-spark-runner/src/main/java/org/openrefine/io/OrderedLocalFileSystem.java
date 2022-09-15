@@ -1,3 +1,4 @@
+
 package org.openrefine.io;
 
 import java.io.IOException;
@@ -11,12 +12,10 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 
 /**
- * A file system which enforces that file names are alphabetically sorted
- * when listing the contents of a directory.
+ * A file system which enforces that file names are alphabetically sorted when listing the contents of a directory.
  * 
- * This is important to preserve the ordering of RDDs serialized to disk,
- * as partitions need to be read in the correct order. This ought to be in Spark itself,
- * but sadly it has not made it there yet.
+ * This is important to preserve the ordering of RDDs serialized to disk, as partitions need to be read in the correct
+ * order. This ought to be in Spark itself, but sadly it has not made it there yet.
  * 
  * {@link https://issues.apache.org/jira/browse/SPARK-5300}
  * 
@@ -24,22 +23,24 @@ import org.apache.hadoop.fs.RemoteIterator;
  *
  */
 public class OrderedLocalFileSystem extends LocalFileSystem {
-    
+
     @Override
     public RemoteIterator<LocatedFileStatus> listLocatedStatus(Path path) throws IOException {
         RemoteIterator<LocatedFileStatus> files = super.listLocatedStatus(path);
         List<LocatedFileStatus> filesList = new ArrayList<>();
-        while(files.hasNext()) {
+        while (files.hasNext()) {
             filesList.add(files.next());
         }
         filesList.sort(new Comparator<LocatedFileStatus>() {
+
             @Override
             public int compare(LocatedFileStatus arg0, LocatedFileStatus arg1) {
                 return arg0.getPath().compareTo(arg1.getPath());
-            } 
+            }
         });
-        
+
         return new RemoteIterator<LocatedFileStatus>() {
+
             int i = 0;
 
             @Override
@@ -53,5 +54,5 @@ public class OrderedLocalFileSystem extends LocalFileSystem {
             }
         };
     }
-    
+
 }

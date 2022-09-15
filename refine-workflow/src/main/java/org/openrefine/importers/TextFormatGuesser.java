@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers;
 
 import java.io.BufferedReader;
@@ -49,10 +50,11 @@ public class TextFormatGuesser implements FormatGuesser {
 
     @Override
     public String guess(File file, String encoding, String seedFormat) {
-        try(InputStream fis = new FileInputStream(file)) {
+        try (InputStream fis = new FileInputStream(file)) {
             if (isCompressed(file)) {
                 return "binary";
-            };
+            }
+            ;
 
             InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
             try (BufferedReader reader = new BufferedReader(
@@ -107,8 +109,9 @@ public class TextFormatGuesser implements FormatGuesser {
                 if (foundFirstChar) {
                     if (wikiTableBegin >= 1 && (wikiTableBegin - wikiTableEnd <= 1) && wikiTableRow >= 2) {
                         return "text/wiki";
-                    } if ((firstChar == '{' || firstChar == '[') &&
-                        openBraces >= JSON_BRACES_THRESHOLD && closeBraces >= JSON_BRACES_THRESHOLD) {
+                    }
+                    if ((firstChar == '{' || firstChar == '[') &&
+                            openBraces >= JSON_BRACES_THRESHOLD && closeBraces >= JSON_BRACES_THRESHOLD) {
                         return "text/json";
                     } else if (openAngleBrackets >= XML_BRACKETS_THRESHOLD
                             && closeAngleBrackets >= XML_BRACKETS_THRESHOLD) {
@@ -131,13 +134,13 @@ public class TextFormatGuesser implements FormatGuesser {
 
     private boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
-        try(InputStream is = new FileInputStream(file)) {
+        try (InputStream is = new FileInputStream(file)) {
             byte[] magic = new byte[4];
             int count = is.read(magic);
-            if (count == 4 && Arrays.equals(magic, new byte[] {0x50,0x4B, 0x03, 0x04}) || // zip
-                    Arrays.equals(magic, new byte[] {0x50,0x4B, 0x07, 0x08}) ||
-                    (magic[0] == 0x1F && magic[1] == (byte)0x8B) // gzip
-                    ) {
+            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
+                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
+                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) // gzip
+            ) {
                 return true;
             }
         }

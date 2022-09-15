@@ -38,17 +38,17 @@ import org.openrefine.browsing.DecoratedValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Store a facet choice that has a decorated value, a count of matched rows,
- * and a flag of whether it has been selected.
+ * Store a facet choice that has a decorated value, a count of matched rows, and a flag of whether it has been selected.
  */
-public class NominalFacetChoice  {
+public class NominalFacetChoice {
+
     @JsonProperty("v")
-    final public DecoratedValue    decoratedValue;
+    final public DecoratedValue decoratedValue;
     @JsonProperty("c")
-    final public long              count;
+    final public long count;
     @JsonProperty("s")
-    final public boolean           selected;
-    
+    final public boolean selected;
+
     public NominalFacetChoice(DecoratedValue decoratedValue, long count, boolean selected) {
         this.decoratedValue = decoratedValue;
         this.count = count;

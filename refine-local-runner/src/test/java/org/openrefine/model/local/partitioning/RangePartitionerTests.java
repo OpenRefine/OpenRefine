@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local.partitioning;
 
 import java.util.Arrays;
@@ -20,5 +21,5 @@ public class RangePartitionerTests {
         Assert.assertEquals(partitioner.getPartition(24L), 4);
         Assert.assertEquals(partitioner.numPartitions(), 5);
     }
-    
+
 }

@@ -87,12 +87,12 @@ public class Sort extends PureFunction {
     public String getDescription() {
         return "Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second.";
     }
-    
+
     @Override
     public String getParams() {
         return "array a of uniform type";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
 
 import java.util.List;
@@ -41,44 +42,44 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ColumnMetadataTests {
-	
-	protected static class MyReconConfig extends ReconConfig {
 
-		@Override
-		public int getBatchSize() {
-			return 40;
-		}
+    protected static class MyReconConfig extends ReconConfig {
 
-		@Override
-		public String getBriefDescription(String columnName) {
-			return "My description";
-		}
+        @Override
+        public int getBatchSize() {
+            return 40;
+        }
 
-		@Override
-		public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
-			return null;
-		}
+        @Override
+        public String getBriefDescription(String columnName) {
+            return "My description";
+        }
 
-		@Override
-		public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-			return null;
-		}
+        @Override
+        public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
+            return null;
+        }
 
-		@Override
-		public Recon createNewRecon(long historyEntryID) {
-			return null;
-		}
+        @Override
+        public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+            return null;
+        }
 
-		@Override
-		public String getMode() {
-			return "my-recon";
-		}
-		
-	}
-	
-	ReconConfig reconConfig = new MyReconConfig();
-	ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L));
-	
+        @Override
+        public Recon createNewRecon(long historyEntryID) {
+            return null;
+        }
+
+        @Override
+        public String getMode() {
+            return "my-recon";
+        }
+
+    }
+
+    ReconConfig reconConfig = new MyReconConfig();
+    ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L));
+
     @Test
     public void serializeColumn() throws Exception {
         ReconConfig.registerReconConfig("core", "my-recon", MyReconConfig.class);
@@ -96,15 +97,15 @@ public class ColumnMetadataTests {
                 + "}}";
         TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testMerge() {
         ColumnMetadata column2 = new ColumnMetadata("name2", "organization_name2", reconConfig, ReconStats.create(3L, 4L, 5L));
         ColumnMetadata expected = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(4L, 6L, 8L));
-        
+
         Assert.assertEquals(SUT.merge(column2), expected);
     }
-    
+
     @Test
     public void testEquals() {
         Assert.assertNotEquals(SUT, 4L);

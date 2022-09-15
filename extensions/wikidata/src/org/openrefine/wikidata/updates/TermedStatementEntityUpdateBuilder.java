@@ -40,9 +40,9 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  * @author Antonin Delpeuch
  *
  */
-public class ItemUpdateBuilder {
+public class TermedStatementEntityUpdateBuilder {
 
-    private EntityIdValue qid;
+    private EntityIdValue id;
     private List<Statement> addedStatements;
     private Set<Statement> deletedStatements;
     private Set<MonolingualTextValue> labels;
@@ -59,9 +59,9 @@ public class ItemUpdateBuilder {
      *            the subject of the document. It can be a reconciled item value for
      *            new items.
      */
-    public ItemUpdateBuilder(EntityIdValue qid) {
-        Validate.notNull(qid);
-        this.qid = qid;
+    public TermedStatementEntityUpdateBuilder(EntityIdValue id) {
+        Validate.notNull(id);
+        this.id = id;
         this.addedStatements = new ArrayList<>();
         this.deletedStatements = new HashSet<Statement>();
         this.labels = new HashSet<MonolingualTextValue>();
@@ -79,7 +79,7 @@ public class ItemUpdateBuilder {
      * @param statement
      *            the statement to add or update
      */
-    public ItemUpdateBuilder addStatement(Statement statement) {
+    public TermedStatementEntityUpdateBuilder addStatement(Statement statement) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         addedStatements.add(statement);
         return this;
@@ -92,7 +92,7 @@ public class ItemUpdateBuilder {
      * @param statement
      *            the statement to delete
      */
-    public ItemUpdateBuilder deleteStatement(Statement statement) {
+    public TermedStatementEntityUpdateBuilder deleteStatement(Statement statement) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         deletedStatements.add(statement);
         return this;
@@ -104,7 +104,7 @@ public class ItemUpdateBuilder {
      * @param statements
      *            the statements to add
      */
-    public ItemUpdateBuilder addStatements(Set<Statement> statements) {
+    public TermedStatementEntityUpdateBuilder addStatements(Set<Statement> statements) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         addedStatements.addAll(statements);
         return this;
@@ -116,7 +116,7 @@ public class ItemUpdateBuilder {
      * @param statements
      *            the statements to delete
      */
-    public ItemUpdateBuilder deleteStatements(Set<Statement> statements) {
+    public TermedStatementEntityUpdateBuilder deleteStatements(Set<Statement> statements) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         deletedStatements.addAll(statements);
         return this;
@@ -130,7 +130,7 @@ public class ItemUpdateBuilder {
      * @param override
      *            whether the label should be added even if there is already a label in that language
      */
-    public ItemUpdateBuilder addLabel(MonolingualTextValue label, boolean override) {
+    public TermedStatementEntityUpdateBuilder addLabel(MonolingualTextValue label, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	labels.add(label);
@@ -148,7 +148,7 @@ public class ItemUpdateBuilder {
      * @param override
      *            whether the label should be added even if there is already a label in that language
      */
-    public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
+    public TermedStatementEntityUpdateBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	this.labels.addAll(labels);
@@ -166,7 +166,7 @@ public class ItemUpdateBuilder {
      * @param override
      *            whether the description should be added even if there is already a description in that language
      */
-    public ItemUpdateBuilder addDescription(MonolingualTextValue description, boolean override) {
+    public TermedStatementEntityUpdateBuilder addDescription(MonolingualTextValue description, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	descriptions.add(description);
@@ -184,7 +184,7 @@ public class ItemUpdateBuilder {
      * @param override
      *            whether the description should be added even if there is already a description in that language
      */
-    public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
+    public TermedStatementEntityUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
         	this.descriptions.addAll(descriptions);
@@ -201,7 +201,7 @@ public class ItemUpdateBuilder {
      * @param alias
      *            the alias to add
      */
-    public ItemUpdateBuilder addAlias(MonolingualTextValue alias) {
+    public TermedStatementEntityUpdateBuilder addAlias(MonolingualTextValue alias) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         aliases.add(alias);
         return this;
@@ -214,7 +214,7 @@ public class ItemUpdateBuilder {
      * @param aliases
      *            the aliases to add
      */
-    public ItemUpdateBuilder addAliases(Set<MonolingualTextValue> aliases) {
+    public TermedStatementEntityUpdateBuilder addAliases(Set<MonolingualTextValue> aliases) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         this.aliases.addAll(aliases);
         return this;
@@ -227,7 +227,7 @@ public class ItemUpdateBuilder {
      */
     public TermedStatementEntityUpdate build() {
         built = true;
-        return new TermedStatementEntityUpdate(qid, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+        return new TermedStatementEntityUpdate(id, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
     }
 
 }

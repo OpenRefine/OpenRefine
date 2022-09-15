@@ -60,133 +60,130 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 
 public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
-    final protected String   _fromColumnName;
+
+    final protected String _fromColumnName;
     final protected List<String> _toColumnNames;
     final protected List<Judgment> _judgments;
-    final protected boolean  _applyToJudgedCells;
-    
+    final protected boolean _applyToJudgedCells;
+
     @JsonCreator
     public ReconCopyAcrossColumnsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig,
-        @JsonProperty("fromColumnName")
-        String fromColumnName,
-        @JsonProperty("toColumnNames")
-        List<String> toColumnNames,
-        @JsonProperty("judgments")
-        List<Recon.Judgment> judgments,
-        @JsonProperty("applyToJudgedCells")
-        boolean applyToJudgedCells) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("fromColumnName") String fromColumnName,
+            @JsonProperty("toColumnNames") List<String> toColumnNames,
+            @JsonProperty("judgments") List<Recon.Judgment> judgments,
+            @JsonProperty("applyToJudgedCells") boolean applyToJudgedCells) {
         super(engineConfig);
         _fromColumnName = fromColumnName;
         _toColumnNames = toColumnNames;
         _judgments = judgments;
         _applyToJudgedCells = applyToJudgedCells;
     }
-    
+
     @JsonProperty("fromColumnName")
     public String getFromColumnName() {
         return _fromColumnName;
     }
-    
+
     @JsonProperty("toColumnNames")
     public List<String> getToColumnNames() {
         return _toColumnNames;
     }
-    
+
     @JsonProperty("judgments")
     public List<Judgment> getJudgments() {
         return _judgments;
     }
-    
+
     @JsonProperty("applyToJudgedCells")
     public boolean getApplyToJudgedCells() {
         return _applyToJudgedCells;
     }
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-		int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
-		List<Integer> targetColumnIndices = _toColumnNames
-				.stream()
-				.map(name -> projectState.getColumnModel().getColumnIndexByName(name))
-				.collect(Collectors.toList());
-		if (columnIndex == -1) {
-			throw new DoesNotApplyException(String.format("Column '%s' does not exist", _fromColumnName));
-		}
-		for(Integer targetColumnIndex : targetColumnIndices) {
-			if (targetColumnIndex == -1) {
-				throw new DoesNotApplyException(String.format("Target column does not exist"));
-			}
-		}
-		Set<Judgment> judgments = new HashSet<>(_judgments);
-		
-		// Aggregate the map from cell values to recons
-		Map<Serializable, Recon> cellValueToRecon = projectState.aggregateRows(getAggregator(columnIndex, judgments), ImmutableMap.<Serializable, Recon>of());
-		
-		// TODO update the ReconStats of the target columns?
-		
-		// Apply the map in the target columns
-		return getRowMapper(targetColumnIndices, cellValueToRecon, _applyToJudgedCells);
-	}
-    
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
+        List<Integer> targetColumnIndices = _toColumnNames
+                .stream()
+                .map(name -> projectState.getColumnModel().getColumnIndexByName(name))
+                .collect(Collectors.toList());
+        if (columnIndex == -1) {
+            throw new DoesNotApplyException(String.format("Column '%s' does not exist", _fromColumnName));
+        }
+        for (Integer targetColumnIndex : targetColumnIndices) {
+            if (targetColumnIndex == -1) {
+                throw new DoesNotApplyException(String.format("Target column does not exist"));
+            }
+        }
+        Set<Judgment> judgments = new HashSet<>(_judgments);
+
+        // Aggregate the map from cell values to recons
+        Map<Serializable, Recon> cellValueToRecon = projectState.aggregateRows(getAggregator(columnIndex, judgments),
+                ImmutableMap.<Serializable, Recon> of());
+
+        // TODO update the ReconStats of the target columns?
+
+        // Apply the map in the target columns
+        return getRowMapper(targetColumnIndices, cellValueToRecon, _applyToJudgedCells);
+    }
+
     /*
-     * There could potentially be a suitable type of immutable map for this,
-     * which would support merges too.
+     * There could potentially be a suitable type of immutable map for this, which would support merges too.
      */
     protected static RowAggregator<ImmutableMap<Serializable, Recon>> getAggregator(int cellIndex, Set<Recon.Judgment> judgments) {
-    	return new RowAggregator<ImmutableMap<Serializable, Recon>>() {
+        return new RowAggregator<ImmutableMap<Serializable, Recon>>() {
 
-			private static final long serialVersionUID = 1509253451942680839L;
+            private static final long serialVersionUID = 1509253451942680839L;
 
-			@Override
-			public ImmutableMap<Serializable, Recon> sum(ImmutableMap<Serializable, Recon> first, ImmutableMap<Serializable, Recon> second) {
-				return ImmutableMap.<Serializable, Recon>builder().putAll(first).putAll(second).build();
-			}
+            @Override
+            public ImmutableMap<Serializable, Recon> sum(ImmutableMap<Serializable, Recon> first,
+                    ImmutableMap<Serializable, Recon> second) {
+                return ImmutableMap.<Serializable, Recon> builder().putAll(first).putAll(second).build();
+            }
 
-			@Override
-			public ImmutableMap<Serializable, Recon> withRow(ImmutableMap<Serializable, Recon> state, long rowId, Row row) {
-				Cell cell = row.getCell(cellIndex);
+            @Override
+            public ImmutableMap<Serializable, Recon> withRow(ImmutableMap<Serializable, Recon> state, long rowId, Row row) {
+                Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.value != null && cell.recon != null) {
                     if (judgments.contains(cell.recon.judgment)) {
-                        return ImmutableMap.<Serializable, Recon>builder().putAll(state).put(cell.value, cell.recon).build();
+                        return ImmutableMap.<Serializable, Recon> builder().putAll(state).put(cell.value, cell.recon).build();
                     }
                 }
                 return state;
-			}
+            }
 
-    		
-    	};
+        };
     }
-    
-    protected static RowInRecordMapper getRowMapper(List<Integer> columnIndices, Map<Serializable, Recon> valueToRecon, boolean applyToJudgedCells) {
-    	return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = -6427575427288421446L;
+    protected static RowInRecordMapper getRowMapper(List<Integer> columnIndices, Map<Serializable, Recon> valueToRecon,
+            boolean applyToJudgedCells) {
+        return new RowInRecordMapper() {
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Row result = row;
-				for (Integer columnIndex : columnIndices) {
+            private static final long serialVersionUID = -6427575427288421446L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Row result = row;
+                for (Integer columnIndex : columnIndices) {
                     Cell cell = row.getCell(columnIndex);
                     if (cell != null && cell.value != null) {
                         Recon reconToCopy = valueToRecon.get(cell.value);
                         boolean judged = cell.recon != null && cell.recon.judgment != Judgment.None;
-                        
+
                         if (reconToCopy != null && (!judged || applyToJudgedCells)) {
                             Cell newCell = new Cell(cell.value, reconToCopy);
                             result = row.withCell(columnIndex, newCell);
                         }
                     }
                 }
-				return result;
-			}
-    		
-    	};
+                return result;
+            }
+
+        };
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return String.format("Copy recon judgments from column %s to %s", _fromColumnName, StringUtils.join(_toColumnNames));
     }
 }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
@@ -52,30 +53,30 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public class ColumnAdditionOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "column-addition", ColumnAdditionOperation.class);
     }
-    
+
     protected Project project;
-	protected GridState initialState;
-	
-	@BeforeMethod
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		project = createProject(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a", "d" },
-			{ "v3", "a", "f" },
-			{ "", "a", "g" },
-			{ "", "b", "h" },
-			{ new EvalError("error"), "a", "i"},
-			{ "v1", "b", "j" }
-		});
-		initialState = project.getCurrentGridState();
-	}
-    
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        project = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+        initialState = project.getCurrentGridState();
+    }
+
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String json = "{"
@@ -84,112 +85,109 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testAddColumnRowsMode() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
-    	Change change = new ColumnAdditionOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar",
-    			"grel:cells[\"foo\"].value+'_'+value",
-    			OnError.SetToBlank,
-    			"newcolumn",
-    			2
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","newcolumn", "hello"},
-				new Serializable[][] {
-			{ "v1", "a", "v1_a", "d" },
-			{ "v3", "a", "v3_a", "f" },
-			{ "", "a",   "_a", "g" },
-			{ "", "b",   "_b", "h" },
-			{ new EvalError("error"), "a", null, "i"},
-			{ "v1", "b",  "v1_b", "j" }
-		});
-    	assertGridEquals(applied, expected);
+        Change change = new ColumnAdditionOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "v1_a", "d" },
+                        { "v3", "a", "v3_a", "f" },
+                        { "", "a", "_a", "g" },
+                        { "", "b", "_b", "h" },
+                        { new EvalError("error"), "a", null, "i" },
+                        { "v1", "b", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
     }
-    
+
     @Test
     public void testAddColumnRecordsMode() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
-    	Change change = new ColumnAdditionOperation(
-    			EngineConfig.ALL_RECORDS,
-    			"bar",
-    			"grel:length(row.record.cells['hello'])",
-    			OnError.SetToBlank,
-    			"newcolumn",
-    			2
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","newcolumn", "hello"},
-				new Serializable[][] {
-			{ "v1", "a", 1, "d" },
-			{ "v3", "a", 4, "f" },
-			{ "", "a",   4, "g" },
-			{ "", "b",   4, "h" },
-			{ new EvalError("error"), "a", 4, "i"},
-			{ "v1", "b",  1, "j" }
-		});
-    	assertGridEquals(applied, expected);
+        Change change = new ColumnAdditionOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:length(row.record.cells['hello'])",
+                OnError.SetToBlank,
+                "newcolumn",
+                2).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 1, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 4, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 1, "j" }
+                });
+        assertGridEquals(applied, expected);
     }
-    
+
     @Test
     public void testAddColumnRowsModeNotLocal() throws Exception {
-    	Operation operation = new ColumnAdditionOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar",
-    			"grel:facetCount(value, 'value', 'bar')",
-    			OnError.SetToBlank,
-    			"newcolumn",
-    			2
-    			);
-    	
-    	org.openrefine.process.Process process = operation.createProcess(project);
-    	((Runnable)process).run();
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","newcolumn", "hello"},
-				new Serializable[][] {
-			{ "v1", "a", 4L, "d" },
-			{ "v3", "a", 4L, "f" },
-			{ "", "a",   4L, "g" },
-			{ "", "b",   2L, "h" },
-			{ new EvalError("error"), "a", 4L, "i"},
-			{ "v1", "b",  2L, "j" }
-		});
-    	assertGridEquals(project.getCurrentGridState(), expected);
+        Operation operation = new ColumnAdditionOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        org.openrefine.process.Process process = operation.createProcess(project);
+        ((Runnable) process).run();
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4L, "d" },
+                        { "v3", "a", 4L, "f" },
+                        { "", "a", 4L, "g" },
+                        { "", "b", 2L, "h" },
+                        { new EvalError("error"), "a", 4L, "i" },
+                        { "v1", "b", 2L, "j" }
+                });
+        assertGridEquals(project.getCurrentGridState(), expected);
     }
-    
+
     @Test
     public void testAddColumnRecordsModeNotLocal() throws Exception {
-    	Operation operation = new ColumnAdditionOperation(
-    			EngineConfig.ALL_RECORDS,
-    			"bar",
-    			"grel:facetCount(value, 'value', 'bar')",
-    			OnError.SetToBlank,
-    			"newcolumn",
-    			2
-    			);
-    	
-    	org.openrefine.process.Process process = operation.createProcess(project);
-    	((Runnable)process).run();
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","newcolumn", "hello"},
-				new Serializable[][] {
-			{ "v1", "a", 4L, "d" },
-			{ "v3", "a", 4L, "f" },
-			{ "", "a",   4L, "g" },
-			{ "", "b",   2L, "h" },
-			{ new EvalError("error"), "a", 4L, "i"},
-			{ "v1", "b",  2L, "j" }
-		});
-    	assertGridEquals(project.getCurrentGridState(), expected);
+        Operation operation = new ColumnAdditionOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        org.openrefine.process.Process process = operation.createProcess(project);
+        ((Runnable) process).run();
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4L, "d" },
+                        { "v3", "a", 4L, "f" },
+                        { "", "a", 4L, "g" },
+                        { "", "b", 2L, "h" },
+                        { new EvalError("error"), "a", 4L, "i" },
+                        { "v1", "b", 2L, "j" }
+                });
+        assertGridEquals(project.getCurrentGridState(), expected);
     }
 }

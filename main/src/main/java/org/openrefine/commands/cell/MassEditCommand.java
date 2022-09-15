@@ -48,19 +48,20 @@ import org.openrefine.util.ParsingUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class MassEditCommand extends EngineDependentCommand {
+
     @Override
     protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         String expression = request.getParameter("expression");
         String editsString = request.getParameter("edits");
-        
+
         return new MassEditOperation(
-            engineConfig,
-            columnName,
-            expression,
-            ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {})
-        );
+                engineConfig,
+                columnName,
+                expression,
+                ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+                }));
     }
 }

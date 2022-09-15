@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
@@ -11,15 +12,15 @@ import java.util.stream.Stream;
 import org.openrefine.process.ProgressReporter;
 
 /**
- * A PLL which is created out of a regular Java collection. The collection
- * is split into contiguous partitions which can be enumerated from independently.
+ * A PLL which is created out of a regular Java collection. The collection is split into contiguous partitions which can
+ * be enumerated from independently.
  * 
  * @author Antonin Delpeuch
  *
  * @param <T>
  */
 public class InMemoryPLL<T> extends PLL<T> {
-    
+
     protected final ArrayList<T> list;
     protected final List<InMemoryPartition> partitions;
 
@@ -27,13 +28,13 @@ public class InMemoryPLL<T> extends PLL<T> {
         super(context);
         list = elements instanceof ArrayList ? (ArrayList<T>) elements : new ArrayList<T>(elements);
         partitions = createPartitions(list.size(), nbPartitions);
-        cachedPartitionSizes = partitions.stream().map(p -> (long)p.length).collect(Collectors.toList());
+        cachedPartitionSizes = partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
     }
 
     @Override
     public Stream<T> compute(Partition partition) {
         InMemoryPartition imPartition = (InMemoryPartition) partition;
-        
+
         return list.subList(imPartition.offset, imPartition.offset + imPartition.length)
                 .stream();
     }
@@ -42,7 +43,7 @@ public class InMemoryPLL<T> extends PLL<T> {
     public List<? extends Partition> getPartitions() {
         return partitions;
     }
-    
+
     @Override
     public void cache(Optional<ProgressReporter> progressReporter) {
         cachedPartitions = partitions.stream()
@@ -52,12 +53,13 @@ public class InMemoryPLL<T> extends PLL<T> {
             progressReporter.get().reportProgress(100);
         }
     }
-    
+
     protected static class InMemoryPartition implements Partition {
+
         protected int offset;
         protected int index;
         protected int length;
-        
+
         protected InMemoryPartition(int index, int offset, int length) {
             this.index = index;
             this.offset = offset;
@@ -74,10 +76,9 @@ public class InMemoryPLL<T> extends PLL<T> {
             return null;
         }
     }
-    
+
     /**
-     * Computes the list of partitions given the size of the collection and the desired
-     * number of partitions.
+     * Computes the list of partitions given the size of the collection and the desired number of partitions.
      * 
      * @param size
      * @param nbPartitions

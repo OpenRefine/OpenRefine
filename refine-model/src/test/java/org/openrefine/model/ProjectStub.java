@@ -40,11 +40,12 @@ import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 
 public class ProjectStub extends Project {
-    public ProjectStub(GridState state){
+
+    public ProjectStub(GridState state) {
         super(state, new LazyChangeDataStore(), new LazyCachedGridStore());
     }
-    
+
     public ProjectStub(long id) {
-    	super(id, mock(History.class));
+        super(id, mock(History.class));
     }
 }

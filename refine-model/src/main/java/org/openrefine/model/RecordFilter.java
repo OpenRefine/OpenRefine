@@ -37,12 +37,13 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Interface for judging if a particular record matches or doesn't match some
- * particular criterion, such as a facet constraint.
+ * Interface for judging if a particular record matches or doesn't match some particular criterion, such as a facet
+ * constraint.
  */
 public interface RecordFilter extends Serializable {
+
     public boolean filterRecord(Record record);
-    
+
     /**
      * A filter which accepts all records.
      */
@@ -54,18 +55,18 @@ public interface RecordFilter extends Serializable {
         public boolean filterRecord(Record record) {
             return true;
         }
-        
+
     };
 
     /**
-     * A record filter which evaluates to true when all the supplied record
-     * filters do.
+     * A record filter which evaluates to true when all the supplied record filters do.
      */
     public static RecordFilter conjunction(List<RecordFilter> recordFilters) {
         if (recordFilters.isEmpty()) {
             return RecordFilter.ANY_RECORD;
         } else {
-            return new RecordFilter() {  
+            return new RecordFilter() {
+
                 private static final long serialVersionUID = -7387688969915555389L;
 
                 @Override
@@ -78,13 +79,14 @@ public interface RecordFilter extends Serializable {
 
     public static RecordFilter negate(RecordFilter filter) {
         return new RecordFilter() {
+
             private static final long serialVersionUID = 5699141718569021249L;
 
             @Override
             public boolean filterRecord(Record record) {
                 return !filter.filterRecord(record);
             }
-            
+
         };
     }
 }

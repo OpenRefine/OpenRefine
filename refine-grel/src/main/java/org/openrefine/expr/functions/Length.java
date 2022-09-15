@@ -50,7 +50,7 @@ public class Length extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -74,12 +74,12 @@ public class Length extends PureFunction {
     public String getDescription() {
         return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
     }
-    
+
     @Override
     public String getParams() {
         return "array a or string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -101,7 +101,20 @@
   <build>
     <finalName>openrefine</finalName>
     <plugins>
-      <plugin> <!-- necessary for launch4j -->
+      <plugin> <!-- gathers license files for all dependencies at packaging time -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin> <!-- necessary for Appbundle -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>3.0.0</version>
@@ -135,7 +148,18 @@
                         </fileset>
                     </copy>
                     
-                    <!-- <copy file="../server/target/openrefine-${project.version}-server.jar" tofile="${built.webapp.dir}/WEB-INF/lib/openrefine-${project.version}.jar"/> -->
+                    <copy todir="${built.webapp.dir}/licenses/"> <!-- licenses for the backend -->
+                        <fileset dir="${project.build.directory}/generated-resources/">
+                            <include name="licenses.xml" />
+                            <include name="licenses/**/*" />
+                        </fileset>
+                    </copy>
+
+                    <copy todir="${built.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
+                        <fileset dir="${webapp.dir}/licenses/">
+                            <include name="**/*" />
+                        </fileset>
+                    </copy>
 
                     <copy todir="${built.webapp.dir}/extensions">
                         <fileset dir="../extensions">
@@ -294,7 +318,7 @@
             </execution>
           </executions>
         </plugin>
-         <plugin>
+        <plugin>
 	   <groupId>org.apache.maven.plugins</groupId>
 	   <artifactId>maven-deploy-plugin</artifactId>
 	   <version>${maven-deploy-plugin.version}</version>

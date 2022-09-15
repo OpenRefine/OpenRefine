@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.cell;
 
 import static org.mockito.Mockito.mock;
@@ -65,12 +66,12 @@ public class MassOperationTests extends RefineTest {
 
     private List<Edit> editList;
     private String editsString;
-    
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "mass-edit", MassEditOperation.class);
     }
-    
+
     @Test
     public void serializeMassEditOperation() throws Exception {
         String json = "{\"op\":\"core/mass-edit\","
@@ -85,11 +86,12 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditString() throws Exception {
         editsString = "[{\"from\":[\"String\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
         Assert.assertEquals(editList.get(0).from.size(), 1);
         Assert.assertEquals(editList.get(0).from.get(0), "String");
-        Assert.assertEquals(editList.get(0).to,"newString" );
+        Assert.assertEquals(editList.get(0).to, "newString");
         Assert.assertFalse(editList.get(0).fromBlank);
         Assert.assertFalse(editList.get(0).fromError);
     }
@@ -98,149 +100,154 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditMultiString() throws Exception {
         editsString = "[{\"from\":[\"String1\",\"String2\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
         Assert.assertEquals(editList.get(0).from.size(), 2);
         Assert.assertEquals(editList.get(0).from.get(0), "String1");
         Assert.assertEquals(editList.get(0).from.get(1), "String2");
-        Assert.assertEquals(editList.get(0).to,"newString" );
+        Assert.assertEquals(editList.get(0).to, "newString");
         Assert.assertFalse(editList.get(0).fromBlank);
         Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditBoolean() throws Exception {
-      editsString = "[{\"from\":[true],\"to\":\"newString\",\"type\":\"text\"}]";
+        editsString = "[{\"from\":[true],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
-      Assert.assertEquals(editList.get(0).from.size(), 1);
-      Assert.assertEquals(editList.get(0).from.get(0), "true");
-      Assert.assertEquals(editList.get(0).to,"newString" );
-      Assert.assertFalse(editList.get(0).fromBlank);
-      Assert.assertFalse(editList.get(0).fromError);
+        Assert.assertEquals(editList.get(0).from.size(), 1);
+        Assert.assertEquals(editList.get(0).from.get(0), "true");
+        Assert.assertEquals(editList.get(0).to, "newString");
+        Assert.assertFalse(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditNumber() throws Exception {
-      editsString = "[{\"from\":[1],\"to\":\"newString\",\"type\":\"text\"}]";
+        editsString = "[{\"from\":[1],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
-      Assert.assertEquals(editList.get(0).from.size(), 1);
-      Assert.assertEquals(editList.get(0).from.get(0), "1");
-      Assert.assertEquals(editList.get(0).to,"newString" );
-      Assert.assertFalse(editList.get(0).fromBlank);
-      Assert.assertFalse(editList.get(0).fromError);
+        Assert.assertEquals(editList.get(0).from.size(), 1);
+        Assert.assertEquals(editList.get(0).from.get(0), "1");
+        Assert.assertEquals(editList.get(0).to, "newString");
+        Assert.assertFalse(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditDate() throws Exception {
-      editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
+        editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
-      Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00:00Z");
-      Assert.assertEquals(editList.get(0).to,"newString" );
-      Assert.assertFalse(editList.get(0).fromBlank);
-      Assert.assertFalse(editList.get(0).fromError);
+        Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00:00Z");
+        Assert.assertEquals(editList.get(0).to, "newString");
+        Assert.assertFalse(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditEmpty() throws Exception {
-      editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
+        editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {
+        });
 
-      Assert.assertEquals(editList.get(0).from.size(), 1);
-      Assert.assertEquals(editList.get(0).from.get(0), "");
-      Assert.assertEquals(editList.get(0).to,"newString" );
-      Assert.assertTrue(editList.get(0).fromBlank);
-      Assert.assertFalse(editList.get(0).fromError);
+        Assert.assertEquals(editList.get(0).from.size(), 1);
+        Assert.assertEquals(editList.get(0).from.get(0), "");
+        Assert.assertEquals(editList.get(0).to, "newString");
+        Assert.assertTrue(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
 
     }
 
-    //Not yet testing for mass edit from OR Error
-    
-	private GridState initialState;
-	private static EngineConfig engineConfig;
-	private ListFacetConfig facet;
-	private List<Edit> edits;
-	private List<Edit> editsWithFromBlank;
-	
-	@BeforeTest
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		Project project = createProject("my project", new String[] {"foo","bar"},
-				new Serializable[][] {
-			{ "v1", "a" },
-			{ "v3", "a" },
-			{ "", "a" },
-			{ "", "b" },
-			{ new EvalError("error"), "a"},
-			{ "v1", "b" }
-		});
-		initialState = project.getCurrentGridState();
-		facet = new ListFacetConfig();
-		facet.columnName = "bar";
-		facet.setExpression("grel:value");
-		facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
-		engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-		edits = Collections.singletonList(new Edit(Collections.singletonList("v1"), false, false, "v2"));
-		editsWithFromBlank = Arrays.asList(edits.get(0), new Edit(Collections.emptyList(), true, false, "hey"));
-	}
-	
-	@Test
-	public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
-		Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-		GridState applied = change.apply(initialState, mock(ChangeContext.class));
-		Row row0 = applied.getRow(0);
-		Assert.assertEquals(row0.getCellValue(0), "v2");
-		Assert.assertEquals(row0.getCellValue(1), "a");
-		Row row1 = applied.getRow(1);
-		Assert.assertEquals(row1.getCellValue(0), "v3");
-		Assert.assertEquals(row1.getCellValue(1), "a");
-		Row row2 = applied.getRow(2);
-		Assert.assertEquals(row2.getCellValue(0), "hey");
-		Assert.assertEquals(row2.getCellValue(1), "a");
-		Row row3 = applied.getRow(3);
-		Assert.assertEquals(row3.getCellValue(0), "");
-		Assert.assertEquals(row3.getCellValue(1), "b");
-		Row row4 = applied.getRow(5);
-		Assert.assertEquals(row4.getCellValue(0), "v1");
-		Assert.assertEquals(row4.getCellValue(1), "b");
-	}
-	
-	@Test
-	public void testRecordsMode() throws DoesNotApplyException, ParsingException {
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-		Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-		GridState applied = change.apply(initialState, mock(ChangeContext.class));
-		Row row0 = applied.getRow(0);
-		Assert.assertEquals(row0.getCellValue(0), "v2");
-		Assert.assertEquals(row0.getCellValue(1), "a");
-		Row row1 = applied.getRow(1);
-		Assert.assertEquals(row1.getCellValue(0), "v3");
-		Assert.assertEquals(row1.getCellValue(1), "a");
-		Row row2 = applied.getRow(2);
-		Assert.assertEquals(row2.getCellValue(0), "hey");
-		Assert.assertEquals(row2.getCellValue(1), "a");
-		Row row3 = applied.getRow(3);
-		Assert.assertEquals(row3.getCellValue(0), "hey");
-		Assert.assertEquals(row3.getCellValue(1), "b");
-		Row row4 = applied.getRow(5);
-		Assert.assertEquals(row4.getCellValue(0), "v1");
-		Assert.assertEquals(row4.getCellValue(1), "b");
-	}
-	
-	@Test
-	public void testDagSlice() throws ParsingException {
-		Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-		DagSlice slice = change.getDagSlice();
-		Assert.assertTrue(slice instanceof TransformationSlice);
-		TransformationSlice transformation = (TransformationSlice) slice;
-		Assert.assertEquals(transformation.getColumnName(), "foo");
-		Assert.assertEquals(transformation.getInputColumns(), TestUtils.set("foo", "bar"));
-	}
+    // Not yet testing for mass edit from OR Error
+
+    private GridState initialState;
+    private static EngineConfig engineConfig;
+    private ListFacetConfig facet;
+    private List<Edit> edits;
+    private List<Edit> editsWithFromBlank;
+
+    @BeforeTest
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        Project project = createProject("my project", new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v1", "a" },
+                        { "v3", "a" },
+                        { "", "a" },
+                        { "", "b" },
+                        { new EvalError("error"), "a" },
+                        { "v1", "b" }
+                });
+        initialState = project.getCurrentGridState();
+        facet = new ListFacetConfig();
+        facet.columnName = "bar";
+        facet.setExpression("grel:value");
+        facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        edits = Collections.singletonList(new Edit(Collections.singletonList("v1"), false, false, "v2"));
+        editsWithFromBlank = Arrays.asList(edits.get(0), new Edit(Collections.emptyList(), true, false, "hey"));
+    }
+
+    @Test
+    public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
+        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Row row0 = applied.getRow(0);
+        Assert.assertEquals(row0.getCellValue(0), "v2");
+        Assert.assertEquals(row0.getCellValue(1), "a");
+        Row row1 = applied.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), "v3");
+        Assert.assertEquals(row1.getCellValue(1), "a");
+        Row row2 = applied.getRow(2);
+        Assert.assertEquals(row2.getCellValue(0), "hey");
+        Assert.assertEquals(row2.getCellValue(1), "a");
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
+        Assert.assertEquals(row4.getCellValue(0), "v1");
+        Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testRecordsMode() throws DoesNotApplyException, ParsingException {
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Row row0 = applied.getRow(0);
+        Assert.assertEquals(row0.getCellValue(0), "v2");
+        Assert.assertEquals(row0.getCellValue(1), "a");
+        Row row1 = applied.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), "v3");
+        Assert.assertEquals(row1.getCellValue(1), "a");
+        Row row2 = applied.getRow(2);
+        Assert.assertEquals(row2.getCellValue(0), "hey");
+        Assert.assertEquals(row2.getCellValue(1), "a");
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "hey");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
+        Assert.assertEquals(row4.getCellValue(0), "v1");
+        Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testDagSlice() throws ParsingException {
+        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
+        DagSlice slice = change.getDagSlice();
+        Assert.assertTrue(slice instanceof TransformationSlice);
+        TransformationSlice transformation = (TransformationSlice) slice;
+        Assert.assertEquals(transformation.getColumnName(), "foo");
+        Assert.assertEquals(transformation.getInputColumns(), TestUtils.set("foo", "bar"));
+    }
 
 }

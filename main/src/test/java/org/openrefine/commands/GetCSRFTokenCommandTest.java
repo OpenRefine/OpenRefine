@@ -1,3 +1,4 @@
+
 package org.openrefine.commands;
 
 import static org.mockito.Mockito.mock;
@@ -21,11 +22,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GetCSRFTokenCommandTest {
+
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
-	protected StringWriter writer = null;
-	protected Command command = null;
-	
+    protected StringWriter writer = null;
+    protected Command command = null;
+
     @BeforeMethod
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -38,12 +40,12 @@ public class GetCSRFTokenCommandTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testGetToken() throws JsonParseException, JsonMappingException, IOException, ServletException {
-    	command.doGet(request, response);
-    	ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
-    	String token = result.get("token").asText();
-    	assertTrue(Command.csrfFactory.validToken(token));
+        command.doGet(request, response);
+        ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
+        String token = result.get("token").asText();
+        assertTrue(Command.csrfFactory.validToken(token));
     }
 }

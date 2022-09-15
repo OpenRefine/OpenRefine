@@ -68,19 +68,18 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
 public class JsonImporterTests extends ImporterTest {
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-
-    //dependencies
+    // dependencies
     ByteArrayInputStream inputStream = null;
 
-    //System Under Test
+    // System Under Test
     JsonImporter SUT = null;
 
     @BeforeMethod
@@ -104,22 +103,22 @@ public class JsonImporterTests extends ImporterTest {
         }
         super.tearDown();
     }
-    
+
     @Test
-    public void canParseSample() throws Exception{
-    	GridState grid = RunTest(getSample());
-        
+    public void canParseSample() throws Exception {
+        GridState grid = RunTest(getSample());
+
         GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - author", "_ - title", "_ - publish_date"
+                "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-        	{ 1L, "Author 1, The", "Book title 1", "2010-05-26" },
-        	{ 2L, "Author 2, The", "Book title 2", "2010-05-26" },
-        	{ 3L, "Author 3, The", "Book title 3", "2010-05-26" },
-        	{ 4L, "Author 4, The", "Book title 4", "2010-05-26" },
-        	{ 5L, "Author 5, The", "Book title 5", "2010-05-26" },
-        	{ 6L, "Author 6, The", "Book title 6", "2010-05-26" },
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26" },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26" },
+                { 4L, "Author 4, The", "Book title 4", "2010-05-26" },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26" },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26" },
         });
-		assertGridEquals(grid, expected);
+        assertGridEquals(grid, expected);
     }
 
     @Test
@@ -144,37 +143,34 @@ public class JsonImporterTests extends ImporterTest {
         List<Row> rows = new ArrayList<>();
 
         try {
-	        SUT.parseOneFile(
-	                allocator, rows,
-	                metadata,
-	                job,
-	                "file-source",
-	                "archive-name",
-	                inputStream,
-	                rootColumnGroup,
-	                -1L,
-	                options
-	        );
-	        Assert.fail("Parsing should have thrown an error");
-        } catch(Exception exception) {
-        	Assert.assertEquals(
-        			exception.getMessage(),
-        			"Unexpected character (';' (code 59)): was expecting comma to separate Object entries"
-                );
+            SUT.parseOneFile(
+                    allocator, rows,
+                    metadata,
+                    job,
+                    "file-source",
+                    "archive-name",
+                    inputStream,
+                    rootColumnGroup,
+                    -1L,
+                    options);
+            Assert.fail("Parsing should have thrown an error");
+        } catch (Exception exception) {
+            Assert.assertEquals(
+                    exception.getMessage(),
+                    "Unexpected character (';' (code 59)): was expecting comma to separate Object entries");
         }
     }
 
     @Test
-    public void trimLeadingTrailingWhitespaceOnTrimStrings() throws Exception{
-        String ScraperwikiOutput = 
-            "[\n" +
-            "{\n" +
-            "        \"school\": \"  University of Cambridge  \",\n" +
-            "        \"name\": \"          Amy Zhang                   \",\n" +
-            "        \"student-faculty-score\": \"100\",\n" +
-            "        \"intl-student-score\": \"95\"\n" +
-            "    }\n" +
-            "]\n";
+    public void trimLeadingTrailingWhitespaceOnTrimStrings() throws Exception {
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
         GridState grid = RunTest(ScraperwikiOutput, getOptions(job, SUT, JsonImporter.ANONYMOUS, true));
         Row row = grid.getRow(0);
         Assert.assertNotNull(row);
@@ -184,16 +180,15 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() throws Exception{
-        String ScraperwikiOutput = 
-            "[\n" +
-            "{\n" +
-            "        \"school\": \"  University of Cambridge  \",\n" +
-            "        \"name\": \"          Amy Zhang                   \",\n" +
-            "        \"student-faculty-score\": \"100\",\n" +
-            "        \"intl-student-score\": \"95\"\n" +
-            "    }\n" +
-            "]\n";
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() throws Exception {
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
         GridState grid = RunTest(ScraperwikiOutput);
         Row row = grid.getRow(0);
         Assert.assertNotNull(row);
@@ -203,60 +198,60 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSampleWithDuplicateNestedElements() throws Exception{
+    public void canParseSampleWithDuplicateNestedElements() throws Exception {
         GridState grid = RunTest(getSampleWithDuplicateNestedElements());
 
         GridState expected = createGrid(new String[] {
-        	"_ - id", "_ - title", "_ - publish_date", "_ - authors - _ - name"
+                "_ - id", "_ - title", "_ - publish_date", "_ - authors - _ - name"
         }, new Serializable[][] {
-        	{ 1L,   "Book title 1", "2010-05-26", "Author 1, The" },
-        	{ null, null,           null,         "Author 1, Another" },  
-        	{ 2L,   "Book title 2", "2010-05-26", "Author 2, The" },
-        	{ null, null,           null,         "Author 2, Another" }, 
-        	{ 3L,   "Book title 3", "2010-05-26", "Author 3, The" },
-        	{ null, null,           null,         "Author 3, Another" }, 
-        	{ 4L,   "Book title 4", "2010-05-26", "Author 4, The" },
-        	{ null, null,           null,         "Author 4, Another" }, 
-        	{ 5L,   "Book title 5", "2010-05-26", "Author 5, The" },
-        	{ null, null,           null,         "Author 5, Another" }, 
-        	{ 6L,   "Book title 6", "2010-05-26", "Author 6, The" },
-        	{ null, null,           null,         "Author 6, Another" }, 
+                { 1L, "Book title 1", "2010-05-26", "Author 1, The" },
+                { null, null, null, "Author 1, Another" },
+                { 2L, "Book title 2", "2010-05-26", "Author 2, The" },
+                { null, null, null, "Author 2, Another" },
+                { 3L, "Book title 3", "2010-05-26", "Author 3, The" },
+                { null, null, null, "Author 3, Another" },
+                { 4L, "Book title 4", "2010-05-26", "Author 4, The" },
+                { null, null, null, "Author 4, Another" },
+                { 5L, "Book title 5", "2010-05-26", "Author 5, The" },
+                { null, null, null, "Author 5, Another" },
+                { 6L, "Book title 6", "2010-05-26", "Author 6, The" },
+                { null, null, null, "Author 6, Another" },
         });
-		assertGridEquals(grid, expected);
+        assertGridEquals(grid, expected);
     }
 
     @Test
     public void testCanParseLineBreak() throws Exception {
         GridState grid = RunTest(getSampleWithLineBreak());
 
-		GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - author", "_ - title", "_ - publish_date"
+        GridState expected = createGrid(new String[] {
+                "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-        	{ 1L, "Author 1, The",     "Book title 1", "2010-05-26" },
-        	{ 2L, "Author 2, The",     "Book title 2", "2010-05-26" },
-        	{ 3L, "Author 3, The",     "Book title 3", "2010-05-26" },
-        	{ 4L, "With line\n break", "Book title 4", "2010-05-26" },
-        	{ 5L, "Author 5, The",     "Book title 5", "2010-05-26" },
-        	{ 6L, "Author 6, The",     "Book title 6", "2010-05-26" },
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26" },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26" },
+                { 4L, "With line\n break", "Book title 4", "2010-05-26" },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26" },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26" },
         });
-		assertGridEquals(grid, expected);
+        assertGridEquals(grid, expected);
     }
 
     @Test
     public void testElementsWithVaryingStructure() throws Exception {
         GridState grid = RunTest(getSampleWithVaryingStructure());
 
-		GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
+        GridState expected = createGrid(new String[] {
+                "_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
         }, new Serializable[][] {
-        	{ 1L, "Author 1, The", "Book title 1", "2010-05-26", null },
-        	{ 2L, "Author 2, The", "Book title 2", "2010-05-26", null },
-        	{ 3L, "Author 3, The", "Book title 3", "2010-05-26", null },
-        	{ 4L, "Author 4, The", "Book title 4", "2010-05-26", null },
-        	{ 5L, "Author 5, The", "Book title 5", "2010-05-26", null },
-        	{ 6L, "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records"},
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26", null },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26", null },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26", null },
+                { 4L, "Author 4, The", "Book title 4", "2010-05-26", null },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26", null },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records" },
         });
-		assertGridEquals(grid, expected);
+        assertGridEquals(grid, expected);
     }
 
     @Test
@@ -264,7 +259,7 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithTreeStructure());
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 5);
-		Assert.assertEquals(grid.rowCount(), 6);
+        Assert.assertEquals(grid.rowCount(), 6);
     }
 
     @Test
@@ -280,49 +275,48 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "recordPath", path);
 
         GridState grid = RunTest(mqlOutput, options);
-        
+
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 3);
-		Assert.assertEquals(grid.rowCount(), 16);
+        Assert.assertEquals(grid.rowCount(), 16);
     }
 
     @Test
     public void testJSONMinimumArray() throws Exception {
-        String ScraperwikiOutput = 
-            "[\n" +
-            "{\n" +
-            "        \"school\": \"University of Cambridge\\n" +
-            "                            United Kingdom\",\n" +
-            "        \"student-faculty-score\": \"100\",\n" +
-            "        \"intl-student-score\": \"95\",\n" +
-            "        \"intl-faculty-score\": \"96\",\n" +
-            "        \"rank\": \"#1\",\n" +
-            "        \"peer-review-score\": \"100\",\n" +
-            "        \"emp-review-score\": \"100\",\n" +
-            "        \"score\": \"100.0\",\n" +
-            "        \"citations-score\": \"93\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"school\": \"Harvard University\\n" +
-            "                            United States\",\n" +
-            "        \"student-faculty-score\": \"97\",\n" +
-            "        \"intl-student-score\": \"87\",\n" +
-            "        \"intl-faculty-score\": \"71\",\n" +
-            "        \"rank\": \"#2\",\n" +
-            "        \"peer-review-score\": \"100\",\n" +
-            "        \"emp-review-score\": \"100\",\n" +
-            "        \"score\": \"99.2\",\n" +
-            "        \"citations-score\": \"100\"\n" +
-            "    }\n" +
-            "]\n";
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"University of Cambridge\\n" +
+                "                            United Kingdom\",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\",\n" +
+                "        \"intl-faculty-score\": \"96\",\n" +
+                "        \"rank\": \"#1\",\n" +
+                "        \"peer-review-score\": \"100\",\n" +
+                "        \"emp-review-score\": \"100\",\n" +
+                "        \"score\": \"100.0\",\n" +
+                "        \"citations-score\": \"93\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"school\": \"Harvard University\\n" +
+                "                            United States\",\n" +
+                "        \"student-faculty-score\": \"97\",\n" +
+                "        \"intl-student-score\": \"87\",\n" +
+                "        \"intl-faculty-score\": \"71\",\n" +
+                "        \"rank\": \"#2\",\n" +
+                "        \"peer-review-score\": \"100\",\n" +
+                "        \"emp-review-score\": \"100\",\n" +
+                "        \"score\": \"99.2\",\n" +
+                "        \"citations-score\": \"100\"\n" +
+                "    }\n" +
+                "]\n";
         GridState grid = RunTest(ScraperwikiOutput);
-        
+
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 9);
-		Assert.assertEquals(grid.rowCount(), 2);
+        Assert.assertEquals(grid.rowCount(), 2);
     }
 
     /**
-     * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName
-     * of an Entity_Start token which occurs after a Field_Name token
+     * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName of an Entity_Start token which
+     * occurs after a Field_Name token
      */
     @Test
     public void EnsureJSONParserHandlesgetLocalNameCorrectly() throws Exception {
@@ -346,9 +340,8 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
-
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
         token = Token.Ignorable;
@@ -366,7 +359,7 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
@@ -393,7 +386,7 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
     }
 
@@ -422,14 +415,14 @@ public class JsonImporterTests extends ImporterTest {
             Assert.fail();
         }
     }
-    
+
     @Test
     public void testJsonDatatypes() throws Exception {
         GridState grid = RunTest(getSampleWithDataTypes());
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 2);
-		Assert.assertEquals(grid.rowCount(), 21);
-		Assert.assertEquals(grid.recordCount(), 4);
+        Assert.assertEquals(grid.rowCount(), 21);
+        Assert.assertEquals(grid.recordCount(), 4);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().get(0).getName(), JsonImporter.ANONYMOUS + " - id");
@@ -449,9 +442,9 @@ public class JsonImporterTests extends ImporterTest {
 
         row = grid.getRow(13);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(),2);
-        Assert.assertEquals(row.cells.get(1).value,Boolean.TRUE); 
-        
+        Assert.assertEquals(row.cells.size(), 2);
+        Assert.assertEquals(row.cells.get(1).value, Boolean.TRUE);
+
         row = grid.getRow(14);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 2);
@@ -474,14 +467,14 @@ public class JsonImporterTests extends ImporterTest {
 
         row = grid.getRow(18);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(),2);
-        Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)0.23)); 
-        
+        Assert.assertEquals(row.cells.size(), 2);
+        Assert.assertEquals(row.cells.get(1).value, Double.valueOf((double) 0.23));
+
         row = grid.getRow(19);
         Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(),2);
-        Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)-0.24)); 
-        
+        Assert.assertEquals(row.cells.size(), 2);
+        Assert.assertEquals(row.cells.get(1).value, Double.valueOf((double) -0.24));
+
         row = grid.getRow(20);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 2);
@@ -490,19 +483,17 @@ public class JsonImporterTests extends ImporterTest {
 
         // null, true, false 0,1,-2.1,0.23,-0.24,3.14e100
 
-
         // TODO: check data types
     }
-
 
     @Test
     public void testComplexJsonStructure() throws Exception {
         String fileName = "grid_small.json";
         GridState grid = RunComplexJSONTest(getComplexJSON(fileName));
-        
+
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 63);
-		Assert.assertEquals(grid.rowCount(), 63);
-		Assert.assertEquals(grid.recordCount(), 8);
+        Assert.assertEquals(grid.rowCount(), 63);
+        Assert.assertEquals(grid.recordCount(), 8);
     }
 
     @Test
@@ -510,7 +501,7 @@ public class JsonImporterTests extends ImporterTest {
         final String FILE = "json-sample-format-1.json";
         String filename = ClassLoader.getSystemResource(FILE).getPath();
         String fileContents = FileUtils.readFileToString(new File(filename), Charsets.UTF_8);
-        
+
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
@@ -519,15 +510,15 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "trimStrings", false);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        JSONUtilities.safePut(options,"includeFileSources",true);
-        
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
         GridState grid = RunTest(fileContents, options);
 
         Assert.assertNotNull(grid.getColumnModel().getColumnByName("File"));
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
     }
 
-    //------------helper methods---------------
+    // ------------helper methods---------------
 
     private static String getTypicalElement(int id) {
         return "{ \"id\" : " + id + "," +
@@ -598,7 +589,7 @@ public class JsonImporterTests extends ImporterTest {
             sb.append(",");
         }
         sb.append("{\"id\" : 4," +
-                "\"author\" : \"With line\\n break\"," + //FIXME this line break is doubled - is this correct??
+                "\"author\" : \"With line\\n break\"," + // FIXME this line break is doubled - is this correct??
                 "\"title\" : \"Book title 4\"," +
                 "\"publish_date\" : \"2010-05-26\"" +
                 "},");
@@ -666,11 +657,11 @@ public class JsonImporterTests extends ImporterTest {
     private GridState RunTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
-    
+
     private GridState RunComplexJSONTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT, "institutes", false));
     }
-    
+
     private GridState RunTest(String testString, ObjectNode options) throws Exception {
         return parseOneString(SUT, testString, options);
     }

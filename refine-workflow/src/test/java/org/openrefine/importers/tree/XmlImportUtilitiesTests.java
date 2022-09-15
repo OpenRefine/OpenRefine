@@ -67,7 +67,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     TreeReader parser;
     ImportColumnGroup columnGroup;
     ImportRecord record;
@@ -75,11 +75,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     ColumnIndexAllocator allocator;
     List<Row> rows;
 
-    //System Under Test
+    // System Under Test
     XmlImportUtilities SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XmlImportUtilities();
         columnGroup = new ImportColumnGroup();
         record = new ImportRecord();
@@ -88,12 +88,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown() throws IOException{
+    public void TearDown() throws IOException {
         SUT = null;
         parser = null;
         columnGroup = null;
         record = null;
-        if(inputStream != null) {
+        if (inputStream != null) {
             inputStream.close();
         }
         inputStream = null;
@@ -102,7 +102,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagXmlTest() throws TreeReaderException{
+    public void detectPathFromTagXmlTest() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
 
         String tag = "library";
@@ -115,7 +115,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectPathFromTagWithNestedElementXml() throws TreeReaderException{
+    public void detectPathFromTagWithNestedElementXml() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         String tag = "book";
 
@@ -129,11 +129,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementXmlTest(){
+    public void detectRecordElementXmlTest() {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
 
-        String tag="library";
+        String tag = "library";
 
         List<String> response = new ArrayList<String>();
         try {
@@ -147,11 +147,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementCanHandleWithNestedElementsXml(){
+    public void detectRecordElementCanHandleWithNestedElementsXml() {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
 
-        String tag="book";
+        String tag = "book";
 
         List<String> response = new ArrayList<String>();
         try {
@@ -166,11 +166,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementIsNullForUnfoundTagXml(){
+    public void detectRecordElementIsNullForUnfoundTagXml() {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
 
-        String tag="";
+        String tag = "";
 
         List<String> response = new ArrayList<String>();
         try {
@@ -182,7 +182,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void detectRecordElementRegressionXmlTest(){
+    public void detectRecordElementRegressionXmlTest() {
         loadSampleXml();
 
         String[] path = XmlImportUtilities.detectRecordElement(createXmlParser());
@@ -191,9 +191,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(path[0], "library");
         Assert.assertEquals(path[1], "book");
     }
-    
+
     @Test
-    public void detectRecordElementRegressionJsonTest(){
+    public void detectRecordElementRegressionJsonTest() {
         loadSampleJson();
 
         String[] path = XmlImportUtilities.detectRecordElement(
@@ -208,7 +208,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void importTreeDataXmlTest() throws TreeReaderException {
         loadSampleXml();
 
-        String[] recordPath = new String[]{"library","book"};
+        String[] recordPath = new String[] { "library", "book" };
 
         XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1L,
                 false, true, false, false, null, false, null);
@@ -224,19 +224,19 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("title"));
         Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("publish_date"));
     }
-    
+
     /**
      * Test of deprecated method which can go away when it does
      */
     @Test
-    public void importTreeDataXmlTestDeprecated(){
+    public void importTreeDataXmlTestDeprecated() {
         loadSampleXml();
 
-        String[] recordPath = new String[]{"library","book"};
+        String[] recordPath = new String[] { "library", "book" };
         try {
             XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
                     false, true, false, false, null, false, null);
-        } catch (Exception e){
+        } catch (Exception e) {
             Assert.fail();
         }
 
@@ -252,12 +252,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void importXmlWithVaryingStructureTest() throws TreeReaderException{
+    public void importXmlWithVaryingStructureTest() throws TreeReaderException {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
-        String[] recordPath = new String[]{"library", "book"};
-		XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1, 
-				false, true, false, false, null, false, null);
+        String[] recordPath = new String[] { "library", "book" };
+        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
+                false, true, false, false, null, false, null);
 
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.get(0).cells.size(), 4);
@@ -276,18 +276,18 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertNotNull(book.subgroups.get("genre"));
     }
 
-
     /**
      * Test using deprecated method which can go away when it does
-     * @throws TreeReaderException 
+     * 
+     * @throws TreeReaderException
      */
     @Test
     public void importXmlWithVaryingStructureTestDeprecated() throws TreeReaderException {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
-        String[] recordPath = new String[]{"library", "book"};
+        String[] recordPath = new String[] { "library", "book" };
         XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
-        	new ImportParameters(false, true, false));
+                new ImportParameters(false, true, false));
 
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.get(0).cells.size(), 4);
@@ -307,7 +307,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void createColumnsFromImportTest(){
+    public void createColumnsFromImportTest() {
 
         ImportColumnGroup columnGroup = new ImportColumnGroup();
         ImportColumnGroup subGroup = new ImportColumnGroup();
@@ -319,8 +319,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         List<Integer> columnIndexTranslation = new ArrayList<>();
         ColumnModel columnModel = XmlImportUtilities.createColumnsFromImport(
-        		new ColumnModel(Collections.emptyList()), columnGroup, columnIndexTranslation);
-        
+                new ColumnModel(Collections.emptyList()), columnGroup, columnIndexTranslation);
+
         Assert.assertEquals(columnModel.getColumns().size(), 4);
         Assert.assertEquals(columnModel.getColumns().get(0).getName(), "hello");
         Assert.assertEquals(columnModel.getColumns().get(1).getName(), "world");
@@ -334,29 +334,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        String[] recordPath = new String[]{"library","book"};
-        int pathIndex = 0;
-
-        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
-                    false, false, false, false, null, false, null);
-
-        Assert.assertEquals(rows.size(), 6);
-
-        Assert.assertEquals(rows.get(0).cells.size(), 4);
-        //TODO
-    }
-
-    /**
-     * Test of deprecated wrapper method which can go away when it does
-     * @throws TreeReaderException  
-     */
-    @Test
-    public void findRecordTestXmlDeprecated() throws TreeReaderException {
-        loadSampleXml();
-        createXmlParser();
-        ParserSkip();
-
-        String[] recordPath = new String[]{"library","book"};
+        String[] recordPath = new String[] { "library", "book" };
         int pathIndex = 0;
 
         XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
@@ -365,12 +343,34 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(rows.size(), 6);
 
         Assert.assertEquals(rows.get(0).cells.size(), 4);
-        //TODO
+        // TODO
     }
 
+    /**
+     * Test of deprecated wrapper method which can go away when it does
+     * 
+     * @throws TreeReaderException
+     */
+    @Test
+    public void findRecordTestXmlDeprecated() throws TreeReaderException {
+        loadSampleXml();
+        createXmlParser();
+        ParserSkip();
+
+        String[] recordPath = new String[] { "library", "book" };
+        int pathIndex = 0;
+
+        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
+                false, false, false, false, null, false, null);
+
+        Assert.assertEquals(rows.size(), 6);
+
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
+        // TODO
+    }
 
     @Test
-    public void processRecordTestXml() throws TreeReaderException{
+    public void processRecordTestXml() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
@@ -388,7 +388,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     @Test
     public void processRecordTestDuplicateColumnsXml() throws TreeReaderException {
-        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><authors><author>author1</author><author>author2</author></authors><genre>genre1</genre></book></library>");
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><authors><author>author1</author><author>author2</author></authors><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
@@ -408,8 +409,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTestNestedElementXml() throws TreeReaderException{
-        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>author1</author-name><author-dob>a date</author-dob></author><genre>genre1</genre></book></library>");
+    public void processRecordTestNestedElementXml() throws TreeReaderException {
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>author1</author-name><author-dob>a date</author-dob></author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
@@ -426,14 +428,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(row.getCell(2).value, "a date");
     }
 
-
     @Test
-    public void processSubRecordTestXml() throws TreeReaderException{
+    public void processSubRecordTestXml() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processSubRecord(allocator, rows, parser, columnGroup, record,0, 
+        XmlImportUtilities.processSubRecord(allocator, rows, parser, columnGroup, record, 0,
                 false, false, false);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
@@ -448,17 +449,18 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertNotNull(book.subgroups.get("author"));
         Assert.assertNotNull(book.subgroups.get("genre"));
 
-        //TODO check record
+        // TODO check record
     }
 
     @Test
     public void trimLeadingTrailingWhitespaceOnTrimString() throws TreeReaderException {
-        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
         XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, true, false, false, false, "", false, "");
-            
+
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
         Row row = rows.get(0);
@@ -471,8 +473,9 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimString(){
-        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimString() {
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
@@ -494,7 +497,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void addCellTest(){
+    public void addCellTest() {
         String columnLocalName = "author";
         String text = "Author1, The";
 
@@ -502,17 +505,17 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         Assert.assertNotNull(record);
         Assert.assertNotNull(record.rows);
-        //Assert.assertNotNull(record.columnEmptyRowIndices);
+        // Assert.assertNotNull(record.columnEmptyRowIndices);
         Assert.assertEquals(record.rows.size(), 1);
-        //Assert.assertEquals(record.columnEmptyRowIndices.size(), 2);
+        // Assert.assertEquals(record.columnEmptyRowIndices.size(), 2);
         Assert.assertNotNull(record.rows.get(0));
-        //Assert.assertNotNull(record.columnEmptyRowIndices.get(0));
-        //Assert.assertNotNull(record.columnEmptyRowIndices.get(1));
+        // Assert.assertNotNull(record.columnEmptyRowIndices.get(0));
+        // Assert.assertNotNull(record.columnEmptyRowIndices.get(1));
         Assert.assertEquals(record.rows.get(0).size(), 1);
         Assert.assertNotNull(record.rows.get(0).get(0));
         Assert.assertEquals(record.rows.get(0).get(0).value, "Author1, The");
-        //Assert.assertEquals(record.columnEmptyRowIndices.get(0).intValue(),0);
-        //Assert.assertEquals(record.columnEmptyRowIndices.get(1).intValue(),1);
+        // Assert.assertEquals(record.columnEmptyRowIndices.get(0).intValue(),0);
+        // Assert.assertEquals(record.columnEmptyRowIndices.get(1).intValue(),1);
 
     }
 
@@ -569,7 +572,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-        	XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
@@ -591,7 +594,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-        	XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
@@ -606,34 +609,34 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(row.getCell(2).value, "50", "Checks the value for 'per-page'");
     }
 
-    //----------------helpers-------------
-    public void loadSampleXml(){
-        loadData( XmlImporterTests.getSample() );
-    }
-    
-    public void loadSampleJson(){
-        loadData( JsonImporterTests.getSample() );
+    // ----------------helpers-------------
+    public void loadSampleXml() {
+        loadData(XmlImporterTests.getSample());
     }
 
-    public void loadData(String xml){
+    public void loadSampleJson() {
+        loadData(JsonImporterTests.getSample());
+    }
+
+    public void loadData(String xml) {
         try {
-            inputStream = new ByteArrayInputStream( xml.getBytes( "UTF-8" ) );
+            inputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e1) {
             Assert.fail();
         }
     }
 
-    public void ParserSkip(){
+    public void ParserSkip() {
         try {
-            if (parser.current() == TreeReader.Token.Ignorable){
-                parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
+            if (parser.current() == TreeReader.Token.Ignorable) {
+                parser.next(); // move parser forward once e.g. skip the START_DOCUMENT parser event
             }
         } catch (Exception e1) {
             Assert.fail();
         }
     }
 
-    public TreeReader createXmlParser(){
+    public TreeReader createXmlParser() {
         try {
             parser = new XmlParser(inputStream);
             return parser;
@@ -643,7 +646,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
             return null;
         }
     }
-    public TreeReader createJsonParser(){
+
+    public TreeReader createJsonParser() {
         parser = new JSONTreeReader(inputStream);
         return parser;
     }

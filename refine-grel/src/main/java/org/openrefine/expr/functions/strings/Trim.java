@@ -52,16 +52,17 @@ public class Trim extends PureFunction {
         }
         return new EvalError("Invalid parameters");
     }
+
     @Override
     public String getDescription() {
         return "Returns a copy of string s with leading and trailing whitespace removed.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

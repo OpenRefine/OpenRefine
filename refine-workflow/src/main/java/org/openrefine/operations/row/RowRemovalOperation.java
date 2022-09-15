@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
- import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.dag.DagSlice;
@@ -47,50 +47,49 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RowRemovalOperation extends EngineDependentOperation {
+
     @JsonCreator
     public RowRemovalOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig) {
         super(engineConfig);
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Remove rows";
     }
-    
+
     @Override
     public Change createChange() {
-    	return new RowRemovalChange(_engineConfig);
+        return new RowRemovalChange(_engineConfig);
     }
-    
+
     public class RowRemovalChange extends EngineDependentChange {
-        
+
         public RowRemovalChange(EngineConfig engineConfig) {
             super(engineConfig);
         }
 
-		@Override
-		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-			Engine engine = getEngine(projectState);
-			if (Mode.RowBased.equals(engine.getMode())) {
-				return projectState.removeRows(engine.combinedRowFilters());
-			} else {
-				return projectState.removeRecords(engine.combinedRecordFilters());
-			}
-		}
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+            Engine engine = getEngine(projectState);
+            if (Mode.RowBased.equals(engine.getMode())) {
+                return projectState.removeRows(engine.combinedRowFilters());
+            } else {
+                return projectState.removeRecords(engine.combinedRecordFilters());
+            }
+        }
 
-		@Override
-		public boolean isImmediate() {
-			return true;
-		}
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
 
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-        
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     }
 

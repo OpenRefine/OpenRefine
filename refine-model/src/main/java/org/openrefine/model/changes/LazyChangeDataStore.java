@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -12,25 +13,24 @@ import java.util.Set;
 import org.openrefine.process.ProgressReporter;
 
 /**
- * A {@link ChangeDataStore} which does not persist its change data,
- * meaning that they do not have to be computed explicitly.
+ * A {@link ChangeDataStore} which does not persist its change data, meaning that they do not have to be computed
+ * explicitly.
  * 
- * The {@link ChangeData} objects are simply stored in an in-memory map,
- * to be restored later. This is suitable in contexts where project data
- * must not be persisted and workflows are meant to be run as pipelines
- * from the import to the export stage.
+ * The {@link ChangeData} objects are simply stored in an in-memory map, to be restored later. This is suitable in
+ * contexts where project data must not be persisted and workflows are meant to be run as pipelines from the import to
+ * the export stage.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class LazyChangeDataStore implements ChangeDataStore {
-    
+
     private Map<String, ChangeData<?>> _changeData;
-    
+
     public LazyChangeDataStore() {
         _changeData = new HashMap<>();
     }
-    
+
     private String idPairToString(long historyEntryId, String dataId) {
         return String.format("%d/%s", historyEntryId, dataId);
     }
@@ -49,7 +49,7 @@ public class LazyChangeDataStore implements ChangeDataStore {
         if (!_changeData.containsKey(key)) {
             throw new IllegalArgumentException(String.format("Change data with id %s does not exist", key));
         }
-        return (ChangeData<T>)_changeData.get(key);
+        return (ChangeData<T>) _changeData.get(key);
     }
 
     @Override
@@ -62,5 +62,5 @@ public class LazyChangeDataStore implements ChangeDataStore {
             }
         }
     }
-    
+
 }

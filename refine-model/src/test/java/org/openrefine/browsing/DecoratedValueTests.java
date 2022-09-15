@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing;
 
 import java.time.OffsetDateTime;
@@ -34,10 +35,12 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class DecoratedValueTests {
+
     @Test
     public void serializeDecoratedValue() {
         OffsetDateTime date = OffsetDateTime.parse("2017-03-04T12:56:32Z");
         DecoratedValue dv = new DecoratedValue(date, "[date 2017-03-04T12:56:32Z]");
-        TestUtils.isSerializedTo(dv, "{\"v\":\"2017-03-04T12:56:32Z\",\"l\":\"[date 2017-03-04T12:56:32Z]\"}", ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(dv, "{\"v\":\"2017-03-04T12:56:32Z\",\"l\":\"[date 2017-03-04T12:56:32Z]\"}",
+                ParsingUtilities.defaultWriter);
     }
 }

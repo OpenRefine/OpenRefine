@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.facets;
 
 import java.util.HashMap;
@@ -9,21 +10,20 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordFilter;
 
 public class StringFacetAggregator extends FacetAggregator<StringFacetState> {
-    
+
     private static final long serialVersionUID = 3209825226374715166L;
     private int columnIdx;
     private String selected;
-    
+
     public StringFacetAggregator(int columnIdx, String selected) {
         this.columnIdx = columnIdx;
         this.selected = selected;
     }
-  
 
     @Override
     public StringFacetState sum(StringFacetState first, StringFacetState second) {
         Map<String, Long> counts = new HashMap<>(second.occurences);
-        for(Entry<String,Long> entry : first.occurences.entrySet()) {
+        for (Entry<String, Long> entry : first.occurences.entrySet()) {
             counts.put(entry.getKey(), counts.getOrDefault(entry.getKey(), 0L) + entry.getValue());
         }
         return new StringFacetState(counts);
@@ -41,6 +41,7 @@ public class StringFacetAggregator extends FacetAggregator<StringFacetState> {
     @Override
     public RowInRecordFilter getRowFilter() {
         return new RowInRecordFilter(true) {
+
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -52,8 +53,8 @@ public class StringFacetAggregator extends FacetAggregator<StringFacetState> {
                 String stringValue = cellValue == null ? "null" : cellValue.toString();
                 return stringValue.equals(selected);
             }
-            
+
         };
     }
-    
+
 }

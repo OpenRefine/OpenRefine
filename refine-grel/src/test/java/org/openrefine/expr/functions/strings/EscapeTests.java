@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -33,16 +34,17 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class EscapeTests extends FunctionTestBase {
+
     @Test
     public void testEscape() {
         assertNull(invoke("escape"));
-        assertEquals(invoke("escape",null,"xml"), "");
+        assertEquals(invoke("escape", null, "xml"), "");
         assertEquals(invoke("escape", "mystring", "html"), "mystring");
         assertEquals(invoke("escape", "mystring", "xml"), "mystring");
         assertEquals(invoke("escape", "mystring", "csv"), "mystring");
         assertEquals(invoke("escape", "mystring", "url"), "mystring");
         assertEquals(invoke("escape", "mystring", "javascript"), "mystring");
-        assertEquals(invoke("escape", 1, "html") ,"1");
+        assertEquals(invoke("escape", 1, "html"), "1");
         assertEquals(invoke("escape", 1, "xml"), "1");
         assertEquals(invoke("escape", 1, "csv"), "1");
         assertEquals(invoke("escape", 1, "url"), "1");
@@ -63,4 +65,3 @@ public class EscapeTests extends FunctionTestBase {
         assertEquals("\"\"\"\"", invoke("escape", "\"", "csv")); // quotes get doubled
     }
 }
-

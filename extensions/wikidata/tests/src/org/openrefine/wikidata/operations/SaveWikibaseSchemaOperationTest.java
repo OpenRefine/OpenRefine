@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import static org.mockito.Mockito.mock;
@@ -61,9 +62,9 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
         Operation operation = reconstruct();
         Change change = operation.createChange();
         ChangeContext context = mock(ChangeContext.class);
-        
+
         GridState applied = change.apply(project.getCurrentGridState(), context);
-        
+
         Assert.assertTrue(applied.getOverlayModels().get("wikibaseSchema") instanceof WikibaseSchema);
     }
 }

@@ -54,12 +54,12 @@ public class Abs extends PureFunction {
     public String getDescription() {
         return "Returns the absolute value of a number.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

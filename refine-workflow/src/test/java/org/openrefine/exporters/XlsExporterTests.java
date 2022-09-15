@@ -58,25 +58,25 @@ import org.testng.annotations.Test;
 public class XlsExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xls exporter test project";
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     ByteArrayOutputStream stream;
     GridState grid;
     ProjectMetadata projectMetadata;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     StreamExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XlsExporter(false);
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
@@ -85,7 +85,7 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         stream = null;
         grid = null;
@@ -94,13 +94,13 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleXls() throws IOException{
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1"},
-    		{"row1cell0", "row1cell1"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+    public void exportSimpleXls() throws IOException {
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
@@ -108,13 +108,13 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(stream.size(),4096);
+        Assert.assertEquals(stream.size(), 4096);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(0);
-            Assert.assertEquals(cell0.toString(),"row0cell0");
+            Assert.assertEquals(cell0.toString(), "row0cell0");
         }
 
     }
@@ -134,7 +134,7 @@ public class XlsExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
-            Assert.assertEquals(cell0.toString(),"row0cell255");
+            Assert.assertEquals(cell0.toString(), "row0cell255");
         }
     }
 
@@ -154,38 +154,38 @@ public class XlsExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
             // FIXME: This is not a good error reporting mechanism, but it's what there today
-            Assert.assertEquals(cell0.toString(),"ERROR: TOO MANY COLUMNS");
+            Assert.assertEquals(cell0.toString(), "ERROR: TOO MANY COLUMNS");
         }
     }
 
     @Test
-    public void exportDateType() throws IOException{
+    public void exportDateType() throws IOException {
         OffsetDateTime odt = OffsetDateTime.now();
-        grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{odt, odt},
-    		{odt, odt}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { odt, odt },
+                        { odt, odt }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
-        
-        Assert.assertEquals(stream.size(),4096);
+
+        Assert.assertEquals(stream.size(), 4096);
     }
 
     private void CreateGrid(int rows, int columns) {
-    	Serializable[][] values = new Serializable[rows][columns];
-    	String[] columnNames = new String[columns];
-		for(int column = 0; column != columns; column++) {
-			columnNames[column] = String.format("column%d", column);
-			for (int row = 0; row != rows; row++) {
-    			values[row][column] = String.format("row%dcell%d", row, column);
-    		}
-    	}
-    	grid = createGrid(columnNames, values);
+        Serializable[][] values = new Serializable[rows][columns];
+        String[] columnNames = new String[columns];
+        for (int column = 0; column != columns; column++) {
+            columnNames[column] = String.format("column%d", column);
+            for (int row = 0; row != rows; row++) {
+                values[row][column] = String.format("row%dcell%d", row, column);
+            }
+        }
+        grid = createGrid(columnNames, values);
     }
 }

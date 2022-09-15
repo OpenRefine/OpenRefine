@@ -52,13 +52,13 @@ public class AllRowsRecordFilter implements RecordFilter {
     @Override
     public boolean filterRecord(Record record) {
         List<Row> rows = record.getRows();
-    	for (int i = 0; i != rows.size(); i++) {
-    		Row row = rows.get(i);
-    		long rowId = record.getStartRowId() + i;
-    		if (!_rowFilter.filterRow(rowId, row)) {
+        for (int i = 0; i != rows.size(); i++) {
+            Row row = rows.get(i);
+            long rowId = record.getStartRowId() + i;
+            if (!_rowFilter.filterRow(rowId, row)) {
                 return false;
             }
-    	}
+        }
         return true;
     }
 }

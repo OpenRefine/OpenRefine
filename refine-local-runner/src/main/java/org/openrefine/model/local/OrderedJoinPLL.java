@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
@@ -14,11 +15,11 @@ import org.openrefine.model.local.partitioning.RangePartitioner;
 import com.google.common.collect.Streams;
 
 /**
- * A PLL which represents the join of two others, assuming both
- * are sorted by keys. Both inner and outer joins are supported.
+ * A PLL which represents the join of two others, assuming both are sorted by keys. Both inner and outer joins are
+ * supported.
  * 
- * The partitions of this PLL are taken from the first PLL supplied (left).
- * It is assumed that each key appears at most once in each collection.
+ * The partitions of this PLL are taken from the first PLL supplied (left). It is assumed that each key appears at most
+ * once in each collection.
  * 
  * @author Antonin Delpeuch
  *
@@ -27,7 +28,7 @@ import com.google.common.collect.Streams;
  * @param <W>
  */
 public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
-    
+
     private final PairPLL<K, V> first;
     private final PairPLL<K, W> second;
     private final Comparator<K> comparator;
@@ -39,10 +40,14 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     /**
      * Constructs a PLL representing the join of two others
      * 
-     * @param first assumed to be sorted by keys
-     * @param second assumed to be sorted by keys
-     * @param comparator the comparator for the common order of keys
-     * @param innerJoin whether the join should be inner or outer
+     * @param first
+     *            assumed to be sorted by keys
+     * @param second
+     *            assumed to be sorted by keys
+     * @param comparator
+     *            the comparator for the common order of keys
+     * @param innerJoin
+     *            whether the join should be inner or outer
      */
     public OrderedJoinPLL(
             PairPLL<K, V> first,
@@ -57,19 +62,18 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
         this.partitions = first.getPartitions().stream()
                 .map(p -> new JoinPartition(p.getIndex(), p))
                 .collect(Collectors.toList());
-        
+
         // Compute the first key in each partition but the first one
         if (getPartitioner().isPresent() && getPartitioner().get() instanceof RangePartitioner<?>) {
             RangePartitioner<K> partitioner = (RangePartitioner<K>) getPartitioner().get();
-            firstKeys = (List<Optional<K>>)partitioner.getFirstKeys();
+            firstKeys = (List<Optional<K>>) partitioner.getFirstKeys();
         } else {
-            firstKeys = first.runOnPartitionsWithoutInterruption(partition ->
-                first.iterate(partition)
-                .map(tuple -> tuple.getKey())
-                .findFirst())
-                .stream()
-                .skip(1)
-                .collect(Collectors.toList());
+            firstKeys = first.runOnPartitionsWithoutInterruption(partition -> first.iterate(partition)
+                    .map(tuple -> tuple.getKey())
+                    .findFirst())
+                    .stream()
+                    .skip(1)
+                    .collect(Collectors.toList());
         }
         // Compute the upper bound of each partition but the last one,
         // which is the first key of the first non-empty partition after it.
@@ -105,19 +109,22 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     /**
-     * Merges two key-ordered streams where each key is guaranteed to appear
-     * at most once in each stream.
+     * Merges two key-ordered streams where each key is guaranteed to appear at most once in each stream.
      * 
      * @param <K>
      * @param <V>
      * @param <W>
-     * @param firstStream the first stream to join
-     * @param secondStream the second stream to join
-     * @param comparator the comparator with respect to which both are sorted
-     * @param innerJoin whether the join should be inner or outer
+     * @param firstStream
+     *            the first stream to join
+     * @param secondStream
+     *            the second stream to join
+     * @param comparator
+     *            the comparator with respect to which both are sorted
+     * @param innerJoin
+     *            whether the join should be inner or outer
      * @return
      */
-    protected static <K,V,W> Stream<Tuple2<K, Tuple2<V, W>>> mergeOrderedStreams(
+    protected static <K, V, W> Stream<Tuple2<K, Tuple2<V, W>>> mergeOrderedStreams(
             Stream<Tuple2<K, V>> firstStream,
             Stream<Tuple2<K, W>> secondStream,
             Comparator<K> comparator,
@@ -133,13 +140,13 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                     secondStream.close();
                 });
     }
-    
-    private static <K,V,W> Iterator<Tuple2<K, Tuple2<V, W>>> innerJoin(
+
+    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> innerJoin(
             Iterator<Tuple2<K, V>> firstIterator,
             Iterator<Tuple2<K, W>> secondIterator,
             Comparator<K> comparator) {
         return new Iterator<Tuple2<K, Tuple2<V, W>>>() {
-            
+
             Tuple2<K, V> lastSeenLeft = null;
             Tuple2<K, W> lastSeenRight = null;
             Tuple2<K, Tuple2<V, W>> nextTuple = null;
@@ -177,7 +184,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                         }
                     }
                 }
-                
+
             }
 
             @Override
@@ -187,16 +194,16 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                 nextTuple = null;
                 return toReturn;
             }
-            
+
         };
     }
-    
-    private static <K,V,W> Iterator<Tuple2<K, Tuple2<V, W>>> outerJoin(
+
+    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> outerJoin(
             Iterator<Tuple2<K, V>> firstIterator,
             Iterator<Tuple2<K, W>> secondIterator,
             Comparator<K> comparator) {
         return new Iterator<Tuple2<K, Tuple2<V, W>>>() {
-            
+
             Tuple2<K, V> lastSeenLeft = null;
             Tuple2<K, W> lastSeenRight = null;
             Tuple2<K, Tuple2<V, W>> nextTuple = null;
@@ -208,7 +215,8 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             }
 
             private void fetchNextTuple() {
-                while ((nextTuple == null) && (lastSeenLeft != null || firstIterator.hasNext() || lastSeenRight != null || secondIterator.hasNext())) {
+                while ((nextTuple == null)
+                        && (lastSeenLeft != null || firstIterator.hasNext() || lastSeenRight != null || secondIterator.hasNext())) {
                     if (lastSeenLeft == null && firstIterator.hasNext()) {
                         lastSeenLeft = firstIterator.next();
                     } else if (lastSeenRight == null && secondIterator.hasNext()) {
@@ -220,8 +228,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                                 Tuple2.of(lastSeenLeft.getValue(), lastSeenRight.getValue()));
                         lastSeenLeft = null;
                         lastSeenRight = null;
-                    } else if ((
-                            lastSeenLeft != null &&
+                    } else if ((lastSeenLeft != null &&
                             lastSeenRight != null &&
                             comparator.compare(lastSeenLeft.getKey(), lastSeenRight.getKey()) > 0) ||
                             (lastSeenLeft == null && !firstIterator.hasNext())) {
@@ -242,7 +249,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                         }
                     }
                 }
-                
+
             }
 
             @Override
@@ -252,7 +259,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                 nextTuple = null;
                 return toReturn;
             }
-            
+
         };
     }
 
@@ -260,12 +267,12 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     public List<? extends Partition> getPartitions() {
         return partitions;
     }
-    
+
     protected static class JoinPartition implements Partition {
-        
+
         protected final int index;
         protected final Partition parent;
-        
+
         protected JoinPartition(int index, Partition parent) {
             this.index = index;
             this.parent = parent;
@@ -280,7 +287,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
         public Partition getParent() {
             return parent;
         }
-        
+
     }
 
 }

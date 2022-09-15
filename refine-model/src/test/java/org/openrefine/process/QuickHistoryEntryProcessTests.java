@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.process;
 
 import static org.mockito.Mockito.mock;
@@ -34,17 +35,17 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class QuickHistoryEntryProcessTests {
-    
+
     @Test
     public void serializeQuickHistoryEntryProcess() {
         History history = mock(History.class);
         Process process = new QuickHistoryEntryProcess(history, "quick description", null, null);
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
-		+ "\"id\":"+hashCode+","
-		+ "\"description\":"
-		+ "\"quick description\","
-		+ "\"immediate\":true,"
-		+ "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
+                + "\"id\":" + hashCode + ","
+                + "\"description\":"
+                + "\"quick description\","
+                + "\"immediate\":true,"
+                + "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
     }
 }

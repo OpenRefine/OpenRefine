@@ -55,43 +55,47 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ListFacet implements Facet {
+
     public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
-    
+
     /**
      * Wrapper to respect the serialization format
      */
     public static class DecoratedValueWrapper {
+
         @JsonProperty("v")
         public final DecoratedValue value;
+
         @JsonCreator
         public DecoratedValueWrapper(
                 @JsonProperty("v") DecoratedValue value) {
             this.value = value;
         }
     }
-    
+
     /*
      * Configuration
      */
     public static class ListFacetConfig implements FacetConfig {
+
         @JsonProperty("name")
-        public String     name;
+        public String name;
         // accessors defined below
-		private String     expression;
-		private Evaluable  evaluable = null;
-		private String     errorMessage = null;
-		
+        private String expression;
+        private Evaluable evaluable = null;
+        private String errorMessage = null;
+
         @JsonProperty("columnName")
-        public String     columnName;
+        public String columnName;
         @JsonProperty("invert")
-        public boolean    invert;
-        
+        public boolean invert;
+
         // If true, then facet won't show the blank and error choices
         @JsonProperty("omitBlank")
         public boolean omitBlank;
         @JsonProperty("omitError")
         public boolean omitError;
-        
+
         @JsonIgnore
         public List<DecoratedValue> selection = new LinkedList<>();
         @JsonProperty("selectBlank")
@@ -105,14 +109,14 @@ public class ListFacet implements Facet {
                     .map(e -> new DecoratedValueWrapper(e))
                     .collect(Collectors.toList());
         }
-        
+
         @JsonProperty("selection")
         public void setSelection(List<DecoratedValueWrapper> wrapped) {
             selection = wrapped.stream()
                     .map(e -> e.value)
                     .collect(Collectors.toList());
         }
-        
+
         @Override
         public ListFacet apply(ColumnModel columnModel) {
             return new ListFacet(this, columnModel);
@@ -123,96 +127,96 @@ public class ListFacet implements Facet {
             return "core/list";
         }
 
-		@Override
-		public Set<String> getColumnDependencies() {
-			if (evaluable == null) {
-				return null;
-			}
-			return evaluable.getColumnDependencies(columnName);
-		}
-	    
-		@Override
-		public ListFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
-			if (errorMessage != null) {
-				return null;
-			}
-			Evaluable translated = evaluable.renameColumnDependencies(substitutions);
-			if (translated == null) {
-				return null;
-			}
-			ListFacetConfig newConfig = new ListFacetConfig();
-			newConfig.columnName = substitutions.getOrDefault(columnName, columnName);
-			newConfig.setExpression(translated.getFullSource());
-			newConfig.invert = invert;
-			newConfig.name = name;
-			newConfig.omitBlank = omitBlank;
-			newConfig.omitError = omitError;
-			newConfig.selectBlank = selectBlank;
-			newConfig.selectError = selectError;
-			newConfig.selection = selection;
-			return newConfig;
-		}
+        @Override
+        public Set<String> getColumnDependencies() {
+            if (evaluable == null) {
+                return null;
+            }
+            return evaluable.getColumnDependencies(columnName);
+        }
 
-		@Override
-		public boolean isNeutral() {
-			return selection.size() == 0 && !selectBlank && !selectError;
-		}
+        @Override
+        public ListFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            if (errorMessage != null) {
+                return null;
+            }
+            Evaluable translated = evaluable.renameColumnDependencies(substitutions);
+            if (translated == null) {
+                return null;
+            }
+            ListFacetConfig newConfig = new ListFacetConfig();
+            newConfig.columnName = substitutions.getOrDefault(columnName, columnName);
+            newConfig.setExpression(translated.getFullSource());
+            newConfig.invert = invert;
+            newConfig.name = name;
+            newConfig.omitBlank = omitBlank;
+            newConfig.omitError = omitError;
+            newConfig.selectBlank = selectBlank;
+            newConfig.selectError = selectError;
+            newConfig.selection = selection;
+            return newConfig;
+        }
 
-		@JsonProperty("expression")
-		public String getExpression() {
-			return expression;
-		}
-		
-		@JsonProperty("expression")
-		public void setExpression(String expression) {
-			this.expression = expression;
-			try {
-	            evaluable = MetaParser.parse(expression);
-	        } catch (ParsingException e) {
-	            errorMessage = e.getMessage();
-	        }
-		}
-		
-		@JsonIgnore
-		public Evaluable getEvaluable() {
-			return evaluable;
-		}
-		
-		@JsonIgnore
-		public String getErrorMessage() {
-			return errorMessage;
-		}
+        @Override
+        public boolean isNeutral() {
+            return selection.size() == 0 && !selectBlank && !selectError;
+        }
+
+        @JsonProperty("expression")
+        public String getExpression() {
+            return expression;
+        }
+
+        @JsonProperty("expression")
+        public void setExpression(String expression) {
+            this.expression = expression;
+            try {
+                evaluable = MetaParser.parse(expression);
+            } catch (ParsingException e) {
+                errorMessage = e.getMessage();
+            }
+        }
+
+        @JsonIgnore
+        public Evaluable getEvaluable() {
+            return evaluable;
+        }
+
+        @JsonIgnore
+        public String getErrorMessage() {
+            return errorMessage;
+        }
     }
-    
+
     final ListFacetConfig _config;
     final ColumnModel _columnModel;
-    
+
     /*
      * Derived configuration
      */
-    protected int        _cellIndex;
-    protected Evaluable  _eval;
-    protected String     _errorMessage;
-    
+    protected int _cellIndex;
+    protected Evaluable _eval;
+    protected String _errorMessage;
+
     public ListFacet(ListFacetConfig config, ColumnModel model) {
-    	_config = config;
-    	_columnModel = model;
-    	
+        _config = config;
+        _columnModel = model;
+
         if (_config.columnName.length() > 0) {
             _cellIndex = _columnModel.getColumnIndexByName(_config.columnName);
             if (_cellIndex == -1) {
-            	_errorMessage = "No column named " + _config.columnName;
+                _errorMessage = "No column named " + _config.columnName;
             }
         } else {
             _cellIndex = -1;
         }
-        
+
         _eval = _config.getEvaluable();
         if (_cellIndex != -1) {
-        	_errorMessage = _config.getErrorMessage();
+            _errorMessage = _config.getErrorMessage();
         }
     }
-    
+
     protected Object[] createMatches() {
         Object[] a = new Object[_config.selection.size()];
         for (int i = 0; i < a.length; i++) {
@@ -220,34 +224,36 @@ public class ListFacet implements Facet {
         }
         return a;
     }
-    
-	@Override
-	public StringValuesFacetState getInitialFacetState() {
-		return new StringValuesFacetState();
-	}
 
-	@Override
-	public ListFacetResult getFacetResult(FacetState state) {
-		if (_errorMessage == null) {
-			return new ListFacetResult(_config, (StringValuesFacetState) state);
-		} else {
-			return new ListFacetResult(_config, _errorMessage);
-		}
-	}
+    @Override
+    public StringValuesFacetState getInitialFacetState() {
+        return new StringValuesFacetState();
+    }
 
-	@Override
-	public FacetAggregator<StringValuesFacetState> getAggregator() {
-		if (_errorMessage == null) {
-			return new StringValuesFacetAggregator(_columnModel, _cellIndex, new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel),
-					Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
-					.collect(Collectors.toSet()), _config.selectBlank, _config.selectError, _config.invert);
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public ListFacetResult getFacetResult(FacetState state) {
+        if (_errorMessage == null) {
+            return new ListFacetResult(_config, (StringValuesFacetState) state);
+        } else {
+            return new ListFacetResult(_config, _errorMessage);
+        }
+    }
 
-	@Override
-	public ListFacetConfig getConfig() {
-		return _config;
-	}
+    @Override
+    public FacetAggregator<StringValuesFacetState> getAggregator() {
+        if (_errorMessage == null) {
+            return new StringValuesFacetAggregator(_columnModel, _cellIndex,
+                    new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel),
+                    Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
+                            .collect(Collectors.toSet()),
+                    _config.selectBlank, _config.selectError, _config.invert);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ListFacetConfig getConfig() {
+        return _config;
+    }
 }

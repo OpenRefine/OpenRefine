@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.facets;
 
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
@@ -10,84 +11,84 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class NumericFacetResult implements FacetResult {
-	
-	@JsonIgnore
-    protected final double           _min;
+
     @JsonIgnore
-    protected final double           _max;
+    protected final double _min;
     @JsonIgnore
-    protected final double           _step;
-	@JsonIgnore
-	protected final RangeFacetConfig _config;
+    protected final double _max;
     @JsonIgnore
-    protected final HistogramState   _allRowsHistogram;
+    protected final double _step;
     @JsonIgnore
-    protected final HistogramState   _rowsInViewHistogram;
-    
+    protected final RangeFacetConfig _config;
+    @JsonIgnore
+    protected final HistogramState _allRowsHistogram;
+    @JsonIgnore
+    protected final HistogramState _rowsInViewHistogram;
+
     public NumericFacetResult(RangeFacetConfig config, NumericFacetState state) {
-    	_config = config;
-    	_allRowsHistogram = state.getGlobalHistogram();
-    	_rowsInViewHistogram = state.getViewHistogram();
-    	_step = _allRowsHistogram.getBinSize();
-    	_min = _allRowsHistogram.getMinBin() * _step;
-    	_max = _allRowsHistogram.getMaxBin() * _step;
+        _config = config;
+        _allRowsHistogram = state.getGlobalHistogram();
+        _rowsInViewHistogram = state.getViewHistogram();
+        _step = _allRowsHistogram.getBinSize();
+        _min = _allRowsHistogram.getMinBin() * _step;
+        _max = _allRowsHistogram.getMaxBin() * _step;
     }
-	
+
     @JsonProperty("baseNumericCount")
     public long getBaseNumericCount() {
-    	return _allRowsHistogram.getNumericCount();
+        return _allRowsHistogram.getNumericCount();
     }
-    
+
     @JsonProperty("baseNonNumericCount")
     public long getBaseNonNumericCount() {
-    	return _allRowsHistogram.getNonNumericCount();
+        return _allRowsHistogram.getNonNumericCount();
     }
-    
+
     @JsonProperty("baseBlankCount")
     public long getBaseBlankCount() {
-    	return _allRowsHistogram.getBlankCount();
+        return _allRowsHistogram.getBlankCount();
     }
-    
+
     @JsonProperty("baseErrorCount")
     public long getBaseErrorCount() {
-    	return _allRowsHistogram.getErrorCount();
+        return _allRowsHistogram.getErrorCount();
     }
-    
+
     @JsonProperty("numericCount")
     public long getNumericCount() {
-    	return _rowsInViewHistogram.getNumericCount();
+        return _rowsInViewHistogram.getNumericCount();
     }
-    
+
     @JsonProperty("nonNumericCount")
     public long getNonNumericCount() {
-    	return _rowsInViewHistogram.getNonNumericCount();
+        return _rowsInViewHistogram.getNonNumericCount();
     }
-    
+
     @JsonProperty("blankCount")
     public long getBlankCount() {
-    	return _rowsInViewHistogram.getBlankCount();
+        return _rowsInViewHistogram.getBlankCount();
     }
-    
+
     @JsonProperty("errorCount")
     protected long getErrorCount() {
-    	return _rowsInViewHistogram.getErrorCount();
+        return _rowsInViewHistogram.getErrorCount();
     }
-    
+
     @JsonProperty("name")
     public String getName() {
         return _config._name;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _config._expression;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _config._columnName;
     }
-    
+
     @JsonProperty("error")
     @JsonInclude(Include.NON_NULL)
     public String getError() {
@@ -98,12 +99,12 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonIgnore
     public boolean isFiniteRange() {
         return !Double.isInfinite(_min) && !Double.isInfinite(_max);
     }
-    
+
     @JsonProperty(RangeFacet.MIN)
     @JsonInclude(Include.NON_NULL)
     public Double getMin() {
@@ -112,7 +113,7 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonProperty(RangeFacet.MAX)
     @JsonInclude(Include.NON_NULL)
     public Double getMax() {
@@ -121,7 +122,7 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonProperty("step")
     @JsonInclude(Include.NON_NULL)
     public Double getStep() {
@@ -130,7 +131,7 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonProperty("bins")
     @JsonInclude(Include.NON_NULL)
     public long[] getBins() {
@@ -139,7 +140,7 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonProperty("baseBins")
     @JsonInclude(Include.NON_NULL)
     public long[] getBaseBins() {
@@ -148,29 +149,29 @@ public class NumericFacetResult implements FacetResult {
         }
         return null;
     }
-    
+
     @JsonProperty(RangeFacet.FROM)
     @JsonInclude(Include.NON_NULL)
     public Double getFrom() {
         if (getError() == null) {
-        	if (_config._selected) {
-        		return _config._from;
-        	} else {
-        		return _min;
-        	}
+            if (_config._selected) {
+                return _config._from;
+            } else {
+                return _min;
+            }
         }
         return null;
     }
-    
+
     @JsonProperty(RangeFacet.TO)
     @JsonInclude(Include.NON_NULL)
     public Double getTo() {
         if (getError() == null) {
-        	if (_config._selected) {
-        		return _config._to;
-        	} else {
-        		return _max;
-        	}
+            if (_config._selected) {
+                return _config._to;
+            } else {
+                return _max;
+            }
         }
         return null;
     }

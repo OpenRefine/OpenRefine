@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import java.io.IOException;
@@ -47,9 +48,8 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-
 public class TimeRangeFacetTests extends RefineTest {
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -69,7 +69,7 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"nonTimeCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
+
     public static String facetNoTimeJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -89,9 +89,9 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"nonTimeCount\":3,"
             + "\"blankCount\":1,"
             + "\"errorCount\":0}";
-    
+
     public static String facetNoColumnJson = "{"
-    		+ "\"error\":\"No column named my column\","
+            + "\"error\":\"No column named my column\","
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
             + "\"columnName\":\"my column\","
@@ -104,74 +104,74 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"nonTimeCount\":0,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
-    public static String configJson = "{\n" + 
-            "          \"selectNonTime\": true,\n" + 
-            "          \"expression\": \"value\",\n" + 
-            "          \"selectBlank\": true,\n" + 
-            "          \"selectError\": true,\n" + 
-            "          \"selectTime\": true,\n" + 
-            "          \"name\": \"my column\",\n" + 
-            "          \"from\": 1262443349000,\n" + 
-            "          \"to\": 1514966950000,\n" + 
-            "          \"type\": \"core/timerange\",\n" + 
-            "          \"columnName\": \"my column\"\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"selectNonTime\": true,\n" +
+            "          \"expression\": \"value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"selectTime\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": 1262443349000,\n" +
+            "          \"to\": 1514966950000,\n" +
+            "          \"type\": \"core/timerange\",\n" +
+            "          \"columnName\": \"my column\"\n" +
             "        }";
-    
+
     @BeforeTest
     public void registerFacetConfig() {
-    	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
-    
+
     @Test
     public void serializeTimeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] {"my column"},
-        		new Serializable[][] {
-                { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
-                { "nontime" },
-                { OffsetDateTime.parse("2008-01-03T03:04:05Z") },
-                { OffsetDateTime.parse("2012-04-05T02:00:01Z") }});
-        
+        GridState project = createGrid(new String[] { "my column" },
+                new Serializable[][] {
+                        { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
+                        { "nontime" },
+                        { OffsetDateTime.parse("2008-01-03T03:04:05Z") },
+                        { OffsetDateTime.parse("2012-04-05T02:00:01Z") } });
+
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
-        
+
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeTimeRangeFacetMismatchingColumn() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] {"my mismatching column"},
-        		new Serializable[][] {
-                { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
-                { "nontime" },
-                { OffsetDateTime.parse("2008-01-03T03:04:05Z") },
-                { OffsetDateTime.parse("2012-04-05T02:00:01Z") }});
-        
+        GridState project = createGrid(new String[] { "my mismatching column" },
+                new Serializable[][] {
+                        { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
+                        { "nontime" },
+                        { OffsetDateTime.parse("2008-01-03T03:04:05Z") },
+                        { OffsetDateTime.parse("2012-04-05T02:00:01Z") } });
+
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
-        
+
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoColumnJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeTimeRangeFacetNoTimeValue() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] {"my column"},
-        		new Serializable[][] {
-                { null },
-                { "nontime" },
-                { 1234L },
-                { "foo" }});
-        
+        GridState project = createGrid(new String[] { "my column" },
+                new Serializable[][] {
+                        { null },
+                        { "nontime" },
+                        { 1234L },
+                        { "foo" } });
+
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
-        
+
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoTimeJson, ParsingUtilities.defaultWriter);
     }
 }

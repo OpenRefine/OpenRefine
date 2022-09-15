@@ -51,75 +51,72 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
+
     final protected boolean _clearData;
     final protected String _columnName;
-    
+
     @JsonCreator
     public ReconDiscardJudgmentsOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName, 
-            @JsonProperty("clearData")
-            boolean clearData) {
-    	super(engineConfig);
-    	_columnName = columnName;
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("clearData") boolean clearData) {
+        super(engineConfig);
+        _columnName = columnName;
         _clearData = clearData;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("clearData")
     public boolean getClearData() {
         return _clearData;
     }
 
     @Override
-	public String getDescription() {
-        return _clearData ?
-            "Discard recon judgments and clear recon data for cells in column " + _columnName :
-            "Discard recon judgments for cells in column " + _columnName;
+    public String getDescription() {
+        return _clearData ? "Discard recon judgments and clear recon data for cells in column " + _columnName
+                : "Discard recon judgments for cells in column " + _columnName;
     }
-    
+
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-    	int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
-    	if (columnIndex == -1) {
-    		throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
-    	}
-		return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
+        int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
+        }
+        return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
     }
-    
+
     @Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, _columnName);
-	}
-    
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
+
     protected static RowInRecordMapper rowMapper(int columnIndex, boolean clearData, long historyEntryId) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = 5930949875518485010L;
+            private static final long serialVersionUID = 5930949875518485010L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Cell cell = row.getCell(columnIndex);
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null && cell.recon != null) {
                     Recon newRecon = cell.recon
-                    		.withMatch(null)
-                    		.withMatchRank(-1)
-                    		.withJudgment(Judgment.None)
-                    		.withJudgmentAction("mass")
-                    		.withJudgmentHistoryEntry(historyEntryId);
-                    
+                            .withMatch(null)
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.None)
+                            .withJudgmentAction("mass")
+                            .withJudgmentHistoryEntry(historyEntryId);
+
                     Cell newCell = new Cell(cell.value, newRecon);
-                    
+
                     return row.withCell(columnIndex, newCell);
                 }
                 return row;
-			}
-    	};
+            }
+        };
     }
 }

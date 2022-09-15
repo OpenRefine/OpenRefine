@@ -1,5 +1,5 @@
-package org.openrefine.extension.database;
 
+package org.openrefine.extension.database;
 
 import static org.mockito.Mockito.when;
 
@@ -34,8 +34,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
-
 @Test(groups = { "requiresMySQL" })
 public class DatabaseImportControllerTest extends DBExtensionTests {
 
@@ -44,36 +42,36 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
 
     @Mock
     private HttpServletResponse response;
-    
+
     private ProjectMetadata metadata;
     private ImportingJob job;
     private RefineServlet servlet;
 
     private String JSON_OPTION = "{\"mode\":\"row-based\"}}";
- 
+
     private DatabaseConfiguration testDbConfig;
-  
+
     private String query;
-   
-    //System under test
+
+    // System under test
     private DatabaseImportController SUT = null;
 
     @BeforeMethod
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        
+
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         DatamodelRunner runner = new TestingDatamodelRunner();
         FileProjectManager.initialize(runner, dir);
-        
+
         servlet = new RefineDbServletStub();
         ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();
-        
+
         SUT = new DatabaseImportController();
         SUT.init(servlet);
     }
-    
+
     @AfterMethod
     public void tearDown() {
         SUT = null;
@@ -82,9 +80,9 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         metadata = null;
         ImportingManager.disposeJob(job.id);
         job = null;
-        //options = null;
+        // options = null;
     }
-    
+
     @Test
     public void testDoGet() {
         StringWriter sw = new StringWriter();
@@ -92,11 +90,11 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
 
         try {
             when(response.getWriter()).thenReturn(pw);
-           
+
             SUT.doGet(request, response);
-            
+
             String result = sw.getBuffer().toString().trim();
-            ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);      
+            ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
             String code = json.get("status").asText();
             String message = json.get("message").asText();
             Assert.assertNotNull(code);
@@ -104,24 +102,23 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
             Assert.assertEquals(code, "error");
             Assert.assertEquals(message, "GET not implemented");
 
-        
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testDoPostInvalidSubCommand() throws IOException, ServletException {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         when(request.getQueryString()).thenReturn(
                 "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=invalid-sub-command");
-        
+
         when(response.getWriter()).thenReturn(pw);
-       //test
+        // test
         SUT.doPost(request, response);
-   
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
 
@@ -132,43 +129,40 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         Assert.assertEquals(code, "error");
         Assert.assertEquals(message, "No such sub command");
     }
-        
-    
 
     @Test
     public void testDoPostInitializeParser() throws ServletException, IOException {
-        
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         when(request.getQueryString()).thenReturn(
                 "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=initialize-parser-ui");
         when(response.getWriter()).thenReturn(pw);
-     
+
         SUT.doPost(request, response);
-       
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String status = json.get("status").asText();
-        //System.out.println("json::" + json);
+        // System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
-    
+
     @Test
     public void testDoPostParsePreview() throws IOException, ServletException {
-        
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-            
+
         long jobId = job.id;
-        
+
         when(request.getQueryString()).thenReturn(
                 "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
                         + jobId + "&subCommand=parse-preview");
         when(response.getWriter()).thenReturn(pw);
-        
-        
+
         when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
         when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
@@ -177,31 +171,30 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("query")).thenReturn(query);
         when(request.getParameter("options")).thenReturn(JSON_OPTION);
-   
+
         SUT.doPost(request, response);
-       
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String status = json.get("status").asText();
-        //System.out.println("json::" + json);
+        // System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
-    
+
     @Test
     public void testDoPostCreateProject() throws IOException, ServletException {
-        
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-            
+
         long jobId = job.id;
-        
+
         when(request.getQueryString()).thenReturn(
                 "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
                         + jobId + "&subCommand=create-project");
         when(response.getWriter()).thenReturn(pw);
-        
-        
+
         when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
         when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
@@ -210,27 +203,26 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("query")).thenReturn(query);
         when(request.getParameter("options")).thenReturn(JSON_OPTION);
-        
-       
+
         SUT.doPost(request, response);
-       
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String status = json.get("status").asText();
-        //System.out.println("json::" + json);
+        // System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
-    
+
     @BeforeTest
-    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
+    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
     public void beforeTest(
-           @Optional(DEFAULT_MYSQL_DB_NAME)   String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-           @Optional(DEFAULT_MYSQL_PORT)      String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-           @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-       
+            @Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
+            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+
         MockitoAnnotations.initMocks(this);
-       
+
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
         testDbConfig.setDatabaseName(mySqlDbName);
@@ -240,13 +232,11 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         testDbConfig.setDatabaseUser(mySqlDbUser);
         testDbConfig.setUseSSL(false);
         query = "SELECT count(*) FROM " + mySqlTestTable;
-        
-        //testTable = mySqlTestTable;
-        
-        
+
+        // testTable = mySqlTestTable;
+
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-        
+
     }
-  
-    
+
 }

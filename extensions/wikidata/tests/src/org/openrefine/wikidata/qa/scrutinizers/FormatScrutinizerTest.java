@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import static org.mockito.Mockito.mock;
@@ -32,7 +33,7 @@ import java.util.List;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -65,13 +66,12 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         return new FormatScrutinizer();
     }
 
-
     @Test
     public void testTrigger() {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, noMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -87,7 +87,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, completeMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -103,7 +103,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -113,14 +113,14 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
     }
-    
+
     @Test
     public void testInvalidRegex() {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
-        
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
+
         List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -129,7 +129,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         scrutinize(updateA);
         assertNoWarningRaised();
     }
-    
+
     protected List<Statement> generateFormatConstraint(String regex) {
         Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, Datamodel.makeStringValue(regex));
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

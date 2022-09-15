@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.util;
 
 import java.util.Collection;
@@ -14,9 +15,8 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 
 /**
- * Base class for facet aggregators which update their state by evaluating
- * an expression and aggregating its result. If the result is a collection,
- * each of the individual values are aggregated independently.
+ * Base class for facet aggregators which update their state by evaluating an expression and aggregating its result. If
+ * the result is a collection, each of the individual values are aggregated independently.
  * 
  * @author Antonin Delpeuch
  *
@@ -24,64 +24,67 @@ import org.openrefine.model.RowFilter;
  */
 public abstract class ExpressionValueFacetAggregator<T extends FacetState> extends FacetAggregator<T> {
 
-	private static final long serialVersionUID = -7981845701085329558L;
-	protected final boolean _invert;
-	protected final RowEvaluable _eval;
-	
-	/**
-	 * @param invert  used to generate the record filter
-	 * @param eval    the evaluable to run on each row
-	 */
-	public ExpressionValueFacetAggregator(boolean invert, RowEvaluable eval) {
-		_invert = invert;
-		_eval = eval;
-	}
-	
-	/**
-	 * Method to be implemented by subclasses to aggregate a value to their
-	 * state. The value is guaranteed not to be a collection, it can be aggregated 
-	 * as such.
-	 * 
-	 * @param state the current aggregation state
-	 * @param value the value to aggregate
-	 * @param inView whether the value is in view (in the rows selected by other
-	 *        facets) or not.
-	 * @return the new aggregation state
-	 */
-	protected abstract T withValue(T state, Object value, boolean inView);
+    private static final long serialVersionUID = -7981845701085329558L;
+    protected final boolean _invert;
+    protected final RowEvaluable _eval;
 
-	@Override
-	public T withRow(T state, long rowId, Row row, Record record) {
-		Properties bindings = ExpressionUtils.createBindings();
-		Object value = _eval.eval(rowId, row, record, bindings);
-		
-		return withRawValue(state, value, true);
-	}
-	
-	@Override
-	public T withRowOutsideView(T state, long rowId, Row row, Record record) {
-		Properties bindings = ExpressionUtils.createBindings();
-		Object value = _eval.eval(rowId, row, record, bindings);
-		
-		return withRawValue(state, value, false);
+    /**
+     * @param invert
+     *            used to generate the record filter
+     * @param eval
+     *            the evaluable to run on each row
+     */
+    public ExpressionValueFacetAggregator(boolean invert, RowEvaluable eval) {
+        _invert = invert;
+        _eval = eval;
     }
-	
-	private T withRawValue(T state, Object value, boolean inView) {
-		T newState = state;
+
+    /**
+     * Method to be implemented by subclasses to aggregate a value to their state. The value is guaranteed not to be a
+     * collection, it can be aggregated as such.
+     * 
+     * @param state
+     *            the current aggregation state
+     * @param value
+     *            the value to aggregate
+     * @param inView
+     *            whether the value is in view (in the rows selected by other facets) or not.
+     * @return the new aggregation state
+     */
+    protected abstract T withValue(T state, Object value, boolean inView);
+
+    @Override
+    public T withRow(T state, long rowId, Row row, Record record) {
+        Properties bindings = ExpressionUtils.createBindings();
+        Object value = _eval.eval(rowId, row, record, bindings);
+
+        return withRawValue(state, value, true);
+    }
+
+    @Override
+    public T withRowOutsideView(T state, long rowId, Row row, Record record) {
+        Properties bindings = ExpressionUtils.createBindings();
+        Object value = _eval.eval(rowId, row, record, bindings);
+
+        return withRawValue(state, value, false);
+    }
+
+    private T withRawValue(T state, Object value, boolean inView) {
+        T newState = state;
         if (value != null && value.getClass().isArray()) {
-        	Object[] a = (Object[]) value;
+            Object[] a = (Object[]) value;
             for (Object v : a) {
-            	newState = withValue(newState, v, inView);
+                newState = withValue(newState, v, inView);
             }
         } else if (value instanceof Collection<?>) {
-        	for (Object v : ExpressionUtils.toObjectCollection(value)) {
-        		newState = withValue(newState, v, inView);
-        	}
+            for (Object v : ExpressionUtils.toObjectCollection(value)) {
+                newState = withValue(newState, v, inView);
+            }
         } else {
-        	newState = withValue(newState, value, inView);
+            newState = withValue(newState, value, inView);
         }
-		
-		return newState;
-	}
+
+        return newState;
+    }
 
 }

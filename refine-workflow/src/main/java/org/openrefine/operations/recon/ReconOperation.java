@@ -85,20 +85,17 @@ import com.google.common.cache.LoadingCache;
  * Runs reconciliation on a column.
  */
 public class ReconOperation extends EngineDependentOperation {
+
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
-    
-    final protected String      _columnName;
+
+    final protected String _columnName;
     final protected ReconConfig _reconConfig;
-    
+
     @JsonCreator
     public ReconOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig, 
-        @JsonProperty("columnName")
-        String columnName, 
-        @JsonProperty("config")
-        ReconConfig reconConfig
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("config") ReconConfig reconConfig) {
         super(engineConfig);
         _columnName = columnName;
         _reconConfig = reconConfig;
@@ -107,80 +104,78 @@ public class ReconOperation extends EngineDependentOperation {
     @Override
     public Process createProcess(Project project) throws Exception {
         return new ReconProcess(
-            project.getHistory(),
-            project.getProcessManager(),
-            new Engine(project.getCurrentGridState(), getEngineConfig()),
-            getDescription()
-        );
+                project.getHistory(),
+                project.getProcessManager(),
+                new Engine(project.getCurrentGridState(), getEngineConfig()),
+                getDescription());
     }
-    
+
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return _reconConfig.getBriefDescription(_columnName);
     }
-    
+
     @JsonProperty("config")
     public ReconConfig getReconConfig() {
         return _reconConfig;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     public class ReconProcess extends LongRunningProcess implements Runnable {
-        final protected History        _history;
+
+        final protected History _history;
         final protected ProcessManager _manager;
-        final protected Engine         _engine;
-        final protected long           _historyEntryID;
-        protected int                  _cellIndex;
-        
-        protected final String _addJudgmentFacetJson =
-                "{\n" + 
-                "  \"action\" : \"createFacet\",\n" + 
-                "  \"facetConfig\" : {\n" + 
-                "  \"columnName\" : \"" + _columnName + "\",\n" + 
-                "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
-                "    \"name\" : \"" + _columnName + ": judgment\"\n" + 
-                "    },\n" + 
-                "    \"facetOptions\" : {\n" + 
-                "      \"scroll\" : false\n" + 
-                "    },\n" + 
-                "    \"facetType\" : \"list\"\n" + 
+        final protected Engine _engine;
+        final protected long _historyEntryID;
+        protected int _cellIndex;
+
+        protected final String _addJudgmentFacetJson = "{\n" +
+                "  \"action\" : \"createFacet\",\n" +
+                "  \"facetConfig\" : {\n" +
+                "  \"columnName\" : \"" + _columnName + "\",\n" +
+                "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
+                +
+                "    \"name\" : \"" + _columnName + ": judgment\"\n" +
+                "    },\n" +
+                "    \"facetOptions\" : {\n" +
+                "      \"scroll\" : false\n" +
+                "    },\n" +
+                "    \"facetType\" : \"list\"\n" +
                 " }";
-        protected final String _addScoreFacetJson = 
-                "{\n" + 
-                "  \"action\" : \"createFacet\",\n" + 
-                "  \"facetConfig\" : {\n" + 
-                "    \"columnName\" : \"" + _columnName + "\",\n" + 
-                "    \"expression\" : \"cell.recon.best.score\",\n" + 
-                "    \"mode\" : \"range\",\n" + 
-                "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" + 
-                "         },\n" + 
-                "         \"facetType\" : \"range\"\n" + 
+        protected final String _addScoreFacetJson = "{\n" +
+                "  \"action\" : \"createFacet\",\n" +
+                "  \"facetConfig\" : {\n" +
+                "    \"columnName\" : \"" + _columnName + "\",\n" +
+                "    \"expression\" : \"cell.recon.best.score\",\n" +
+                "    \"mode\" : \"range\",\n" +
+                "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" +
+                "         },\n" +
+                "         \"facetType\" : \"range\"\n" +
                 "}";
         protected JsonNode _addJudgmentFacet, _addScoreFacet;
-        
+
         public ReconProcess(
-            History history,
-            ProcessManager manager,
-            Engine engine, 
-            String description
-        ) {
+                History history,
+                ProcessManager manager,
+                Engine engine,
+                String description) {
             super(description);
             _history = history;
             _manager = manager;
             _engine = engine;
             _historyEntryID = HistoryEntry.allocateID();
-            try {               
+            try {
                 _addJudgmentFacet = ParsingUtilities.mapper.readValue(_addJudgmentFacetJson, JsonNode.class);
                 _addScoreFacet = ParsingUtilities.mapper.readValue(_addScoreFacetJson, JsonNode.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
+
         @JsonProperty("onDone")
         public List<JsonNode> onDoneActions() {
             List<JsonNode> onDone = new ArrayList<>();
@@ -190,143 +185,142 @@ public class ReconOperation extends EngineDependentOperation {
             }
             return onDone;
         }
-        
+
         @Override
         protected Runnable getRunnable() {
             return this;
         }
-        
+
         @Override
         public void run() {
-        	GridState state = _history.getCurrentGridState();
-        	ColumnModel columnModel = state.getColumnModel();
-        	
-        	int columnIndex = columnModel.getColumnIndexByName(_columnName);
-        	
-        	RowFilter combined = RowFilter.conjunction(Arrays.asList(_engine.combinedRowFilters(), new NonBlankRowFilter(columnIndex)));
-        	RowChangeDataProducer<Cell> rowMapper = new ReconChangeDataProducer(_columnName, columnIndex, _reconConfig, _historyEntryID, columnModel);
-			ChangeData<Cell> changeData = state.mapRows(combined, rowMapper);
-			
-			try {
-				_history.getChangeDataStore().store(changeData, _historyEntryID, "recon", new CellChangeDataSerializer(), Optional.of(_reporter));
-				
-				if (!_canceled) {
-	                Change reconChange = new ColumnChangeByChangeData(
-	                    "recon", 
-	                    columnIndex, 
-	                    null,
-	                    Mode.RowBased,
-	                    _reconConfig,
-	                    null
-	                );
-	                
-	                HistoryEntry historyEntry = new HistoryEntry(
-	                    _historyEntryID, 
-	                    _description, 
-	                    ReconOperation.this, 
-	                    reconChange
-	                );
-	                
-	                _history.addEntry(historyEntry);
-	                _manager.onDoneProcess(this);
-	            }
-			} catch (Exception e) {
-				if (_canceled) {
-					_history.getChangeDataStore().discardAll(_historyEntryID);
-				} else {
-					_manager.onFailedProcess(this, e);
-				}
-			}
-			
+            GridState state = _history.getCurrentGridState();
+            ColumnModel columnModel = state.getColumnModel();
+
+            int columnIndex = columnModel.getColumnIndexByName(_columnName);
+
+            RowFilter combined = RowFilter.conjunction(Arrays.asList(_engine.combinedRowFilters(), new NonBlankRowFilter(columnIndex)));
+            RowChangeDataProducer<Cell> rowMapper = new ReconChangeDataProducer(_columnName, columnIndex, _reconConfig, _historyEntryID,
+                    columnModel);
+            ChangeData<Cell> changeData = state.mapRows(combined, rowMapper);
+
+            try {
+                _history.getChangeDataStore().store(changeData, _historyEntryID, "recon", new CellChangeDataSerializer(),
+                        Optional.of(_reporter));
+
+                if (!_canceled) {
+                    Change reconChange = new ColumnChangeByChangeData(
+                            "recon",
+                            columnIndex,
+                            null,
+                            Mode.RowBased,
+                            _reconConfig,
+                            null);
+
+                    HistoryEntry historyEntry = new HistoryEntry(
+                            _historyEntryID,
+                            _description,
+                            ReconOperation.this,
+                            reconChange);
+
+                    _history.addEntry(historyEntry);
+                    _manager.onDoneProcess(this);
+                }
+            } catch (Exception e) {
+                if (_canceled) {
+                    _history.getChangeDataStore().discardAll(_historyEntryID);
+                } else {
+                    _manager.onFailedProcess(this, e);
+                }
+            }
+
         }
     }
-    
+
     protected static class ReconChangeDataProducer implements RowChangeDataProducer<Cell> {
-    	
-		private static final long serialVersionUID = 881447948869363218L;
-		transient private LoadingCache<ReconJob, Cell> cache = null;
-    	private final ReconConfig reconConfig;
-    	private final String columnName;
-    	private final int columnIndex;
-    	private final long historyEntryId;
-    	private final ColumnModel columnModel;
-    	
-    	protected ReconChangeDataProducer(
-    			String columnName,
-    			int columnIndex,
-    			ReconConfig reconConfig,
-    			long historyEntryId,
-    			ColumnModel columnModel) {
-    		this.reconConfig = reconConfig;
-    		this.columnName = columnName;
-    		this.columnIndex = columnIndex;
-    		this.historyEntryId = historyEntryId;
-    		this.columnModel = columnModel;
-    	}
-    	
-    	private void initCache() {
-    		cache = CacheBuilder.newBuilder()
-    				.maximumSize(4096)
-    				.build(new CacheLoader<ReconJob, Cell>() {
 
-						@Override
-						public Cell load(ReconJob key) throws Exception {
-							return loadAll(Collections.singletonList(key)).get(key);
-						}
-						
-						@Override
-						public Map<ReconJob, Cell> loadAll(Iterable<? extends ReconJob> jobs) {
-							List<ReconJob> jobList = StreamSupport.stream(jobs.spliterator(), false)
-	                                .collect(Collectors.toList());
-							List<Recon> recons = reconConfig.batchRecon(jobList, historyEntryId);
-							Map<ReconJob, Cell> results = new HashMap<>(jobList.size());
-							for(int i = 0; i != jobList.size(); i++) {
-								results.put(jobList.get(i), new Cell(jobList.get(i).getCellValue(), recons.get(i)));
-							}
-							return results;
-						}
-    					
-    				});
-    	}
+        private static final long serialVersionUID = 881447948869363218L;
+        transient private LoadingCache<ReconJob, Cell> cache = null;
+        private final ReconConfig reconConfig;
+        private final String columnName;
+        private final int columnIndex;
+        private final long historyEntryId;
+        private final ColumnModel columnModel;
 
-		@Override
-		public Cell call(long rowId, Row row) {
-			return callRowBatch(Collections.singletonList(new IndexedRow(rowId,row))).get(0);
-		}
-		
-		@Override
-		public List<Cell> callRowBatch(List<IndexedRow> rows) {
-			if (cache == null) {
-				initCache();
-			}
-			List<ReconJob> reconJobs = new ArrayList<>(rows.size());
-			for(IndexedRow indexedRow : rows) {
-				Row row = indexedRow.getRow();
-				reconJobs.add(reconConfig.createJob(
-	                    columnModel, 
-	                    indexedRow.getIndex(), 
-	                    row, 
-	                    columnName,
-	                    row.getCell(columnIndex)
-	                ));
-			}
-			try {
-				Map<ReconJob, Cell> results = cache.getAll(reconJobs);
-				return reconJobs.stream().map(job -> results.get(job)).collect(Collectors.toList());
-			} catch (ExecutionException e) {
-				// the `batchRecon` method should throw IOException, it currently does not.
-				// Once that is fixed, we should do a couple of retries here before failing
-				throw new IllegalStateException("Fetching reconciliation responses failed", e);
-			}
-		}
-		
-		@Override
-		public int getBatchSize() {
-			return reconConfig.getBatchSize();
-		}
-    	
+        protected ReconChangeDataProducer(
+                String columnName,
+                int columnIndex,
+                ReconConfig reconConfig,
+                long historyEntryId,
+                ColumnModel columnModel) {
+            this.reconConfig = reconConfig;
+            this.columnName = columnName;
+            this.columnIndex = columnIndex;
+            this.historyEntryId = historyEntryId;
+            this.columnModel = columnModel;
+        }
+
+        private void initCache() {
+            cache = CacheBuilder.newBuilder()
+                    .maximumSize(4096)
+                    .build(new CacheLoader<ReconJob, Cell>() {
+
+                        @Override
+                        public Cell load(ReconJob key) throws Exception {
+                            return loadAll(Collections.singletonList(key)).get(key);
+                        }
+
+                        @Override
+                        public Map<ReconJob, Cell> loadAll(Iterable<? extends ReconJob> jobs) {
+                            List<ReconJob> jobList = StreamSupport.stream(jobs.spliterator(), false)
+                                    .collect(Collectors.toList());
+                            List<Recon> recons = reconConfig.batchRecon(jobList, historyEntryId);
+                            Map<ReconJob, Cell> results = new HashMap<>(jobList.size());
+                            for (int i = 0; i != jobList.size(); i++) {
+                                results.put(jobList.get(i), new Cell(jobList.get(i).getCellValue(), recons.get(i)));
+                            }
+                            return results;
+                        }
+
+                    });
+        }
+
+        @Override
+        public Cell call(long rowId, Row row) {
+            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
+        }
+
+        @Override
+        public List<Cell> callRowBatch(List<IndexedRow> rows) {
+            if (cache == null) {
+                initCache();
+            }
+            List<ReconJob> reconJobs = new ArrayList<>(rows.size());
+            for (IndexedRow indexedRow : rows) {
+                Row row = indexedRow.getRow();
+                reconJobs.add(reconConfig.createJob(
+                        columnModel,
+                        indexedRow.getIndex(),
+                        row,
+                        columnName,
+                        row.getCell(columnIndex)));
+            }
+            try {
+                Map<ReconJob, Cell> results = cache.getAll(reconJobs);
+                return reconJobs.stream().map(job -> results.get(job)).collect(Collectors.toList());
+            } catch (ExecutionException e) {
+                // the `batchRecon` method should throw IOException, it currently does not.
+                // Once that is fixed, we should do a couple of retries here before failing
+                throw new IllegalStateException("Fetching reconciliation responses failed", e);
+            }
+        }
+
+        @Override
+        public int getBatchSize() {
+            return reconConfig.getBatchSize();
+        }
+
     }
-    
+
     /**
      * Filter used to select only rows which have a non-blank value to reconcile.
      * 
@@ -335,17 +329,17 @@ public class ReconOperation extends EngineDependentOperation {
      */
     protected static class NonBlankRowFilter implements RowFilter {
 
-		private static final long serialVersionUID = 6646807801184457426L;
-		private final int columnIndex;
-    	
-    	protected NonBlankRowFilter(int columnIndex) {
-    		this.columnIndex = columnIndex;
-    	}
+        private static final long serialVersionUID = 6646807801184457426L;
+        private final int columnIndex;
 
-		@Override
-		public boolean filterRow(long rowIndex, Row row) {
-			return !row.isCellBlank(columnIndex);
-		}
+        protected NonBlankRowFilter(int columnIndex) {
+            this.columnIndex = columnIndex;
+        }
+
+        @Override
+        public boolean filterRow(long rowIndex, Row row) {
+            return !row.isCellBlank(columnIndex);
+        }
     }
 
 }

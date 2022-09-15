@@ -1,3 +1,4 @@
+
 package org.openrefine.operations.cell;
 
 import static org.mockito.Mockito.mock;
@@ -25,29 +26,30 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public class TextTransformTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "text-transform", TextTransformOperation.class);
     }
-    
-	protected GridState initialState;
-	protected Project project;
-	
-	@BeforeMethod
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		project = createProject(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a", "d" },
-			{ "v3", "a", "f" },
-			{ "", "a", "g" },
-			{ "", "b", "h" },
-			{ new EvalError("error"), "a", "i"},
-			{ "v1", "b", "j" }
-		});
-		initialState = project.getCurrentGridState();
-	}
-    
+
+    protected GridState initialState;
+    protected Project project;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        project = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+        initialState = project.getCurrentGridState();
+    }
+
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String json = "{"
@@ -60,98 +62,95 @@ public class TextTransformTests extends RefineTest {
                 + "   \"repeat\": false,"
                 + "   \"repeatCount\": 0"
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TextTransformOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TextTransformOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testTransformColumnInRowsMode() throws DoesNotApplyException, NotImmediateOperationException {
-    	Change change = new TextTransformOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar",
-    			"grel:cells[\"foo\"].value+'_'+value",
-    			OnError.SetToBlank,
-    			false, 0
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "v1_a", "d" },
-			{ "v3", "v3_a", "f" },
-			{ "",   "_a", "g" },
-			{ "",    "_b", "h" },
-			{ new EvalError("error"), null, "i"},
-			{ "v1",  "v1_b", "j" }
-		});
-    	assertGridEquals(applied, expected);
+        Change change = new TextTransformOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "v1_a", "d" },
+                        { "v3", "v3_a", "f" },
+                        { "", "_a", "g" },
+                        { "", "_b", "h" },
+                        { new EvalError("error"), null, "i" },
+                        { "v1", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
     }
-    
+
     @Test
     public void testTransformIdentity() throws DoesNotApplyException, NotImmediateOperationException {
-    	Change change = new TextTransformOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar",
-    			"grel:value",
-    			OnError.SetToBlank,
-    			false, 0
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	assertGridEquals(applied, initialState);
+        Change change = new TextTransformOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:value",
+                OnError.SetToBlank,
+                false, 0).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        assertGridEquals(applied, initialState);
     }
-    
+
     @Test
     public void testTransformColumnInRecordsMode() throws DoesNotApplyException, NotImmediateOperationException {
-    	Change change = new TextTransformOperation(
-    			EngineConfig.ALL_RECORDS,
-    			"bar",
-    			"grel:cells[\"foo\"].value+'_'+row.record.rowCount",
-    			OnError.SetToBlank,
-    			false, 0
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "v1_1", "d" },
-			{ "v3", "v3_4", "f" },
-			{ "",   "_4", "g" },
-			{ "",    "_4", "h" },
-			{ new EvalError("error"), null, "i"},
-			{ "v1",  "v1_1", "j" }
-		});
-    	assertGridEquals(applied, expected);
+        Change change = new TextTransformOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+row.record.rowCount",
+                OnError.SetToBlank,
+                false, 0).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "v1_1", "d" },
+                        { "v3", "v3_4", "f" },
+                        { "", "_4", "g" },
+                        { "", "_4", "h" },
+                        { new EvalError("error"), null, "i" },
+                        { "v1", "v1_1", "j" }
+                });
+        assertGridEquals(applied, expected);
     }
-    
+
     @Test
     public void testTransformColumnNonLocalOperationInRowsMode() throws Exception {
-    	Operation operation = new TextTransformOperation(
-    			EngineConfig.ALL_RECORDS,
-    			"bar",
-    			"grel:value + '_' + facetCount(value, 'value', 'bar')",
-    			OnError.SetToBlank,
-    			false, 0
-    			);
-    	
-    	org.openrefine.process.Process process = operation.createProcess(project);
-    	((Runnable)process).run();
-    	GridState applied = project.getCurrentGridState();
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a_4", "d" },
-			{ "v3", "a_4", "f" },
-			{ "",   "a_4", "g" },
-			{ "",    "b_2", "h" },
-			{ new EvalError("error"), "a_4", "i"},
-			{ "v1",  "b_2", "j" }
-		});
-    	assertGridEquals(applied, expected);
+        Operation operation = new TextTransformOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:value + '_' + facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                false, 0);
+
+        org.openrefine.process.Process process = operation.createProcess(project);
+        ((Runnable) process).run();
+        GridState applied = project.getCurrentGridState();
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a_4", "d" },
+                        { "v3", "a_4", "f" },
+                        { "", "a_4", "g" },
+                        { "", "b_2", "h" },
+                        { new EvalError("error"), "a_4", "i" },
+                        { "v1", "b_2", "j" }
+                });
+        assertGridEquals(applied, expected);
     }
 }

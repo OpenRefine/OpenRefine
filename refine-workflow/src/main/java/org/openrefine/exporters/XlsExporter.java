@@ -60,12 +60,13 @@ import org.openrefine.util.ParsingUtilities;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class XlsExporter implements StreamExporter {
+
     final private boolean xml;
-    
+
     public XlsExporter(boolean xml) {
         this.xml = xml;
     }
-    
+
     @Override
     public String getContentType() {
         return xml ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.ms-excel";
@@ -76,12 +77,13 @@ public class XlsExporter implements StreamExporter {
             Engine engine, OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
-        
+
         TabularSerializer serializer = new TabularSerializer() {
+
             Sheet s;
             int rowCount = 0;
             CellStyle dateStyle;
-            
+
             @Override
             public void startFile(JsonNode options) {
                 s = wb.createSheet();
@@ -111,7 +113,7 @@ public class XlsExporter implements StreamExporter {
                         break;
                     } else {
                         CellData cellData = cells.get(i);
-                        
+
                         if (cellData != null && cellData.text != null && cellData.value != null) {
                             Object v = cellData.value;
                             if (v instanceof Number) {
@@ -119,7 +121,7 @@ public class XlsExporter implements StreamExporter {
                             } else if (v instanceof Boolean) {
                                 c.setCellValue(((Boolean) v).booleanValue());
                             } else if (v instanceof OffsetDateTime) {
-                                OffsetDateTime odt = (OffsetDateTime)v;
+                                OffsetDateTime odt = (OffsetDateTime) v;
                                 c.setCellValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                                 c.setCellStyle(dateStyle);
                             } else {
@@ -130,27 +132,27 @@ public class XlsExporter implements StreamExporter {
                                 }
                                 c.setCellValue(s);
                             }
-                            
+
                             if (cellData.link != null) {
-                            	try {
-                            		Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                            		hl.setLabel(cellData.text);
-                            		hl.setAddress(cellData.link);
-                            		c.setHyperlink(hl);
-                            	} catch(IllegalArgumentException e) {
-                            		// If we failed to create the hyperlink and add it to the cell,
-                            		// we just use the string value as fallback
-                            	}
+                                try {
+                                    Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+                                    hl.setLabel(cellData.text);
+                                    hl.setAddress(cellData.link);
+                                    c.setHyperlink(hl);
+                                } catch (IllegalArgumentException e) {
+                                    // If we failed to create the hyperlink and add it to the cell,
+                                    // we just use the string value as fallback
+                                }
                             }
                         }
                     }
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 grid, engine, params, serializer, SortingConfig.NO_SORTING);
-        
+
         wb.write(outputStream);
         outputStream.flush();
         wb.close();

@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010,2011 Google Inc.
+Copyright 2010, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,45 +31,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.grel.functions.xml;
+package org.openrefine.expr.functions.xml;
+
+import java.util.Properties;
 
 import org.jsoup.nodes.Element;
+
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
+import org.openrefine.grel.Function;
+import org.openrefine.expr.functions.Type;
 
-public class WholeText extends PureFunction {
-
-    private static final long serialVersionUID = -4570560742280631476L;
+public class Parent implements Function {
 
     @Override
-    public Object call(Object[] args) {
+    public Object call(Properties bindings, Object[] args) {
+
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                return e1.wholeText();
+                Element e1 = (Element) o1;
+                return e1.parent();
 
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + "() cannot work with this '"
+                        + new Type().call(bindings, args)
+                        + "'"
+                        + " but instead needs a jsoup XML or HTML Element to work with."
+                        + " For arrays, you might select an index or loop over them with forEach().");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
     }
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return "Returns the parent node or null if no parent. Use it in conjunction with parseHtml() and select() to provide an element.";
     }
-    
+
     @Override
     public String getParams() {
-        return "element e";
+        return "string s, element e";
     }
-    
+
     @Override
     public String getReturns() {
-        return "string";
+        return "HTML/XML Element";
     }
 }

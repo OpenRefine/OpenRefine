@@ -36,32 +36,29 @@ package org.openrefine.browsing.facets;
 /**
  * Interface of facets.
  */
-public interface Facet  {
-    
+public interface Facet {
+
     /**
      * Returns the configuration of the facet.
      */
     public FacetConfig getConfig();
-    
+
     /**
-     * An initial facet state for this facet, which can
-     * then be used to scan the table and ingest statistics
-     * about rows or records.
+     * An initial facet state for this facet, which can then be used to scan the table and ingest statistics about rows
+     * or records.
      */
     public FacetState getInitialFacetState();
-    
+
     /**
-     * An aggregator used to populate the facet state for this facet.
-     * It should accept the initial state returned by {@link getInitialFacetState}.
+     * An aggregator used to populate the facet state for this facet. It should accept the initial state returned by
+     * {@link getInitialFacetState}.
      */
     public FacetAggregator<?> getAggregator();
-    
+
     /**
-     * Returns all the information necessary to render the
-     * facet in the UI (aggregation statistics and configuration
+     * Returns all the information necessary to render the facet in the UI (aggregation statistics and configuration
      * combined).
      */
     public FacetResult getFacetResult(FacetState state);
- 
-  
+
 }

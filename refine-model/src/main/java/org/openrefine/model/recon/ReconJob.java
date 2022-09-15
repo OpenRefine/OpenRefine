@@ -34,8 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model.recon;
 
 /**
- * A reconciliation query paired with the original cell value
- * which generated it.
+ * A reconciliation query paired with the original cell value which generated it.
  * 
  * It is required to be hashable.
  * 
@@ -43,6 +42,6 @@ package org.openrefine.model.recon;
  *
  */
 public interface ReconJob {
-    
+
     public String getCellValue();
 }

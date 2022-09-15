@@ -24,8 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package org.openrefine.importers;
 
+package org.openrefine.importers;
 
 import java.io.File;
 import java.util.Arrays;
@@ -45,40 +45,40 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class FixedWidthImporterTests extends ImporterTest {
 
-    //constants
+    // constants
     String SAMPLE_ROW = "NDB_NoShrt_DescWater";
 
-    //System Under Test
+    // System Under Test
     FixedWidthImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new FixedWidthImporter(runner());
     }
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         SUT = null;
         super.tearDown();
     }
-    
-    //---------------------read tests------------------------
+
+    // ---------------------read tests------------------------
     @Test
     public void readFixedWidth() throws Exception {
-    	File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
-    	
+        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
+
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
         options.set("columnWidths", columnWidths);
- 
+
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("Col 1");
-        columnNames.add("Col 2"); 
+        columnNames.add("Col 2");
         columnNames.add("Col 3");
         options.set("columnNames", columnNames);
 
@@ -87,27 +87,27 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("skipDataLines", 0);
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
-        
+
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
-        
+
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
         Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(0), "NDB_No");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(2), "Water");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "NDB_No");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "Water");
         Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
-        Assert.assertEquals((String)rows.get(1).getRow().getCellValue(0), "TooSho");
-        Assert.assertEquals((String)rows.get(1).getRow().getCellValue(1), "rt");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(0), "TooSho");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(1), "rt");
         Assert.assertNull(rows.get(1).getRow().getCellValue(2));
-        
+
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Col 1", "Col 2", "Col 3"));
     }
-    
+
     @Test
     public void readNoColumnNames() throws Exception {
-    	File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
-    	
+        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
+
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -119,27 +119,27 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("skipDataLines", 0);
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
-        
+
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
-        
+
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
         Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(0), "NDB_No");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(2), "Water");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "NDB_No");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "Water");
         Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
-        Assert.assertEquals((String)rows.get(1).getRow().getCellValue(0), "TooSho");
-        Assert.assertEquals((String)rows.get(1).getRow().getCellValue(1), "rt");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(0), "TooSho");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(1), "rt");
         Assert.assertNull(rows.get(1).getRow().getCellValue(2));
-        
+
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Column 1", "Column 2", "Column 3"));
     }
-    
+
     @Test
     public void readColumnHeader() throws Exception {
-    	File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\n012345green....00342\n");
-    	
+        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\n012345green....00342\n");
+
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -151,16 +151,16 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("skipDataLines", 0);
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
-        
+
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
-        
+
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 1);
         Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(0), "012345");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(1), "green....");
-        Assert.assertEquals((String)rows.get(0).getRow().getCellValue(2), "00342");
-        
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "012345");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "green....");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "00342");
+
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("NDB_No", "Shrt_Desc", "Water"));
     }
 }

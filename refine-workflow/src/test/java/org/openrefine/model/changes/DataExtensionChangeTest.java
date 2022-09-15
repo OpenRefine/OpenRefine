@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -55,33 +56,32 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-
 public class DataExtensionChangeTest extends RefineTest {
 
     private static final String serializedChangeData = "{\"e\":{\"0\":{\"d\":[[{\"v\":\"a\"}],[{\"v\":\"b\"}]]}}}";
-    private static final String serializedChangeMetadata = "{\n" + 
-    		"        \"type\": \"org.openrefine.model.changes.DataExtensionChange\",\n" + 
-    		"        \"engineConfig\": {\n" + 
-    		"          \"facets\": [],\n" + 
-    		"          \"mode\": \"record-based\"\n" + 
-    		"        },\n" + 
-    		"        \"baseColumnName\": \"head of government\",\n" + 
-    		"        \"endpoint\": \"https://wikidata.reconci.link/en/api\",\n" + 
-    		"        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
-    		"        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" + 
-    		"        \"columnInsertIndex\": 3,\n" + 
-    		"        \"columnNames\": [\n" + 
-    		"          \"date of birth\"\n" + 
-    		"        ],\n" + 
-    		"        \"columnTypes\": [\n" + 
-    		"          null\n" + 
-    		"        ],\n" + 
-    		"        \"dagSlice\": null\n" + 
-    		"      }";
-    
-	Project project;
+    private static final String serializedChangeMetadata = "{\n" +
+            "        \"type\": \"org.openrefine.model.changes.DataExtensionChange\",\n" +
+            "        \"engineConfig\": {\n" +
+            "          \"facets\": [],\n" +
+            "          \"mode\": \"record-based\"\n" +
+            "        },\n" +
+            "        \"baseColumnName\": \"head of government\",\n" +
+            "        \"endpoint\": \"https://wikidata.reconci.link/en/api\",\n" +
+            "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+            "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+            "        \"columnInsertIndex\": 3,\n" +
+            "        \"columnNames\": [\n" +
+            "          \"date of birth\"\n" +
+            "        ],\n" +
+            "        \"columnTypes\": [\n" +
+            "          null\n" +
+            "        ],\n" +
+            "        \"dagSlice\": null\n" +
+            "      }";
+
+    Project project;
     RecordDataExtension recordDataExtension;
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -92,60 +92,59 @@ public class DataExtensionChangeTest extends RefineTest {
     public void SetUp()
             throws IOException, ModelException {
         project = createProject(
-                new String[] {"reconciled"},
-                new Serializable[][] {{"some item"}});
-        
+                new String[] { "reconciled" },
+                new Serializable[][] { { "some item" } });
+
         DataExtension dataExtension = new DataExtension(Arrays.asList(
-    			Collections.singletonList(new Cell("a", null)),
-    			Collections.singletonList(new Cell("b", null))
-    			));
-    	recordDataExtension = new RecordDataExtension(Collections.singletonMap(0L, dataExtension));
+                Collections.singletonList(new Cell("a", null)),
+                Collections.singletonList(new Cell("b", null))));
+        recordDataExtension = new RecordDataExtension(Collections.singletonMap(0L, dataExtension));
     }
-    
+
     @Test
     public void testJoiner() {
-    	GridState state = createGrid(new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    		{"1",  "2"},
-    		{null, "3"}
-    	});
-    	Record record = state.getRecord(0L);
-    	
-    	DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
-    	
-    	List<Row> rows = joiner.call(record, recordDataExtension);
-    	
-    	GridState expectedState = createGrid(new String[] {"foo", "bar", "extended"},
-    			new Serializable[][] {
-    		{"1", "2", "a"},
-    		{null, null, "b"},
-    		{null, "3", null}
-    	});
-    	List<Row> expectedRows = expectedState.collectRows()
-    			.stream().map(ir -> ir.getRow()).collect(Collectors.toList());
-    	Assert.assertEquals(rows, expectedRows);
+        GridState state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, recordDataExtension);
+
+        GridState expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", "a" },
+                        { null, null, "b" },
+                        { null, "3", null }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
     }
-    
+
     @Test
     public void testSerializeChangeData() {
-    	DataExtensionSerializer serializer = new DataExtensionSerializer();
-    	
-    	String serialized = serializer.serialize(recordDataExtension);
-    	TestUtils.assertEqualAsJson(serialized, serializedChangeData);
+        DataExtensionSerializer serializer = new DataExtensionSerializer();
+
+        String serialized = serializer.serialize(recordDataExtension);
+        TestUtils.assertEqualAsJson(serialized, serializedChangeData);
     }
-    
+
     @Test
     public void testDeserializeChangeData() throws IOException {
-    	DataExtensionSerializer serializer = new DataExtensionSerializer();
-    	
-    	RecordDataExtension deserialized = serializer.deserialize(serializedChangeData);
-    	Assert.assertEquals(deserialized, recordDataExtension);
+        DataExtensionSerializer serializer = new DataExtensionSerializer();
+
+        RecordDataExtension deserialized = serializer.deserialize(serializedChangeData);
+        Assert.assertEquals(deserialized, recordDataExtension);
     }
-    
+
     @Test
     public void testSerializeChange() throws JsonParseException, JsonMappingException, IOException {
-    	DataExtensionChange change = (DataExtensionChange) ParsingUtilities.mapper.readValue(serializedChangeMetadata, Change.class);
-    	
-    	TestUtils.isSerializedTo(change, serializedChangeMetadata, ParsingUtilities.defaultWriter);
+        DataExtensionChange change = (DataExtensionChange) ParsingUtilities.mapper.readValue(serializedChangeMetadata, Change.class);
+
+        TestUtils.isSerializedTo(change, serializedChangeMetadata, ParsingUtilities.defaultWriter);
     }
 }

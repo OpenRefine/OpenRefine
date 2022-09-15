@@ -53,9 +53,10 @@ public class RecordSorter extends BaseSorter<Record> {
 
         Serializable error = null;
         Serializable finalKey = null;
-        
+
         for (IndexedRow indexedRow : o.getIndexedRows()) {
-            Serializable key = keyMaker._columnIndex == -1 ? null : keyMaker.makeKey(indexedRow.getRow().getCellValue(keyMaker._columnIndex));
+            Serializable key = keyMaker._columnIndex == -1 ? null
+                    : keyMaker.makeKey(indexedRow.getRow().getCellValue(keyMaker._columnIndex));
             if (ExpressionUtils.isError(key)) {
                 error = key;
             } else if (ExpressionUtils.isNonBlankData(key)) {
@@ -75,7 +76,7 @@ public class RecordSorter extends BaseSorter<Record> {
                 }
             }
         }
-        
+
         if (finalKey != null) {
             return finalKey;
         } else if (error != null) {

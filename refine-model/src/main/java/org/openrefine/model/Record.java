@@ -43,56 +43,55 @@ import java.util.stream.IntStream;
 import org.openrefine.expr.ExpressionUtils;
 
 /**
- * A list of consecutive rows where only the first row has a non-blank
- * value in the record key column (normally, the first column).
+ * A list of consecutive rows where only the first row has a non-blank value in the record key column (normally, the
+ * first column).
  * 
  * @author Antonin Delpeuch
  */
 public class Record implements Serializable {
-    
+
     private static final long serialVersionUID = 1547689057610085206L;
-    
+
     final private long startRowIndex;
     final private List<Row> rows;
 
     public Record(
             long startRowIndex,
-            List<Row> rows
-    ) {
+            List<Row> rows) {
         this.startRowIndex = startRowIndex;
         this.rows = rows;
     }
-    
+
     public long getStartRowId() {
         return startRowIndex;
     }
-    
+
     public long getEndRowId() {
         return startRowIndex + rows.size();
     }
-    
+
     public List<Row> getRows() {
         return rows;
     }
-    
+
     public Iterable<IndexedRow> getIndexedRows() {
         return new Iterable<IndexedRow>() {
 
             @Override
             public Iterator<IndexedRow> iterator() {
                 return IntStream.range(0, rows.size())
-                        .mapToObj(i -> new IndexedRow(startRowIndex+i, rows.get(i)))
+                        .mapToObj(i -> new IndexedRow(startRowIndex + i, rows.get(i)))
                         .iterator();
             }
-            
+
         };
-                
+
     }
 
     public int size() {
         return rows.size();
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Record)) {
@@ -101,12 +100,12 @@ public class Record implements Serializable {
         Record otherRecord = (Record) other;
         return startRowIndex == otherRecord.getStartRowId() && rows.equals(otherRecord.getRows());
     }
-    
+
     @Override
     public int hashCode() {
         return Long.hashCode(startRowIndex);
     }
-    
+
     @Override
     public String toString() {
         return String.format("[Record, id %d, rows:\n%s\n]",
@@ -121,14 +120,18 @@ public class Record implements Serializable {
         return ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))
                 || row.getCells().stream().allMatch(c -> c == null || !ExpressionUtils.isNonBlankData(c.getValue()));
     }
-    
+
     /**
      * Groups a stream of indexed rows into a stream of records.
      * 
-     * @param parentIter the iterator of rows
-     * @param keyCellIndex the index of the column used to group rows into records
-     * @param ignoreFirstRows whether the first rows with blank record key should be ignored
-     * @param additionalRows additional rows to read once the stream is consumed
+     * @param parentIter
+     *            the iterator of rows
+     * @param keyCellIndex
+     *            the index of the column used to group rows into records
+     * @param ignoreFirstRows
+     *            whether the first rows with blank record key should be ignored
+     * @param additionalRows
+     *            additional rows to read once the stream is consumed
      * @return a stream of records
      */
     public static Iterator<Record> groupIntoRecords(
@@ -136,9 +139,9 @@ public class Record implements Serializable {
             int keyCellIndex,
             boolean ignoreFirstRows,
             List<Row> additionalRows) {
-        
+
         return new Iterator<Record>() {
-            
+
             IndexedRow fetchedRowTuple = null;
             Record nextRecord = null;
             boolean additionalRowsConsumed = false;
@@ -164,7 +167,7 @@ public class Record implements Serializable {
                 nextRecord = null;
                 return result;
             }
-            
+
             private void buildNextRecord() {
                 List<Row> rows = new ArrayList<>();
                 long startRowId = 0;
@@ -188,8 +191,8 @@ public class Record implements Serializable {
                 }
                 nextRecord = rows.isEmpty() ? null : new Record(startRowId, rows);
             }
-            
+
         };
     }
-    
+
 }

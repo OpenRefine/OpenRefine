@@ -40,7 +40,6 @@ import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 
-
 public class AnyRowRecordFilter implements RecordFilter {
 
     private static final long serialVersionUID = 1793156053035805563L;
@@ -53,13 +52,13 @@ public class AnyRowRecordFilter implements RecordFilter {
     @Override
     public boolean filterRecord(Record record) {
         List<Row> rows = record.getRows();
-    	for (int i = 0; i < rows.size(); i++) {
-    		Row row = rows.get(i);
-    		long rowId = record.getStartRowId() + i;
-    		if (_rowFilter.filterRow(rowId, row)) {
+        for (int i = 0; i < rows.size(); i++) {
+            Row row = rows.get(i);
+            long rowId = record.getStartRowId() + i;
+            if (_rowFilter.filterRow(rowId, row)) {
                 return true;
             }
-    	}
+        }
         return false;
     }
 }

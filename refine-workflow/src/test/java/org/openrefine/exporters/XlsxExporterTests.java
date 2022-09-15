@@ -62,25 +62,25 @@ import org.testng.annotations.Test;
 public class XlsxExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xlsx exporter test project";
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
     GridState grid;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     StreamExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XlsExporter(true);
         stream = new ByteArrayOutputStream();
         projectMetadata = new ProjectMetadata();
@@ -89,7 +89,7 @@ public class XlsxExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         stream = null;
         grid = null;
@@ -98,24 +98,24 @@ public class XlsxExporterTests extends RefineTest {
     }
 
     @Test
-    public void getContentType(){
+    public void getContentType() {
         Assert.assertEquals(SUT.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
 
     @Test
-    public void getSpreadsheetVersion(){
-        XlsExporter exporter = (XlsExporter)SUT;
+    public void getSpreadsheetVersion() {
+        XlsExporter exporter = (XlsExporter) SUT;
         Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL2007);
     }
 
     @Test
     public void exportSimpleXlsx() {
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1"},
-    		{"row1cell0", "row1cell1"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
@@ -129,29 +129,29 @@ public class XlsxExporterTests extends RefineTest {
             XSSFSheet ws = wb.getSheetAt(0);
             XSSFRow row1 = ws.getRow(1);
             XSSFCell cell0 = row1.getCell(0);
-            Assert.assertEquals(cell0.toString(),"row0cell0");
+            Assert.assertEquals(cell0.toString(), "row0cell0");
             wb.close();
         } catch (IOException e) {
             Assert.fail();
         }
     }
-    
+
     @Test
-    public void exportXlsxDateType() throws IOException{
-        OffsetDateTime odt =  OffsetDateTime.parse("2019-04-09T12:00+00:00");
-        grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{odt, odt},
-    		{odt, odt}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+    public void exportXlsxDateType() throws IOException {
+        OffsetDateTime odt = OffsetDateTime.parse("2019-04-09T12:00+00:00");
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { odt, odt },
+                        { odt, odt }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toByteArray());
         try {
             XSSFWorkbook wb = new XSSFWorkbook(inStream);
@@ -164,15 +164,15 @@ public class XlsxExporterTests extends RefineTest {
             Assert.fail();
         }
     }
-    
+
     @Test
-    public void exportXlsxStringWithURLs() throws IOException{
+    public void exportXlsxStringWithURLs() throws IOException {
         String url = "GET /primo-library/,http:%2F%2Fcatalogue.unice.fr HTTP/1.1";
-        grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{url, url},
-    		{url, url}
-    	});
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { url, url },
+                        { url, url }
+                });
         engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
@@ -180,7 +180,7 @@ public class XlsxExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         ByteArrayInputStream inStream = new ByteArrayInputStream(stream.toByteArray());
         try {
             XSSFWorkbook wb = new XSSFWorkbook(inStream);
@@ -209,7 +209,7 @@ public class XlsxExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(256);
-            Assert.assertEquals(cell0.toString(),"row0cell256");
+            Assert.assertEquals(cell0.toString(), "row0cell256");
         }
     }
 
@@ -228,21 +228,21 @@ public class XlsxExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(9999);
-            Assert.assertEquals(cell0.toString(),"row0cell9999");
+            Assert.assertEquals(cell0.toString(), "row0cell9999");
         }
     }
 
-    //helper methods
-    
+    // helper methods
+
     private void CreateGrid(int rows, int columns) {
-    	Serializable[][] values = new Serializable[rows][columns];
-    	String[] columnNames = new String[columns];
-		for(int column = 0; column != columns; column++) {
-			columnNames[column] = String.format("column%d", column);
-			for (int row = 0; row != rows; row++) {
-    			values[row][column] = String.format("row%dcell%d", row, column);
-    		}
-    	}
-    	grid = createGrid(columnNames, values);
+        Serializable[][] values = new Serializable[rows][columns];
+        String[] columnNames = new String[columns];
+        for (int column = 0; column != columns; column++) {
+            columnNames[column] = String.format("column%d", column);
+            for (int row = 0; row != rows; row++) {
+                values[row][column] = String.format("row%dcell%d", row, column);
+            }
+        }
+        grid = createGrid(columnNames, values);
     }
 }

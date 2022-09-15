@@ -1,3 +1,4 @@
+
 package org.openrefine.grel.ast;
 
 import java.util.Map;
@@ -16,23 +17,23 @@ public class ArrayExpr extends FunctionCallExpr {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append(ev.toString());
         }
-        
-        return "[ "+sb.toString()+" ]";
+
+        return "[ " + sb.toString() + " ]";
     }
-    
+
     @Override
     public ArrayExpr renameColumnDependencies(Map<String, String> substitutions) {
         GrelExpr[] translatedArgs = new GrelExpr[_args.length];
-        for(int i = 0; i != _args.length; i++) {
+        for (int i = 0; i != _args.length; i++) {
             translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
-            if(translatedArgs[i] == null) {
+            if (translatedArgs[i] == null) {
                 return null;
             }
         }

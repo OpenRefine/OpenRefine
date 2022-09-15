@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.List;
@@ -5,9 +6,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 /**
- * A PLL obtained by transforming each partition independently.
- * The supplied function takes two arguments: the first is the index
- * of the partition to map, the second is a stream of its contents.
+ * A PLL obtained by transforming each partition independently. The supplied function takes two arguments: the first is
+ * the index of the partition to map, the second is a stream of its contents.
  * 
  * @author Antonin Delpeuch
  *
@@ -18,26 +18,30 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
 
     protected final PLL<U> parent;
     protected final BiFunction<Integer, Stream<U>, Stream<T>> mapFunction;
-    
 
     /**
      * Constructs a PLL with partitions derived one-to-one from the parent.
      * 
-     * @param parent the source list
-     * @param mapFunction the function to apply to each partition
+     * @param parent
+     *            the source list
+     * @param mapFunction
+     *            the function to apply to each partition
      */
     public MapPartitionsPLL(PLL<U> parent, BiFunction<Integer, Stream<U>, Stream<T>> mapFunction) {
         super(parent.getContext());
         this.parent = parent;
         this.mapFunction = mapFunction;
     }
-    
+
     /**
      * Constructs a PLL with partitions derived one-to-one from the parent.
      * 
-     * @param parent the source list
-     * @param mapFunction the function to apply to each partition
-     * @param cachedPartitionSizes the list of partition sizes, if known (otherwise null)
+     * @param parent
+     *            the source list
+     * @param mapFunction
+     *            the function to apply to each partition
+     * @param cachedPartitionSizes
+     *            the list of partition sizes, if known (otherwise null)
      */
     protected MapPartitionsPLL(
             PLL<U> parent,
@@ -48,7 +52,6 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
         this.mapFunction = mapFunction;
         this.cachedPartitionSizes = cachedPartitionSizes;
     }
-
 
     @Override
     public Stream<T> compute(Partition partition) {

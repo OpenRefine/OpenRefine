@@ -41,14 +41,14 @@ import org.openrefine.model.Cell;
 
 public class CellAtRow {
 
-    final public int    row;
-    final public Cell   cell;
-    
+    final public int row;
+    final public Cell cell;
+
     public CellAtRow(int row, Cell cell) {
         this.row = row;
         this.cell = cell;
     }
-    
+
     public void save(Writer writer, Properties options) throws IOException {
         writer.write(Integer.toString(row));
         writer.write(';');
@@ -56,12 +56,12 @@ public class CellAtRow {
             cell.save(writer);
         }
     }
-    
+
     static public CellAtRow load(String s) throws Exception {
         int semicolon = s.indexOf(';');
         int row = Integer.parseInt(s.substring(0, semicolon));
         Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1)) : null;
-        
+
         return new CellAtRow(row, cell);
     }
 }

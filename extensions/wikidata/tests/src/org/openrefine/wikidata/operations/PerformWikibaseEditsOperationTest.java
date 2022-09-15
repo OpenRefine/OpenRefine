@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import static org.mockito.Mockito.mock;
@@ -69,8 +70,8 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
             throws Exception {
         return TestingData.jsonFromFile("operations/perform-edits.json");
     }
-    
-    @Test(expectedExceptions=IllegalArgumentException.class)
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
         new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, "");
     }
@@ -78,33 +79,33 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Test
     public void testChange()
             throws Exception {
-    	
-    	ReconConfig reconConfig = mock(ReconConfig.class);
-    	ColumnModel columnModel = new ColumnModel(
-    			Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
-    		    new ColumnMetadata("bar")));
-    	GridState grid = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{ TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
-    			})
-    			.withColumnModel(columnModel);
-    	
+
+        ReconConfig reconConfig = mock(ReconConfig.class);
+        ColumnModel columnModel = new ColumnModel(
+                Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
+                        new ColumnMetadata("bar")));
+        GridState grid = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
+                })
+                        .withColumnModel(columnModel);
+
         Change change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange();
         ChangeContext context = mock(ChangeContext.class);
         RowNewReconUpdate rowNewReconUpdate = new RowNewReconUpdate(Collections.singletonMap(0, "Q789"));
         ChangeData<RowNewReconUpdate> changeData = runner().create(
-        		Collections.singletonList(new IndexedData<RowNewReconUpdate>(0L, rowNewReconUpdate)));
-        
-        when(context.<RowNewReconUpdate>getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId), Mockito.any()))
-        	.thenReturn(changeData);
-        
+                Collections.singletonList(new IndexedData<RowNewReconUpdate>(0L, rowNewReconUpdate)));
+
+        when(context.<RowNewReconUpdate> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId), Mockito.any()))
+                .thenReturn(changeData);
+
         GridState applied = change.apply(grid, context);
 
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
         assertEquals(row.getCell(0).recon.match.id, "Q789");
-        
+
         Assert.assertEquals(applied.getColumnModel().getColumnByIndex(0).getReconStats().getMatchedTopics(), 1L);
     }
 

@@ -37,37 +37,38 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Interface for judging if a particular row matches or doesn't match some
- * particular criterion, such as a facet constraint.
+ * Interface for judging if a particular row matches or doesn't match some particular criterion, such as a facet
+ * constraint.
  */
 public interface RowFilter extends Serializable {
-    
+
     public boolean filterRow(long rowIndex, Row row);
-    
+
     /**
      * Filter which accepts any row
      */
     public static RowFilter ANY_ROW = new RowFilter() {
+
         private static final long serialVersionUID = 5496299113387243579L;
 
         @Override
         public boolean filterRow(long rowIndex, Row row) {
             return true;
         }
-        
+
     };
-    
+
     /**
-     * A row filter which evaluates to true when all the supplied row
-     * filters do.
+     * A row filter which evaluates to true when all the supplied row filters do.
      */
     public static RowFilter conjunction(List<RowFilter> rowFilters) {
         if (rowFilters.isEmpty()) {
             return ANY_ROW;
         } else {
             return new RowFilter() {
+
                 private static final long serialVersionUID = -778029463533608671L;
-    
+
                 @Override
                 public boolean filterRow(long rowIndex, Row row) {
                     return rowFilters.stream().allMatch(f -> f.filterRow(rowIndex, row));
@@ -85,32 +86,32 @@ public interface RowFilter extends Serializable {
             public boolean filterRow(long rowIndex, Row row) {
                 return !filter.filterRow(rowIndex, row);
             }
-            
+
         };
     }
-    
+
     public static RowFilter limitFilter(long limit) {
         return new RowFilter() {
-            
+
             private static final long serialVersionUID = 7373072483613980130L;
-    
+
             @Override
             public boolean filterRow(long rowIndex, Row row) {
                 return rowIndex >= limit;
             }
         };
     }
-    
+
     public static RowFilter dropFilter(long rowsToDrop) {
         return new RowFilter() {
-            
+
             private static final long serialVersionUID = 7373072483613980130L;
-    
+
             @Override
             public boolean filterRow(long rowIndex, Row row) {
                 return rowIndex < rowsToDrop;
             }
-            
+
         };
     }
 }

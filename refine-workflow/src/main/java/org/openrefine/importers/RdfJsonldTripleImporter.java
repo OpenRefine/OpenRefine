@@ -40,5 +40,5 @@ public class RdfJsonldTripleImporter extends RdfTripleImporter {
     public RdfJsonldTripleImporter(DatamodelRunner runner) {
         super(runner, RdfTripleImporter.Mode.JSONLD);
     }
-    
+
 }

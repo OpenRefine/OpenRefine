@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.ByteArrayOutputStream;
@@ -6,8 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Serializable;
 
 /**
- * Helper class to represent an item in the map from
- * row ids to change values in the context of a {@class ChangeData}
+ * Helper class to represent an item in the map from row ids to change values in the context of a {@class ChangeData}
  * object.
  * 
  * @author Antonin Delpeuch
@@ -17,25 +17,25 @@ import java.io.Serializable;
 public class IndexedData<T> implements Serializable {
 
     private static final long serialVersionUID = 6928586351690626940L;
-    
+
     private final long rowId;
     private final T data;
-    
+
     public IndexedData(
             long rowId,
             T data) {
         this.rowId = rowId;
         this.data = data;
     }
-    
+
     public long getId() {
         return rowId;
     }
-    
+
     public T getData() {
         return data;
     }
-    
+
     public void write(OutputStreamWriter os, ChangeDataSerializer<T> serializer) throws IOException {
         os.write(Long.toString(rowId));
         os.write(",");
@@ -50,32 +50,32 @@ public class IndexedData<T> implements Serializable {
         writer.close();
         return new String(baos.toByteArray()).strip();
     }
-    
+
     public static <T> IndexedData<T> read(String line, ChangeDataSerializer<T> serializer) throws IOException {
         int index = line.indexOf(',');
         if (index == -1) {
             throw new IOException("Unexpected change data line: no comma");
         }
         long id = Long.valueOf(line.substring(0, index));
-        T data = serializer.deserialize(line.substring(index+1, line.length()));
+        T data = serializer.deserialize(line.substring(index + 1, line.length()));
         return new IndexedData<T>(id, data);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof IndexedData)) {
             return false;
         }
         @SuppressWarnings("unchecked")
-        IndexedData<T> otherData = (IndexedData<T>)other;
+        IndexedData<T> otherData = (IndexedData<T>) other;
         return rowId == otherData.getId() && data.equals(otherData.getData());
     }
-    
+
     @Override
     public int hashCode() {
-        return (int)rowId;
+        return (int) rowId;
     }
-    
+
     @Override
     public String toString() {
         return String.format("[IndexedData %d %s]", rowId, data);

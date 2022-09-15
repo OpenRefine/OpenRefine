@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -57,35 +58,34 @@ import scala.Tuple2;
 import scala.reflect.ClassManifestFactory;
 
 /**
- * Immutable object which represents the state of the project grid
- * at a given point in a workflow. This might only contain a subset of the rows
- * if a filter has been applied.
+ * Immutable object which represents the state of the project grid at a given point in a workflow. This might only
+ * contain a subset of the rows if a filter has been applied.
  */
 @JsonIgnoreType
 public class SparkGridState implements GridState {
-	
-	final static protected String METADATA_PATH = "metadata.json";
-	final static protected String GRID_PATH = "grid";
-    
-    protected final Map<String, OverlayModel>  overlayModels;
+
+    final static protected String METADATA_PATH = "metadata.json";
+    final static protected String GRID_PATH = "grid";
+
+    protected final Map<String, OverlayModel> overlayModels;
     protected final ColumnModel columnModel;
     protected final JavaPairRDD<Long, Row> grid;
     // not final because it is initialized on demand, as creating
     // it involves running a (small) Spark job
     protected JavaPairRDD<Long, Record> records = null;
-    
+
     protected final SparkDatamodelRunner runner;
-    
+
     private transient long cachedRowCount;
     private transient long cachedRecordCount;
-    
+
     /**
      * Creates a grid state from a grid and a column model
      * 
      * @param columnModel
-     *     the header of the table
+     *            the header of the table
      * @param grid
-     *     the state of the table
+     *            the state of the table
      */
     public SparkGridState(
             ColumnModel columnModel,
@@ -94,16 +94,16 @@ public class SparkGridState implements GridState {
             SparkDatamodelRunner runner) {
         this(columnModel, grid, overlayModels, runner, -1, -1);
     }
-    
+
     /**
      * Creates a grid state from a grid and a column model
      * 
      * @param columnModel
-     *     the header of the table
+     *            the header of the table
      * @param grid
-     *     the state of the table
+     *            the state of the table
      * @param cachedRowCount
-     *     the number of rows in the table, cached
+     *            the number of rows in the table, cached
      */
     protected SparkGridState(
             ColumnModel columnModel,
@@ -115,20 +115,20 @@ public class SparkGridState implements GridState {
         this.columnModel = columnModel;
         // Ensure that the grid has a partitioner
         this.grid = SortedRDD.assumeSorted(grid);
-        
+
         this.cachedRowCount = cachedRowCount;
         this.cachedRecordCount = cachedRecordCount;
 
         this.overlayModels = immutableMap(overlayModels);
         this.runner = runner;
-        
+
     }
-    
+
     private ImmutableMap<String, OverlayModel> immutableMap(Map<String, OverlayModel> map) {
-        if (map instanceof ImmutableMap<?,?>) {
-            return (ImmutableMap<String, OverlayModel>)map;
+        if (map instanceof ImmutableMap<?, ?>) {
+            return (ImmutableMap<String, OverlayModel>) map;
         }
-        Builder<String, OverlayModel> overlayBuilder = ImmutableMap.<String,OverlayModel>builder();
+        Builder<String, OverlayModel> overlayBuilder = ImmutableMap.<String, OverlayModel> builder();
         if (map != null) {
             overlayBuilder.putAll(map);
         }
@@ -139,7 +139,7 @@ public class SparkGridState implements GridState {
     public ColumnModel getColumnModel() {
         return columnModel;
     }
-    
+
     @JsonIgnore
     @Override
     public DatamodelRunner getDatamodelRunner() {
@@ -153,27 +153,23 @@ public class SparkGridState implements GridState {
     public JavaPairRDD<Long, Row> getGrid() {
         return grid;
     }
-    
+
     /**
-     * If true, calling {@link rowCount()} will
-     * not trigger any Spark job as a cached value
-     * will be returned instead.
+     * If true, calling {@link rowCount()} will not trigger any Spark job as a cached value will be returned instead.
      */
     @JsonIgnore
     public boolean isRowCountCached() {
         return cachedRowCount >= 0;
     }
-    
+
     /**
-     * If true, calling {@link recordCount()} will
-     * not trigger any Spark job as a cached value
-     * will be returned instead.
+     * If true, calling {@link recordCount()} will not trigger any Spark job as a cached value will be returned instead.
      */
     @JsonIgnore
     public boolean isRecordCountCached() {
         return cachedRecordCount >= 0;
     }
-    
+
     /**
      * @return the RDD of indexed rows (a different format than the PairRDD above)
      */
@@ -181,19 +177,19 @@ public class SparkGridState implements GridState {
     public JavaRDD<IndexedRow> getIndexedRows() {
         return grid.map(t -> new IndexedRow(t._1, t._2));
     }
-   
+
     @Override
     public Row getRow(long id) {
         List<Row> rows = grid.lookup(id);
         if (rows.size() == 0) {
             throw new IndexOutOfBoundsException(String.format("Row id %d not found", id));
-        } else if (rows.size() > 1){
+        } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d rows at index %d", rows.size(), id));
         } else {
             return rows.get(0);
         }
     }
-    
+
     @Override
     public List<IndexedRow> getRows(long start, int limit) {
         return RDDUtils.paginate(grid, start, limit)
@@ -201,18 +197,16 @@ public class SparkGridState implements GridState {
                 .map(tuple -> new IndexedRow(tuple._1, tuple._2))
                 .collect(Collectors.toList());
     }
-    
+
     /**
-     * @todo override this to do the fetching more efficiently:
-     * * separate all indices by the partitions they belong to
-     * * run a job for each partition with non-empty indices
-     * * gather all results and return
+     * @todo override this to do the fetching more efficiently: * separate all indices by the partitions they belong to
+     *       * run a job for each partition with non-empty indices * gather all results and return
      */
     @Override
     public List<IndexedRow> getRows(List<Long> rowIndices) {
         return GridState.super.getRows(rowIndices);
     }
-    
+
     @Override
     public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit) {
         JavaPairRDD<Long, Row> filteredGrid = grid;
@@ -222,9 +216,9 @@ public class SparkGridState implements GridState {
         if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
             // Without sorting, we can rely on row ids to paginate
             return RDDUtils.paginate(filteredGrid, start, limit)
-               .stream()
-               .map(tuple -> new IndexedRow(tuple._1, tuple._2))
-               .collect(Collectors.toList());
+                    .stream()
+                    .map(tuple -> new IndexedRow(tuple._1, tuple._2))
+                    .collect(Collectors.toList());
         } else {
             RowSorter sorter = new RowSorter(this, sortingConfig);
             // If we have a sorter, pagination is less efficient since we cannot rely
@@ -234,48 +228,49 @@ public class SparkGridState implements GridState {
                     .keyBy(ir -> ir)
                     .sortByKey(sorter)
                     .values()
-                    .take((int)start + limit);
+                    .take((int) start + limit);
             return rows
-                    .subList(Math.min((int)start, rows.size()), Math.min((int)start + limit, rows.size()));
+                    .subList(Math.min((int) start, rows.size()), Math.min((int) start + limit, rows.size()));
         }
     }
-    
+
     private static Function<Tuple2<Long, Row>, Boolean> wrapRowFilter(RowFilter filter) {
         return new Function<Tuple2<Long, Row>, Boolean>() {
+
             private static final long serialVersionUID = 2093008247452689031L;
 
             @Override
             public Boolean call(Tuple2<Long, Row> tuple) throws Exception {
                 return filter.filterRow(tuple._1, tuple._2);
             }
-            
+
         };
     }
-    
+
     @Override
     public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig) {
-    	JavaRDD<IndexedRow> filtered;
-    	if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
-	        filtered = grid
-	                .filter(wrapRowFilter(filter))
-	                .map(t -> new IndexedRow(t._1, t._2));
-    	} else {
-    		RowSorter sorter = new RowSorter(this, sortingConfig);
-    		filtered = grid
-    				.filter(wrapRowFilter(filter))
+        JavaRDD<IndexedRow> filtered;
+        if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            filtered = grid
+                    .filter(wrapRowFilter(filter))
+                    .map(t -> new IndexedRow(t._1, t._2));
+        } else {
+            RowSorter sorter = new RowSorter(this, sortingConfig);
+            filtered = grid
+                    .filter(wrapRowFilter(filter))
                     .map(t -> new IndexedRow(t._1, t._2))
                     .keyBy(ir -> ir)
                     .sortByKey(sorter)
                     .values();
-    	}
-    	
-    	return new Iterable<IndexedRow>() {
-    		
+        }
+
+        return new Iterable<IndexedRow>() {
+
             @Override
             public Iterator<IndexedRow> iterator() {
                 return filtered.toLocalIterator();
             }
-            
+
         };
     }
 
@@ -283,7 +278,7 @@ public class SparkGridState implements GridState {
     public List<IndexedRow> collectRows() {
         return grid.map(tuple -> new IndexedRow(tuple._1, tuple._2)).collect();
     }
-    
+
     /**
      * @return the number of rows in the table
      */
@@ -294,12 +289,12 @@ public class SparkGridState implements GridState {
         }
         return cachedRowCount;
     }
-    
+
     @Override
     public long countMatchingRows(RowFilter filter) {
         return grid.filter(wrapRowFilter(filter)).count();
     }
-    
+
     @Override
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
         long partitionLimit = limit / grid.getNumPartitions();
@@ -307,7 +302,7 @@ public class SparkGridState implements GridState {
         return RDDUtils.limitPartitions(grid, partitionLimit)
                 .aggregate(initialState, approxRowFilterAggregator(filter, partitionLimit), approxCountSum());
     }
-    
+
     private static Function2<ApproxCount, ApproxCount, ApproxCount> approxCountSum() {
         return new Function2<ApproxCount, ApproxCount, ApproxCount>() {
 
@@ -320,7 +315,7 @@ public class SparkGridState implements GridState {
                         v1.getMatched() + v2.getMatched(),
                         v1.limitReached() || v2.limitReached());
             }
-            
+
         };
     }
 
@@ -334,11 +329,11 @@ public class SparkGridState implements GridState {
                 long matched = count.getMatched() + (filter.filterRow(tuple._1, tuple._2) ? 1 : 0);
                 return new ApproxCount(count.getProcessed() + 1, matched, count.limitReached() || count.getProcessed() + 1 == rowLimit);
             }
-            
+
         };
     }
 
-    /** 
+    /**
      * @return the rows grouped into records, indexed by the first row id in the record
      */
     @JsonIgnore
@@ -348,7 +343,7 @@ public class SparkGridState implements GridState {
         }
         return records;
     }
-    
+
     @Override
     public Record getRecord(long id) {
         List<Record> records = getRecords().lookup(id);
@@ -360,7 +355,7 @@ public class SparkGridState implements GridState {
             return records.get(0);
         }
     }
-    
+
     @Override
     public List<Record> getRecords(long start, int limit) {
         return RDDUtils.paginate(getRecords(), start, limit)
@@ -368,7 +363,7 @@ public class SparkGridState implements GridState {
                 .map(tuple -> tuple._2)
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit) {
         JavaPairRDD<Long, Record> filteredRecords = getRecords();
@@ -377,7 +372,7 @@ public class SparkGridState implements GridState {
         }
         if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
             return RDDUtils.paginate(filteredRecords, start, limit)
-                .stream().map(tuple -> tuple._2).collect(Collectors.toList());
+                    .stream().map(tuple -> tuple._2).collect(Collectors.toList());
         } else {
             RecordSorter sorter = new RecordSorter(this, sortingConfig);
             return filteredRecords
@@ -385,35 +380,36 @@ public class SparkGridState implements GridState {
                     .keyBy(record -> record)
                     .sortByKey(sorter)
                     .values()
-                    .take((int)start + limit)
-                    .subList((int)start, (int)start + limit);
+                    .take((int) start + limit)
+                    .subList((int) start, (int) start + limit);
         }
     }
-    
+
     private static Function<Tuple2<Long, Record>, Boolean> wrapRecordFilter(RecordFilter filter) {
         return new Function<Tuple2<Long, Record>, Boolean>() {
+
             private static final long serialVersionUID = 3881968239559552931L;
 
             @Override
             public Boolean call(Tuple2<Long, Record> tuple) throws Exception {
                 return filter.filterRecord(tuple._2);
             }
-            
+
         };
     }
-    
+
     @Override
     public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) {
         JavaRDD<Record> filtered;
         if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
-	        filtered = getRecords()
-	                .filter(wrapRecordFilter(filter))
-	                .values();
+            filtered = getRecords()
+                    .filter(wrapRecordFilter(filter))
+                    .values();
         } else {
-        	RecordSorter sorter = new RecordSorter(this, sortingConfig);
-        	filtered = getRecords()
-        			.filter(wrapRecordFilter(filter))
-        			.values()
+            RecordSorter sorter = new RecordSorter(this, sortingConfig);
+            filtered = getRecords()
+                    .filter(wrapRecordFilter(filter))
+                    .values()
                     .keyBy(record -> record)
                     .sortByKey(sorter)
                     .values();
@@ -425,7 +421,7 @@ public class SparkGridState implements GridState {
                 return filtered
                         .toLocalIterator();
             }
-            
+
         };
     }
 
@@ -433,8 +429,7 @@ public class SparkGridState implements GridState {
     public List<Record> collectRecords() {
         return getRecords().values().collect();
     }
-    
-    
+
     /**
      * @return the number of records in the table
      */
@@ -450,7 +445,6 @@ public class SparkGridState implements GridState {
     public long countMatchingRecords(RecordFilter filter) {
         return getRecords().filter(wrapRecordFilter(filter)).count();
     }
-    
 
     @Override
     public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
@@ -459,8 +453,9 @@ public class SparkGridState implements GridState {
         return RDDUtils.limitPartitions(getRecords(), partitionLimit)
                 .aggregate(initialState, approxRecordFilterAggregator(filter, partitionLimit), approxCountSum());
     }
-    
-    private static Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount> approxRecordFilterAggregator(RecordFilter filter, long partitionLimit) {
+
+    private static Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount> approxRecordFilterAggregator(RecordFilter filter,
+            long partitionLimit) {
         return new Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount>() {
 
             private static final long serialVersionUID = 1266194909791433973L;
@@ -468,9 +463,10 @@ public class SparkGridState implements GridState {
             @Override
             public ApproxCount call(ApproxCount count, Tuple2<Long, Record> tuple) throws Exception {
                 long matched = count.getMatched() + (filter.filterRecord(tuple._2) ? 1 : 0);
-                return new ApproxCount(count.getProcessed() + 1, matched, count.limitReached() || count.getProcessed() + 1 == partitionLimit);
+                return new ApproxCount(count.getProcessed() + 1, matched,
+                        count.limitReached() || count.getProcessed() + 1 == partitionLimit);
             }
-            
+
         };
     }
 
@@ -478,89 +474,92 @@ public class SparkGridState implements GridState {
     public Map<String, OverlayModel> getOverlayModels() {
         return overlayModels;
     }
-    
+
     @Override
     public String toString() {
         return String.format("[GridState, %d columns, %d rows]", columnModel.getColumns().size(), rowCount());
     }
 
     @Override
-	public void saveToFile(File file) throws IOException {
-		File metadataFile = new File(file, METADATA_PATH);
-		File gridFile = new File(file, GRID_PATH);
-		IOUtils.deleteDirectoryIfExists(file);
-		DoubleAccumulator accumulator = grid.context().doubleAccumulator();
-		grid
-		    .map(r -> serializeIndexedRow(r))
-		    .map(r -> { accumulator.add(1L); return r; })
-		    .saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
-		
-		Metadata metadata = new Metadata();
-		metadata.columnModel = columnModel;
-		metadata.overlayModels = overlayModels;
-		if (cachedRowCount >= 0) {
-		    metadata.rowCount = cachedRowCount;
-		}
-		if (cachedRecordCount >= 0) {
-		    metadata.recordCount = cachedRecordCount;
-		}
-		ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
-	}
-    
+    public void saveToFile(File file) throws IOException {
+        File metadataFile = new File(file, METADATA_PATH);
+        File gridFile = new File(file, GRID_PATH);
+        IOUtils.deleteDirectoryIfExists(file);
+        DoubleAccumulator accumulator = grid.context().doubleAccumulator();
+        grid
+                .map(r -> serializeIndexedRow(r))
+                .map(r -> {
+                    accumulator.add(1L);
+                    return r;
+                })
+                .saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
+
+        Metadata metadata = new Metadata();
+        metadata.columnModel = columnModel;
+        metadata.overlayModels = overlayModels;
+        if (cachedRowCount >= 0) {
+            metadata.rowCount = cachedRowCount;
+        }
+        if (cachedRecordCount >= 0) {
+            metadata.recordCount = cachedRecordCount;
+        }
+        ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
+    }
+
     @Override
     public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
         saveToFile(file);
         progressReporter.reportProgress(100);
     }
-	
-	protected static String serializeIndexedRow(Tuple2<Long,Row> indexedRow) throws JsonProcessingException {
-	    return ParsingUtilities.saveWriter.writeValueAsString(new IndexedRow(indexedRow._1, indexedRow._2));
-	}
 
-	public static SparkGridState loadFromFile(JavaSparkContext context, File file) throws IOException {
-		File metadataFile = new File(file, METADATA_PATH);
-		File gridFile = new File(file, GRID_PATH);
-		
-		Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
-		
-		/*
-		 * The text files corresponding to each partition are read in the correct order
-		 * thanks to our dedicated file system OrderedLocalFileSystem.
-		 * https://issues.apache.org/jira/browse/SPARK-5300
-		 */
-		JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
-		        .map(s -> parseIndexedRow(s.toString()))
-		        .keyBy(p -> p._1)
-		        .mapValues(p -> p._2);
-		//        .persist(StorageLevel.MEMORY_ONLY());
+    protected static String serializeIndexedRow(Tuple2<Long, Row> indexedRow) throws JsonProcessingException {
+        return ParsingUtilities.saveWriter.writeValueAsString(new IndexedRow(indexedRow._1, indexedRow._2));
+    }
 
-		return new SparkGridState(metadata.columnModel,
-		        grid,
-		        metadata.overlayModels,
-		        new SparkDatamodelRunner(context),
-		        metadata.rowCount,
-		        metadata.recordCount);
-	}
-	
-	protected static TypeReference<Tuple2<Long,Row>> typeRef = new TypeReference<Tuple2<Long,Row>>() {};
-	
-	protected static Tuple2<Long, Row> parseIndexedRow(String source) throws IOException {
-	    IndexedRow id = ParsingUtilities.mapper.readValue(source, IndexedRow.class);
-	    return new Tuple2<Long, Row>(id.getIndex(), id.getRow());
-	}
-	
+    public static SparkGridState loadFromFile(JavaSparkContext context, File file) throws IOException {
+        File metadataFile = new File(file, METADATA_PATH);
+        File gridFile = new File(file, GRID_PATH);
+
+        Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
+
+        /*
+         * The text files corresponding to each partition are read in the correct order thanks to our dedicated file
+         * system OrderedLocalFileSystem. https://issues.apache.org/jira/browse/SPARK-5300
+         */
+        JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
+                .map(s -> parseIndexedRow(s.toString()))
+                .keyBy(p -> p._1)
+                .mapValues(p -> p._2);
+        // .persist(StorageLevel.MEMORY_ONLY());
+
+        return new SparkGridState(metadata.columnModel,
+                grid,
+                metadata.overlayModels,
+                new SparkDatamodelRunner(context),
+                metadata.rowCount,
+                metadata.recordCount);
+    }
+
+    protected static TypeReference<Tuple2<Long, Row>> typeRef = new TypeReference<Tuple2<Long, Row>>() {
+    };
+
+    protected static Tuple2<Long, Row> parseIndexedRow(String source) throws IOException {
+        IndexedRow id = ParsingUtilities.mapper.readValue(source, IndexedRow.class);
+        return new Tuple2<Long, Row>(id.getIndex(), id.getRow());
+    }
+
     // Facet computation
 
     @Override
     public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
         return grid.aggregate(initialState, rowSeqOp(aggregator), facetCombineOp(aggregator));
     }
-    
+
     @Override
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
         return getRecords().aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
     }
-    
+
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
         long partitionLimit = maxRows / grid.getNumPartitions();
@@ -578,9 +577,9 @@ public class SparkGridState implements GridState {
         return RDDUtils.limitPartitions(records, partitionLimit)
                 .aggregate(initialPartialState, recordSeqOpPartial(aggregator, partitionLimit), facetCombineOpPartial(aggregator));
     }
-    
-    private static <T> Function2<T, Tuple2<Long,Row>, T> rowSeqOp(RowAggregator<T> aggregator) {
-        return new Function2<T, Tuple2<Long,Row>, T>() {
+
+    private static <T> Function2<T, Tuple2<Long, Row>, T> rowSeqOp(RowAggregator<T> aggregator) {
+        return new Function2<T, Tuple2<Long, Row>, T>() {
 
             private static final long serialVersionUID = 2188564367142265354L;
 
@@ -590,22 +589,24 @@ public class SparkGridState implements GridState {
             }
         };
     }
-    
-    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long,Row>, PartialAggregation<T>> rowSeqOpPartial(RowAggregator<T> aggregator, long limit) {
-        return new Function2<PartialAggregation<T>, Tuple2<Long,Row>, PartialAggregation<T>>() {
+
+    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long, Row>, PartialAggregation<T>> rowSeqOpPartial(
+            RowAggregator<T> aggregator, long limit) {
+        return new Function2<PartialAggregation<T>, Tuple2<Long, Row>, PartialAggregation<T>>() {
 
             private static final long serialVersionUID = 2188564367142265354L;
 
             @Override
             public PartialAggregation<T> call(PartialAggregation<T> states, Tuple2<Long, Row> rowTuple) throws Exception {
                 T newState = aggregator.withRow(states.getState(), rowTuple._1, rowTuple._2);
-                return new PartialAggregation<T>(newState, states.getProcessed() + 1, states.limitReached() || (states.getProcessed() + 1 == limit));
+                return new PartialAggregation<T>(newState, states.getProcessed() + 1,
+                        states.limitReached() || (states.getProcessed() + 1 == limit));
             }
         };
     }
-    
-    private static <T> Function2<T, Tuple2<Long,Record>, T> recordSeqOp(RecordAggregator<T> aggregator) {
-        return new Function2<T, Tuple2<Long,Record>, T>() {
+
+    private static <T> Function2<T, Tuple2<Long, Record>, T> recordSeqOp(RecordAggregator<T> aggregator) {
+        return new Function2<T, Tuple2<Long, Record>, T>() {
 
             private static final long serialVersionUID = 6349675935547753918L;
 
@@ -613,50 +614,54 @@ public class SparkGridState implements GridState {
             public T call(T states, Tuple2<Long, Record> tuple) throws Exception {
                 return aggregator.withRecord(states, tuple._2);
             }
-            
+
         };
     }
-    
-    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long, Record>, PartialAggregation<T>> recordSeqOpPartial(RecordAggregator<T> aggregator, long limit) {
-        return new Function2<PartialAggregation<T>, Tuple2<Long,Record>, PartialAggregation<T>>() {
+
+    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long, Record>, PartialAggregation<T>> recordSeqOpPartial(
+            RecordAggregator<T> aggregator, long limit) {
+        return new Function2<PartialAggregation<T>, Tuple2<Long, Record>, PartialAggregation<T>>() {
 
             private static final long serialVersionUID = 6349675935547753918L;
 
             @Override
             public PartialAggregation<T> call(PartialAggregation<T> states, Tuple2<Long, Record> tuple) throws Exception {
                 T newState = aggregator.withRecord(states.getState(), tuple._2);
-                return new PartialAggregation<T>(newState, states.getProcessed() + 1, states.limitReached() || states.getProcessed() + 1 == limit);
+                return new PartialAggregation<T>(newState, states.getProcessed() + 1,
+                        states.limitReached() || states.getProcessed() + 1 == limit);
             }
-            
+
         };
     }
-    
-    
+
     private static <T> Function2<T, T, T> facetCombineOp(Combiner<T> aggregator) {
-       return new Function2<T, T, T>() {
+        return new Function2<T, T, T>() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public T call(T statesA, T statesB) throws Exception {
                 return aggregator.sum(statesA, statesB);
             }
         };
     }
-    
-    private static <T extends Serializable> Function2<PartialAggregation<T>, PartialAggregation<T>, PartialAggregation<T>>
-    facetCombineOpPartial(Combiner<T> aggregator) {
+
+    private static <T extends Serializable> Function2<PartialAggregation<T>, PartialAggregation<T>, PartialAggregation<T>> facetCombineOpPartial(
+            Combiner<T> aggregator) {
         return new Function2<PartialAggregation<T>, PartialAggregation<T>, PartialAggregation<T>>() {
-            
-             private static final long serialVersionUID = 1L;
-             @Override
-             public PartialAggregation<T> call(PartialAggregation<T> statesA, PartialAggregation<T> statesB) throws Exception {
-                 T newState = aggregator.sum(statesA.getState(), statesB.getState());
-                 return new PartialAggregation<T>(newState,
-                         statesA.getProcessed() + statesB.getProcessed(),
-                         statesA.limitReached() || statesB.limitReached());
-             }
-         };
-     }
-    
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public PartialAggregation<T> call(PartialAggregation<T> statesA, PartialAggregation<T> statesB) throws Exception {
+                T newState = aggregator.sum(statesA.getState(), statesB.getState());
+                return new PartialAggregation<T>(newState,
+                        statesA.getProcessed() + statesB.getProcessed(),
+                        statesA.limitReached() || statesB.limitReached());
+            }
+        };
+    }
+
     // Transformation
 
     @Override
@@ -664,10 +669,10 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> rows = RDDUtils.mapKeyValuesToValues(grid, rowMap(mapper));
         return new SparkGridState(newColumnModel, rows, overlayModels, runner, cachedRowCount, -1);
     }
-    
+
     private static Function2<Long, Row, Row> rowMap(RowMapper mapper) {
         return new Function2<Long, Row, Row>() {
-            
+
             private static final long serialVersionUID = 429225090136968798L;
 
             @Override
@@ -676,15 +681,15 @@ public class SparkGridState implements GridState {
             }
         };
     }
-    
+
     @Override
     public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, Row> rows = RDDUtils.zipWithIndex(grid.flatMap(rowFlatMap(mapper)));
         return new SparkGridState(newColumnModel, rows, overlayModels, runner);
     }
-    
-    private static FlatMapFunction<Tuple2<Long,Row>,Row> rowFlatMap(RowFlatMapper mapper) {
-        return new FlatMapFunction<Tuple2<Long,Row>,Row>() {
+
+    private static FlatMapFunction<Tuple2<Long, Row>, Row> rowFlatMap(RowFlatMapper mapper) {
+        return new FlatMapFunction<Tuple2<Long, Row>, Row>() {
 
             private static final long serialVersionUID = -2920197696120331752L;
 
@@ -692,13 +697,13 @@ public class SparkGridState implements GridState {
             public Iterator<Row> call(Tuple2<Long, Row> t) throws Exception {
                 return mapper.call(t._1, t._2).iterator();
             }
-            
+
         };
     }
-    
+
     @Override
     public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
-        RDD<Tuple2<Long,Row>> rows = new ScanMapRDD<Serializable,Tuple2<Long,Row>,Tuple2<Long,Row>>(
+        RDD<Tuple2<Long, Row>> rows = new ScanMapRDD<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>>(
                 grid.rdd(),
                 rowScanMapperToFeed(mapper),
                 rowScanMapperToCombine(mapper),
@@ -714,9 +719,9 @@ public class SparkGridState implements GridState {
                 overlayModels,
                 runner);
     }
-    
-    private static <S extends Serializable> Function<Tuple2<Long,Row>,Serializable> rowScanMapperToFeed(RowScanMapper<S> mapper) {
-        return new Function<Tuple2<Long,Row>,Serializable>() {
+
+    private static <S extends Serializable> Function<Tuple2<Long, Row>, Serializable> rowScanMapperToFeed(RowScanMapper<S> mapper) {
+        return new Function<Tuple2<Long, Row>, Serializable>() {
 
             private static final long serialVersionUID = -5264889389519072017L;
 
@@ -724,35 +729,37 @@ public class SparkGridState implements GridState {
             public Serializable call(Tuple2<Long, Row> tuple) throws Exception {
                 return mapper.feed(tuple._1, tuple._2);
             }
-            
+
         };
     }
-    
-    private static <S extends Serializable> Function2<Serializable,Serializable,Serializable> rowScanMapperToCombine(RowScanMapper<S> mapper) {
-        return new Function2<Serializable,Serializable,Serializable>() {
+
+    private static <S extends Serializable> Function2<Serializable, Serializable, Serializable> rowScanMapperToCombine(
+            RowScanMapper<S> mapper) {
+        return new Function2<Serializable, Serializable, Serializable>() {
 
             private static final long serialVersionUID = 2713407215238946726L;
 
             @SuppressWarnings("unchecked")
             @Override
             public Serializable call(Serializable v1, Serializable v2) throws Exception {
-                return mapper.combine((S)v1, (S)v2);
+                return mapper.combine((S) v1, (S) v2);
             }
-            
+
         };
     }
-    
-    private static <S extends Serializable> Function2<Serializable,Tuple2<Long,Row>,Tuple2<Long,Row>> rowScanMapperToMap(RowScanMapper<S> mapper) {
-        return new Function2<Serializable,Tuple2<Long,Row>,Tuple2<Long,Row>>() {
+
+    private static <S extends Serializable> Function2<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>> rowScanMapperToMap(
+            RowScanMapper<S> mapper) {
+        return new Function2<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>>() {
 
             private static final long serialVersionUID = -321428794497355320L;
 
             @SuppressWarnings("unchecked")
             @Override
             public Tuple2<Long, Row> call(Serializable v1, Tuple2<Long, Row> v2) throws Exception {
-                return new Tuple2<Long,Row>(v2._1, mapper.map((S)v1, v2._1, v2._2));
+                return new Tuple2<Long, Row>(v2._1, mapper.map((S) v1, v2._1, v2._2));
             }
-            
+
         };
     }
 
@@ -761,23 +768,23 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> rows;
         if (mapper.preservesRowCount()) {
             // Row ids do not change, we can reuse the same partitioner
-            JavaPairRDD<Long, Tuple2<Long,Row>> newRows = getRecords().flatMapValues(rowPreservingRecordMap(mapper));
-            rows = new PartitionedRDD<Long,Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
+            JavaPairRDD<Long, Tuple2<Long, Row>> newRows = getRecords().flatMapValues(rowPreservingRecordMap(mapper));
+            rows = new PartitionedRDD<Long, Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
                     newRows.partitioner().get())
-                    .asPairRDD(newRows.kClassTag(), grid.vClassTag());
+                            .asPairRDD(newRows.kClassTag(), grid.vClassTag());
         } else {
             // We need to recompute row ids and get a new partitioner
             JavaRDD<Row> newRows = getRecords().values().flatMap(recordMap(mapper));
             rows = RDDUtils.zipWithIndex(newRows);
         }
         return new SparkGridState(
-                newColumnModel, 
+                newColumnModel,
                 rows,
                 overlayModels,
                 runner);
     }
-    
-    private static FlatMapFunction<Record, Tuple2<Long,Row>> rowPreservingRecordMap(RecordMapper mapper) {
+
+    private static FlatMapFunction<Record, Tuple2<Long, Row>> rowPreservingRecordMap(RecordMapper mapper) {
         return new FlatMapFunction<Record, Tuple2<Long, Row>>() {
 
             private static final long serialVersionUID = 7501726558696862638L;
@@ -786,14 +793,14 @@ public class SparkGridState implements GridState {
             public Iterator<Tuple2<Long, Row>> call(Record record) throws Exception {
                 List<Row> result = mapper.call(record);
                 return IntStream.range(0, result.size())
-                        .mapToObj(i -> new Tuple2<Long,Row>(record.getStartRowId()+i, result.get(i)))
+                        .mapToObj(i -> new Tuple2<Long, Row>(record.getStartRowId() + i, result.get(i)))
                         .collect(Collectors.toList())
                         .iterator();
             }
-            
+
         };
     }
-    
+
     private static FlatMapFunction<Record, Row> recordMap(RecordMapper mapper) {
         return new FlatMapFunction<Record, Row>() {
 
@@ -804,7 +811,7 @@ public class SparkGridState implements GridState {
                 List<Row> rows = mapper.call(record);
                 return rows.iterator();
             }
-            
+
         };
     }
 
@@ -835,12 +842,12 @@ public class SparkGridState implements GridState {
         RowSorter sorter = new RowSorter(this, sortingConfig);
         // TODO: we should map by the keys generated by the sortingConfig,
         // and provide a comparator for those: that could be more efficient
-        JavaPairRDD<Long,Row> sortedGrid = RDDUtils.zipWithIndex(
+        JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
                 getIndexedRows()
-                .keyBy(ir -> ir)
-                .sortByKey(sorter)
-                .values()
-                .map(ir -> ir.getRow()));
+                        .keyBy(ir -> ir)
+                        .sortByKey(sorter)
+                        .values()
+                        .map(ir -> ir.getRow()));
         return new SparkGridState(
                 columnModel,
                 sortedGrid,
@@ -855,13 +862,13 @@ public class SparkGridState implements GridState {
         RecordSorter sorter = new RecordSorter(this, sortingConfig);
         // TODO: we should map by the keys generated by the sortingConfig,
         // and provide a comparator for those: that could be more efficient
-        JavaPairRDD<Long,Row> sortedGrid = RDDUtils.zipWithIndex(
+        JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
                 getRecords()
-                .values()
-                .keyBy(record -> record)
-                .sortByKey(sorter)
-                .values()
-                .flatMap(recordMap(RecordMapper.IDENTITY)));
+                        .values()
+                        .keyBy(record -> record)
+                        .sortByKey(sorter)
+                        .values()
+                        .flatMap(recordMap(RecordMapper.IDENTITY)));
         return new SparkGridState(
                 columnModel,
                 sortedGrid,
@@ -876,7 +883,7 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> newRows = RDDUtils.zipWithIndex(grid
                 .filter(wrapRowFilter(RowFilter.negate(filter)))
                 .values());
-                
+
         return new SparkGridState(
                 columnModel,
                 newRows,
@@ -891,7 +898,7 @@ public class SparkGridState implements GridState {
                 .filter(wrapRecordFilter(RecordFilter.negate(filter)))
                 .values()
                 .flatMap(recordMap(RecordMapper.IDENTITY)));
-        
+
         return new SparkGridState(
                 columnModel,
                 newRows,
@@ -899,7 +906,6 @@ public class SparkGridState implements GridState {
                 runner);
         // cached row and record counts are not preserved
     }
-    
 
     @Override
     public GridState limitRows(long rowLimit) {
@@ -913,22 +919,22 @@ public class SparkGridState implements GridState {
                 newCachedRowCount,
                 -1);
     }
-    
+
     @Override
     public GridState dropRows(long rowLimit) {
         JavaPairRDD<Long, Row> newRows = grid
                 .filter(wrapRowFilter(RowFilter.limitFilter(rowLimit)))
                 .mapToPair(offsetRowIds(-rowLimit));
-        
+
         // Adapt the partitioner to the new row ids
         if (grid.partitioner().isPresent() && grid.partitioner().get() instanceof SortedRDD.SortedPartitioner) {
             @SuppressWarnings("unchecked")
-            SortedRDD.SortedPartitioner<Long> oldPartitioner = (SortedRDD.SortedPartitioner<Long>)grid.partitioner().get();
+            SortedRDD.SortedPartitioner<Long> oldPartitioner = (SortedRDD.SortedPartitioner<Long>) grid.partitioner().get();
             List<Long> oldIndices = oldPartitioner.firstKeys();
             List<Long> newIndices = new ArrayList<>(oldIndices.size());
-            for(int i = 0; i < oldIndices.size(); i++) {
+            for (int i = 0; i < oldIndices.size(); i++) {
                 long newFirstElement = oldIndices.get(i) - rowLimit;
-                if (newFirstElement < 0 && i < oldIndices.size()-1 && oldIndices.get(i+1) <= rowLimit) {
+                if (newFirstElement < 0 && i < oldIndices.size() - 1 && oldIndices.get(i + 1) <= rowLimit) {
                     newIndices.add(null);
                 } else {
                     newIndices.add(Math.max(0, newFirstElement));
@@ -937,10 +943,10 @@ public class SparkGridState implements GridState {
             Partitioner newPartitioner = new SortedRDD.SortedPartitioner<>(oldPartitioner.numPartitions(), newIndices);
             newRows = new PartitionedRDD<Long, Row>(newRows, newPartitioner).asPairRDD(grid.kClassTag(), grid.vClassTag());
         }
-        
+
         // Compute the new row count
         long newRowCount = cachedRowCount == -1 ? -1 : Math.max(0, cachedRowCount - rowLimit);
-                
+
         return new SparkGridState(
                 columnModel,
                 newRows,
@@ -949,7 +955,7 @@ public class SparkGridState implements GridState {
                 newRowCount,
                 -1);
     }
-    
+
     private static PairFunction<Tuple2<Long, Row>, Long, Row> offsetRowIds(long offset) {
         return new PairFunction<Tuple2<Long, Row>, Long, Row>() {
 
@@ -959,13 +965,13 @@ public class SparkGridState implements GridState {
             public Tuple2<Long, Row> call(Tuple2<Long, Row> t) throws Exception {
                 return new Tuple2<Long, Row>(t._1 + offset, t._2);
             }
-            
+
         };
     }
-    
+
     private static <T> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {
         return new Function2<Long, Row, T>() {
-            
+
             private static final long serialVersionUID = 429225090136968798L;
 
             @Override
@@ -982,13 +988,14 @@ public class SparkGridState implements GridState {
         if (rowMapper.getBatchSize() == 1) {
             data = RDDUtils.mapKeyValuesToValues(filteredGrid, rowMap(rowMapper));
         } else {
-            JavaRDD<List<IndexedRow>> batched = RDDUtils.partitionWiseBatching(filteredGrid.map(t -> new IndexedRow(t._1, t._2)), rowMapper.getBatchSize());
+            JavaRDD<List<IndexedRow>> batched = RDDUtils.partitionWiseBatching(filteredGrid.map(t -> new IndexedRow(t._1, t._2)),
+                    rowMapper.getBatchSize());
             data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
         }
-                
+
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
     }
-   
+
     private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
         return new FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>>() {
 
@@ -998,16 +1005,17 @@ public class SparkGridState implements GridState {
             public Iterator<Tuple2<Long, T>> call(List<IndexedRow> rows) throws Exception {
                 List<T> results = rowMapper.callRowBatch(rows);
                 if (rows.size() != results.size()) {
-                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), rows.size()));
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", results.size(), rows.size()));
                 }
                 return IntStream.range(0, rows.size())
                         .mapToObj(i -> new Tuple2<Long, T>(rows.get(i).getIndex(), results.get(i)))
                         .iterator();
             }
-            
+
         };
     }
-    
+
     private static <T> Function2<Long, Record, T> recordMap(RecordChangeDataProducer<T> mapper) {
         return new Function2<Long, Record, T>() {
 
@@ -1031,10 +1039,10 @@ public class SparkGridState implements GridState {
             JavaRDD<List<Record>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(), recordMapper.getBatchSize());
             data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
         }
-                
+
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
     }
-    
+
     private static <T> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
         return new FlatMapFunction<List<Record>, Tuple2<Long, T>>() {
 
@@ -1044,13 +1052,14 @@ public class SparkGridState implements GridState {
             public Iterator<Tuple2<Long, T>> call(List<Record> records) throws Exception {
                 List<T> results = recordMapper.callRecordBatch(records);
                 if (records.size() != results.size()) {
-                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records", results.size(), records.size()));
+                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records",
+                            results.size(), records.size()));
                 }
                 return IntStream.range(0, records.size())
                         .mapToObj(i -> new Tuple2<Long, T>(records.get(i).getStartRowId(), results.get(i)))
                         .iterator();
             }
-            
+
         };
     }
 
@@ -1060,24 +1069,24 @@ public class SparkGridState implements GridState {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
         }
-        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
+        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
         JavaPairRDD<Long, Tuple2<Row, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, Row> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapJoiner(rowJoiner));
-        
+
         return new SparkGridState(newColumnModel, newGrid, overlayModels, runner);
     }
-    
-    private static <T> Function2<Long, Tuple2<Row,Optional<T>>, Row> wrapJoiner(RowChangeDataJoiner<T> joiner) {
-        
-        return new Function2<Long, Tuple2<Row,Optional<T>>, Row>() {
+
+    private static <T> Function2<Long, Tuple2<Row, Optional<T>>, Row> wrapJoiner(RowChangeDataJoiner<T> joiner) {
+
+        return new Function2<Long, Tuple2<Row, Optional<T>>, Row>() {
 
             private static final long serialVersionUID = 3976239801526423806L;
 
             @Override
-            public Row call(Long id, Tuple2<Row,Optional<T>> tuple) throws Exception {
+            public Row call(Long id, Tuple2<Row, Optional<T>> tuple) throws Exception {
                 return joiner.call(id, tuple._1, tuple._2.or(null));
             }
         };
@@ -1089,7 +1098,7 @@ public class SparkGridState implements GridState {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
         }
-        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
+        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
@@ -1098,15 +1107,15 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.values().flatMap(l -> l.iterator()));
         return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
     }
-    
-    private static <T> Function2<Long, Tuple2<Row,Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
-        
-        return new Function2<Long, Tuple2<Row,Optional<T>>, List<Row>>() {
+
+    private static <T> Function2<Long, Tuple2<Row, Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
+
+        return new Function2<Long, Tuple2<Row, Optional<T>>, List<Row>>() {
 
             private static final long serialVersionUID = 3976239801526423806L;
 
             @Override
-            public List<Row> call(Long id, Tuple2<Row,Optional<T>> tuple) throws Exception {
+            public List<Row> call(Long id, Tuple2<Row, Optional<T>> tuple) throws Exception {
                 return joiner.call(id, tuple._1, tuple._2.or(null));
             }
         };
@@ -1118,7 +1127,7 @@ public class SparkGridState implements GridState {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
         }
-        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
+        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
@@ -1127,9 +1136,9 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.flatMap(l -> l.iterator()));
         return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
     }
-    
-    private static <T> Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
-        return new Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>>() {
+
+    private static <T> Function<Tuple2<Long, Tuple2<Record, Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
+        return new Function<Tuple2<Long, Tuple2<Record, Optional<T>>>, List<Row>>() {
 
             private static final long serialVersionUID = -8170813739798353133L;
 
@@ -1137,9 +1146,9 @@ public class SparkGridState implements GridState {
             public List<Row> call(Tuple2<Long, Tuple2<Record, Optional<T>>> tuple) throws Exception {
                 return joiner.call(tuple._2._1, tuple._2._2.orNull());
             }
-            
+
         };
-        
+
     }
 
     @Override
@@ -1147,15 +1156,15 @@ public class SparkGridState implements GridState {
         if (!(other instanceof SparkGridState)) {
             throw new IllegalArgumentException("Union of a Spark GridState is only possible with another Spark GridState");
         }
-        
+
         ColumnModel merged = columnModel.merge(other.getColumnModel());
         SparkGridState sparkGrid = (SparkGridState) other;
-        
+
         JavaRDD<Row> rows = grid.values().union(sparkGrid.getGrid().values());
         JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
         Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
         mergedOverlayModels.putAll(overlayModels);
-        
+
         long newRowCount = -1;
         if (cachedRowCount != -1 && sparkGrid.cachedRowCount != -1) {
             newRowCount = cachedRowCount + sparkGrid.cachedRowCount;
@@ -1173,7 +1182,7 @@ public class SparkGridState implements GridState {
     public void uncache() {
         grid.unpersist(true);
     }
-    
+
     @Override
     public boolean cache() {
         grid.persist(StorageLevel.MEMORY_ONLY());
@@ -1187,5 +1196,5 @@ public class SparkGridState implements GridState {
         progressReporter.reportProgress(100);
         return isCached;
     }
-    
+
 }

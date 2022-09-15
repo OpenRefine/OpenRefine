@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.util;
 
 import java.util.HashMap;
@@ -12,32 +13,33 @@ import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.util.StringUtils;
 
 public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<StringValuesFacetState> {
+
     private static final long serialVersionUID = 1L;
 
-    protected final ColumnModel  _columnModel;
-    protected final int          _cellIndex;
-    protected final Set<String>  _selected;
-    protected final boolean      _selectBlanks;
-    protected final boolean      _selectErrors;
-    
+    protected final ColumnModel _columnModel;
+    protected final int _cellIndex;
+    protected final Set<String> _selected;
+    protected final boolean _selectBlanks;
+    protected final boolean _selectErrors;
+
     /**
      * Constructor.
      * 
      * @param columnModel
-     *      the list of columns of the table where this facet is being applied
+     *            the list of columns of the table where this facet is being applied
      * @param cellIndex
-     *      the index of the base column where the evaluable is run
-     *      (-1 if no base column is used, for instance for the flag/star facets)
+     *            the index of the base column where the evaluable is run (-1 if no base column is used, for instance
+     *            for the flag/star facets)
      * @param evaluable
-     *      the evaluable which generates the values held by this facet
+     *            the evaluable which generates the values held by this facet
      * @param selected
-     *      the list of string values which are selected
+     *            the list of string values which are selected
      * @param selectBlanks
-     *      whether blanks should be selected
+     *            whether blanks should be selected
      * @param selectErrors
-     *      whether errors should be selected
+     *            whether errors should be selected
      * @param invert
-     *      whether the selection should be inverted
+     *            whether the selection should be inverted
      */
     public StringValuesFacetAggregator(
             ColumnModel columnModel, int cellIndex, RowEvaluable evaluable,
@@ -49,7 +51,7 @@ public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<
         _selectBlanks = selectBlanks;
         _selectErrors = selectErrors;
     }
-    
+
     @Override
     public StringValuesFacetState sum(StringValuesFacetState first, StringValuesFacetState second) {
         Map<String, Long> newCounts = new HashMap<>(first.getCounts());
@@ -68,17 +70,16 @@ public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<
 
     @Override
     public RowInRecordFilter getRowFilter() {
-        return _eval == null || 
-                (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? 
-                    null :
-                    new ExpressionEqualRowFilter(
-                        _eval, 
-                        _cellIndex == -1 ? null : _columnModel.getColumns().get(_cellIndex).getName(),
-                        _cellIndex, 
-                        _selected, 
-                        _selectBlanks, 
-                        _selectErrors,
-                        _invert);
+        return _eval == null ||
+                (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? null
+                        : new ExpressionEqualRowFilter(
+                                _eval,
+                                _cellIndex == -1 ? null : _columnModel.getColumns().get(_cellIndex).getName(),
+                                _cellIndex,
+                                _selected,
+                                _selectBlanks,
+                                _selectErrors,
+                                _invert);
     }
 
     @Override

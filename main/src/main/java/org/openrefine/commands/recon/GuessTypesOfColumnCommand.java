@@ -65,12 +65,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class GuessTypesOfColumnCommand extends Command {
-    
+
     final static int DEFAULT_SAMPLE_SIZE = 10;
     private int sampleSize = DEFAULT_SAMPLE_SIZE;
-     
+
     protected static class TypesResponse {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -79,7 +81,7 @@ public class GuessTypesOfColumnCommand extends Command {
         @JsonProperty("types")
         @JsonInclude(Include.NON_NULL)
         List<TypeGroup> types;
-        
+
         protected TypesResponse(
                 String code,
                 String message,
@@ -89,63 +91,64 @@ public class GuessTypesOfColumnCommand extends Command {
             this.types = types;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
-            
+
             GridState state = project.getCurrentGridState();
             int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
             if (columnIndex == -1) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
                 List<TypeGroup> typeGroups = guessTypes(state, columnIndex, serviceUrl);
-                respondJSON(response, new TypesResponse("ok", null, typeGroups));   
+                respondJSON(response, new TypesResponse("ok", null, typeGroups));
             }
 
         } catch (Exception e) {
             respondException(response, e);
         }
     }
-    
+
     protected static class IndividualQuery {
+
         @JsonProperty("query")
         protected String query;
         @JsonProperty("limit")
         protected int limit;
-        
+
         protected IndividualQuery(String query, int limit) {
             this.query = query;
             this.limit = limit;
         }
     }
-    
+
     /**
-     * Run relevance searches for the first n cells in the given column and
-     * count the types of the results. Return a sorted list of types, from most
-     * frequent to least. 
+     * Run relevance searches for the first n cells in the given column and count the types of the results. Return a
+     * sorted list of types, from most frequent to least.
      * 
      * @param project
      * @param column
      * @return
-     * @throws JSONException, IOException 
+     * @throws JSONException,
+     *             IOException
      */
     protected List<TypeGroup> guessTypes(GridState gridState, int cellIndex, String serviceUrl)
             throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
-        
+
         List<String> samples = new ArrayList<String>(sampleSize);
         Set<String> sampleSet = new HashSet<String>();
-        
+
         for (IndexedRow row : gridState.getRows(0, sampleSize)) {
             Object value = row.getRow().getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
@@ -156,12 +159,12 @@ public class GuessTypesOfColumnCommand extends Command {
                 }
             }
         }
-        
+
         Map<String, IndividualQuery> queryMap = new HashMap<>();
         for (int i = 0; i < samples.size(); i++) {
             queryMap.put("q" + i, new IndividualQuery(samples.get(i), 3));
         }
-        
+
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         String responseString;
         try {
@@ -176,7 +179,8 @@ public class GuessTypesOfColumnCommand extends Command {
                 }
 
                 ArrayNode results = (ArrayNode) o2.get("result");
-                List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
+                List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {
+                });
                 int count = reconResults.size();
 
                 for (int j = 0; j < count; j++) {
@@ -206,6 +210,7 @@ public class GuessTypesOfColumnCommand extends Command {
 
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
+
             @Override
             public int compare(TypeGroup o1, TypeGroup o2) {
                 int c = Math.min(sampleSize, o2.count) - Math.min(sampleSize, o1.count);
@@ -215,7 +220,7 @@ public class GuessTypesOfColumnCommand extends Command {
                 return (int) Math.signum(o2.score / o2.count - o1.score / o1.count);
             }
         });
-        
+
         return types;
     }
 
@@ -225,6 +230,7 @@ public class GuessTypesOfColumnCommand extends Command {
     }
 
     static protected class TypeGroup {
+
         @JsonProperty("id")
         protected String id;
         @JsonProperty("name")
@@ -233,7 +239,7 @@ public class GuessTypesOfColumnCommand extends Command {
         protected int count;
         @JsonProperty("score")
         protected double score;
-        
+
         TypeGroup(String id, String name, double score) {
             this.id = id;
             this.name = name;
@@ -241,7 +247,7 @@ public class GuessTypesOfColumnCommand extends Command {
             this.count = 1;
         }
     }
-    
+
     // for testability
     protected void setSampleSize(int sampleSize) {
         this.sampleSize = sampleSize;

@@ -47,11 +47,11 @@ public class LiteralExpr implements GrelExpr {
 
     private static final long serialVersionUID = -8738998872783303739L;
     final protected Object _value;
-    
+
     public LiteralExpr(Object value) {
         _value = value;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         return _value;
@@ -61,16 +61,16 @@ public class LiteralExpr implements GrelExpr {
     public String toString() {
         return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof GrelExpr) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<String> getColumnDependencies(String baseColumn) {
+        return Collections.emptySet();
+    }
 
     @Override
     public LiteralExpr renameColumnDependencies(Map<String, String> substitutions) {

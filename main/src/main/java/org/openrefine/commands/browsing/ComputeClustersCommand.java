@@ -51,15 +51,15 @@ import org.slf4j.LoggerFactory;
 public class ComputeClustersCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
-    
+
     /**
-     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state
-     * so we do not add CSRF protection to it.
+     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state so we do
+     * not add CSRF protection to it.
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             long start = System.currentTimeMillis();
             Project project = getProject(request);
@@ -68,11 +68,12 @@ public class ComputeClustersCommand extends Command {
             ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
 
             Clusterer clusterer = clustererConfig.apply(project.getHistory().getCurrentGridState());
-            
+
             clusterer.computeClusters(engine);
-            
+
             respondJSON(response, clusterer);
-            logger.info("computed clusters [{}] in {}ms", new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
+            logger.info("computed clusters [{}] in {}ms",
+                    new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
         } catch (Exception e) {
             respondException(response, e);
         }

@@ -41,10 +41,10 @@ import org.openrefine.model.GridState;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface ImportingParser {
+
     /**
-     * Create data sufficient for the parser UI on the client side to do its work.
-     * For example, an XML parser UI would need to know some sample elements so it
-     * can let the user pick which the path to the record elements.
+     * Create data sufficient for the parser UI on the client side to do its work. For example, an XML parser UI would
+     * need to know some sample elements so it can let the user pick which the path to the record elements.
      * 
      * @param job
      * @param fileRecords
@@ -52,11 +52,10 @@ public interface ImportingParser {
      * @return ObjectNode options
      */
     public ObjectNode createParserUIInitializationData(
-        ImportingJob job,
-        List<ImportingFileRecord> fileRecords,
-        String format
-    );
-    
+            ImportingJob job,
+            List<ImportingFileRecord> fileRecords,
+            String format);
+
     /**
      * 
      * @param project
@@ -67,15 +66,13 @@ public interface ImportingParser {
      * @param limit
      *            maximum number of rows to create
      * @param options
-     *            custom options put together by the UI corresponding to this
-     *            parser, which the parser should understand
+     *            custom options put together by the UI corresponding to this parser, which the parser should understand
      */
     public GridState parse(
-        ProjectMetadata metadata,
-        ImportingJob job,
-        List<ImportingFileRecord> fileRecords,
-        String format,
-        long limit,
-        ObjectNode options
-    ) throws Exception;
+            ProjectMetadata metadata,
+            ImportingJob job,
+            List<ImportingFileRecord> fileRecords,
+            String format,
+            long limit,
+            ObjectNode options) throws Exception;
 }

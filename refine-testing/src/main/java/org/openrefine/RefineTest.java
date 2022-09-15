@@ -62,7 +62,6 @@ import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.TestUtils;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -74,20 +73,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * A base class containing various utilities to help testing Refine.
  */
-public class RefineTest extends PowerMockTestCase {
+public class RefineTest {
 
     protected static Properties bindings = null;
 
     protected Logger logger;
-    
+
     boolean testFailed;
     protected File workspaceDir;
-    
+
     private DatamodelRunner runner;
-    
+
     /**
-     * Method that subclasses can override to change the datamodel runner
-     * used in the test.
+     * Method that subclasses can override to change the datamodel runner used in the test.
      */
     protected DatamodelRunner createDatamodelRunner() {
         return new TestingDatamodelRunner();
@@ -102,14 +100,14 @@ public class RefineTest extends PowerMockTestCase {
         }
         return runner;
     }
-    
+
     @BeforeSuite
-    public void init() { 
+    public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
-            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
+            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" +
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
@@ -120,7 +118,7 @@ public class RefineTest extends PowerMockTestCase {
             workspaceDir = null;
             e.printStackTrace();
         }
-        
+
         // This just keeps track of any failed test, for cleanupWorkspace
         testFailed = false;
     }
@@ -129,45 +127,42 @@ public class RefineTest extends PowerMockTestCase {
     protected void initProjectManager() {
         ProjectManager.singleton = new ProjectManagerStub(runner());
     }
-    
+
     /**
-     * Helper to create a project with given contents. Not much
-     * control is given on the import options, because this method is intended
-     * to be a quick way to create a project for a test. For more control over
-     * the import, just call the importer directly.
+     * Helper to create a project with given contents. Not much control is given on the import options, because this
+     * method is intended to be a quick way to create a project for a test. For more control over the import, just call
+     * the importer directly.
      * 
      * @param columns
-     *          the list of column names
+     *            the list of column names
      * @param rows
-     *          the cell values, as a flattened array of arrays
+     *            the cell values, as a flattened array of arrays
      * @return
      */
     protected Project createProject(String[] columns, Serializable[][] rows) {
         return createProject("test project", columns, rows);
     }
-    
+
     /**
-     * Helper to create a project with given contents. Not much
-     * control is given on the import options, because this method is intended
-     * to be a quick way to create a project for a test. For more control over
-     * the import, just call the importer directly.
+     * Helper to create a project with given contents. Not much control is given on the import options, because this
+     * method is intended to be a quick way to create a project for a test. For more control over the import, just call
+     * the importer directly.
      * 
-     * The projects created via this method will be disposed of
-     * at the end of each test.
+     * The projects created via this method will be disposed of at the end of each test.
      * 
      * @param projectName
-     *       the name of the project to create
+     *            the name of the project to create
      * @param columns
-     *       the list of column names
+     *            the list of column names
      * @param rows
-     *       the cell values, as a flattened array of arrays
+     *            the cell values, as a flattened array of arrays
      * @return
      */
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
-    	GridState state = createGrid(columns, rows);
-    	return createProject(projectName, state);
+        GridState state = createGrid(columns, rows);
+        return createProject(projectName, state);
     }
-    
+
     protected Project createProject(String projectName, GridState grid) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
@@ -175,54 +170,54 @@ public class RefineTest extends PowerMockTestCase {
         ProjectManager.singleton.registerProject(project, meta);
         return project;
     }
-    
+
     protected GridState createGrid(String[] columns, Serializable[][] rows) {
         List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
-        for(String column: columns) {
+        for (String column : columns) {
             columnMeta.add(new ColumnMetadata(column));
         }
         ColumnModel model = new ColumnModel(columnMeta);
         Cell[][] cells = new Cell[rows.length][];
-        for(int i = 0; i != rows.length; i++) {
+        for (int i = 0; i != rows.length; i++) {
             cells[i] = new Cell[columns.length];
-            for(int j = 0; j != rows[i].length; j++) {
-                if (rows[i][j] == null ) {
+            for (int j = 0; j != rows[i].length; j++) {
+                if (rows[i][j] == null) {
                     cells[i][j] = null;
                 } else if (rows[i][j] instanceof Cell) {
-                    cells[i][j] = (Cell)rows[i][j];
+                    cells[i][j] = (Cell) rows[i][j];
                 } else {
                     cells[i][j] = new Cell(rows[i][j], null);
                 }
             }
         }
-        
+
         return runner().create(model, toRows(cells), Collections.emptyMap());
     }
- 
+
     @Deprecated
     protected Project createProject(String projectName, String[] columns, Serializable[] rows) {
-    	Serializable[][] cells = new Serializable[rows.length / columns.length][];
-    	for(int i = 0; i != rows.length; i++) {
-    		if(i % columns.length == 0) {
-    			cells[i / columns.length] = new Serializable[columns.length];
-    		}
-    		cells[i / columns.length][i % columns.length] = rows[i];
-    	}
-    	return createProject(projectName, columns, cells);
+        Serializable[][] cells = new Serializable[rows.length / columns.length][];
+        for (int i = 0; i != rows.length; i++) {
+            if (i % columns.length == 0) {
+                cells[i / columns.length] = new Serializable[columns.length];
+            }
+            cells[i / columns.length][i % columns.length] = rows[i];
+        }
+        return createProject(projectName, columns, cells);
     }
-    
+
     protected List<Row> toRows(Cell[][] cells) {
-    	List<Row> rows = new ArrayList<>(cells.length);
-    	for (int i = 0; i != cells.length; i++) {
-    		List<Cell> currentCells = new ArrayList<>(cells[i].length);
-    		for(int j = 0; j != cells[i].length; j++) {
-    			currentCells.add(cells[i][j]);
-    		}
-    		rows.add(new Row(currentCells));
-    	}
-		return rows;
+        List<Row> rows = new ArrayList<>(cells.length);
+        for (int i = 0; i != cells.length; i++) {
+            List<Cell> currentCells = new ArrayList<>(cells[i].length);
+            for (int j = 0; j != cells[i].length; j++) {
+                currentCells.add(cells[i][j]);
+            }
+            rows.add(new Row(currentCells));
+        }
+        return rows;
     }
-    
+
     // We do not use the equals method of GridState here because GridState does not check for equality
     // with its grid contents (because this would require fetching all rows in memory)
     protected void assertGridEquals(GridState actual, GridState expected) {
@@ -232,6 +227,7 @@ public class RefineTest extends PowerMockTestCase {
 
     /**
      * Initializes the importing options for the CSV importer.
+     * 
      * @param options
      * @param sep
      * @param limit
@@ -244,52 +240,54 @@ public class RefineTest extends PowerMockTestCase {
     public static void prepareImportOptions(ObjectNode options,
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            options.put("separator", sep);
-            options.put("limit", limit);
-            options.put("skipDataLines", skip);
-            options.put("ignoreLines", ignoreLines);
-            options.put("headerLines", headerLines);
-            options.put("guessCellValueTypes", guessValueType);
-            options.put("processQuotes", !ignoreQuotes);
-            options.put("storeBlankCellsAsNulls", true);
+
+        options.put("separator", sep);
+        options.put("limit", limit);
+        options.put("skipDataLines", skip);
+        options.put("ignoreLines", ignoreLines);
+        options.put("headerLines", headerLines);
+        options.put("guessCellValueTypes", guessValueType);
+        options.put("processQuotes", !ignoreQuotes);
+        options.put("storeBlankCellsAsNulls", true);
     }
-    
+
     /**
      * Cleans up the projects and jobs created with createCSVProject
      */
     @AfterMethod
     protected void cleanupProjectsAndJobs() {
-		ProjectManager projectManager = ProjectManager.singleton;
+        ProjectManager projectManager = ProjectManager.singleton;
         projectManager.dispose();
     }
-            
+
     protected Recon testRecon(String name, String id, Recon.Judgment judgment) {
-    	List<ReconCandidate> candidates = Arrays.asList(
-    		new ReconCandidate(id, name + " 1", null, 98.0),
-    		new ReconCandidate(id+"2", name + " 2", null, 76.0)
-    	);
-    	ReconCandidate match = Recon.Judgment.Matched.equals(judgment) ? candidates.get(0) : null;
-    	return new Recon(
-    			1234L,
-    			3478L,
-    			judgment,
-    			match,
-    			new Object[3],
-    			candidates,
-    			"http://my.service.com/api",
-    			"http://my.service.com/space",
-    			"http://my.service.com/schema",
-    			"batch",
-    			-1);
+        List<ReconCandidate> candidates = Arrays.asList(
+                new ReconCandidate(id, name + " 1", null, 98.0),
+                new ReconCandidate(id + "2", name + " 2", null, 76.0));
+        ReconCandidate match = Recon.Judgment.Matched.equals(judgment) ? candidates.get(0) : null;
+        return new Recon(
+                1234L,
+                3478L,
+                judgment,
+                match,
+                new Object[3],
+                candidates,
+                "http://my.service.com/api",
+                "http://my.service.com/space",
+                "http://my.service.com/schema",
+                "batch",
+                -1);
     }
 
     /**
      * Check that a project was created with the appropriate number of columns and rows.
      * 
-     * @param project project to check
-     * @param numCols expected column count
-     * @param numRows expected row count
+     * @param project
+     *            project to check
+     * @param numCols
+     *            expected column count
+     * @param numRows
+     *            expected row count
      */
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
@@ -309,22 +307,21 @@ public class RefineTest extends PowerMockTestCase {
      * @throws ParsingException
      */
     protected void parseEval(Properties bindings, String[] test)
-    throws ParsingException {
+            throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
         Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
     }
 
     /**
-     * Parse and evaluate a GREL expression and compare the result an expected
-     * type using instanceof
+     * Parse and evaluate a GREL expression and compare the result an expected type using instanceof
      *
      * @param bindings
      * @param test
      * @throws ParsingException
      */
     protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
-    throws ParsingException {
+            throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Object result = eval.evaluate(bindings);
         Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
@@ -347,7 +344,7 @@ public class RefineTest extends PowerMockTestCase {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
+        Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
     }
 
 }

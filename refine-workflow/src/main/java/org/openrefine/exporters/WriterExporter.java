@@ -31,7 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 package org.openrefine.exporters;
 
 import java.io.IOException;
@@ -44,6 +43,7 @@ import org.openrefine.model.GridState;
 
 public interface WriterExporter extends Exporter {
 
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer) throws IOException;
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer)
+            throws IOException;
 
 }

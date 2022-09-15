@@ -137,8 +137,11 @@ import org.openrefine.expr.functions.xml.InnerXml;
 import org.openrefine.expr.functions.xml.OwnText;
 import org.openrefine.expr.functions.xml.ParseXml;
 import org.openrefine.expr.functions.xml.SelectXml;
+import org.openrefine.expr.functions.xml.WholeText;
+import org.openrefine.expr.functions.xml.ScriptText;
 import org.openrefine.expr.functions.xml.XmlAttr;
 import org.openrefine.expr.functions.xml.XmlText;
+import org.openrefine.expr.functions.xml.Parent;
 import org.openrefine.grel.controls.Filter;
 import org.openrefine.grel.controls.ForEach;
 import org.openrefine.grel.controls.ForEachIndex;
@@ -153,7 +156,6 @@ import org.openrefine.grel.controls.IsNotNull;
 import org.openrefine.grel.controls.IsNull;
 import org.openrefine.grel.controls.IsNumeric;
 import org.openrefine.grel.controls.With;
-import org.openrefine.grel.functions.xml.WholeText;
 
 public class ControlFunctionRegistry {
 
@@ -166,26 +168,32 @@ public class ControlFunctionRegistry {
     static public Function getFunction(String name) {
         return s_nameToFunction.get(name);
     }
+
     static public String getFunctionName(Function f) {
         return s_functionToName.get(f);
     }
+
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
-    static public Map<String,Function> getFunctionMap() {
+
+    static public Map<String, Function> getFunctionMap() {
         return Collections.unmodifiableMap(s_nameToFunction);
     }
 
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
     }
+
     static public String getControlName(Control f) {
         return s_controlToName.get(f);
     }
+
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
     }
-    static public Map<String,Control> getControlMap() {
+
+    static public Map<String, Control> getControlMap() {
         return Collections.unmodifiableMap(s_nameToControl);
     }
 
@@ -258,6 +266,8 @@ public class ControlFunctionRegistry {
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
         registerFunction("wholeText", new WholeText());
+        registerFunction("parent", new Parent());
+        registerFunction("scriptText", new ScriptText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

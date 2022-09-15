@@ -53,50 +53,46 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Class representing a single Row which contains a list of {@link Cell}s.  There may
- * be multiple rows in a {@link Record}.
+ * Class representing a single Row which contains a list of {@link Cell}s. There may be multiple rows in a
+ * {@link Record}.
  */
 public class Row implements HasFields, Serializable {
-	private static final long serialVersionUID = -6999837276078747023L;
-	public final boolean             flagged;
-    public final boolean             starred;
-    public final ImmutableList<Cell>    cells;
-    
+
+    private static final long serialVersionUID = -6999837276078747023L;
+    public final boolean flagged;
+    public final boolean starred;
+    public final ImmutableList<Cell> cells;
+
     private static final String FLAGGED = "flagged";
     private static final String STARRED = "starred";
-    
+
     /**
      * Construct a new Row containing the given cells.
      */
     public Row(List<Cell> cells) {
         this(cells, false, false);
     }
-    
+
     @JsonCreator
     public Row(
-            @JsonProperty("cells")
-            List<Cell> cells,
-            @JsonProperty("flagged")
-            boolean flagged,
-            @JsonProperty("starred")
-            boolean starred) {
-        this(cells != null ?
-                ImmutableList.<Cell>builder().addAll(
-                        cells.stream().map(c -> c != null ? c : Cell.NULL).collect(Collectors.toList())
-                ).build() : ImmutableList.of(),
+            @JsonProperty("cells") List<Cell> cells,
+            @JsonProperty("flagged") boolean flagged,
+            @JsonProperty("starred") boolean starred) {
+        this(cells != null ? ImmutableList.<Cell> builder().addAll(
+                cells.stream().map(c -> c != null ? c : Cell.NULL).collect(Collectors.toList())).build() : ImmutableList.of(),
                 flagged, starred);
     }
-    
+
     public Row(int nbCells) {
         this(Collections.nCopies(nbCells, null), false, false);
     }
-    
+
     protected Row(ImmutableList<Cell> cells, boolean flagged, boolean starred) {
         this.cells = cells;
         this.flagged = flagged;
         this.starred = starred;
     }
-    
+
     @Override
     public Object getField(String name) {
         if (FLAGGED.equals(name)) {
@@ -106,12 +102,12 @@ public class Row implements HasFields, Serializable {
         }
         return null;
     }
-    
+
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return "cells".equals(name) || "record".equals(name);
     }
-    
+
     @JsonIgnore
     public boolean isEmpty() {
         for (Cell cell : cells) {
@@ -121,9 +117,10 @@ public class Row implements HasFields, Serializable {
         }
         return true;
     }
-    
+
     /**
-     * @param cellIndex index of cell to return
+     * @param cellIndex
+     *            index of cell to return
      * @return given cell or null if cell doesn't exist or cell index is out of range
      */
     public Cell getCell(int cellIndex) {
@@ -138,7 +135,7 @@ public class Row implements HasFields, Serializable {
             return null;
         }
     }
-    
+
     public Serializable getCellValue(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
@@ -148,42 +145,43 @@ public class Row implements HasFields, Serializable {
         }
         return null;
     }
-    
+
     public boolean isCellBlank(int cellIndex) {
         return isValueBlank(getCellValue(cellIndex));
     }
-    
+
     protected boolean isValueBlank(Object value) {
         return value == null || (value instanceof String && ((String) value).trim().length() == 0);
     }
-    
+
     public CellTuple getCellTuple(ColumnModel columnModel) {
         return new CellTuple(columnModel, this);
     }
-    
+
     @JsonProperty(FLAGGED)
     public boolean isFlagged() {
         return flagged;
     }
-    
+
     @JsonProperty(STARRED)
     public boolean isStarred() {
         return starred;
     }
-    
+
     @JsonProperty("cells")
     public List<Cell> getCells() {
         return cells.stream()
                 .map(c -> c.value == null && c.recon == null ? null : c)
                 .collect(Collectors.toList());
     }
-    
+
     /**
-     * Overwrite a cell at a given index. As rows are 
-     * immutable this returns a new row.
+     * Overwrite a cell at a given index. As rows are immutable this returns a new row.
      * 
-     * @param index the position of the cell to overwrite
-     * @param cell the cell value
+     * @param index
+     *            the position of the cell to overwrite
+     * @param cell
+     *            the cell value
      * @return the modified row
      */
     public Row withCell(int index, Cell cell) {
@@ -191,13 +189,14 @@ public class Row implements HasFields, Serializable {
         newCells.set(index, cell);
         return new Row(newCells, flagged, starred);
     }
-    
+
     /**
-     * Inserts a cell at a given index. As rows are
-     * immutable this returns a new row.
+     * Inserts a cell at a given index. As rows are immutable this returns a new row.
      * 
-     * @param index the position where to insert the cell
-     * @param cell the cell to insert
+     * @param index
+     *            the position where to insert the cell
+     * @param cell
+     *            the cell to insert
      * @return the new row
      */
     public Row insertCell(int index, Cell cell) {
@@ -207,11 +206,14 @@ public class Row implements HasFields, Serializable {
         newCells.addAll(cells.subList(index, cells.size()));
         return new Row(newCells, flagged, starred);
     }
-    
+
     /**
      * Insest multiple cells contiguously, starting at a given index
-     * @param index the index of the first inserted cell
-     * @param cells the cells to insert
+     * 
+     * @param index
+     *            the index of the first inserted cell
+     * @param cells
+     *            the cells to insert
      * @return
      */
     public Row insertCells(int index, List<Cell> cells) {
@@ -221,20 +223,21 @@ public class Row implements HasFields, Serializable {
         newCells.addAll(this.cells.subList(index, this.cells.size()));
         return new Row(newCells, flagged, starred);
     }
-    
+
     /**
      * Removes a cell from the row (removing the corresponding column).
      * 
-     * @param index the index of the cell to remove
+     * @param index
+     *            the index of the cell to remove
      * @return the new row without the cell
      */
     public Row removeCell(int index) {
         List<Cell> newCells = new ArrayList<>(cells.size() - 1);
         newCells.addAll(cells.subList(0, index));
-        newCells.addAll(cells.subList(index+1, cells.size()));
+        newCells.addAll(cells.subList(index + 1, cells.size()));
         return new Row(newCells, flagged, starred);
     }
-    
+
     /**
      * Changes the flag on the row.
      * 
@@ -244,7 +247,7 @@ public class Row implements HasFields, Serializable {
     public Row withFlagged(boolean newFlagged) {
         return new Row(cells, newFlagged, starred);
     }
-    
+
     /**
      * Changes the star on the row.
      * 
@@ -254,12 +257,12 @@ public class Row implements HasFields, Serializable {
     public Row withStarred(boolean newStarred) {
         return new Row(cells, flagged, newStarred);
     }
-    
+
     /**
-     * Returns a copy of this row with null cells added at the end,
-     * such that the new row has the supplied size.
+     * Returns a copy of this row with null cells added at the end, such that the new row has the supplied size.
      * 
-     * @param finalSize the size of the returned row
+     * @param finalSize
+     *            the size of the returned row
      * @return
      */
     public Row padWithNull(int finalSize) {
@@ -271,7 +274,7 @@ public class Row implements HasFields, Serializable {
             return insertCells(cells.size(), Arrays.asList(new Cell[finalSize - cells.size()]));
         }
     }
-    
+
     public void save(Writer writer, Properties options) {
         if (options.containsKey("rowIndex")) {
             // See GetRowsCommand to serialize a row with indices
@@ -283,16 +286,15 @@ public class Row implements HasFields, Serializable {
             e.printStackTrace();
         }
     }
-    
+
     static public Row load(String s) throws Exception {
-        return s.length() == 0 ? null : 
-            loadStreaming(s);
+        return s.length() == 0 ? null : loadStreaming(s);
     }
-    
+
     static public Row loadStreaming(String s) throws Exception {
         return ParsingUtilities.mapper.readValue(s, Row.class);
     }
-    
+
     @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
@@ -302,17 +304,16 @@ public class Row implements HasFields, Serializable {
         }
         return result.toString();
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	if(!(other instanceof Row)) {
-    		return false;
-    	}
-    	Row otherRow = (Row)other;
-    	return (otherRow.cells.equals(cells) &&
-    			flagged == otherRow.flagged &&
-    			starred == otherRow.starred);
+        if (!(other instanceof Row)) {
+            return false;
+        }
+        Row otherRow = (Row) other;
+        return (otherRow.cells.equals(cells) &&
+                flagged == otherRow.flagged &&
+                starred == otherRow.starred);
     }
-
 
 }

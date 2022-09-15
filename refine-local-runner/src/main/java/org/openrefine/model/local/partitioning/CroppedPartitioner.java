@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local.partitioning;
 
 import java.util.List;
@@ -10,20 +11,20 @@ import java.util.List;
  * @param <T>
  */
 public class CroppedPartitioner<T> implements Partitioner<T> {
-    
+
     private final Partitioner<T> parent;
-    private final int            partitionsToDrop;
-    private final boolean        atEnd;
-    
+    private final int partitionsToDrop;
+    private final boolean atEnd;
+
     /**
      * Constructs the partitioner based on the partitioner for the uncropped PLL.
      * 
      * @param parent
-     *      the partitioner for the original PLL
+     *            the partitioner for the original PLL
      * @param partitionsToDrop
-     *      the number of partitions which were dropped from that PLL
+     *            the number of partitions which were dropped from that PLL
      * @param atEnd
-     *      true if the partitions were dropped at the end, false if at the beginning
+     *            true if the partitions were dropped at the end, false if at the beginning
      * @see {@link #crop(Partitioner, int, boolean)} which attempts to preserve the partioner type
      */
     protected CroppedPartitioner(Partitioner<T> parent, int partitionsToDrop, boolean atEnd) {
@@ -48,26 +49,26 @@ public class CroppedPartitioner<T> implements Partitioner<T> {
     public int numPartitions() {
         return parent.numPartitions() - partitionsToDrop;
     }
-    
+
     /**
      * Constructs the partitioner based on the partitioner for the uncropped PLL.
      * 
      * @param parent
-     *      the partitioner for the original PLL
+     *            the partitioner for the original PLL
      * @param partitionsToDrop
-     *      the number of partitions which were dropped from that PLL
+     *            the number of partitions which were dropped from that PLL
      * @param atEnd
-     *      true if the partitions were dropped at the end, false if at the beginning
+     *            true if the partitions were dropped at the end, false if at the beginning
      */
     @SuppressWarnings("unchecked")
     public static <T> Partitioner<T> crop(Partitioner<T> partitioner, int partitionsToDrop, boolean atEnd) {
         if (partitioner instanceof LongRangePartitioner) {
-            List<Long> firstKeys = ((LongRangePartitioner)partitioner).firstKeys;
+            List<Long> firstKeys = ((LongRangePartitioner) partitioner).firstKeys;
             return (Partitioner<T>) new LongRangePartitioner(partitioner.numPartitions() - partitionsToDrop,
-                    atEnd ? firstKeys.subList(0, firstKeys.size() - partitionsToDrop) :
-                        firstKeys.subList(partitionsToDrop, firstKeys.size()));
+                    atEnd ? firstKeys.subList(0, firstKeys.size() - partitionsToDrop)
+                            : firstKeys.subList(partitionsToDrop, firstKeys.size()));
         }
         return new CroppedPartitioner<T>(partitioner, partitionsToDrop, atEnd);
     }
-    
+
 }

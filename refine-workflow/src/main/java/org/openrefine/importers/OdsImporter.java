@@ -69,9 +69,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class OdsImporter extends InputStreamImporter { 
+public class OdsImporter extends InputStreamImporter {
+
     final static Logger logger = LoggerFactory.getLogger("open office");
-    
+
     private final TabularParserHelper tabularParserHelper;
 
     public OdsImporter(DatamodelRunner runner) {
@@ -79,7 +80,6 @@ public class OdsImporter extends InputStreamImporter {
         tabularParserHelper = new TabularParserHelper(runner);
     }
 
-    
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
@@ -89,20 +89,20 @@ public class OdsImporter extends InputStreamImporter {
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            for (int index = 0;index < fileRecords.size();index++) {
+            for (int index = 0; index < fileRecords.size(); index++) {
                 ImportingFileRecord fileRecord = fileRecords.get(index);
                 File file = fileRecord.getFile(job.getRawDataDir());
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
                 List<OdfTable> tables = odfDoc.getTableList();
                 int sheetCount = tables.size();
-    
+
                 for (int i = 0; i < sheetCount; i++) {
                     OdfTable sheet = tables.get(i);
                     int rows = sheet.getRowCount();
-    
+
                     ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
+                    JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
                     if (rows > 0) {
@@ -114,10 +114,10 @@ public class OdsImporter extends InputStreamImporter {
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.info("File not found",e);
+            logger.info("File not found", e);
         } catch (Exception e) {
             // ODF throws *VERY* wide exceptions
-            logger.info("Error reading ODF spreadsheet",e);
+            logger.info("Error reading ODF spreadsheet", e);
         } finally {
             if (odfDoc != null) {
                 odfDoc.close();
@@ -125,7 +125,6 @@ public class OdsImporter extends InputStreamImporter {
         }
         return options;
     }
-    
 
     @Override
     public GridState parseOneFile(
@@ -134,8 +133,7 @@ public class OdsImporter extends InputStreamImporter {
             String fileSource,
             String archiveFileName,
             InputStream inputStream,
-            long limit, ObjectNode options
-    ) throws Exception {
+            long limit, ObjectNode options) throws Exception {
         OdfDocument odfDoc;
         try {
             odfDoc = OdfDocument.loadDocument(inputStream);
@@ -147,19 +145,20 @@ public class OdsImporter extends InputStreamImporter {
         List<GridState> grids = new ArrayList<>();
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
-        for(int i=0;i<sheets.size();i++)  {
+        for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
-        
+
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
-            
+
             final OdfTable table = tables.get(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = table.getRowCount();
 
             TableDataReader dataReader = new TableDataReader() {
+
                 int nextRow = 0;
                 Map<String, Recon> reconMap = new HashMap<String, Recon>();
 
@@ -198,16 +197,15 @@ public class OdsImporter extends InputStreamImporter {
                     fileSource + "#" + table.getTableName(),
                     archiveFileName,
                     dataReader,
-                    limit, options
-            ));
+                    limit, options));
         }
-        
+
         return mergeGridStates(grids);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {
         // TODO: how can we tell if a cell contains an error?
-        //String formula = cell.getFormula();
+        // String formula = cell.getFormula();
 
         Serializable value = null;
         // "boolean", "currency", "date", "float", "percentage", "string" or "time"
@@ -269,14 +267,14 @@ public class OdsImporter extends InputStreamImporter {
                         if (reconMap.containsKey(id)) {
                             recon = reconMap.get(id);
                         } else {
-                        	ReconCandidate candidate = new ReconCandidate(id, value.toString(), new String[0], 100);
+                            ReconCandidate candidate = new ReconCandidate(id, value.toString(), new String[0], 100);
                             recon = new Recon(0, null, null)
-                            		.withService("import")
-                            		.withMatch(candidate)
-                            		.withMatchRank(0)
-                            		.withJudgment(Judgment.Matched)
-                            		.withJudgmentAction("auto")
-                            		.withCandidate(candidate);
+                                    .withService("import")
+                                    .withMatch(candidate)
+                                    .withMatchRank(0)
+                                    .withJudgment(Judgment.Matched)
+                                    .withJudgmentAction("auto")
+                                    .withCandidate(candidate);
 
                             reconMap.put(id, recon);
                         }

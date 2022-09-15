@@ -43,52 +43,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Stores statistics about the judgment of reconciled cells in a column.
+ * 
  * @author Antonin Delpeuch
  *
  */
-public interface ReconStats extends Serializable {   
+public interface ReconStats extends Serializable {
 
     public static final ReconStats ZERO = new ReconStatsImpl(0L, 0L, 0L);
-    
+
     /*
-     * Recon statistics are created by looking at most that many rows.
-     * TODO make this configurable by the user, by removing recon stats
-     * from the backend altogether, and computing them as facets on the
-     * frontend.
-     * See issue: https://github.com/OpenRefine/OpenRefine/issues/4350
+     * Recon statistics are created by looking at most that many rows. TODO make this configurable by the user, by
+     * removing recon stats from the backend altogether, and computing them as facets on the frontend. See issue:
+     * https://github.com/OpenRefine/OpenRefine/issues/4350
      */
     public static final long SAMPLING_SIZE = 10000L;
-    
+
     @JsonCreator
     public static ReconStats create(
-            @JsonProperty("nonBlanks")
-            long nonBlanks,
-            @JsonProperty("newTopics")
-            long newTopics,
-            @JsonProperty("matchedTopics")
-            long matchedTopics) {
+            @JsonProperty("nonBlanks") long nonBlanks,
+            @JsonProperty("newTopics") long newTopics,
+            @JsonProperty("matchedTopics") long matchedTopics) {
         return new ReconStatsImpl(nonBlanks, newTopics, matchedTopics);
     }
-    
+
     @JsonProperty("nonBlanks")
     public long getNonBlanks();
-    
+
     @JsonProperty("newTopics")
     public long getNewTopics();
 
     @JsonProperty("matchedTopics")
     public long getMatchedTopics();
-    
+
     /**
      * Updates the recon statistics with an additional row
+     * 
      * @param row
      * @param columnIndex
      * @return
      */
     public ReconStats withRow(Row row, int columnIndex);
-    
+
     /**
      * Sums the statistics with those contained in another instance
+     * 
      * @param other
      * @return
      */

@@ -54,20 +54,18 @@ public class ParseHtml extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
-
     @Override
     public String getDescription() {
         return "Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing ' /' at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, value.parseHtml().toString().";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "HTML object";
     }
 }
-

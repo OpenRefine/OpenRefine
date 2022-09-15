@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa;
 
 import java.io.IOException;

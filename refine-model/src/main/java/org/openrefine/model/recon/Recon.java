@@ -53,31 +53,29 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ImmutableList;
- 
+
 @JsonFilter("reconCandidateFilter")
 public class Recon implements HasFields, Serializable {
-    
+
     private static final long serialVersionUID = 3926584932566476537L;
-    
+
     /**
      * Freebase schema URLs kept for compatibility with legacy reconciliation results
      */
     private static final String FREEBASE_SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
     private static final String FREEBASE_IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/type.object.mid";
-    
+
     private static final String WIKIDATA_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
     private static final String WIKIDATA_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
     private static final Random idGenerator = new Random();
 
     static public enum Judgment {
         @JsonProperty("none")
-        None,
-        @JsonProperty("matched")
-        Matched,
-        @JsonProperty("new")
+        None, @JsonProperty("matched")
+        Matched, @JsonProperty("new")
         New
     }
-    
+
     @Deprecated
     static public String judgmentToString(Judgment judgment) {
         if (judgment == Judgment.Matched) {
@@ -88,10 +86,10 @@ public class Recon implements HasFields, Serializable {
             return "none";
         }
     }
-    
+
     /**
-     * Deprecated: use JSON deserialization to create
-     * a Judgment object directly.
+     * Deprecated: use JSON deserialization to create a Judgment object directly.
+     * 
      * @param s
      * @return
      */
@@ -105,7 +103,7 @@ public class Recon implements HasFields, Serializable {
             return Judgment.None;
         }
     }
-    
+
     static final public int Feature_typeMatch = 0;
     static final public int Feature_nameMatch = 1;
     static final public int Feature_nameLevenshtein = 2;
@@ -119,48 +117,48 @@ public class Recon implements HasFields, Serializable {
         s_featureMap.put("nameLevenshtein", Feature_nameLevenshtein);
         s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
     }
-    
+
     @JsonIgnore
-    final public long            id;
+    final public long id;
     @JsonIgnore
-    final public String          service;
+    final public String service;
     @JsonIgnore
-    final public String          identifierSpace;
+    final public String identifierSpace;
     @JsonIgnore
-    final public String          schemaSpace;
-    
+    final public String schemaSpace;
+
     @JsonIgnore
-    final public Object[]        features;
+    final public Object[] features;
     @JsonIgnore
-    final public ImmutableList<ReconCandidate>  candidates;
-    
+    final public ImmutableList<ReconCandidate> candidates;
+
     @JsonIgnore
-    final public Judgment        judgment;
+    final public Judgment judgment;
     @JsonIgnore
-    final public String          judgmentAction;
+    final public String judgmentAction;
     @JsonIgnore
-    final public long            judgmentHistoryEntry;
-    
+    final public long judgmentHistoryEntry;
+
     @JsonIgnore
-    final public ReconCandidate  match;
+    final public ReconCandidate match;
     @JsonIgnore
-    final public int             matchRank;
-    
+    final public int matchRank;
+
     @Deprecated
     static public Recon makeFreebaseRecon(long judgmentHistoryEntry) {
         return new Recon(
-            judgmentHistoryEntry,
-            FREEBASE_IDENTIFIER_SPACE,
-            FREEBASE_SCHEMA_SPACE);
+                judgmentHistoryEntry,
+                FREEBASE_IDENTIFIER_SPACE,
+                FREEBASE_SCHEMA_SPACE);
     }
-    
+
     static public Recon makeWikidataRecon(long judgmentHistoryEntry) {
         return new Recon(
-            judgmentHistoryEntry,
-            WIKIDATA_IDENTIFIER_SPACE,
-            WIKIDATA_SCHEMA_SPACE);
+                judgmentHistoryEntry,
+                WIKIDATA_IDENTIFIER_SPACE,
+                WIKIDATA_SCHEMA_SPACE);
     }
-    
+
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
         id = idGenerator.nextLong();
         service = "unknown";
@@ -175,12 +173,12 @@ public class Recon implements HasFields, Serializable {
         match = null;
         matchRank = -1;
     }
-    
+
     // TODO inline this
     public Recon dup(long judgmentHistoryEntry) {
         return withJudgmentHistoryEntry(judgmentHistoryEntry);
     }
-    
+
     @JsonIgnore
     public ReconCandidate getBestCandidate() {
         if (candidates != null && candidates.size() > 0) {
@@ -188,11 +186,11 @@ public class Recon implements HasFields, Serializable {
         }
         return null;
     }
-    
+
     public Object getFeature(int feature) {
         return feature < features.length ? features[feature] : null;
     }
-    
+
     @Override
     public Object getField(String name) {
         if ("id".equals(name)) {
@@ -226,18 +224,19 @@ public class Recon implements HasFields, Serializable {
         }
         return null;
     }
-    
+
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return "match".equals(name) || "best".equals(name);
     }
-    
+
     @Deprecated
     protected String judgmentToString() {
         return judgmentToString(judgment);
     }
-    
+
     public class Features implements HasFields {
+
         @Override
         public Object getField(String name) {
             int index = s_featureMap.containsKey(name) ? s_featureMap.get(name) : -1;
@@ -249,66 +248,65 @@ public class Recon implements HasFields, Serializable {
             return false;
         }
     }
-    
+
     @JsonProperty("id")
     public long getId() {
         return id;
     }
-    
+
     @JsonProperty("judgmentHistoryEntry")
     @JsonView(JsonViews.SaveMode.class)
     public long getJudgmentHistoryEntry() {
         return judgmentHistoryEntry;
     }
-    
+
     @JsonProperty("service")
     public String getServiceURI() {
         return service;
     }
-    
+
     @JsonProperty("identifierSpace")
     public String getIdentifierSpace() {
         return identifierSpace;
     }
-    
+
     @JsonProperty("schemaSpace")
     public String getSchemaSpace() {
         return schemaSpace;
     }
-    
+
     @JsonProperty("j")
     public Judgment getJudgment() {
         return judgment;
     }
-    
+
     @JsonProperty("m")
     @JsonInclude(Include.NON_NULL)
     public ReconCandidate getMatch() {
         return match;
     }
-    
+
     @JsonProperty("c")
-    //@JsonView(JsonViews.SaveMode.class)
+    // @JsonView(JsonViews.SaveMode.class)
     public List<ReconCandidate> getCandidates() {
         if (candidates != null) {
             return candidates;
         }
         return Collections.emptyList();
     }
-   
-    
+
     @JsonProperty("f")
     @JsonView(JsonViews.SaveMode.class)
     public Object[] getfeatures() {
         return features;
     }
-    
+
     @JsonProperty("judgmentAction")
     @JsonView(JsonViews.SaveMode.class)
     public String getJudgmentAction() {
         return judgmentAction;
     }
-    
+
     @JsonProperty("matchRank")
     @JsonView(JsonViews.SaveMode.class)
     @JsonInclude(Include.NON_NULL)
@@ -322,31 +320,20 @@ public class Recon implements HasFields, Serializable {
     static public Recon loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
-    
+
     @JsonCreator
     public Recon(
-            @JsonProperty("id")
-            long id,
-            @JsonProperty("judgmentHistoryEntry")
-            long judgmentHistoryEntry,
-            @JsonProperty("j")
-            Judgment judgment,
-            @JsonProperty("m")
-            ReconCandidate match,
-            @JsonProperty("f")
-            Object[] features,
-            @JsonProperty("c")
-            List<ReconCandidate> candidates,
-            @JsonProperty("service")
-            String service,
-            @JsonProperty("identifierSpace")
-            String identifierSpace,
-            @JsonProperty("schemaSpace")
-            String schemaSpace,
-            @JsonProperty("judgmentAction")
-            String judgmentAction,
-            @JsonProperty("matchRank")
-            Integer matchRank) {
+            @JsonProperty("id") long id,
+            @JsonProperty("judgmentHistoryEntry") long judgmentHistoryEntry,
+            @JsonProperty("j") Judgment judgment,
+            @JsonProperty("m") ReconCandidate match,
+            @JsonProperty("f") Object[] features,
+            @JsonProperty("c") List<ReconCandidate> candidates,
+            @JsonProperty("service") String service,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace,
+            @JsonProperty("judgmentAction") String judgmentAction,
+            @JsonProperty("matchRank") Integer matchRank) {
         this.id = id;
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.judgment = judgment != null ? judgment : Judgment.None;
@@ -359,7 +346,7 @@ public class Recon implements HasFields, Serializable {
         this.judgmentAction = judgmentAction != null ? judgmentAction : "unknown";
         this.matchRank = matchRank != null ? matchRank : -1;
     }
-    
+
     public Recon withId(long newId) {
         return new Recon(
                 newId,
@@ -374,7 +361,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withJudgmentHistoryEntry(long newJudgmentHistoryEntry) {
         return new Recon(
                 id,
@@ -389,7 +376,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withJudgment(Judgment newJudgment) {
         return new Recon(
                 id,
@@ -404,7 +391,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withMatch(ReconCandidate newMatch) {
         return new Recon(
                 id,
@@ -419,7 +406,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withFeatures(Object[] newFeatures) {
         return new Recon(
                 id,
@@ -434,7 +421,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withCandidates(List<ReconCandidate> newCandidates) {
         return new Recon(
                 id,
@@ -449,21 +436,22 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     /**
      * Adds a reconciliation candidate at the end of the list of candidates
+     * 
      * @param newCandidate
      * @return
      */
     public Recon withCandidate(ReconCandidate newCandidate) {
         ImmutableList<ReconCandidate> newCandidates = ImmutableList
-                .<ReconCandidate>builder()
+                .<ReconCandidate> builder()
                 .addAll(candidates)
                 .add(newCandidate)
                 .build();
         return withCandidates(newCandidates);
     }
-    
+
     public Recon withService(String service) {
         return new Recon(
                 id,
@@ -478,7 +466,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withIdentifierSpace(String newIdentifierSpace) {
         return new Recon(
                 id,
@@ -493,7 +481,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withSchemaSpace(String newSchemaSpace) {
         return new Recon(
                 id,
@@ -508,7 +496,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 matchRank);
     }
-    
+
     public Recon withJudgmentAction(String newJudgmentAction) {
         return new Recon(
                 id,
@@ -523,7 +511,7 @@ public class Recon implements HasFields, Serializable {
                 newJudgmentAction,
                 matchRank);
     }
-    
+
     public Recon withMatchRank(int newMatchRank) {
         return new Recon(
                 id,
@@ -538,7 +526,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 newMatchRank);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Recon)) {
@@ -556,17 +544,15 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction.equals(otherRecon.judgmentAction) &&
                 matchRank == otherRecon.matchRank);
     }
-    
+
     @Override
     public int hashCode() {
         return (int) id;
     }
-    
+
     @Override
     public String toString() {
         return String.format("[Recon %d %d %s %s %s %s]",
                 id, judgmentHistoryEntry, judgment, match, StringUtils.join(", ", candidates), judgmentAction);
     }
 }
-
-

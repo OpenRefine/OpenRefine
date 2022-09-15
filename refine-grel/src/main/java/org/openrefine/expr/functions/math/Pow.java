@@ -43,9 +43,8 @@ public class Pow extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
             return Math.pow(
-                ((Number) args[0]).doubleValue(),
-                ((Number) args[1]).doubleValue()
-            );
+                    ((Number) args[0]).doubleValue(),
+                    ((Number) args[1]).doubleValue());
         }
         return null;
     }
@@ -54,12 +53,12 @@ public class Pow extends PureFunction {
     public String getDescription() {
         return "Returns n1 raised to the power of n2.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

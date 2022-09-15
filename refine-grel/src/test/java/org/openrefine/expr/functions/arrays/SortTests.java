@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.arrays;
 
 import org.openrefine.RefineTest;
@@ -32,27 +33,28 @@ import org.openrefine.expr.ParsingException;
 import org.testng.annotations.Test;
 
 public class SortTests extends RefineTest {
+
     @Test
     public void sortJsonArray() throws ParsingException {
-        String[] test = {"'[2,1,3]'.parseJson().sort().toString()", "[1, 2, 3]"};
+        String[] test = { "'[2,1,3]'.parseJson().sort().toString()", "[1, 2, 3]" };
         parseEval(bindings, test);
-        String[] test1 = {"'[2,null,3]'.parseJson().sort().toString()", "[2, 3, null]"};
+        String[] test1 = { "'[2,null,3]'.parseJson().sort().toString()", "[2, 3, null]" };
         parseEval(bindings, test1);
     }
 
     @Test
     public void sortArray() throws ParsingException {
-        String[] test = {"[2,1,3].sort().toString()", "[1, 2, 3]"};
+        String[] test = { "[2,1,3].sort().toString()", "[1, 2, 3]" };
         parseEval(bindings, test);
-        String[] test1 = {"[2,null,3].sort().toString()", "[2, 3, null]"};
+        String[] test1 = { "[2,null,3].sort().toString()", "[2, 3, null]" };
         parseEval(bindings, test1);
 
-        String[] test2 = {"['z','b','c','a'].sort().toString()", "[a, b, c, z]"};
+        String[] test2 = { "['z','b','c','a'].sort().toString()", "[a, b, c, z]" };
         parseEval(bindings, test2);
-        String[] test3 = {"['z',null,'c','a'].sort().toString()", "[a, c, z, null]"};
+        String[] test3 = { "['z',null,'c','a'].sort().toString()", "[a, c, z, null]" };
         parseEval(bindings, test3);
 
-        String[] test4 = {"[toDate(2020), '2018-03-02'.toDate()].sort().toString()", "[2018-03-02T00:00Z, 2020-01-01T00:00Z]"};
+        String[] test4 = { "[toDate(2020), '2018-03-02'.toDate()].sort().toString()", "[2018-03-02T00:00Z, 2020-01-01T00:00Z]" };
         parseEval(bindings, test4);
     }
 
@@ -68,4 +70,3 @@ public class SortTests extends RefineTest {
     }
 
 }
-

@@ -64,35 +64,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * The super class of all calls that the client side can invoke, most of which
- * are AJAX calls.
+ * The super class of all calls that the client side can invoke, most of which are AJAX calls.
  */
 public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
-    
-    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600*5, 32);
+
+    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600 * 5, 32);
 
     protected RefineServlet servlet;
-    
+
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
     }
-    
+
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
     };
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
     };
 
     public void doPut(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
     };
@@ -104,17 +103,16 @@ public abstract class Command {
     };
 
     /**
-     * Whether each request to this command should be logged. For some commands
-     * that can get called too frequently, such as GetProcessesCommand, logging
-     * is very distracting.
+     * Whether each request to this command should be logged. For some commands that can get called too frequently, such
+     * as GetProcessesCommand, logging is very distracting.
      */
     public boolean logRequests() {
         return true;
     }
 
     /**
-     * Utility function to get the browsing engine's configuration as a JSON object
-     * from the "engine" request parameter, most often in the POST body.
+     * Utility function to get the browsing engine's configuration as a JSON object from the "engine" request parameter,
+     * most often in the POST body.
      *
      * @param request
      * @return
@@ -124,15 +122,14 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        
+
         String json = request.getParameter("engine");
-        return (json == null) ? null :
-                   EngineConfig.reconstruct(json);
+        return (json == null) ? null : EngineConfig.reconstruct(json);
     }
 
     /**
-     * Utility function to reconstruct the browsing engine from the "engine" request parameter,
-     * most often in the POST body.
+     * Utility function to reconstruct the browsing engine from the "engine" request parameter, most often in the POST
+     * body.
      *
      * @param request
      * @param project
@@ -140,7 +137,7 @@ public abstract class Command {
      * @throws Exception
      */
     static protected Engine getEngine(HttpServletRequest request, Project project)
-    throws Exception {
+            throws Exception {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
@@ -148,18 +145,16 @@ public abstract class Command {
             throw new IllegalArgumentException("parameter 'project' should not be null");
         }
 
-        
         EngineConfig c = getEngineConfig(request);
         if (c == null) {
-        	c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
+            c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
         }
         Engine engine = new Engine(project.getHistory().getCurrentGridState(), c);
         return engine;
     }
 
     /**
-     * Utility method for retrieving the Project object having the ID specified
-     * in the "project" URL parameter.
+     * Utility method for retrieving the Project object having the ID specified in the "project" URL parameter.
      *
      * @param request
      * @return
@@ -188,8 +183,7 @@ public abstract class Command {
     }
 
     /**
-     * Utility method for retrieving the ProjectMetadata object having the ID specified
-     * in the "project" URL parameter.
+     * Utility method for retrieving the ProjectMetadata object having the ID specified in the "project" URL parameter.
      *
      * @param request
      * @return
@@ -209,7 +203,7 @@ public abstract class Command {
         }
         throw new ServletException("Can't find project metadata: missing or bad URL parameter");
     }
-    
+
     static protected int getIntegerParameter(HttpServletRequest request, String name, int def) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
@@ -221,7 +215,7 @@ public abstract class Command {
         }
         return def;
     }
-    
+
     static protected long getLongParameter(HttpServletRequest request, String name, long def) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
@@ -233,10 +227,10 @@ public abstract class Command {
         }
         return def;
     }
-    
+
     /**
-     * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request,
-     * and checking that it is valid.
+     * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
+     * that it is valid.
      *
      * @param request
      * @return
@@ -254,39 +248,40 @@ public abstract class Command {
         }
         throw new ServletException("Can't find CSRF token: missing or bad URL parameter");
     }
-    
-    
+
     /**
-     * Checks the validity of a CSRF token, without reading the whole POST body.
-     * Useful when we need to control how the POST body is read (for instance if it
-     * contains files).
+     * Checks the validity of a CSRF token, without reading the whole POST body. Useful when we need to control how the
+     * POST body is read (for instance if it contains files).
      */
     protected boolean hasValidCSRFTokenAsGET(HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-    	Properties options = ParsingUtilities.parseUrlParameters(request);
+        Properties options = ParsingUtilities.parseUrlParameters(request);
         String token = options.getProperty("csrf_token");
         return token != null && csrfFactory.validToken(token);
     }
-    
+
     protected static class HistoryEntryResponse {
+
         @JsonProperty("code")
-        protected String getCode() { return "ok"; }
+        protected String getCode() {
+            return "ok";
+        }
+
         @JsonProperty("historyEntry")
         protected HistoryEntry historyEntry;
+
         protected HistoryEntryResponse(HistoryEntry entry) {
             historyEntry = entry;
         }
     }
 
     static protected void performProcessAndRespond(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Project project,
-        Process process
-    ) throws Exception {
-
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Project project,
+            Process process) throws Exception {
 
         HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
         if (historyEntry != null) {
@@ -303,7 +298,7 @@ public abstract class Command {
     }
 
     static protected void respond(HttpServletResponse response, String content)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
 
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -318,7 +313,7 @@ public abstract class Command {
     }
 
     static protected void respond(HttpServletResponse response, String status, String message)
-        throws IOException {
+            throws IOException {
 
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
@@ -333,7 +328,7 @@ public abstract class Command {
     }
 
     public static void respondJSON(HttpServletResponse response, Object o)
-        throws IOException {
+            throws IOException {
 
         respondJSON(response, o, new Properties());
     }
@@ -352,16 +347,16 @@ public abstract class Command {
         w.flush();
         w.close();
     }
-    
+
     static protected void respondCSRFError(HttpServletResponse response) throws IOException {
-    	Map<String, String> responseJSON = new HashMap<>();
-    	responseJSON.put("code", "error");
-    	responseJSON.put("message", "Missing or invalid csrf_token parameter");
-    	respondJSON(response, responseJSON);
+        Map<String, String> responseJSON = new HashMap<>();
+        responseJSON.put("code", "error");
+        responseJSON.put("message", "Missing or invalid csrf_token parameter");
+        respondJSON(response, responseJSON);
     }
 
     static protected void respondException(HttpServletResponse response, Exception e)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
 
         logger.warn("Exception caught", e);
 
@@ -371,17 +366,17 @@ public abstract class Command {
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-        
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         pw.flush();
         sw.flush();
-        
+
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         writer.writeStartObject();
-        writer.writeStringField("code", "error");   
+        writer.writeStringField("code", "error");
         writer.writeStringField("message", e.toString());
         writer.writeStringField("stack", sw.toString());
         writer.writeEndObject();
@@ -390,50 +385,49 @@ public abstract class Command {
         w.flush();
         w.close();
     }
-    
+
     protected void respondWithErrorPage(
-        HttpServletRequest request, 
-        HttpServletResponse response, 
-        String message, 
-        Throwable e
-    ) {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String message,
+            Throwable e) {
         VelocityContext context = new VelocityContext();
-        
+
         context.put("message", message);
-        
+
         if (e != null) {
             StringWriter writer = new StringWriter();
-            
+
             e.printStackTrace(new PrintWriter(writer));
-            
+
             context.put("stack", writer.toString());
         } else {
             context.put("stack", "");
         }
-        
+
         try {
             servlet.getModule("core").sendTextFromTemplate(
-                request, response, context, "error.vt", "UTF-8", "text/html", true);
-            
+                    request, response, context, "error.vt", "UTF-8", "text/html", true);
+
         } catch (Exception e1) {
             e1.printStackTrace();
         }
     }
 
     protected SortingConfig getSortingConfig(HttpServletRequest request) {
-	    SortingConfig sortingConfig = SortingConfig.NO_SORTING;
-		try {
-	        String sortingJson = request.getParameter("sorting");
-	        if (sortingJson != null) {
-	            sortingConfig = SortingConfig.reconstruct(sortingJson);
-	        }
-	        return sortingConfig;
-	    } catch (IOException e) {
-	    	throw new IllegalArgumentException("Invalid sorting configuration provided", e);
-	    }
-	}
+        SortingConfig sortingConfig = SortingConfig.NO_SORTING;
+        try {
+            String sortingJson = request.getParameter("sorting");
+            if (sortingJson != null) {
+                sortingConfig = SortingConfig.reconstruct(sortingJson);
+            }
+            return sortingConfig;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid sorting configuration provided", e);
+        }
+    }
 
-	static protected void redirect(HttpServletResponse response, String url) throws IOException {
+    static protected void redirect(HttpServletResponse response, String url) throws IOException {
         response.sendRedirect(url);
     }
 

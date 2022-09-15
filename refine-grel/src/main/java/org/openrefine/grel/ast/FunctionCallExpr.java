@@ -45,24 +45,23 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 
 /**
- * An abstract syntax tree node encapsulating a function call. The function's
- * arguments are all evaluated down to values before the function is applied.
- * If any argument is an error, the function is not applied, and the error is
- * the result of the expression.
+ * An abstract syntax tree node encapsulating a function call. The function's arguments are all evaluated down to values
+ * before the function is applied. If any argument is an error, the function is not applied, and the error is the result
+ * of the expression.
  */
 public class FunctionCallExpr implements GrelExpr {
 
     private static final long serialVersionUID = -7793494352606403242L;
-    final protected Function    _function;
+    final protected Function _function;
     final protected GrelExpr[] _args;
-    final protected String      _sourceName;
-    
+    final protected String _sourceName;
+
     public FunctionCallExpr(GrelExpr[] args, Function f, String sourceName) {
         _args = args;
         _function = f;
         _sourceName = sourceName;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         Object[] args = new Object[_args.length];
@@ -71,7 +70,7 @@ public class FunctionCallExpr implements GrelExpr {
             if (ExpressionUtils.isError(v)) {
                 return v; // bubble up the error
             }
-             args[i] = v;
+            args[i] = v;
         }
         try {
             return _function.call(bindings, args);
@@ -83,22 +82,22 @@ public class FunctionCallExpr implements GrelExpr {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append(ev.toString());
         }
-        
+
         return _sourceName + "(" + sb.toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof GrelExpr) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
-    
+
     @Override
     public final Set<String> getColumnDependencies(String baseColumn) {
         if (_function instanceof PureFunction) {
@@ -116,14 +115,14 @@ public class FunctionCallExpr implements GrelExpr {
             return null;
         }
     }
-    
+
     @Override
     public FunctionCallExpr renameColumnDependencies(Map<String, String> substitutions) {
         if (_function instanceof PureFunction) {
             GrelExpr[] translatedArgs = new GrelExpr[_args.length];
-            for(int i = 0; i != _args.length; i++) {
+            for (int i = 0; i != _args.length; i++) {
                 translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
-                if(translatedArgs[i] == null) {
+                if (translatedArgs[i] == null) {
                     return null;
                 }
             }
@@ -140,7 +139,7 @@ public class FunctionCallExpr implements GrelExpr {
             return false;
         }
         for (GrelExpr ev : _args) {
-            if(!ev.isLocal()) {
+            if (!ev.isLocal()) {
                 return false;
             }
         }

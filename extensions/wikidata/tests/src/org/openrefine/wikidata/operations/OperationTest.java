@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.LineNumberReader;
@@ -43,8 +44,8 @@ public abstract class OperationTest extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createProject(new String[] {"a","b"},
-        		new Serializable[][] {{"c","d"}});
+        project = createProject(new String[] { "a", "b" },
+                new Serializable[][] { { "c", "d" } });
     }
 
     protected void registerOperation(String name, Class klass) {

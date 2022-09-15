@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.util;
 
 import static org.testng.Assert.fail;
@@ -49,9 +50,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-
 public class TestUtils {
-    
+
     static ObjectMapper mapper = new ObjectMapper();
     static {
         mapper = mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
@@ -62,8 +62,8 @@ public class TestUtils {
     }
 
     /**
-     * Create a temporary directory. NOTE: This is a quick and dirty
-     * implementation suitable for tests, not production code.
+     * Create a temporary directory. NOTE: This is a quick and dirty implementation suitable for tests, not production
+     * code.
      * 
      * @param name
      * @return
@@ -78,18 +78,16 @@ public class TestUtils {
     }
 
     /**
-     * Creates a temporary file with the given contents.
-     * This is useful in the case where Java's resource mechanism is not
-     * applicable, for instance when importing from files with Spark
-     * (as they need to be located by path, not using an InputStream).
+     * Creates a temporary file with the given contents. This is useful in the case where Java's resource mechanism is
+     * not applicable, for instance when importing from files with Spark (as they need to be located by path, not using
+     * an InputStream).
      * 
      * @param filename
-     *     the filename of the temporary file to create
+     *            the filename of the temporary file to create
      * @param contents
-     *     the contents to write in the file
-     * @return
-     *     a {%class java.io.File} object, use {@link java.io.File#getAbsolutePath()} to obtain its path.
-     * @throws IOException 
+     *            the contents to write in the file
+     * @return a {%class java.io.File} object, use {@link java.io.File#getAbsolutePath()} to obtain its path.
+     * @throws IOException
      */
     public static File createTempFile(String filename, String contents) throws IOException {
         File file = File.createTempFile(filename, "");
@@ -98,12 +96,11 @@ public class TestUtils {
         pw.close();
         return file;
     }
-    
+
     /**
      * Assert that two JSON strings are equal as JSON objects.
      *
-     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter
-     *             order as the rest of the assert
+     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter order as the rest of the assert
      *             methods{@link #assertEqualsAsJson(String, String)}
      */
     public static void assertEqualAsJson(String expected, String actual) {
@@ -121,37 +118,37 @@ public class TestUtils {
                 jsonDiff(expected, actual);
                 fail("Objects above are not equal as JSON strings.");
             }
-        } catch(Exception e) {
-            fail("\""+actual+"\" and \""+expected+"\" are not equal as JSON strings.");
+        } catch (Exception e) {
+            fail("\"" + actual + "\" and \"" + expected + "\" are not equal as JSON strings.");
         }
     }
-    
-    public static boolean equalAsJson(String a, String b)  {
+
+    public static boolean equalAsJson(String a, String b) {
         try {
             JsonNode jsonA = mapper.readValue(a, JsonNode.class);
             JsonNode jsonB = mapper.readValue(b, JsonNode.class);
             return (jsonA == null && jsonB == null) || jsonA.equals(jsonB);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
-    
+
     public static void isSerializedTo(Object o, String targetJson, ObjectWriter writer) {
 
         // also check Jackson serialization
         try {
             String jacksonJson = writer.writeValueAsString(o);
-            if(!equalAsJson(targetJson, jacksonJson)) {
-                System.out.println("jackson, "+o.getClass().getName());
+            if (!equalAsJson(targetJson, jacksonJson)) {
+                System.out.println("jackson, " + o.getClass().getName());
                 jsonDiff(jacksonJson, targetJson);
             }
-    	    assertEqualAsJson(targetJson, jacksonJson);
-    	} catch (JsonProcessingException e) {
-    	    e.printStackTrace();
-    	    fail("jackson serialization failed");
-    	}
+            assertEqualAsJson(targetJson, jacksonJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            fail("jackson serialization failed");
+        }
     }
-    
+
     public static void jsonDiff(String a, String b) throws JsonParseException, JsonMappingException {
         ObjectMapper myMapper = mapper.copy().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                 .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
@@ -161,43 +158,43 @@ public class TestUtils {
             JsonNode nodeB = myMapper.readValue(b, JsonNode.class);
             String prettyA = myMapper.writeValueAsString(myMapper.treeToValue(nodeA, Object.class));
             String prettyB = myMapper.writeValueAsString(myMapper.treeToValue(nodeB, Object.class));
-            
+
             // Compute the max line length of A
             LineNumberReader readerA = new LineNumberReader(new StringReader(prettyA));
             int maxLength = 0;
             String line = readerA.readLine();
             while (line != null) {
-                if(line.length() > maxLength) {
+                if (line.length() > maxLength) {
                     maxLength = line.length();
                 }
                 line = readerA.readLine();
             }
-            
+
             // Pad all lines
             readerA = new LineNumberReader(new StringReader(prettyA));
             LineNumberReader readerB = new LineNumberReader(new StringReader(prettyB));
             StringWriter writer = new StringWriter();
             String lineA = readerA.readLine();
             String lineB = readerB.readLine();
-            while(lineA != null || lineB != null) {
+            while (lineA != null || lineB != null) {
                 if (lineA == null) {
                     lineA = "";
                 }
                 if (lineB == null) {
                     lineB = "";
                 }
-                String paddedLineA = lineA +  new String(new char[maxLength + 2 - lineA.length()]).replace("\0", " ");
+                String paddedLineA = lineA + new String(new char[maxLength + 2 - lineA.length()]).replace("\0", " ");
                 writer.write(paddedLineA);
                 writer.write(lineB + "\n");
                 lineA = readerA.readLine();
                 lineB = readerB.readLine();
             }
             System.out.print(writer.toString());
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     @SafeVarargs
     public static <T> Set<T> set(T... values) {
         return Arrays.asList(values).stream().collect(Collectors.toSet());

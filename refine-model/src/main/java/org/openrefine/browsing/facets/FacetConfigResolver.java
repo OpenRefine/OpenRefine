@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import java.util.HashMap;
@@ -36,14 +37,13 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class FacetConfigResolver extends TypeIdResolverBase {
-	
-	static final public Map<String, Class<? extends FacetConfig>> s_nameToClass =
-	        new HashMap<String, Class<? extends FacetConfig>>();
-    
+
+    static final public Map<String, Class<? extends FacetConfig>> s_nameToClass = new HashMap<String, Class<? extends FacetConfig>>();
+
     protected TypeFactory factory = TypeFactory.defaultInstance();
-    
+
     public static void registerFacetConfig(String moduleName, String name, Class<? extends FacetConfig> klass) {
-    	s_nameToClass.put(moduleName + "/" + name, klass);
+        s_nameToClass.put(moduleName + "/" + name, klass);
     }
 
     @Override
@@ -53,25 +53,25 @@ public class FacetConfigResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValue(Object instance) {
-        return ((FacetConfig)instance).getJsonType();
+        return ((FacetConfig) instance).getJsonType();
     }
 
     @Override
     public String idFromValueAndType(Object instance, Class<?> type) {
-        return ((FacetConfig)instance).getJsonType();
+        return ((FacetConfig) instance).getJsonType();
     }
-    
+
     @Override
     public JavaType typeFromId(DatabindContext context, String id) {
-    	// backwards compatibility
-    	if (id.indexOf('/') == -1) {
-    		id = "core/"+id;
-    	}
-    	
-    	if (s_nameToClass.containsKey(id)) {
-    		return factory.constructSimpleType(s_nameToClass.get(id), new JavaType[0]);
-    	} else {
-    		throw new IllegalArgumentException("Unknown facet type: '"+id+"'");
-    	}
+        // backwards compatibility
+        if (id.indexOf('/') == -1) {
+            id = "core/" + id;
+        }
+
+        if (s_nameToClass.containsKey(id)) {
+            return factory.constructSimpleType(s_nameToClass.get(id), new JavaType[0]);
+        } else {
+            throw new IllegalArgumentException("Unknown facet type: '" + id + "'");
+        }
     }
 }

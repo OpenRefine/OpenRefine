@@ -55,12 +55,12 @@ public class ToUppercase extends PureFunction {
     public String getDescription() {
         return "Returns string s converted to all uppercase characters.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

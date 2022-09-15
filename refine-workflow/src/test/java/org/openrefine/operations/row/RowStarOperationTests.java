@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.row;
 
 import static org.mockito.Mockito.mock;
@@ -53,11 +54,12 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class RowStarOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "row-star", RowStarOperation.class);
     }
-    
+
     @Test
     public void serializeRowStarOperation() throws Exception {
         String json = "{"
@@ -67,37 +69,37 @@ public class RowStarOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
+
     GridState initial;
     ListFacetConfig facet;
-    
+
     @BeforeTest
-	public void createProject() {
-		initial = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "",   "i" }
-		});
-		
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		facet = new ListFacetConfig();
-		facet.columnName = "hello";
-		facet.setExpression("grel:value");
-	}
-    
+    public void createProject() {
+        initial = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        facet = new ListFacetConfig();
+        facet.columnName = "hello";
+        facet.setExpression("grel:value");
+    }
+
     @Test
     public void testStarRows() throws DoesNotApplyException {
-    	facet.selection = Arrays.asList(
-				new DecoratedValue("h", "h"),
-				new DecoratedValue("d", "d"));
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-		Change change = new RowStarOperation(engineConfig, true).createChange();
-		GridState applied = change.apply(initial, mock(ChangeContext.class));
-		
-    	List<Boolean> flagged = applied.collectRows().stream().map(ir -> ir.getRow().starred).collect(Collectors.toList());
-    	Assert.assertEquals(flagged, Arrays.asList(false, true, false, true, false));
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("d", "d"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        Change change = new RowStarOperation(engineConfig, true).createChange();
+        GridState applied = change.apply(initial, mock(ChangeContext.class));
+
+        List<Boolean> flagged = applied.collectRows().stream().map(ir -> ir.getRow().starred).collect(Collectors.toList());
+        Assert.assertEquals(flagged, Arrays.asList(false, true, false, true, false));
     }
 }

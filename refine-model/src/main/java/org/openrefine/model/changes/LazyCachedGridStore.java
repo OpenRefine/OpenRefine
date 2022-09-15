@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.util.Set;
 import org.openrefine.model.GridState;
 
 public class LazyCachedGridStore implements CachedGridStore {
-    
+
     protected final Map<Long, GridState> _cache = new HashMap<>();
 
     @Override

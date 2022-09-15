@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importing;
 
 import static org.mockito.Mockito.mock;
@@ -89,10 +90,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
     }
-    
+
     @Test
     public void createProjectMetadataTest()
             throws Exception {
@@ -104,33 +105,33 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertTrue(pm.getTags().length == 0);
     }
 
-    @Test(expectedExceptions=IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testZipSlip() throws IOException {
         File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
         // For CVE-2018-19859, issue #1840
         ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
-    
+
     @Test
     public void testMostCommonFormatEmpty() {
-    	Assert.assertNull(ImporterUtilities.mostCommonFormat(Collections.emptyList()));
+        Assert.assertNull(ImporterUtilities.mostCommonFormat(Collections.emptyList()));
     }
-    
+
     @Test
     public void testMostCommonFormat() {
-    	ImportingFileRecord recA = mock(ImportingFileRecord.class);
-    	when(recA.getFormat()).thenReturn("foo");
-    	ImportingFileRecord recB = mock(ImportingFileRecord.class);
-    	when(recB.getFormat()).thenReturn("bar");
-    	ImportingFileRecord recC = mock(ImportingFileRecord.class);
-    	when(recC.getFormat()).thenReturn("foo");
-    	ImportingFileRecord recD = mock(ImportingFileRecord.class);
-    	when(recD.getFormat()).thenReturn(null);
-    	List<ImportingFileRecord> records = Arrays.asList(recA, recB, recC, recD);
-    	
-    	Assert.assertEquals(ImporterUtilities.mostCommonFormat(records), "foo");
+        ImportingFileRecord recA = mock(ImportingFileRecord.class);
+        when(recA.getFormat()).thenReturn("foo");
+        ImportingFileRecord recB = mock(ImportingFileRecord.class);
+        when(recB.getFormat()).thenReturn("bar");
+        ImportingFileRecord recC = mock(ImportingFileRecord.class);
+        when(recC.getFormat()).thenReturn("foo");
+        ImportingFileRecord recD = mock(ImportingFileRecord.class);
+        when(recD.getFormat()).thenReturn(null);
+        List<ImportingFileRecord> records = Arrays.asList(recA, recB, recC, recD);
+
+        Assert.assertEquals(ImporterUtilities.mostCommonFormat(records), "foo");
     }
-    
+
     @Test
     public void testAllocateFileDeduplication() throws IOException {
         // Test for comment https://github.com/OpenRefine/OpenRefine/issues/3043#issuecomment-671057317
@@ -139,7 +140,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         dirA.mkdir();
         File conflicting = new File(dirA, "dummy");
         conflicting.createNewFile();
-        
+
         File allocated = ImportingUtilities.allocateFile(dirA, ".././a/dummy");
         Assert.assertEquals(allocated, new File(dirA, "dummy-2"));
     }
@@ -179,20 +180,22 @@ public class ImportingUtilitiesTests extends ImporterTest {
         RetrievalRecord retrievalRecord = new RetrievalRecord();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, new ImportingUtilities.Progress() {
-                @Override
-                public void setProgress(String message, int percent) {
-                    if (message != null) {
-                        JSONUtilities.safePut(progress, "message", message);
-                    }
-                    JSONUtilities.safePut(progress, "percent", percent);
-                }
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                    new ImportingUtilities.Progress() {
 
-                @Override
-                public boolean isCanceled() {
-                    return job.canceled;
-                }
-            });
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
+                        }
+
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
+                    });
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), MESSAGE);
@@ -212,39 +215,38 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         @Override
         public int read() throws IOException {
-        	finished = true;
+            finished = true;
             return delegate.read();
         }
 
-		@Override
-		public boolean isFinished() {
-			return finished;
-		}
+        @Override
+        public boolean isFinished() {
+            return finished;
+        }
 
-		@Override
-		public boolean isReady() {
-			return true;
-		}
+        @Override
+        public boolean isReady() {
+            return true;
+        }
 
-		@Override
-		public void setReadListener(ReadListener readListener) {
-			// TODO
-		}
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            // TODO
+        }
 
     }
 
     /**
-     * This tests both exploding a zip archive into it's constituent files
-     * as well as importing them all (both) and making sure that the
-     * recording of archive names and file names works correctly.
+     * This tests both exploding a zip archive into it's constituent files as well as importing them all (both) and
+     * making sure that the recording of archive names and file names works correctly.
      *
-     * It's kind of a lot to have in one test, but it's a sequence
-     * of steps that need to be done in order.
-     * @throws Exception 
+     * It's kind of a lot to have in one test, but it's a sequence of steps that need to be done in order.
+     * 
+     * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void importArchive() throws Exception{
+    public void importArchive() throws Exception {
         String filename = "movies.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
@@ -253,8 +255,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         FileUtils.copyFile(new File(filepath), tmp);
 
         Progress dummyProgress = new Progress() {
+
             @Override
-            public void setProgress(String message, int percent) {}
+            public void setProgress(String message, int percent) {
+            }
 
             @Override
             public boolean isCanceled() {
@@ -264,7 +268,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         List<ImportingFileRecord> fileRecords = new ArrayList<>();
         ImportingFileRecord fileRecord = new ImportingFileRecord(
-        		null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed", null, null, "UTF-8", null, null, null);
+                null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed", null, null, "UTF-8", null, null, null);
 
         assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
         assertEquals(fileRecords.size(), 2);
@@ -284,43 +288,42 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 IteratorUtils.toList(fileRecords.iterator()),
                 "tsv",
                 -1,
-                options
-                );
+                options);
         assertEquals(exceptions.size(), 0);
 
         ColumnModel columnModel = grid.getColumnModel();
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
-        assertEquals(columnModel.getColumns().get(0).getName(),"Archive");
-        assertEquals(rows.get(0).getCellValue(0),"movies.zip");
-        assertEquals(columnModel.getColumns().get(1).getName(),"File");
-        assertEquals(rows.get(0).getCellValue(1),"movies-condensed.tsv");
-        assertEquals(columnModel.getColumns().get(2).getName(),"name");
-        assertEquals(rows.get(0).getCell(2).getValue(),"Wayne's World");
+        assertEquals(columnModel.getColumns().get(0).getName(), "Archive");
+        assertEquals(rows.get(0).getCellValue(0), "movies.zip");
+        assertEquals(columnModel.getColumns().get(1).getName(), "File");
+        assertEquals(rows.get(0).getCellValue(1), "movies-condensed.tsv");
+        assertEquals(columnModel.getColumns().get(2).getName(), "name");
+        assertEquals(rows.get(0).getCell(2).getValue(), "Wayne's World");
 
         // Make sure we imported both files contained in the zip file
         assertEquals(rows.size(), 252);
 
         ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
         assertEquals(importOptionsArray.size(), 2);
-        ObjectNode importOptions = (ObjectNode)importOptionsArray.get(0);
+        ObjectNode importOptions = (ObjectNode) importOptionsArray.get(0);
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
         assertEquals(importOptions.get("fileSource").asText(), "movies-condensed.tsv");
         assertTrue(importOptions.get("includeFileSources").asBoolean());
         assertTrue(importOptions.get("includeArchiveFileName").asBoolean());
 
-        importOptions = (ObjectNode)importOptionsArray.get(1);
+        importOptions = (ObjectNode) importOptionsArray.get(1);
         assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
     }
-    
+
     @Test
     public void testExtractFilenameFromSparkURI() {
-    	Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
-    	Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
+        Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
+        Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
     }
 
     @Test
-    public void importUnsupportedZipFile() throws IOException, ServletException{
+    public void importUnsupportedZipFile() throws IOException, ServletException {
         String filename = "unsupportedPPMD.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
@@ -329,8 +332,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         FileUtils.copyFile(new File(filepath), tmp);
 
         Progress dummyProgress = new Progress() {
+
             @Override
-            public void setProgress(String message, int percent) {}
+            public void setProgress(String message, int percent) {
+            }
 
             @Override
             public boolean isCanceled() {
@@ -339,16 +344,18 @@ public class ImportingUtilitiesTests extends ImporterTest {
         };
 
         ImportingFileRecord fileRecord = new ImportingFileRecord(
-        		null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed",
-        		null, null, null, "UTF-8", null, null);
+                null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed",
+                null, null, null, "UTF-8", null, null);
         List<ImportingFileRecord> fileRecords = Collections.singletonList(fileRecord);
         RetrievalRecord retrievalRecord = new RetrievalRecord();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        assertThrows(IOException.class, () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request, new Properties(), job.getRawDataDir(), retrievalRecord, dummyProgress));
+        assertThrows(IOException.class,
+                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                new Properties(), job.getRawDataDir(), retrievalRecord, dummyProgress));
         assertThrows(IOException.class, () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job));
 
     }

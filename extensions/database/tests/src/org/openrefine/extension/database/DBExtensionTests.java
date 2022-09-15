@@ -38,22 +38,21 @@ import java.util.Properties;
 import org.slf4j.Logger;
 
 public class DBExtensionTests {
-    
+
     protected final String MYSQL_DB_NAME = "mysql";
     protected final String DEFAULT_MYSQL_HOST = "127.0.0.1";
     protected final String DEFAULT_MYSQL_PORT = "3306";
     protected final String DEFAULT_MYSQL_USER = "root";
     protected final String DEFAULT_MYSQL_PASSWORD = "secret";
     protected final String DEFAULT_MYSQL_DB_NAME = "testdb";
-    
+
     protected final String PGSQL_DB_NAME = "postgresql";
     protected final String DEFAULT_PGSQL_HOST = "127.0.0.1";
     protected final String DEFAULT_PGSQL_PORT = "5432";
     protected final String DEFAULT_PGSQL_USER = "postgres";
     protected final String DEFAULT_PGSQL_PASSWORD = "";
     protected final String DEFAULT_PGSQL_DB_NAME = "testdb";
-    
-    
+
     protected final String MARIA_DB_NAME = "mariadb";
     protected final String DEFAULT_MARIADB_HOST = "127.0.0.1";
     protected final String DEFAULT_MARIADB_PORT = "3306";
@@ -63,11 +62,11 @@ public class DBExtensionTests {
 
     protected final String SQLITE_DB_NAME = "sqlite";
     protected final String DEFAULT_SQLITE_DB_NAME = "extension_test_db.sqlite";
-    
+
     protected final String DEFAULT_TEST_TABLE = "test_data";
-    
+
     protected Properties properties;
 
-    protected Logger logger;  
-   
+    protected Logger logger;
+
 }

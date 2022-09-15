@@ -50,7 +50,7 @@ public class ToNumber extends PureFunction {
             } else {
                 String s;
                 if (args[0] instanceof String) {
-                    s = (String)args[0];
+                    s = (String) args[0];
                 } else {
                     s = args[0].toString();
                 }
@@ -77,12 +77,12 @@ public class ToNumber extends PureFunction {
     public String getDescription() {
         return "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.";
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

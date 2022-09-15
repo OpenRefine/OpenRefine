@@ -57,17 +57,16 @@ public class ReplaceChars extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
     }
 
-    
     @Override
     public String getDescription() {
         return "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. You cannot use this to replace a single character with more than one character.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string find, string replace";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

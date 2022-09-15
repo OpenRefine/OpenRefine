@@ -1,3 +1,4 @@
+
 package org.openrefine;
 
 import java.util.Collections;
@@ -19,24 +20,23 @@ import org.openrefine.model.Project;
 import org.openrefine.util.FacetCountException;
 
 /**
- * Holds a cache of facet counts, to be used by the facetCount GREL
- * function.
+ * Holds a cache of facet counts, to be used by the facetCount GREL function.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class FacetCountCacheManager {
-    
+
     protected final Map<String, FacetCount> _cache = new HashMap<>();
-    
+
     public StringValuesFacetState getFacetState(long targetProjectId, String expression, String columnName) throws FacetCountException {
         String key = targetProjectId + ";" + columnName + "_" + expression;
-        
+
         Project project = ProjectManager.singleton.getProject(targetProjectId);
         if (project == null) {
             throw new FacetCountException(String.format("Project %d could not be found", targetProjectId));
         }
-        
+
         // Retrieve the id of the last entry, used for cache invalidation
         History history = project.getHistory();
         List<HistoryEntry> entries = history.getLastPastEntries(1);
@@ -44,10 +44,10 @@ public class FacetCountCacheManager {
         if (!entries.isEmpty()) {
             changeId = entries.get(0).getId();
         }
-        
+
         FacetCount facetCount = _cache.get(key);
-        
-        if (facetCount == null || facetCount.getChangeId() != changeId) { 
+
+        if (facetCount == null || facetCount.getChangeId() != changeId) {
             facetCount = computeFacetCount(project.getCurrentGridState(), columnName, expression, changeId);
 
             synchronized (_cache) {
@@ -57,15 +57,15 @@ public class FacetCountCacheManager {
 
         return facetCount.getFacetState();
     }
-    
+
     protected FacetCount computeFacetCount(GridState grid, String columnName, String expression, long changeId) throws FacetCountException {
         ColumnModel columnModel = grid.getColumnModel();
         int cellIndex = columnModel.getColumnIndexByName(columnName);
         if (cellIndex == -1) {
             throw new FacetCountException(String.format("The column '%s' could not be found", columnName));
         }
-        
-        RowEvaluable evaluable; 
+
+        RowEvaluable evaluable;
         try {
             evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression), columnModel);
         } catch (ParsingException e) {
@@ -79,22 +79,22 @@ public class FacetCountCacheManager {
     }
 
     public static class FacetCount {
+
         private final StringValuesFacetState _facetState;
         private final long _changeId;
-        
+
         public FacetCount(StringValuesFacetState facetState, long changeId) {
             _facetState = facetState;
             _changeId = changeId;
         }
-        
+
         public long getChangeId() {
             return _changeId;
         }
-        
+
         public StringValuesFacetState getFacetState() {
             return _facetState;
         }
     }
-    
 
 }

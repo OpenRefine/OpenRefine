@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.io.IOException;
@@ -13,12 +14,12 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  *
  */
 public class PLLContext {
-    
+
     private final ListeningExecutorService executorService;
     private final int defaultParallelism;
     private final long minSplitSize;
     private final long maxSplitSize;
-    
+
     public PLLContext(
             ListeningExecutorService executorService,
             int defaultParallelism,
@@ -29,19 +30,19 @@ public class PLLContext {
         this.minSplitSize = minSplitSize;
         this.maxSplitSize = maxSplitSize;
     }
-    
+
     /**
      * Returns the thread pool used in this context
      */
     public ListeningExecutorService getExecutorService() {
         return executorService;
     }
-    
+
     /**
      * Loads a text file as a PLL.
      * 
      * @param path
-     * @param encoding 
+     * @param encoding
      * @return
      * @throws IOException
      */
@@ -50,7 +51,7 @@ public class PLLContext {
     }
 
     /**
-     * @throws IOException 
+     * @throws IOException
      * 
      */
     public void shutdown() throws IOException {
@@ -61,30 +62,32 @@ public class PLLContext {
      * Turns a regular list into a Partitioned Lazy List.
      * 
      * @param <T>
-     * @param numPartitions the desired number of partitions
+     * @param numPartitions
+     *            the desired number of partitions
      * @param rows
      * @return
      */
     public <T> PLL<T> parallelize(int numPartitions, List<T> rows) {
         return new InMemoryPLL<T>(this, rows, numPartitions);
     }
-    
+
     /**
      * Returns the default number of partitions that text files should be split into
      */
     protected int getDefaultParallelism() {
         return defaultParallelism;
     }
-    
+
     /**
      * Returns the minimum size of a partition in bytes
      */
     protected long getMinSplitSize() {
         return minSplitSize;
     }
-    
+
     /**
      * Returns the maximum size of a partition in bytes
+     * 
      * @return
      */
     protected long getMaxSplitSize() {

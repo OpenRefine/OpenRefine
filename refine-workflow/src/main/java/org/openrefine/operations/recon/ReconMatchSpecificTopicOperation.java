@@ -53,14 +53,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
-    
+
     public static class ReconItem {
+
         @JsonProperty("id")
-        public final String id; 
+        public final String id;
         @JsonProperty("name")
         public final String name;
         @JsonProperty("types")
         public final String[] types;
+
         @JsonCreator
         public ReconItem(
                 @JsonProperty("id") String id,
@@ -70,13 +72,13 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
             this.name = name;
             this.types = types;
         }
-        
+
         @JsonIgnore
         public ReconCandidate getCandidate() {
             return new ReconCandidate(id, name, types, 100);
         }
     }
-    
+
     @JsonProperty("columnName")
     final protected String columnName;
     @JsonProperty("match")
@@ -88,78 +90,70 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
 
     @JsonCreator
     public ReconMatchSpecificTopicOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig, 
-        @JsonProperty("columnName")
-        String columnName, 
-        @JsonProperty("match")
-        ReconItem match,
-        @JsonProperty("identifierSpace")
-        String identifierSpace,
-        @JsonProperty("schemaSpace")
-        String schemaSpace
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("match") ReconItem match,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace) {
         super(engineConfig);
         this.columnName = columnName;
         this.match = match;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
     }
-    
+
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Match specific item " +
-            match.name + " (" + 
-            match.id + ") to cells in column " + columnName;
+                match.name + " (" +
+                match.id + ") to cells in column " + columnName;
     }
-    
+
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
-    	int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
-    	if (columnIndex == -1) {
-    		throw new ColumnNotFoundException(columnName);
-    	}
-    	long historyEntryId = context.getHistoryEntryId();
-		return rowMapper(columnIndex, match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
     }
-    	
-	@Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, columnName);
-	}
-    
-    protected static RowInRecordMapper rowMapper(int columnIndex, ReconCandidate match, long historyEntryId, String identifierSpace, String schemaSpace) {
-    	return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = 5866873129004859060L;
+    @Override
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, columnName);
+    }
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
+    protected static RowInRecordMapper rowMapper(int columnIndex, ReconCandidate match, long historyEntryId, String identifierSpace,
+            String schemaSpace) {
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = 5866873129004859060L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
-                    Recon newRecon = cell.recon != null ? 
-                        cell.recon.dup(historyEntryId) : 
-                        new Recon(
-                            historyEntryId,
-                            identifierSpace,
-                            schemaSpace);
-                        
-                    newRecon = newRecon.withMatch(match)
-                    		.withMatchRank(-1)
-                    		.withJudgment(Judgment.Matched)
-                    		.withJudgmentAction("mass");
+                    Recon newRecon = cell.recon != null ? cell.recon.dup(historyEntryId)
+                            : new Recon(
+                                    historyEntryId,
+                                    identifierSpace,
+                                    schemaSpace);
 
+                    newRecon = newRecon.withMatch(match)
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.Matched)
+                            .withJudgmentAction("mass");
 
                     Cell newCell = new Cell(
-                        cell.value,
-                        newRecon
-                    );
-                    
+                            cell.value,
+                            newRecon);
+
                     return row.withCell(columnIndex, newCell);
                 }
                 return row;
-			}
-    		
-    	};
+            }
+
+        };
     }
 }

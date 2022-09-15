@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class IndexedRowTests {
-    
+
     @Test
     public void saveIndexedRow() {
         Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
@@ -22,7 +23,7 @@ public class IndexedRowTests {
                 "{\"i\":1234,\"r\":{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}}",
                 ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void readIndexedRow() throws JsonParseException, JsonMappingException, IOException {
         IndexedRow tuple = ParsingUtilities.mapper.readValue(

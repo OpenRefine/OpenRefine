@@ -1,3 +1,4 @@
+
 package org.openrefine.grel.ast;
 
 import static org.mockito.Mockito.mock;
@@ -10,8 +11,7 @@ import java.util.stream.Collectors;
 import org.testng.annotations.BeforeMethod;
 
 /**
- * Base class to test expression classes.
- * Contains utilities to test column dependency extraction.
+ * Base class to test expression classes. Contains utilities to test column dependency extraction.
  * 
  * 
  * @author Antonin Delpeuch
@@ -30,23 +30,23 @@ public class ExprTestBase {
         unanalyzable = mock(GrelExpr.class);
         twoColumns = mock(GrelExpr.class);
         constant = mock(GrelExpr.class);
-        
+
         when(currentColumn.getColumnDependencies(baseColumn))
-           .thenReturn(set(baseColumn));
+                .thenReturn(set(baseColumn));
         when(currentColumn.isLocal())
-           .thenReturn(true);
+                .thenReturn(true);
         when(unanalyzable.getColumnDependencies(baseColumn))
-           .thenReturn(null);
+                .thenReturn(null);
         when(unanalyzable.isLocal())
-           .thenReturn(false);
+                .thenReturn(false);
         when(twoColumns.getColumnDependencies(baseColumn))
-           .thenReturn(set("a","b"));
+                .thenReturn(set("a", "b"));
         when(twoColumns.isLocal())
-            .thenReturn(true);
+                .thenReturn(true);
         when(constant.getColumnDependencies(baseColumn))
-           .thenReturn(set());
+                .thenReturn(set());
         when(constant.isLocal())
-           .thenReturn(true);
+                .thenReturn(true);
     }
 
     protected Set<String> set(String... strings) {

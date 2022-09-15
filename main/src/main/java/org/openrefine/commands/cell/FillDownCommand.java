@@ -42,15 +42,15 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.FillDownOperation;
 
 public class FillDownCommand extends EngineDependentCommand {
+
     @Override
     protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
-        
+
         return new FillDownOperation(
-            engineConfig, 
-            columnName
-        );
+                engineConfig,
+                columnName);
     }
 }

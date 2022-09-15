@@ -43,34 +43,34 @@ public class ToTitlecase extends PureFunction {
 
     private static final long serialVersionUID = 4173141031075676198L;
     final static private char[] delimiters = { ' ', '\t', '\r', '\n', '.' };
-    
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
-            String s = o instanceof String ? (String) o : o.toString();            
+            String s = o instanceof String ? (String) o : o.toString();
             return WordUtils.capitalizeFully(s, delimiters);
         } else if (args.length == 2 && args[0] != null && args[1] != null) {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();
             o = args[1];
-            String delims = o instanceof String ? (String) o: o.toString(); 
-            return WordUtils.capitalizeFully(s,delims.toCharArray());
-        } else { 
+            String delims = o instanceof String ? (String) o : o.toString();
+            return WordUtils.capitalizeFully(s, delims.toCharArray());
+        } else {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a one or two strings");
         }
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, 'Once upon a midnight DREARY'.toTitlecase() returns the string 'Once Upon A Midnight Dreary'.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

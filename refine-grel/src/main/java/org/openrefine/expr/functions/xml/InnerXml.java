@@ -47,40 +47,40 @@ public class InnerXml extends PureFunction {
     public Object call(Object[] args) {
         return call(args, "xml");
     }
-    
+
     public Object call(Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                if(mode.equals("xml")) {
+                Element e1 = (Element) o1;
+                if (mode.equals("xml")) {
                     return e1.children().toString();
                 } else if (mode.equals("html")) {
                     return e1.html();
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to determine whether XML or HTML is being used.");
+                    return new EvalError(
+                            ControlFunctionRegistry.getFunctionName(this) + " unable to determine whether XML or HTML is being used.");
                 }
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
     }
 
-
     @Override
     public String getDescription() {
-    	return "Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. Use it in conjunction with parseXml() and select() to provide an element.";
+        return "Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. Use it in conjunction with parseXml() and select() to provide an element.";
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string innerXml";
     }
 }
-

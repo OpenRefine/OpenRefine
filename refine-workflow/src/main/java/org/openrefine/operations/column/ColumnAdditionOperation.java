@@ -60,53 +60,45 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Adds a new column by evaluating an expression, based on a given
- * column.
+ * Adds a new column by evaluating an expression, based on a given column.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class ColumnAdditionOperation extends ExpressionBasedOperation {
 
-    final protected String     _newColumnName;
-    final protected int        _columnInsertIndex;
+    final protected String _newColumnName;
+    final protected int _columnInsertIndex;
 
     @JsonCreator
     public ColumnAdditionOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig   engineConfig,
-        @JsonProperty("baseColumnName")
-        String         baseColumnName,
-        @JsonProperty("expression")
-        String         expression,
-        @JsonProperty("onError")
-        OnError        onError,
-        @JsonProperty("newColumnName")
-        String         newColumnName,
-        @JsonProperty("columnInsertIndex")
-        int            columnInsertIndex 
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("baseColumnName") String baseColumnName,
+            @JsonProperty("expression") String expression,
+            @JsonProperty("onError") OnError onError,
+            @JsonProperty("newColumnName") String newColumnName,
+            @JsonProperty("columnInsertIndex") int columnInsertIndex) {
         super(engineConfig, expression, baseColumnName, onError);
-        
+
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
     }
-    
+
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
     }
-    
+
     @JsonProperty("columnInsertIndex")
     public int getColumnInsertIndex() {
         return _columnInsertIndex;
     }
-    
+
     @JsonProperty("baseColumnName")
     public String getBaseColumnName() {
         return _baseColumnName;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _expression;
@@ -116,83 +108,84 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     public OnError getOnError() {
         return _onError;
     }
-    
+
     @Override
-	public String getDescription() {
-        return "Create column " + _newColumnName + 
-            " at index " + _columnInsertIndex + 
-            " based on column " + _baseColumnName + 
-            " using expression " + _expression;
+    public String getDescription() {
+        return "Create column " + _newColumnName +
+                " at index " + _columnInsertIndex +
+                " based on column " + _baseColumnName +
+                " using expression " + _expression;
     }
 
     protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size() +
-            " rows with " + _expression;
+        return "Create new column " + _newColumnName +
+                " based on column " + column.getName() +
+                " by filling " + cellsAtRows.size() +
+                " rows with " + _expression;
     }
-    
+
     @Override
     protected ColumnModel getNewColumnModel(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
-    	ColumnModel columnModel = state.getColumnModel();
+        ColumnModel columnModel = state.getColumnModel();
         try {
-			return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
-		} catch (ModelException e) {
-			throw new DoesNotApplyException("Another column already named " + _newColumnName);
-		}
+            return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
+        } catch (ModelException e) {
+            throw new DoesNotApplyException("Another column already named " + _newColumnName);
+        }
     }
 
-	@Override
-	protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval)
-			throws DoesNotApplyException {
-		ColumnModel columnModel = state.getColumnModel();
-		int columnIndex = RowMapChange.columnIndex(columnModel, _baseColumnName);
-		return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel);
-	}
-	
-	@Override
-	protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval)
-			throws DoesNotApplyException {
-		return negativeMapper(_columnInsertIndex);
-	}
-	
-	protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError, Evaluable eval, ColumnModel columnModel) {
-		RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel, 0L);
-		return new RowInRecordMapper() {
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval)
+            throws DoesNotApplyException {
+        ColumnModel columnModel = state.getColumnModel();
+        int columnIndex = RowMapChange.columnIndex(columnModel, _baseColumnName);
+        return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel);
+    }
 
-			private static final long serialVersionUID = 897585827026825498L;
+    @Override
+    protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval)
+            throws DoesNotApplyException {
+        return negativeMapper(_columnInsertIndex);
+    }
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				return row.insertCell(columnInsertIndex, changeDataProducer.call(record, rowId, row));
-			}
-			
-		};
-	}
-	
-	protected static RowInRecordMapper negativeMapper(int columnInsertIndex) {
-		return new RowInRecordMapper() {
+    protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
+            Evaluable eval, ColumnModel columnModel) {
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel,
+                0L);
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = -4885450470285627722L;
+            private static final long serialVersionUID = 897585827026825498L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				return row.insertCell(columnInsertIndex, null);
-			}
-			
-		};
-	}
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return row.insertCell(columnInsertIndex, changeDataProducer.call(record, rowId, row));
+            }
 
-	@Override
-	protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
-			Mode engineMode) {
-		return new ColumnChangeByChangeData(
-                           "eval", 
-                           columnIndex + 1, 
-                           _newColumnName,
-                           engineMode,
-                           null,
-                           null
-                       );
-	}
+        };
+    }
+
+    protected static RowInRecordMapper negativeMapper(int columnInsertIndex) {
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = -4885450470285627722L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return row.insertCell(columnInsertIndex, null);
+            }
+
+        };
+    }
+
+    @Override
+    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
+            Mode engineMode) {
+        return new ColumnChangeByChangeData(
+                "eval",
+                columnIndex + 1,
+                _newColumnName,
+                engineMode,
+                null,
+                null);
+    }
 }

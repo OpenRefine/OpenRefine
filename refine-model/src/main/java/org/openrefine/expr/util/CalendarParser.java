@@ -294,8 +294,7 @@ class ParserState {
      * @param cal
      *            calendar to fill
      * @param ignoreChanges
-     *            if <tt>true</tt>, throw an exception when a date like
-     *            <tt>Sept 31</tt> is changed to <tt>Oct 1</tt>
+     *            if <tt>true</tt>, throw an exception when a date like <tt>Sept 31</tt> is changed to <tt>Oct 1</tt>
      * 
      * @throws CalendarParserException
      *             if the date cannot be set for some reason
@@ -495,6 +494,7 @@ class ParserState {
  * A parser for arbitrary date/time strings.
  */
 public class CalendarParser {
+
     /** bit indicating that the year comes before the month. */
     public static final int YEAR_BEFORE_MONTH = ParserState.YEAR_BEFORE_MONTH;
     /** bit indicating that the year comes before the day. */
@@ -570,8 +570,7 @@ public class CalendarParser {
      * @param cal
      *            object containing time
      * @param needSpace
-     *            <tt>true</tt> if a space character should be inserted before
-     *            any data
+     *            <tt>true</tt> if a space character should be inserted before any data
      */
     private static final void appendTimeString(StringBuffer buf, Calendar cal, boolean needSpace) {
         final int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -655,36 +654,33 @@ public class CalendarParser {
      */
     public static final String getOrderString(int order) {
         switch (order) {
-        case DD_MM_YY:
-            return "DD_MM_YY";
-        case MM_DD_YY:
-            return "MM_DD_YY";
-        case MM_YY_DD:
-            return "MM_YY_DD";
-        case DD_YY_MM:
-            return "DD_YY_MM";
-        case YY_DD_MM:
-            return "YY_DD_MM";
-        case YY_MM_DD:
-            return "YY_MM_DD";
-        default:
-            break;
+            case DD_MM_YY:
+                return "DD_MM_YY";
+            case MM_DD_YY:
+                return "MM_DD_YY";
+            case MM_YY_DD:
+                return "MM_YY_DD";
+            case DD_YY_MM:
+                return "DD_YY_MM";
+            case YY_DD_MM:
+                return "YY_DD_MM";
+            case YY_MM_DD:
+                return "YY_MM_DD";
+            default:
+                break;
         }
 
         return "??" + order + "??";
     }
 
     /**
-     * Translate a string representation of an ordinal number to the appropriate
-     * numeric value.<br>
-     * For example, <tt>"1st"</tt> would return <tt>1</tt>, <tt>"23rd"</tt>
-     * would return <tt>23</tt>, etc.
+     * Translate a string representation of an ordinal number to the appropriate numeric value.<br>
+     * For example, <tt>"1st"</tt> would return <tt>1</tt>, <tt>"23rd"</tt> would return <tt>23</tt>, etc.
      * 
      * @param str
      *            ordinal string
      * 
-     * @return the numeric value of the ordinal number, or
-     *         <tt>CalendarParser.UNSET</tt> if the supplied string is not a
+     * @return the numeric value of the ordinal number, or <tt>CalendarParser.UNSET</tt> if the supplied string is not a
      *         valid ordinal number.
      */
     private static final int getOrdinalNumber(String str) {
@@ -716,16 +712,16 @@ public class CalendarParser {
      */
     private static final String getTimePlaceString(int place) {
         switch (place) {
-        case PLACE_HOUR:
-            return "hour";
-        case PLACE_MINUTE:
-            return "minute";
-        case PLACE_SECOND:
-            return "second";
-        case PLACE_MILLI:
-            return "millisecond";
-        default:
-            break;
+            case PLACE_HOUR:
+                return "hour";
+            case PLACE_MINUTE:
+                return "minute";
+            case PLACE_SECOND:
+                return "second";
+            case PLACE_MILLI:
+                return "millisecond";
+            default:
+                break;
         }
 
         return "unknown";
@@ -829,14 +825,13 @@ public class CalendarParser {
 
     /**
      * Convert the supplied month name to its numeric representation. <br>
-     * For example, <tt>"January"</tt> (or any substring) would return
-     * <tt>1</tt> and <tt>"December"</tt> would return <tt>12</tt>.
+     * For example, <tt>"January"</tt> (or any substring) would return <tt>1</tt> and <tt>"December"</tt> would return
+     * <tt>12</tt>.
      * 
      * @param str
      *            month name
      * 
-     * @return the numeric month, or <tt>CalendarParser.UNSET</tt> if the
-     *         supplied string is not a valid month name.
+     * @return the numeric month, or <tt>CalendarParser.UNSET</tt> if the supplied string is not a valid month name.
      */
     public static int monthNameToNumber(String str) {
         if (str != null && str.length() >= 3) {
@@ -853,8 +848,7 @@ public class CalendarParser {
     }
 
     /**
-     * Extract a date from a string, defaulting to YY-MM-DD order for
-     * all-numeric strings.
+     * Extract a date from a string, defaulting to YY-MM-DD order for all-numeric strings.
      * 
      * @param dateStr
      *            date string
@@ -868,19 +862,19 @@ public class CalendarParser {
             throws CalendarParserException {
         return parse(dateStr, YY_MM_DD);
     }
-    
+
     public static final OffsetDateTime parseAsOffsetDateTime(String dateStr) throws CalendarParserException {
         return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr));
     }
-    
+
     /**
      * Extract a date from a string.
      * 
      * @param dateStr
      *            date string
      * @param order
-     *            order in which pieces of numeric strings are assigned (should
-     *            be one of <tt>YY_MM_DD</tt>, <tt>MM_DD_YY</tt>, etc.)
+     *            order in which pieces of numeric strings are assigned (should be one of <tt>YY_MM_DD</tt>,
+     *            <tt>MM_DD_YY</tt>, etc.)
      * 
      * @return parsed date
      * 
@@ -891,7 +885,7 @@ public class CalendarParser {
             throws CalendarParserException {
         return parse(dateStr, order, true);
     }
-    
+
     public static final OffsetDateTime parseAsOffsetDateTime(String dateStr, int order)
             throws CalendarParserException {
         return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr, order));
@@ -903,11 +897,10 @@ public class CalendarParser {
      * @param dateStr
      *            date string
      * @param order
-     *            order in which pieces of numeric strings are assigned (should
-     *            be one of <tt>YY_MM_DD</tt>, <tt>MM_DD_YY</tt>, etc.)
+     *            order in which pieces of numeric strings are assigned (should be one of <tt>YY_MM_DD</tt>,
+     *            <tt>MM_DD_YY</tt>, etc.)
      * @param ignoreChanges
-     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt>
-     *            being changed to <tt>Mar 3</tt>.
+     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt> being changed to <tt>Mar 3</tt>.
      * 
      * @return parsed date
      * 
@@ -927,7 +920,7 @@ public class CalendarParser {
             boolean ignoreChanges) throws CalendarParserException {
         return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr, order, ignoreChanges));
     }
-    
+
     /**
      * Parse a non-numeric token from the date string.
      * 
@@ -1540,8 +1533,7 @@ public class CalendarParser {
      * @param order
      *            year/month/day order (YY_MM_DD, MM_DD_YY, etc.)
      * @param ignoreChanges
-     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt>
-     *            being changed to <tt>Mar 3</tt>.
+     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt> being changed to <tt>Mar 3</tt>.
      * 
      * @return parsed date
      * 
@@ -1710,7 +1702,8 @@ public class CalendarParser {
                                 .getSecond()) : "UNSET")
                         + ", MILLISECOND "
                         + (state.isMillisecondSet() ? Integer.toString(state
-                                .getMillisecond()) : "UNSET") + ", TOKEN=\""
+                                .getMillisecond()) : "UNSET")
+                        + ", TOKEN=\""
                         + token + "\"");
             }
 
@@ -1724,57 +1717,57 @@ public class CalendarParser {
             }
 
             switch (place) {
-            case PLACE_HOUR:
-                try {
-                    state.setHour(val);
-                } catch (CalendarParserException dfe) {
-                    throw new CalendarParserException(dfe.getMessage()
-                            + " in \"" + dateStr + "\"");
-                }
-                if (DEBUG) {
-                    System.err.println("Set hour to " + val);
-                }
-                place = PLACE_MINUTE;
-                break;
-            case PLACE_MINUTE:
-                try {
-                    state.setMinute(val);
-                } catch (CalendarParserException dfe) {
-                    throw new CalendarParserException(dfe.getMessage()
-                            + " in \"" + dateStr + "\"");
-                }
-                if (DEBUG) {
-                    System.err.println("Set minute to " + val);
-                }
-                place = PLACE_SECOND;
-                break;
-            case PLACE_SECOND:
-                try {
-                    state.setSecond(val);
-                } catch (CalendarParserException dfe) {
-                    throw new CalendarParserException(dfe.getMessage()
-                            + " in \"" + dateStr + "\"");
-                }
-                if (DEBUG) {
-                    System.err.println("Set second to " + val);
-                }
-                place = PLACE_MILLI;
-                break;
-            case PLACE_MILLI:
-                try {
-                    state.setMillisecond(val);
-                } catch (CalendarParserException dfe) {
-                    throw new CalendarParserException(dfe.getMessage()
-                            + " in \"" + dateStr + "\"");
-                }
-                if (DEBUG) {
-                    System.err.println("Set millisecond to " + val);
-                }
-                place = PLACE_UNKNOWN;
-                break;
-            default:
-                throw new CalendarParserException("Unexpected place value "
-                        + place);
+                case PLACE_HOUR:
+                    try {
+                        state.setHour(val);
+                    } catch (CalendarParserException dfe) {
+                        throw new CalendarParserException(dfe.getMessage()
+                                + " in \"" + dateStr + "\"");
+                    }
+                    if (DEBUG) {
+                        System.err.println("Set hour to " + val);
+                    }
+                    place = PLACE_MINUTE;
+                    break;
+                case PLACE_MINUTE:
+                    try {
+                        state.setMinute(val);
+                    } catch (CalendarParserException dfe) {
+                        throw new CalendarParserException(dfe.getMessage()
+                                + " in \"" + dateStr + "\"");
+                    }
+                    if (DEBUG) {
+                        System.err.println("Set minute to " + val);
+                    }
+                    place = PLACE_SECOND;
+                    break;
+                case PLACE_SECOND:
+                    try {
+                        state.setSecond(val);
+                    } catch (CalendarParserException dfe) {
+                        throw new CalendarParserException(dfe.getMessage()
+                                + " in \"" + dateStr + "\"");
+                    }
+                    if (DEBUG) {
+                        System.err.println("Set second to " + val);
+                    }
+                    place = PLACE_MILLI;
+                    break;
+                case PLACE_MILLI:
+                    try {
+                        state.setMillisecond(val);
+                    } catch (CalendarParserException dfe) {
+                        throw new CalendarParserException(dfe.getMessage()
+                                + " in \"" + dateStr + "\"");
+                    }
+                    if (DEBUG) {
+                        System.err.println("Set millisecond to " + val);
+                    }
+                    place = PLACE_UNKNOWN;
+                    break;
+                default:
+                    throw new CalendarParserException("Unexpected place value "
+                            + place);
             }
         }
     }
@@ -1814,7 +1807,8 @@ public class CalendarParser {
                                         : "UNSET")
                                 + ", TZ_MINUTE "
                                 + (minute != UNSET ? Integer.toString(minute)
-                                        : "UNSET") + ", TOKEN=\"" + token
+                                        : "UNSET")
+                                + ", TOKEN=\"" + token
                                 + "\"");
             }
 
@@ -1828,23 +1822,23 @@ public class CalendarParser {
             }
 
             switch (place) {
-            case PLACE_HOUR:
-                hour = val;
-                if (DEBUG) {
-                    System.err.println("Set time zone offset hour to " + val);
-                }
-                place = PLACE_MINUTE;
-                break;
-            case PLACE_MINUTE:
-                minute = val;
-                if (DEBUG) {
-                    System.err.println("Set time zone offset minute to " + val);
-                }
-                place = PLACE_UNKNOWN;
-                break;
-            default:
-                throw new CalendarParserException("Unexpected place value "
-                        + place);
+                case PLACE_HOUR:
+                    hour = val;
+                    if (DEBUG) {
+                        System.err.println("Set time zone offset hour to " + val);
+                    }
+                    place = PLACE_MINUTE;
+                    break;
+                case PLACE_MINUTE:
+                    minute = val;
+                    if (DEBUG) {
+                        System.err.println("Set time zone offset minute to " + val);
+                    }
+                    place = PLACE_UNKNOWN;
+                    break;
+                default:
+                    throw new CalendarParserException("Unexpected place value "
+                            + place);
             }
         }
 
@@ -1950,8 +1944,7 @@ public class CalendarParser {
     }
 
     /**
-     * Return a string representation of the date suitable for use in an SQL
-     * statement.
+     * Return a string representation of the date suitable for use in an SQL statement.
      * 
      * @param cal
      *            calendar to convert to a string

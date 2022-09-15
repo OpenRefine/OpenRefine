@@ -1,3 +1,4 @@
+
 package org.openrefine.extension.gdata;
 
 import static org.mockito.Mockito.mock;

@@ -66,13 +66,14 @@ public class OdsExporter implements StreamExporter {
         try {
             odfDoc = OdfSpreadsheetDocument.newSpreadsheetDocument();
         } catch (Exception e) {
-            throw new IOException("Failed to create spreadsheet",e);
+            throw new IOException("Failed to create spreadsheet", e);
         }
-        
+
         TabularSerializer serializer = new TabularSerializer() {
+
             OdfTable table;
-            //int rowCount = 0;
-            
+            // int rowCount = 0;
+
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
@@ -86,8 +87,8 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
                 OdfTableRow r = table.appendRow();
-                //rowCount++;
-                
+                // rowCount++;
+
                 for (int i = 0; i < cells.size(); i++) {
                     OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell
                     CellData cellData = cells.get(i);
@@ -99,7 +100,7 @@ public class OdsExporter implements StreamExporter {
                         } else if (v instanceof Boolean) {
                             c.setBooleanValue(((Boolean) v).booleanValue());
                         } else if (v instanceof OffsetDateTime) {
-                            OffsetDateTime odt = (OffsetDateTime)v;
+                            OffsetDateTime odt = (OffsetDateTime) v;
                             c.setDateValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                         } else {
                             c.setStringValue(cellData.text);
@@ -112,14 +113,14 @@ public class OdsExporter implements StreamExporter {
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 grid, engine, params, serializer, SortingConfig.NO_SORTING);
-        
+
         try {
             odfDoc.save(outputStream);
         } catch (Exception e) {
-            throw new IOException("Error saving spreadsheet",e);
+            throw new IOException("Error saving spreadsheet", e);
         }
         outputStream.flush();
     }

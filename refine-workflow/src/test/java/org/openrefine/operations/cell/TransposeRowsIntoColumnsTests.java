@@ -50,8 +50,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class TransposeRowsIntoColumnsTests extends RefineTest {
-	
-	GridState initial;
+
+    GridState initial;
 
     @Override
     @BeforeTest
@@ -59,71 +59,72 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation("core", "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
-    
+
     @Test
     public void testTransposeRowsIntoColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/transpose-rows-into-columns\","
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-	
-	@BeforeTest
-	public void setUpGrid() {
-		initial = createGrid(
-				new String[] { "a", "b", "c" },
-				new Serializable[][] {
-			{ "1", "2", "3" },
-			{ "4", "5", "6" },
-			{ "7", "8", "9" },
-			{ "10", "11", "12" }
-		});
-	}
-	
-	@Test(expectedExceptions = DoesNotApplyException.class)
-	public void testDoesNotApply() throws DoesNotApplyException {
-		Change change = new TransposeRowsIntoColumnsOperation("d", 2).createChange();
-		change.apply(initial, mock(ChangeContext.class));
-	}
-	
-	@Test
-	public void testTransposeRowsIntoColumns() throws DoesNotApplyException {
-		Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
-		
-		GridState expected = createGrid(
-				new String[] { "a", "b 1", "b 2", "c" },
-				new Serializable[][] {
-			{ "1",  "2",  "5",  "3" },
-			{ "4",  null, null, "6" },
-			{ "7",  "8",  "11", "9" },
-			{ "10", null, null, "12" }
-		});
-		
-		assertGridEquals(change.apply(initial, mock(ChangeContext.class)), expected);
-	}
-	
-	@Test
-	public void testTransposeRecordsIntoRows() throws DoesNotApplyException {
-		GridState initialRecords = createGrid(
-				new String[] { "a", "b", "c" },
-				new Serializable[][] {
-			{ "1",  "2",  "3"  },
-			{ null, "5",  null },
-			{ "7",  "8",  "9"  },
-			{ null, "11", null }
-		});
-		
-		Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
-		
-		GridState expected = createGrid(
-				new String[] { "a", "b 1", "b 2", "c" },
-				new Serializable[][] {
-			{ "1",  "2",  "5",  "3" },
-			{ "7",  "8",  "11", "9" }
-		});
-		
-		assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
-	}
+
+    @BeforeTest
+    public void setUpGrid() {
+        initial = createGrid(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { "4", "5", "6" },
+                        { "7", "8", "9" },
+                        { "10", "11", "12" }
+                });
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testDoesNotApply() throws DoesNotApplyException {
+        Change change = new TransposeRowsIntoColumnsOperation("d", 2).createChange();
+        change.apply(initial, mock(ChangeContext.class));
+    }
+
+    @Test
+    public void testTransposeRowsIntoColumns() throws DoesNotApplyException {
+        Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
+
+        GridState expected = createGrid(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "4", null, null, "6" },
+                        { "7", "8", "11", "9" },
+                        { "10", null, null, "12" }
+                });
+
+        assertGridEquals(change.apply(initial, mock(ChangeContext.class)), expected);
+    }
+
+    @Test
+    public void testTransposeRecordsIntoRows() throws DoesNotApplyException {
+        GridState initialRecords = createGrid(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { null, "5", null },
+                        { "7", "8", "9" },
+                        { null, "11", null }
+                });
+
+        Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
+
+        GridState expected = createGrid(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "7", "8", "11", "9" }
+                });
+
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
+    }
 
 }

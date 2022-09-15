@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import java.io.Serializable;
@@ -39,32 +40,31 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class FacetCountTests extends FunctionTestBase {
-    
+
     Project project = null;
-    
+
     @BeforeMethod
     public void setUpProject() {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
-        project = createProject(new String[] { "Column A" }, new Serializable[][] { 
-                {"a"}, {"a"}, {"a"}, {1}, {1}, {true}
+        project = createProject(new String[] { "Column A" }, new Serializable[][] {
+                { "a" }, { "a" }, { "a" }, { 1 }, { 1 }, { true }
         });
         bindings = new Properties();
         bindings.put("project_id", project.getId());
     }
-    
 
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertTrue(invoke("facetCount") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","two","three") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","bad(","Column A") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "two", "three") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "bad(", "Column A") instanceof EvalError);
     }
-    
+
     @Test
-    public void testFacetCountString() {        
+    public void testFacetCountString() {
         Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Long.valueOf(3));
     }
-    
+
     @Test
     public void testExpressionChange() {
         Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Long.valueOf(2));
@@ -72,4 +72,3 @@ public class FacetCountTests extends FunctionTestBase {
     }
 
 }
-

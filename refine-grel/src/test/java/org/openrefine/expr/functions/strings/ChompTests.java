@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -32,6 +33,7 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class ChompTests extends FunctionTestBase {
+
     @Test
     public void testChomp() {
         // FIXME: These return null instead of an EvalError
@@ -43,4 +45,3 @@ public class ChompTests extends FunctionTestBase {
     }
 
 }
-

@@ -42,6 +42,7 @@ import java.util.Set;
  * Interface for evaluable expressions in any arbitrary language.
  */
 public interface Evaluable extends Serializable {
+
     /**
      * Evaluate this expression in the given environment (bindings).
      * 
@@ -49,63 +50,56 @@ public interface Evaluable extends Serializable {
      * @return
      */
     public Object evaluate(Properties bindings);
-    
+
     /**
-     * Returns the source string which generated this expression.
-     * This does not include the language prefix, which can be obtained
-     * by {@link #getLanguagePrefix()}.
+     * Returns the source string which generated this expression. This does not include the language prefix, which can
+     * be obtained by {@link #getLanguagePrefix()}.
      */
     public String getSource();
-    
+
     /**
      * @return the language prefix used to generate this evaluable.
      */
     public String getLanguagePrefix();
-    
+
     /**
-     * @return true when the evaluable can be computed fully (and quickly)
-     * from the local context (the given row or record). If it relies on any
-     * other information (external web service, aggregation over the project),
-     * then it should return false, indicating that the return value may need
-     * to be cached by the caller.
+     * @return true when the evaluable can be computed fully (and quickly) from the local context (the given row or
+     *         record). If it relies on any other information (external web service, aggregation over the project), then
+     *         it should return false, indicating that the return value may need to be cached by the caller.
      */
     public default boolean isLocal() {
         return false;
     }
-    
+
     /**
      * Returns the names of the columns this expression depends on.
      * 
      * @param baseColumn
-     * 		the name of the column this expression is based on
-     * 		(null if none)
-     * @returns null if the columns could not be isolated: in this 
-     *     case, the expression might depend on all columns in the project.
+     *            the name of the column this expression is based on (null if none)
+     * @returns null if the columns could not be isolated: in this case, the expression might depend on all columns in
+     *          the project.
      */
     public default Set<String> getColumnDependencies(String baseColumn) {
-    	return null;
+        return null;
     }
-    
+
     /**
-     * Translates this expression by simultaneously substituting column names
-     * as the supplied map specifies.
+     * Translates this expression by simultaneously substituting column names as the supplied map specifies.
      * 
-     * This is only possible if the extraction of column dependencies
-     * with {@link #getColumnDependencies(String)} succeeds (return a non-null value).
+     * This is only possible if the extraction of column dependencies with {@link #getColumnDependencies(String)}
+     * succeeds (return a non-null value).
      * 
      * @param substitutions
-     *     a map specifying new names for some columns. If a column name is not
-     *     present in the map, it is assumed that the column is not renamed.
-     * @return
-     *     a new expression with updated column names.
+     *            a map specifying new names for some columns. If a column name is not present in the map, it is assumed
+     *            that the column is not renamed.
+     * @return a new expression with updated column names.
      */
     public default Evaluable renameColumnDependencies(Map<String, String> substitutions) {
         return null;
     }
 
     /**
-     * @return
-     *    the source prefixed by the language prefix
+     * @return the source prefixed by the language prefix
      */
     public default String getFullSource() {
         return getLanguagePrefix() + ":" + getSource();

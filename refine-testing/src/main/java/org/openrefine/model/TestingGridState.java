@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -36,50 +37,49 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Iterators;
 
 /**
- * A massively inefficient but very simple implementation of a GridState,
- * for testing purposes.
+ * A massively inefficient but very simple implementation of a GridState, for testing purposes.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class TestingGridState implements GridState {
-    
+
     private ColumnModel columnModel;
     private Map<String, OverlayModel> overlayModels;
     private List<Row> rows;
     private List<Record> records;
-    
+
     // the following is just to emulate the behaviour of a real implementation,
     // since in this testing one everything is always loaded in memory (cached).
     // This boolean indicates whether we pretend that the grid is cached or not.
     private boolean isCached = false;
-    
+
     public TestingGridState(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         this.columnModel = columnModel;
         this.rows = rows;
         this.overlayModels = overlayModels;
         records = groupRowsIntoRecords(rows, columnModel.getKeyColumnIndex());
-        
+
         // Check that all rows have the same number of cells as the project has columns
         int expectedSize = columnModel.getColumns().size();
-        if(!rows.stream().allMatch(r -> r.getCells().size() == expectedSize)) {
+        if (!rows.stream().allMatch(r -> r.getCells().size() == expectedSize)) {
             throw new IllegalArgumentException("Rows are required to contain as many cells as there are columns");
         }
     }
-    
+
     public static List<Record> groupRowsIntoRecords(List<Row> rows, int keyCellIndex) {
         List<Record> records = new ArrayList<>();
         List<Row> currentRecord = new ArrayList<>();
         int recordStart = 0;
-        for(int i = 0; i < rows.size(); i++) {
-            if(Record.isRecordStart(rows.get(i), keyCellIndex) && !currentRecord.isEmpty()) {
+        for (int i = 0; i < rows.size(); i++) {
+            if (Record.isRecordStart(rows.get(i), keyCellIndex) && !currentRecord.isEmpty()) {
                 records.add(new Record(recordStart, currentRecord));
                 recordStart = i;
                 currentRecord = new ArrayList<>();
             }
             currentRecord.add(rows.get(i));
         }
-        if(!currentRecord.isEmpty()) {
+        if (!currentRecord.isEmpty()) {
             records.add(new Record(recordStart, currentRecord));
         }
         return records;
@@ -94,24 +94,24 @@ public class TestingGridState implements GridState {
     public Row getRow(long id) {
         return rows.get((int) id);
     }
-    
+
     private List<IndexedRow> indexedRows() {
-        return IntStream.range(0, rows.size()).mapToObj(i ->  new IndexedRow((long)i, rows.get(i))).collect(Collectors.toList());
+        return IntStream.range(0, rows.size()).mapToObj(i -> new IndexedRow((long) i, rows.get(i))).collect(Collectors.toList());
     }
 
     @Override
     public List<IndexedRow> getRows(long start, int limit) {
         return indexedRows().subList(
-                Math.min((int)start, rows.size()),
-                Math.min((int)start + limit, rows.size()));
+                Math.min((int) start, rows.size()),
+                Math.min((int) start + limit, rows.size()));
     }
-    
+
     @Override
     public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RowFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
-        
+
         List<IndexedRow> sortedRows = sortedRows(sortingConfig);
         return sortedRows.stream()
                 .filter(tuple -> deserializedFilter.filterRow(tuple.getIndex(), tuple.getRow()))
@@ -119,7 +119,7 @@ public class TestingGridState implements GridState {
                 .limit(limit)
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public List<IndexedRow> collectRows() {
         return indexedRows();
@@ -170,7 +170,7 @@ public class TestingGridState implements GridState {
     public long recordCount() {
         return records.size();
     }
-    
+
     @Override
     public long countMatchingRows(RowFilter filter) {
         return indexedRows()
@@ -178,7 +178,7 @@ public class TestingGridState implements GridState {
                 .filter(tuple -> filter.filterRow(tuple.getIndex(), tuple.getRow()))
                 .count();
     }
-    
+
     @Override
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
         long matching = indexedRows()
@@ -216,16 +216,16 @@ public class TestingGridState implements GridState {
     public void saveToFile(File file) throws IOException {
         saveToFile(file, Optional.empty());
     }
-    
+
     @Override
     public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
         saveToFile(file, Optional.ofNullable(progressReporter));
     }
-    
+
     protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
         File gridPath = new File(file, GridState.GRID_PATH);
         File metadataPath = new File(file, GridState.METADATA_PATH);
-        
+
         gridPath.mkdirs();
         File partFile = new File(gridPath, "part-00000.gz");
         FileOutputStream fos = null;
@@ -233,7 +233,7 @@ public class TestingGridState implements GridState {
         try {
             fos = new FileOutputStream(partFile);
             gos = new GZIPOutputStream(fos);
-            for(IndexedRow row : indexedRows()) {
+            for (IndexedRow row : indexedRows()) {
                 ParsingUtilities.saveWriter.writeValue(gos, row);
                 gos.write('\n');
             }
@@ -249,7 +249,7 @@ public class TestingGridState implements GridState {
             // just for the sake of having a more incremental progress report
             progressReporter.get().reportProgress(90);
         }
-        
+
         ParsingUtilities.saveWriter.writeValue(metadataPath, this);
         if (progressReporter.isPresent()) {
             progressReporter.get().reportProgress(100);
@@ -258,14 +258,14 @@ public class TestingGridState implements GridState {
 
     @Override
     public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
-          return aggregateRowsApprox(aggregator, initialState, rows.size()).getState();
+        return aggregateRowsApprox(aggregator, initialState, rows.size()).getState();
     }
-    
+
     @Override
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
         return aggregateRecordsApprox(aggregator, initialState, records.size()).getState();
     }
-    
+
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
         initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
@@ -276,7 +276,7 @@ public class TestingGridState implements GridState {
         T statesA = initialState;
         T statesB = initialState;
         long count = 0;
-        for(IndexedRow row : indexedRows()) {
+        for (IndexedRow row : indexedRows()) {
             if (count == maxRows) {
                 break;
             }
@@ -287,7 +287,7 @@ public class TestingGridState implements GridState {
             }
             count += 1;
         }
-        
+
         return new PartialAggregation<T>(aggregator.sum(statesA, statesB), count, count == maxRows);
     }
 
@@ -302,7 +302,7 @@ public class TestingGridState implements GridState {
         T statesA = initialState;
         T statesB = initialState;
         long count = 0;
-        for(Record record : records) {
+        for (Record record : records) {
             if (count == maxRecords) {
                 break;
             }
@@ -313,7 +313,7 @@ public class TestingGridState implements GridState {
             }
             count += 1;
         }
-        
+
         return new PartialAggregation<T>(aggregator.sum(statesA, statesB), count, count == maxRecords);
     }
 
@@ -322,9 +322,9 @@ public class TestingGridState implements GridState {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
-        
+
         List<Row> rows = new ArrayList<>(this.rows.size());
-        for(IndexedRow indexedRow : indexedRows()) {
+        for (IndexedRow indexedRow : indexedRows()) {
             Row row = mapper.call(indexedRow.getIndex(), indexedRow.getRow());
             if (row.getCells().size() != newColumnModel.getColumns().size()) {
                 Assert.fail(String.format("Row size (%d) inconsistent with supplied column model (%s)",
@@ -334,16 +334,15 @@ public class TestingGridState implements GridState {
         }
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
-    
 
     @Override
     public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
-        
+
         List<Row> rows = new ArrayList<>(this.rows.size());
-        for(IndexedRow indexedRow : indexedRows()) {
+        for (IndexedRow indexedRow : indexedRows()) {
             List<Row> rowBatch = mapper.call(indexedRow.getIndex(), indexedRow.getRow());
             for (Row row : rowBatch) {
                 if (row.getCells().size() != newColumnModel.getColumns().size()) {
@@ -361,10 +360,10 @@ public class TestingGridState implements GridState {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
-        
+
         S currentState = mapper.unit();
         List<Row> rows = new ArrayList<>(this.rows.size());
-        for(IndexedRow indexedRow : indexedRows()) {
+        for (IndexedRow indexedRow : indexedRows()) {
             Row row = mapper.map(currentState, indexedRow.getIndex(), indexedRow.getRow());
             currentState = mapper.combine(currentState, mapper.feed(indexedRow.getIndex(), indexedRow.getRow()));
             if (row.getCells().size() != newColumnModel.getColumns().size()) {
@@ -376,17 +375,16 @@ public class TestingGridState implements GridState {
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
 
-
     @Override
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
-        
+
         List<Row> rows = new ArrayList<>(this.rows.size());
-        for(Record record : records) {
+        for (Record record : records) {
             List<Row> addedRows = mapper.call(record);
-            for(Row row : addedRows) {
+            for (Row row : addedRows) {
                 if (row.getCells().size() != newColumnModel.getColumns().size()) {
                     Assert.fail("Row size inconsistent with supplied column model");
                 }
@@ -398,7 +396,7 @@ public class TestingGridState implements GridState {
 
     @Override
     public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig) {
-    	List<IndexedRow> sortedRows = sortedRows(sortingConfig);
+        List<IndexedRow> sortedRows = sortedRows(sortingConfig);
         return new Iterable<IndexedRow>() {
 
             @Override
@@ -408,13 +406,13 @@ public class TestingGridState implements GridState {
                         .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()))
                         .iterator();
             }
-            
+
         };
     }
 
     @Override
     public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) {
-    	List<Record> sorted = sortedRecords(sortingConfig);
+        List<Record> sorted = sortedRecords(sortingConfig);
         return new Iterable<Record>() {
 
             @Override
@@ -424,7 +422,7 @@ public class TestingGridState implements GridState {
                         .filter(r -> filter.filterRecord(r))
                         .iterator();
             }
-            
+
         };
     }
 
@@ -451,13 +449,13 @@ public class TestingGridState implements GridState {
         if (sortingConfig.getCriteria().isEmpty()) {
             newRows = rows;
         } else {
-            for(Record record : sortedRecords(sortingConfig)) {
+            for (Record record : sortedRecords(sortingConfig)) {
                 newRows.addAll(record.getRows());
             }
         }
         return new TestingGridState(columnModel, newRows, overlayModels);
     }
-    
+
     private List<IndexedRow> sortedRows(SortingConfig sortingConfig) {
         if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
             return indexedRows();
@@ -467,7 +465,7 @@ public class TestingGridState implements GridState {
         Collections.sort(sortedIndexedRows, rowSorter);
         return sortedIndexedRows;
     }
-    
+
     private List<Record> sortedRecords(SortingConfig sortingConfig) {
         if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
             return records;
@@ -510,10 +508,10 @@ public class TestingGridState implements GridState {
         // even if this implementation does not rely on it.
         RowChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(rowMapper);
         RowFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
-        
+
         Map<Long, T> changeData = new HashMap<>();
         Stream<IndexedRow> filteredRows = indexedRows().stream()
-        .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow()));
+                .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow()));
         if (deserializedMapper.getBatchSize() == 1) {
             filteredRows.forEach(ir -> changeData.put(ir.getIndex(), deserializedMapper.call(ir.getIndex(), ir.getRow())));
         } else {
@@ -522,26 +520,27 @@ public class TestingGridState implements GridState {
                 List<IndexedRow> batch = batches.next();
                 List<T> results = deserializedMapper.callRowBatch(batch);
                 if (results.size() != batch.size()) {
-                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
-                for(int i = 0; i != batch.size(); i++) {
+                for (int i = 0; i != batch.size(); i++) {
                     changeData.put(batch.get(i).getIndex(), results.get(i));
                 }
             }
         }
         return new TestingChangeData<T>(changeData);
     }
-    
+
     @Override
     public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RecordChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(recordMapper);
         RecordFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
-        
+
         Map<Long, T> changeData = new HashMap<>();
         Stream<Record> filteredRecords = records.stream()
-        .filter(ir -> deserializedFilter.filterRecord(ir));
+                .filter(ir -> deserializedFilter.filterRecord(ir));
         if (deserializedMapper.getBatchSize() == 1) {
             filteredRecords.forEach(record -> changeData.put(record.getStartRowId(), deserializedMapper.call(record)));
         } else {
@@ -550,9 +549,10 @@ public class TestingGridState implements GridState {
                 List<Record> batch = batches.next();
                 List<T> results = deserializedMapper.callRecordBatch(batch);
                 if (results.size() != batch.size()) {
-                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
-                for(int i = 0; i != batch.size(); i++) {
+                for (int i = 0; i != batch.size(); i++) {
                     changeData.put(batch.get(i).getStartRowId(), results.get(i));
                 }
             }
@@ -566,7 +566,7 @@ public class TestingGridState implements GridState {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RowChangeDataJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(rowJoiner);
-        
+
         List<Row> newRows = indexedRows()
                 .stream()
                 .map(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())))
@@ -580,7 +580,7 @@ public class TestingGridState implements GridState {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RowChangeDataFlatJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(rowJoiner);
-        
+
         List<Row> newRows = indexedRows()
                 .stream()
                 .flatMap(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())).stream())
@@ -594,23 +594,23 @@ public class TestingGridState implements GridState {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RecordChangeDataJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(recordJoiner);
-        
+
         List<Row> rows = records
                 .stream()
                 .flatMap(record -> deserializedJoiner.call(record, changeData.get(record.getStartRowId())).stream())
                 .collect(Collectors.toList());
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
-   
+
     @Override
     public GridState concatenate(GridState other) {
         ColumnModel merged = columnModel.merge(other.getColumnModel());
-        
+
         List<Row> otherRows = other.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
         List<Row> newRows = new ArrayList<>(rows.size() + otherRows.size());
         newRows.addAll(rows);
         newRows.addAll(otherRows);
-        
+
         Map<String, OverlayModel> newOverlayModels = new HashMap<>(other.getOverlayModels());
         newOverlayModels.putAll(overlayModels);
         return new TestingGridState(merged, newRows, newOverlayModels);
@@ -632,7 +632,7 @@ public class TestingGridState implements GridState {
         progressReporter.reportProgress(100);
         return true;
     }
-    
+
     @Override
     public boolean cache() {
         isCached = true;

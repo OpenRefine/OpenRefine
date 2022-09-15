@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.cell;
 
 import static org.mockito.Mockito.mock;
@@ -55,7 +56,7 @@ public class FillDownTests extends RefineTest {
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "fill-down", FillDownOperation.class);
     }
-    
+
     @Test
     public void serializeFillDownOperation() throws Exception {
         String json = "{\"op\":\"core/fill-down\","
@@ -64,101 +65,101 @@ public class FillDownTests extends RefineTest {
                 + "\"columnName\":\"my key\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
-	GridState toFillDown;
-	ListFacetConfig facet;
-	
-	@BeforeTest
-	public void createSplitProject() {
-		toFillDown = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "",   "i" }
-		});
-		
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		facet = new ListFacetConfig();
-		facet.columnName = "hello";
-		facet.setExpression("grel:value");
-	}
-	
-	@Test
-	public void testFillDownRowsNoFacets() throws DoesNotApplyException {
-		Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
-		
-		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b", "c" },
-			{ "",   "b", "d" },
-			{ "e",  "b", "f" },
-			{ null, "g", "h" },
-			{ null, "g", "i" }
-		});
-		
-		assertGridEquals(applied, expectedGrid);
-	}
-	
+
+    GridState toFillDown;
+    ListFacetConfig facet;
+
+    @BeforeTest
+    public void createSplitProject() {
+        toFillDown = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        facet = new ListFacetConfig();
+        facet.columnName = "hello";
+        facet.setExpression("grel:value");
+    }
+
+    @Test
+    public void testFillDownRowsNoFacets() throws DoesNotApplyException {
+        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
-	@Test
-	public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
-		Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
-		
-		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a", "b",   "c" },
-			{ "",  "b",   "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "g",  "i"}
-		});
-		
-		assertGridEquals(applied, expectedGrid);
-	}
-	
-	@Test
-	public void testFillDownRowsFacets() throws DoesNotApplyException {
-		facet.selection = Arrays.asList(
-				new DecoratedValue("h", "h"),
-				new DecoratedValue("i", "i"));
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-		Change change = new FillDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "g",  "i"}
-		});
-		
-		assertGridEquals(applied, expected);
-	}
-	
-	@Test
-	public void testFillDownRecordsFacets() throws DoesNotApplyException {
-		facet.selection = Arrays.asList(
-				new DecoratedValue("c", "c"));
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-		Change change = new FillDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   "b",  "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "",   "i" }
-		});
-		
-		assertGridEquals(applied, expected);
-	}
+    @Test
+    public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
+        Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
+        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testFillDownRowsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        Change change = new FillDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testFillDownRecordsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new FillDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
 }

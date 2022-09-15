@@ -58,12 +58,12 @@ public class EndsWith extends PureFunction {
     public String getDescription() {
         return "Returns a boolean indicating whether s ends with sub. For example, \"food\".endsWith(\"ood\") returns true, whereas \"food\".endsWith(\"odd\") returns false.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

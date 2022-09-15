@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.File;
@@ -12,10 +13,10 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 
 public class FileCachedGridStore implements CachedGridStore {
-    
+
     private final DatamodelRunner runner;
     private final File baseDir;
-    
+
     public FileCachedGridStore(DatamodelRunner runner, File baseDir) {
         this.runner = runner;
         this.baseDir = baseDir;
@@ -23,7 +24,7 @@ public class FileCachedGridStore implements CachedGridStore {
             baseDir.mkdir();
         }
     }
-    
+
     protected File getGridPath(long id) {
         return new File(baseDir, Long.toString(id));
     }
@@ -41,7 +42,7 @@ public class FileCachedGridStore implements CachedGridStore {
             public boolean accept(File dir, String name) {
                 return false;
             }
-            
+
         };
         IOFileFilter dirFilter = fileFilter.negate();
         Collection<File> subDirs = FileUtils.listFilesAndDirs(baseDir, fileFilter, dirFilter);
@@ -49,7 +50,7 @@ public class FileCachedGridStore implements CachedGridStore {
         for (File subDir : subDirs) {
             try {
                 results.add(Long.valueOf(subDir.getName()));
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 continue;
             }
         }

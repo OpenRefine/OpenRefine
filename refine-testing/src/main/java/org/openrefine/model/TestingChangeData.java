@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -21,9 +22,9 @@ import org.openrefine.process.ProgressReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TestingChangeData<T> implements ChangeData<T> {
-    
+
     private Map<Long, T> data;
-    
+
     public TestingChangeData(Map<Long, T> data) {
         this.data = data;
     }
@@ -39,19 +40,20 @@ public class TestingChangeData<T> implements ChangeData<T> {
         return new TestingDatamodelRunner();
     }
 
-    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
-        
+    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)
+            throws IOException {
+
         file.mkdirs();
         File partFile = new File(file, "part-00000.gz");
         FileOutputStream fos = null;
         GZIPOutputStream gos = null;
         OutputStreamWriter writer = null;
-        
+
         try {
             fos = new FileOutputStream(partFile);
             gos = new GZIPOutputStream(fos);
             writer = new OutputStreamWriter(gos);
-            for(IndexedData<T> row : this) {
+            for (IndexedData<T> row : this) {
                 row.write(writer, serializer);
             }
         } finally {
@@ -69,15 +71,14 @@ public class TestingChangeData<T> implements ChangeData<T> {
             progressReporter.get().reportProgress(100);
         }
     }
-    
+
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
         saveToFile(file, serializer, Optional.empty());
     }
-    
+
     public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
         saveToFile(file, serializer, Optional.ofNullable(progressReporter));
     }
-
 
     @Override
     public Iterator<IndexedData<T>> iterator() {
@@ -90,9 +91,9 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
             @Override
             public int compare(IndexedData<T> arg0, IndexedData<T> arg1) {
-                return (int)(arg0.getId() - arg1.getId());
+                return (int) (arg0.getId() - arg1.getId());
             }
-            
+
         });
         return indexed.iterator();
     }

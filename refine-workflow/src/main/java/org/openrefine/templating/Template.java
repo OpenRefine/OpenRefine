@@ -46,6 +46,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class Template {
+
     protected String _prefix;
     protected String _suffix;
     protected String _separator;
@@ -67,52 +68,53 @@ public class Template {
     public void setSeparator(String separator) {
         _separator = separator;
     }
-    
+
     public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, int limit) throws IOException {
-    	Properties bindings = ExpressionUtils.createBindings();
-    	if (_prefix != null) {
+        Properties bindings = ExpressionUtils.createBindings();
+        if (_prefix != null) {
             writer.write(_prefix);
         }
-    	long total = 0;
-    	for(IndexedRow indexedRow : rows) {
-    		if (limit > 0 && total >= limit) {
-    			break;
-    		}
-    		
-    		internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
-    		total++;
-    	}
-    	if (_suffix != null) {
+        long total = 0;
+        for (IndexedRow indexedRow : rows) {
+            if (limit > 0 && total >= limit) {
+                break;
+            }
+
+            internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
+            total++;
+        }
+        if (_suffix != null) {
             writer.write(_suffix);
         }
     }
-    
+
     public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, int limit) throws IOException {
-    	Properties bindings = ExpressionUtils.createBindings();
-    	if (_prefix != null) {
+        Properties bindings = ExpressionUtils.createBindings();
+        if (_prefix != null) {
             writer.write(_prefix);
         }
-    	long total = 0;
-    	for(Record record : records) {
-    		if (limit > 0 && total >= limit) {
-    			break;
-    		}
-    		bindings.put("recordIndex", record.getStartRowId());
-    		for (IndexedRow indexedRow : record.getIndexedRows()) {
-    			if (limit > 0 && total >= limit) {
-        			break;
-        		}
-    			internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
-    			bindings.remove("recordIndex");
-    			total++;
-    		}
-    	}
-    	if (_suffix != null) {
+        long total = 0;
+        for (Record record : records) {
+            if (limit > 0 && total >= limit) {
+                break;
+            }
+            bindings.put("recordIndex", record.getStartRowId());
+            for (IndexedRow indexedRow : record.getIndexedRows()) {
+                if (limit > 0 && total >= limit) {
+                    break;
+                }
+                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
+                bindings.remove("recordIndex");
+                total++;
+            }
+        }
+        if (_suffix != null) {
             writer.write(_suffix);
         }
     }
-    
-    public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings, ColumnModel columnModel) throws IOException {
+
+    public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings, ColumnModel columnModel)
+            throws IOException {
         if (total > 0 && _separator != null) {
             writer.write(_separator);
         }
@@ -144,13 +146,13 @@ public class Template {
             }
         }
     }
-    
+
     protected void writeValue(Object v, Writer writer) throws IOException {
         if (v == null) {
             writer.write("null");
         } else if (ExpressionUtils.isError(v)) {
             writer.write("null");
-            //writer.write("[Error: " + ((EvalError) v).message);
+            // writer.write("[Error: " + ((EvalError) v).message);
         } else if (v instanceof String) {
             writer.write((String) v);
         } else {

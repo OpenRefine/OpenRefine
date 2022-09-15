@@ -72,8 +72,9 @@ public class Escape extends PureFunction {
                     return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLEncoder.encode(s,"UTF-8");
-                    } catch (UnsupportedEncodingException e) {}
+                        return URLEncoder.encode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                    }
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
                 }
@@ -81,17 +82,17 @@ public class Escape extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Escapes s in the given escaping mode. The mode can be one of: 'html', 'xml', csv', 'url', 'javascript'. Note that quotes are required around your mode.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string mode ['html','xml','csv','url','javascript']";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

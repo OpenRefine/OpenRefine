@@ -53,8 +53,8 @@ public class ToString extends PureFunction {
             if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
                 if (o1 instanceof OffsetDateTime) {
-                    OffsetDateTime odt = (OffsetDateTime)o1;
-                    return odt.format(DateTimeFormatter.ofPattern((String)o2));
+                    OffsetDateTime odt = (OffsetDateTime) o1;
+                    return odt.format(DateTimeFormatter.ofPattern((String) o2));
                 } else if (o1 instanceof Number) {
                     return String.format((String) o2, (Number) o1);
                 }
@@ -63,23 +63,23 @@ public class ToString extends PureFunction {
                     return (String) o1;
                 } else {
                     return StringUtils.toString(o1);
-                } 
+                }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a date format string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + " accepts an object and an optional second argument containing a date format string");
     }
 
-    
     @Override
     public String getDescription() {
         return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://docs.openrefine.org/manual/grelfunctions/#date-functions.";
     }
-    
+
     @Override
     public String getParams() {
         return "object o, string format (optional)";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

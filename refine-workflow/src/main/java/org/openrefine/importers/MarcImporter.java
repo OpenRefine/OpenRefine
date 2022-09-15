@@ -52,18 +52,18 @@ import org.openrefine.model.DatamodelRunner;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MarcImporter extends XmlImporter {
-    
+
     public MarcImporter(DatamodelRunner runner) {
         super(runner);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);
             File file = firstFileRecord.getFile(job.getRawDataDir());
-            File tempFile = new File(file.getAbsolutePath()+".xml");
+            File tempFile = new File(file.getAbsolutePath() + ".xml");
 
             try {
                 InputStream inputStream = new FileInputStream(file);
@@ -82,13 +82,13 @@ public class MarcImporter extends XmlImporter {
                     try {
                         outputStream.close();
                         inputStream.close();
-                        
-                        if (tempFile.length() == 0) {           // write failed. Most of time because of wrong Marc format
+
+                        if (tempFile.length() == 0) { // write failed. Most of time because of wrong Marc format
                             tempFile.delete();
-                        } else {                 // only set json if write the temp file successfully:
-                        	firstFileRecord.setLocation(firstFileRecord.getLocation()+".xml");
+                        } else { // only set json if write the temp file successfully:
+                            firstFileRecord.setLocation(firstFileRecord.getLocation() + ".xml");
                         }
-                        
+
 //                        file.delete(); // get rid of our original file
                     } catch (IOException e) {
                         // Just ignore - not much we can do anyway
@@ -101,5 +101,5 @@ public class MarcImporter extends XmlImporter {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         return options;
     };
-    
+
 }

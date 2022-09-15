@@ -59,143 +59,141 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Transforms a table without a record structure to blanking out values
- * which are identical to those on the previous row, creating a record structure.
+ * Transforms a table without a record structure to blanking out values which are identical to those on the previous
+ * row, creating a record structure.
  */
 public class BlankDownOperation extends EngineDependentOperation {
-	
-	protected String _columnName;
-    
+
+    protected String _columnName;
+
     @JsonCreator
     public BlankDownOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName
-        ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName) {
         super(engineConfig);
         _columnName = columnName;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
-    	return _columnName;
+        return _columnName;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Blank down cells in column " + _columnName;
     }
 
     @Override
     public Change createChange() {
-    	return new BlankDownChange(getEngineConfig());
+        return new BlankDownChange(getEngineConfig());
     }
 
     public class BlankDownChange extends EngineDependentChange {
 
-    	public BlankDownChange(EngineConfig engineConfig) {
-			super(engineConfig);
-		}
+        public BlankDownChange(EngineConfig engineConfig) {
+            super(engineConfig);
+        }
 
-		@Override
-    	public GridState apply(GridState state, ChangeContext context) throws DoesNotApplyException {
-    		ColumnModel model = state.getColumnModel();
-    		int index = model.getColumnIndexByName(_columnName);
-    		if (index == -1) {
-    			throw new DoesNotApplyException(
-    					String.format("Column '%s' does not exist", _columnName));
-    		}
-    		Engine engine = getEngine(state);
-    		if (Mode.RecordBased.equals(_engineConfig.getMode())) {
-    			// Simple map of records
-    			return state.mapRecords(
-    					RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
-    					model);
-    			
-    		} else {
-    			// We need to remember the cell from the previous row, so we use a scan map
-    			return state.mapRows(RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index), RowMapper.IDENTITY), model);
-    		}
-    	}
-    
-    	@Override
-    	public boolean isImmediate() {
-    		return true;
-    	}
+        @Override
+        public GridState apply(GridState state, ChangeContext context) throws DoesNotApplyException {
+            ColumnModel model = state.getColumnModel();
+            int index = model.getColumnIndexByName(_columnName);
+            if (index == -1) {
+                throw new DoesNotApplyException(
+                        String.format("Column '%s' does not exist", _columnName));
+            }
+            Engine engine = getEngine(state);
+            if (Mode.RecordBased.equals(_engineConfig.getMode())) {
+                // Simple map of records
+                return state.mapRecords(
+                        RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
+                        model);
 
-    	@Override
-    	public DagSlice getDagSlice() {
-    		// TODO Auto-generated method stub
-    		return null;
-    	}
+            } else {
+                // We need to remember the cell from the previous row, so we use a scan map
+                return state.mapRows(RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index), RowMapper.IDENTITY),
+                        model);
+            }
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
-    
-   	protected static RecordMapper recordMapper(int columnIndex) {
-		return new RecordMapper() {
 
-			private static final long serialVersionUID = -5754924505312738966L;
+    protected static RecordMapper recordMapper(int columnIndex) {
+        return new RecordMapper() {
 
-			@Override
-			public List<Row> call(Record record) {
-				Cell lastCell = null;
-				List<Row> result = new LinkedList<>();
-				for (Row row : record.getRows()) {
-					Serializable cellValue = row.getCellValue(columnIndex);
-					if (lastCell != null
-							&& ExpressionUtils.isNonBlankData(cellValue)
-							&& cellValue.equals(lastCell.getValue())) {
-						result.add(row.withCell(columnIndex, null));
-					} else {
-						result.add(row);
-					}
-					lastCell = row.getCell(columnIndex);
-				}
-				return result;
-			}
-			
-		};
-	}
-	
-	protected static RowScanMapper<Cell> rowScanMapper(int columnIndex) {
-		return new RowScanMapper<Cell>() {
+            private static final long serialVersionUID = -5754924505312738966L;
 
-			private static final long serialVersionUID = 2808768242505893380L;
+            @Override
+            public List<Row> call(Record record) {
+                Cell lastCell = null;
+                List<Row> result = new LinkedList<>();
+                for (Row row : record.getRows()) {
+                    Serializable cellValue = row.getCellValue(columnIndex);
+                    if (lastCell != null
+                            && ExpressionUtils.isNonBlankData(cellValue)
+                            && cellValue.equals(lastCell.getValue())) {
+                        result.add(row.withCell(columnIndex, null));
+                    } else {
+                        result.add(row);
+                    }
+                    lastCell = row.getCell(columnIndex);
+                }
+                return result;
+            }
 
-			@Override
-			public Cell feed(long rowId, Row row) {
-				return row.getCell(columnIndex);
-			}
+        };
+    }
 
-			@Override
-			public Cell combine(Cell left, Cell right) {
-				if (right != null && right.value == null) {
-					// Cell.NULL is used as sentinel, for rows that are skipped by facets.
-					// null cells are simply represented by right == null
-					return left;
-				} else {
-					return right;
-				}
-			}
+    protected static RowScanMapper<Cell> rowScanMapper(int columnIndex) {
+        return new RowScanMapper<Cell>() {
 
-			@Override
-			public Cell unit() {
-				return Cell.NULL;
-			}
+            private static final long serialVersionUID = 2808768242505893380L;
 
-			@Override
-			public Row map(Cell lastCell, long rowId, Row row) {
-				Serializable cellValue = row.getCellValue(columnIndex);
-				if (ExpressionUtils.isNonBlankData(cellValue)
-						&& lastCell != null
-						&& cellValue.equals(lastCell.getValue())) {
-					return row.withCell(columnIndex, null);
-				} else {
-					return row;
-				}
-			}
-			
-		};
-	}
+            @Override
+            public Cell feed(long rowId, Row row) {
+                return row.getCell(columnIndex);
+            }
+
+            @Override
+            public Cell combine(Cell left, Cell right) {
+                if (right != null && right.value == null) {
+                    // Cell.NULL is used as sentinel, for rows that are skipped by facets.
+                    // null cells are simply represented by right == null
+                    return left;
+                } else {
+                    return right;
+                }
+            }
+
+            @Override
+            public Cell unit() {
+                return Cell.NULL;
+            }
+
+            @Override
+            public Row map(Cell lastCell, long rowId, Row row) {
+                Serializable cellValue = row.getCellValue(columnIndex);
+                if (ExpressionUtils.isNonBlankData(cellValue)
+                        && lastCell != null
+                        && cellValue.equals(lastCell.getValue())) {
+                    return row.withCell(columnIndex, null);
+                } else {
+                    return row;
+                }
+            }
+
+        };
+    }
 
 }

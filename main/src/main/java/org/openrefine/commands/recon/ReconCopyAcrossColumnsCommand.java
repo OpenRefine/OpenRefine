@@ -48,18 +48,19 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
 
 public class ReconCopyAcrossColumnsCommand extends EngineDependentCommand {
+
     @Override
     protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String fromColumnName = request.getParameter("fromColumnName");
         String[] toColumnNames = request.getParameterValues("toColumnName[]");
         String[] judgments = request.getParameterValues("judgment[]");
         List<Judgment> parsedJudgments = Arrays.asList(judgments).stream().map(
-        		s -> Recon.stringToJudgment(s)).collect(Collectors.toList());
+                s -> Recon.stringToJudgment(s)).collect(Collectors.toList());
         boolean applyToJudgedCells = Boolean.parseBoolean(request.getParameter("applyToJudgedCells"));
-        
+
         return new ReconCopyAcrossColumnsOperation(
-            engineConfig, fromColumnName, Arrays.asList(toColumnNames), parsedJudgments, applyToJudgedCells);
+                engineConfig, fromColumnName, Arrays.asList(toColumnNames), parsedJudgments, applyToJudgedCells);
     }
 }

@@ -45,34 +45,33 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class RdfTripleImporterTests extends ImporterTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
-    
-    //System Under Test
+
+    // System Under Test
     RdfTripleImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new RdfTripleImporter(runner());
         JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");
     }
 
-    @Test(enabled=false)
-    public void canParseSingleLineTriple() throws Exception{
+    @Test(enabled = false)
+    public void canParseSingleLineTriple() throws Exception {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.";
         StringReader reader = new StringReader(sampleRdf);
 
         GridState grid = parseOneFile(SUT, reader);
-        
+
         ColumnModel columnModel = grid.getColumnModel();
-            
+
         Assert.assertEquals(columnModel.getColumns().size(), 2);
         Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
         Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
@@ -84,32 +83,34 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Test
     public void canParseMultiLineTriple() throws Exception {
-        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.under_the_red_sky>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
+        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.under_the_red_sky>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
         StringReader input = new StringReader(sampleRdf);
         GridState grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
-        //columns
+        // columns
         Assert.assertEquals(columnModel.getColumns().size(), 2);
         Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
         Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
 
-        //rows
+        // rows
         Assert.assertEquals(grid.rowCount(), 3);
-        
-        //row0
+
+        // row0
         Assert.assertEquals(grid.getRow(0).cells.size(), 2);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); 
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
 
-        //row1
+        // row1
         Assert.assertEquals(grid.getRow(1).cells.size(), 2);
         Assert.assertNull(grid.getRow(1).getCell(0));
         Assert.assertEquals(grid.getRow(1).getCellValue(1), "http://rdf.freebase.com/ns/en.under_the_red_sky");
 
-        //row2
+        // row2
         Assert.assertEquals(grid.getRow(2).cells.size(), 2);
         Assert.assertNull(grid.getRow(2).getCell(0));
         Assert.assertEquals(grid.getRow(2).getCellValue(1), "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
@@ -117,39 +118,41 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Test
     public void canParseMultiLineMultiPredicatesTriple() throws Exception {
-        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.genre> <http://rdf.freebase.com/ns/en.folk_rock>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
+        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.genre> <http://rdf.freebase.com/ns/en.folk_rock>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
         StringReader input = new StringReader(sampleRdf);
         GridState grid = parseOneFile(SUT, input);
- 
+
         ColumnModel columnModel = grid.getColumnModel();
-        //columns
+        // columns
         Assert.assertEquals(columnModel.getColumns().size(), 3);
         Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
         Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
         Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
-        
-        //rows
+
+        // rows
         Assert.assertEquals(grid.rowCount(), 2);
 
-        //row0
+        // row0
         Assert.assertEquals(grid.getRow(0).cells.size(), 3);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
         Assert.assertEquals(grid.getRow(0).getCellValue(2), "http://rdf.freebase.com/ns/en.folk_rock");
 
-        //row1
+        // row1
         Assert.assertEquals(grid.getRow(1).cells.size(), 3);
         Assert.assertNull(grid.getRow(1).getCell(0));
         Assert.assertEquals(grid.getRow(1).getCell(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
     }
-    
+
     @Test
     public void canParseTripleWithValue() throws Exception {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/common.topic.alias>\"Robert Zimmerman\"@en.";
         StringReader input = new StringReader(sampleRdf);
-        
+
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.N3);
         GridState grid = parseOneFile(SUT, input);
 
@@ -161,8 +164,8 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).cells.size(), 2);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(grid.getRow(0).getCellValue(1), "Robert Zimmerman@en");
-    }    
-    
+    }
+
     @Test
     public void canParseRdfXml() throws Exception {
         // From W3C spec http://www.w3.org/TR/REC-rdf-syntax/#example8
@@ -200,18 +203,18 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(3).getCellValue(1), "The Tree@en");
         Assert.assertEquals(grid.getRow(3).getCellValue(2), "Das Buch ist außergewöhnlich@de");
     }
-    
+
     @Test
     public void canParseN3() throws Exception {
-        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
-            "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
-            "<http://www.example.org/people#fred>\n" + 
-                    "p:GivenName     \"Fred\";\n" + 
-                    "p:hasEmail              <mailto:fred@example.com>;\n" + 
-                    "m:attending     <http://meetings.example.com/cal#m1> .\n";
-                        
+        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" +
+                "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" +
+                "<http://www.example.org/people#fred>\n" +
+                "p:GivenName     \"Fred\";\n" +
+                "p:hasEmail              <mailto:fred@example.com>;\n" +
+                "m:attending     <http://meetings.example.com/cal#m1> .\n";
+
         StringReader input = new StringReader(sampleRdf);
-        
+
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.N3);
         GridState grid = parseOneFile(SUT, input);
 
@@ -228,18 +231,18 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).getCellValue(2), "mailto:fred@example.com");
         Assert.assertEquals(grid.getRow(0).getCellValue(3), "Fred");
     }
-    
+
     @Test
     public void canParseTtl() throws Exception {
-        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
-            "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
-            "<http://www.example.org/people#fred>\n" + 
-                    "p:GivenName     \"Fred\";\n" + 
-                    "p:hasEmail              <mailto:fred@example.com>;\n" + 
-                    "m:attending     <http://meetings.example.com/cal#m1> .\n";
-                        
+        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" +
+                "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" +
+                "<http://www.example.org/people#fred>\n" +
+                "p:GivenName     \"Fred\";\n" +
+                "p:hasEmail              <mailto:fred@example.com>;\n" +
+                "m:attending     <http://meetings.example.com/cal#m1> .\n";
+
         StringReader input = new StringReader(sampleRdf);
-        
+
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.TTL);
         GridState grid = parseOneFile(SUT, input);
 
@@ -256,15 +259,16 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).getCellValue(2), "mailto:fred@example.com");
         Assert.assertEquals(grid.getRow(0).getCellValue(3), "Fred");
     }
-    
+
     @Test
     public void canParseNTriples() throws Exception {
-        String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n" +
-                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
-                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
-                        
+        String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n"
+                +
+                "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
+                "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
+
         StringReader input = new StringReader(sampleRdf);
-        
+
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.NT);
         GridState grid = parseOneFile(SUT, input);
 
@@ -274,7 +278,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#GivenName");
         Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
         Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
-        
+
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 4);
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "http://www.example.org/people#fred");
@@ -295,12 +299,12 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.TTL);
         GridState grid = parseOneFile(SUT, input);
 
-        String[] columns = {"subject",
+        String[] columns = { "subject",
                 "http://example.org/data#professor",
                 "http://example.org/data#title",
                 "http://example.org/data#homePage",
                 "http://example.org/data#fullName",
-                };
+        };
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), columns.length);
@@ -316,30 +320,28 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).getCellValue(1), grid.getRow(1).getCellValue(0));
     }
 
-
-    
     @Test
     public void canParseJsonld() throws Exception {
-        String sampleJsonld = "{\n "+
-        "  \"@context\": {\n "+
-        "    \"m\": \"http://www.example.org/meeting_organization#\",\n "+
-        "    \"p\": \"http://www.example.org/personal_details#\",\n "+
-        "    \"rdf\": \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\",\n "+
-        "    \"rdfs\": \"http://www.w3.org/2000/01/rdf-schema#\",\n "+
-        "    \"xsd\": \"http://www.w3.org/2001/XMLSchema#\"\n "+
-        "  },\n "+
-        "  \"@id\": \"http://www.example.org/people#fred\",\n "+
-        "  \"m:attending\": {\n "+
-        "    \"@id\": \"http://meetings.example.com/cal#m1\"\n "+
-        "  },\n "+
-        "  \"p:GivenName\": \"Fred\",\n "+
-        "  \"p:hasEmail\": {\n "+
-        "    \"@id\": \"mailto:fred@example.com\"\n "+
-        "  }\n "+
-        "}";
-                        
+        String sampleJsonld = "{\n " +
+                "  \"@context\": {\n " +
+                "    \"m\": \"http://www.example.org/meeting_organization#\",\n " +
+                "    \"p\": \"http://www.example.org/personal_details#\",\n " +
+                "    \"rdf\": \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\",\n " +
+                "    \"rdfs\": \"http://www.w3.org/2000/01/rdf-schema#\",\n " +
+                "    \"xsd\": \"http://www.w3.org/2001/XMLSchema#\"\n " +
+                "  },\n " +
+                "  \"@id\": \"http://www.example.org/people#fred\",\n " +
+                "  \"m:attending\": {\n " +
+                "    \"@id\": \"http://meetings.example.com/cal#m1\"\n " +
+                "  },\n " +
+                "  \"p:GivenName\": \"Fred\",\n " +
+                "  \"p:hasEmail\": {\n " +
+                "    \"@id\": \"mailto:fred@example.com\"\n " +
+                "  }\n " +
+                "}";
+
         StringReader input = new StringReader(sampleJsonld);
-        
+
         SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.JSONLD);
         GridState grid = parseOneFile(SUT, input);
 
@@ -355,5 +357,5 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).getCellValue(1), "mailto:fred@example.com");
         Assert.assertEquals(grid.getRow(0).getCellValue(2), "Fred");
         Assert.assertEquals(grid.getRow(0).getCellValue(3), "http://meetings.example.com/cal#m1");
-    } 
+    }
 }

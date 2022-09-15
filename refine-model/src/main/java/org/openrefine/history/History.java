@@ -52,40 +52,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Track done and undone changes. Done changes can be undone; undone changes can be redone.
- * Each change is actually not tracked directly but through a history entry. The history
- * entry stores only the metadata, while the change object stores the actual data. Thus
- * the history entries are much smaller and can be kept in memory, while the change objects
+ * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
+ * tracked directly but through a history entry. The history entry stores only the metadata, while the change object
+ * stores the actual data. Thus the history entries are much smaller and can be kept in memory, while the change objects
  * are only loaded into memory on demand.
  */
-public class History  {
-    
+public class History {
+
     private static final Logger logger = LoggerFactory.getLogger(History.class);
 
     @JsonProperty("entries")
-    protected List<HistoryEntry>       _entries;
+    protected List<HistoryEntry> _entries;
     @JsonProperty("position")
-    protected int                      _position;
-    
+    protected int _position;
+
     @JsonIgnore
-    protected List<GridState>    _states;
+    protected List<GridState> _states;
     // stores whether the grid state at the same index is read directly from disk or not
     @JsonIgnore
-    protected List<Boolean>      _cachedOnDisk;
+    protected List<Boolean> _cachedOnDisk;
     @JsonIgnore
-    protected ChangeDataStore    _dataStore;
+    protected ChangeDataStore _dataStore;
     @JsonIgnore
-    protected CachedGridStore    _gridStore;
+    protected CachedGridStore _gridStore;
 
     /**
      * Creates an empty on an initial grid state.
      * 
      * @param initialGrid
-     *    the initial state of the project
+     *            the initial state of the project
      * @param dataStore
-     *    where to store change data
+     *            where to store change data
      * @param gridStore
-     *    where to store intermediate cached grids
+     *            where to store intermediate cached grids
      */
     public History(GridState initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
         _entries = new ArrayList<>();
@@ -98,13 +97,13 @@ public class History  {
         _dataStore = dataStore;
         _gridStore = gridStore;
     }
-    
+
     /**
-     * Constructs a history with an initial grid
-     * and a list of history entries.
+     * Constructs a history with an initial grid and a list of history entries.
+     * 
      * @param initialGrid
      * @param metadata
-     * @throws DoesNotApplyException 
+     * @throws DoesNotApplyException
      */
     public History(
             GridState initialGrid,
@@ -114,7 +113,7 @@ public class History  {
             int position) throws DoesNotApplyException {
         this(initialGrid, dataStore, gridStore);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
-        for(HistoryEntry entry : entries) {
+        for (HistoryEntry entry : entries) {
             GridState grid = null;
             if (availableCachedStates.contains(entry.getId())) {
                 try {
@@ -128,15 +127,15 @@ public class History  {
             _cachedOnDisk.add(grid != null);
             _entries.add(entry);
         }
-        
+
         // ensure the grid state of the current position is computed (invariant)
         getGridState(position);
         _position = position;
     }
 
     /**
-     * Returns the state of the grid at the current position in the
-     * history.
+     * Returns the state of the grid at the current position in the history.
+     * 
      * @return
      */
     @JsonIgnore
@@ -147,23 +146,26 @@ public class History  {
         }
         return _states.get(_position);
     }
-    
+
     /**
      * Returns the state of the grid at before any operation was applied on it
+     * 
      * @return
      */
     @JsonIgnore
-	public GridState getInitialGridState() {
+    public GridState getInitialGridState() {
         // the initial state is always assumed to be computed already
         if (_states.get(0) == null) {
             throw new IllegalStateException("The initial grid state has not been computed yet");
         }
-		return _states.get(0);
-	}
-    
+        return _states.get(0);
+    }
+
     /**
      * Returns the state of the grid at a given index in the history
-     * @param position a 0-based index in the list of successive grid states
+     * 
+     * @param position
+     *            a 0-based index in the list of successive grid states
      * @return
      */
     protected GridState getGridState(int position) throws DoesNotApplyException {
@@ -184,37 +186,37 @@ public class History  {
             return newState;
         }
     }
-    
+
     @JsonProperty("position")
     public int getPosition() {
         return _position;
     }
-    
+
     @JsonProperty("entries")
     public List<HistoryEntry> getEntries() {
         return _entries;
     }
-    
+
     @JsonIgnore
     public ChangeDataStore getChangeDataStore() {
-        return _dataStore; 
+        return _dataStore;
     }
-    
+
     @JsonIgnore
     public CachedGridStore getCachedGridStore() {
         return _gridStore;
     }
 
     /**
-     * Adds a HistoryEntry to the list of past histories
-     * Adding a new entry clears all currently held future histories
+     * Adds a HistoryEntry to the list of past histories Adding a new entry clears all currently held future histories
+     * 
      * @param entry
-     * @throws DoesNotApplyException 
+     * @throws DoesNotApplyException
      */
     public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
         // Any new change will clear all future entries.
-        if(_position != _entries.size()) {
-            
+        if (_position != _entries.size()) {
+
             // uncache all the grid states that we are removing
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
@@ -229,10 +231,10 @@ public class History  {
                 }
             }
             _entries = _entries.subList(0, _position);
-            _states = _states.subList(0, _position+1);
-            _cachedOnDisk = _cachedOnDisk.subList(0, _position+1);
+            _states = _states.subList(0, _position + 1);
+            _cachedOnDisk = _cachedOnDisk.subList(0, _position + 1);
         }
-        
+
         ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
         GridState newState = entry.getChange().apply(getCurrentGridState(), context);
         _states.add(newState);
@@ -240,30 +242,31 @@ public class History  {
         _entries.add(entry);
         _position++;
     }
-    
+
     /**
      * Makes sure the current grid state is cached on disk, to make project loading faster
-     * @throws DoesNotApplyException 
-     * @throws IOException 
+     * 
+     * @throws DoesNotApplyException
+     * @throws IOException
      */
     public void cacheCurrentGridState() throws IOException {
-        if ( _position > 0 && !_cachedOnDisk.get(_position)) {
+        if (_position > 0 && !_cachedOnDisk.get(_position)) {
             try {
-                cacheIntermediateGrid(_entries.get(_position-1).getId());
+                cacheIntermediateGrid(_entries.get(_position - 1).getId());
             } catch (DoesNotApplyException e) {
                 // cannot happen, since we assume that the current grid state is always computed
                 throw new IllegalStateException("Current grid state is not computed");
             }
         }
     }
-    
+
     protected void cacheIntermediateGrid(long historyEntryID) throws DoesNotApplyException, IOException {
         int historyEntryIndex = entryIndex(historyEntryID);
         // first, ensure that the grid is computed
         GridState grid = getGridState(historyEntryIndex + 1);
         long historyEntryId = _entries.get(historyEntryIndex).getId();
         GridState cached = _gridStore.cacheGrid(historyEntryId, grid);
-        synchronized(this) {
+        synchronized (this) {
             _states.set(historyEntryIndex + 1, cached);
             _cachedOnDisk.set(historyEntryIndex + 1, true);
             // invalidate the following states until the next cached grid
@@ -276,11 +279,11 @@ public class History  {
     }
 
     public List<HistoryEntry> getLastPastEntries(int count) {
-        
+
         if (count <= 0) {
             return _entries.subList(0, _position);
         } else {
-            return _entries.subList(Math.max(0,_position-count), _position);
+            return _entries.subList(Math.max(0, _position - count), _position);
         }
     }
 
@@ -300,7 +303,7 @@ public class History  {
             try {
                 int index = entryIndex(entryID);
                 return index == 0 ? 0 : _entries.get(index - 1).getId();
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return -1;
             }
         }
@@ -313,7 +316,7 @@ public class History  {
             return null;
         }
     }
-    
+
     protected int entryIndex(long entryID) {
         for (int i = 0; i < _entries.size(); i++) {
             if (_entries.get(i).getId() == entryID) {

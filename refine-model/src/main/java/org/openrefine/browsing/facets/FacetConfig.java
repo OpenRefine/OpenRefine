@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import java.util.Map;
@@ -35,63 +36,51 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
-
 /**
- * Represents the configuration of a facet, as stored
- * in the engine configuration and in the JSON serialization
- * of operations. It does not contain the actual values displayed by
- * the facet.
+ * Represents the configuration of a facet, as stored in the engine configuration and in the JSON serialization of
+ * operations. It does not contain the actual values displayed by the facet.
  * 
  * @author Antonin Delpeuch
  *
  */
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeIdResolver(FacetConfigResolver.class)
-public interface FacetConfig  {   
-    
+public interface FacetConfig {
+
     /**
-     * Instantiates the given facet on a particular column model.
-     * This allows to check the validity of the configuration
-     * against a particular table schema (checking that the 
-     * dependent columns exist, for instance).
+     * Instantiates the given facet on a particular column model. This allows to check the validity of the configuration
+     * against a particular table schema (checking that the dependent columns exist, for instance).
      * 
      * @param columnModel
-     *      the header of the table the facet is applied to.
-     *      
+     *            the header of the table the facet is applied to.
+     * 
      * @return a computed facet on the given project.
      */
     public Facet apply(ColumnModel columnModel);
-    
+
     /**
-     * Computes the set of columns the facet depends on.
-     * If the facet relies on an unknown set of columns, or if
-     * it is not row-wise, this returns null.
+     * Computes the set of columns the facet depends on. If the facet relies on an unknown set of columns, or if it is
+     * not row-wise, this returns null.
      * 
-     * @return
-     *     the set of column names the facet depends on.
+     * @return the set of column names the facet depends on.
      */
     @JsonIgnore
     public Set<String> getColumnDependencies();
-    
+
     /**
      * Updates the facet config after a renaming of columns.
      * 
-     * @return null if the update could not be performed, or the new
-     * facet config if the update could be performed.
+     * @return null if the update could not be performed, or the new facet config if the update could be performed.
      */
     public FacetConfig renameColumnDependencies(Map<String, String> substitutions);
-    
+
     /**
-     * A neutral facet is a facet that does not filter out any row,
-     * i.e. it is in its initial, reset state. Neutral facets are still
-     * useful to visualize the distribution of values in a column.
+     * A neutral facet is a facet that does not filter out any row, i.e. it is in its initial, reset state. Neutral
+     * facets are still useful to visualize the distribution of values in a column.
      */
     @JsonIgnore
     public boolean isNeutral();
-    
+
     /**
      * The facet type as stored in json.
      */

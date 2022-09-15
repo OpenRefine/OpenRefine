@@ -54,7 +54,6 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-
 public class MultiValuedCellsJoinTests extends RefineTest {
 
     @Override
@@ -62,12 +61,12 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
-    
+
     @Test
     public void serializeMultiValuedCellJoinOperation() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-join\","
@@ -75,69 +74,69 @@ public class MultiValuedCellsJoinTests extends RefineTest {
                 + "\"columnName\":\"value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
-	GridState initialState;
-	
-	@BeforeTest
-	public void setUpGrid() {
-		initialState = createGrid(
-				new String[] { "key", "foo", "bar" },
-				new Serializable[][] {
-			{ "record1", "a", "b" },
-			{ null,      "c", "d" },
-			{ "record2", "", "f" },
-			{ null,      "g", ""  },
-			{ null,      null, null }
-		});
-	}
-	
-	@Test(expectedExceptions = DoesNotApplyException.class)
-	public void testInvalidColumn() throws DoesNotApplyException, ParsingException {
-		Change SUT = new MultiValuedCellJoinOperation("does_not_exist", "key", ",").createChange();
-		SUT.apply(initialState, mock(ChangeContext.class));
-	}
-	
-	@Test
-	public void testJoin() throws DoesNotApplyException, ParsingException {
-		Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
-		GridState state = SUT.apply(initialState, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(new String[] { "key", "foo", "bar" },
-				new Serializable[][] {
-			{ "record1", "a,c", "b" },
-			{ null,      null, "d" },
-			{ "record2", "g", "f" },
-			{ null,      null, null } // this line is a record on its own, so it is preserved
-		});
-		
-		Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
-		List<IndexedRow> rows = state.collectRows();
-		List<IndexedRow> expectedRows = expected.collectRows();
-		Assert.assertEquals(rows, expectedRows);
-	}
-	
-	@Test
-	public void testCustomKey() throws DoesNotApplyException, ParsingException {
-		Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
-		GridState state = SUT.apply(initialState, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(
-				new String[] { "key", "foo", "bar" },
-				new Serializable[][] {
-			{ "record1", "a", "b" },
-			{ null,      "c", "d,f" },
-			{ "record2", "",   null },
-			{ null,      "g", null  },
-			{ null,      null, null }
-		});
-		
-		Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
-		List<IndexedRow> rows = state.collectRows();
-		List<IndexedRow> expectedRows = expected.collectRows();
-		Assert.assertEquals(rows, expectedRows);
-	}
+
+    GridState initialState;
+
+    @BeforeTest
+    public void setUpGrid() {
+        initialState = createGrid(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "b" },
+                        { null, "c", "d" },
+                        { "record2", "", "f" },
+                        { null, "g", "" },
+                        { null, null, null }
+                });
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testInvalidColumn() throws DoesNotApplyException, ParsingException {
+        Change SUT = new MultiValuedCellJoinOperation("does_not_exist", "key", ",").createChange();
+        SUT.apply(initialState, mock(ChangeContext.class));
+    }
+
+    @Test
+    public void testJoin() throws DoesNotApplyException, ParsingException {
+        Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
+        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a,c", "b" },
+                        { null, null, "d" },
+                        { "record2", "g", "f" },
+                        { null, null, null } // this line is a record on its own, so it is preserved
+                });
+
+        Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
+        List<IndexedRow> rows = state.collectRows();
+        List<IndexedRow> expectedRows = expected.collectRows();
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testCustomKey() throws DoesNotApplyException, ParsingException {
+        Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
+        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "b" },
+                        { null, "c", "d,f" },
+                        { "record2", "", null },
+                        { null, "g", null },
+                        { null, null, null }
+                });
+
+        Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
+        List<IndexedRow> rows = state.collectRows();
+        List<IndexedRow> expectedRows = expected.collectRows();
+        Assert.assertEquals(rows, expectedRows);
+    }
 
 }
-

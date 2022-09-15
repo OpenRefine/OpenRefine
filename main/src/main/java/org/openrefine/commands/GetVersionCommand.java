@@ -46,6 +46,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class GetVersionCommand extends Command {
 
     protected class VersionResponse {
+
         @JsonProperty("version")
         public String version = RefineServlet.VERSION;
         @JsonProperty("revision")

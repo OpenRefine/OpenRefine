@@ -79,10 +79,10 @@ public class ImportProjectCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFTokenAsGET(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFTokenAsGET(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ProjectManager.singleton.setBusy(true);
         try {
@@ -113,9 +113,8 @@ public class ImportProjectCommand extends Command {
     }
 
     protected long internalImport(
-        HttpServletRequest    request,
-        Properties            options
-    ) throws Exception {
+            HttpServletRequest request,
+            Properties options) throws Exception {
 
         String url = null;
         long projectID = 0;
@@ -146,15 +145,14 @@ public class ImportProjectCommand extends Command {
         if (url != null && url.length() > 0) {
             projectID = internalImportURL(request, options, url);
         }
-        
+
         return projectID;
     }
 
     protected long internalImportURL(
-        HttpServletRequest    request,
-        Properties            options,
-        String                urlString
-    ) throws Exception {
+            HttpServletRequest request,
+            Properties options,
+            String urlString) throws Exception {
         URL url = new URL(urlString);
         URLConnection connection = null;
 
@@ -179,81 +177,80 @@ public class ImportProjectCommand extends Command {
             inputStream.close();
         }
     }
-    
+
     protected long importProject(InputStream inputStream, boolean decompress) throws IOException {
 
         long projectID = 0;
-        
-    	// First copy the candidate project data as an importing job, to have the opportunity to check
+
+        // First copy the candidate project data as an importing job, to have the opportunity to check
         // its format.
         ImportingJob job = ImportingManager.createJob();
-        
+
         // Save the input stream to a file in the importer job dir
         String filename = decompress ? "project.tar.gz" : "project.tar";
         File targetFile = new File(job.getRawDataDir(), filename);
         OutputStream outputStream = new FileOutputStream(targetFile);
         long size = ByteStreams.copy(inputStream, outputStream);
         outputStream.close();
-        
+
         // Inspect the stream to check if it looks like a legit project
         boolean dataZipFound = false;
         boolean historyJsonFound = false;
         InputStream importedInputStream = new FileInputStream(targetFile);
         if (decompress) {
-        	importedInputStream = new GZIPInputStream(importedInputStream);
+            importedInputStream = new GZIPInputStream(importedInputStream);
         }
         TarArchiveInputStream tin = new TarArchiveInputStream(importedInputStream);
         TarArchiveEntry tarEntry = null;
-      
+
         while ((tarEntry = tin.getNextTarEntry()) != null) {
             String name = tarEntry.getName();
             if ("data.zip".equals(name)) {
-            	dataZipFound = true;
-            	break;
+                dataZipFound = true;
+                break;
             } else if ("history.json".equals(name)) {
-            	historyJsonFound = true;
-            	break;
+                historyJsonFound = true;
+                break;
             }
         }
         tin.close();
-        
+
         if (historyJsonFound) {
-        	 projectID = Project.generateID();
-             logger.info("Importing existing project using new ID {}", projectID);
-        	// This looks like a valid OR project.
-        	// Just untar it directly in the project directory
-             InputStream fileInputStream = new FileInputStream(targetFile);
-        	ProjectManager.singleton.importProject(projectID, fileInputStream, decompress);
+            projectID = Project.generateID();
+            logger.info("Importing existing project using new ID {}", projectID);
+            // This looks like a valid OR project.
+            // Just untar it directly in the project directory
+            InputStream fileInputStream = new FileInputStream(targetFile);
+            ProjectManager.singleton.importProject(projectID, fileInputStream, decompress);
         } else if (dataZipFound) {
-        	// If legacy project, then use the appropriate importer instead
-        	logger.info("Importing legacy project");
-        	
-        	// Add the ImportingFileRecord to the job
-        	ImportingFileRecord fileRecord = new ImportingFileRecord(
-            		null, // sparkURI
-        			ImportingUtilities.getRelativePath(targetFile, job.getRawDataDir()), // location
-        			filename, // fileName
-        			size, // size
-        			"project import", // origin
-        			null, // declaredMimeType
-        			null, // mimeType
-        			null, // URL
-        			null, // encoding
-        			null, // declaredEncoding
-        			"openrefine", // format
-        			null // archiveFileName
-        			);
-        	job.getRetrievalRecord().files = Collections.singletonList(fileRecord);
-        	job.setFileSelection(Collections.singletonList(0));
-        	List<Exception> exceptions = new ArrayList<>();
-        	ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        	projectID = ImportingUtilities.createProject(job, "openrefine-legacy", options, exceptions, true);
+            // If legacy project, then use the appropriate importer instead
+            logger.info("Importing legacy project");
+
+            // Add the ImportingFileRecord to the job
+            ImportingFileRecord fileRecord = new ImportingFileRecord(
+                    null, // sparkURI
+                    ImportingUtilities.getRelativePath(targetFile, job.getRawDataDir()), // location
+                    filename, // fileName
+                    size, // size
+                    "project import", // origin
+                    null, // declaredMimeType
+                    null, // mimeType
+                    null, // URL
+                    null, // encoding
+                    null, // declaredEncoding
+                    "openrefine", // format
+                    null // archiveFileName
+            );
+            job.getRetrievalRecord().files = Collections.singletonList(fileRecord);
+            job.setFileSelection(Collections.singletonList(0));
+            List<Exception> exceptions = new ArrayList<>();
+            ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+            projectID = ImportingUtilities.createProject(job, "openrefine-legacy", options, exceptions, true);
         } else {
-        	throw new IOException("The supplied file could not be recognized as an OpenRefine project");
+            throw new IOException("The supplied file could not be recognized as an OpenRefine project");
         }
-        
+
         return projectID;
     }
-
 
 }

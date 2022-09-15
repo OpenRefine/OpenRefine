@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
- import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
@@ -45,67 +45,65 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An operation which reorders the rows of the grid permanently
- * according to a given sorting configuration.
+ * An operation which reorders the rows of the grid permanently according to a given sorting configuration.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class RowReorderOperation implements Operation {
+
     final protected Mode _mode;
     final protected SortingConfig _sorting;
 
     @JsonCreator
     public RowReorderOperation(
-            @JsonProperty("mode")
-            Mode mode,
-            @JsonProperty("sorting")
-            SortingConfig sorting) {
+            @JsonProperty("mode") Mode mode,
+            @JsonProperty("sorting") SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
     }
-    
+
     @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
     }
-    
+
     @JsonProperty("sorting")
     public SortingConfig getSortingConfig() {
         return _sorting;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Reorder rows";
     }
-    
+
     @Override
     public Change createChange() {
-    	return new RowReorderChange();
+        return new RowReorderChange();
     }
 
     public class RowReorderChange implements Change {
-        
-    	@Override
-    	public boolean isImmediate() {
-    		return true;
-    	}
 
-    	@Override
-    	public DagSlice getDagSlice() {
-    		// TODO Auto-generated method stub
-    		return null;
-    	}
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
 
-    	@Override
-    	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-    		if (Mode.RowBased.equals(_mode)) {
-    			return projectState.reorderRows(_sorting);
-    		} else {
-    			return projectState.reorderRecords(_sorting);
-    		}
-    	}
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+            if (Mode.RowBased.equals(_mode)) {
+                return projectState.reorderRows(_sorting);
+            } else {
+                return projectState.reorderRecords(_sorting);
+            }
+        }
 
     }
 

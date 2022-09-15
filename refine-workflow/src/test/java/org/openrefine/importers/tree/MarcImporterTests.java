@@ -57,64 +57,64 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MarcImporterTests extends ImporterTest {
-	
-	MarcImporter parser;
-	
-	@BeforeMethod
-	@Override
-	public void setUp() {
-		super.setUp();
-		parser = new MarcImporter(runner());
-	}
-	
-	@Test
-	public void testParseSampleRecord() throws Exception {
-		ObjectNode options = parser.createParserUIInitializationData(
+
+    MarcImporter parser;
+
+    @BeforeMethod
+    @Override
+    public void setUp() {
+        super.setUp();
+        parser = new MarcImporter(runner());
+    }
+
+    @Test
+    public void testParseSampleRecord() throws Exception {
+        ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
         JSONUtilities.append(path, "marc:record");
         JSONUtilities.safePut(options, "recordPath", path);
-        
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.mrc");
-		File copy = saveInputStreamToImporterTestDir(inputStream);
-		
-		List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
-				new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
-		// NOTE: This has the side effect of creating sample.mrc.xml
-		parser.createParserUIInitializationData(job, importingFileRecords, "marc");
-		
-		GridState grid = parseFiles(parser, importingFileRecords, options);
-		
-		List<String> columnNames = grid.getColumnModel().getColumnNames();
-		Assert.assertTrue(columnNames.contains("marc:record - marc:datafield - tag"));
-	}
-	
-	@Test
-	public void testReadMarcFileWithUnicode() throws Exception {
-		ObjectNode options = parser.createParserUIInitializationData(
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.mrc");
+        File copy = saveInputStreamToImporterTestDir(inputStream);
+
+        List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
+                new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
+        // NOTE: This has the side effect of creating sample.mrc.xml
+        parser.createParserUIInitializationData(job, importingFileRecords, "marc");
+
+        GridState grid = parseFiles(parser, importingFileRecords, options);
+
+        List<String> columnNames = grid.getColumnModel().getColumnNames();
+        Assert.assertTrue(columnNames.contains("marc:record - marc:datafield - tag"));
+    }
+
+    @Test
+    public void testReadMarcFileWithUnicode() throws Exception {
+        ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
         JSONUtilities.append(path, "marc:record");
         JSONUtilities.safePut(options, "recordPath", path);
         JSONUtilities.safePut(options, "trimStrings", true);
         JSONUtilities.safePut(options, "storeEmptyStrings", false);
-        
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("importers/scriblio.mrc");
-		File copy = saveInputStreamToImporterTestDir(inputStream);
-		
-		List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
-				new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
-		// NOTE: This has the side effect of creating scriblio.mrc.xml
-		parser.createParserUIInitializationData(job, importingFileRecords, "marc");
-		
-		GridState grid = parseFiles(parser, importingFileRecords, options);
-		
-		List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
-		assertEquals(grid.rowCount(), 30);
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("importers/scriblio.mrc");
+        File copy = saveInputStreamToImporterTestDir(inputStream);
+
+        List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
+                new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
+        // NOTE: This has the side effect of creating scriblio.mrc.xml
+        parser.createParserUIInitializationData(job, importingFileRecords, "marc");
+
+        GridState grid = parseFiles(parser, importingFileRecords, options);
+
+        List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        assertEquals(grid.rowCount(), 30);
         assertEquals(rows.get(1).cells.size(), 8);
 
         Row r0 = rows.get(0);
@@ -125,8 +125,7 @@ public class MarcImporterTests extends ImporterTest {
         Row r2 = rows.get(2);
         assertEquals(r2.getCellValue(5), "005");
         assertEquals(r2.getCellValue(4), "£4.99");
-        assertEquals(rows.get(29).getCellValue(0),"700");
-	}
-
+        assertEquals(rows.get(29).getCellValue(0), "700");
+    }
 
 }

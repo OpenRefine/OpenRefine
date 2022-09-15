@@ -90,58 +90,47 @@ import com.google.common.cache.LoadingCache;
  *
  */
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
-	final static private String urlChangeDataId = "urls";
-	
+
+    final static private String urlChangeDataId = "urls";
+
     public static final class HttpHeader implements Serializable {
 
-		private static final long serialVersionUID = -7546898562925960196L;
-		@JsonProperty("name")
+        private static final long serialVersionUID = -7546898562925960196L;
+        @JsonProperty("name")
         final public String name;
         @JsonProperty("value")
         final public String value;
-        
+
         @JsonCreator
         public HttpHeader(
-                @JsonProperty("name")
-                String name,
-                @JsonProperty("value")
-                String value) {
+                @JsonProperty("name") String name,
+                @JsonProperty("value") String value) {
             this.name = name;
             this.value = value;
         }
     }
-    
-    final protected String     _baseColumnName;
-    final protected String     _urlExpression;
-    final protected OnError    _onError;
 
-    final protected String     _newColumnName;
-    final protected int        _columnInsertIndex;
-    final protected int        _delay;
-    final protected boolean    _cacheResponses;
-    final protected List<HttpHeader>  _httpHeadersJson;
+    final protected String _baseColumnName;
+    final protected String _urlExpression;
+    final protected OnError _onError;
+
+    final protected String _newColumnName;
+    final protected int _columnInsertIndex;
+    final protected int _delay;
+    final protected boolean _cacheResponses;
+    final protected List<HttpHeader> _httpHeadersJson;
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig   engineConfig,
-        @JsonProperty("baseColumnName")
-        String         baseColumnName,
-        @JsonProperty("urlExpression")
-        String         urlExpression,
-        @JsonProperty("onError")
-        OnError        onError,
-        @JsonProperty("newColumnName")
-        String         newColumnName,
-        @JsonProperty("columnInsertIndex")
-        int            columnInsertIndex,
-        @JsonProperty("delay")
-        int            delay,
-        @JsonProperty("cacheResponses")
-        boolean        cacheResponses,
-        @JsonProperty("httpHeadersJson")
-        List<HttpHeader>      httpHeadersJson
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("baseColumnName") String baseColumnName,
+            @JsonProperty("urlExpression") String urlExpression,
+            @JsonProperty("onError") OnError onError,
+            @JsonProperty("newColumnName") String newColumnName,
+            @JsonProperty("columnInsertIndex") int columnInsertIndex,
+            @JsonProperty("delay") int delay,
+            @JsonProperty("cacheResponses") boolean cacheResponses,
+            @JsonProperty("httpHeadersJson") List<HttpHeader> httpHeadersJson) {
         super(engineConfig);
 
         _baseColumnName = baseColumnName;
@@ -175,52 +164,51 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     public int getColumnInsertIndex() {
         return _columnInsertIndex;
     }
-    
+
     @JsonProperty("baseColumnName")
     public String getBaseColumnName() {
         return _baseColumnName;
     }
-    
+
     @JsonProperty("urlExpression")
     public String getUrlExpression() {
         return _urlExpression;
     }
-    
+
     @JsonProperty("onError")
     public OnError getOnError() {
         return _onError;
     }
-    
+
     @JsonProperty("delay")
     public int getDelay() {
         return _delay;
     }
-    
+
     @JsonProperty("httpHeadersJson")
     public List<HttpHeader> getHttpHeadersJson() {
         return _httpHeadersJson;
     }
-    
+
     @JsonProperty("cacheResponses")
     public boolean getCacheResponses() {
         return _cacheResponses;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Create column " + _newColumnName +
-            " at index " + _columnInsertIndex +
-            " by fetching URLs based on column " + _baseColumnName +
-            " using expression " + _urlExpression;
+                " at index " + _columnInsertIndex +
+                " by fetching URLs based on column " + _baseColumnName +
+                " using expression " + _urlExpression;
     }
 
     protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
         return "Create new column " + _newColumnName +
-            ", filling " + cellsAtRows.size() +
-            " rows by fetching URLs based on column " + column.getName() +
-            " and formulated as " + _urlExpression;
+                ", filling " + cellsAtRows.size() +
+                " rows by fetching URLs based on column " + column.getName() +
+                " and formulated as " + _urlExpression;
     }
-
 
     @Override
     public Process createProcess(Project project) throws Exception {
@@ -229,65 +217,63 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         Evaluable eval = MetaParser.parse(_urlExpression);
 
         return new ColumnAdditionByFetchingURLsProcess(
-            project.getHistory(),
-            project.getProcessManager(),
-            engine,
-            eval,
-            getDescription(),
-            _cacheResponses
-        );
+                project.getHistory(),
+                project.getProcessManager(),
+                engine,
+                eval,
+                getDescription(),
+                _cacheResponses);
     }
-    
+
     protected static class URLFetchingChangeProducer implements RowChangeDataProducer<Cell> {
-    	
-		private static final long serialVersionUID = 131571544240263338L;
-		final protected OnError    _onError;
-    	final protected List<HttpHeader>  _httpHeaders;
-    	final protected boolean     _cacheResponses;
-    	final protected int         _delay;
-    	final protected int         _cellIndex;
-    	final protected String      _baseColumnName;
-    	final protected Evaluable   _eval;
-    	// initialized lazily for serializability
-    	transient private LoadingCache<String, Serializable> _urlCache;
+
+        private static final long serialVersionUID = 131571544240263338L;
+        final protected OnError _onError;
+        final protected List<HttpHeader> _httpHeaders;
+        final protected boolean _cacheResponses;
+        final protected int _delay;
+        final protected int _cellIndex;
+        final protected String _baseColumnName;
+        final protected Evaluable _eval;
+        // initialized lazily for serializability
+        transient private LoadingCache<String, Serializable> _urlCache;
         transient private HttpClient _httpClient;
         transient private Header[] _headers;
-    	
-    	protected URLFetchingChangeProducer(
-    			OnError onError,
-    			List<HttpHeader> httpHeaders,
-    			boolean cacheResponses,
-    			int delay,
-    			int cellIndex,
-    			String baseColumnName,
-    			Evaluable eval) {
-    		_onError = onError;
-    		_cacheResponses = cacheResponses;
-    		_httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyList();
-    		_delay = delay;
-    		_cellIndex = cellIndex;
-    		_baseColumnName = baseColumnName;
-    		_eval = eval;
-                _headers = null;
-                _httpClient = null;
 
+        protected URLFetchingChangeProducer(
+                OnError onError,
+                List<HttpHeader> httpHeaders,
+                boolean cacheResponses,
+                int delay,
+                int cellIndex,
+                String baseColumnName,
+                Evaluable eval) {
+            _onError = onError;
+            _cacheResponses = cacheResponses;
+            _httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyList();
+            _delay = delay;
+            _cellIndex = cellIndex;
+            _baseColumnName = baseColumnName;
+            _eval = eval;
+            _headers = null;
+            _httpClient = null;
 
-    	}
-    	
-    	protected HttpClient getHttpClient() {
-    		if (_httpClient != null) {
-    			return _httpClient;
-    		}
+        }
+
+        protected HttpClient getHttpClient() {
+            if (_httpClient != null) {
+                return _httpClient;
+            }
 
             _httpClient = new HttpClient(_delay);
             return _httpClient;
-    	}
-    	
-    	protected Header[] getHttpHeaders() {
-    		if (_headers != null) {
-    			return _headers;
-    		}
-    		List<Header> headers = new ArrayList<>();
+        }
+
+        protected Header[] getHttpHeaders() {
+            if (_headers != null) {
+                return _headers;
+            }
+            List<Header> headers = new ArrayList<>();
             if (_httpHeaders != null) {
                 for (HttpHeader header : _httpHeaders) {
                     if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
@@ -297,12 +283,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
             _headers = (Header[]) headers.toArray(new Header[headers.size()]);
             return _headers;
-    	}
-    	
-		@Override
-		public Cell call(long rowId, Row row) {
-			
-			Cell cell = row.getCell(_cellIndex);
+        }
+
+        @Override
+        public Cell call(long rowId, Row row) {
+
+            Cell cell = row.getCell(_cellIndex);
             Cell urlCell = null;
 
             Properties bindings = new Properties();
@@ -333,84 +319,84 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             if (response != null) {
                 return new Cell(response, null);
             }
-			return null;
-		}
-		
-		protected LoadingCache<String, Serializable> getCache() {
-			if (_urlCache != null) {
-				return _urlCache;
-			}
-			_urlCache = CacheBuilder.newBuilder()
-	                .maximumSize(2048)
-	                .expireAfterWrite(10, TimeUnit.MINUTES)
-	                .build(
-	                     new CacheLoader<String, Serializable>() {
-	                        public Serializable load(String urlString) throws Exception {
-	                            Serializable result = fetch(urlString);
-	                            try {
-	                                // Always sleep for the delay, no matter how long the
-	                                // request took. This is more responsible than subtracting
-	                                // the time spend requesting the URL, because it naturally
-	                                // slows us down if the server is busy and takes a long time
-	                                // to reply.
-	                                if (_delay > 0) {
-	                                    Thread.sleep(_delay);
-	                                }
-	                            } catch (InterruptedException e) {
-	                                result = null;
-	                            }
+            return null;
+        }
 
-	                            if (result == null) {
-	                                // the load method should not return any null value
-	                                throw new Exception("null result returned by fetch");
-	                            }
-	                            return result;
-	                        }
-	         });
-			return _urlCache;
-		}
-		
+        protected LoadingCache<String, Serializable> getCache() {
+            if (_urlCache != null) {
+                return _urlCache;
+            }
+            _urlCache = CacheBuilder.newBuilder()
+                    .maximumSize(2048)
+                    .expireAfterWrite(10, TimeUnit.MINUTES)
+                    .build(
+                            new CacheLoader<String, Serializable>() {
+
+                                public Serializable load(String urlString) throws Exception {
+                                    Serializable result = fetch(urlString);
+                                    try {
+                                        // Always sleep for the delay, no matter how long the
+                                        // request took. This is more responsible than subtracting
+                                        // the time spend requesting the URL, because it naturally
+                                        // slows us down if the server is busy and takes a long time
+                                        // to reply.
+                                        if (_delay > 0) {
+                                            Thread.sleep(_delay);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        result = null;
+                                    }
+
+                                    if (result == null) {
+                                        // the load method should not return any null value
+                                        throw new Exception("null result returned by fetch");
+                                    }
+                                    return result;
+                                }
+                            });
+            return _urlCache;
+        }
+
         Serializable cachedFetch(String urlString) {
             try {
                 return getCache().get(urlString);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return null;
             }
         }
 
         Serializable fetch(String urlString) {
-            try { //HttpClients.createDefault()) {
+            try { // HttpClients.createDefault()) {
                 try {
-                	Header[] headers = getHttpHeaders();
+                    Header[] headers = getHttpHeaders();
                     return getHttpClient().getAsString(urlString, headers);
                 } catch (IOException e) {
                     return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
-            	e.printStackTrace();
+                e.printStackTrace();
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }
-    	
+
     }
 
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
-        final protected History       _history;
-        final protected Engine        _engine;
-        final protected Evaluable     _eval;
-        final protected long          _historyEntryID;
+
+        final protected History _history;
+        final protected Engine _engine;
+        final protected Evaluable _eval;
+        final protected long _historyEntryID;
         final protected ProcessManager _processManager;
-        protected int                 _cellIndex;
-   
+        protected int _cellIndex;
 
         public ColumnAdditionByFetchingURLsProcess(
-            History history,
-            ProcessManager processManager,
-            Engine engine,
-            Evaluable eval,
-            String description,
-            boolean cacheResponses
-        ) {
+                History history,
+                ProcessManager processManager,
+                Engine engine,
+                Evaluable eval,
+                String description,
+                boolean cacheResponses) {
             super(description);
             _processManager = processManager;
             _history = history;
@@ -418,7 +404,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
         }
-        
+
         @Override
         protected Runnable getRunnable() {
             return this;
@@ -426,9 +412,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         @Override
         public void run() {
-        	GridState state = _history.getCurrentGridState();
+            GridState state = _history.getCurrentGridState();
             ColumnModel columnModel = state.getColumnModel();
-			ColumnMetadata column = columnModel.getColumnByName(_baseColumnName);
+            ColumnMetadata column = columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 _processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
                 return;
@@ -440,42 +426,42 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
 
             URLFetchingChangeProducer changeProducer = new URLFetchingChangeProducer(
-            		_onError,
-            		_httpHeadersJson,
-            		_cacheResponses,
-            		_delay,
-            		_cellIndex,
-            		_baseColumnName,
-            		_eval);
-            
+                    _onError,
+                    _httpHeadersJson,
+                    _cacheResponses,
+                    _delay,
+                    _cellIndex,
+                    _baseColumnName,
+                    _eval);
+
             ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
-            
+
             try {
-	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer(), Optional.of(_reporter));
-	
-	            if (!_canceled) {
-	                HistoryEntry historyEntry = new HistoryEntry(
-	                    _historyEntryID,
-	                    _description,
-	                    ColumnAdditionByFetchingURLsOperation.this,
-	                    new ColumnChangeByChangeData(
-	                        urlChangeDataId,
-	                        _columnInsertIndex,
-	                        _newColumnName,
-	                        Mode.RowBased,
-	                        null,
-	                        null)
-	                );
-	
-	                _history.addEntry(historyEntry);
-	                _processManager.onDoneProcess(this);
-	            }
-            } catch(Exception e) {
-            	if (_canceled) {
-            		_history.getChangeDataStore().discardAll(_historyEntryID);
-            	} else {
-            		_processManager.onFailedProcess(this, e);
-            	}
+                _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer(),
+                        Optional.of(_reporter));
+
+                if (!_canceled) {
+                    HistoryEntry historyEntry = new HistoryEntry(
+                            _historyEntryID,
+                            _description,
+                            ColumnAdditionByFetchingURLsOperation.this,
+                            new ColumnChangeByChangeData(
+                                    urlChangeDataId,
+                                    _columnInsertIndex,
+                                    _newColumnName,
+                                    Mode.RowBased,
+                                    null,
+                                    null));
+
+                    _history.addEntry(historyEntry);
+                    _processManager.onDoneProcess(this);
+                }
+            } catch (Exception e) {
+                if (_canceled) {
+                    _history.getChangeDataStore().discardAll(_historyEntryID);
+                } else {
+                    _processManager.onFailedProcess(this, e);
+                }
             }
         }
     }

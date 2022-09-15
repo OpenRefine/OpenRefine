@@ -46,18 +46,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RowStarOperation extends ImmediateRowMapOperation {
+
     final protected boolean _starred;
 
     @JsonCreator
     public RowStarOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("starred")
-            boolean starred) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("starred") boolean starred) {
         super(engineConfig);
         _starred = starred;
     }
-    
+
     @JsonProperty("starred")
     public boolean getStarred() {
         return _starred;
@@ -68,22 +67,21 @@ public class RowStarOperation extends ImmediateRowMapOperation {
         return (_starred ? "Star rows" : "Unstar rows");
     }
 
-
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
-		return rowMapper(_starred);
-	}
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
+        return rowMapper(_starred);
+    }
 
     protected static RowInRecordMapper rowMapper(boolean starred) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = 7358285487574613684L;
+            private static final long serialVersionUID = 7358285487574613684L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				return row.withStarred(starred);
-			}
-    		
-    	};
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return row.withStarred(starred);
+            }
+
+        };
     }
 }

@@ -41,22 +41,23 @@ import org.openrefine.model.ColumnModel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StringCriterion extends Criterion {
+
     @JsonProperty("caseSensitive")
     public boolean caseSensitive;
 
-    
     @Override
     public KeyMaker createKeyMaker(ColumnModel columnModel) {
         return new KeyMaker(columnModel, columnName) {
+
             @Override
             protected Serializable makeKey(Serializable value) {
-                return (ExpressionUtils.isNonBlankData(value) 
+                return (ExpressionUtils.isNonBlankData(value)
                         && !(value instanceof String)) ? value.toString() : (String) value;
             }
 
             @Override
             public int compareKeys(Serializable key1, Serializable key2) {
-                return ((String)key1).compareTo((String)key2);
+                return ((String) key1).compareTo((String) key2);
             }
         };
     }

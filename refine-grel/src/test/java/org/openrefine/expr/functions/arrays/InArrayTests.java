@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.arrays;
 
 import java.util.Arrays;
@@ -39,19 +40,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class InArrayTests extends FunctionTestBase {
-    
+
     static Properties bindings;
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
-    static final String stringArray[] = {"v1","v2","v3"};
-    
+    static final String stringArray[] = { "v1", "v2", "v3" };
+
     @Test
     public void testInArrayParameters() {
         Assert.assertTrue(invoke("inArray") instanceof EvalError);
         Assert.assertTrue(invoke("inArray", "string1") instanceof EvalError);
-        Assert.assertTrue(invoke("inArray", "string1","string2") instanceof EvalError);
-        Assert.assertTrue(invoke("inArray", "string1","string2","string3") instanceof EvalError);
+        Assert.assertTrue(invoke("inArray", "string1", "string2") instanceof EvalError);
+        Assert.assertTrue(invoke("inArray", "string1", "string2", "string3") instanceof EvalError);
     }
-    
+
     @Test
     public void testInArray() {
         Assert.assertTrue((boolean) invoke("inArray", listArray, "v1"));
@@ -59,7 +60,7 @@ public class InArrayTests extends FunctionTestBase {
         Assert.assertTrue((boolean) invoke("inArray", stringArray, "v1"));
         Assert.assertFalse((boolean) invoke("inArray", stringArray, "v4"));
     }
-    
+
     @Test
     public void testInArrayWithArrayNode() {
         ObjectMapper mapper = new ObjectMapper();
@@ -71,4 +72,3 @@ public class InArrayTests extends FunctionTestBase {
         Assert.assertFalse((boolean) invoke("inArray", arrayNode, "v4"));
     }
 }
-

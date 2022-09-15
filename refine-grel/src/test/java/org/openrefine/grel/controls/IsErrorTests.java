@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.grel.controls;
 
 import org.openrefine.util.ParsingUtilities;
@@ -31,10 +32,10 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class IsErrorTests {
+
     @Test
     public void serializeIsError() {
         String json = "{\"description\":\"Returns whether o is an error\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new IsError(), json, ParsingUtilities.defaultWriter);
     }
 }
-

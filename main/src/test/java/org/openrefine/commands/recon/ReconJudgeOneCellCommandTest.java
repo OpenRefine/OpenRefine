@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.recon;
 
 import static org.mockito.Mockito.mock;
@@ -55,25 +56,25 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ReconJudgeOneCellCommandTest extends RefineTest {
-        
+
     Project project = null;
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
     PrintWriter writer = null;
-    
+
     @BeforeMethod
     public void setUp() {
         GridState grid = createGrid(
-                new String[] {"reconciled column","unreconciled column"},
+                new String[] { "reconciled column", "unreconciled column" },
                 new Serializable[][] {
-                	{"a","b"},
-                	{"c","d"}});
+                        { "a", "b" },
+                        { "c", "d" } });
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",
                 "http://my.recon.service/rdf/space",
                 "http://my.recon.service/rdf/schema",
-                "type3894", 
+                "type3894",
                 "octopus",
                 true,
                 Collections.emptyList(),
@@ -81,30 +82,30 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         grid = grid.withColumnModel(grid.getColumnModel().withReconConfig(0, config));
         project = new Project(grid, mock(ChangeDataStore.class), new LazyCachedGridStore());
         ProjectMetadata meta = new ProjectMetadata();
-    	meta.setName("test project");
+        meta.setName("test project");
         ProjectManager.singleton.registerProject(project, meta);
-        
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        
+
         when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
+
         writer = mock(PrintWriter.class);
         try {
             when(response.getWriter()).thenReturn(writer);
         } catch (IOException e1) {
             Assert.fail();
         }
-        
-        command = new  ReconJudgeOneCellCommand();
+
+        command = new ReconJudgeOneCellCommand();
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.getId());
     }
-    
+
     @Test
     public void testMarkOneCellInReconciledColumn() throws Exception {
 
@@ -112,12 +113,12 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("cell")).thenReturn("0");
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
-        
+
         Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
     }
-    
+
     @Test
     public void testMarkOneCellWithCustomSpace() throws Exception {
 
@@ -127,7 +128,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("identifierSpace")).thenReturn("http://my.custom.space/id");
         when(request.getParameter("schemaSpace")).thenReturn("http://my.custom.space/schema");
         command.doPost(request, response);
-        
+
         Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.custom.space/id", cell.recon.identifierSpace);

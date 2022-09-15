@@ -45,13 +45,13 @@ import org.openrefine.grel.Control;
 public class ControlCallExpr extends PureArgumentsExpr {
 
     private static final long serialVersionUID = 7404947308121024234L;
-    final protected Control     _control;
-    
+    final protected Control _control;
+
     public ControlCallExpr(GrelExpr[] args, Control c) {
         super(args);
         _control = c;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         try {
@@ -64,28 +64,28 @@ public class ControlCallExpr extends PureArgumentsExpr {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append(ev.toString());
         }
-        
+
         return _control.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof GrelExpr) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
     @Override
     public ControlCallExpr renameColumnDependencies(Map<String, String> substitutions) {
         GrelExpr[] translatedArgs = new GrelExpr[_args.length];
-        for(int i = 0; i != _args.length; i++) {
+        for (int i = 0; i != _args.length; i++) {
             translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
-            if(translatedArgs[i] == null) {
+            if (translatedArgs[i] == null) {
                 return null;
             }
         }

@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.facets;
 
 import java.util.Collections;
@@ -7,11 +8,12 @@ import java.util.Set;
 import org.openrefine.model.ColumnModel;
 
 public class StringFacet implements Facet {
-    
+
     public static class Config implements FacetConfig {
+
         public String columnName;
         public String selected;
-        
+
         public Config(String columnName, String selected) {
             this.columnName = columnName;
             this.selected = selected;
@@ -42,7 +44,7 @@ public class StringFacet implements Facet {
             return null;
         }
     }
-    
+
     private int columnIndex;
     private Config config;
 
@@ -68,7 +70,7 @@ public class StringFacet implements Facet {
 
     @Override
     public FacetResult getFacetResult(FacetState state) {
-        return (StringFacetState)state;
+        return (StringFacetState) state;
     }
 
 }

@@ -1,3 +1,4 @@
+
 package org.openrefine.operations;
 
 import java.io.Serializable;
@@ -41,21 +42,18 @@ import org.openrefine.process.ProcessManager;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 /**
- * Base class for an operation which evaluates an expression on rows or
- * records, and then uses it to derive the new grid. 
- * This implements the common functionality of {@link ColumnAdditionOperation} and {@link TextTransformOperation}.
+ * Base class for an operation which evaluates an expression on rows or records, and then uses it to derive the new
+ * grid. This implements the common functionality of {@link ColumnAdditionOperation} and {@link TextTransformOperation}.
  * 
- * Depending on whether the expresion is local or not, the operation will
- * return an immediate change or create a long-running process which evaluates
- * the expression and stores the results in a {@link ChangeData} object, so that
- * expensive evaluations (or expressions with side effects) are not evaluated multiple
- * times.
+ * Depending on whether the expresion is local or not, the operation will return an immediate change or create a
+ * long-running process which evaluates the expression and stores the results in a {@link ChangeData} object, so that
+ * expensive evaluations (or expressions with side effects) are not evaluated multiple times.
  * 
  * @author Antonin Delpeuch
  *
  */
 public abstract class ExpressionBasedOperation extends EngineDependentOperation {
-    
+
     protected final String _expression;
     protected final String _baseColumnName;
     protected final OnError _onError;
@@ -66,7 +64,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
         _baseColumnName = baseColumnName;
         _onError = onError;
     }
-    
+
     /**
      * Returns the mapper to apply to all matching rows.
      * 
@@ -74,20 +72,21 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
      * @return
      * @throws DoesNotApplyException
      */
-    protected abstract RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException;
-    
+    protected abstract RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval)
+            throws DoesNotApplyException;
+
     protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
     }
-    
+
     protected ColumnModel getNewColumnModel(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         return state.getColumnModel();
     }
-    
+
     protected int columnIndex(ColumnModel model, String columnName, Evaluable eval) throws DoesNotApplyException {
         return RowMapChange.columnIndex(model, columnName);
     }
-    
+
     protected GridState postTransform(GridState state, ChangeContext context, Evaluable eval) {
         return state;
     }
@@ -100,34 +99,35 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
         } catch (ParsingException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
-        
+
         // if the evaluator is a pure function which only reads data from the current row/record
         if (eval.isLocal()) {
             return createChange(eval);
         } else {
             // otherwise a long-running process is required
-            throw new NotImmediateOperationException("Operation is not immediate because evaluable is not local, a long-running process is required");
+            throw new NotImmediateOperationException(
+                    "Operation is not immediate because evaluable is not local, a long-running process is required");
         }
     }
-    
+
     public Change createChange(Evaluable eval) {
         return new RowMapChange(getEngineConfig()) {
-            
+
             @Override
             public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getPositiveRowMapper(state, context, eval);
             }
-            
+
             @Override
             public RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getNegativeRowMapper(state, context, eval);
             }
-            
+
             @Override
             public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getNewColumnModel(state, context, eval);
             }
-            
+
             @Override
             public GridState postTransform(GridState state, ChangeContext context) {
                 return ExpressionBasedOperation.this.postTransform(state, context, eval);
@@ -143,10 +143,10 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 // TODO Auto-generated method stub
                 return null;
             }
-            
+
         };
     }
-    
+
     @Override
     public Process createProcess(Project project) throws Exception {
         Evaluable eval;
@@ -155,7 +155,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
         } catch (ParsingException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
-        
+
         // if the evaluator is a pure function which only reads
         if (eval.isLocal()) {
             Change change = createChange(eval);
@@ -166,29 +166,28 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                     project.getHistory(),
                     project.getProcessManager(),
                     createEngine(project.getCurrentGridState()),
-                    eval, 
+                    eval,
                     getDescription(),
                     project.getId());
         }
     }
-    
+
     protected abstract Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex, Mode engineMode);
-    
+
     /**
-     * Long-running process to evaluate the expression and store the results as
-     * a ChangeData object.
+     * Long-running process to evaluate the expression and store the results as a ChangeData object.
      * 
      * @author Antonin Delpeuch
      *
      */
     protected class ExpressionEvaluationProcess extends LongRunningProcess implements Runnable {
-        
-        final protected History        _history;
+
+        final protected History _history;
         final protected ProcessManager _manager;
-        final protected Evaluable      _eval;
-        final protected Engine         _engine;
-        final protected long           _historyEntryID;
-        final protected long           _projectId;
+        final protected Evaluable _eval;
+        final protected Engine _engine;
+        final protected long _historyEntryID;
+        final protected long _projectId;
 
         public ExpressionEvaluationProcess(
                 History history,
@@ -196,47 +195,48 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 Engine engine,
                 Evaluable eval,
                 String description,
-                long projectId
-            ) {
-                super(description);
-                _history = history;
-                _manager = manager;
-                _eval = eval;
-                _engine = engine;
-                _historyEntryID = HistoryEntry.allocateID();
-                _projectId = projectId;
+                long projectId) {
+            super(description);
+            _history = history;
+            _manager = manager;
+            _eval = eval;
+            _engine = engine;
+            _historyEntryID = HistoryEntry.allocateID();
+            _projectId = projectId;
         }
 
         @Override
         public void run() {
             GridState state = _history.getCurrentGridState();
             ColumnModel columnModel = state.getColumnModel();
-            
+
             int columnIndex = columnModel.getColumnIndexByName(_baseColumnName);
-            RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, _baseColumnName, _onError, _eval, columnModel, _projectId);
-            
+            RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, _baseColumnName, _onError, _eval,
+                    columnModel, _projectId);
+
             try {
                 if (Mode.RowBased.equals(_engine.getMode())) {
                     RowFilter filter = _engine.combinedRowFilters();
                     ChangeData<Cell> changeData = state.mapRows(filter, changeDataProducer);
-                    _history.getChangeDataStore().store(changeData, _historyEntryID, "eval", new CellChangeDataSerializer(), Optional.of(_reporter));
+                    _history.getChangeDataStore().store(changeData, _historyEntryID, "eval", new CellChangeDataSerializer(),
+                            Optional.of(_reporter));
 
                 } else {
                     RecordFilter filter = _engine.combinedRecordFilters();
                     ChangeData<List<Cell>> changeData = state.mapRecords(filter, changeDataProducer);
-                    _history.getChangeDataStore().store(changeData, _historyEntryID, "eval", new CellListChangeDataSerializer(), Optional.of(_reporter));
+                    _history.getChangeDataStore().store(changeData, _historyEntryID, "eval", new CellListChangeDataSerializer(),
+                            Optional.of(_reporter));
                 }
-                
+
                 if (!_canceled) {
                     Change change = getChangeForNonLocalExpression("eval", _eval, columnIndex, _engine.getMode());
-                    
+
                     HistoryEntry historyEntry = new HistoryEntry(
-                        _historyEntryID, 
-                        _description, 
-                        ExpressionBasedOperation.this, 
-                        change
-                    );
-                    
+                            _historyEntryID,
+                            _description,
+                            ExpressionBasedOperation.this,
+                            change);
+
                     _history.addEntry(historyEntry);
                     _manager.onDoneProcess(this);
                 }
@@ -255,7 +255,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
             return this;
         }
     }
-    
+
     protected static RowInRecordChangeDataProducer<Cell> changeDataProducer(
             int columnIndex,
             String baseColumnName,
@@ -275,7 +275,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 Properties bindings = new Properties();
                 ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell);
                 bindings.put("project_id", projectId);
-                
+
                 Object o = eval.evaluate(bindings);
                 if (o != null) {
                     if (o instanceof Cell) {
@@ -291,7 +291,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                                 v = cell != null ? cell.value : null;
                             }
                         }
-                        
+
                         if (v != null) {
                             newCell = new Cell(v, null);
                         }
@@ -299,7 +299,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 }
                 return newCell;
             }
-        
+
         };
     }
 }

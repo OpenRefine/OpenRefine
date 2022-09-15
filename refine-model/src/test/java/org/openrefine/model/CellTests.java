@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
 
 import static org.testng.Assert.assertNull;
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.when;
 import org.testng.annotations.Test;
 
 public class CellTests {
-    
+
     String reconJson = "{\"id\":1533649346002675326,"
             + "\"judgmentHistoryEntry\":1530278634724,"
             + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -54,45 +55,45 @@ public class CellTests {
             + "\"m\":{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]},"
             + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
             + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"matchRank\":0}";
-    
+
     Recon recon = null;
-    
+
     @Test
     public void serializeCellWithRecon() throws Exception {
-        String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":"+reconJson+"}";
-        
+        String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":" + reconJson + "}";
+
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.saveWriter);
     }
-    
+
     @Test
     public void serializeCellWithString() throws Exception {
         String json = "{\"v\":\"0000-0002-5022-0488\"}";
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeNullCell() throws Exception {
         String json = "null";
         Cell c = Cell.loadStreaming(json);
         assertNull(c);
     }
-    
+
     @Test
     public void serializeEmptyStringCell() throws Exception {
         String json = "{\"v\":\"\"}";
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeErrorCell() throws Exception {
         String json = "{\"e\":\"HTTP 403\"}";
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-	
+
     @Test
     public void getMessageFromErrorCell() throws Exception {
         String errorMessage = "Sample error message";
@@ -114,14 +115,14 @@ public class CellTests {
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeBooleanCell() throws Exception {
         String json = "{\"v\": true}";
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeDatewithOffset() throws Exception {
         OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -129,15 +130,15 @@ public class CellTests {
         String json = "{\"v\":\"2017-05-12T04:45:00Z\",\"t\":\"date\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeLocalDate() throws Exception {
-        LocalDateTime dateTimeValue = LocalDateTime.of(2017,5,12,0,0,0);
+        LocalDateTime dateTimeValue = LocalDateTime.of(2017, 5, 12, 0, 0, 0);
         Cell c = new Cell(dateTimeValue, null);
         String json = "{\"v\":\"2017-05-12T00:00:00Z\",\"t\":\"date\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeDoubleNan() throws Exception {
         double dn = Double.NaN;
@@ -145,7 +146,7 @@ public class CellTests {
         String json = "{\"v\":\"NaN\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeFloatNan() throws Exception {
         Float fn = Float.NaN;
@@ -153,7 +154,7 @@ public class CellTests {
         String json = "{\"v\":\"NaN\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeDoubleInfinity() throws Exception {
         double di = Double.POSITIVE_INFINITY;
@@ -161,7 +162,7 @@ public class CellTests {
         String json = "{\"v\":\"Infinity\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeFloatInfinity() throws Exception {
         Float fi = Float.POSITIVE_INFINITY;

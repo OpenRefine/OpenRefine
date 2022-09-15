@@ -53,18 +53,18 @@ public class RefineDbServletStub extends RefineServlet {
 
     private static File tempDir = null;
     private static DatamodelRunner runner = new TestingDatamodelRunner();
-    
-    //requirement of extending HttpServlet, not required for testing
+
+    // requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;
 
-    public void wrapService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    public void wrapService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.service(request, response);
     }
 
-    public String wrapGetCommandName(HttpServletRequest request){
+    public String wrapGetCommandName(HttpServletRequest request) {
         return super.getCommandKey(request);
     }
-    
+
     @Override
     public File getTempDir() {
         if (tempDir == null) {
@@ -72,32 +72,34 @@ public class RefineDbServletStub extends RefineServlet {
                 tempDir = File.createTempFile("refine-test-dir", "");
                 tempDir.deleteOnExit();
             } catch (IOException e) {
-                throw new RuntimeException("Failed to create temp directory",e);
+                throw new RuntimeException("Failed to create temp directory", e);
             }
         }
-        return tempDir; 
-    }
-    
-    @Override
-    public DatamodelRunner getCurrentDatamodelRunner() {
-    	return runner;
+        return tempDir;
     }
 
-    //-------------------helper methods--------------
+    @Override
+    public DatamodelRunner getCurrentDatamodelRunner() {
+        return runner;
+    }
+
+    // -------------------helper methods--------------
     /**
      * Helper method for inserting a mock object
+     * 
      * @param commandName
      * @param command
      */
-    public void insertCommand(String commandName, Command command ){
+    public void insertCommand(String commandName, Command command) {
         registerOneCommand("core/" + commandName, command);
     }
 
     /**
      * Helper method for clearing up after testing
+     * 
      * @param commandName
      */
-    public void removeCommand( String commandName ){
+    public void removeCommand(String commandName) {
         unregisterCommand("core/" + commandName);
     }
 }

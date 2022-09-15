@@ -24,13 +24,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 
 public class TrimTests extends FunctionTestBase {
 
@@ -52,39 +52,38 @@ public class TrimTests extends FunctionTestBase {
 //    private static String WDJOIN = "\u2060";
     private static String IDEOSPC = "\u3000";
 
-    private static String WHITESPACE = NBSP+ENQUAD+ENSPC+EMQUAD+EMSPC+N3PMSPC+N4PMSPC+N6PMSPC+FIGSP+PUNCSPC
-            +THINSPC+HAIRSPC+NNBSP+MDMMATHSPC
+    private static String WHITESPACE = NBSP + ENQUAD + ENSPC + EMQUAD + EMSPC + N3PMSPC + N4PMSPC + N6PMSPC + FIGSP + PUNCSPC
+            + THINSPC + HAIRSPC + NNBSP + MDMMATHSPC
 //            +ZWNBSP
 //            +WDJOIN
-            +IDEOSPC
-            ;
-    
+            + IDEOSPC;
+
     private static String[][] testStrings = {
-        {" foo ","foo"},  
-        {"\tfoo\t","foo"},  
-        {"\t \t foo \t \t","foo"},  
+            { " foo ", "foo" },
+            { "\tfoo\t", "foo" },
+            { "\t \t foo \t \t", "foo" },
 //        {WHITESPACE+"foo"+WHITESPACE,"foo"},  
-        {"",""},  
+            { "", "" },
     };
-   
-    
+
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertTrue(invoke("trim") instanceof EvalError);
-        Assert.assertTrue(invoke("trim", "one","two","three") instanceof EvalError);
+        Assert.assertTrue(invoke("trim", "one", "two", "three") instanceof EvalError);
         Assert.assertTrue(invoke("trim", Long.getLong("1")) instanceof EvalError);
     }
-    
+
     @Test
     public void testTrim() {
         for (String[] ss : testStrings) {
-            Assert.assertEquals(ss.length,2,"Invalid test"); // Not a valid test
-            Assert.assertEquals((String)(invoke("trim", ss[0])),ss[1],"Trim for string: " + ss + " failed");
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals((String) (invoke("trim", ss[0])), ss[1], "Trim for string: " + ss + " failed");
         }
 
-        for (int i=0; i < WHITESPACE.length(); i++) {
-            String c = WHITESPACE.substring(i,i+1);
-            Assert.assertEquals((String)(invoke("trim", c+"foo"+c)),"foo","Trim for whitespace char: '" + c + "' at index "+ i+ " failed");
+        for (int i = 0; i < WHITESPACE.length(); i++) {
+            String c = WHITESPACE.substring(i, i + 1);
+            Assert.assertEquals((String) (invoke("trim", c + "foo" + c)), "foo",
+                    "Trim for whitespace char: '" + c + "' at index " + i + " failed");
         }
 
     }

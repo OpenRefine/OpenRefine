@@ -76,45 +76,53 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class PreviewExpressionCommand extends Command {
-    
-    protected static interface ExpressionValue  { }
+
+    protected static interface ExpressionValue {
+    }
+
     protected static class ErrorMessage implements ExpressionValue {
+
         @JsonProperty("message")
         protected String message;
+
         public ErrorMessage(String m) {
             message = m;
         }
     }
+
     protected static class SuccessfulEvaluation implements ExpressionValue {
+
         @JsonIgnore
         protected String value;
-        
+
         protected SuccessfulEvaluation(String value) {
             this.value = value;
         }
-        
+
         @JsonValue
         protected String getValue() {
-        	return value;
+            return value;
         }
     }
-    
+
     protected static class RowResult {
-    	@JsonProperty("rowIndex")
-    	long rowIndex;
-    	@JsonProperty("value")
-    	ExpressionValue value;
-    	@JsonProperty("result")
-    	ExpressionValue result;
-    	
-    	public RowResult(long rowIndex, ExpressionValue value, ExpressionValue result) {
-    		this.rowIndex = rowIndex;
-    		this.value = value;
-    		this.result = result;
-    	}
+
+        @JsonProperty("rowIndex")
+        long rowIndex;
+        @JsonProperty("value")
+        ExpressionValue value;
+        @JsonProperty("result")
+        ExpressionValue result;
+
+        public RowResult(long rowIndex, ExpressionValue value, ExpressionValue result) {
+            this.rowIndex = rowIndex;
+            this.value = value;
+            this.result = result;
+        }
     }
-    
-    protected static class PreviewResult  {
+
+    protected static class PreviewResult {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -125,8 +133,8 @@ public class PreviewExpressionCommand extends Command {
         protected String type;
         @JsonProperty("results")
         @JsonInclude(Include.NON_NULL)
-        List<RowResult> results; 
-        
+        List<RowResult> results;
+
         public PreviewResult(String code, String message, String type) {
             this.code = code;
             this.message = message;
@@ -141,34 +149,34 @@ public class PreviewExpressionCommand extends Command {
             this.results = evaluated;
         }
     }
+
     /**
-     * The command uses POST but does not actually modify any state so it does
-     * not require CSRF.
+     * The command uses POST but does not actually modify any state so it does not require CSRF.
      */
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Project project = getProject(request);
-            
+
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
             String columnName = cellIndex < 0 ? "" : project.getColumnModel().getColumns().get(cellIndex).getName();
-            
+
             String expression = request.getParameter("expression");
             EngineConfig engineConfig = getEngineConfig(request);
             String limitString = request.getParameter("limit");
             int limit = 10;
             try {
-            	if (limitString != null) {
-            		limit = Integer.parseInt(limitString);
-            	}
-            } catch(NumberFormatException e) {
-            	throw new IllegalArgumentException("Invalid limit specified", e);
+                if (limitString != null) {
+                    limit = Integer.parseInt(limitString);
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid limit specified", e);
             }
             SortingConfig sortingConfig = getSortingConfig(request);
-            
+
             boolean repeat = "true".equals(request.getParameter("repeat"));
             int repeatCount = 10;
             if (repeat) {
@@ -178,71 +186,73 @@ public class PreviewExpressionCommand extends Command {
                 } catch (Exception e) {
                 }
             }
-            
+
             GridState state = project.getCurrentGridState();
             ColumnModel columnModel = state.getColumnModel();
             Engine engine = new Engine(state, engineConfig);
-            
+
             try {
                 Evaluable eval = MetaParser.parse(expression);
-                
+
                 List<RowResult> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings();
-                
+
                 if (Mode.RowBased.equals(engine.getMode())) {
-                	List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
-                	for (IndexedRow indexedRow : rows) {
+                    List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+                    for (IndexedRow indexedRow : rows) {
                         Cell cell = indexedRow.getRow().getCell(cellIndex);
                         Record record = null;
-                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval, repeat, repeatCount));
+                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval, repeat,
+                                repeatCount));
                     }
                 } else {
-                	List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
-                	for (Record record : records) {
-                		for (IndexedRow indexedRow : record.getIndexedRows()) {
-                			Cell cell = indexedRow.getRow().getCell(cellIndex);
-                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval, repeat, repeatCount));
-                		}
-                	}
+                    List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
+                    for (Record record : records) {
+                        for (IndexedRow indexedRow : record.getIndexedRows()) {
+                            Cell cell = indexedRow.getRow().getCell(cellIndex);
+                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval,
+                                    repeat, repeatCount));
+                        }
+                    }
                 }
-                
+
                 respondJSON(response, new PreviewResult(evaluated));
             } catch (ParsingException e) {
                 respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
             } catch (Exception e) {
-            	e.printStackTrace();
+                e.printStackTrace();
                 respondJSON(response, new PreviewResult("error", e.getMessage(), "other"));
             }
         } catch (Exception e) {
             respondException(response, e);
         }
     }
-    
+
     static protected RowResult evaluate(
-    		Properties bindings,
-    		ColumnModel columnModel,
-    		IndexedRow indexedRow,
-    		Record record,
-    		String columnName,
-    		Cell cell,
-    		long projectId,
-    		Evaluable eval,
-    		boolean repeat,
-    		int repeatCount) {
-    	Row row = indexedRow.getRow();
-    	long rowIndex = indexedRow.getIndex();
-    	ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
+            Properties bindings,
+            ColumnModel columnModel,
+            IndexedRow indexedRow,
+            Record record,
+            String columnName,
+            Cell cell,
+            long projectId,
+            Evaluable eval,
+            boolean repeat,
+            int repeatCount) {
+        Row row = indexedRow.getRow();
+        long rowIndex = indexedRow.getIndex();
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
         bindings.put("project_id", projectId);
         Object result = null;
         try {
-        	
+
             result = eval.evaluate(bindings);
-            
+
             if (repeat) {
                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
                     ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, newCell);
-                    
+
                     Object newResult = eval.evaluate(bindings);
                     if (ExpressionUtils.isError(newResult)) {
                         break;
@@ -256,7 +266,7 @@ public class PreviewExpressionCommand extends Command {
         } catch (Exception e) {
             // ignore
         }
-        
+
         ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null ? "null" : cell.value.toString());
         ExpressionValue expressionResult;
         if (result == null) {
@@ -265,14 +275,14 @@ public class PreviewExpressionCommand extends Command {
             expressionResult = new ErrorMessage(((EvalError) result).message);
         } else {
             StringBuffer sb = new StringBuffer();
-            
+
             writeValue(sb, result, false);
-            
+
             expressionResult = new SuccessfulEvaluation(sb.toString());
         }
         return new RowResult(rowIndex, origCellValue, expressionResult);
     }
-    
+
     static protected void writeValue(StringBuffer sb, Object v, boolean quote) {
         if (ExpressionUtils.isError(v)) {
             sb.append("[error: " + ((EvalError) v).message + "]");
@@ -285,7 +295,7 @@ public class PreviewExpressionCommand extends Command {
                 } else if (v instanceof WrappedRow) {
                     sb.append("[object Row]");
                 } else if (v instanceof ObjectNode) {
-                   sb.append(((ObjectNode) v).toString());
+                    sb.append(((ObjectNode) v).toString());
                 } else if (v instanceof ArrayNode) {
                     sb.append(((ArrayNode) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
@@ -311,15 +321,15 @@ public class PreviewExpressionCommand extends Command {
                 } else if (v instanceof HasFields) {
                     sb.append("[object " + v.getClass().getSimpleName() + "]");
                 } else if (v instanceof OffsetDateTime) {
-                    sb.append("[date " + 
-                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
+                    sb.append("[date " +
+                            ParsingUtilities.dateToString((OffsetDateTime) v) + "]");
                 } else if (v instanceof String) {
                     if (quote) {
                         try {
-							sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
-						} catch (JsonProcessingException e) {
-							// will not happen
-						}
+                            sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
+                        } catch (JsonProcessingException e) {
+                            // will not happen
+                        }
                     } else {
                         sb.append((String) v);
                     }

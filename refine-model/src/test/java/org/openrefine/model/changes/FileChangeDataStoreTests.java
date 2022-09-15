@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import static org.mockito.Mockito.mock;
@@ -27,17 +28,17 @@ public class FileChangeDataStoreTests {
     MySerializer serializer;
     File dir;
     FileChangeDataStore SUT;
-    
+
     @BeforeClass
     public void setUpDir() throws IOException {
         dir = TestUtils.createTempDirectory("changedatastore");
     }
-    
+
     @AfterClass
     public void removeDir() throws IOException {
         FileUtils.deleteDirectory(dir);
     }
-    
+
     @BeforeMethod
     public void setUp() throws IOException {
         runner = mock(DatamodelRunner.class);
@@ -47,7 +48,7 @@ public class FileChangeDataStoreTests {
         // when(changeData.saveToFile(any(), eq(serializer), any())).
         SUT = new FileChangeDataStore(runner, dir);
     }
-    
+
     @Test
     public void testStoreRetrieveAndDelete() throws IOException, InterruptedException {
         SUT.store(changeData, 123, "data", serializer, Optional.empty());
@@ -58,13 +59,14 @@ public class FileChangeDataStoreTests {
         SUT.discardAll(123);
         Assert.assertFalse(new File(dir, "123").exists());
     }
-    
+
     // to ease mocking
-    
+
     private abstract static class MyChangeData implements ChangeData<String> {
     }
-    
+
     private abstract static class MySerializer implements ChangeDataSerializer<String> {
+
         private static final long serialVersionUID = 8276627729632340969L;
     }
 }
