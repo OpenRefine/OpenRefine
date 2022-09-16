@@ -1,7 +1,6 @@
 
 package org.openrefine.wikidata.qa;
 
-import org.openrefine.wikidata.commands.CommandTest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
