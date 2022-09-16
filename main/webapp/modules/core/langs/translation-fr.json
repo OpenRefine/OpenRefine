@@ -216,7 +216,7 @@
     "core-dialogs/no-rotation": "Sans rotation",
     "core-dialogs/regular-dot": "Points de taille normale",
     "core-dialogs/for-recon-cell": "pour réconcilier les cellules, sortie",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "La valeur de la cellule en cours. C’est un alias de 'cell.value'.",
     "core-dialogs/cluster-values": "Valeurs dans le groupe",
     "core-dialogs/clustering": "Groupage…",

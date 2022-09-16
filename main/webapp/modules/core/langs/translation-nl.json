@@ -458,7 +458,7 @@
     "core-dialogs/ngram-size": "Ngram Grootte",
     "core-dialogs/ngram-radius": "Straal",
     "core-dialogs/distance-fun": "Afstandsfunctie",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/key-collision": "key collision",
     "core-dialogs/keying-function": "Keying functie",
     "core-index-import/invalid-url": "Ongeldige URL",

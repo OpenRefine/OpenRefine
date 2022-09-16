@@ -142,7 +142,7 @@
     "clustering-keyers/cologne-phonetic": "cologne-phonetic",
     "core-dialogs/distance-fun": "מרחק פונקציית",
     "clustering-distances/levenshtein": "levenshtein",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/ngram-size": "אורך ה־Ngram",
     "core-dialogs/ngram-radius": "רדיוס",
     "core-dialogs/block-chars": "חסימת תווים",

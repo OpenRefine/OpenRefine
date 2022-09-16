@@ -209,7 +209,7 @@
     "core-dialogs/no-rotation": "回転なし",
     "core-dialogs/regular-dot": "標準的なドット",
     "core-dialogs/for-recon-cell": "照合したセルを出力",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "現在のセルのvalue: cell.valueの別名です.",
     "core-dialogs/cluster-values": "クラスタの値",
     "core-dialogs/clustering": "クラスタリング中…",

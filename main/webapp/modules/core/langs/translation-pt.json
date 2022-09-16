@@ -80,7 +80,7 @@
     "core-dialogs/cluster-values": "Valores no cluster",
     "core-index-parser/store-nulls": "Carregar células em branco como nulas",
     "core-dialogs/scatterplot-matrix": "Gráfico de dispersão",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-views/search-match": "Buscar uma correspondência",
     "core-util-enc/aliases": "Alias",
     "core-facets/unknown-error": "Erro desconhecido",

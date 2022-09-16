@@ -673,7 +673,7 @@
     "core-index-parser/column-names-optional": "vesszővel elválasztva",
     "core-dialogs/no-clustering-functions-and-distances": "Az összevonási műveletek és távolságok nem tölthetők be.",
     "clustering-distances/levenshtein": "Levenshtein",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/sql-exporter": "SQL exportálás",
     "core-dialogs/select-columns-dialog": "Oszlopok kiválasztása",
     "core-dialogs/columnType": "SQL típus",

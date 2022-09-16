@@ -204,7 +204,7 @@
     "core-dialogs/no-rotation": "Walang pag-ikot",
     "core-dialogs/regular-dot": "Regular na Dot Size",
     "core-dialogs/for-recon-cell": "Para sa mga nakipagkasundo na mga cell, output",
-    "clustering-distances/PPM": "P P M",
+    "clustering-distances/ppm": "P P M",
     "core-dialogs/cell-value": "Ang halaga ng kasalukuyang cell. Ito ay isang shortcut para sa 'cell.value'.",
     "core-dialogs/cluster-values": "Mga Halaga sa klaster",
     "core-dialogs/clustering": "Klastering…",

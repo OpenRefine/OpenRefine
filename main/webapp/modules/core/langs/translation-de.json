@@ -209,7 +209,7 @@
     "core-dialogs/no-rotation": "Keine Drehung",
     "core-dialogs/regular-dot": "Normale Punktgröße",
     "core-dialogs/for-recon-cell": "Ausgabe für abgestimmte Zellen",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "Der aktuelle Wert der Zelle. Dies ist eine Abkürzung für 'cell.value'.",
     "core-dialogs/cluster-values": "Werte im Cluster",
     "core-dialogs/clustering": "Clustere…",

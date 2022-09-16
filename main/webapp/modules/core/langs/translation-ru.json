@@ -240,7 +240,7 @@
     "core-dialogs/no-rotation": "Не поворачивать",
     "core-dialogs/regular-dot": "Стандартный размер точки",
     "core-dialogs/for-recon-cell": "Вывод ячеек прошедших сверку",
-    "clustering-distances/PPM": "РРМ",
+    "clustering-distances/ppm": "РРМ",
     "core-dialogs/cell-value": "Значение текущей ячейки. Сокращённое наименование для 'cell.value'.",
     "core-dialogs/cluster-values": "Значения в кластере",
     "core-dialogs/clustering": "Кластеризация…",

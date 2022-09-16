@@ -206,7 +206,7 @@
     "core-dialogs/no-rotation": "Nessuna Rotazione",
     "core-dialogs/regular-dot": "Dimensione punto: normale",
     "core-dialogs/for-recon-cell": "Per celle riconciliate, esporta",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "Il valore della cella corrente. Questa è una scorcatoia per 'cell.value'.",
     "core-dialogs/cluster-values": "Valori nei cluster",
     "core-dialogs/clustering": "Raggruppamento…",

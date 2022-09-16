@@ -361,7 +361,7 @@
     "core-dialogs/block-chars": "Blokování",
     "core-dialogs/ngram-radius": "Rádius",
     "core-dialogs/ngram-size": "Velikost n-gramů",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "clustering-distances/levenshtein": "Levenštejnova vzdálenost",
     "core-dialogs/distance-fun": "Distanční funkce",
     "clustering-keyers/cologne-phonetic": "cologne-phonetic",

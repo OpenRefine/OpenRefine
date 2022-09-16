@@ -204,7 +204,7 @@
     "core-dialogs/no-rotation": "Não rotacionar",
     "core-dialogs/regular-dot": "Pontos normais",
     "core-dialogs/line-based": "Formatos de texto",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "O valor atual da célula. É um atalho para 'cell.value'.",
     "core-dialogs/custom": "Personalizado",
     "core-dialogs/clustering": "Agrupando…",

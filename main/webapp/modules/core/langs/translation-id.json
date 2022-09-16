@@ -43,7 +43,7 @@
     "core-dialogs/block-chars": "Block Karakter",
     "core-dialogs/ngram-radius": "Radius",
     "core-dialogs/ngram-size": "Ukuran Ngram",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/distance-fun": "Fungsi Distance",
     "clustering-keyers/cologne-phonetic": "cologne-phonetic",
     "clustering-keyers/metaphone3": "metaphone3",

@@ -204,7 +204,7 @@
     "core-dialogs/no-rotation": "Walang pag-ikot",
     "core-dialogs/regular-dot": "Regular na Sukat ng Tuldok",
     "core-dialogs/for-recon-cell": "Para sa mga narekonsilang mga cells, kalalabasan",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "Ang kasalukuyang balyu ng mga cell. Ito ay isang shortcut para sa 'cell.value'.",
     "core-dialogs/cluster-values": "Ang mga balyu sa Klaster",
     "core-dialogs/clustering": "Ang pagklaster... ",

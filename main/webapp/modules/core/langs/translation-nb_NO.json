@@ -168,7 +168,7 @@
     "clustering-keyers/ngram-fingerprint": "n-gram-fingeravtrykk",
     "clustering-keyers/metaphone3": "Metaphone3",
     "core-dialogs/distance-fun": "Distanse funksjon",
-    "clustering-distances/PPM": "DPM",
+    "clustering-distances/ppm": "DPM",
     "core-dialogs/ngram-size": "N-gram størrelse",
     "core-dialogs/ngram-radius": "Radius",
     "core-dialogs/block-chars": "Blogg tegn",

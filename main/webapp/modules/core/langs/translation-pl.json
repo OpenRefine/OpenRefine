@@ -419,7 +419,7 @@
     "core-dialogs/find-more": "Dowiedz się więcej…",
     "core-dialogs/key-collision": "kluczowa kolizja",
     "clustering-keyers/cologne-phonetic": "cologne-phonetic",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/ngram-size": "Rozmiar Ngram",
     "core-views/by-number-example": "[11, AbcDef22]",
     "core-views/replacement-text": "Zamień na",

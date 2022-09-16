@@ -142,7 +142,7 @@
     "clustering-keyers/cologne-phonetic": "cologne-phonetic算法",
     "core-dialogs/distance-fun": "距离算法",
     "clustering-distances/levenshtein": "levenshtein算法",
-    "clustering-distances/PPM": "PPM算法",
+    "clustering-distances/ppm": "PPM算法",
     "core-dialogs/ngram-size": "Ngram 大小",
     "core-dialogs/ngram-radius": "半径（距离)",
     "core-dialogs/block-chars": "块字符数",

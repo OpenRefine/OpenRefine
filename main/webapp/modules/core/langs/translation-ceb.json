@@ -204,7 +204,7 @@
     "core-dialogs/no-rotation": "Ayaw ituyok",
     "core-dialogs/regular-dot": "Regular ang gidak on sa dot",
     "core-dialogs/for-recon-cell": "Para sa inuli nga cells, resulta",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/cell-value": "Ang kasamtangan nga bili sa mga cell. Mao kini ang shortcut para 'cell.value'.",
     "core-dialogs/cluster-values": "Mga bili sa kluster",
     "core-dialogs/clustering": "Clustering… ",

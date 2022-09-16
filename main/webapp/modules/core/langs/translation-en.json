@@ -205,7 +205,7 @@
     "clustering-keyers/cologne-phonetic": "Cologne phonetic",
     "core-dialogs/distance-fun": "Distance function",
     "clustering-distances/levenshtein": "Levenshtein",
-    "clustering-distances/PPM": "PPM",
+    "clustering-distances/ppm": "PPM",
     "core-dialogs/ngram-size": "n-Gram size",
     "core-dialogs/ngram-radius": "Radius",
     "core-dialogs/block-chars": "Block chars",
