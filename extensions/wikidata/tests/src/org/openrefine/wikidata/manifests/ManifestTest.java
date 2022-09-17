@@ -11,8 +11,6 @@ import static org.testng.AssertJUnit.assertEquals;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.testng.AssertJUnit.assertEquals;
-
 public class ManifestTest {
 
     @Test

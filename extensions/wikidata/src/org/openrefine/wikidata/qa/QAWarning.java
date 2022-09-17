@@ -24,7 +24,6 @@
 
 package org.openrefine.wikidata.qa;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;

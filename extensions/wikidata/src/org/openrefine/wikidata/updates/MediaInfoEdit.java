@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.MediaFileUtils;
 import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.editing.ReconEntityRewriter;
