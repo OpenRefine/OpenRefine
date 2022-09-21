@@ -1,6 +1,6 @@
 /**
- * Delete all previously added wikibase test instances
- * They are shared across project, therefore some cleanup is required to ensure a wikibase instance doesn't come from another test
+ * Delete all previously added Wikibase test instances
+ * They are shared across project, therefore some cleanup is required to ensure a Wikibase instance doesn't come from another test
  */
 function cleanupWikibases() {
     cy.get('#extension-bar-menu-container').contains('Wikidata').click();
@@ -20,14 +20,13 @@ function cleanupWikibases() {
 }
 describe(__filename, function () {
     it('Add a wikibase instance, general navigation', function () {
-        //
         cy.loadAndVisitProject('food.mini');
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
         cy.get('.menu-container a').contains('Select Wikibase instance').click();
 
         // check dialog and header
-        cy.get('.dialog-container .wikibase-dialog').should('to.exist');
-        cy.get('.dialog-container .wikibase-dialog .dialog-header').should(
+        cy.get('.wikibase-dialog').should('to.exist');
+        cy.get('.wikibase-dialog .dialog-header').should(
             'to.contain',
             'Select Wikibase instance'
         );
@@ -54,7 +53,7 @@ describe(__filename, function () {
             .contains('Add Wikibase')
             .click();
 
-        // ad a manifest
+        // add a manifest
         cy.get('.add-wikibase-dialog input[bind="manifestURLInput"]').invoke(
             'val',
             'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
@@ -62,7 +61,7 @@ describe(__filename, function () {
         cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
 
         // ensure the new Wikibase is listed
-        cy.get('.dialog-container .wikibase-dialog').should(
+        cy.get('.wikibase-dialog').should(
             'to.contain',
             'OpenRefine Wikibase Test'
         );
@@ -112,7 +111,7 @@ describe(__filename, function () {
         cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
 
         // ensure the new Wikibase is listed
-        cy.get('.dialog-container .wikibase-dialog').should(
+        cy.get('.wikibase-dialog').should(
             'to.contain',
             'OpenRefine Wikibase Cypress Test'
         );
