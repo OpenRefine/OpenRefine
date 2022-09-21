@@ -16,5 +16,5 @@ Cypress.Commands.add('addWikibaseInstance', (url) => {
     );
     cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
 
-    cy.get('.dialog-container .wikibase-dialog button').contains('Close').click();
+    cy.get('.dialog-container .wikibase-dialog button').contains('Cancel').click();
 });
