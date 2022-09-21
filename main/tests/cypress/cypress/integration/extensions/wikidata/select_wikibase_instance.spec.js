@@ -1,16 +1,20 @@
 /**
- * Delete all previsouly added wikibase instances
+ * Delete all previously added wikibase test instances
  * They are shared across project, therefore some cleanup is required to ensure a wikibase instance doesn't come from another test
  */
 function cleanupWikibases() {
     cy.get('#extension-bar-menu-container').contains('Wikidata').click();
     cy.get('.menu-container a').contains('Select Wikibase instance').click();
-    cy.get(
-        '.wikibase-dialog a:visible'
-    ).each(($el) => cy.wrap($el).click());
-    cy.get('div.dialog-container div.dialog-body ol > li > a:visible').contains('Delete').click();
-}
 
+    cy.get(
+        'div.wikibase-dialog ol.wikibase-list > li'
+    ).each(($el) => {
+        if ($el.text().includes('OpenRefine Wikibase Cypress Test')) {
+            cy.wrap($el).contains('Delete').click();
+        }
+    });
+    cy.get('.dialog-container .wikibase-dialog button').contains('OK').click();
+}
 describe(__filename, function () {
     it('Add a wikibase instance, general navigation', function () {
         //
@@ -39,7 +43,6 @@ describe(__filename, function () {
 
     it('Add a wikibase instance (URL)', function () {
         cy.loadAndVisitProject('food.mini');
-        // cleanupWikibases();
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
         cy.get('.menu-container a').contains('Select Wikibase instance').click();
@@ -58,13 +61,13 @@ describe(__filename, function () {
         // ensure the new Wikibase is listed
         cy.get('.dialog-container .wikibase-dialog').should(
             'to.contain',
-            'OpenRefine Wikibase Test'
+            'OpenRefine Wikibase Cypress Test'
         );
+        cleanupWikibases();
     });
 
     it('Add a wikibase instance (JSON Manifest copy-pasted in the textarea)', function () {
         cy.loadAndVisitProject('food.mini');
-        // cleanupWikibases();
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
         cy.get('.menu-container a').contains('Select Wikibase instance').click();
@@ -77,7 +80,7 @@ describe(__filename, function () {
         const manifest = {
             version: '1.0',
             mediawiki: {
-                name: 'OpenRefine Wikibase Test',
+                name: 'OpenRefine Wikibase Cypress Test',
                 root: 'https://or-wikibase-test.wiki.opencura.com/wiki/',
                 main_page: 'https://or-wikibase-test.wiki.opencura.com/wiki/Main_Page',
                 api: 'https://or-wikibase-test.wiki.opencura.com/w/api.php',
@@ -107,13 +110,13 @@ describe(__filename, function () {
         // ensure the new Wikibase is listed
         cy.get('.dialog-container .wikibase-dialog').should(
             'to.contain',
-            'Cypress Testing Wikibase Test'
+            'OpenRefine Wikibase Cypress Test'
         );
+        cleanupWikibases();
     });
 
     it('Add a wikibase instance (Invalid manifest provided)', function () {
         cy.loadAndVisitProject('food.mini');
-        // cleanupWikibases();
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
         cy.get('.menu-container a').contains('Select Wikibase instance').click();
@@ -127,11 +130,11 @@ describe(__filename, function () {
         cy.get('.add-wikibase-dialog p.invalid-manifest')
             .should('be.visible')
             .contains('SyntaxError: Unexpected token \'T\', "This is an"... is not valid JSON');
+        cleanupWikibases();
     });
 
     it('Switch from one wikibase to another', function () {
         cy.loadAndVisitProject('food.mini');
-        // cleanupWikibases();
         cy.addWikibaseInstance(
             'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
         );
@@ -146,8 +149,8 @@ describe(__filename, function () {
             'active'
         );
 
-        // switch to OpenRefine Wikibase Test
-        cy.get('.wikibase-dialog li').contains('OpenRefine Wikibase Test').click();
+        // switch to OpenRefine Wikibase Cypress Test
+        cy.get('.wikibase-dialog li').contains('OpenRefine Wikibase Cypress Test').click();
         cy.get('.wikibase-dialog li').should(
             'to.contain',
             'active'
@@ -159,11 +162,11 @@ describe(__filename, function () {
             'to.contain',
             'active'
         );
+        cleanupWikibases();
     });
 
     it('Remove wikibase', function () {
         cy.loadAndVisitProject('food.mini');
-        // cleanupWikibases();
         cy.addWikibaseInstance(
             'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
         );
@@ -173,7 +176,7 @@ describe(__filename, function () {
 
         // Click on the little cross to remove the test wikibase and ensure it's been removed
         cy.get('.wikibase-dialog li')
-            .contains('OpenRefine Wikibase Test')
+            .contains('OpenRefine Wikibase Cypress Test')
             .parent()
             .parent()
             .find('.wikibase-dialog-selector-delete')
@@ -181,10 +184,11 @@ describe(__filename, function () {
 
         cy.get('.wikibase-dialog').should(
             'not.to.contain',
-            'OpenRefine Wikibase Test'
+            'OpenRefine Wikibase Cypress Test'
         );
 
         // wikidata should still be there
         cy.get('.wikibase-dialog').should('to.contain', 'Wikidata');
+        cleanupWikibases();
     });
 });
