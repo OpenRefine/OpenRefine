@@ -80,6 +80,7 @@ WikibaseDialog.prototype.populateDialog = function () {
     _elmts.wikibaseName.text(wikibaseName);
     _elmts.wikibaseUrl.text(rootURL);
     _elmts.deleteWikibase.text($.i18n('core-index/delete'));
+    _elmts.deleteWikibase.addClass('wikibase-dialog-selector-delete');
     _elmts.deleteWikibase.on('click', (event) => {
       this.removeWikibase(event, wikibaseName);
     });
