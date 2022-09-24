@@ -29,6 +29,8 @@
     "wikibase-addition/add-wikibase": "Add Wikibase",
     "wikibase-addition/cancel": "Cancel",
     "wikibase-addition/invalid-manifest": "Invalid Wikibase manifest.",
+    "wikibase-addition/manifest-url-input": "Manifest URL",
+    "wikibase-addition/manifest-paste-input": "Manifest JSON",
     "wikibase-addition/version-error": "Manifest version $1 is not supported. OpenRefine supports manifest versions 1.x and 2.x only.",
     "wikibase-schema/dialog-header": "Align to Wikibase",
     "wikibase-schema/dialog-explanation": "You are currently working against <a href=\"$1\" target=\"_blank\">$2</a>. You should have your data reconciled to reconciliation services linked to $2 first. The schema below specifies how your tabular data will be transformed into $2 edits. You can drag and drop the column names below in most input boxes: for each row, edits will be generated with the values in these columns.",

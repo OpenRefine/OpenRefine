@@ -95,8 +95,13 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_noType.html($.i18n('core-recon/no-type'));
   this._elmts.or_proc_autoMatch.html($.i18n('core-recon/auto-match'));
   this._elmts.or_proc_max_candidates.html($.i18n('core-recon/max-candidates'));
+  this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
+
+  this._elmts.againstType.on('change', function() {
+    self._elmts.typeInput.trigger('focus').trigger('select');
+  });
 
   this._guessTypes(function() {
     self._populatePanel();
