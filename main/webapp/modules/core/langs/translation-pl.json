@@ -386,7 +386,7 @@
     "core-project/comma-sep": "Wartość oddzielona przecinkami",
     "core-project/custom-tabular": "Niestandardowa tabela…",
     "core-project/sql-export": "SQL…",
-    "core-project/templating": "Szablonowanie…",
+    "core-project/templating": "Przygotowanie szablonu…",
     "core-recon/as-property": "Jako właściwość",
     "core-recon/recon-col": "Uzgodnij kolumnę",
     "core-views/search-for": "Szukaj",
