@@ -126,10 +126,10 @@ SchemaAlignment._rerenderTabs = function() {
   let editableEntityTypes = WikibaseManager.getSelectedWikibaseEditableEntityTypes();
   for (let entityType of editableEntityTypes) {
     let addButton = $('<div></div>').addClass("wbs-toolbar");
-    let link = $('<a></a>').addClass("wbs-add-entity").appendTo(addButton);
+    let button = $('<button></button>').addClass("button").appendTo(addButton);
     addButton.appendTo(schemaElmts.entityAddButtons);
-    this._plusButton($.i18n('wikibase-schema/add-'+entityType+'-button'), link);
-    link.on('click',function(e) {
+    button.text($.i18n('wikibase-schema/add-'+entityType+'-button'));
+    button.on('click',function(e) {
       SchemaAlignment._addEntity(entityType);
       SchemaAlignment._hasChanged();
       e.preventDefault();
