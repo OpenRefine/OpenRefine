@@ -93,36 +93,84 @@ To exit, close all the browser tabs, and then press `control` and `C` in the ter
 If you see this error, you need to [install and configure a JDK package](installing#linux), including setting up `JAVA_HOME`.
 :::
   
+</TabItem>
+  
+<TabItem value="mac">
+
+You can find OpenRefine in your Applications folder, or you can open it using Terminal. 
+
+To run OpenRefine using Terminal:
+*   Find the OpenRefine application / icon in Finder
+*   Control-click on the icon and select “Show Package Contents” from the context menu
+*   This should open a new Finder menu: navigate into the “MacOS” folder
+*   Control-click on “JavaAppLauncher”
+*   Choose “Open With” from the menu, and select “Terminal.”
+
+To exit, close all your OpenRefine browser tabs, go back to the terminal window and press `Command` and `Q` to close it down.
+
+:::caution Problems starting?
+If you are using an older version of OpenRefine or are on an older version of MacOS, [check our Wiki for solutions to problems with MacOS](https://github.com/OpenRefine/OpenRefine/wiki/Installation-Instructions#macos). 
+:::
+
+</TabItem>
+
+<TabItem value="linux">
+
+Use a terminal to launch OpenRefine. First, navigate to the installation folder. Then call the program:
+
+```
+cd openrefine-3.4.1
+  ./refine
+```
+
+This will start OpenRefine and open your browser to the home screen.
+
+To exit, close all the browser tabs, and then press `control` and `C` in the terminal window.
+
+:::caution Did you get a JAVA_HOME error?
+“Error: Could not find the ‘java’ executable at ‘’, are you sure your JAVA_HOME environment variable is pointing to a proper java installation?”
+
+If you see this error, you need to [install and configure a JDK package](installing#linux), including setting up `JAVA_HOME`.
+:::
+
+</TabItem>
+  
 #### Running unsigned apps {#running-unsigned-apps}
 
 When you first attempt to run OpenRefine, you may receive a warning that OpenRefine is unrecognized and cannot be verified. 
 
 This warning is to be expected when attempting to start newly installed applications. This warning requires users to acknowledge opening applications from unverified sources, or unsigned applications. 
+  
+<TabItem value="mac">
 
 If you installed OpenRefine on a machine running MacOS and double-click to open the application, the message will read "OpenRefine cannot be opened because the developer cannot be verified." If this notification appears, click "Cancel."
 
-<img src="../../../graphics/MacOSWarning.png">
+![Alt](../../static/img/mac-os-warning.png "macOS warning")
 
 Now, right-click on the application icon and select "Open." 
 
-<img src="../../../graphics/RightClickOpenRefine.png">
+![Alt](../../static/img/right-click-open-refine.png "Right click to open OpenRefine")
 
 A new message will appear that states "macOS cannot verify the developer of OpenRefine. Are you sure you want to open it?" You should select "Open" which will start OpenRefine running.
 
-<img src="../../../graphics/VerifyOpen.png">
+![Alt](../../static/img/verify-open.png "How to verify opening OpenRefine")
 
 You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Mac machine.
+  
+</TabItem>
+  
+<TabItem value="windows">
 
 If you installed OpenRefine on a machine running Windows 10 or Windows 11 and double-click to open the application, the message will read “Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.” If this notification appears, click “More info.”
 
-<img src="../../../graphics/WindowsWarning.PNG">
+![Alt](../../static/img/windows-warning.png "Windows warning")
 
 There should be an option to “Run anyway”, you should select this option.
 
-<img src="../../../graphics/RunAnyway.PNG">
+![Alt](../../static/img/run-anyway.png "How to continue running the OpenRefine application")
 
 You will now be able to start the OpenRefine application in normal way in which you would run any other application on your Windows machine.
-
+  
 </TabItem>
 
 </Tabs>
