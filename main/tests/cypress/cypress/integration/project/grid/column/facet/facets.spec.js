@@ -399,7 +399,7 @@ describe(__filename, function () {
 
     cy.get('.dialog-container .dialog-header').should(
         'to.contain',
-        'Cluster & edit column "Shrt_Desc"'
+        'Cluster and edit column "Shrt_Desc"'
     );
   });
 

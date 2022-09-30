@@ -174,6 +174,7 @@ WikibaseManager.addWikibase = function (manifest) {
     for (let template of manifest.schema_templates) {
       WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
     }
+    WikibaseTemplateManager.saveTemplates();
   }
   WikibaseManager.saveWikibases();
 };

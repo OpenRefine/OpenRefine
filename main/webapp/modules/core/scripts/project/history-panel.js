@@ -196,6 +196,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   var elmts = DOM.bind(frame);
 
   elmts.dialogHeader.html($.i18n('core-project/extract-history'));
+  elmts.textarea.attr('aria-label',$.i18n('core-project/operation-history-json'))
   elmts.or_proj_extractSave.html($.i18n('core-project/extract-save'));
   elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
   elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));

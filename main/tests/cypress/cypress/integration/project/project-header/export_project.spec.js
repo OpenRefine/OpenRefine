@@ -5,11 +5,25 @@ describe(__filename, function () {
     ['0a', '0b', '0c'],
     ['1a', '1b', '1c']
   ];
+
+  /*
+     Workaround for https://github.com/cypress-io/cypress/issues/14857
+   */
+  function triggerLoadEvent() {
+    cy.window().document().then(function (doc) {
+      doc.addEventListener('click', () => {
+        setTimeout(function () {
+          Cypress.$(cy.state("$autIframe")).trigger("load");
+        }, 1000)
+      })
+    })
+  }
   it('Export a project through "OpenRefine project archive to file"', function () {
 
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('OpenRefine project archive to file')
       .click();
@@ -24,34 +38,33 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('Tab-separated value')
       .click();
-
     cy.get('.app-path-section').invoke('text').then((name)=>{
       cy.readFile(`cypress/downloads/${name}.tsv`).should('not.be.empty');
     });
-
   });
   it('Export a project through "Comma-separated value"', function () {
 
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('Comma-separated value')
       .click();
-
-    cy.get('.app-path-section').invoke('text').then((name)=>{
+    cy.get('.app-path-section').invoke('text').then((name)=> {
       cy.readFile(`cypress/downloads/${name}.csv`).should('not.be.empty');
     });
-
   });
   it('Export a project through "HTML table"', function () {
 
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('HTML table')
       .click();
@@ -66,6 +79,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('Excel (.xls)')
       .click();
@@ -80,6 +94,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('Excel 2007+ (.xlsx)')
       .click();
@@ -94,6 +109,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture, Date.now());
 
     cy.get('#export-button').click();
+    triggerLoadEvent();
     cy.get('.menu-container a')
       .contains('ODF spreadsheet')
       .click();
@@ -112,6 +128,7 @@ describe(__filename, function () {
       .contains('Custom tabular')
       .click();
     cy.get('a[bind="or_dialog_download"]').click();
+    triggerLoadEvent();
     cy.get('button[bind="downloadButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
@@ -128,6 +145,7 @@ describe(__filename, function () {
       .contains('SQL')
       .click();
     cy.get('a[bind="or_dialog_download"]').click();
+    triggerLoadEvent();
     cy.get('button[bind="downloadButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
@@ -143,6 +161,7 @@ describe(__filename, function () {
     cy.get('.menu-container a')
       .contains('Templating')
       .click();
+    triggerLoadEvent();
     cy.get('button[bind="exportButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{

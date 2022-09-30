@@ -39,12 +39,15 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._extension = { properties: [] };
 
   var self = this;
-  this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
+  this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/add-column-by-reconciliation.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.html($.i18n('core-views/add-col-recon-col')+" "+column.name);
   this._elmts.okButton.html($.i18n('core-buttons/ok'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   this._elmts.resetButton.html($.i18n('core-buttons/reset'));
+  this._elmts.addPropertyHeader.html($.i18n('core-dialogs/add-property'));
+  this._elmts.suggestedPropertyHeader.html($.i18n('core-dialogs/suggested-properties'));
+  this._elmts.previewHeader.html($.i18n('core-dialogs/preview'));
   this._elmts.resetButton.on('click',function() {
     self._extension.properties = [];
     self._update();
@@ -190,7 +193,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
 
 ExtendReconciledDataPreviewDialog.prototype._update = function() {
   this._elmts.previewContainer.empty().html(
-        '<div bind="progressPanel" class="extend-data-preview-progress"><img src="images/large-spinner.gif" /></div>');
+        '<div bind="progressPanel" class="add-column-by-reconciliation-progress"><img src="images/large-spinner.gif" /></div>');
 
   var self = this;
   var params = {

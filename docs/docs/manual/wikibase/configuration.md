@@ -19,12 +19,21 @@ To let your users contribute to your Wikibase instance with OpenRefine, you will
 
 ### Requirements {#requirements}
 
-To work with OpenRefine, your Wikibase instance needs an associated reconciliation service. For instance you can use [a Python wrapper](https://github.com/wetneb/openrefine-wikibase) for this. Also, in addition to Wikibase, the [UniversalLanguageSelector extension](https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:UniversalLanguageSelector) should be installed.
+To work with OpenRefine, your Wikibase instance needs an associated reconciliation service for each editable entity type:
 
+* To enable editing items (entities with an identifier starting with Q), you can deploy [a Python wrapper](https://github.com/wetneb/openrefine-wikibase) for this. It exposes a reconciliation service for items, built on top of Wikibase's own API and its Query Service.
+  Note that this service requires the [UniversalLanguageSelector extension](https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:UniversalLanguageSelector) should be installed.
+
+* To enable editing media files (if your Wikibase instance accepts file uploads), you can use [another Python wrapper](https://github.com/wikimedia/labs-tools-commons-recon-service) which exposes a reconciliation service for media files.
+
+* Editing properties or other entity types is not supported yet.
+
+We are aware that deploying those additional web services can be difficult for some Wikibase users, and we think those web services should be replaced by a MediaWiki extension which exposes the reconciliation endpoints from MediaWiki itself. We are not
+aware of anyone planning to work on this, though.
 
 ### The format of the manifest {#the-format-of-the-manifest}
 
-Here is the manifest of Wikimedia Commons:
+The manifest is a JSON object describing all the configuration details necessary for OpenRefine to integrate with your Wikibase instance. As an example, here is the manifest of Wikimedia Commons:
 
 ```json
 {
@@ -186,3 +195,21 @@ The URL schema used in edits summary. This is used for EditGroups to extract the
 As mentioned above, the manifest should be in the format specified by [wikibase-manifest-schema-v2.json](https://github.com/afkbrb/wikibase-manifest/blob/master/wikibase-manifest-schema-v2.json). You can check the format by adding the manifest directly to OpenRefine, and OpenRefine will complain if there is anything wrong with the format.
 
 ![test-validate-manifest-format](https://user-images.githubusercontent.com/29347603/90506110-52d85d00-e186-11ea-8077-683d2f234c46.gif)
+
+#### Migrate from the version 1 to the version 2 of the manifest format
+
+If you have created a manifest for your Wikibase instance before OpenRefine 3.6, then you have used the version 1 format for manifests. This format was generalized (into version 2) in OpenRefine 3.6 to allow for editing different entity types.
+If you are interested in letting OpenRefine users edit not just items on your Wikibase instance, but also other types of entities (such as media files), then you should migrate your manifest from version 1 to 2.
+
+To do so, you need to:
+
+* Change the `version` field of your manifest to 2.0;
+
+* Introduce the new `entity_types` field, into which the URL of your existing reconciliation service should go (inside the `item` subsection). See the documentation above for more details about the expected values of such fields;
+
+* Deploy [the additional reconciliation service for media files](https://github.com/wikimedia/labs-tools-commons-recon-service) and reference it in the `entity_types` section of the manifest, following the documentation above.
+
+* If your Wikibase instance supports file uploads, but does not use structured data on those files, add the `hide_structured_fields_in_mediainfo` field to your manifest, as documented above.
+
+After you have made those changes to your manifest, OpenRefine users will need to add it again to their list of Wikibase instances for the changes to take effect.
+

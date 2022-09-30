@@ -80,6 +80,7 @@ WikibaseDialog.prototype.populateDialog = function () {
     _elmts.wikibaseName.text(wikibaseName);
     _elmts.wikibaseUrl.text(rootURL);
     _elmts.deleteWikibase.text($.i18n('core-index/delete'));
+    _elmts.deleteWikibase.addClass('wikibase-dialog-selector-delete');
     _elmts.deleteWikibase.on('click', (event) => {
       this.removeWikibase(event, wikibaseName);
     });
@@ -114,7 +115,9 @@ WikibaseDialog.prototype.addWikibaseManifest = function () {
   elmts.dialogHeader.text($.i18n("wikibase-addition/dialog-header"));
   elmts.explainAddManifest.text($.i18n("wikibase-addition/explain-add-manifest"));
   elmts.explainAddManifestViaURL.text($.i18n("wikibase-addition/explain-add-manifest-via-url"));
+  elmts.manifestURLInput.attr("aria-label",$.i18n("wikibase-addition/manifest-url-input"));
   elmts.explainPasteManifest.html($.i18n("wikibase-addition/explain-paste-manifest"));
+  elmts.manifestTextarea.attr("aria-label",$.i18n("wikibase-addition/manifest-paste-input"));
   elmts.cancelButton.text($.i18n("wikibase-addition/cancel"));
   elmts.addButton.text($.i18n("wikibase-addition/add-wikibase"));
   elmts.invalidManifest.hide();

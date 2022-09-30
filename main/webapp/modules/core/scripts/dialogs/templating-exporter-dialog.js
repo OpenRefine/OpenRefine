@@ -51,6 +51,7 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.resetButton.html($.i18n('core-buttons/reset-template'));
     this._elmts.exportButton.html($.i18n('core-buttons/export'));
     this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+    this._elmts.previewTextarea.attr('aria-label',$.i18n('core-dialogs/template-preview'))
     
     this._elmts.exportButton.on('click',function() { self._export(); self._dismiss(); });
     this._elmts.cancelButton.on('click',function() { self._dismiss(); });
@@ -152,8 +153,7 @@ TemplatingExporterDialog.prototype._export = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "command/core/export-rows/" + name + ".txt")
-        .attr("target", "refine-export");
+        .attr("action", "command/core/export-rows/" + name + ".txt");
         
     var appendField = function(name, value) {
         $('<textarea />')
@@ -172,9 +172,6 @@ TemplatingExporterDialog.prototype._export = function() {
     appendField("template", this._elmts.templateTextarea[0].value);
 
     document.body.appendChild(form);
-
-    window.open(" ", "refine-export");
     form.submit();
-
     document.body.removeChild(form);
 };
