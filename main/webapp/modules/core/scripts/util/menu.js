@@ -161,16 +161,22 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           MenuSystem.createAndShowStandardMenu(item.submenu, this, options);
         });
       } else {
-        menuItem.html(item.label).on('click',function(evt) {
-          item.click.call(this, evt);
-          MenuSystem.dismissAll();
-        });
-        if ("tooltip" in item) {
-          menuItem.attr("title", item.tooltip);
+        if ("download" in item) {
+          menuItem.html(item.label);
+          menuItem.attr("href",item.download);
+          menuItem.attr("download","");
+        } else {
+          menuItem.html(item.label).on('click', function (evt) {
+            item.click.call(this, evt);
+            MenuSystem.dismissAll();
+          });
+          if ("tooltip" in item) {
+            menuItem.attr("title", item.tooltip);
+          }
+          menuItem.on('mouseenter', function () {
+            MenuSystem.dismissUntil(level);
+          });
         }
-        menuItem.on('mouseenter',function() {
-          MenuSystem.dismissUntil(level);
-        });
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);

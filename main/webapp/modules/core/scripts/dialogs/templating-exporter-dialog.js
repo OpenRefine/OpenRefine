@@ -152,8 +152,7 @@ TemplatingExporterDialog.prototype._export = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "command/core/export-rows/" + name + ".txt")
-        .attr("target", "refine-export");
+        .attr("action", "command/core/export-rows/" + name + ".txt");
         
     var appendField = function(name, value) {
         $('<textarea />')
@@ -172,9 +171,6 @@ TemplatingExporterDialog.prototype._export = function() {
     appendField("template", this._elmts.templateTextarea[0].value);
 
     document.body.appendChild(form);
-
-    window.open(" ", "refine-export");
     form.submit();
-
     document.body.removeChild(form);
 };

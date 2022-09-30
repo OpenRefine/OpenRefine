@@ -349,6 +349,9 @@ function SqlExporterDialog(options) {
 
   // var ext = SqlExporterDialog.formats[format].extension;
     var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
+    if (preview) {
+      $(form).attr("target", "refine-export");
+    }
     $('<input />')
     .attr("name", "options")
     .val(JSON.stringify(options))
@@ -366,12 +369,13 @@ function SqlExporterDialog(options) {
 
     document.body.appendChild(form);
 
-    window.open(" ", "refine-export");
+    if (preview) {
+      window.open(" ", "refine-export");
+    }
     form.submit();
 
     document.body.removeChild(form);
     return true;
-
   };
 
   SqlExporterDialog.prototype._prepareSqlExportRowsForm = function(format, includeEngine, ext) {
@@ -380,8 +384,7 @@ function SqlExporterDialog(options) {
       $(form)
       .css("display", "none")
       .attr("method", "post")
-      .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""))
-      .attr("target", "refine-export");
+      .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""));
 
       $('<input />')
       .attr("name", "project")
