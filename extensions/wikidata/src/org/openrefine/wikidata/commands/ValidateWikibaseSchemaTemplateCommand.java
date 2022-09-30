@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.commands;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,13 +25,13 @@ import java.util.Properties;
 import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 /**
- * Command to check whether a given schema template is syntactically valid.
- * This uses POST because schema templates can be large, but it is not
- * making any changes to the application state, so we are not CSRF-protecting this one.
+ * Command to check whether a given schema template is syntactically valid. This uses POST because schema templates can
+ * be large, but it is not making any changes to the application state, so we are not CSRF-protecting this one.
  */
 public class ValidateWikibaseSchemaTemplateCommand extends Command {
 
     protected static class WikibaseSchemaTemplate {
+
         // the name of the template, displayed in the UI
         @JsonProperty("name")
         String name;

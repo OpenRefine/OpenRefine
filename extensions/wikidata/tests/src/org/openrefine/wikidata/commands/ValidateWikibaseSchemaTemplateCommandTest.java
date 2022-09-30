@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.commands;
 
 import com.google.refine.commands.Command;
@@ -51,7 +52,7 @@ public class ValidateWikibaseSchemaTemplateCommandTest extends CommandTest {
         // schema that is syntactically correct but misses some elements.
         // it is invalid as a schema but valid as a schema template.
         String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
-        String templateJson = "{\"name\":\"My template\",\"template\":"+schemaJson+"}";
+        String templateJson = "{\"name\":\"My template\",\"template\":" + schemaJson + "}";
         when(request.getParameter("template")).thenReturn(schemaJson);
 
         command.doPost(request, response);
