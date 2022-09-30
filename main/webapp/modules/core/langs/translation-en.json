@@ -652,7 +652,7 @@
     "core-views/view": "View",
     "core-views/collapse-all": "Collapse all columns",
     "core-views/expand-all": "Expand all columns",
-    "core-views/display-null": "Show/Hide 'null' values in cells",
+    "core-views/display-null": "Show / Hide null values in cells",
     "core-views/reorder-perma": "Reorder rows permanently",
     "core-views/by": "By",
     "core-views/custom-text-trans": "Custom text transform on column",
