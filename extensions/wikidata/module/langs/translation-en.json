@@ -311,5 +311,13 @@
     "wikibase-save-new-template/select-template": "Select template...",
     "wikibase-save-new-template/save": "Save",
     "wikibase-save-new-template/empty-name": "Please provide a name for the schema template.",
-    "wikibase-schema/template-load-erases-schema": "This will discard the current schema, which has unsaved changes."
+    "wikibase-save-new-template/manage-templates": "Manage schema templates",
+    "wikibase-schema/template-load-erases-schema": "This will discard the current schema, which has unsaved changes.",
+    "wikibase-schema-template/dialog-header": "Schema templates",
+    "wikibase-schema-template/import": "Import new template",
+    "wikibase-schema-template/export": "Export",
+    "wikibase-schema-template/rename": "Rename",
+    "wikibase-schema-template/delete": "Delete",
+    "wikibase-schema-template/enter-new-template-name": "Enter a new name for the schema template",
+    "wikibase-schema-template/invalid-template": "Invalid schema template."
 }

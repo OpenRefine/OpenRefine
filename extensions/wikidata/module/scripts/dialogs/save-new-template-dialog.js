@@ -8,6 +8,7 @@ SaveNewTemplateDialog.launch = function() {
   this._elmts.dialogHeader.text($.i18n('wikibase-save-new-template/dialog-header'));
   this._elmts.nameLabel.html($.i18n('wikibase-save-new-template/template-name'));
   this._elmts.existingTemplateLabel.text($.i18n('wikibase-save-new-template/existing-template-label'));
+  this._elmts.manageButton.text($.i18n('wikibase-save-new-template/manage-templates'));
   this._elmts.cancelButton.text($.i18n('core-buttons/cancel'));
   this._elmts.saveButton.text($.i18n('wikibase-save-new-template/save'));
 
@@ -45,8 +46,12 @@ SaveNewTemplateDialog.launch = function() {
      SaveNewTemplateDialog._elmts.templateSelect.val('__placeholder__');
   });
 
-  elmts.cancelButton.on('click',function() {
+  elmts.cancelButton.on('click', function() {
      dismiss();
+  });
+ 
+  elmts.manageButton.on('click', function() {
+    new SchemaTemplateDialog();
   });
 
   elmts.form.on('submit',function(e) {

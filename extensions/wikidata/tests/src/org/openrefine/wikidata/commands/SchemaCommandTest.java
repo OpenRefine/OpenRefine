@@ -56,4 +56,5 @@ public abstract class SchemaCommandTest extends CommandTest {
 
         assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
+
 }

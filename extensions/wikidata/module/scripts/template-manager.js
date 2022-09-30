@@ -51,6 +51,23 @@ WikibaseTemplateManager.deleteTemplate = function (wikibaseName, templateName) {
   WikibaseTemplateManager.templates[wikibaseName] = newTemplates;
 }
 
+// renames a template
+WikibaseTemplateManager.renameTemplate = function (wikibaseName, oldTemplateName, newTemplateName) {
+  let newTemplate = WikibaseTemplateManager.getTemplate(wikibaseName, oldTemplateName);
+  if (newTemplate === undefined) {
+    return;
+  }
+  newTemplate.name = newTemplateName;
+  let newTemplates = WikibaseTemplateManager.getTemplates(wikibaseName).map(function (template) {
+    if (template.name === oldTemplateName) {
+      return newTemplate;
+    } else {
+      return template;
+    }
+  });
+  WikibaseTemplateManager.templates[wikibaseName] = newTemplates;
+}
+
 // loads all the templates from the backend
 WikibaseTemplateManager.loadTemplates = function(onDone) {
   $.ajax({
