@@ -310,6 +310,10 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   
   var ext = CustomTabularExporterDialog.formats[format].extension;
   var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext);
+
+  if (preview) {
+    $(form).attr("target", "refine-export");
+  }
   $('<input />')
   .attr("name", "options")
   .val(JSON.stringify(options))
@@ -325,13 +329,13 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   .val(preview)
   .appendTo(form);
 
-  document.body.appendChild(form);
-
-  window.open(" ", "refine-export");
-  form.submit();
-
-  document.body.removeChild(form);
-};
+    document.body.appendChild(form);
+    if (preview) {
+      window.open(" ", "refine-export");
+    }
+    form.submit();
+    document.body.removeChild(form);
+}
 
 CustomTabularExporterDialog.prototype._selectColumn = function(columnName) {
   this._elmts.columnNameSpan.text(columnName);
