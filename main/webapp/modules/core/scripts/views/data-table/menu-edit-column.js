@@ -227,6 +227,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-views/enter-col-name'));
     elmts.columnNameInput.text();
+    elmts.columnNameInput.attr('aria-label',$.i18n('core-views/new-column-name'));
     elmts.columnNameInput[0].value = column.name;
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
@@ -258,6 +259,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         );
       }
     });
+    elmts.columnNameInput.trigger('focus').trigger('select');
   };
   
 
