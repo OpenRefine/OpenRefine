@@ -56,13 +56,6 @@ public class Column {
     private ReconConfig _reconConfig;
     private ReconStats _reconStats;
 
-    // from data package metadata Field.java:
-    private String type = "";
-    private String format = "default";
-    private String title = "";
-    private String description = "";
-    private Map<String, Object> constraints = Collections.emptyMap();
-
     transient protected Map<String, Object> _precomputes;
 
     @JsonCreator
@@ -140,74 +133,6 @@ public class Column {
             _precomputes = new HashMap<String, Object>();
         }
         _precomputes.put(key, value);
-    }
-
-    @JsonProperty("type")
-    public String getType() {
-        return type;
-    }
-
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @JsonProperty("format")
-    public String getFormat() {
-        return format;
-    }
-
-    @JsonProperty("format")
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    @JsonProperty("title")
-    public String getTitle() {
-        return title;
-    }
-
-    @JsonProperty("title")
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @JsonProperty("description")
-    public String getDescription() {
-        return description;
-    }
-
-    @JsonProperty("description")
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @JsonProperty("constraints")
-    public String getConstraintsString() {
-        try {
-            return ParsingUtilities.mapper.writeValueAsString(constraints);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "{}";
-        }
-    }
-
-    @JsonProperty("constraints")
-    public void setConstraintsJson(String json) {
-        try {
-            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String, Object>>() {
-            }));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Map<String, Object> getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(Map<String, Object> constraints) {
-        this.constraints = constraints;
     }
 
     public void save(Writer writer) {
