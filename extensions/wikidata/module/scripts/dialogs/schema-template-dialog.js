@@ -83,9 +83,11 @@ SchemaTemplateDialog.prototype.deleteTemplate = function (wikibaseName, template
 
 SchemaTemplateDialog.prototype.renameTemplate = function (wikibaseName, templateName) {
   let newName = prompt($.i18n('wikibase-schema-template/enter-new-template-name'), templateName);
-  WikibaseTemplateManager.renameTemplate(wikibaseName, templateName, newName);
-  WikibaseTemplateManager.saveTemplates();
-  this.populateDialog();
+  if (newName && newName.trim()) {
+    WikibaseTemplateManager.renameTemplate(wikibaseName, templateName, newName.trim());
+    WikibaseTemplateManager.saveTemplates();
+    this.populateDialog();
+  }
 };
 
 ;

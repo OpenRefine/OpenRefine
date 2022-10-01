@@ -98,6 +98,7 @@ function init() {
         "styles/dialogs/wikibase-dialog.less",
         "styles/dialogs/add-wikibase-dialog.less",
         "styles/dialogs/statement-configuration-dialog.less",
+        "styles/dialogs/save-new-template-dialog.less",
         "styles/dialogs/schema-template-dialog.less"
       ]);
    
