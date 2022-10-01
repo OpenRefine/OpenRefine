@@ -45,7 +45,7 @@ class ReconCellRenderer {
       } else {
         $('<span>').text(cell.v).appendTo(divContentRecon);
 
-        if (this._dataTableView._showRecon) {
+        if (cellUI._dataTableView._showRecon) {
           var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContentRecon);
           if ("c" in r && r.c.length > 0) {
             var candidates = r.c;
