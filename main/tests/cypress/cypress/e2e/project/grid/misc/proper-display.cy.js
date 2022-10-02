@@ -16,7 +16,7 @@ describe(__filename, function () {
       .children('div')
       .children('a')
       .should('have.attr', 'href');
-    cy.getCell(1, 'tests').children('div').children('span');
+    cy.getCell(1, 'tests').children('div').children('div').children('span');
     cy.getCell(2, 'tests')
       .children('div')
       .children('a')
