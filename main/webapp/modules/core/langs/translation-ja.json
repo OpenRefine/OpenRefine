@@ -833,5 +833,9 @@
     "core-views/warning-throttle-delay-input": "絞り込みは0ミリ秒以上でなければなりません.",
     "core-buttons/apply-all": "すべてに適用",
     "core-dialogs/add-property": "プロパティを追加",
-    "core-dialogs/suggested-properties": "提案されたプロパティ"
+    "core-dialogs/suggested-properties": "提案されたプロパティ",
+    "core-dialogs/template-preview": "テンプレートのプレビュー",
+    "core-views/item-to-match": "マッチさせる項目",
+    "core-project/operation-history-json": "操作履歴のJSON",
+    "core-recon/type": "種類"
 }

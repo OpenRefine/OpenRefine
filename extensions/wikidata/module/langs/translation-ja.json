@@ -311,5 +311,7 @@
     "wikibase-save-new-template/dialog-header": "スキーマのテンプレートを新規保存",
     "wikibase-save-new-template/existing-template-label": "既存テンプレートに上書き保存",
     "wikibase-save-new-template/select-template": "テンプレートを選択...",
-    "wikibase-save-new-template/empty-name": "スキーマのテンプレートの名前を入力してください."
+    "wikibase-save-new-template/empty-name": "スキーマのテンプレートの名前を入力してください.",
+    "wikibase-addition/manifest-paste-input": "マニフェストのJSON",
+    "wikibase-addition/manifest-url-input": "マニフェストのURL"
 }
