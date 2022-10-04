@@ -71,7 +71,7 @@ public class ParseWikibaseSchemaCommand extends Command {
                 jsonResponse.put("object_type", "template");
                 jsonResponse.put("message", "Valid schema template");
                 respondJSON(response, jsonResponse);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 // if it is not a schema template, it might just be a schema (without a name).
                 // This is also accepted, just for the sake of being able to import schemas exported
                 // prior to OpenRefine 3.7 (which did not come with the wrapping object storing the name).
@@ -83,7 +83,6 @@ public class ParseWikibaseSchemaCommand extends Command {
                 jsonResponse.put("message", "Valid schema");
                 respondJSON(response, jsonResponse);
             }
-
 
         } catch (IOException e) {
             // we did not recognize the JSON as that of a schema template or schema
