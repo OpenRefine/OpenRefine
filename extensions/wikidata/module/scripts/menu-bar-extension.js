@@ -100,19 +100,11 @@ $(function () {
               ManageAccountDialog.checkAndLaunch();
             }
           },
-          {},
-          {
-            id: "wikidata/import-schema",
-            label: $.i18n('wikibase-extension/import-wikibase-schema'),
-            click: function () {
-              ImportSchemaDialog.launch();
-            }
-          },
           {
             id: "wikidata/export-schema",
-            label: $.i18n('wikibase-extension/export-schema'),
+            label: $.i18n('wikibase-save-schema-dialog/manage-schemas'),
             click: function () {
-              WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema");
+              new SchemaManagementDialog();
             }
           },
           {},
