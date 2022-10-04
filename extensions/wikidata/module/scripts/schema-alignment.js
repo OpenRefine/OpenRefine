@@ -148,14 +148,14 @@ SchemaAlignment._rerenderTabs = function() {
       .addClass('disabled')
       .on('click',function() { SchemaAlignment._discardChanges(); });
 
-  // Init template loading UI
-  schemaElmts.templateLabel.text($.i18n('wikibase-schema/start-from-a-schema-template'));
-  schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-new-template'));
+  // Init schema loading UI
+  schemaElmts.templateLabel.text($.i18n('wikibase-schema/start-from-an-existing-schema'));
+  schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-new-schema'));
   WikibaseTemplateManager.loadTemplates(function() {
     SchemaAlignment.updateAvailableTemplates();
   });
   schemaElmts.saveNewTemplateButton.on('click', function(e) {
-    SaveNewTemplateDialog.launch();
+    SaveSchemaDialog.launch();
     e.preventDefault();
   });
   schemaElmts.templateSelect.on('change', function(e) {
@@ -166,7 +166,7 @@ SchemaAlignment._rerenderTabs = function() {
     let currentJson = SchemaAlignment.getJSON();
     if (currentJson === undefined || currentJson.entityEdits.length === 0 || 
       !SchemaAlignment._hasUnsavedChanges ||
-      confirm($.i18n('wikibase-schema/template-load-erases-schema'))) {
+      confirm($.i18n('wikibase-schema/schema-load-erases-schema'))) {
       SchemaAlignment._reset(template.schema);
       SchemaAlignment.preview();
       SchemaAlignment._hasUnsavedChanges = true;
@@ -263,7 +263,7 @@ SchemaAlignment.updateAvailableTemplates = function() {
     .attr('selected', 'selected')
     .attr('value', '__placeholder__')
     .addClass('placeholder')
-    .text($.i18n('wikibase-save-new-template/select-template'))
+    .text($.i18n('wikibase-save-schema-dialog/select-schema'))
     .appendTo(templateSelect);
   for (let template of templates) {
      $('<option></option>')

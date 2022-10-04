@@ -1,7 +1,6 @@
 
 package org.openrefine.wikidata.commands;
 
-import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
@@ -14,11 +13,11 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
-public class ValidateWikibaseSchemaTemplateCommandTest extends CommandTest {
+public class ParseWikibaseSchemaCommandTest extends CommandTest {
 
     @BeforeMethod
     public void setUp() {
-        this.command = new ValidateWikibaseSchemaTemplateCommand();
+        this.command = new ParseWikibaseSchemaCommand();
     }
 
     @Test
@@ -41,7 +40,7 @@ public class ValidateWikibaseSchemaTemplateCommandTest extends CommandTest {
     @Test
     public void testInvalidSchemaTemplate()
             throws ServletException, IOException {
-        when(request.getParameter("template")).thenReturn("{\"foo\":\"bar\"}");
+        when(request.getParameter("template")).thenReturn("{\"entityEdits\":\"foo\"}");
         command.doPost(request, response);
 
         assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
@@ -59,7 +58,25 @@ public class ValidateWikibaseSchemaTemplateCommandTest extends CommandTest {
 
         String expectedMessage = "{"
                 + "\"code\":\"ok\","
+                + "\"object_type\":\"template\","
                 + "\"message\":\"Valid schema template\"}";
+
+        TestUtils.assertEqualsAsJson(writer.toString(), expectedMessage);
+    }
+
+    @Test
+    public void testIncompleteSchemaWithoutName() throws IOException, ServletException {
+        // schema that is syntactically correct but misses some elements.
+        // it is invalid as a schema but valid as a schema template.
+        String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
+        when(request.getParameter("template")).thenReturn(schemaJson);
+
+        command.doPost(request, response);
+
+        String expectedMessage = "{"
+                + "\"code\":\"ok\","
+                + "\"object_type\":\"schema\","
+                + "\"message\":\"Valid schema\"}";
 
         TestUtils.assertEqualsAsJson(writer.toString(), expectedMessage);
     }

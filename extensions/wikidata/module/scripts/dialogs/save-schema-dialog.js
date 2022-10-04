@@ -1,16 +1,16 @@
-var SaveNewTemplateDialog = {};
+var SaveSchemaDialog = {};
 
-SaveNewTemplateDialog.launch = function() {
+SaveSchemaDialog.launch = function() {
   var self = this;
-  var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/save-new-template-dialog.html"));
+  var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/save-schema-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
 
-  this._elmts.dialogHeader.text($.i18n('wikibase-save-new-template/dialog-header'));
-  this._elmts.nameLabel.html($.i18n('wikibase-save-new-template/template-name'));
-  this._elmts.existingTemplateLabel.text($.i18n('wikibase-save-new-template/existing-template-label'));
-  this._elmts.manageButton.text($.i18n('wikibase-save-new-template/manage-templates'));
+  this._elmts.dialogHeader.text($.i18n('wikibase-save-schema-dialog/dialog-header'));
+  this._elmts.nameLabel.html($.i18n('wikibase-save-schema-dialog/schema-name'));
+  this._elmts.existingTemplateLabel.text($.i18n('wikibase-save-schema-dialog/existing-schema-label'));
+  this._elmts.manageButton.text($.i18n('wikibase-save-schema-dialog/manage-schemas'));
   this._elmts.cancelButton.text($.i18n('core-buttons/cancel'));
-  this._elmts.saveButton.text($.i18n('wikibase-save-new-template/save'));
+  this._elmts.saveButton.text($.i18n('wikibase-save-schema-dialog/save'));
 
   this._level = DialogSystem.showDialog(frame);
 
@@ -28,7 +28,7 @@ SaveNewTemplateDialog.launch = function() {
         .attr('selected', 'selected')
         .attr('value', '__placeholder__')
         .addClass('placeholder')
-        .text($.i18n('wikibase-save-new-template/select-template'))
+        .text($.i18n('wikibase-save-schema-dialog/select-schema'))
         .appendTo(elmts.templateSelect);
     templates.forEach(template =>
       $('<option></option>')
@@ -38,12 +38,12 @@ SaveNewTemplateDialog.launch = function() {
   }
 
   elmts.templateSelect.on('change', function(e) {
-     SaveNewTemplateDialog._elmts.nameInput.val($(this).val());
+     SaveSchemaDialog._elmts.nameInput.val($(this).val());
   });
 
   elmts.nameInput.focus();
   elmts.nameInput.on('change', function(e) {
-     SaveNewTemplateDialog._elmts.templateSelect.val('__placeholder__');
+     SaveSchemaDialog._elmts.templateSelect.val('__placeholder__');
   });
 
   elmts.cancelButton.on('click', function() {
@@ -51,7 +51,7 @@ SaveNewTemplateDialog.launch = function() {
   });
  
   elmts.manageButton.on('click', function() {
-    new SchemaTemplateDialog();
+    new SchemaManagementDialog();
   });
 
   elmts.form.on('submit',function(e) {
@@ -59,7 +59,7 @@ SaveNewTemplateDialog.launch = function() {
     let wikibaseName = WikibaseManager.getSelectedWikibaseName();
     let templateName = elmts.nameInput.val();
     if (templateName.trim().length === 0) {
-      alert($.i18n('wikibase-save-new-template/empty-name'));
+      alert($.i18n('wikibase-save-schema-dialog/empty-name'));
       return;
     }
     let schema = SchemaAlignment.getJSON();
