@@ -3,7 +3,7 @@
  */
 Cypress.Commands.add('addWikibaseInstance', (url) => {
     cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-    cy.get('.menu-container a').contains('Select Wikibase instance').click();
+    cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
     cy.get('.wikibase-dialog .dialog-footer button')
         .contains('Add Wikibase')

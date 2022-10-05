@@ -4,7 +4,7 @@
  */
 function cleanupWikibases() {
     cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-    cy.get('.menu-container a').contains('Select Wikibase instance').click();
+    cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
     cy.get(
         'div.wikibase-dialog ol.wikibase-list > li'
@@ -22,13 +22,13 @@ describe(__filename, function () {
     it('Add a wikibase instance, general navigation', function () {
         cy.loadAndVisitProject('food.mini');
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-        cy.get('.menu-container a').contains('Select Wikibase instance').click();
+        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         // check dialog and header
         cy.get('.wikibase-dialog').should('to.exist');
         cy.get('.wikibase-dialog .dialog-header').should(
             'to.contain',
-            'Select Wikibase instance'
+            'Manage Wikibase instances'
         );
 
         // click add
@@ -47,7 +47,7 @@ describe(__filename, function () {
         cy.loadAndVisitProject('food.mini');
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-        cy.get('.menu-container a').contains('Select Wikibase instance').click();
+        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
             .contains('Add Wikibase')
@@ -73,7 +73,7 @@ describe(__filename, function () {
         cy.loadAndVisitProject('food.mini');
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-        cy.get('.menu-container a').contains('Select Wikibase instance').click();
+        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
             .contains('Add Wikibase')
@@ -123,7 +123,7 @@ describe(__filename, function () {
         cy.loadAndVisitProject('food.mini');
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-        cy.get('.menu-container a').contains('Select Wikibase instance').click();
+        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
             .contains('Add Wikibase')
@@ -146,7 +146,7 @@ describe(__filename, function () {
         );
 
         cy.get('#extension-bar-menu-container').contains('Wikidata').click();
-        cy.get('.menu-container a').contains('Select Wikibase instance').click();
+        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog li')
             .contains('OpenRefine Wikibase Test')

@@ -7,6 +7,6 @@ describe(__filename, function () {
             .click();
 
         // we do only one assertion to ensure the menu appear properly
-        cy.get('.menu-container').should('to.contain', 'Select Wikibase instance');
+        cy.get('.menu-container').should('to.contain', 'Manage Wikibase instances');
     });
 });

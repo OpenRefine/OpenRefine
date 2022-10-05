@@ -36,21 +36,6 @@ WikibaseDialog.prototype.launch = function () {
 WikibaseDialog.prototype.populateDialog = function () {
   let wikibases = WikibaseManager.getAllWikibaseManifests();
 
-
-  wikibases.sort((a, b) => {
-    let ret;
-    let aName = a.mediawiki.name.toLowerCase();
-    let bName = b.mediawiki.name.toLowerCase();
-    if (aName < bName) {
-      ret = -1;
-    } else if (aName > bName) {
-      ret = 1;
-    } else {
-      ret = 0;
-    }
-    return ret;
-  });
-
   this.elmts.wikibaseList.empty();
   for (let manifest of wikibases) {
     let wikibaseName = manifest.mediawiki.name;
