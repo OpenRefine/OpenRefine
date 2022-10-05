@@ -94,13 +94,6 @@ $(function () {
             }
           },
           {
-            id: "wikidata/manage-account",
-            label: $.i18n('wikibase-extension/manage-wikibase-account'),
-            click: function () {
-              ManageAccountDialog.checkAndLaunch();
-            }
-          },
-          {
             id: "wikidata/export-schema",
             label: $.i18n('wikibase-save-schema-dialog/manage-schemas'),
             click: function () {
@@ -108,6 +101,13 @@ $(function () {
             }
           },
           {},
+          {
+            id: "wikidata/manage-account",
+            label: $.i18n('wikibase-extension/manage-wikibase-account'),
+            click: function () {
+              ManageAccountDialog.checkAndLaunch();
+            }
+          },
           {
             id: "wikidata/perform-edits",
             label: $.i18n('wikibase-extension/perform-edits-on-wikibase'),
