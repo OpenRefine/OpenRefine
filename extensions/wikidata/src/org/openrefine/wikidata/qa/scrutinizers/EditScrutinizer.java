@@ -74,9 +74,9 @@ public abstract class EditScrutinizer {
     /**
      * False by default.
      *
-     * @param enableSlowChecks whether this scrutinizer is allowed to run more expensive checks
-     *                         (typically, those requesting to fetch external resources, make extra
-     *                         queries to an online service…).
+     * @param enableSlowChecks
+     *            whether this scrutinizer is allowed to run more expensive checks (typically, those requesting to fetch
+     *            external resources, make extra queries to an online service…).
      */
     public void setEnableSlowChecks(boolean enableSlowChecks) {
         this.enableSlowChecks = enableSlowChecks;

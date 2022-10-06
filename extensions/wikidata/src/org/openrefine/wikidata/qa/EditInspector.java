@@ -84,9 +84,12 @@ public class EditInspector {
     /**
      * Builds an edit inspector.
      *
-     * @param warningStore the store in which to push any warnings generated
-     * @param manifest the configuration of the Wikibase instance to run on
-     * @param slowMode whether expensive checks should be run as well
+     * @param warningStore
+     *            the store in which to push any warnings generated
+     * @param manifest
+     *            the configuration of the Wikibase instance to run on
+     * @param slowMode
+     *            whether expensive checks should be run as well
      */
     public EditInspector(QAWarningStore warningStore, Manifest manifest, boolean slowMode) {
         this.scrutinizers = new HashMap<>();
