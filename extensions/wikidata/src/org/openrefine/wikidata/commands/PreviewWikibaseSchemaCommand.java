@@ -69,6 +69,8 @@ public class PreviewWikibaseSchemaCommand extends Command {
             response.setHeader("Content-Type", "application/json");
 
             String schemaJson = request.getParameter("schema");
+            String manifestJson = request.getParameter("manifest");
+            boolean slowMode = "true".equals(request.getParameter("slow_mode"));
 
             WikibaseSchema schema = null;
             if (schemaJson != null) {
@@ -100,7 +102,6 @@ public class PreviewWikibaseSchemaCommand extends Command {
             }
 
             Manifest manifest = null;
-            String manifestJson = request.getParameter("manifest");
             if (manifestJson != null) {
                 try {
                     manifest = ManifestParser.parse(manifestJson);
@@ -121,7 +122,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             List<EntityEdit> editBatch = schema.evaluate(project, engine, warningStore);
 
             // Inspect the edits and generate warnings
-            EditInspector inspector = new EditInspector(warningStore, manifest);
+            EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
             inspector.inspect(editBatch, schema);
 
             // Dump the first 10 edits, scheduled with the default scheduler

@@ -79,11 +79,20 @@ public class EditInspector {
     private ConstraintFetcher fetcher;
     private Manifest manifest;
     private EntityCache entityCache;
+    private boolean slowMode;
 
-    public EditInspector(QAWarningStore warningStore, Manifest manifest) {
+    /**
+     * Builds an edit inspector.
+     *
+     * @param warningStore the store in which to push any warnings generated
+     * @param manifest the configuration of the Wikibase instance to run on
+     * @param slowMode whether expensive checks should be run as well
+     */
+    public EditInspector(QAWarningStore warningStore, Manifest manifest, boolean slowMode) {
         this.scrutinizers = new HashMap<>();
         this.warningStore = warningStore;
         this.manifest = manifest;
+        this.slowMode = slowMode;
 
         String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
         if (propertyConstraintPid != null) {
@@ -127,6 +136,7 @@ public class EditInspector {
         scrutinizer.setStore(warningStore);
         scrutinizer.setFetcher(fetcher);
         scrutinizer.setManifest(manifest);
+        scrutinizer.setEnableSlowChecks(slowMode);
         if (scrutinizer.prepareDependencies()) {
             String key = scrutinizer.getClass().getName();
             scrutinizers.put(key, scrutinizer);

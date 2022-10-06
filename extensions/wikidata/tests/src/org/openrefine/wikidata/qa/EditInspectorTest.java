@@ -17,7 +17,7 @@ public class EditInspectorTest {
     public void testNoScrutinizerSkipped() throws Exception {
         String manifestJson = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         Manifest manifest = ManifestParser.parse(manifestJson);
-        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest);
+        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerCount);
     }
 
@@ -25,7 +25,7 @@ public class EditInspectorTest {
     public void toSkipScrutinizerDependingOnConstraintPropertyPid1() throws Exception {
         String manifestJson = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0-without-constraints.json");
         Manifest manifest = ManifestParser.parse(manifestJson);
-        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest);
+        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerNotDependingOnPropertyConstraintCount);
     }
 
@@ -33,7 +33,7 @@ public class EditInspectorTest {
     public void toSkipScrutinizerDependingOnConstraintPropertyPid2() throws Exception {
         String manifestJson = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0-missing-property-constraint-pid.json");
         Manifest manifest = ManifestParser.parse(manifestJson);
-        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest);
+        EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerNotDependingOnPropertyConstraintCount);
     }
 }

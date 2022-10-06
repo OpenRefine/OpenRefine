@@ -126,7 +126,11 @@ PerformEditsDialog.checkAndLaunch = function () {
       var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikibase-edits/analyzing-edits'));
       Refine.postCSRF(
           "command/wikidata/preview-wikibase-schema?" + $.param({project: theProject.id}),
-          {manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()), engine: JSON.stringify(ui.browsingEngine.getJSON())},
+          {
+             manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()),
+             engine: JSON.stringify(ui.browsingEngine.getJSON()),
+             slow_mode: true
+          },
           function (data) {
             discardWaiter();
             if (data['code'] !== 'error') {

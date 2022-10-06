@@ -50,6 +50,7 @@ public abstract class EditScrutinizer {
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
     protected Manifest manifest;
+    protected boolean enableSlowChecks = false;
 
     public void setStore(QAWarningStore store) {
         _store = store;
@@ -68,6 +69,17 @@ public abstract class EditScrutinizer {
 
     public String getConstraintsRelatedId(String name) {
         return manifest.getConstraintsRelatedId(name);
+    }
+
+    /**
+     * False by default.
+     *
+     * @param enableSlowChecks whether this scrutinizer is allowed to run more expensive checks
+     *                         (typically, those requesting to fetch external resources, make extra
+     *                         queries to an online service…).
+     */
+    public void setEnableSlowChecks(boolean enableSlowChecks) {
+        this.enableSlowChecks = enableSlowChecks;
     }
 
     /**
