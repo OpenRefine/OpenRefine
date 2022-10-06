@@ -70,7 +70,9 @@ ExporterManager.MenuItems.push(
             } else {
                 alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
-            onDone();
+            if (onDone) {
+              onDone();
+            }
           },
           "json"
         );
@@ -113,7 +115,6 @@ ExporterManager.handlers.exportProjectToGoogleDrive = function () {
           } else {
             alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
-          onDone();
         },
         "json"
       );
@@ -147,7 +148,6 @@ ExporterManager.handlers.exportProjectToGoogleSheets = function () {
           } else {
             alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
-          onDone();
         },
         "json"
       );
