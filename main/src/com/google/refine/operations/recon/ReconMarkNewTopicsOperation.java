@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
@@ -51,20 +53,30 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationDescription;
 
 public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
 
     final protected boolean _shareNewTopics;
+    final protected String _service;
+    final protected String _identifierSpace;
+    final protected String _schemaSpace;
 
     @JsonCreator
     public ReconMarkNewTopicsOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("shareNewTopics") boolean shareNewTopics) {
+            @JsonProperty("shareNewTopics") boolean shareNewTopics,
+            @JsonProperty("service") String service,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace) {
         super(engineConfig, columnName, false);
         _shareNewTopics = shareNewTopics;
+        _service = service;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
     }
 
     @JsonProperty("columnName")
@@ -75,6 +87,24 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
     @JsonProperty("shareNewTopics")
     public boolean getShareNewTopics() {
         return _shareNewTopics;
+    }
+
+    @JsonProperty("service")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getService() {
+        return _service;
+    }
+
+    @JsonProperty("identifierSpace")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getIdentifierSpace() {
+        return _identifierSpace;
+    }
+
+    @JsonProperty("schemaSpace")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getSchemaSpace() {
+        return _schemaSpace;
     }
 
     @Override
@@ -91,10 +121,22 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
 
     }
 
+    protected ReconConfig getNewReconConfig(Column column) {
+        return column.getReconConfig() != null ? column.getReconConfig()
+                : new StandardReconConfig(
+                        _service,
+                        _identifierSpace,
+                        _schemaSpace,
+                        null,
+                        false,
+                        Collections.emptyList(),
+                        0);
+    }
+
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
-        ReconConfig reconConfig = column.getReconConfig();
+        ReconConfig reconConfig = getNewReconConfig(column);
 
         return new RowVisitor() {
 
@@ -121,14 +163,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             }
 
             private Recon createNewRecon() {
-                if (reconConfig != null) {
-                    return reconConfig.createNewRecon(historyEntryID);
-                } else {
-                    // This should only happen when marking cells as reconciled
-                    // in a column that has never been reconciled before. In this case,
-                    // we just resort to the default reconciliation space.
-                    return new Recon(historyEntryID, null, null);
-                }
+                return reconConfig.createNewRecon(historyEntryID);
             }
 
             @Override
@@ -173,7 +208,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         return new ReconChange(
                 cellChanges,
                 _columnName,
-                column.getReconConfig(),
+                getNewReconConfig(column),
                 null);
     }
 }
