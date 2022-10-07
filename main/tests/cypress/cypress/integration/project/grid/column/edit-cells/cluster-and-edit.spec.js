@@ -111,11 +111,11 @@ describe(__filename, function () {
         cy.get('.dialog-container').within(() => {
             // check lines to be merged
             cy.get(
-                '.clustering-dialog-entry-table tr.odd input[type="checkbox"]'
+                '.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="checkbox"]'
             ).check();
 
             // enter a new cell value
-            cy.get('.clustering-dialog-entry-table tr.odd input[type="text"]').type(
+            cy.get('.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="text"]').type(
                 'testing'
             );
 
@@ -133,18 +133,18 @@ describe(__filename, function () {
         ]);
     });
 
-    it('Merge Select & Re Cluster', function () {
+    it.only('Merge Select & Re Cluster', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
 
         cy.get('.dialog-container').within(() => {
             // Merge BALLARDS RIVER
             cy.get(
-                '.clustering-dialog-entry-table tr.odd input[type="checkbox"]'
+                '.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="checkbox"]'
             ).check();
 
             // enter a new cell value
-            cy.get('.clustering-dialog-entry-table tr.odd input[type="text"]').type(
+            cy.get('.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="text"]').type(
                 ' TESTING A'
             );
 
@@ -154,11 +154,11 @@ describe(__filename, function () {
 
             // Merge Swabbys
             cy.get(
-                '.clustering-dialog-entry-table tr.odd input[type="checkbox"]'
+                '.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="checkbox"]'
             ).check();
 
             // enter a new cell value
-            cy.get('.clustering-dialog-entry-table tr.odd input[type="text"]').type(
+            cy.get('.clustering-dialog-entry-table tbody tr:nth-child(2) input[type="text"]').type(
                 ' TESTING B'
             );
 
