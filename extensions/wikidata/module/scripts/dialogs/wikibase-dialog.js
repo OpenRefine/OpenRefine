@@ -36,21 +36,6 @@ WikibaseDialog.prototype.launch = function () {
 WikibaseDialog.prototype.populateDialog = function () {
   let wikibases = WikibaseManager.getAllWikibaseManifests();
 
-
-  wikibases.sort((a, b) => {
-    let ret;
-    let aName = a.mediawiki.name.toLowerCase();
-    let bName = b.mediawiki.name.toLowerCase();
-    if (aName < bName) {
-      ret = -1;
-    } else if (aName > bName) {
-      ret = 1;
-    } else {
-      ret = 0;
-    }
-    return ret;
-  });
-
   this.elmts.wikibaseList.empty();
   for (let manifest of wikibases) {
     let wikibaseName = manifest.mediawiki.name;
@@ -115,7 +100,9 @@ WikibaseDialog.prototype.addWikibaseManifest = function () {
   elmts.dialogHeader.text($.i18n("wikibase-addition/dialog-header"));
   elmts.explainAddManifest.text($.i18n("wikibase-addition/explain-add-manifest"));
   elmts.explainAddManifestViaURL.text($.i18n("wikibase-addition/explain-add-manifest-via-url"));
+  elmts.manifestURLInput.attr("aria-label",$.i18n("wikibase-addition/manifest-url-input"));
   elmts.explainPasteManifest.html($.i18n("wikibase-addition/explain-paste-manifest"));
+  elmts.manifestTextarea.attr("aria-label",$.i18n("wikibase-addition/manifest-paste-input"));
   elmts.cancelButton.text($.i18n("wikibase-addition/cancel"));
   elmts.addButton.text($.i18n("wikibase-addition/add-wikibase"));
   elmts.invalidManifest.hide();

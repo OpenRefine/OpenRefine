@@ -19,18 +19,15 @@ const WikibaseManifestSchemaV1 = {
         },
         "root": {
           "type": "string",
-          "format": "url",
           "pattern": "^.*/$",
           "description": "The URL of the root of the Wikibase, such as 'https://www.wikidata.org/wiki/'. The trailing slash cannot be omitted"
         },
         "main_page": {
           "type": "string",
-          "format": "url",
           "description": "The URL of the main page of the Wikibase, such as 'https://www.wikidata.org/wiki/Wikidata:Main_Page'"
         },
         "api": {
           "type": "string",
-          "format": "url",
           "description": "The MediaWiki API endpoint of the Wikibase, such as 'https://www.wikidata.org/w/api.php'"
         }
       },
@@ -42,7 +39,6 @@ const WikibaseManifestSchemaV1 = {
       "properties": {
         "site_iri": {
           "type": "string",
-          "format": "url",
           "pattern": "^.*/$",
           "description": "The IRI of the Wikibase, such as 'http://www.wikidata.org/entity/'. This should match the IRI prefixes used in RDF serialization. Be careful about using 'http' or 'https', because any variation will break comparisons at various places. The trailing slash cannot be omitted"
         },
@@ -98,7 +94,6 @@ const WikibaseManifestSchemaV1 = {
       "properties": {
         "registration_page": {
           "type": "string",
-          "format": "url",
           "description": "The url of the OAuth consumer registration page, 'https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose' for Wikidata"
         }
       },
@@ -110,7 +105,6 @@ const WikibaseManifestSchemaV1 = {
       "properties": {
         "endpoint": {
           "type": "string",
-          "format": "url",
           "pattern": "^.*\\${lang}.*$",
           "description": "The default reconciliation API endpoint of the Wikibase, the endpoint should include the language variable '${lang}', such as 'https://wikidata.reconci.link/${lang}/api'"
         }

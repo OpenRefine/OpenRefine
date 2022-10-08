@@ -119,16 +119,17 @@ SchemaAlignment._rerenderTabs = function() {
   this._schemaPanel.empty();
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
+  schemaElmts.targetWikibaseLabel.text($.i18n('wikibase-schema/target-wikibase-instance'));
   schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
       WikibaseManager.getSelectedWikibaseMainPage(),
       WikibaseManager.getSelectedWikibaseName()));
   let editableEntityTypes = WikibaseManager.getSelectedWikibaseEditableEntityTypes();
   for (let entityType of editableEntityTypes) {
     let addButton = $('<div></div>').addClass("wbs-toolbar");
-    let link = $('<a></a>').addClass("wbs-add-entity").appendTo(addButton);
+    let button = $('<button></button>').addClass("button").appendTo(addButton);
     addButton.appendTo(schemaElmts.entityAddButtons);
-    this._plusButton($.i18n('wikibase-schema/add-'+entityType+'-button'), link);
-    link.on('click',function(e) {
+    button.text($.i18n('wikibase-schema/add-'+entityType+'-button'));
+    button.on('click',function(e) {
       SchemaAlignment._addEntity(entityType);
       SchemaAlignment._hasChanged();
       e.preventDefault();
@@ -148,9 +149,21 @@ SchemaAlignment._rerenderTabs = function() {
       .addClass('disabled')
       .on('click',function() { SchemaAlignment._discardChanges(); });
 
-  // Init schema loading UI
+  // Init the wikibase selection UI
+  // The choices of the select widget are added when _reset is called
+  schemaElmts.wikibaseSelect.on('change', function(e) {
+    let wikibaseName = $(this).val();
+    let previousWikibase = WikibaseManager.getSelectedWikibaseName();
+    if (wikibaseName !== previousWikibase) {
+      WikibaseManager.selected = wikibaseName;
+      SchemaAlignment.onWikibaseChange();
+    }
+  });
+
+  // Init template loading UI
   schemaElmts.templateLabel.text($.i18n('wikibase-schema/start-from-an-existing-schema'));
   schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-new-schema'));
+
   WikibaseTemplateManager.loadTemplates(function() {
     SchemaAlignment.updateAvailableTemplates();
   });
@@ -220,7 +233,7 @@ SchemaAlignment._rerenderTabs = function() {
 SchemaAlignment.onWikibaseChange = function() {
   SchemaAlignment._rerenderTabs();
   SchemaAlignment._save(function () {
-    SchemaAlignment._reset(theProject.overlayModels.wikibaseSchema);
+    SchemaAlignment._reset(null);
     SchemaAlignment.preview();
   });
 };
@@ -252,6 +265,23 @@ SchemaAlignment.updateColumns = function() {
      snap: ".wbs-target-input input",
      zIndex: 100,
   });
+};
+
+SchemaAlignment.updateAvailableWikibases = function() {
+  let wikibaseSelect = $('#wikibase-instance-selector');
+  wikibaseSelect.empty();
+  let wikibases = WikibaseManager.getAllWikibaseManifests();
+  let selectedWikibase = WikibaseManager.getSelectedWikibaseName();
+  for (let manifest of wikibases) {
+    let wikibaseName = manifest.mediawiki.name;
+    let option = $('<option></option>')
+      .attr('value', manifest.mediawiki.name)
+      .text(manifest.mediawiki.name)
+      .appendTo(wikibaseSelect);
+    if (selectedWikibase == manifest.mediawiki.name) {
+      option.attr('selected', 'selected');
+    }
+  }
 };
 
 SchemaAlignment.updateAvailableTemplates = function() {
@@ -341,6 +371,9 @@ SchemaAlignment._reset = function(schema) {
   this._originalSchema = schema;
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
   this._copiedReference = null;
+
+  // update the widget to select the Wikibase instance
+  SchemaAlignment.updateAvailableWikibases();
 
   $('#schema-alignment-entity-edits-container').empty();
 

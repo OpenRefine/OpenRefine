@@ -165,6 +165,22 @@ WikibaseManager.getAllWikibaseManifests = function () {
       manifests.push(WikibaseManager.wikibases[wikibaseName])
     }
   }
+
+  manifests.sort((a, b) => {
+    let ret;
+    let aName = a.mediawiki.name.toLowerCase();
+    let bName = b.mediawiki.name.toLowerCase();
+    if (aName < bName) {
+      ret = -1;
+    } else if (aName > bName) {
+      ret = 1;
+    } else {
+      ret = 0;
+    }
+    return ret;
+  });
+
+
   return manifests;
 };
 
@@ -174,6 +190,7 @@ WikibaseManager.addWikibase = function (manifest) {
     for (let template of manifest.schema_templates) {
       WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
     }
+    WikibaseTemplateManager.saveTemplates();
   }
   WikibaseManager.saveWikibases();
 };

@@ -149,6 +149,7 @@ describe(__filename, function () {
             );
 
             cy.get('.dialog-footer button[bind="applyReClusterButton"]').click();
+            cy.get('#resultSummaryId').contains('1 cluster found');
 
             // Re Cluster
 
