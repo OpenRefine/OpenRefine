@@ -36,18 +36,16 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.util.TestUtils;
 
 public class ToStringTests extends RefineTest {
-
     @Test
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
         assertEquals(invoke("toString", (Object) null), "");
-        assertEquals(invoke("toString", Long.valueOf(100)), "100");
-        assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
-        assertEquals(invoke("toString", Double.valueOf(100.0), "%.0f"), "100");
-        assertEquals(invoke("toString", Double.valueOf(100.0), "%.1f"), "100.0");
+        assertEquals(invoke("toString", 100L), "100");
+        assertEquals(invoke("toString", 100.0), "100.0");
+        assertEquals(invoke("toString", 100.0, "%.0f"), "100");
+        assertEquals(invoke("toString", 100.0, "%.1f"), String.format("%.1f", 100D));
 
         // test with other radix (2, 8, 10, 16)
         assertEquals(invoke("toString", 100L, "%x"), "64");
@@ -76,5 +74,4 @@ public class ToStringTests extends RefineTest {
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 01:12:11");
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
     }
-
 }
