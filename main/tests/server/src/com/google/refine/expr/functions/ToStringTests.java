@@ -38,6 +38,7 @@ import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 
 public class ToStringTests extends RefineTest {
+
     @Test
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
@@ -74,4 +75,5 @@ public class ToStringTests extends RefineTest {
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 01:12:11");
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
     }
+    
 }
