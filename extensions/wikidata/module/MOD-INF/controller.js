@@ -46,6 +46,7 @@ function init() {
     RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
+    RefineServlet.registerCommand(module, "parse-wikibase-schema", new ParseWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "login", new LoginCommand());
 
     /*
@@ -80,7 +81,8 @@ function init() {
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
         "scripts/dialogs/statement-configuration-dialog.js",
-        "scripts/dialogs/save-new-template-dialog.js",
+        "scripts/dialogs/save-schema-dialog.js",
+        "scripts/dialogs/schema-management-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 
@@ -95,7 +97,9 @@ function init() {
         "styles/dialogs/perform-edits.less",
         "styles/dialogs/wikibase-dialog.less",
         "styles/dialogs/add-wikibase-dialog.less",
-        "styles/dialogs/statement-configuration-dialog.less"
+        "styles/dialogs/statement-configuration-dialog.less",
+        "styles/dialogs/save-schema-dialog.less",
+        "styles/dialogs/schema-management-dialog.less"
       ]);
    
 }
