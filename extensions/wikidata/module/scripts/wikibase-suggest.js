@@ -91,7 +91,6 @@
               self.input.data("request.count.suggest", calls);
             },
             success: function(data) {
-              $.suggest.cache[url] = data;
               // translate the results of the MediaWiki API to that of the reconciliation API
               var translated = {
                   prefix: val, // keep track of prefix to match up response with input value
@@ -100,6 +99,7 @@
                       name: result.label,
                       description: result.description};})
               };
+              $.suggest.cache[url] = translated;
               self.response(translated, cursor ? cursor : -1);
             },
             error: function(xhr) {
