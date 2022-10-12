@@ -105,6 +105,7 @@ function resizeAll() {
   ui.processPanel.resize();
   ui.historyPanel.resize();
   ui.dataTableView.resize();
+  SchemaAlignment.resize();
 }
 
 function initializeUI(uiState) {

@@ -309,16 +309,21 @@ SchemaAlignment.switchTab = function(targetTab) {
   $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
   $(targetTab).show();
   resizeAll();
-  var panelHeight = this._viewPanel.height();
-  this._schemaPanel.height(panelHeight);
-  this._issuesPanel.height(panelHeight);
-  this._previewPanel.height(panelHeight);
-  // Resize the inside of the schema panel
-  var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
-  this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
 
   if (targetTab === "#view-panel") {
-     ui.dataTableView.render();
+    ui.dataTableView.render();
+  }
+};
+
+SchemaAlignment.resize = function() {
+  if (this._viewPanel) {
+    var panelHeight = this._viewPanel.height();
+    this._schemaPanel.height(panelHeight);
+    this._issuesPanel.height(panelHeight);
+    this._previewPanel.height(panelHeight);
+    // Resize the inside of the schema panel
+    var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
+    this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
   }
 };
 
