@@ -122,4 +122,28 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 NewEntityScrutinizer.newMediaWithoutWikitextType);
     }
 
+    @Test
+    public void testInvalidFilePath() {
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFilePath("/this/path/does/not/exist.jpg")
+                .addFileName("my_file.jpg")
+                .addWikitext("description")
+                .build();
+        scrutinizer.setEnableSlowChecks(true);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType);
+    }
+
+    @Test
+    public void testInvalidFilePathFastMode() {
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFilePath("/this/path/does/not/exist.jpg")
+                .addFileName("my_file.jpg")
+                .addWikitext("description")
+                .build();
+        scrutinizer.setEnableSlowChecks(false);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType);
+    }
+
 }

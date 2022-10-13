@@ -74,7 +74,7 @@ public abstract class ScrutinizerTest {
 
     public abstract EditScrutinizer getScrutinizer();
 
-    private EditScrutinizer scrutinizer;
+    protected EditScrutinizer scrutinizer;
     private QAWarningStore store;
 
     @BeforeMethod

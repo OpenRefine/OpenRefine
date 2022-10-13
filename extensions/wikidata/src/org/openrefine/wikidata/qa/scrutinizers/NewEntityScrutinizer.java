@@ -35,6 +35,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.io.File;
 
 /**
  * A scrutinizer that inspects new entities.
@@ -55,6 +56,9 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String newMediaWithoutFileNameType = "new-media-without-file-name";
     public static final String newMediaWithoutWikitextType = "new-media-without-wikitext";
     public static final String newMediaType = "new-media-created";
+    public static final String invalidFilePathType = "invalid-file-path";
+    // TODO add checks for bad file names (which are page titles): https://www.mediawiki.org/wiki/Help:Bad_title
+    // https://commons.wikimedia.org/wiki/Commons:File_naming
 
     // map from seen pairs of labels and descriptions in a given language to an example id where this was seen
     Map<LabelDescription, EntityIdValue> labelDescriptionPairs;
@@ -83,7 +87,17 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                 QAWarning issue = new QAWarning(newMediaWithoutFilePathType, null, QAWarning.Severity.CRITICAL, 1);
                 issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
+            } else if (enableSlowChecks) {
+                // check that the file exists.
+                File file = new File(update.getFilePath());
+                if (!file.exists()) {
+                    QAWarning issue = new QAWarning(invalidFilePathType, null, QAWarning.Severity.CRITICAL, 1);
+                    issue.setFacetable(false); // for now
+                    issue.setProperty("example_path", update.getFilePath());
+                    addIssue(issue);
+                }
             }
+
             if (update.getWikitext() == null || update.getWikitext().isBlank()) {
                 QAWarning issue = new QAWarning(newMediaWithoutWikitextType, null, QAWarning.Severity.CRITICAL, 1);
                 issue.setProperty("example_entity", update.getEntityId());

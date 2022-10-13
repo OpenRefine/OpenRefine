@@ -530,6 +530,7 @@ function init() {
       "styles/dialogs/column-reordering-dialog.less",
       "styles/dialogs/custom-tabular-exporter-dialog.less",
       "styles/dialogs/sql-exporter-dialog.less",
+      "styles/dialogs/recon-service-selection-dialog.less",
       "styles/reconciliation/recon-dialog.less",
       "styles/reconciliation/standard-service-panel.less",
       "styles/reconciliation/add-column-by-reconciliation.less",
