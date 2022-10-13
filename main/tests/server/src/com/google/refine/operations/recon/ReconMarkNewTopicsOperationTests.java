@@ -27,16 +27,46 @@
 
 package com.google.refine.operations.recon;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconMarkNewTopicsOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
+import java.util.Collections;
+import java.util.Properties;
+
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
+
+    String jsonWithoutService = "{"
+            + "\"op\":\"core/recon-mark-new-topics\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"columnName\":\"my column\","
+            + "\"shareNewTopics\":true,"
+            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
+            + "}";
+
+    String jsonWithService = "{"
+            + "\"op\":\"core/recon-mark-new-topics\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"columnName\":\"my column\","
+            + "\"shareNewTopics\":true,"
+            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\","
+            + "\"service\":\"http://foo.com/api\","
+            + "\"identifierSpace\":\"http://foo.com/identifierSpace\","
+            + "\"schemaSpace\":\"http://foo.com/schemaSpace\""
+            + "}";
 
     @BeforeSuite
     public void registerOperation() {
@@ -45,13 +75,55 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void serializeReconMarkNewTopicsOperation() throws Exception {
-        String json = "{"
-                + "\"op\":\"core/recon-mark-new-topics\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"columnName\":\"my column\","
-                + "\"shareNewTopics\":true,"
-                + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
-                + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class),
+                jsonWithoutService);
+    }
+
+    @Test
+    public void serializeReconMarkNewTopicsOperationWithService() throws Exception {
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class), jsonWithService);
+    }
+
+    @Test
+    public void testNotPreviouslyReconciled() throws Exception {
+        Project project = createCSVProject("my column\n"
+                + "hello\n"
+                + "world");
+        ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class);
+        op.createProcess(project, new Properties()).performImmediate();
+
+        assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
+        assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);
+        assertEquals("http://foo.com/identifierSpace", project.rows.get(0).cells.get(0).recon.identifierSpace);
+        assertEquals("http://foo.com/identifierSpace", project.rows.get(1).cells.get(0).recon.identifierSpace);
+        assertEquals(2, project.columnModel.columns.get(0).getReconStats().newTopics);
+        assertEquals("http://foo.com/schemaSpace", ((StandardReconConfig) project.columnModel.columns.get(0).getReconConfig()).schemaSpace);
+    }
+
+    @Test
+    public void testPreviouslyReconciled() throws Exception {
+        Project project = createCSVProject("my column\n"
+                + "hello\n"
+                + "world");
+        StandardReconConfig reconConfig = new StandardReconConfig(
+                "http://foo.com/api",
+                "http://foo.com/identifierSpace",
+                "http://foo.com/schemaSpace",
+                null,
+                false,
+                Collections.emptyList(),
+                0);
+
+        project.columnModel.columns.get(0).setReconConfig(reconConfig);
+
+        ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
+        op.createProcess(project, new Properties()).performImmediate();
+
+        assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
+        assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);
+        assertEquals("http://foo.com/identifierSpace", project.rows.get(0).cells.get(0).recon.identifierSpace);
+        assertEquals("http://foo.com/identifierSpace", project.rows.get(1).cells.get(0).recon.identifierSpace);
+        assertEquals(2, project.columnModel.columns.get(0).getReconStats().newTopics);
+        assertEquals("http://foo.com/schemaSpace", ((StandardReconConfig) project.columnModel.columns.get(0).getReconConfig()).schemaSpace);
     }
 }
