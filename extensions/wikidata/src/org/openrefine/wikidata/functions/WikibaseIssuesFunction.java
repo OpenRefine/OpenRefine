@@ -81,7 +81,7 @@ public class WikibaseIssuesFunction implements Function {
         // Evaluate the schema
         try {
             List<EntityEdit> entityEdits = schema.evaluateEntityDocuments(expressionContext);
-            EditInspector inspector = new EditInspector(warningStore, manifest);
+            EditInspector inspector = new EditInspector(warningStore, manifest, false);
             inspector.inspect(entityEdits, schema);
 
             return warningStore.getWarnings()
