@@ -27,8 +27,14 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.io.File;
 
 /**
@@ -43,6 +49,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String deletedStatementsType = "new-item-with-deleted-statements";
     public static final String noTypeType = "new-item-without-instance-of-or-subclass-of";
     public static final String newItemType = "new-item-created";
+    public static final String duplicateLabelDescriptionType = "duplicate-label-and-description";
 
     // mediainfo entities
     public static final String newMediaWithoutFilePathType = "new-media-without-file-path";
@@ -53,9 +60,17 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     // TODO add checks for bad file names (which are page titles): https://www.mediawiki.org/wiki/Help:Bad_title
     // https://commons.wikimedia.org/wiki/Commons:File_naming
 
+    // map from seen pairs of labels and descriptions in a given language to an example id where this was seen
+    Map<LabelDescription, EntityIdValue> labelDescriptionPairs;
+
     @Override
     public boolean prepareDependencies() {
         return true;
+    }
+
+    @Override
+    public void batchIsBeginning() {
+        labelDescriptionPairs = new HashMap<>();
     }
 
     @Override
@@ -114,6 +129,32 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                 addIssue(issue);
             }
 
+            // check that the pairs of (label,description) are unique among all new items
+            ItemDocument newItem = update.toNewEntity();
+            Map<String, MonolingualTextValue> descriptions = newItem.getDescriptions();
+            for (MonolingualTextValue label : newItem.getLabels().values()) {
+                MonolingualTextValue matchingDescription = descriptions.get(label.getLanguageCode());
+                if (matchingDescription != null) {
+                    LabelDescription labelDescription = new LabelDescription(
+                            label.getLanguageCode(),
+                            label.getText(),
+                            matchingDescription.getText());
+                    EntityIdValue exampleId = labelDescriptionPairs.get(labelDescription);
+                    if (exampleId != null) {
+                        QAWarning issue = new QAWarning(duplicateLabelDescriptionType, label.getLanguageCode(), QAWarning.Severity.CRITICAL,
+                                1);
+                        issue.setProperty("first_example_entity", exampleId);
+                        issue.setProperty("second_example_entity", update.getEntityId());
+                        issue.setProperty("common_label", label.getText());
+                        issue.setProperty("common_description", matchingDescription.getText());
+                        issue.setProperty("lang_code", label.getLanguageCode());
+                        addIssue(issue);
+                    } else {
+                        labelDescriptionPairs.put(labelDescription, update.getEntityId());
+                    }
+                }
+            }
+
             // Try to find a "instance of" or "subclass of" claim
             boolean typeFound = false;
             for (Statement statement : update.getAddedStatements()) {
@@ -131,4 +172,44 @@ public class NewEntityScrutinizer extends EditScrutinizer {
         }
     }
 
+    /**
+     * A pair of a label and a description in a common language.
+     */
+    private static class LabelDescription {
+
+        protected String label;
+        protected String description;
+        protected String language;
+        protected EntityIdValue exampleEntity;
+
+        public LabelDescription(String label, String description, String language) {
+            this.label = label;
+            this.description = description;
+            this.language = language;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LabelDescription that = (LabelDescription) o;
+            return label.equals(that.label) &&
+                    description.equals(that.description) &&
+                    language.equals(that.language);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(label, description, language);
+        }
+
+        @Override
+        public String toString() {
+            return "LabelDescription{" +
+                    "label='" + label + '\'' +
+                    ", description='" + description + '\'' +
+                    ", language='" + language + '\'' +
+                    '}';
+        }
+    }
 }

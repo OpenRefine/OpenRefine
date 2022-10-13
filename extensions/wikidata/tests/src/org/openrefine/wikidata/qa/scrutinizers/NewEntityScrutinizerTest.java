@@ -31,6 +31,7 @@ import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -43,6 +44,10 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
             Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingData.existingId),
             Collections.emptyList());
     private Statement p31Statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+    private Claim claimB = Datamodel.makeClaim(TestingData.newIdB,
+            Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingData.existingId),
+            Collections.emptyList());
+    private Statement p31StatementB = Datamodel.makeStatement(claimB, Collections.emptyList(), StatementRank.NORMAL, "");
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -86,6 +91,24 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.deletedStatementsType);
+    }
+
+    @Test
+    public void testNewItemsWithDuplicateLabelAndDescription() {
+        ItemEdit updateA = new ItemEditBuilder(TestingData.newIdA)
+                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
+                .addDescription(Datamodel.makeMonolingualTextValue("description commune", "fr"), true)
+                .addStatement(add(p31Statement))
+                .build();
+        ItemEdit updateB = new ItemEditBuilder(TestingData.newIdB)
+                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), true)
+                .addDescription(Datamodel.makeMonolingualTextValue("description commune", "fr"), false)
+                .addStatement(add(p31StatementB))
+                .build();
+
+        scrutinize(updateA, updateB);
+
+        assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.duplicateLabelDescriptionType);
     }
 
     @Test
