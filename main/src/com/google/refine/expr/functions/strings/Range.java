@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.CharMatcher;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
@@ -105,7 +106,7 @@ public class Range implements Function {
 
         // Check for valid string argument(s)
         if (range != null && range instanceof String) {
-            String rangeString = ((String) range).trim();
+            String rangeString = CharMatcher.whitespace().trimFrom((String) range);
             String[] rangeValues = rangeString.split(SEPARATOR);
 
             if (hasCommaAsLastCharacter(rangeString)) {
@@ -114,16 +115,16 @@ public class Range implements Function {
 
             try {
                 if (rangeValues.length == 1) {
-                    rangeEnd = Integer.parseInt(rangeValues[0].trim());
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 } else if (rangeValues.length == 2) {
-                    rangeStart = Integer.parseInt(rangeValues[0].trim());
-                    rangeEnd = Integer.parseInt(rangeValues[1].trim());
+                    rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[1]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 } else if (rangeValues.length == 3) {
-                    rangeStart = Integer.parseInt(rangeValues[0].trim());
-                    rangeEnd = Integer.parseInt(rangeValues[1].trim());
-                    rangeStep = Integer.parseInt(rangeValues[2].trim());
+                    rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[1]));
+                    rangeStep = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[2]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 }
             } catch (NumberFormatException nfe) {
@@ -204,8 +205,8 @@ public class Range implements Function {
             secondArg = ((Double) secondArg).intValue();
         }
 
-        String firstArgStringified = String.valueOf(firstArg).trim();
-        String secondArgStringified = String.valueOf(secondArg).trim();
+        String firstArgStringified = CharMatcher.whitespace().trimFrom(String.valueOf(firstArg));
+        String secondArgStringified = CharMatcher.whitespace().trimFrom(String.valueOf(secondArg));
         String thirdArgStringified = "";
 
         if (hasCommaAsLastCharacter(firstArgStringified) || hasCommaAsLastCharacter(secondArgStringified)) {
@@ -224,12 +225,12 @@ public class Range implements Function {
                 hasThreeArguments = true;
 
                 if (firstArgArray.length == 1) {
-                    secondArgStringified = secondArgArray[0].trim();
-                    thirdArgStringified = secondArgArray[1].trim();
+                    secondArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[0]);
+                    thirdArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[1]);
                 } else {
-                    firstArgStringified = firstArgArray[0].trim();
-                    secondArgStringified = firstArgArray[1].trim();
-                    thirdArgStringified = secondArgArray[0].trim();
+                    firstArgStringified = CharMatcher.whitespace().trimFrom(firstArgArray[0]);
+                    secondArgStringified = CharMatcher.whitespace().trimFrom(firstArgArray[1]);
+                    thirdArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[0]);
                 }
 
             } else if (combinedArrayLength == 2) {
@@ -285,9 +286,9 @@ public class Range implements Function {
         }
 
         try {
-            int rangeStart = Integer.parseInt(String.valueOf(firstArg).trim());
-            int rangeEnd = Integer.parseInt(String.valueOf(secondArg).trim());
-            int rangeStep = Integer.parseInt(String.valueOf(thirdArg).trim());
+            int rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(firstArg)));
+            int rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(secondArg)));
+            int rangeStep = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(thirdArg)));
             return createRange(rangeStart, rangeEnd, rangeStep);
         } catch (NumberFormatException nfe) {
             // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "

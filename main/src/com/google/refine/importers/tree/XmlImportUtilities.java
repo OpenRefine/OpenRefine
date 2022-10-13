@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.CharMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -346,7 +347,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (value instanceof String) {
             String text = (String) value;
             if (trimStrings) {
-                text = text.trim();
+                text = CharMatcher.whitespace().trimFrom(text);
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 record = new ImportRecord();
@@ -442,7 +443,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i);
             if (trimStrings) {
-                text = text.trim();
+                text = CharMatcher.whitespace().trimFrom(text);
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 addCell(
@@ -475,7 +476,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 if (value instanceof String) {
                     String text = (String) value;
                     if (trimStrings) {
-                        text = text.trim();
+                        text = CharMatcher.whitespace().trimFrom(text);
                     }
                     addCell(project, thisColumnGroup, record, colName, text,
                             storeEmptyStrings, guessDataType);

@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -106,7 +107,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             if (strings.length > 0) {
                 retrievedColumnNames = new ArrayList<Object>();
                 for (String s : strings) {
-                    s = s.trim();
+                    s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
                         retrievedColumnNames.add(s);
                     }
@@ -124,8 +125,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
-        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
-            quote = quoteCharacter.trim().charAt(0);
+        if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
+            quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
         }
 
         final CSVParser parser = new CSVParser(

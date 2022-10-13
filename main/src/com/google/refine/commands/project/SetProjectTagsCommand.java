@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.CharMatcher;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -84,7 +85,7 @@ public class SetProjectTagsCommand extends Command {
         String[] newTags = newT.split(" |\\,");
         List<String> polishedTags = new ArrayList<String>(newTags.length);
         for (String tag : newTags) {
-            tag = tag.trim();
+            tag = CharMatcher.whitespace().trimFrom(tag);
 
             if (!tag.isEmpty()) {
                 if (allProjectTags != null) {

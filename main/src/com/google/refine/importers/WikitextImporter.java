@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.CharMatcher;
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.WikitextEncodingValidator;
 import org.sweble.wikitext.parser.WikitextParser;
@@ -308,7 +309,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (value == null) {
                 value = "";
             }
-            value = value.trim();
+            value = CharMatcher.whitespace().trimFrom(value);
             cellStringBuilder = null;
             return value;
         }

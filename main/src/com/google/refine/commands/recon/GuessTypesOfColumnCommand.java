@@ -55,6 +55,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
@@ -151,7 +152,7 @@ public class GuessTypesOfColumnCommand extends Command {
         for (Row row : project.rows) {
             Object value = row.getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
-                String s = value.toString().trim();
+                String s = CharMatcher.whitespace().trimFrom(value.toString());
                 if (!sampleSet.contains(s)) {
                     samples.add(s);
                     sampleSet.add(s);
