@@ -71,7 +71,6 @@ describe(__filename, function () {
     cy.get(
       '.history-panel-body .history-past a.history-entry:last-of-type'
     ).click();
-    cy.waitForOrOperation();
     cy.get('.history-panel-body .history-past').should(
       'to.contain',
       'Remove column NDB_No'
@@ -88,7 +87,6 @@ describe(__filename, function () {
     cy.get(
       '.history-panel-body .history-past a.history-entry:last-of-type'
     ).click();
-    cy.waitForOrOperation();
     cy.get('.history-panel-body .history-now').should(
       'to.contain',
       'Remove column NDB_No'
