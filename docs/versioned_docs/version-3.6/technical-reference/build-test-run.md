@@ -158,7 +158,7 @@ NOTE: You can use Maven commands directly, but running some goals in isolation m
 ### Node.js and npm
 
 The OpenRefine webapp requires node and npm to install package dependencies.
-Download and install [Node.js](https://nodejs.org).  You should then have node and npm intalled. You can check the versions by typing:
+Download and install [Node.js](https://nodejs.org).  (On Windows, you can alternatively install [nvm](https://github.com/coreybutler/nvm-windows) to easily manage multiple npm versions on your system).  You should then have node and npm intalled. You can check the versions by typing:
 ```
 node -v
 npm -v
