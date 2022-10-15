@@ -39,6 +39,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 /**
  * Inspects an edit batch and emits warnings.
@@ -49,6 +50,7 @@ public abstract class EditScrutinizer {
 
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
+    protected ApiConnection connection;
     protected Manifest manifest;
     protected boolean enableSlowChecks = false;
 
@@ -65,6 +67,10 @@ public abstract class EditScrutinizer {
 
     public void setManifest(Manifest manifest) {
         this.manifest = manifest;
+    }
+
+    public void setApiConnection(ApiConnection connection) {
+        this.connection = connection;
     }
 
     public String getConstraintsRelatedId(String name) {

@@ -24,6 +24,7 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -58,6 +59,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 public abstract class ScrutinizerTest {
 
@@ -74,15 +76,18 @@ public abstract class ScrutinizerTest {
 
     public abstract EditScrutinizer getScrutinizer();
 
+    protected ApiConnection connection;
     protected EditScrutinizer scrutinizer;
     private QAWarningStore store;
 
     @BeforeMethod
     public void setUp() {
         store = new QAWarningStore();
+        connection = mock(ApiConnection.class);
         scrutinizer = getScrutinizer();
         scrutinizer.setStore(store);
         scrutinizer.setManifest(manifest);
+        scrutinizer.setApiConnection(connection);
         scrutinizer.prepareDependencies();
     }
 

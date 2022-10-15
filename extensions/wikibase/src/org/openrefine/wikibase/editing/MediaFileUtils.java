@@ -4,11 +4,11 @@ package org.openrefine.wikibase.editing;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
@@ -170,6 +170,24 @@ public class MediaFileUtils {
             retries--;
         }
         throw lastException;
+    }
+
+    /**
+     * Checks which of the provided page names already exist on the wiki.
+     *
+     * @param pageNames
+     *            the page names (including namespace prefix)
+     * @return
+     * @throws IOException
+     * @throws MediaWikiApiErrorException
+     */
+    public Set<String> checkIfPageNamesExist(List<String> pageNames) throws IOException, MediaWikiApiErrorException {
+        // the site IRI provided to the fetcher is not important because it will not be exposed to the user
+        WikibaseDataFetcher fetcher = new WikibaseDataFetcher(apiConnection, "http://some.site/iri");
+        return fetcher.getMediaInfoIdsByFileName(pageNames).entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     /**

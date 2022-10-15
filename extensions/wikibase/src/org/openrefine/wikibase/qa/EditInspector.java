@@ -32,29 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikibase.manifests.Manifest;
-import org.openrefine.wikibase.qa.scrutinizers.CalendarScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.CommonDescriptionScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.ConflictsWithScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.DifferenceWithinRangeScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.DistinctValuesScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.EditScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.EnglishDescriptionScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.EntityTypeScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.FormatScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.InverseConstraintScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.ItemRequiresScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.MultiValueScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.NewEntityScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.NoEditsMadeScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.QualifierCompatibilityScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.QuantityScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.RestrictedPositionScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.RestrictedValuesScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.SelfReferentialScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.SingleValueScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
-import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.*;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
@@ -64,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.
@@ -79,6 +59,7 @@ public class EditInspector {
     private ConstraintFetcher fetcher;
     private Manifest manifest;
     private EntityCache entityCache;
+    private ApiConnection connection;
     private boolean slowMode;
 
     /**
@@ -95,6 +76,10 @@ public class EditInspector {
         this.scrutinizers = new HashMap<>();
         this.warningStore = warningStore;
         this.manifest = manifest;
+        // TODO this connection could be logged in, as the user doing the upload, so that
+        // we could check for their rights to upload.
+        // see https://github.com/OpenRefine/OpenRefine/issues/5170
+        this.connection = new BasicApiConnection(manifest.getMediaWikiApiEndpoint());
         this.slowMode = slowMode;
 
         String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
@@ -126,6 +111,7 @@ public class EditInspector {
         register(new ConflictsWithScrutinizer());
         register(new ItemRequiresScrutinizer());
         register(new UseAsQualifierScrutinizer());
+        register(new FileNameScrutinizer());
     }
 
     /**
