@@ -1,4 +1,4 @@
-// librarycarpentry.org/lc-open-refine/03-working-with-data/index.html
+ // librarycarpentry.org/lc-open-refine/03-working-with-data/index.html
 
 describe(__filename, function () {
   it('Working with rows and records in openrefine', function () {
@@ -30,9 +30,6 @@ describe(__filename, function () {
     // Click the Records option to change to Records mode,
     // Note how the numbering has changed - indicating that several rows are related to the same record
     cy.get('span[bind="modeSelectors"]').contains('records').click();
-
-    cy.get('body[ajax_in_progress="true"]');
-    cy.get('body[ajax_in_progress="false"]');
 
     cy.get('#summary-bar').should('to.contain', '1001 records');
 
