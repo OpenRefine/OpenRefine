@@ -125,6 +125,7 @@ public class EditInspector {
         scrutinizer.setStore(warningStore);
         scrutinizer.setFetcher(fetcher);
         scrutinizer.setManifest(manifest);
+        scrutinizer.setApiConnection(connection);
         scrutinizer.setEnableSlowChecks(slowMode);
         if (scrutinizer.prepareDependencies()) {
             String key = scrutinizer.getClass().getName();

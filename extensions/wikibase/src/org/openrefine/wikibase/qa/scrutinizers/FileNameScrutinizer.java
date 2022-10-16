@@ -59,6 +59,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
                 QAWarning issue = new QAWarning(duplicateFileNamesInBatchType, null, QAWarning.Severity.CRITICAL,
                         1);
                 issue.setProperty("example_filename", fileName);
+                issue.setFacetable(false);
                 addIssue(issue);
             } else {
                 seenFileNames.add(fileName);
@@ -130,6 +131,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(fileNamesAlreadyExistOnWikiType, null,
                             QAWarning.Severity.CRITICAL, existing.size());
                     issue.setProperty("example_filename", existing.stream().findFirst().get());
+                    issue.setFacetable(false);
                     addIssue(issue);
                 }
             } catch (IOException e) {
