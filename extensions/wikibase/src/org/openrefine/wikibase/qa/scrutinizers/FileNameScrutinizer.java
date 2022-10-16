@@ -19,7 +19,9 @@ public class FileNameScrutinizer extends EditScrutinizer {
 
     // see https://commons.wikimedia.org/wiki/Commons:File_naming
     public static final int maxFileNameLength = 240;
-    public static final Pattern forbiddenFileNameChars = Pattern.compile(".*([^ %!\"$&'()*,\\-./0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF+]).*");
+    public static final Pattern forbiddenFileNameChars = Pattern.compile(
+            ".*([^ %!\"$&'()*,\\-./0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
+    public static final Pattern normalizedFileNameChars = Pattern.compile("[:/\\\\]");
 
     public static final String duplicateFileNamesInBatchType = "duplicate-file-names-in-batch";
     public static final String fileNamesAlreadyExistOnWikiType = "file-names-already-exist-on-wiki";
@@ -45,6 +47,18 @@ public class FileNameScrutinizer extends EditScrutinizer {
         seenFileNames = new HashSet<>();
     }
 
+    /**
+     * Attempt of a local implementation of the file name normalization that is done in MediaWiki. Assumes a non-empty
+     * file name as input.
+     * 
+     * @return
+     */
+    protected String normalizeFileName(String filename) {
+        String replaced = filename.replaceAll(normalizedFileNameChars.pattern(), "-")
+                .replaceAll("_", " ");
+        return replaced.substring(0, 1).toUpperCase() + replaced.substring(1);
+    }
+
     @Override
     public void scrutinize(MediaInfoEdit edit) {
         String fileName = edit.getFileName();
@@ -55,14 +69,15 @@ public class FileNameScrutinizer extends EditScrutinizer {
 
         if (edit.isNew()) {
             // check whether multiple files in the batch to be uploaded have the same filename
-            if (seenFileNames.contains(fileName)) {
+            String normalizedFileName = normalizeFileName(fileName);
+            if (seenFileNames.contains(normalizedFileName)) {
                 QAWarning issue = new QAWarning(duplicateFileNamesInBatchType, null, QAWarning.Severity.CRITICAL,
                         1);
                 issue.setProperty("example_filename", fileName);
                 issue.setFacetable(false);
                 addIssue(issue);
             } else {
-                seenFileNames.add(fileName);
+                seenFileNames.add(normalizedFileName);
             }
 
             // check whether filenames exceed the maximum length (240 bytes, which we take to be 240 characters)

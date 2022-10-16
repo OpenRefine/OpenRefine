@@ -42,10 +42,13 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
                 .build();
 
         MediaInfoEdit edit2 = new MediaInfoEditBuilder(TestingData.newMidB)
-                .addFileName("Some_filename.png")
+                .addFileName("some filename.png")
                 .build();
 
         scrutinize(edit1, edit2);
+
+        // the two file names are different, but equal after normalization,
+        // so we should report a conflict.
         assertWarningsRaised(FileNameScrutinizer.duplicateFileNamesInBatchType);
     }
 
@@ -65,9 +68,19 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     }
 
     @Test
-    public void testInvalidCharactersInFilename() throws IOException, MediaWikiApiErrorException {
+    public void testInvalidCharactersInFilenameVerticalBar() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("vertical bars (|) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test
+    public void testInvalidCharactersInFilenameHTMLEscaped() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("HTML escaped entities such as &nbsp; are not allowed.png")
                 .build();
 
         scrutinize(edit);
