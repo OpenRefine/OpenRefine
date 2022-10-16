@@ -986,7 +986,7 @@ fi
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
   build) build_prepare; do_mvn process-resources; do_mvn compile\ test-compile;;
-  clean) mvn clean;;
+  clean) do_mvn clean;;
   whitespace) whitespace $1;;
   test) test $1;;
   tests) test $1;;
