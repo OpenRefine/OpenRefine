@@ -4,7 +4,8 @@
 const WikibaseManager = {
   selected: "Wikidata",
   wikibases: {
-    "Wikidata": WikidataManifestV1_0 // default one
+    "Wikidata": WikidataManifestV1_0, // default one
+    "Wikimedia Commons": CommonsManifestV2_0
   }
 };
 
@@ -151,6 +152,22 @@ WikibaseManager.areStructuredMediaInfoFieldsDisabledForSelectedWikibase = functi
 WikibaseManager.selectWikibase = function (wikibaseName) {
   if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
     WikibaseManager.selected = wikibaseName;
+
+    // add any default templates that might not exist yet
+    let manifest = WikibaseManager.wikibases[wikibaseName];
+    if (manifest.schema_templates !== undefined) {
+      let templateAdded = false;
+      for (let template of manifest.schema_templates) {
+        if (WikibaseTemplateManager.getTemplate(template.name) === undefined) {
+          WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
+          templateAdded = true;
+        }
+      }
+      if (templateAdded) {
+        WikibaseTemplateManager.saveTemplates();
+      }
+    }
+
   }
 };
 
