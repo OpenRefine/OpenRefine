@@ -1,7 +1,7 @@
 describe(__filename, function () {
     it('Test the elements of the login panel', function () {
         cy.loadAndVisitProject('food.mini');
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase account').click();
 
         cy.get('.dialog-container').should('be.visible');
@@ -16,7 +16,7 @@ describe(__filename, function () {
 
     it('Login with invalid credentials', function () {
         cy.loadAndVisitProject('food.mini');
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase account').click();
 
         cy.get('.dialog-container input#wb-username').type('cypress');
@@ -30,7 +30,7 @@ describe(__filename, function () {
 
     it('Close the panel', function () {
         cy.loadAndVisitProject('food.mini');
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase account').click();
 
         cy.get('.dialog-container button').contains('Close').click();
@@ -40,7 +40,7 @@ describe(__filename, function () {
 
     it('Login with owner only consumer credentials (invalid credentials)', function () {
         cy.loadAndVisitProject('food.mini');
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase account').click();
 
         cy.get('.dialog-container a')

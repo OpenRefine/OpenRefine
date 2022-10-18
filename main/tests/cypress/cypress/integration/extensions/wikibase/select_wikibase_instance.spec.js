@@ -3,7 +3,7 @@
  * They are shared across project, therefore some cleanup is required to ensure a Wikibase instance doesn't come from another test
  */
 function cleanupWikibases() {
-    cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+    cy.get('#extension-bar-menu-container').contains('Wikibase').click();
     cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
     cy.get(
@@ -21,7 +21,7 @@ function cleanupWikibases() {
 describe(__filename, function () {
     it('Add a wikibase instance, general navigation', function () {
         cy.loadAndVisitProject('food.mini');
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         // check dialog and header
@@ -46,7 +46,7 @@ describe(__filename, function () {
     it('Add a wikibase instance (URL)', function () {
         cy.loadAndVisitProject('food.mini');
 
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
@@ -72,7 +72,7 @@ describe(__filename, function () {
     it('Add a wikibase instance (JSON Manifest copy-pasted in the textarea)', function () {
         cy.loadAndVisitProject('food.mini');
 
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
@@ -122,7 +122,7 @@ describe(__filename, function () {
     it('Add a wikibase instance (Invalid manifest provided)', function () {
         cy.loadAndVisitProject('food.mini');
 
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog .dialog-footer button')
@@ -145,7 +145,7 @@ describe(__filename, function () {
             'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
         );
 
-        cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
         cy.get('.wikibase-dialog li')
@@ -159,7 +159,7 @@ describe(__filename, function () {
             'OpenRefine Wikibase Test'
         );
 
-        cy.get('.wikibase-dialog').should('to.contain', 'Wikidata');
+        cy.get('.wikibase-dialog').should('to.contain', 'Wikibase');
         cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click();
         cleanupWikibases();
     });
