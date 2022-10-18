@@ -49,6 +49,12 @@ On Windows, OpenRefine can also be run by using the file `refine.bat` in the pro
 If you call `refine.bat` from the command line, you can [start OpenRefine with modifications](#starting-with-modifications). 
 If you want to modify the way `refine.bat` opens through double-clicking or using a shortcut, you can edit the `refine.ini` file. 
 
+:::caution Did you get a JAVA_HOME error?
+“Error: Could not find the ‘java’ executable at ‘’, are you sure your JAVA_HOME environment variable is pointing to a proper java installation?”
+
+If you see this error, you need to [install and configure Java](installing#java), including setting up `JAVA_HOME`.
+:::
+
 #### Exiting {#exiting}
 
 To exit OpenRefine, close all the browser tabs or windows, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `Control` and press `C` on your keyboard. This will save any last changes to your projects. 
