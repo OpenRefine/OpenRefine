@@ -52,7 +52,7 @@ If you want to modify the way `refine.bat` opens through double-clicking or usin
 :::caution Did you get a JAVA_HOME error?
 “Error: Could not find the ‘java’ executable at ‘’, are you sure your JAVA_HOME environment variable is pointing to a proper java installation?”
 
-If you see this error, you need to [install and configure a JDK package](installing#java), including setting up `JAVA_HOME`.
+If you see this error, you need to [install and configure Java](installing#java), including setting up `JAVA_HOME`.
 :::
 
 #### Exiting {#exiting}
