@@ -2,7 +2,7 @@
  * Return the .facets-container for a given facet name
  */
 Cypress.Commands.add('addWikibaseInstance', (url) => {
-    cy.get('#extension-bar-menu-container').contains('Wikidata').click();
+    cy.get('#extension-bar-menu-container').contains('Wikibase').click();
     cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
     cy.get('.wikibase-dialog .dialog-footer button')
