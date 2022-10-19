@@ -33,12 +33,15 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.facets.FacetConfig;
 import com.google.refine.util.ParsingUtilities;
 
 public class EngineConfig {
-
+    private static Logger LOGGER = LoggerFactory.getLogger(EngineConfig.class);
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
 
@@ -67,7 +70,7 @@ public class EngineConfig {
         try {
             return ParsingUtilities.mapper.readValue(json, EngineConfig.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.debug("Error reconstructing engine configuration", e);
             return null;
         }
     }

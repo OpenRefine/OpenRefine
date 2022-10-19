@@ -136,7 +136,8 @@ public class CommandTests extends RefineTest {
 
     @Test
     public void getEngineConfigReturnsNullWithEmptyOrBadParameterValue() {
-        when(request.getParameter("engine")).thenReturn("sdfasdfas");
+        // TODO: This seems wrong. The engine config needs to be valid JSON and it should be an error if not
+        when(request.getParameter("engine")).thenReturn("this string is invalid JSON for testing");
 
         Assert.assertNull(SUT.wrapGetEngineConfig(request));
 
