@@ -407,7 +407,7 @@
     "core-views/smallest-first": "昇順",
     "core-views/warning-col-name": "カラム名を入力してください.",
     "core-views/match-this": "このセルだけにマッチ",
-    "core-views/one-topic": "同内容のセルの、新しい項目を作成",
+    "core-views/one-topic": "同内容のセルの、新しい項目を1つ作成",
     "core-views/sort-cell": "セル値の扱い",
     "core-views/add-col-recon-col": "照合カラムから新しいカラムを作る:",
     "core-views/create-topic-cells": "このセルと同じ全セルにマッチする新項目を作成",
@@ -839,5 +839,8 @@
     "core-project/operation-history-json": "操作履歴のJSON",
     "core-recon/type": "種類",
     "core-views/new-column-name": "新しいカラム名",
-    "core-views/cell-content": "セルの内容"
+    "core-views/cell-content": "セルの内容",
+    "core-views/new-topic/header": "各セルから新しい項目を作成",
+    "core-views/one-topic/header": "同内容のセルの、新しい項目を１つ作成",
+    "core-views/recon-mark-new-warning": "このカラムは未照合です。この操作ではセルにマークして、サービス内にそれらのエンティティが存在するかどうかのチェック無しに、新しいエンティティを作成します。"
 }

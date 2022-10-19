@@ -322,5 +322,9 @@
     "wikibase-save-schema-dialog/empty-name": "スキーマの名前を入力してください。",
     "wikibase-save-schema-dialog/manage-schemas": "スキーマを管理…",
     "wikibase-schema-management-dialog/rename": "名前変更",
-    "wikibase-schema/schema-load-erases-schema": "この操作により未保存の変更がある現在のスキーマを破棄します。"
+    "wikibase-schema/schema-load-erases-schema": "この操作により未保存の変更がある現在のスキーマを破棄します。",
+    "warnings-messages/duplicate-label-and-description/title": "言語 <span class=\"wb-issue-preformat\">{lang_code}</span> において一意になるラベルと説明",
+    "warnings-messages/duplicate-label-and-description/body": "当該の言語内で2つのウィキベース項目が同じラベルと説明を持つことはできません。例えば、このバッチは{first_example_entity} と {second_example_entity}を作成しようとしますが、両方ともラベル <span class=\"wb-issue-preformat\">{common_label}</span> と説明 <span class=\"wb-issue-preformat\">{common_description}</span> をこの言語 <span class=\"wb-issue-preformat\">{lang_code}</span>内に持つことになるので、登録はできません。",
+    "warnings-messages/invalid-file-path/title": "不適切なファイルパス",
+    "warnings-messages/invalid-file-path/body": "例えば <span class=\"wb-issue-preformat\">{example_path}</span>のような不適切なファイルのパスがあります。OpenRefineを実行しているシステム上で正しい絶対パスが指定されているか確認してください。"
 }
