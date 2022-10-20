@@ -715,6 +715,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   .trigger('select')
   .trigger('focus');
 
+  setInitialHeightTextArea(elmts.textarea[0]);
+
   elmts.cancelButton.on('click',function() {
     MenuSystem.dismissAll();
   });

@@ -87,3 +87,12 @@ function formatRelativeDate(d) {
 function daysIntoYear(date){
   return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
 }
+
+function setInitialHeightTextArea(textarea) {
+  const textareaStyle = getComputedStyle(textarea);
+  const fontSizePx = textareaStyle.fontSize;
+  const fontSize = Number(fontSizePx.replace(/px$/, ''));
+  let initialHeight = Math.max(textarea.scrollHeight,Math.round(3*1.1*fontSize));
+  initialHeight = Math.min(initialHeight,Math.round(15*1.1*fontSize));
+  textarea.style.height = initialHeight+'px';
+}
