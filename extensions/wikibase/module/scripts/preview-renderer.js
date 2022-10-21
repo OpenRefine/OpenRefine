@@ -312,6 +312,10 @@ EditRenderer._renderValue = function(json, container) {
   
   if (mode === "wikibase-item" || mode === "wikibase-property") {
     EditRenderer._renderEntity(json.datavalue, container);
+  } else if (json.snaktype === "somevalue") {
+    $('<span>somevalue</span>').appendTo(container);
+  } else if (json.snaktype === "novalue") {
+    $('<span>novalue</span>').appendTo(container);
   } else {
     var jsonValue = JSON.stringify(json.datavalue);
     var fullJsonValue = JSON.stringify(json);

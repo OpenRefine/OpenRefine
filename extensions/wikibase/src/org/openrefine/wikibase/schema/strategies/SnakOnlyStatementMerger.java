@@ -19,6 +19,8 @@ import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+import org.wikidata.wdtk.datamodel.implementation.SomeValueSnakImpl;
+import org.wikidata.wdtk.datamodel.implementation.NoValueSnakImpl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -87,9 +89,9 @@ public class SnakOnlyStatementMerger implements StatementMerger {
         // Deliberately only comparing the pids and not the siteIRIs to avoid spurious mismatches due to federation
         if (!existingSnak.getPropertyId().getId().equals(addedSnak.getPropertyId().getId())) {
             return false;
-        } else if (existingSnak instanceof NoValueSnak && addedSnak instanceof NoValueSnak) {
+        } else if (existingSnak instanceof NoValueSnakImpl && addedSnak instanceof NoValueSnakImpl) {
             return true;
-        } else if (existingSnak instanceof SomeValueSnak && addedSnak instanceof SomeValueSnak) {
+        } else if (existingSnak instanceof SomeValueSnakImpl && addedSnak instanceof SomeValueSnakImpl) {
             return true;
         } else {
             Value existingValue = ((ValueSnak) existingSnak).getValue();
