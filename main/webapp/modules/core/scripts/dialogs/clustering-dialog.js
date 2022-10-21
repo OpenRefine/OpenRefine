@@ -306,6 +306,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
+    $('body > div.dialog-container.ui-draggable :input').prop('disabled', true);
     $(".clustering-dialog-facet").css("display","none");
     var self = this;
 
@@ -365,6 +366,7 @@ ClusteringDialog.prototype._updateData = function(data) {
 
     this._resetFacets();
     this._updateAll();
+    $('body > div.dialog-container.ui-draggable :input').prop('disabled', false);
 };
 
 ClusteringDialog.prototype._selectAll = function() {
