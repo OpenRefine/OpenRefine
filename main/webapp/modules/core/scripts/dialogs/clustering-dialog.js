@@ -121,6 +121,8 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
+    self._level = DialogSystem.showDialog(dialog);
+
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
     .done(function(data) {
@@ -153,7 +155,6 @@ ClusteringDialog.prototype._createDialog = function() {
              option.prop('selected', 'true');
           }
        }
-       self._level = DialogSystem.showDialog(dialog);
     })
     .fail(function(error) {
             alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
@@ -306,7 +307,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
-    $('body > div.dialog-container.ui-draggable :input').prop('disabled', true);
+    $('#cluster-and-edit-dialog :input').prop('disabled', true);
     $(".clustering-dialog-facet").css("display","none");
     var self = this;
 
@@ -330,6 +331,7 @@ ClusteringDialog.prototype._cluster = function() {
         function(data) {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
+            $('#cluster-and-edit-dialog :input').prop('disabled', false);
         },
         "json"
     );
@@ -366,7 +368,6 @@ ClusteringDialog.prototype._updateData = function(data) {
 
     this._resetFacets();
     this._updateAll();
-    $('body > div.dialog-container.ui-draggable :input').prop('disabled', false);
 };
 
 ClusteringDialog.prototype._selectAll = function() {

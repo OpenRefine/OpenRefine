@@ -1,4 +1,4 @@
-<div class="dialog-frame" style="width: 1000px;">
+<div id="cluster-and-edit-dialog" class="dialog-frame" style="width: 1000px;">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body clustering-dialog-body" bind="dialogBody">
         <div>
@@ -9,17 +9,17 @@
         <div class="clustering-dialog-control-row">
             <div>
                 <label for="methodSelectorId" bind="or_dialog_method"></label>
-                <select bind="methodSelector" id="methodSelectorId" disabled>
+                <select bind="methodSelector" id="methodSelectorId">
                 <option selected="true" bind="or_dialog_keyCollision"></option>
                 <option bind="or_dialog_neighbor"></option>
             </select>
             </div>
             <div>
                 <div class="binning-controls"><label for="keyingFunctionSelectorId" bind="or_dialog_keying"></label>
-                    <select bind="keyingFunctionSelector" id="keyingFunctionSelectorId" disabled></select>
+                    <select bind="keyingFunctionSelector" id="keyingFunctionSelectorId"></select>
                 </div>
                 <div class="knn-controls hidden"><label for="distanceFunctionSelectorId" bind="or_dialog_distance"></label>
-                    <select bind="distanceFunctionSelector" id="distanceFunctionSelectorId" disabled></select>
+                    <select bind="distanceFunctionSelector" id="distanceFunctionSelectorId"></select>
                 </div>
             </div>
             <div>
@@ -49,16 +49,16 @@
             <div bind="facetContainer"></div>
         </div>
     </div>
-    <div class="dialog-footer clustering-dialog-footer" bind="dialogFooter" style="justify-content: space-between">
+    <div class="dialog-footer" bind="dialogFooter" style="justify-content: space-between">
         <div class="dialog-footer-bg">
-            <button class="button" bind="selectAllButton" disabled></button>
-            <button class="button" bind="deselectAllButton" disabled></button>
+            <button class="button" bind="selectAllButton"></button>
+            <button class="button" bind="deselectAllButton"></button>
         </div>
         <div class="dialog-footer-bg">
-            <button class="button" bind="exportClusterButton" disabled></button>
-            <button class="button button-primary" bind="applyReClusterButton" disabled></button>
-            <button class="button" bind="applyCloseButton" disabled></button>
-            <button class="button" bind="closeButton" disabled></button>
+            <button class="button" bind="exportClusterButton"></button>
+            <button class="button button-primary" bind="applyReClusterButton"></button>
+            <button class="button" bind="applyCloseButton"></button>
+            <button class="button" bind="closeButton"></button>
         </div>
     </div>
 </div>
