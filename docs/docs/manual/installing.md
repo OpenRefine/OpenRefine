@@ -190,12 +190,33 @@ brew install --cask openrefine
 
 <TabItem value="linux">
 
-Once you have downloaded the `.tar.gz` file, open a shell, navigate to the folder containing the download, and type:
+Once you have downloaded the `.tar.gz` file, open the command line (e.g., "Terminal") and navigate to the directory where the file is located.
+
+For instance, if the file is in your `Downloads` directory, use the `cd` command to navigate there.
 
 ```
-tar xzf openrefine-linux-3.4.tar.gz
+user@machine:~$ cd Downloads/
 ```
-
+Next, extract the `.tar.gz` file. To extract to the same directory, use the following command:
+  
+```
+user@machine:~$ tar xzf openrefine-3.6.2-linux.tar.gz
+```
+If you want OpenRefine to be housed in a different directory on your system, add the `-C` argument to the above command and specify the directory:
+```
+user@machine:~$ tar xzf openrefine-3.6.2-linux.tar.gz user@machine:~$ tar xzf -C /home/user/Documents
+```
+After that, use the `cd` command to navigate to the directory housing OpenRefine:
+```
+user@machine:~$ cd Documents/openrefine-3.6.2/
+user@machine:~/Documents/openrefine-3.6.2$
+```
+Run OpenRefine by entering ./refine
+```
+user@machine:~/Documents/openrefine-3.6.2$ ./refine
+```
+OpenRefine will start.
+  
 </TabItem>
 
 </Tabs>
