@@ -206,17 +206,7 @@ If you want OpenRefine to be housed in a different directory on your system, add
 ```
 user@machine:~$ tar xzf openrefine-3.6.2-linux.tar.gz user@machine:~$ tar xzf -C /home/user/Documents
 ```
-After that, use the `cd` command to navigate to the directory housing OpenRefine:
-```
-user@machine:~$ cd Documents/openrefine-3.6.2/
-user@machine:~/Documents/openrefine-3.6.2$
-```
-Run OpenRefine by entering ./refine
-```
-user@machine:~/Documents/openrefine-3.6.2$ ./refine
-```
-OpenRefine will start.
-  
+
 </TabItem>
 
 </Tabs>
