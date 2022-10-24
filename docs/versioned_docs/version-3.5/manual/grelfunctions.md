@@ -204,7 +204,7 @@ Returns an array of strings [ a, fragment, z ] where a is the substring within s
 
 If the omitFragment boolean is true, for example with `"internationalization".partition("nation", true)`, the fragment is not returned. The output is [ "inter", "alization" ].
 
-You can use regex for your fragment. The expresion `"abcdefgh".partition(/c.e/)` will output  [“abc”, "cde", defgh” ]. 
+You can use regex for your fragment. The expression `"abcdefgh".partition(/c.e/)` will output  ["abc", "cde", "fgh" ]. 
 
 ###### rpartition(s, s or p fragment, b omitFragment (optional)) {#rpartitions-s-or-p-fragment-b-omitfragment-optional}
 
