@@ -153,7 +153,6 @@
     "wikibase-extension/select-wikibase-instance": "Seleziona l'istanza di Wikibase…",
     "wikibase-schema/configure-statement": "configura",
     "wikibase-preview/delete-all-existing-statements": "Cancella tutte le dichiarazioni esistenti",
-    "wikibase-account/bot-passwords-alert": "Sembra che tu abbia usato la tua password per accedere. Ti consigliamo caldamente di utilizzare invece una password per bot (per funzionare, il tuo nome utente dovrebbe essere digitato come segue: \"tuonomeutentewikidata@nomedeltuobot\").",
     "wikibase-account/explain-owner-only-consumer-wiki": "Devi prima <a href=\"$1\" target=\"_blank\">registrare un account consumer personale</a>, se non ne hai già uno. Per maggiori informazioni su come registrarlo, leggi <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">qui</a>.",
     "wikibase-account/explain-password-login": "Puoi anche <a>accedere con il tuo nome utente e password</a>.",
     "wikibase-account/explain-owner-only-consumer-login": "Puoi anche <a>accedere con il tuo account consumer personale</a>.",
