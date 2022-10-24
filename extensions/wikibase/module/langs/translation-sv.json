@@ -184,5 +184,8 @@
     "wikibase-schema/description-override": "Beskrivning (skriv över om närvarande)",
     "wikibase-schema/override-term": "skriv över om närvarande",
     "wikibase-schema/override-wikitext": "skriv över existerande Wikitext",
-    "wikibase-schema/caption": "Bildtext"
+    "wikibase-schema/caption": "Bildtext",
+    "wikibase-account/username-placeholder": "användarnamn",
+    "wikibase-account/password-placeholder": "lösenord",
+    "wikibase-account/logo-alt-text": "$1 loggotyp"
 }
