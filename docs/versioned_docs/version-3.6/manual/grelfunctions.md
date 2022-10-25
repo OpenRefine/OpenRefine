@@ -149,11 +149,19 @@ The length of the find array must be the same as the length of the replace array
 
 ###### find(s, sub or p) {#finds-sub-or-p}
 
+:::tip
+
+See Also [match()](grelfunctions#matchs-p)
+
 Outputs an array of all consecutive substrings inside string s that match the substring or [regex](expressions#grel-supported-regex) pattern p. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in the array [ "a", "ea", "a", "o", "oei" ].
 
 You can supply a substring instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes. 
 
 ###### match(s, p) {#matchs-p}
+
+:::tip
+
+See Also [find()](grelfunctions#finds-sub-or-p)
 
 Attempts to match the string s in its entirety against the [regex](expressions#grel-supported-regex) pattern p and, if the pattern is found, outputs an array of all [capturing groups](https://www.regular-expressions.info/brackets.html) (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [ "3480" ]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
 
