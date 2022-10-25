@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
@@ -151,9 +152,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             // add column even if cell is blank
                             columnName = "";
                         } else if (cell instanceof Cell) {
-                            columnName = ((Cell) cell).value.toString().trim();
+                            columnName = CharMatcher.whitespace().trimFrom(((Cell) cell).value.toString());
                         } else {
-                            columnName = cell.toString().trim();
+                            columnName = CharMatcher.whitespace().trimFrom(cell.toString());
                         }
 
                         ImporterUtilities.appendColumnName(columnNames, c, columnName);
@@ -184,7 +185,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 Serializable storedValue;
                                 if (value instanceof String) {
                                     if (trimStrings) {
-                                        value = ((String) value).trim();
+                                        value = CharMatcher.whitespace().trimFrom(((String) value));
                                     }
                                     storedValue = guessCellValueTypes ? ImporterUtilities.parseCellValue((String) value) : (String) value;
 

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -199,7 +200,7 @@ public class ProjectMetadata {
             List<String> tmpTags = new ArrayList<String>(tags.length);
             for (String tag : tags) {
                 if (tag != null) {
-                    String trimmedTag = tag.trim();
+                    String trimmedTag = CharMatcher.whitespace().trimFrom(tag);
 
                     if (!trimmedTag.isEmpty()) {
                         tmpTags.add(trimmedTag);

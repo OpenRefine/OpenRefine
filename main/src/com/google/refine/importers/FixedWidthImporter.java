@@ -40,6 +40,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
@@ -97,7 +98,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
             if (strings.length > 0) {
                 retrievedColumnNames = new ArrayList<Object>();
                 for (String s : strings) {
-                    s = s.trim();
+                    s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
                         retrievedColumnNames.add(s);
                     }

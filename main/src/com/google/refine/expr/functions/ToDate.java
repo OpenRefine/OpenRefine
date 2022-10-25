@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import com.google.common.base.CharMatcher;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +78,7 @@ public class ToDate implements Function {
                 return arg0;
             } else if (arg0 instanceof Long) {
                 o1 = ((Long) arg0).toString(); // treat integers as years
-            } else if (arg0 instanceof String && arg0.toString().trim().length() > 0) {
+            } else if (arg0 instanceof String && CharMatcher.whitespace().trimFrom(arg0.toString()).length() > 0) {
                 o1 = (String) arg0;
             } else {
                 // ignore cell values that aren't Date, Calendar, Long or String
