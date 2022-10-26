@@ -28,6 +28,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,16 +39,17 @@ import com.google.refine.util.TestUtils;
 
 public class JacksonSerializationTest {
 
-    private static ObjectMapper mapper = ParsingUtilities.mapper;
+    private static final Logger logger = LoggerFactory.getLogger(JacksonSerializationTest.class);
+    private static final ObjectMapper mapper = ParsingUtilities.mapper;
 
     public static void testSerialize(Object pojo, String expectedJson) {
         // Test that the pojo is correctly serialized
         try {
 
             String actualJson = ParsingUtilities.defaultWriter.writeValueAsString(pojo);
-            TestUtils.assertEqualAsJson(expectedJson, actualJson);
+            TestUtils.assertEqualsAsJson(actualJson, expectedJson);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to serialize object", e); // TODO: Redundant with TestNG?
             Assert.fail("Failed to serialize object");
         }
     }
@@ -58,7 +61,7 @@ public class JacksonSerializationTest {
             assertEquals(pojo, deserialized);
             assertEquals(pojo.hashCode(), deserialized.hashCode());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to deserialize object", e); // TODO: Redundant with TestNG?
             Assert.fail("Failed to deserialize object");
         }
     }

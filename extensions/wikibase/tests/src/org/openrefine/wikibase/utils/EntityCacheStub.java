@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.DatamodelMapper;
 import org.wikidata.wdtk.datamodel.implementation.EntityDocumentImpl;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class EntityCacheStub extends EntityCache {
 
+    private static final Logger logger = LoggerFactory.getLogger(EntityCacheStub.class);
     private ObjectMapper mapper = new DatamodelMapper(Datamodel.SITE_WIKIDATA);
 
     public EntityCacheStub() {
@@ -35,7 +38,7 @@ public class EntityCacheStub extends EntityCache {
             // https://github.com/Wikidata/Wikidata-Toolkit/issues/471
             return mapper.readValue(stream, EntityDocumentImpl.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error reading value from entity cache", e);
         }
         return null;
     }

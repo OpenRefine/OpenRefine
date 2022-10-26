@@ -49,6 +49,8 @@ import org.openrefine.wikibase.schema.strategies.StatementMerger;
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.StatementEdit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -63,6 +65,7 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 public abstract class ScrutinizerTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(ScrutinizerTest.class);
     private static Manifest manifest;
 
     static {
@@ -70,7 +73,7 @@ public abstract class ScrutinizerTest {
             String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
             manifest = ManifestParser.parse(json);
         } catch (IOException | ManifestException e) {
-            e.printStackTrace();
+            logger.error("Failed to read manifest file", e);
         }
     }
 
