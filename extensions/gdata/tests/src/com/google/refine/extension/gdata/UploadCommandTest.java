@@ -32,7 +32,7 @@ class UploadCommandStub extends UploadCommand {
 
 public class UploadCommandTest {
 
-    static final Logger logger = LoggerFactory.getLogger("gdata_upload_command_test");
+    private static final Logger logger = LoggerFactory.getLogger(UploadCommandTest.class);
 
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
