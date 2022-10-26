@@ -13,6 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -30,6 +32,8 @@ class UploadCommandStub extends UploadCommand {
 
 public class UploadCommandTest {
 
+    static final Logger logger = LoggerFactory.getLogger("gdata_upload_command_test");
+
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
@@ -44,7 +48,7 @@ public class UploadCommandTest {
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error in test", e);
         }
     }
 

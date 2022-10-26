@@ -106,7 +106,7 @@ public class GDataImporter {
                         options,
                         exceptions);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                logger.error("Failed to open Sheet", e);
                 exceptions.add(e);
             }
         }

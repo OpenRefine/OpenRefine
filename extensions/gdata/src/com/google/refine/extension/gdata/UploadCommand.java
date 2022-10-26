@@ -117,7 +117,7 @@ public class UploadCommand extends Command {
                     writer.writeStringField("message", exceptions.get(0).getLocalizedMessage());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error uploading sheet", e);
                 writer.writeStringField("status", "error");
                 writer.writeStringField("message", e.getMessage());
             } finally {
