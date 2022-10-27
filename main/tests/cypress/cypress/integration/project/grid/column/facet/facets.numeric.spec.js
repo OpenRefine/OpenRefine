@@ -62,15 +62,16 @@ describe(__filename, function () {
     cy.get('#refine-tabs-facets .facets-container li:first-child a[bind="changeButton"]').click();
     cy.typeExpression('value.toNumber()');
     cy.get('.dialog-footer button').contains('OK').click();
-    cy.get('#refine-tabs-facets').should('exist');
+
+    cy.get('.browsing-panel-indicator').should("not.be.visible")
 
     cy.getNumericFacetContainer('Magnesium').find('#facet-0-numeric').click();
     cy.get('#summary-bar').contains('11 matching rows');
-
-    cy.waitForOrOperation();
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
 
     cy.getNumericFacetContainer('Magnesium').find('#facet-0-error').click();
     cy.get('#summary-bar').contains('0 matching rows');
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
 
     cy.getNumericFacetContainer('Magnesium').contains('reset').click();
     cy.get('#summary-bar').contains('199 rows');
