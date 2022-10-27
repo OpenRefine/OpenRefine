@@ -65,12 +65,33 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doReconMarkNewTopics = function(shareNewTopics) {
-    Refine.postCoreProcess(
-      "recon-mark-new-topics",
-      { columnName: column.name, shareNewTopics: shareNewTopics },
-      null,
-      { cellsChanged: true, columnStatsChanged: true }
-    );
+    var headerText = $.i18n(shareNewTopics ? 'core-views/one-topic/header' : 'core-views/new-topic/header');
+    var explanationText = $.i18n('core-views/recon-mark-new-warning');
+    var onSelect = function(service, identifierSpace, schemaSpace) {
+      Refine.postCoreProcess(
+        "recon-mark-new-topics",
+        {
+          columnName: column.name,
+          shareNewTopics: shareNewTopics,
+          service: service,
+          identifierSpace: identifierSpace,
+          schemaSpace: schemaSpace
+        },
+        null,
+        { cellsChanged: true, columnStatsChanged: true }
+      );
+    };
+
+    // if this column is already partly reconciled,
+    // we do not need to prompt the user for a reconciliation service,
+    // as we can use the existing one.
+    if (column.reconConfig != null && column.reconConfig.service != null) {
+      // we do not pass the service, identifierSpace and schemaSpace to the operation
+      // so that the existing ReconConfig is kept by the operation
+      onSelect(null, null, null);
+    } else {
+      createReconServiceSelectionDialog(headerText, explanationText, onSelect);
+    }
   };
 
   var doSearchToMatch = function() {
@@ -136,17 +157,26 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     input.trigger('focus').data("suggest").textchange();
   };
 
-  var doUseValuesAsIdentifiers = function() {
+  var createReconServiceSelectionDialog = function(headerText, explanationText, onSelect) {
     var frame = DialogSystem.createDialog();
     frame.width("400px");
+    frame.addClass('recon-service-selection-dialog');
 
-    var header = $('<div></div>').addClass("dialog-header").text($.i18n('core-views/use-values-as-identifiers/header')).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text(headerText).appendTo(frame);
+    var form = $('<form></form>').appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(form);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(form);
     
-    $('<p></p>').text($.i18n('core-views/use-values-as-identifiers-note')).appendTo(body);
-    $('<p></p>').text($.i18n('core-views/choose-reconciliation-service')).appendTo(body);
-    var select = $('<select></select>').appendTo(body);
+    $('<p></p>')
+      .text(explanationText)
+      .appendTo(body);
+    $('<label></label>')
+      .attr('for', 'dialog-recon-service-select')
+      .text($.i18n('core-views/choose-reconciliation-service')).appendTo(body);
+    var select = $('<select></select>')
+      .attr('id', 'dialog-recon-service-select')
+      .attr('name', 'dialog-recon-service-select')
+      .appendTo(body);
     var services = ReconciliationManager.getAllServices();
     for (var i = 0; i < services.length; i++) {
         var service = services[i];
@@ -155,39 +185,57 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
            .appendTo(select);
     }
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
-      DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
-    $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
-        
-        var service = select.val();
-        var identifierSpace = null;
-        var schemaSpace = null;
-        for(var i = 0; i < services.length; i++) {
-           if(services[i].url === service) {
-              identifierSpace = services[i].identifierSpace;
-              schemaSpace = services[i].schemaSpace;
-           }
-        }
-        if (identifierSpace === null) {
-            alert($.i18n('core-views/choose-reconciliation-service-alert'));
-        } else {
-          Refine.postCoreProcess(
-            "recon-use-values-as-identifiers",
-            {
-              columnName: column.name,
-              service: service,
-              identifierSpace: identifierSpace,
-              schemaSpace: schemaSpace
-            },
-            null,
-            { cellsChanged: true, columnStatsChanged: true }
-         );
-       }
-       DialogSystem.dismissUntil(level - 1);
-    }).appendTo(footer);
+    $('<button class="button"></button>')
+      .text($.i18n('core-buttons/cancel'))
+      .on('click',function() {
+         DialogSystem.dismissUntil(level - 1);
+      })
+      .appendTo(footer);
+
+    $('<button class="button"></button>')
+      .attr('type', 'submit')
+      .html($.i18n('core-buttons/ok'))
+      .appendTo(footer);
+
+    form.on('submit', function() {
+          var service = select.val();
+          var identifierSpace = null;
+          var schemaSpace = null;
+          for(var i = 0; i < services.length; i++) {
+            if(services[i].url === service) {
+                identifierSpace = services[i].identifierSpace;
+                schemaSpace = services[i].schemaSpace;
+            }
+          }
+          if (identifierSpace === null) {
+              alert($.i18n('core-views/choose-reconciliation-service-alert'));
+          } else {
+              onSelect(service, identifierSpace, schemaSpace);
+              DialogSystem.dismissUntil(level - 1);
+          }
+      });
 
     var level = DialogSystem.showDialog(frame);
+  };
+
+  var doUseValuesAsIdentifiers = function() {
+    var headerText = $.i18n('core-views/use-values-as-identifiers/header');
+    var explanationText = $.i18n('core-views/use-values-as-identifiers-note');
+    var onSelect = function(service, identifierSpace, schemaSpace) {
+      Refine.postCoreProcess(
+        "recon-use-values-as-identifiers",
+        {
+          columnName: column.name,
+          service: service,
+          identifierSpace: identifierSpace,
+          schemaSpace: schemaSpace
+        },
+        null,
+        { cellsChanged: true, columnStatsChanged: true }
+      );
+    };
+
+    createReconServiceSelectionDialog(headerText, explanationText, onSelect);
   };
 
   var doAddIdcolumn = function() {

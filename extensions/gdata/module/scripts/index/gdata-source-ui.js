@@ -77,7 +77,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
     } else {
       var doc = {};
       doc.docSelfLink = url;
-      if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
+      if (doc.docSelfLink.includes('spreadsheet')) { // TODO: fragile?
         doc.type = 'spreadsheet';
       } else {
         doc.type = 'table';

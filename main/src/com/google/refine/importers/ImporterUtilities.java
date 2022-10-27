@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.messages.OpenRefineMessage;
@@ -57,7 +58,7 @@ public class ImporterUtilities {
 
     static public Serializable parseCellValue(String text) {
         if (text.length() > 0) {
-            String text2 = text.trim();
+            String text2 = CharMatcher.whitespace().trimFrom(text);
             if (text2.length() > 0) {
                 try {
                     return Long.parseLong(text2);
@@ -102,7 +103,7 @@ public class ImporterUtilities {
     }
 
     static public void appendColumnName(List<String> columnNames, int index, String name) {
-        name = name.trim();
+        name = CharMatcher.whitespace().trimFrom(name);
 
         while (columnNames.size() <= index) {
             columnNames.add("");
@@ -165,7 +166,7 @@ public class ImporterUtilities {
     static public void setupColumns(Project project, List<String> columnNames) {
         Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < columnNames.size(); c++) {
-            String cell = columnNames.get(c).trim();
+            String cell = CharMatcher.whitespace().trimFrom(columnNames.get(c));
             if (cell.isEmpty()) {
                 cell = "Column";
             } else if (cell.startsWith("\"") && cell.endsWith("\"")) {

@@ -204,65 +204,44 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
-    // force visibility
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-
     // include ALLSPICE,GROUND, and check rows
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('ALLSPICE,GROUND')
       .parent()
-      .find('.facet-choice-toggle')
+      .trigger('mouseover')
+      .contains('include')
       .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
-    // OR is refreshing facets, need to show the toggle again
-    cy.waitForOrOperation();
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-
+    cy.wait(0);
     // include CELERY SEED, and check rows
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('ANISE SEED')
       .parent()
-      .find('.facet-choice-toggle')
+      .trigger('mouseover')
+      .contains('include')
       .click();
     cy.getCell(1, 'Shrt_Desc').should('to.contain', 'ANISE SEED');
     cy.get('#tool-panel').contains('2 matching rows');
 
-    // OR ir refreshing facets, need to show the toggle again
-    cy.waitForOrOperation();
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-
+    cy.wait(0);
     // include a third one, CELERY SEED, and check rows
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('BUTTER OIL,ANHYDROUS')
       .parent()
-      .find('.facet-choice-toggle')
+      .trigger('mouseover')
+      .contains('include')
       .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER OIL,ANHYDROUS'); // this row is added first
     cy.get('#tool-panel').contains('3 matching rows');
-
-    // OR ir refreshing facets, need to show the toggle again
-    cy.waitForOrOperation();
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-
+    
+    cy.wait(0);
     // EXCLUDE ALLSPICE,GROUND
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('ALLSPICE,GROUND')
       .parent()
-      .find('.facet-choice-toggle')
+      .contains('exclude')
       .click();
     cy.get('#tool-panel').contains('2 matching rows');
   });
@@ -296,7 +275,6 @@ describe(__filename, function () {
 
     // remove invert
     cy.getFacetContainer('Shrt_Desc').find('a[bind="invertButton"]').click();
-    cy.waitForOrOperation();
     cy.get('#tool-panel').contains('1 matching rows');
   });
 
@@ -399,7 +377,7 @@ describe(__filename, function () {
 
     cy.get('.dialog-container .dialog-header').should(
         'to.contain',
-        'Cluster & edit column "Shrt_Desc"'
+        'Cluster and edit column "Shrt_Desc"'
     );
   });
 

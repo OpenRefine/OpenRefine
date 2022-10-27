@@ -483,7 +483,7 @@ function init() {
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",
-      "scripts/dialogs/extend-data-preview-dialog.js",
+      "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
@@ -530,9 +530,10 @@ function init() {
       "styles/dialogs/column-reordering-dialog.less",
       "styles/dialogs/custom-tabular-exporter-dialog.less",
       "styles/dialogs/sql-exporter-dialog.less",
+      "styles/dialogs/recon-service-selection-dialog.less",
       "styles/reconciliation/recon-dialog.less",
       "styles/reconciliation/standard-service-panel.less",
-      "styles/reconciliation/extend-data-preview-dialog.less",
+      "styles/reconciliation/add-column-by-reconciliation.less",
     ]
   );
 

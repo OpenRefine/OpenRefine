@@ -14,9 +14,9 @@ describe(__filename, function () {
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
 
         cy.get('.dialog-container').within(() => {
-            cy.get('.dialog-header').contains('Cluster & edit column "location"');
+            cy.get('.dialog-header').contains('Cluster and edit column "location"');
             cy.get('.dialog-body').contains(
-                'This feature helps you find groups of different cell values'
+                'Find groups of different cell values'
             );
             cy.get('.dialog-footer').contains('Export clusters');
         });
@@ -52,7 +52,7 @@ describe(__filename, function () {
         // the following code simply iterate over every clustering method (dropdow) and functions (ngram, levenshtein ...) to ensure the rendering is not broken
         const methods = [
             {
-                methodName: 'key collision',
+                methodName: 'Key collision',
                 selector: 'keyingFunctionSelector',
                 functions: [
                     'Fingerprint',
@@ -149,6 +149,7 @@ describe(__filename, function () {
             );
 
             cy.get('.dialog-footer button[bind="applyReClusterButton"]').click();
+            cy.get('#resultSummaryId').contains('1 cluster found');
 
             // Re Cluster
 

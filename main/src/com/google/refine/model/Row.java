@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.google.common.base.CharMatcher;
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
@@ -144,7 +145,7 @@ public class Row implements HasFields {
     }
 
     protected boolean isValueBlank(Object value) {
-        return value == null || (value instanceof String && ((String) value).trim().length() == 0);
+        return value == null || (value instanceof String && CharMatcher.whitespace().trimFrom((String) value).length() == 0);
     }
 
     public void setCell(int cellIndex, Cell cell) {

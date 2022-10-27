@@ -19,7 +19,7 @@
 
   <modules>
         <module>jython</module>
-        <module>wikidata</module>
+        <module>wikibase</module>
         <module>database</module>
         <module>gdata</module>
         <module>pc-axis</module>

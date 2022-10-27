@@ -54,6 +54,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_descr.html($.i18n('core-dialogs/cluster-descr'));
     this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
     this._elmts.or_dialog_method.html($.i18n('core-dialogs/method'));
+    this._elmts.or_dialog_distance.html($.i18n('core-dialogs/distance-fun'));
     this._elmts.or_dialog_keyCollision.html($.i18n('core-dialogs/key-collision'));
     this._elmts.or_dialog_neighbor.html($.i18n('core-dialogs/nearest-neighbor'));
     this._elmts.or_dialog_keying.html($.i18n('core-dialogs/keying-function'));
@@ -120,6 +121,8 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
+    self._level = DialogSystem.showDialog(dialog);
+
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
     .done(function(data) {
@@ -152,7 +155,6 @@ ClusteringDialog.prototype._createDialog = function() {
              option.prop('selected', 'true');
           }
        }
-       self._level = DialogSystem.showDialog(dialog);
     })
     .fail(function(error) {
             alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
@@ -305,6 +307,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
+    $('#cluster-and-edit-dialog :input').prop('disabled', true);
     $(".clustering-dialog-facet").css("display","none");
     var self = this;
 
@@ -328,6 +331,7 @@ ClusteringDialog.prototype._cluster = function() {
         function(data) {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
+            $('#cluster-and-edit-dialog :input').prop('disabled', false);
         },
         "json"
     );

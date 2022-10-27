@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+ 
+<suite name="Wikidata extension" object-factory="org.powermock.modules.testng.PowerMockObjectFactory">
+  <test name="tests">
+    <groups>
+      <run>
+        <exclude name="broken" />
+      </run>
+    </groups>
+    <packages>
+      <package name="org.openrefine.wikibase.*" />
+    </packages>
+  </test>
+</suite>

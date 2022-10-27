@@ -18,7 +18,7 @@ describe(__filename, function () {
     loadExpressionPanel();
 
     cy.get('.dialog-container').within(() => {
-      cy.get('td[bind="or_dialog_expr"]').contains('Expression');
+      cy.get('label[bind="or_dialog_expr"]').contains('Expression');
       cy.get('select[bind="expressionPreviewLanguageSelect"] option').should(
         'have.length',
         3

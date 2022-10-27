@@ -36,6 +36,7 @@ function ExporterManager(button) {
 
 ExporterManager.handlers = {};
 
+
 ExporterManager.MenuItems = [
   {
     "id": "core/export-local",
@@ -111,24 +112,19 @@ ExporterManager.stripNonFileChars = function(name) {
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
-  var form = ExporterManager.prepareExportRowsForm(format, true, ext);
-
+  let form = ExporterManager.prepareExportRowsForm(format, true, ext);
   document.body.appendChild(form);
-
-  window.open(" ", "refine-export");
   form.submit();
-
   document.body.removeChild(form);
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
-  var form = document.createElement("form");
+  let name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
+  let form = document.createElement("form");
   $(form)
   .css("display", "none")
   .attr("method", "post")
-  .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""))
-  .attr("target", "refine-export");
+  .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""));
 
   $('<input />')
   .attr("name", "project")
@@ -147,27 +143,22 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
     .val(JSON.stringify(ui.browsingEngine.getJSON()))
     .appendTo(form);
   }
-
   return form;
 };
 
 ExporterManager.handlers.exportProjectToLocal = function() {
-  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
-  var form = document.createElement("form");
+  let name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
+  let form = document.createElement("form");
   $(form)
   .css("display", "none")
   .attr("method", "post")
-  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
-  .attr("target", "refine-export");
+  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz");
   $('<input />')
   .attr("name", "project")
   .val(theProject.id)
   .appendTo(form);
 
   document.body.appendChild(form);
-
-  window.open(" ", "refine-export");
   form.submit();
-
   document.body.removeChild(form);
 };

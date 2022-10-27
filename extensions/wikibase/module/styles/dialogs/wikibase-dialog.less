@@ -1,0 +1,77 @@
+@import-less url("../theme.less");
+
+.wikibase-dialog p {
+  padding: 0 10px 10px 10px
+}
+
+.wikibase-list-wrapper {
+  max-height: 500px; overflow-y: auto
+}
+
+.wikibase-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.wikibase-list li {
+  display: flex;
+  flex-direction: row;
+  flex-basis: fit-content;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+}
+
+.wikibase-list li.selected {
+  background: #bcf;
+  font-weight: bold;
+}
+
+.wikibase-list li:not(.selected):hover {
+  background: @dialog_footer;
+}
+
+.wikibase-list li img {
+  flex: 0 0;
+  max-height: 60px;
+  max-width: 60px;
+}
+
+.wikibase-list .wikibase-info {
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.wikibase-list li.selected .wikibase-name {
+  font-weight: bold;
+}
+
+.wikibase-list .wikibase-name {
+  padding: 3px;
+}
+
+.wikibase-list .wikibase-url {
+  padding-left: 13px;
+  color: gray;
+}
+
+.wikibase-list li a, .wikibase-list li span {
+  margin: 10px;
+  flex: 0 0;
+}
+
+.wikibase-list li.selected a, .wikibase-list li.active a {
+  display:none;
+}
+
+.wikibase-list li.active span {
+  display:block !important;
+}

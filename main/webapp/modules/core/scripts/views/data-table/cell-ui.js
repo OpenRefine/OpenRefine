@@ -365,6 +365,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var elmts = DOM.bind(frame);
   
   elmts.dialogHeader.html($.i18n('core-views/search-match'));
+  elmts.input.attr('aria-label',$.i18n('core-views/item-to-match'));
   elmts.or_views_searchFor.html($.i18n('core-views/search-for'));
   elmts.or_views_matchOther.html($.i18n('core-views/match-other'));
   elmts.or_views_matchThis.html($.i18n('core-views/match-this'));
@@ -589,6 +590,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   var elmts = DOM.bind(menu);
 
   elmts.or_views_dataType.html($.i18n('core-views/data-type'));
+  elmts.textarea.attr('aria-label',$.i18n('core-views/cell-content'));
   elmts.or_views_text.html($.i18n('core-views/text'));
   elmts.or_views_number.html($.i18n('core-views/number'));
   elmts.or_views_boolean.html($.i18n('core-views/boolean'));
@@ -712,6 +714,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   })
   .trigger('select')
   .trigger('focus');
+
+  setInitialHeightTextArea(elmts.textarea[0]);
 
   elmts.cancelButton.on('click',function() {
     MenuSystem.dismissAll();
