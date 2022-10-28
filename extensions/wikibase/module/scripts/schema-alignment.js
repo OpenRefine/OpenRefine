@@ -1305,7 +1305,13 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   if (this._reconService !== null && (mode.startsWith("wikibase-") || mode === "unit")) {
     var entityType = null;
     if (mode.startsWith("wikibase-")) {
-        input.attr("placeholder", $.i18n('wikibase-schema/entity-or-reconciled-column'));
+        let placeholderKey = 'wikibase-schema/entity-or-reconciled-column';
+        if (mode === 'wikibase-item' || mode === 'wikibase-property' ||
+            mode === 'wikibase-mediainfo' || mode === 'wikibase-lexeme' ||
+            mode === 'wikibase-form' || mode === 'wikibase-sense') {
+            placeholderKey = 'wikibase-schema/input-placeholder-for-'+mode;
+        }
+        input.attr("placeholder", $.i18n(placeholderKey));
 	entityType = mode.slice("wikibase-".length);
     } else {
         input.attr("placeholder", $.i18n('wikibase-schema/unit'));
@@ -1316,7 +1322,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
       mediawiki_endpoint: endpoint,
       entity_type: entityType,
       language: $.i18n("core-recon/wd-recon-lang"),
-      view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType(entityType)+'{{id}'
+      view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType(entityType)+'{{id}}'
     };
     
     input.suggestWikibase(suggestConfig).on("fb-select", function(evt, data) {
