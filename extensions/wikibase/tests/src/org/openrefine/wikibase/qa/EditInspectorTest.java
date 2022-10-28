@@ -10,8 +10,8 @@ import static org.testng.Assert.assertEquals;
 
 public class EditInspectorTest {
 
-    private static final int scrutinizerCount = 22;
-    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 7;
+    private static final int scrutinizerCount = 23;
+    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 8;
 
     @Test
     public void testNoScrutinizerSkipped() throws Exception {
