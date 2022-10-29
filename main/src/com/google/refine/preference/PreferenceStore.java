@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -47,9 +46,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PreferenceStore {
 
+    private static final Logger logger = LoggerFactory.getLogger(PreferenceStore.class);
     public static final String USER_METADATA_KEY = "userMetadata";
 
     private boolean dirty = false;
@@ -131,7 +133,7 @@ public class PreferenceStore {
                 return ParsingUtilities.mapper.treeToValue(o, Object.class);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to load object from JSON", e);
             return null;
         }
     }

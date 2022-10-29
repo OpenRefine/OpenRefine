@@ -35,11 +35,9 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,7 +92,7 @@ public class TestUtils {
                 jsonDiff(expected, actual);
                 fail("Objects above are not equal as JSON strings.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             fail("\"" + actual + "\" and \"" + expected + "\" are not equal as JSON strings.");
         }
     }
@@ -111,7 +109,7 @@ public class TestUtils {
 
     /**
      * Checks that a serializable object is serialized to the target JSON string.
-     * 
+     *
      * @throws IOException
      */
     public static void isSerializedTo(Object o, String targetJson, boolean saveMode) {
@@ -139,49 +137,46 @@ public class TestUtils {
         isSerializedTo(o, targetJson, false);
     }
 
-    public static void jsonDiff(String a, String b) throws JsonParseException, JsonMappingException {
+    public static void jsonDiff(String a, String b) throws IOException {
         ObjectMapper myMapper = mapper.copy().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                 .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
                 .configure(SerializationFeature.INDENT_OUTPUT, true);
-        try {
-            JsonNode nodeA = myMapper.readValue(a, JsonNode.class);
-            JsonNode nodeB = myMapper.readValue(b, JsonNode.class);
-            String prettyA = myMapper.writeValueAsString(myMapper.treeToValue(nodeA, Object.class));
-            String prettyB = myMapper.writeValueAsString(myMapper.treeToValue(nodeB, Object.class));
 
-            // Compute the max line length of A
-            LineNumberReader readerA = new LineNumberReader(new StringReader(prettyA));
-            int maxLength = 0;
-            String line = readerA.readLine();
-            while (line != null) {
-                if (line.length() > maxLength) {
-                    maxLength = line.length();
-                }
-                line = readerA.readLine();
-            }
+        JsonNode nodeA = myMapper.readValue(a, JsonNode.class);
+        JsonNode nodeB = myMapper.readValue(b, JsonNode.class);
+        String prettyA = myMapper.writeValueAsString(myMapper.treeToValue(nodeA, Object.class));
+        String prettyB = myMapper.writeValueAsString(myMapper.treeToValue(nodeB, Object.class));
 
-            // Pad all lines
-            readerA = new LineNumberReader(new StringReader(prettyA));
-            LineNumberReader readerB = new LineNumberReader(new StringReader(prettyB));
-            StringWriter writer = new StringWriter();
-            String lineA = readerA.readLine();
-            String lineB = readerB.readLine();
-            while (lineA != null || lineB != null) {
-                if (lineA == null) {
-                    lineA = "";
-                }
-                if (lineB == null) {
-                    lineB = "";
-                }
-                String paddedLineA = lineA + new String(new char[maxLength + 2 - lineA.length()]).replace("\0", " ");
-                writer.write(paddedLineA);
-                writer.write(lineB + "\n");
-                lineA = readerA.readLine();
-                lineB = readerB.readLine();
+        // Compute the max line length of A
+        LineNumberReader readerA = new LineNumberReader(new StringReader(prettyA));
+        int maxLength = 0;
+        String line = readerA.readLine();
+        while (line != null) {
+            if (line.length() > maxLength) {
+                maxLength = line.length();
             }
-            System.out.print(writer.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+            line = readerA.readLine();
         }
+
+        // Pad all lines
+        readerA = new LineNumberReader(new StringReader(prettyA));
+        LineNumberReader readerB = new LineNumberReader(new StringReader(prettyB));
+        StringWriter writer = new StringWriter();
+        String lineA = readerA.readLine();
+        String lineB = readerB.readLine();
+        while (lineA != null || lineB != null) {
+            if (lineA == null) {
+                lineA = "";
+            }
+            if (lineB == null) {
+                lineB = "";
+            }
+            String paddedLineA = lineA + new String(new char[maxLength + 2 - lineA.length()]).replace("\0", " ");
+            writer.write(paddedLineA);
+            writer.write(lineB + "\n");
+            lineA = readerA.readLine();
+            lineB = readerB.readLine();
+        }
+        System.out.print(writer.toString());
     }
 }

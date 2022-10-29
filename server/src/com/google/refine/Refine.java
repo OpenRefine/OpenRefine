@@ -80,7 +80,7 @@ public class Refine {
     static private String host;
     static private String iface;
 
-    final static Logger logger = LoggerFactory.getLogger("refine");
+    final static Logger logger = LoggerFactory.getLogger(Refine.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -152,7 +152,7 @@ public class Refine {
 
 class RefineServer extends Server {
 
-    final static Logger logger = LoggerFactory.getLogger("refine_server");
+    final static Logger logger = LoggerFactory.getLogger(RefineServer.class);
 
     public RefineServer() {
         super(createThreadPool());
@@ -304,7 +304,7 @@ class RefineServer extends Server {
         try {
             scanner.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Fatal error", e);
         }
     }
 
@@ -537,11 +537,11 @@ class ShutdownSignalHandler implements Runnable {
 
     @Override
     public void run() {
-
+        final Logger logger = LoggerFactory.getLogger(getClass());
         try {
             _server.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Caught exception stopping server", e);
             System.exit(1);
         }
     }

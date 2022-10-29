@@ -156,7 +156,7 @@ public class CancelProcessesCommandTests extends RefineTest {
      * Contract for a complete working post
      */
     @Test
-    public void doPostRegressionTest() {
+    public void doPostRegressionTest() throws IOException {
 
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);

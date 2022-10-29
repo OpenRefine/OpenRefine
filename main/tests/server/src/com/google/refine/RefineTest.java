@@ -47,6 +47,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -95,6 +96,7 @@ public class RefineTest {
     @BeforeSuite
     public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
+        logger = LoggerFactory.getLogger(getClass()); // make sure we have a default logger
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
@@ -107,7 +109,7 @@ public class RefineTest {
 
         } catch (IOException e) {
             workspaceDir = null;
-            e.printStackTrace();
+            logger.warn("Error initializing file project manager", e);
         }
         // This just keeps track of any failed test, for cleanupWorkspace
         testFailed = false;
@@ -120,7 +122,7 @@ public class RefineTest {
         ImportingManager.initialize(servlet);
     }
 
-    protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {
+    protected Project createProjectWithColumns(String projectName, String... columnNames) throws ModelException {
         Project project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName(projectName);

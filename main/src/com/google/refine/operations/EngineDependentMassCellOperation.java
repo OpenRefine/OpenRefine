@@ -75,11 +75,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
 
         FilteredRows filteredRows = engine.getAllFilteredRows();
-        try {
-            filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
 
         String description = createDescription(column, cellChanges);
 

@@ -22,14 +22,14 @@ public class DetectLanguageUtils {
 
     public static Optional<LdLocale> detect(String text) throws IOException {
 
-        // load the language profiles
+        // lazy load the language profiles - one time only
         if (languageProfiles.isEmpty()) {
             languageProfiles = new LanguageProfileReader().readAllBuiltIn();
         }
 
-        // build language detector
-        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard()).withProfiles(languageProfiles)
-                .build();
+        // TODO: How expensive is this?
+        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
+                .withProfiles(languageProfiles).build();
 
         // create a text object factory
         TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();

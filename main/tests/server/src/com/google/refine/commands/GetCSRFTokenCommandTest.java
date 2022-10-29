@@ -13,6 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -28,6 +30,9 @@ public class GetCSRFTokenCommandTest {
     protected StringWriter writer = null;
     protected Command command = null;
 
+    final private Logger logger = LoggerFactory.getLogger(getClass());
+
+
     @BeforeMethod
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -37,7 +42,7 @@ public class GetCSRFTokenCommandTest {
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error in test setup", e);
         }
     }
 

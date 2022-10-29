@@ -81,7 +81,7 @@ public abstract class ProjectManager {
     protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
     protected PreferenceStore _preferenceStore;
 
-    final static Logger logger = LoggerFactory.getLogger("ProjectManager");
+    final protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * What caches the lookups of projects.
@@ -196,7 +196,7 @@ public abstract class ProjectManager {
                 try {
                     saveMetadata(metadata, id);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error saving project metadata", e);
                 }
             } // FIXME what should be the behaviour if metadata is null? i.e. not found
 
@@ -205,7 +205,7 @@ public abstract class ProjectManager {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error saving project", e);
                 }
             } // FIXME what should be the behaviour if project is null? i.e. not found or loaded.
               // FIXME what should happen if the metadata is found, but not the project? or vice versa?
@@ -323,11 +323,11 @@ public abstract class ProjectManager {
             for (int i = 0; i < records.size() &&
                     (allModified || (LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() -
                             startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < QUICK_SAVE_MAX_TIME)); i++) {
-
+                Project project = records.get(i).project;
                 try {
-                    saveProject(records.get(i).project);
+                    saveProject(project);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error saving project %d", project.id, e);
                     // In case we're running low on memory, free as much as we can
                     disposeUnmodifiedProjects();
                 }

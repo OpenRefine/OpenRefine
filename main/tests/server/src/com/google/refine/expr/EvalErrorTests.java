@@ -36,6 +36,8 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
+import java.io.IOException;
+
 public class EvalErrorTests extends RefineTest {
 
     @Override
@@ -45,7 +47,7 @@ public class EvalErrorTests extends RefineTest {
     }
 
     @Test
-    public void serializeEvalError() {
+    public void serializeEvalError() throws IOException {
         EvalError e = new EvalError("This is a critical error");
         TestUtils.isSerializedTo(e, "{\"type\":\"error\",\"message\":\"This is a critical error\"}");
     }

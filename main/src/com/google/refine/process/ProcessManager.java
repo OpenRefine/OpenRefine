@@ -44,6 +44,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProcessManager {
 
@@ -51,6 +53,8 @@ public class ProcessManager {
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
+
+    final private static Logger logger = LoggerFactory.getLogger(ProcessManager.class);
 
     public static class ExceptionMessage {
 
@@ -141,7 +145,7 @@ public class ProcessManager {
                     p.performImmediate();
                 } catch (Exception e) {
                     // TODO: Not sure what to do yet
-                    e.printStackTrace();
+                    logger.error("Error while executing immediate mode process", e);
                 }
                 _processes.remove(0);
             } else if (p.isDone()) {

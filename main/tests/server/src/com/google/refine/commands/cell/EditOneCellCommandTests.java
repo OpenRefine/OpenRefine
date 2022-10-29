@@ -45,7 +45,7 @@ public class EditOneCellCommandTests extends RefineTest {
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error setting up project", e);
         }
     }
 
@@ -80,7 +80,7 @@ public class EditOneCellCommandTests extends RefineTest {
         assertEquals(project.rows.get(0).cells.get(0).value, "a");
         assertEquals(project.rows.get(0).cells.get(1).value, "b");
         assertTrue(project.rows.get(1).cells.get(0).value instanceof Long);
-        assertEquals(new Long(12345), project.rows.get(1).cells.get(0).value);
+        assertEquals(project.rows.get(1).cells.get(0).value, 12345L);
         assertEquals(project.rows.get(1).cells.get(1).value, "d");
     }
 
@@ -113,6 +113,6 @@ public class EditOneCellCommandTests extends RefineTest {
         command.doPost(request, response);
 
         assertEquals(project.rows.get(1).cells.get(0).value, "c");
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(),"{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 }

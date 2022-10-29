@@ -29,21 +29,18 @@ public class DetectLanguage implements Function {
      */
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1) {
-            Object obj = args[0]; // get the first argument
-            if (obj instanceof String) { // if it is a string
-                String text = (String) obj; // get the string
-                if (text.length() > 0) { // if the string is not empty
-                    try { // try to detect the language
-                        Optional<LdLocale> lang = DetectLanguageUtils.detect(text); // detect the language
-                        if (lang.isPresent()) { // if the language is detected
-                            return lang.get().getLanguage(); // return the language code
-                        } else { // if the language is not detected
-                            return new EvalError(EvalErrorMessage.language_detect_failed(ControlFunctionRegistry.getFunctionName(this)));
-                        }
-                    } catch (IOException e) { // if the language detection failed
-                        e.printStackTrace(); // print the stack trace
+        if (args.length == 1 && args[0] instanceof String) {
+            String text = (String) args[0];
+            if (text.length() > 0) {
+                try {
+                    Optional<LdLocale> lang = DetectLanguageUtils.detect(text);
+                    if (lang.isPresent()) {
+                        return lang.get().getLanguage();
+                    } else {
+                        return new EvalError(EvalErrorMessage.language_detect_failed(ControlFunctionRegistry.getFunctionName(this)));
                     }
+                } catch (IOException e) {
+                    return new EvalError(EvalErrorMessage.failed(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
                 }
             }
         }

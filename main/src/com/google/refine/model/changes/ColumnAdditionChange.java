@@ -96,12 +96,8 @@ public class ColumnAdditionChange extends ColumnChange {
 
             Column column = new Column(_newCellIndex, _columnName);
             project.columnModel.columns.add(_columnIndex, column);
-            try {
-                for (CellAtRow cell : _newCells) {
-                    project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            for (CellAtRow cell : _newCells) {
+                project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
             }
 
             project.update();

@@ -346,7 +346,6 @@ public abstract class Command {
             throws IOException, ServletException {
 
         logger.warn("Exception caught", e);
-        e.printStackTrace();
 
         if (response == null) {
             throw new ServletException("Response object can't be null");
@@ -398,7 +397,7 @@ public abstract class Command {
                     request, response, context, "error.vt", "UTF-8", "text/html", true);
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            logger.error("Fatal error - exception when handling exception", e1);
         }
     }
 

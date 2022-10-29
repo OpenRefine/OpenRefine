@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -38,14 +39,10 @@ import com.google.refine.util.ParsingUtilities;
 
 public class JsonValueConverterTests {
 
-    private void fieldEquals(String json, Object expectedValue) {
-        try {
-            ObjectNode n = (ObjectNode) ParsingUtilities.mapper.readTree(json);
-            assertEquals(expectedValue, JsonValueConverter.convert(n.get("foo")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private void fieldEquals(String json, Object expectedValue) throws JsonProcessingException {
+        ObjectNode n = (ObjectNode) ParsingUtilities.mapper.readTree(json);
+        assertEquals(expectedValue, JsonValueConverter.convert(n.get("foo")));
+}
 
     @Test
     public void testConvertJsonObject() throws IOException {
@@ -58,32 +55,32 @@ public class JsonValueConverterTests {
     }
 
     @Test
-    public void testConvertInt() {
+    public void testConvertInt() throws JsonProcessingException {
         fieldEquals("{\"foo\":3}", 3);
     }
 
     @Test
-    public void testConvertFloat() {
+    public void testConvertFloat() throws JsonProcessingException {
         fieldEquals("{\"foo\":3.14}", 3.14);
     }
 
     @Test
-    public void testConvertBool() {
+    public void testConvertBool() throws JsonProcessingException {
         fieldEquals("{\"foo\":true}", true);
     }
 
     @Test
-    public void testConvertNull() {
+    public void testConvertNull() throws JsonProcessingException {
         fieldEquals("{\"foo\":null}", null);
     }
 
     @Test
-    public void testConvertString() {
+    public void testConvertString() throws JsonProcessingException {
         fieldEquals("{\"foo\":\"bar\"}", "bar");
     }
 
     @Test
-    public void testConvertNoField() {
+    public void testConvertNoField() throws JsonProcessingException {
         fieldEquals("{}", null);
     }
 }

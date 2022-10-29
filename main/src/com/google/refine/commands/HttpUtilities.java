@@ -47,7 +47,7 @@ import com.google.refine.util.ParsingUtilities;
 
 abstract public class HttpUtilities {
 
-    final static protected Logger logger = LoggerFactory.getLogger("command");
+    final static protected Logger logger = LoggerFactory.getLogger("command"); // TODO: Fix logger name?
 
     static public void respond(HttpServletResponse response, String content)
             throws IOException, ServletException {
@@ -183,7 +183,7 @@ abstract public class HttpUtilities {
                     request, response, context, "error.vt", "UTF-8", "text/html", true);
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            logger.error("Error in respondWithErrorPage", e);
         }
     }
 }

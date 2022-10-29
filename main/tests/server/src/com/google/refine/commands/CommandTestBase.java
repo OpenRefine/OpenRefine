@@ -11,12 +11,15 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.util.TestUtils;
 
 public class CommandTestBase {
 
+    final protected Logger logger = LoggerFactory.getLogger(getClass());
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
@@ -30,7 +33,7 @@ public class CommandTestBase {
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error in setUpRequestResponse stub", e);
         }
     }
 
