@@ -240,7 +240,7 @@ You can find out more in the [reconciliaton variables](expressions#reconciliaton
 
 :::tip Make a copy of a reconciled column
 
-To make a copy of a reconciled column and all it's contents (the entire recon object for each cell) into a new column just use the GREL expression `cell` only when using <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column</span>.
+To make a copy of a reconciled column and all its contents (the entire recon object for each cell) into a new column, just use the GREL expression `cell` only when using <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column</span>.
 
 :::
 
