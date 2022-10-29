@@ -238,6 +238,12 @@ OpenRefine supplies a number of variables related specifically to reconciled val
 
 You can find out more in the [reconciliaton variables](expressions#reconciliaton-variables) section. 
 
+:::tip Make a copy of a reconciled column
+
+To make a copy of a reconciled column and all it's contents (the entire recon object for each cell) into a new column just use the GREL expression `cell` only when using <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column</span>.
+
+:::
+
 ## Exporting reconciled data {#exporting-reconciled-data}
 
 Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata or other Wikibase instances](wikibase/uploading) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
