@@ -31,28 +31,24 @@ package org.openrefine.extension.database;
 import java.util.List;
 
 public class SavedConnectionContainer {
+
     private List<DatabaseConfiguration> savedConnections;
     
     public List<DatabaseConfiguration> getSavedConnections() {
         return savedConnections;
     }
 
-    
     public void setSavedConnections(List<DatabaseConfiguration> savedConnections) {
         this.savedConnections = savedConnections;
     }
-
-
 
     public SavedConnectionContainer(List<DatabaseConfiguration> savedConnections) {
         super();
         this.savedConnections = savedConnections;
     }
 
-
     public SavedConnectionContainer() {
     
     }
     
-
 }

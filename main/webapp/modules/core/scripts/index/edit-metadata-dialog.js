@@ -22,7 +22,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
       var td2 = tr.insertCell(2);
       
       if(key==="tags"){
-          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).on('click',function() {
               var oldTags = $(td1).text().replace("[","").replace("]","");
               oldTags = replaceAll(oldTags,"\"","");
               var newTags = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, $(td1).text());
@@ -53,7 +53,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
               key !== "importOptionMetadata" && 
               key !== "id" &&
               key !== "tags")  {
-          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).on('click',function() {
             var newValue = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, value);
             if (newValue !== null) {
               $(td1).text(newValue);
@@ -90,17 +90,19 @@ EditMetadataDialog.prototype._createDialog = function() {
 
   this._level = DialogSystem.showDialog(frame);
   this._elmts.closeButton.html($.i18n('core-buttons/close'));
-  this._elmts.closeButton.click(function() { self._dismiss();Refine.OpenProjectUI.prototype._addTagFilter()});
+  this._elmts.closeButton.on('click',function() { self._dismiss();Refine.OpenProjectUI.prototype._addTagFilter()});
   
   var body = $("#metadata-body");
     
   $('<h1>').text($.i18n('core-index/metaDatas')).appendTo(body);
 
+  var scrollabelDiv = $("<div>").addClass("scrollable-table").appendTo(body);
+
   var metadataTable = $("<table>")
   .addClass("list-table")
   .addClass("preferences")
   .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
-  .appendTo(body)[0];
+  .appendTo(scrollabelDiv)[0];
 
     var flattenObject = function(ob, key) {
         var toReturn = {};
@@ -131,7 +133,9 @@ EditMetadataDialog.prototype._createDialog = function() {
     this._metaDataUIs.push(new this._MetadataUI(tr, k, v, flatMetadata.id));
   }
   
-  $(".dialog-container").css("top", Math.round(($(".dialog-overlay").height() - $(frame).height()) / 2) + "px");
+  // $(".dialog-container").css("top", Math.round(($(".dialog-overlay").height() - $(frame).height()) / 2) + "px");
+
+  $(".dialog-container").css({"top":"50%","left":"50%","transform":"translate(-50%, -50%)"});
 };
 
 EditMetadataDialog.prototype._dismiss = function() {

@@ -46,6 +46,7 @@ import org.openrefine.operations.ImmediateRowMapOperation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.operations.OperationDescription;
 
 public class ColumnRenameOperation extends ImmediateRowMapOperation {
 
@@ -73,7 +74,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return "Rename column " + _oldColumnName + " to " + _newColumnName;
+        return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
     }
 
     @Override

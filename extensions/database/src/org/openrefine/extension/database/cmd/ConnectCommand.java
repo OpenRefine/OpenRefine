@@ -35,7 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
@@ -47,7 +47,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openrefine.util.ParsingUtilities;
 
-
 public class ConnectCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("ConnectCommand");
@@ -55,13 +54,13 @@ public class ConnectCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
         
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("ConnectCommand::Post::{}", databaseConfiguration);
         }
        // ProjectManager.singleton.setBusy(true);
@@ -85,10 +84,10 @@ public class ConnectCommand extends DatabaseCommand {
            
             } catch (DatabaseServiceException e) {
                 logger.error("ConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
-            }catch (Exception e) {
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
+            } catch (Exception e) {
                 logger.error("ConnectCommand::Post::Exception::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
             } finally {  
                 writer.flush();
                 writer.close();
@@ -102,7 +101,6 @@ public class ConnectCommand extends DatabaseCommand {
 //           // ProjectManager.singleton.setBusy(false);
 //        }
 
-        
     }
 
 }

@@ -36,6 +36,7 @@ package org.openrefine.grel.controls;
 import java.util.Properties;
 
 import org.openrefine.grel.Control;
+import org.openrefine.grel.ControlEvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.expr.EvalError;
@@ -46,7 +47,7 @@ abstract class IsTest implements Control {
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 1) {
-            return ControlFunctionRegistry.getControlName(this) + " expects one argument";
+            return ControlEvalError.expects_one_arg(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }

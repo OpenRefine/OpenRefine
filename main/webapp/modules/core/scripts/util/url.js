@@ -79,7 +79,7 @@ URL.getParameters = function() {
 
   var params = window.location.search;
   if (params.length > 1) {
-    params = params.substr(1).split("&");
+    params = params.substring(1).split("&");
     $.each(params, function() {
       pair = this.split("=");
       r[pair[0]] = decodeURIComponent(pair[1]);

@@ -85,11 +85,11 @@ SliderWidget.prototype._initializeUI = function() {
 
   var self = this;
   this._elmt.find(".slider-widget-draggable")
-  .mousedown(function(evt) {
+  .on('mousedown',function(evt) {
     return self._onMouseDown(evt, this.getAttribute("part"));
   });
 
-  this._highlightRect.dblclick(function(evt) {
+  this._highlightRect.on('dblclick',function(evt) {
     if (self._range.from > self._range.min || self._range.to < self._range.max) {
       self._range.from = self._range.min;
       self._range.to = self._range.max;
@@ -99,10 +99,10 @@ SliderWidget.prototype._initializeUI = function() {
   });
 
   this._elmt
-  .mousemove(function(evt) {
+  .on('mousemove',function(evt) {
     return self._onMouseMove(evt);
   })
-  .mouseup(function(evt) {
+  .on('mouseup',function(evt) {
     return self._onMouseUp(evt);
   });
 };
@@ -112,8 +112,8 @@ SliderWidget.prototype._onMouseDown = function(evt, part) {
     return;
   }
 
-  $(document).mousemove(this._mouseMoveHandler);
-  $(document).mouseup(this._mouseUpHandler);
+  $(document).on('mousemove',this._mouseMoveHandler);
+  $(document).on('mouseup',this._mouseUpHandler);
 
   this._drag = {
     sureDrag: false,
@@ -144,8 +144,8 @@ SliderWidget.prototype._onMouseUp = function(evt) {
     return;
   }
 
-  $(document).unbind("mousemove", this._mouseMoveHandler);
-  $(document).unbind("mouseup", this._mouseUpHandler);
+  $(document).off("mousemove", this._mouseMoveHandler);
+  $(document).off("mouseup", this._mouseUpHandler);
 
   if (this._drag.sureDrag) {
     this._update();

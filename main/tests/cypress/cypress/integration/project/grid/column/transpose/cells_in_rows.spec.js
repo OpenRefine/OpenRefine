@@ -29,7 +29,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Employee', [
       'Transpose',
-      'Transpose cells in rows into columns...',
+      'Transpose cells in rows into columns…',
     ]);
 
     const expected = [

@@ -1,4 +1,4 @@
-package org.openrefine.wikidata.utils;
+package org.openrefine.wikibase.utils;
 
 import java.io.IOException;
 import java.util.Arrays;

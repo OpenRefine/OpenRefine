@@ -48,24 +48,24 @@ public class DatabaseUtils {
     
     private static final Logger logger = LoggerFactory.getLogger("DatabaseUtils");
     
- 
     public final static String DATABASE_EXTENSION_DIR = "dbextension";
     public final static String SETTINGS_FILE_NAME = ".saved-db-connections.json";
     public final static String SAVED_CONNECTION_KEY = "savedConnections";
     
     private static SimpleTextEncryptor textEncryptor = new SimpleTextEncryptor("Aa1Gb@tY7_Y");
     
-    
     public static int getSavedConnectionsSize() {
        List<DatabaseConfiguration> scList = getSavedConnections();
-       if(scList == null || scList.isEmpty()) {
+        if (scList == null || scList.isEmpty()) {
            return 0;
        }
        
        return scList.size();
     }
+
     /**
      * GET saved connections
+     * 
      * @return
      */
     public static List<DatabaseConfiguration> getSavedConnections() {
@@ -75,28 +75,28 @@ public class DatabaseUtils {
             
             File file = new File(filename);
             if (!file.exists()) {
-                //logger.debug("saved connections file not found, creating new: {}", filename);
+                // logger.debug("saved connections file not found, creating new: {}", filename);
                 
                 String dirPath = getExtensionFolder(); 
                 File dirFile = new File(dirPath);
                 boolean dirExists = true;
-                if(!dirFile.exists()) {
+                if (!dirFile.exists()) {
                     dirExists =  dirFile.mkdir();
                 }
                 
-                if(dirExists) {
+                if (dirExists) {
                     
                   SavedConnectionContainer sc = new SavedConnectionContainer(new ArrayList<DatabaseConfiguration>());
                   mapper.writerWithDefaultPrettyPrinter().writeValue(new File(filename), sc);
                   return sc.getSavedConnections();
-                  //return decryptAll(sc.getSavedConnections());
+                    // return decryptAll(sc.getSavedConnections());
                     
                 }
              
             }
-            //logger.debug("saved connections file  found {}", filename);
+            // logger.debug("saved connections file found {}", filename);
             SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(filename), SavedConnectionContainer.class);
-            //return decryptAll(savedConnectionContainer.getSavedConnections());
+            // return decryptAll(savedConnectionContainer.getSavedConnections());
             return savedConnectionContainer.getSavedConnections();
            
         } catch (JsonParseException e) {
@@ -109,24 +109,21 @@ public class DatabaseUtils {
         return null;
     }
     
-   
-   
-
-
     /**
      * GET one saved connection
+     * 
      * @param connectionName
      * @return
      */
      public static DatabaseConfiguration getSavedConnection(String connectionName) {
-        //logger.debug("get saved connection called with connectionName: {}", connectionName);    
+        // logger.debug("get saved connection called with connectionName: {}", connectionName);
         List<DatabaseConfiguration> savedConfigurations = getSavedConnections();
 
         for (DatabaseConfiguration dc : savedConfigurations) {
-            //logger.debug("Saved Connection  : {}", dc.getConnectionName()); 
+            // logger.debug("Saved Connection : {}", dc.getConnectionName());
             if (dc.getConnectionName().equalsIgnoreCase(connectionName.trim())) {
-                //logger.debug("Saved Connection Found : {}", dc);  
-                //dc.setDatabasePassword(decrypt(dc.getDatabasePassword()));
+                // logger.debug("Saved Connection Found : {}", dc);
+                // dc.setDatabasePassword(decrypt(dc.getDatabasePassword()));
                 return dc;
             }
         }
@@ -145,7 +142,7 @@ public class DatabaseUtils {
      public static List<DatabaseConfiguration> decryptAll(List<DatabaseConfiguration> savedConnections) {
          List<DatabaseConfiguration> dbConfigs = new ArrayList<DatabaseConfiguration>(savedConnections.size());
          
-         for(DatabaseConfiguration d: savedConnections) {
+        for (DatabaseConfiguration d : savedConnections) {
              d.setDatabasePassword(decrypt(d.getDatabasePassword()));
              dbConfigs.add(d);
              
@@ -153,17 +150,18 @@ public class DatabaseUtils {
          return dbConfigs;
      }
      
-    
      /**
       * ADD to saved connections
+     * 
       * @param dbConfig
       */
-     public static void addToSavedConnections(DatabaseConfiguration dbConfig){
+    public static void addToSavedConnections(DatabaseConfiguration dbConfig) {
          
          try {
              ObjectMapper mapper = new ObjectMapper();
              String savedConnectionFile = getExtensionFilePath();
-             SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile), SavedConnectionContainer.class);
+            SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile),
+                    SavedConnectionContainer.class);
              savedConnectionContainer.getSavedConnections().add(dbConfig);
              
              mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedConnectionFile), savedConnectionContainer);
@@ -180,16 +178,15 @@ public class DatabaseUtils {
          }
      }
      
-     
      public static void deleteAllSavedConnections() {
-         if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
              logger.debug("delete All Saved Connections called...");
          }
          
          try {
              
              List<DatabaseConfiguration> savedConnections = getSavedConnections();
-             if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                  logger.debug("Size before delete SavedConnections :: {}", savedConnections.size());
              }
             
@@ -197,10 +194,11 @@ public class DatabaseUtils {
             
              ObjectMapper mapper = new ObjectMapper();
              String savedConnectionFile = getExtensionFilePath();
-             SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile), SavedConnectionContainer.class);
+            SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile),
+                    SavedConnectionContainer.class);
              savedConnectionContainer.setSavedConnections(newSavedConns);
              
-             if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                  logger.debug("Size after delete SavedConnections :: {}", savedConnectionContainer.getSavedConnections().size());
              }
              mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedConnectionFile), savedConnectionContainer);
@@ -220,23 +218,25 @@ public class DatabaseUtils {
      
      /**
       * DELETE saved connections
+     * 
       * @param connectionName
       */
      public static void deleteSavedConnections(String connectionName) {
-         if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
              logger.debug("deleteSavedConnections called with: {}", connectionName);
          }
          
         try {
             
-             List<DatabaseConfiguration> savedConnections = getSavedConnections();;
-             if(logger.isDebugEnabled()) {
+            List<DatabaseConfiguration> savedConnections = getSavedConnections();
+            ;
+            if (logger.isDebugEnabled()) {
                  logger.debug("Size before delete SavedConnections :: {}", savedConnections.size());
              }
             
              ArrayList<DatabaseConfiguration> newSavedConns = new ArrayList<DatabaseConfiguration>();
-             for(DatabaseConfiguration dc: savedConnections) {
-                 if(!dc.getConnectionName().equalsIgnoreCase(connectionName.trim())) {
+            for (DatabaseConfiguration dc : savedConnections) {
+                if (!dc.getConnectionName().equalsIgnoreCase(connectionName.trim())) {
                      newSavedConns.add(dc);
                  }
                  
@@ -244,10 +244,11 @@ public class DatabaseUtils {
             
              ObjectMapper mapper = new ObjectMapper();
              String savedConnectionFile = getExtensionFilePath();
-             SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile), SavedConnectionContainer.class);
+            SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile),
+                    SavedConnectionContainer.class);
              savedConnectionContainer.setSavedConnections(newSavedConns);
              
-             if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                  logger.debug("Size after delete SavedConnections :: {}", savedConnectionContainer.getSavedConnections().size());
              }
              mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedConnectionFile), savedConnectionContainer);
@@ -266,18 +267,19 @@ public class DatabaseUtils {
     
      /**
       * EDIT saved connections
+     * 
       * @param jdbcConfig
       */
      public static void editSavedConnections(DatabaseConfiguration jdbcConfig) {
-         if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
              logger.debug("Edit SavedConnections called with: {}", jdbcConfig); 
          }
          
-       
          try {
              ObjectMapper mapper = new ObjectMapper();
              String savedConnectionFile = getExtensionFilePath();
-             SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile), SavedConnectionContainer.class);
+            SavedConnectionContainer savedConnectionContainer = mapper.readValue(new File(savedConnectionFile),
+                    SavedConnectionContainer.class);
              
              List<DatabaseConfiguration> savedConnections = savedConnectionContainer.getSavedConnections();
           
@@ -309,7 +311,7 @@ public class DatabaseUtils {
          }
      }
     
-    public static String getExtensionFilePath(){
+    public static String getExtensionFilePath() {
         File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
         String fileSep = System.getProperty("file.separator"); 
         String filename = dir.getPath() + fileSep + DATABASE_EXTENSION_DIR + fileSep + SETTINGS_FILE_NAME;
@@ -317,7 +319,8 @@ public class DatabaseUtils {
         logger.debug("** extension file name: {} **", filename);
         return filename;
     }
-    public static String getExtensionFolder(){
+
+    public static String getExtensionFolder() {
         File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
         String fileSep = System.getProperty("file.separator"); 
         String filename = dir.getPath() + fileSep + DATABASE_EXTENSION_DIR;

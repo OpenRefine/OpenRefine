@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions.strings;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Chomp extends PureFunction {
@@ -54,7 +55,7 @@ public class Chomp extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a copy of string s with string sep remoed from the end if s ends with sep; otherwies, returns s.";
+        return FunctionDescription.str_chomp();
     }
 
     @Override

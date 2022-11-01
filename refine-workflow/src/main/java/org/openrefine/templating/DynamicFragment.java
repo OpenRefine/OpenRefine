@@ -36,6 +36,7 @@ package org.openrefine.templating;
 import org.openrefine.expr.Evaluable;
 
 class DynamicFragment extends Fragment {
+
     final public Evaluable eval;
 
     public DynamicFragment(Evaluable eval) {

@@ -77,6 +77,7 @@ import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 
 public class GDataImportingController implements ImportingController {
+
     private static final Logger logger = LoggerFactory.getLogger("GDataImportingController");
     protected RefineServlet servlet;
     
@@ -199,8 +200,7 @@ public class GDataImportingController implements ImportingController {
             JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
             JSONUtilities.safePut(options, "worksheets", worksheets);
             
-            List<Sheet> worksheetEntries =
-                    getWorksheetEntriesForDoc(token, spreadSheetId);
+            List<Sheet> worksheetEntries = getWorksheetEntriesForDoc(token, spreadSheetId);
             int workSheetIndex = 0;
             for (Sheet sheet : worksheetEntries) {
                 ObjectNode worksheetO = ParsingUtilities.mapper.createObjectNode();
@@ -317,6 +317,7 @@ public class GDataImportingController implements ImportingController {
         job.setState("creating-project");
         
         new Thread() {
+
             @Override
             public void run() {
                 ProjectMetadata pm = new ProjectMetadata();

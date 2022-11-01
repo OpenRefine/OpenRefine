@@ -90,22 +90,22 @@ You can imagine the structure as a tree with many branches, all leading back to 
 
 For example, your key column may be a film or television show, with multiple cast members identified by name, associated to that work. You may have one or more roles listed for each person. The roles are linked to the actors, which are linked to the title.
 
-|Work|Actor|Role|
-|---|---|---|
-|The Wizard of Oz|Judy Garland|Dorothy Gale|
-||Ray Bolger|"Hunk"|
-|||The Scarecrow|
-||Jack Haley|"Hickory"|
-|||The Tin Man|
-||Bert Lahr|"Zeke"|
-|||The Cowardly Lion|
-||Frank Morgan|Professor Marvel|
-|||The Gatekeeper|
-|||The Carriage Driver|
-|||The Guard|
-|||The Wizard of Oz|
-||Margaret Hamilton|Miss Almira Gulch|
-|||The Wicked Witch of the West|
+| Work             | Actor             | Role                         |
+|------------------|-------------------|------------------------------|
+| The Wizard of Oz | Judy Garland      | Dorothy Gale                 |
+|                  | Ray Bolger        | "Hunk"                       |
+|                  |                   | The Scarecrow                |
+|                  | Jack Haley        | "Hickory"                    |
+|                  |                   | The Tin Man                  |
+|                  | Bert Lahr         | "Zeke"                       |
+|                  |                   | The Cowardly Lion            |
+|                  | Frank Morgan      | Professor Marvel             |
+|                  |                   | The Gatekeeper               |
+|                  |                   | The Carriage Driver          |
+|                  |                   | The Guard                    |
+|                  |                   | The Wizard of Oz             |
+|                  | Margaret Hamilton | Miss Almira Gulch            |
+|                  |                   | The Wicked Witch of the West |
 
 Once you are in records mode, you can still move some columns around, but if you move a column to the beginning, you may find your data becomes misaligned. The new key column will sort into records based on empty cells, and values in the old key column will be assigned to the last row in the old record (the key value sitting above those values). 
 
@@ -114,3 +114,5 @@ OpenRefine assigns a unique key behind the scenes, so your records don’t need 
 To [split multi-valued cells](transforming#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming). 
 
 Be careful when in records mode that you do not accidentally delete rows based on being blank in one column where there is a value in another. 
+
+This feature is related to [Column Groups](../technical-reference/architecture#column-groups), which however is incomplete and deprecated.

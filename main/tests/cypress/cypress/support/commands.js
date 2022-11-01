@@ -266,6 +266,13 @@ Cypress.Commands.add('navigateTo', (target) => {
 
 /**
  * Wait for OpenRefine to finish an Ajax load
+ *
+ * @deprecated
+ *
+ * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
+ * indicator may have come and gone already by the time waitForOrOperation() is called, causing the cypress test to
+ * wait forever on ajax_in_progress=true until it fails due to timeout.
+ *
  */
 Cypress.Commands.add('waitForOrOperation', () => {
   cy.get('body[ajax_in_progress="true"]');
@@ -278,7 +285,7 @@ Cypress.Commands.add('waitForOrOperation', () => {
 Cypress.Commands.add('waitForImportUpdate', () => {
   cy.get('#or-import-updating').should('be.visible');
   cy.get('#or-import-updating').should('not.be.visible');
-  cy.wait(500); // eslint-disable-line
+  cy.wait(1500); // eslint-disable-line
 });
 
 /**
@@ -356,16 +363,25 @@ Cypress.Commands.add('visitProject', (projectId) => {
  *   * a file referenced in fixtures.js (food.mini | food.small)
  */
 Cypress.Commands.add(
-  'loadAndVisitProject',
-  (fixture, projectName = Date.now()) => {
-    cy.loadProject(fixture, projectName).then((projectId) => {
-      cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
-
-      cy.get('#left-panel', { log: false }).should('be.visible');
-      cy.get('#right-panel', { log: false }).should('be.visible');
-    });
-  }
+    'loadAndVisitProject',
+    (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
+      cy.loadProject(fixture, projectName).then((projectId) => {
+        cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+        cy.waitForProjectTable();
+      });
+    }
 );
+
+Cypress.Commands.add('waitForProjectTable', (numRows) => {
+  cy.url().should('contain', '/project?project=')
+  cy.get('#left-panel', { log: false }).should('be.visible');
+  cy.get('#right-panel', { log: false }).should('be.visible');
+  cy.get('#project-title').should('exist');
+  cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
+  if (arguments.length == 1) {
+    cy.get('#summary-bar').should('to.contain', numRows+' rows');
+  }
+});
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
   cy.get('#notification-container').should('be.visible');
@@ -383,12 +399,15 @@ Cypress.Commands.add(
 
 /**
  * Performs drag and drop on target and source item
+ * sourcSelector jquery selector for the element to be dragged
+ * targetSelector jquery selector for the element to be dropped on
+ * position position relative to the target element to perform the drop
  */
-Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
+Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 'center') => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
   cy.get(targetSelector) // eslint-disable-line
-    .trigger('mousemove')
+    .trigger('mousemove',position)
     .trigger('mouseup', { force: true });
 });
 

@@ -21,6 +21,7 @@ import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
 
 class SpreadsheetSerializer implements TabularSerializer {
+
     static final Logger logger = LoggerFactory.getLogger("SpreadsheetSerializer");
     
     private static final int BATCH_SIZE = 500;
@@ -44,7 +45,6 @@ class SpreadsheetSerializer implements TabularSerializer {
     @Override
     public void startFile(JsonNode options) {
     }
-    
     
     @Override
     public void endFile() {

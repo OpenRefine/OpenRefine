@@ -29,10 +29,8 @@
 package org.openrefine.extension.database;
 
 
-
 import java.util.HashMap;
 import java.util.Map;
-
 
 public final class SQLType {
 
@@ -66,7 +64,6 @@ public final class SQLType {
         return null;
     }
     
-
     public String getClassPath() {
         return this.driverContainer.classpath;
     }
@@ -79,7 +76,6 @@ public final class SQLType {
         return this.driverContainer.useJDBCManager;
     }
 
-    
     private static class DriverContainer {
 
         public final String classpath;

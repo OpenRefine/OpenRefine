@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import org.openrefine.expr.EvalError;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
 
 public class GreatestCommonDenominator extends PureFunction {
 
@@ -44,11 +44,11 @@ public class GreatestCommonDenominator extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number) {
             return GreatestCommonDenominator.GCD(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(this));
     }
 
     public static double GCD(double a, double b) {
@@ -57,7 +57,7 @@ public class GreatestCommonDenominator extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the greatest common denominator of two numbers.";
+        return FunctionDescription.math_gcd();
     }
 
     @Override

@@ -39,7 +39,7 @@ class ListFacet extends Facet {
       this._options.sort = "name";
     }
 
-    this._selection = selection || [];
+    this._selection = selection || config.selection || [];
 
     if (!("invert" in this._config)) {
       this._config.invert = false;
@@ -172,7 +172,7 @@ class ListFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
+    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
@@ -180,21 +180,21 @@ class ListFacet extends Facet {
       });
     });
     
-    this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
-    this._elmts.resetButton.click(function() { self._reset(); });
-    this._elmts.invertButton.click(function() { self._invert(); });
+    this._elmts.expressionDiv.text(this._config.expression).hide().on('click',function() { self._editExpression(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
+    this._elmts.resetButton.on('click',function() { self._reset(); });
+    this._elmts.invertButton.on('click',function() { self._invert(); });
 
-    this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });
-    this._elmts.sortByCountLink.click(function() {
+    this._elmts.choiceCountContainer.on('click',function() { self._copyChoices(); });
+    this._elmts.sortByCountLink.on('click',function() {
       if (self._options.sort != "count") {
         self._options.sort = "count";
         self._reSortChoices();
         self._update(true);
       }
     });
-    this._elmts.sortByNameLink.click(function() {
+    this._elmts.sortByNameLink.on('click',function() {
       if (self._options.sort != "name") {
         self._options.sort = "name";
         self._reSortChoices();
@@ -202,7 +202,7 @@ class ListFacet extends Facet {
       }
     });
 
-    this._elmts.clusterLink.click(function() { self._doEdit(); });
+    this._elmts.clusterLink.on('click',function() { self._doEdit(); });
     if (this._config.expression != "value" && this._config.expression != "grel:value") {
       this._elmts.clusterLink.hide();
     }
@@ -228,10 +228,10 @@ class ListFacet extends Facet {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-    body.html('<textarea disabled wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
+    body.html('<textarea disabled wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;"></textarea>');
     var elmts = DOM.bind(body);
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/close')).click(function() {
+    $('<button class="button"></button>').text($.i18n('core-buttons/close')).on('click',function() {
       DialogSystem.dismissUntil(level - 1);
     }).appendTo(footer);
 
@@ -294,7 +294,7 @@ class ListFacet extends Facet {
         .addClass("action")
         .addClass("secondary")
         .appendTo(messageDiv)
-        .click(function() {
+        .on('click',function() {
           self._setChoiceCountLimit(self._data.choiceCount);
         });
         
@@ -487,7 +487,7 @@ class ListFacet extends Facet {
     .addClass("action")
     .addClass("secondary")
     .appendTo(bodyControls)
-    .click(function() {
+    .on('click',function() {
       ui.browsingEngine.addFacet(
         "range", 
         {
@@ -521,7 +521,7 @@ class ListFacet extends Facet {
 
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
+        '<textarea class="data-table-cell-editor-editor" bind="textarea"></textarea>' +
         '<div id="data-table-cell-editor-actions">' +
           '<div class="data-table-cell-editor-action">' +
             '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
@@ -595,10 +595,10 @@ class ListFacet extends Facet {
       );            
     };
 
-    elmts.okButton.click(commit);
+    elmts.okButton.on('click',commit);
     elmts.textarea
     .text(originalContent)
-    .keydown(function(evt) {
+    .on('keydown',function(evt) {
       if (!evt.shiftKey) {
         if (evt.keyCode === 13) {
           commit();
@@ -607,10 +607,12 @@ class ListFacet extends Facet {
         }
       }
     })
-    .select()
-    .focus();
+    .trigger('select')
+    .trigger('focus');
 
-    elmts.cancelButton.click(function() {
+    setInitialHeightTextArea(elmts.textarea[0]);
+
+    elmts.cancelButton.on('click',function() {
       MenuSystem.dismissAll();
     });
   };

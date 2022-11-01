@@ -59,7 +59,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .dialog-border {
-  border: 4px solid @dialog_border;
   }
 
 .dialog-header {
@@ -82,9 +81,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .dialog-footer {
   font-size: 1.3em;
+  display: flex;
+  column-gap: 5px;
+  justify-content: right;
   background: @dialog_footer;
   padding: @padding_loose;
   }
+
+.dialog-footer .dialog-footer-bg {
+  display: flex;
+  column-gap: 5px;
+}
+
+.dialog-footer :disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dialog-footer button:hover:disabled  {
+  border: 1px solid #bbb !important;
+}
 
 .dialog-busy {
   width: 400px;

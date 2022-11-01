@@ -130,17 +130,17 @@ BrowsingEngine.prototype._initializeUI = function() {
     }
   });
 
-  this._elmts.refreshLink.click(function() { self.update(); });
-  this._elmts.resetLink.click(function() { self.reset(); });
-  this._elmts.removeLink.click(function() { self.remove(); });
+  this._elmts.refreshLink.on('click', function() { self.update(); });
+  this._elmts.resetLink.on('click', function() { self.reset(); });
+  this._elmts.removeLink.on('click', function() { self.remove(); });
 
   this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
   this._elmts.aggregationLimitInput.val(this._aggregationLimit);
-  this._elmts.aggregationLimitInput.change(function() {
+  this._elmts.aggregationLimitInput.on('change', function() {
     self._aggregationLimit = self._elmts.aggregationLimitInput.val();
     self.update();
   });
-  this._elmts.aggregationLimitCheckBox.change(function() {
+  this._elmts.aggregationLimitCheckBox.on('change', function() {
     self._aggregationLimitEnabled = this.checked;
     self._elmts.aggregationLimitInput.attr('disabled', !self._aggregationLimitEnabled);
     self.update();

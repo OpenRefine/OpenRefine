@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.importing.ImportingJob;
 
-
 public class DBQueryResultPreviewReader implements TableDataReader {
     
     private static final Logger logger = LoggerFactory.getLogger("DBQueryResultPreviewReader");
@@ -58,7 +57,6 @@ public class DBQueryResultPreviewReader implements TableDataReader {
     private boolean usedHeaders = false;
     private DatabaseService databaseService;
     private DatabaseQueryInfo dbQueryInfo;
-    
     
     public DBQueryResultPreviewReader(
             ImportingJob job, 
@@ -100,22 +98,23 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             rowsOfCells = getRowsOfCells(newBatchRowStart);
             batchRowStart = newBatchRowStart;
             setProgress(job, querySource, -1 /* batchRowStart * 100 / totalRows */);
-           // logger.info("getNextRowOfCells:: rowsOfCellsIsNull::rowsOfCells size:" + rowsOfCells.size() + ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
+                // logger.info("getNextRowOfCells:: rowsOfCellsIsNull::rowsOfCells size:" + rowsOfCells.size() +
+                // ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
         }
         
         if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
-            //logger.info("Exit::getNextRowOfCells :rowsOfCellsNotNull::rowsOfCells size:" + rowsOfCells.size() + ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
+                // logger.info("Exit::getNextRowOfCells :rowsOfCellsNotNull::rowsOfCells size:" + rowsOfCells.size() +
+                // ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
             return rowsOfCells.get(nextRow++ - batchRowStart);
         } else {
-            if(logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
                 logger.debug("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
             }
 
             return null;
         }
       
-        
-      }catch(DatabaseServiceException e) {
+        } catch (DatabaseServiceException e) {
           logger.error("DatabaseServiceException::preview:{}", e.getMessage());
           IOException ioEx = new IOException(e.getMessage(), e);
           throw ioEx;
@@ -132,20 +131,20 @@ public class DBQueryResultPreviewReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
-        //logger.info("Entry getRowsOfCells::startRow:" + startRow);
+        // logger.info("Entry getRowsOfCells::startRow:" + startRow);
         
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
         
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        if(logger.isDebugEnabled()) {
-            logger.debug("batchSize::"  + batchSize +  " startRow::" + startRow + " query::" + query );
+        if (logger.isDebugEnabled()) {
+            logger.debug("batchSize::" + batchSize + " startRow::" + startRow + " query::" + query);
         }
         
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
 
-        if(dbRows != null && !dbRows.isEmpty() && dbRows.size() > 0) {
+        if (dbRows != null && !dbRows.isEmpty() && dbRows.size() > 0) {
             
-            for(DatabaseRow dbRow: dbRows) {
+            for (DatabaseRow dbRow : dbRows) {
                List<String> row = dbRow.getValues();
                List<Object> rowOfCells = new ArrayList<Object>(row.size());
                
@@ -154,22 +153,24 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                     String text = row.get(j);
                     if (text == null || text.isEmpty()) {
                         rowOfCells.add(null);
-                    }else {
+                    } else {
                         DatabaseColumn col = dbColumns.get(j);
-                        if(col.getType() == DatabaseColumnType.NUMBER) {
+                        if (col.getType() == DatabaseColumnType.NUMBER) {
                             try {
                                 rowOfCells.add(Long.parseLong(text));
                                 continue;
-                            } catch (NumberFormatException e) {}
+                            } catch (NumberFormatException e) {
+                            }
                        
-                         }else if(col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT ) {
+                        } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
                              try {
                                  double d = Double.parseDouble(text);
                                  if (!Double.isInfinite(d) && !Double.isNaN(d)) {
                                      rowOfCells.add(d);
                                      continue;
                                  }
-                             } catch (NumberFormatException e) {}
+                            } catch (NumberFormatException e) {
+                            }
                              
                          }
                         
@@ -183,7 +184,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
          
         }
         end = dbRows.size() < batchSize + 1;
-        //logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells); 
+        // logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells);
         return rowsOfCells;
      
     }
@@ -196,75 +197,60 @@ public class DBQueryResultPreviewReader implements TableDataReader {
         return dbColumns;
     }
 
-    
     public void setColumns(List<DatabaseColumn> columns) {
         this.dbColumns = columns;
     }
 
-    
     public int getNextRow() {
         return nextRow;
     }
 
-    
     public void setNextRow(int nextRow) {
         this.nextRow = nextRow;
     }
 
-    
     public int getBatchRowStart() {
         return batchRowStart;
     }
 
-    
     public void setBatchRowStart(int batchRowStart) {
         this.batchRowStart = batchRowStart;
     }
 
-    
     public boolean isEnd() {
         return end;
     }
 
-    
     public void setEnd(boolean end) {
         this.end = end;
     }
 
-    
     public List<List<Object>> getRowsOfCells() {
         return rowsOfCells;
     }
 
-    
     public void setRowsOfCells(List<List<Object>> rowsOfCells) {
         this.rowsOfCells = rowsOfCells;
     }
 
-    
     public boolean isUsedHeaders() {
         return usedHeaders;
     }
 
-    
     public void setUsedHeaders(boolean usedHeaders) {
         this.usedHeaders = usedHeaders;
     }
 
-    
     public ImportingJob getJob() {
         return job;
     }
 
-    
     public String getQuerySource() {
         return querySource;
     }
 
-    
     public int getBatchSize() {
         return batchSize;
     }
-
 
 }

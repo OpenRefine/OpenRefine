@@ -72,70 +72,72 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 };
 
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
-  var self = this;
-  
-  $(form).find('input:text').filter(function() { 
-		return this.value === ""; 
-  }).prop("disabled", true);
-  
-  Refine.wrapCSRF(function(token) {
-    $.post(
-        "command/core/create-importing-job",
-        { csrf_token: token },
-        function(data) {
-            var jobID = self._jobID = data.jobID;
+    var self = this;
 
-            form.attr("method", "post")
-            .attr("enctype", "multipart/form-data")
-            .attr("accept-charset", "UTF-8")
-            .attr("target", "create-project-iframe")
-            .attr("action", "command/core/importing-controller?" + $.param({
-            "controller": "core/default-importing-controller",
-            "jobID": jobID,
-            "subCommand": "load-raw-data",
-            "csrf_token": token
-            }));
-            form[0].submit();
+    Refine.wrapCSRF(function(token) {
+        $.post(
+            "command/core/create-importing-job",
+            { csrf_token: token },
+            function(data) {
+                var jobID = self._jobID = data.jobID;
 
-            var start = new Date();
-            var timerID = window.setInterval(
-            function() {
-                self._createProjectUI.pollImportJob(
-                start, jobID, timerID,
-                function(job) {
-                    return job.config.hasData;
-                },
-                function(jobID, job) {
-                    self._job = job;
-                    self._onImportJobReady();
-                    if (callback) {
-                    callback(jobID, job);
+                var url =  "command/core/importing-controller?" + $.param({
+                    "controller": "core/default-importing-controller",
+                    "jobID": jobID,
+                    "subCommand": "load-raw-data",
+                    "csrf_token": token
+                });
+                var formData = new FormData(form[0]);
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "text",
+                    error: function( jqXHR, textStatus, errorThrown){
+                        console.log('Error calling load-raw-data: '+textStatus);
                     }
-                },
-                function(job) {
-                    alert(job.config.error + '\n' + job.config.errorDetails);
-                    self._startOver();
-                }
+                });
+
+                var start = new Date();
+                var timerID = window.setInterval(
+                    function() {
+                        self._createProjectUI.pollImportJob(
+                            start, jobID, timerID,
+                            function(job) {
+                                return job.config.hasData;
+                            },
+                            function(jobID, job) {
+                                self._job = job;
+                                self._onImportJobReady();
+                                if (callback) {
+                                    callback(jobID, job);
+                                }
+                            },
+                            function(job) {
+                                alert(job.config.error + '\n' + job.config.errorDetails);
+                                self._startOver();
+                            }
+                        );
+                    },
+                    1000
                 );
+                self._createProjectUI.showImportProgressPanel(progressMessage, function() {
+
+                    // stop the timed polling
+                    window.clearInterval(timerID);
+
+                    // explicitly cancel the import job
+                    Refine.CreateProjectUI.cancelImportingJob(jobID);
+
+                    self._createProjectUI.showSourceSelectionPanel();
+                });
             },
-            1000
-            );
-            self._createProjectUI.showImportProgressPanel(progressMessage, function() {
-            // stop the iframe
-            $('#create-project-iframe')[0].contentWindow.stop();
-
-            // stop the timed polling
-            window.clearInterval(timerID);
-
-            // explicitly cancel the import job
-            Refine.CreateProjectUI.cancelImportingJob(jobID);
-
-            self._createProjectUI.showSourceSelectionPanel();
-            });
-        },
-        "json"
-    );
-  });
+            "json"
+        );
+    });
 };
 
 Refine.DefaultImportingController.prototype._onImportJobReady = function() {
@@ -217,21 +219,21 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
   var self = this;
   Refine.wrapCSRF(function(token) {
     $.post(
-        "command/core/importing-controller?" + $.param({
+      "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
         "jobID": self._jobID,
         "subCommand": "update-format-and-options",
         "csrf_token": token
-        }),
-        {
+      }),
+      {
         "format" : self._format,
         "options" : JSON.stringify(options)
-        },
-        function(o) {
+      },
+      function(o) {
         if (o.status == 'error') {
-            if (o.message) {
-            alert(o.message);					
-            } else {
+          if (o.message) {
+            alert(o.message);
+          } else {
             var messages = [];
             $.each(o.errors, function() { messages.push(this.message); });
             alert(messages.join('\n\n'));
@@ -239,12 +241,11 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             if(finallyCallBack){
               finallyCallBack();
             }
-        } else {
-            callback(o);
-        }
+          }
+          callback(o);
         },
         "json"
-    );
+    ).fail(() => { alert($.i18n('core-index-parser/update-format-failed')); });
   });
 };
 
@@ -269,12 +270,12 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-        function(data) {
-          result.rowModel = data;
-          callback(result);
-        },
+		function(data) {
+			  result.rowModel = data;
+			  callback(result);
+		  },
         "jsonp"
-      );
+	   ).fail(() => { alert($.i18n('core-index/rows-loading-failed')); });
     },
     "json"
   );
@@ -282,15 +283,15 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
 
 Refine.DefaultImportingController.prototype._createProject = function() {
   if ((this._formatParserUI) && this._formatParserUI.confirmReadyToCreateProject()) {
-    var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
+    var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length === 0) {
       window.alert($.i18n('core-index-import/warning-name'));
       this._parsingPanelElmts.projectNameInput.focus();
       return;
     }
 
-    var projectTags = $("#tagsInput").val().split(",");
-    
+    var projectTags = $("#tagsInput").val();
+
     var self = this;
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;

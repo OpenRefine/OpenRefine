@@ -1,11 +1,11 @@
 <div class="grid-layout layout-tight layout-full"><table rows="4" cols="4">
   <tr style="vertical-align: bottom;">
-    <td bind="or_dialog_expr"></td>
-    <td style="text-align: right;" bind="or_dialog_lang"></td>
-    <td colspan="2"><select bind="expressionPreviewLanguageSelect">$LANGUAGE_OPTIONS$</select></td>
+    <td><label for="expressionPreviewTextareaId" bind="or_dialog_expr"></label></td>
+    <td style="text-align: right;"><label for="expressionPreviewLanguageSelectId" bind="or_dialog_lang"></label></td>
+    <td colspan="2"><select bind="expressionPreviewLanguageSelect" id="expressionPreviewLanguageSelectId">$LANGUAGE_OPTIONS$</select></td>
   </tr>
   <tr>
-    <td colspan="3"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" spellcheck="false" /></div></td>
+    <td colspan="3"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" id="expressionPreviewTextareaId" spellcheck="false"></textarea></div></td>
     <td class="expression-preview-parsing-status" bind="expressionPreviewParsingStatus" width="150" style="vertical-align: top;"></td>
   </tr>
   <tr>

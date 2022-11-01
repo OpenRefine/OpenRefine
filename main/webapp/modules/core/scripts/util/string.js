@@ -31,32 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-String.prototype.trim = function() {
-  return this.replace(/^\s+/, '').replace(/\s+$/, '');
+jQueryTrim = function( text ) {
+  return text == null ? "" : text.trim();
 };
 
-String.prototype.startsWith = function(s) {
-  return this.length >= s.length && this.substring(0, s.length) == s;
-};
-
-String.prototype.endsWith = function(s) {
-  return this.length >= s.length && this.substring(this.length - s.length) == s;
-};
-
-String.prototype.contains = function(s) {
-  return this.indexOf(s) >= 0;
-};
-
-String.encodeSeparator = function(s) {
-  return s.replace("\\", "\\\\")
-  .replace("\r", "\\r")
-  .replace("\n", "\\n")
-  .replace("\t", "\\t");
-};
-
-String.decodeSeparator = function(s) {
-  return s.replace("\\n", "\n")
-  .replace("\\r", "\r")
-  .replace("\\t", "\t")
-  .replace("\\\\", "\\");
-};

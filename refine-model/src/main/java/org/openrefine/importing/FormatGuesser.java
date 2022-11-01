@@ -36,5 +36,6 @@ package org.openrefine.importing;
 import java.io.File;
 
 public interface FormatGuesser {
+
     public String guess(File file, String encoding, String seedFormat);
 }

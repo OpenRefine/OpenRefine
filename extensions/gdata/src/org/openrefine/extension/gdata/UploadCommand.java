@@ -65,6 +65,7 @@ import com.google.api.services.drive.model.File.ContentHints;
 import com.google.api.services.drive.model.File.ContentHints.Thumbnail;
 
 public class UploadCommand extends Command {
+
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");
     
     private static final String METADATA_DESCRIPTION = "OpenRefine project dump";
@@ -74,7 +75,7 @@ public class UploadCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
@@ -148,7 +149,10 @@ public class UploadCommand extends Command {
 
     protected byte[] getIconImage() throws IOException {
         InputStream is = getClass().getResourceAsStream(METADATA_ICON_FILE);
-        return IOUtils.toByteArray(is);
+        byte[] iconImage = IOUtils.toByteArray(is);
+        is.close();
+
+        return iconImage;
     }
 
     private String uploadOpenRefineProject(Project project, String token,

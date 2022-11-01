@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
 public class PgSQLConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("PgSQLConnectionManager");
@@ -47,8 +46,6 @@ public class PgSQLConnectionManager {
     private SQLType type;
 
     private static PgSQLConnectionManager instance;
-    
-  
     
     /**
      * 
@@ -61,9 +58,6 @@ public class PgSQLConnectionManager {
 
     }
   
-    
-    
-    
     /**
      * Create a new instance of this connection manager.
      *
@@ -73,7 +67,7 @@ public class PgSQLConnectionManager {
      */
     public static PgSQLConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("::Creating new PgSQL ConnectionManager ::"); 
             }
             
@@ -83,7 +77,6 @@ public class PgSQLConnectionManager {
         return instance;
     }
 
-   
     /**
      * Get the SQL Database type.
      *
@@ -95,24 +88,24 @@ public class PgSQLConnectionManager {
 
     /**
      * testConnection
+     * 
      * @param databaseConfiguration
      * @return
      */
-    public  boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException{
+    public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
         
         try {
                 boolean connResult = false;
               
                 Connection conn = getConnection(databaseConfiguration, true);
-                if(conn != null) {
+            if (conn != null) {
                     connResult = true;
                     conn.close();
                 }
                 
                 return connResult;
        
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
@@ -124,7 +117,8 @@ public class PgSQLConnectionManager {
      *
      * @return connection from the pool
      */
-    public  Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection) throws DatabaseServiceException{
+    public Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection)
+            throws DatabaseServiceException {
         try {
 
            // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
@@ -132,7 +126,7 @@ public class PgSQLConnectionManager {
             if (connection != null && !forceNewConnection) {
                // logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
-                    if(logger.isDebugEnabled()){
+                    if (logger.isDebugEnabled()) {
                         logger.debug("Returning existing connection::{}", connection); 
                     }
                     return connection;
@@ -149,7 +143,6 @@ public class PgSQLConnectionManager {
 
             return connection;
 
-            
         } catch (ClassNotFoundException e) {
             logger.error("Jdbc Driver not found", e);
             throw new DatabaseServiceException(e.getMessage());
@@ -159,21 +152,18 @@ public class PgSQLConnectionManager {
         } 
     }
 
- 
     public  void shutdown() {
 
         if (connection != null) {
             try {
                 connection.close();
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
  
     }
   
-   
     private static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
        
             int port = dbConfig.getDatabasePort();

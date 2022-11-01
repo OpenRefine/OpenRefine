@@ -1,0 +1,76 @@
+{
+  "type": "mediainfo",
+  "fileName": null,
+  "filePath": null,
+  "wikitext": null,
+  "overrideWikitext": false,
+  "labels": [],
+  "labelsIfNew": [],
+  "new": false,
+  "statementGroups": [
+    {
+      "property": {
+        "type": "wikibase-entityid",
+        "value": {
+          "entity-type": "property",
+          "id": "P348",
+          "numeric-id": 348
+        }
+      },
+      "statementEdits": [
+        {
+          "mergingStrategy": {
+            "type": "property"
+          },
+          "mode": "add_or_merge",
+          "statement": {
+            "mainsnak": {
+              "property": "P348",
+              "snaktype": "novalue"
+            },
+            "rank": "normal",
+            "type": "statement"
+          }
+        }
+      ]
+    },
+    {
+      "property": {
+        "type": "wikibase-entityid",
+        "value": {
+          "entity-type": "property",
+          "id": "P52",
+          "numeric-id": 52
+        }
+      },
+      "statementEdits": [
+        {
+          "mergingStrategy": {
+            "type": "property"
+          },
+          "mode": "delete",
+          "statement": {
+            "mainsnak": {
+              "datavalue": {
+                "type": "string",
+                "value": "foo"
+              },
+              "property": "P52",
+              "snaktype": "value"
+            },
+            "rank": "normal",
+            "type": "statement"
+          }
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "type": "wikibase-entityid",
+    "value": {
+      "entity-type": "mediainfo",
+      "id": "M5678",
+      "numeric-id": 5678
+    }
+  }
+}

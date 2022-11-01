@@ -33,15 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.arrays;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
 import org.openrefine.util.JSONUtilities;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class InArray extends PureFunction {
 
@@ -64,16 +65,17 @@ public class InArray extends PureFunction {
                     List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
                     return a.contains(s);
                 }
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+                return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
             }
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+            return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two parameters: an array and a string");
+        // string");
+        return new EvalError(EvalErrorMessage.expects_one_array_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns true if the array contains the desired string, and false otherwise. Will not convert data types.";
+        return FunctionDescription.arr_in_array();
     }
 
     @Override

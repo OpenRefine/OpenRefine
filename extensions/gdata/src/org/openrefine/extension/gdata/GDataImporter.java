@@ -53,6 +53,7 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 public class GDataImporter {
+
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");
     
     static public GridState parse(
@@ -150,6 +151,7 @@ public class GDataImporter {
     }
     
     static private class WorksheetBatchRowReader implements TableDataReader {
+
         final ImportingJob job;
         final String fileSource;
         
@@ -198,8 +200,7 @@ public class GDataImporter {
         List<List<Object>> getRowsOfCells(
             Sheets service,
             String spreadsheetId,
-            Sheet worksheet
-        ) throws IOException {
+                Sheet worksheet) throws IOException {
             String range = worksheet.getProperties().getTitle();
             ValueRange result = service.spreadsheets().values().get(spreadsheetId, range).execute();
             
@@ -210,4 +211,3 @@ public class GDataImporter {
         
     }
 }
-    

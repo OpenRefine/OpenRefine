@@ -26,12 +26,12 @@
                                       <legend class="new-connection-legend pure-input-1-2" id="new-connection-legend"></legend>
                                   
                                       <div class="pure-control-group">
-                                           <label id="connectionNameLabel" for="name"></label>
-                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="" class="pure-input-1-3" required>
+                                           <label id="connectionNameLabel" for="connectionName"></label>
+                                           <input spellcheck="false" bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="" class="pure-input-1-3" required>
                                        </div>
                                
                                        <div class="pure-control-group">
-                                           <label id="databaseTypeLabel" for="databaseType"></label>
+                                           <label id="databaseTypeLabel" for="databaseTypeSelect"></label>
                                             <select name="selection" id="databaseTypeSelect" bind="databaseTypeSelect" class="pure-input-1-3" required>
                                             	  <option value="postgresql">PostgreSQL</option>  
                                                <option value="mysql" selected="selected">MySQL</option>
@@ -42,15 +42,15 @@
 
                                         <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databaseHostLabel" for="databaseHost"></label> 
-                                          <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="" value="localhost" class="pure-input-1-3" required>
+                                          <input spellcheck="false"  bind="databaseHostInput" id="databaseHost" type="text" placeholder="" value="localhost" class="pure-input-1-3" required>
                                         </div>
                                         <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databasePortLabel" for="databasePort"></label> 
-                                          <input bind="databasePortInput" id="databasePort" type="text" placeholder="" value="5432" class="pure-input-1-3" required>
+                                          <input spellcheck="false" bind="databasePortInput" id="databasePort" type="text" placeholder="" value="5432" class="pure-input-1-3" required>
                                         </div>
                                         <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databaseUserLabel" for="databaseUser"></label> 
-                                          <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="" value="postgres" class="pure-input-1-3" required>
+                                          <input spellcheck="false" bind="databaseUserInput" id="databaseUser" type="text" placeholder="" value="postgres" class="pure-input-1-3" required>
                                         </div>
                                         <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databasePasswordLabel" for="databasePassword"></label> 
@@ -58,11 +58,11 @@
                                         </div>
                                         <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb dbt-sqlite">
                                           <label id="databaseNameLabel" for="initialDatabase"></label> 
-                                          <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" class="pure-input-1-3" required>
+                                          <input spellcheck="false" bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" class="pure-input-1-3" required>
                                         </div>
                                         <div class="pure-control-group dbtype-options">
                                           <label id="databaseSchemaLabel" for="initialSchema"></label> 
-                                          <input bind="initialSchemaInput" id="initialSchema" type="text" placeholder="" class="pure-input-1-3" required>
+                                          <input spellcheck="false" bind="initialSchemaInput" id="initialSchema" type="text" placeholder="" class="pure-input-1-3" required>
                                         </div>
                                        
                                         <div class="pure-controls" id="newConnectionControlDiv">
@@ -98,7 +98,7 @@
                                 		<input type="hidden" id="currentInitialDatabaseInput" name="currentInitialDatabase">
                                 		
 									<div class="panel panel-info pure-input-3-4">
-										<div class="panel-heading">Query Editor </div>
+										<div class="panel-heading"><label for="queryTextArea">Query Editor </label></div>
 										<div class="panel-body">
 											<fieldset style="padding:2px; margin-top:5px;">
 											    <textarea id="queryTextArea" bind="queryTextArea" class="pure-input-1 no-resize" placeholder="Enter your query" rows="10" >SELECT * FROM</textarea>
@@ -139,4 +139,3 @@
     
     
 </div><!-- End databaseContainer -->
- 

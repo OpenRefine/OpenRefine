@@ -47,7 +47,9 @@ import org.openrefine.importers.TabularParserHelper.TableDataReader;
 
 
 public class PCAxisTableDataReader implements TableDataReader {
+
     final private static class Dimension {
+
         String name;
         List<String> values;
         int next;
@@ -114,6 +116,7 @@ public class PCAxisTableDataReader implements TableDataReader {
         }
         
         Collections.sort(_dimensions, new Comparator<Dimension>() {
+
             @Override
             public int compare(Dimension d0, Dimension d1) {
                 return dimensionNameToOrder.get(d0.name)
@@ -132,12 +135,12 @@ public class PCAxisTableDataReader implements TableDataReader {
     
     private List<String> parseMetadataValues(int start, List<Exception> _exceptions) throws IOException {
         List<String> values = new ArrayList<String>();
-        outer:while (_line != null && start < _line.length()) {
+        outer: while (_line != null && start < _line.length()) {
             char c = _line.charAt(start);
             if (c == '"') {
                 // A string
                 StringBuffer sb = new StringBuffer();
-                inner:while (_line != null && start < _line.length()) {
+                inner: while (_line != null && start < _line.length()) {
                     int close = _line.indexOf('"', start + 1);
                     if (close < 0) {
                         // Exceptional case of missing closing "

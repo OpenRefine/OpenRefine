@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions;
 
-import org.openrefine.grel.PureFunction;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.expr.HasFields;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
 
 public class HasField extends PureFunction {
 
@@ -62,7 +62,7 @@ public class HasField extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether o has a member field called name.";
+        return FunctionDescription.fun_has_field();
     }
 
     @Override

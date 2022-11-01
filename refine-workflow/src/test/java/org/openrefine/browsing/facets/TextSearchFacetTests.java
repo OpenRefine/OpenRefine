@@ -97,7 +97,7 @@ public class TextSearchFacetTests extends RefineTest {
     private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
         // Add the facet to the project and create a row filter
         textFilterConfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
-        textFilter = textFilterConfig.apply(grid.getColumnModel());
+        textFilter = textFilterConfig.apply(grid.getColumnModel(), Collections.emptyMap());
         rowFilter = textFilter.getAggregator().getRowFilter();
     }
 

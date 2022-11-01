@@ -37,11 +37,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.openrefine.importers.tree.TreeImportingParserBase;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
@@ -114,8 +117,38 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
+    public void setsProjectMetadata() throws Exception {
+        // Setup a file record to import
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), "UTF-8");
+        List<ImportingFileRecord> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.mapper.readValue(
+                "{\"location\": \"test-file.xml\",\"fileName\": \"test-file.xml\"}", ImportingFileRecord.class));
+
+        // We need a real ObjectNode to support the deepCopy() method
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, "library");
+        JSONUtilities.append(path, "book");
+
+        JSONUtilities.safePut(options, "recordPath", path);
+
+        SUT.parse(
+                runner,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options);
+
+        Assert.assertNotNull(metadata.getModified());
+        Assert.assertNotNull(metadata.getCreated());
+        Assert.assertNotEquals(metadata.getImportOptionMetadata().size(), 0);
+    }
+
+    @Test
     public void canParseDeeplyNestedSample() throws Exception {
-        GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
+       GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
         assertGridEquals(grid, expectedGrid);
     }

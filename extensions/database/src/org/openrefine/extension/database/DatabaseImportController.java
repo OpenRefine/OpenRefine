@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
 public class DatabaseImportController implements ImportingController {
     
     private static final Logger logger = LoggerFactory.getLogger("DatabaseImportController");
@@ -87,7 +86,7 @@ public class DatabaseImportController implements ImportingController {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        if(logger.isDebugEnabled()){
+        if (logger.isDebugEnabled()) {
             logger.debug("doPost Query String::{}", request.getQueryString());
         }
         response.setCharacterEncoding("UTF-8");
@@ -95,7 +94,7 @@ public class DatabaseImportController implements ImportingController {
         
         String subCommand = parameters.getProperty("subCommand");
         
-        if(logger.isDebugEnabled()){
+        if (logger.isDebugEnabled()) {
             logger.info("doPost::subCommand::{}", subCommand);
         }
         
@@ -120,9 +119,9 @@ public class DatabaseImportController implements ImportingController {
  
     private String getDbServiceException(Exception ex) {
         String message = "";
-        if(ex instanceof DatabaseServiceException) {
+        if (ex instanceof DatabaseServiceException) {
             DatabaseServiceException dbEx = (DatabaseServiceException) ex;
-            if(dbEx.isSqlException()) {
+            if (dbEx.isSqlException()) {
                 message = message + dbEx.getSqlCode() + " " +  dbEx.getSqlState();
             }
         }
@@ -141,11 +140,10 @@ public class DatabaseImportController implements ImportingController {
      */
     private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("::doInitializeParserUI::");
         }
         
-
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(result, "status", "ok");
@@ -154,7 +152,7 @@ public class DatabaseImportController implements ImportingController {
         JSONUtilities.safePut(options, "skipDataLines", 0); 
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("doInitializeParserUI:::{}", result.toString());
         }
        
@@ -162,9 +160,9 @@ public class DatabaseImportController implements ImportingController {
 
     }
 
-
     /**
      * doParsePreview
+     * 
      * @param request
      * @param response
      * @param parameters
@@ -175,11 +173,10 @@ public class DatabaseImportController implements ImportingController {
     private void doParsePreview(
             HttpServletRequest request, HttpServletResponse response, Properties parameters)
                 throws ServletException, IOException, DatabaseServiceException {
-            if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
                 logger.debug("JobID::{}", parameters.getProperty("jobID"));
             } 
            
-            
             long jobID = Long.parseLong(parameters.getProperty("jobID"));
             ImportingJob job = ImportingManager.getJob(jobID);
             if (job == null) {
@@ -187,11 +184,9 @@ public class DatabaseImportController implements ImportingController {
                 return;
             }
           
-            
             DatabaseQueryInfo databaseQueryInfo = getQueryInfo(request);
           
-            
-            if(databaseQueryInfo == null) {
+        if (databaseQueryInfo == null) {
                 HttpUtilities.respond(response, "error", "Invalid or missing Query Info");
             }
             
@@ -206,10 +201,9 @@ public class DatabaseImportController implements ImportingController {
                     databaseQueryInfo,
                     job.metadata,
                     job,
-                    DEFAULT_PREVIEW_LIMIT ,
+                    DEFAULT_PREVIEW_LIMIT,
                     optionObj,
-                    exceptions
-                );
+                    exceptions);
                 Writer w = response.getWriter();
                 JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
                 try {
@@ -238,11 +232,9 @@ public class DatabaseImportController implements ImportingController {
             }
         }
 
-
-
     private String getExceptionString(List<Exception> exceptions) {
         String ex = "";
-        for(Exception e: exceptions) {
+        for (Exception e : exceptions) {
             ex = ex + e.getLocalizedMessage() + "\n";
         }
         // TODO Auto-generated method stub
@@ -266,15 +258,13 @@ public class DatabaseImportController implements ImportingController {
             final ImportingJob job, 
             int limit, 
             ObjectNode options,
-            List<Exception> exceptions) throws DatabaseServiceException{
-        
+            List<Exception> exceptions) throws DatabaseServiceException {
        
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
         
         List<DatabaseColumn> columns = databaseService.getColumns(dbQueryInfo.getDbConfig(), dbQueryInfo.getQuery());
                 
-        
         setProgress(job, querySource, -1);
 
         JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
@@ -300,16 +290,16 @@ public class DatabaseImportController implements ImportingController {
        
     }
   
-
     /**
      * doCreateProject
+     * 
      * @param request
      * @param response
      * @param parameters
      */
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
-            throws ServletException, IOException{
-            if(logger.isDebugEnabled()) {
+            throws ServletException, IOException {
+        if (logger.isDebugEnabled()) {
                 logger.debug("DatabaseImportController::doCreateProject:::{}", parameters.getProperty("jobID"));
             }
             
@@ -321,7 +311,7 @@ public class DatabaseImportController implements ImportingController {
             }
             
             final DatabaseQueryInfo databaseQueryInfo = getQueryInfo(request);
-            if(databaseQueryInfo == null) {
+        if (databaseQueryInfo == null) {
                 HttpUtilities.respond(response, "error", "Invalid or missing Query Info");
             }
             
@@ -335,6 +325,7 @@ public class DatabaseImportController implements ImportingController {
                 job.setState("creating-project");
               
                 new Thread() {
+
                     @Override
                     public void run() {
                         ProjectMetadata pm = new ProjectMetadata();
@@ -377,7 +368,6 @@ public class DatabaseImportController implements ImportingController {
             }
         }
     
-   
     /**   
      * @param dbQueryInfo
      * @param project
@@ -394,8 +384,7 @@ public class DatabaseImportController implements ImportingController {
             final ImportingJob job, 
             int limit, 
             ObjectNode options,
-            List<Exception> exceptions) throws DatabaseServiceException{
-        
+            List<Exception> exceptions) throws DatabaseServiceException {
         
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
@@ -427,8 +416,8 @@ public class DatabaseImportController implements ImportingController {
         }
 
         
-        long endTime = System.currentTimeMillis() ;
-        if(logger.isDebugEnabled()) {
+        long endTime = System.currentTimeMillis();
+        if (logger.isDebugEnabled()) {
             logger.debug("Execution Time: {}", endTime - startTime);
         }
         
@@ -439,10 +428,10 @@ public class DatabaseImportController implements ImportingController {
     private static int getCreateBatchSize() {
         String propBatchSize = DatabaseModuleImpl.getImportCreateBatchSize();
         int batchSize = 100;
-        if(propBatchSize != null && !propBatchSize.isEmpty()) {
+        if (propBatchSize != null && !propBatchSize.isEmpty()) {
             try {
                 batchSize = Integer.parseInt(propBatchSize);
-            }catch(NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {
                 
             }
         }
@@ -460,7 +449,7 @@ public class DatabaseImportController implements ImportingController {
         jdbcConfig.setDatabaseHost(request.getParameter("databaseServer"));
         try {
         	jdbcConfig.setDatabasePort(Integer.parseInt(request.getParameter("databasePort")));
-        } catch(NumberFormatException nfE) {
+        } catch (NumberFormatException nfE) {
         	logger.error("getQueryInfo :: invalid database port ::{}", nfE);
         }
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
@@ -469,14 +458,14 @@ public class DatabaseImportController implements ImportingController {
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
         
         String query = request.getParameter("query");
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("jdbcConfig::{}, query::{}", jdbcConfig, query);
         }
         if (jdbcConfig.getDatabaseHost() == null || jdbcConfig.getDatabaseName() == null
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
                 || jdbcConfig.getDatabaseUser() == null || query == null
                 || (jdbcConfig.getDatabasePort() == 0 &&  !"SQLite".equalsIgnoreCase(jdbcConfig.getDatabaseType()))) {
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("Missing Database Configuration::{}", jdbcConfig);
             }
             return null;
@@ -485,12 +474,10 @@ public class DatabaseImportController implements ImportingController {
         return new DatabaseQueryInfo(jdbcConfig, query);
     }
    
-
     private static String getQuerySource(DatabaseQueryInfo dbQueryInfo) {
         String dbType = dbQueryInfo.getDbConfig().getDatabaseType();
         return DatabaseService.get(dbType).getDatabaseUrl(dbQueryInfo.getDbConfig());
     }
-
 
     private static  void setProgress(ImportingJob job, String querySource, int percent) {
         job.setProgress(percent, "Reading " + querySource);

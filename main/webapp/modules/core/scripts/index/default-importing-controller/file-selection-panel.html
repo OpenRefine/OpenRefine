@@ -15,20 +15,20 @@
     <tr>
       <td width="98%" bind="summary"></td>
       <td width="1%"><button bind="selectAllButton" class="button"></button></td>
-      <td width="1%"><button bind="unselectAllButton" class="button"></button></td>
+      <td width="1%"><button bind="deselectAllButton" class="button"></button></td>
     </tr>
   </table></div>
   
   <h2 id="or-import-selExt"></h2>
   <div bind="extensionContainer" class="grid-layout layout-full layout-tightest"></div>
   
-  <h2 id="or-import-regex"></h2>
+  <h2><label for="regexInputId" id="or-import-regex"></label></h2>
   <div class="grid-layout layout-full layout-tighter"><table>
-    <tr><td colspan="3"><input bind="regexInput" style="width: 100%;"/></td></tr>
+    <tr><td colspan="3"><input spellcheck="false" bind="regexInput" id="regexInputId" style="width: 100%;"/></td></tr>
     <tr>
       <td bind="regexSummary"></td>
       <td width="1%"><button bind="selectRegexButton" class="button"></button></td>
-      <td width="1%"><button bind="unselectRegexButton" class="button"></button></td>
+      <td width="1%"><button bind="deselectRegexButton" class="button"></button></td>
     </tr>
   </table></div>
 </div>

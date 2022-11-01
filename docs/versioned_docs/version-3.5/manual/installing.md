@@ -20,22 +20,23 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to the [Java downloads page](https://java.com/en/download/), and you can simply follow the instructions there.
 
-We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5.
+We recommend you [download](https://adoptium.net/temurin/releases) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5. More recent plugins for OpenRefine require Java 17.
 
 #### Compatible browser {#compatible-browser}
 
-OpenRefine works best on browsers based on Webkit, such as:
+OpenRefine works best on browsers based on WebKit, such as:
 
-*   Google Chrome
-*   Chromium
-*   Opera
-*   Microsoft Edge
+*   [Google Chrome](https://www.google.com/chrome/)
+*   [Chromium](https://ungoogled-software.github.io/)
+*   [Opera](https://www.opera.com/)
+*   [Microsoft Edge](https://www.microsoft.com/edge)
+*   [Safari](https://www.apple.com/safari/)
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer. If you are having issues running OpenRefine, see the [section on Running](running.md#troubleshooting).
 
 ### Release versions {#release-versions}
 
-OpenRefine always has a [latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest), as well as some more recent developments available in beta, release candidate, or [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases/releases). If you are installing for the first time, we recommend [the latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest).
+OpenRefine always has a [latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest), as well as some more recent developments available in beta, release candidate, or [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases). If you are installing for the first time, we recommend [the latest stable release](https://github.com/OpenRefine/OpenRefine/releases/latest).
 
 If you wish to use an extension that is only compatible with an earlier version of OpenRefine, and do not require the latest features, you may find that [an older stable version is best for you](https://github.com/OpenRefine/OpenRefine/releases) in our list of releases. Look at later releases to see which security vulnerabilities are being fixed, in order to assess your own risk tolerance for using earlier versions. Look for “final release” versions instead of “beta” or “release candidate” versions.
 
@@ -45,17 +46,7 @@ If you need a recently developed function, and are willing to risk some untested
 
 “Beta” and “release candidate” versions may both have unreported bugs and are most suitable for people who are willing to help us troubleshoot these versions by [creating bug reports](https://github.com/OpenRefine/OpenRefine/issues).  
 
-For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases/releases). These are created with every commit.
-
-#### What’s changed {#whats-changed}
-
-Our [latest version is OpenRefine 3.5.0](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0), released November 7th 2021. The major changes in this version are listed on the [3.5.0 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0) with the downloadable packages.
-
-You can find information about all OpenRefine versions on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
-
-:::info Other distributions
-OpenRefine may also work in other environments, such as [Chromebooks](https://gist.github.com/organisciak/3e12e5138e44a2fed75240f4a4985b4f) where Linux terminals are available. Look at our list of [Other Distributions on the Downloads page](https://openrefine.org/download.html) for other ways of running OpenRefine, and refer to our contributor community to see new environments in development.
-:::
+For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases). These are created with every commit.
 
 ## Installing or upgrading {#installing-or-upgrading}
 ### Back up your data {#back-up-your-data}
@@ -104,37 +95,44 @@ You can right-click on `openrefine.exe` or `refine.bat` and pin one of those pro
 
 Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon onto the Applications folder icon (just like you would normally install Mac applications).
 
+:::caution
+When you double-click the OpenRefine icon to start the application on your Mac for the first time, you may see the notification "OpenRefine cannot be opened because the developer cannot be verified". If you see this notification, click <span class="buttonLabels">Cancel</span>.
+
+Instead, _right_-click the application's icon and select `Open` from the pop-up menu. You will see a new notification which now contains an <span class="buttonLabels">Open</span> button.
+![A screenshot of the notification containing an 'Open' button.](/img/mac-open-notification.png)
+After clicking <span class="buttonLabels">Open</span> and starting OpenRefine for the first time, you will be able to start the application normally in the future.
+:::
+
 </TabItem>
 
 <TabItem value="mac-hb">
 
 The quick version:
 
-1. Install [Homebrew](http://brew.sh)
-2. In Terminal enter ` brew cask install openrefine`
+1. Install [Homebrew](https://brew.sh)
+2. In Terminal enter ` brew install --cask openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 The long version:
 
-[Homebrew](http://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website](http://brew.sh).
+[Homebrew](https://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website](https://brew.sh).
 
 ###### Install {#install}
 
 Install OpenRefine with this command:
 
 ```
-brew cask install openrefine
+brew install --cask openrefine
 ```
 
 You should see output like this:
 
 ```
-==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-########################### 100.0%
-  ==> Verifying checksum for Cask openrefine
-  ==> Installing Cask openrefine
-  ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
-  🍺  openrefine was successfully installed!
+==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/3.4.1/openrefine-mac-3.4.1.dmg
+######################################################################## 100.0%
+==> Installing Cask openrefine
+==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'
+🍺  openrefine was successfully installed!
 ```
 
 Behind the scenes, this command causes Homebrew to download the OpenRefine installer, verify the file’s authenticity (using a SHA-256 checksum), mount the disk image, copy the `OpenRefine.app` application bundle into the Applications folder, unmount the disk image, and save a copy of the installer and metadata about the installation for future use.
@@ -146,39 +144,47 @@ If an existing `OpenRefine.app` is found in the Applications folder, Homebrew wi
 To uninstall OpenRefine, paste this command into the Terminal:
 
 ```
- brew cask uninstall openrefine
+brew uninstall --cask openrefine
 ```
 
 You should see output like this:
 
 ```
- ==> Removing App '/Applications/OpenRefine.app'.
+==> Uninstalling Cask openrefine
+==> Backing App 'OpenRefine.app' up to '/usr/local/Caskroom/openrefine/3.4.1/OpenRefine.app'
+==> Removing App '/Applications/OpenRefine.app'
+==> Purging files for version 3.4.1 of Cask openrefine
 ```
 
 ###### Update {#update}
 
-To update to the latest version of OpenRefine, paste this command into the Terminal:
+To update to the latest version of OpenRefine, paste these two commands into the Terminal:
 
 ```
- brew cask reinstall openrefine
+brew update
+brew upgrade
 ```
 
 You should see output like this:
 
 ```
- ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-########################### 100.0%
-  ==> Verifying checksum for Cask openrefine
-  ==> Removing App '/Applications/OpenRefine.app'.
-  ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
-  🍺  openrefine was successfully installed!
+==> Upgrading 1 outdated package:
+openrefine 3.4.0-> 3.4.1
+==> Upgrading openrefine
+==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/3.4.1/openrefine-mac-3.4.1.dmg
+######################################################################## 100.0%
+==> Backing App 'OpenRefine.app' up to '/usr/local/Caskroom/openrefine/3.4.0/OpenRefine.app'
+==> Removing App '/Applications/OpenRefine.app'
+==> Installing Cask openrefine
+==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'
+🍺  openrefine was successfully upgraded!
 ```
 
 If you had previously installed the `openrefine-dev` cask (containing a release candidate) and you want to move to the stable release, you need to first uninstall the old cask and then install the new one:
 
 ```
- brew cask uninstall openrefine-dev
- brew cask install openrefine
+brew uninstall --cask openrefine-dev
+brew install --cask openrefine
 ```
 </TabItem>
 
@@ -347,16 +353,19 @@ Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
 </TabItem>
 <TabItem value="mac">
 
+:::caution First, ensure that you have already followed and completed the install steps above, otherwise you will get an error about a read-only volume when editing the `Info.plist` file following the next steps.
+:::
+
 If you have downloaded the `.dmg` package and you start OpenRefine by double-clicking on it:
 
 *   close OpenRefine
 *   control-click on the OpenRefine icon (opens the contextual menu)
 *   click on "show package content” (a finder window opens)
 *   open the “Contents” folder
-*   open the `Info.plist` file with any text editor (like Mac's default TextEdit)
+*   open and edit the `Info.plist` file with any text editor (like Mac's default TextEdit)
 *   Change “-Xmx1024M” into, for example, “-Xmx2048M” or “-Xmx8G”
 *   save the file
-*   restart OpenRefine.
+*   restart OpenRefine
 
 </TabItem>
 <TabItem value="linux">

@@ -27,15 +27,16 @@
 
 package org.openrefine.expr.functions.strings;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
-import org.openrefine.expr.EvalError;
 
 public class Find extends PureFunction {
 
@@ -68,12 +69,12 @@ public class Find extends PureFunction {
 
             return allMatches.toArray(new String[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regex");
+        return new EvalError(EvalErrorMessage.expects_one_string_or_regex(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Outputs an array of all consecutive substrings inside string s that match the substring or regex pattern p. You can supply a substring by putting it in quotes.";
+        return FunctionDescription.str_find();
     }
 
     @Override

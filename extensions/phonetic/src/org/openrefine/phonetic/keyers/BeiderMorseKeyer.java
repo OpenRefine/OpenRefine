@@ -1,3 +1,4 @@
+
 package org.openrefine.phonetic.keyers;
 
 import org.openrefine.clustering.binning.Keyer;
@@ -19,9 +20,8 @@ public class BeiderMorseKeyer extends Keyer {
              * for multiple values to be returned (and the clustering code
              * should be adapted accordingly).
              * 
-             * As a simple workaround we only return the first value.
-             * We could also return the entire list but it would make
-             * matching harder.
+             * As a simple workaround we only return the first value. We could also return the entire list but it would
+             * make matching harder.
              */
             return encoder.encode(string).split("\\|")[0];
         } catch (EncoderException e) {

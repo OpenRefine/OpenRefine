@@ -38,7 +38,6 @@ import org.openrefine.extension.database.SQLType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class MySQLConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("MySQLConnectionManager");
@@ -58,8 +57,6 @@ public class MySQLConnectionManager {
 
     }
   
-  
-    
     /**
      * Create a new instance of this connection manager.
      *
@@ -76,7 +73,6 @@ public class MySQLConnectionManager {
         return instance;
     }
 
-   
     /**
      * Get the SQL Database type.
      *
@@ -88,24 +84,24 @@ public class MySQLConnectionManager {
 
     /**
      * testConnection
+     * 
      * @param databaseConfiguration
      * @return
      */
-    public  boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException{
+    public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
         
         try {
                 boolean connResult = false;
               
                 Connection conn = getConnection(databaseConfiguration, true);
-                if(conn != null) {
+            if (conn != null) {
                     connResult = true;
                     conn.close();
                 }
                 
                 return connResult;
        
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
@@ -117,13 +113,14 @@ public class MySQLConnectionManager {
      *
      * @return connection from the pool
      */
-    public  Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection) throws DatabaseServiceException{
+    public Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection)
+            throws DatabaseServiceException {
         try {
 
             if (connection != null && !forceNewConnection) {
-                //logger.info("connection closed::{}", connection.isClosed());
+                // logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
-                    if(logger.isDebugEnabled()){
+                    if (logger.isDebugEnabled()) {
                         logger.debug("Returning existing connection::{}", connection); 
                     }
                     
@@ -133,21 +130,19 @@ public class MySQLConnectionManager {
             String dbURL = getDatabaseUrl(databaseConfiguration);
             Class.forName(type.getClassPath());
             
-            //logger.info("*** type.getClassPath() ::{}, {}**** ", type.getClassPath());
+            // logger.info("*** type.getClassPath() ::{}, {}**** ", type.getClassPath());
             
             DriverManager.setLoginTimeout(10);
             
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("*** Acquired New  connection for ::{} **** ", dbURL); 
             }
             
-
             return connection;
 
-            
         } catch (ClassNotFoundException e) {
             logger.error("Jdbc Driver not found", e);
             throw new DatabaseServiceException(e.getMessage());
@@ -157,21 +152,18 @@ public class MySQLConnectionManager {
         } 
     }
 
- 
     public  void shutdown() {
 
         if (connection != null) {
             try {
                 connection.close();
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
  
     }
     
-   
     private  String getDatabaseUrl(DatabaseConfiguration dbConfig) {
        
             int port = dbConfig.getDatabasePort();

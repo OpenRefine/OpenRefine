@@ -18,16 +18,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="dialog-footer" bind="dialogFooter">
-		<table width="100%">
-			<tr>
-				<td align="left">
-					<button class="button" bind="addStandardServiceButton"></button>
-				</td>
-				<td align="right">
-					<button class="button" bind="reconcileButton"></button>
-					<button class="button" bind="cancelButton"></button>
-				</td>
-		</table>
+	<div class="dialog-footer" bind="dialogFooter" style="justify-content: space-between">
+		<div class="dialog-footer-bg">
+			<button class="button" bind="addStandardServiceButton"></button>
+			<a class="button" bind="discoverServicesButton" href="https://reconciliation-api.github.io/testbench" target="_blank" ></a>
+		</div>
+		<div class="dialog-footer-bg">
+			<button class="button" bind="reconcileButton"></button>
+			<button class="button" bind="cancelButton"></button>
+		</div>
 	</div>
 </div>

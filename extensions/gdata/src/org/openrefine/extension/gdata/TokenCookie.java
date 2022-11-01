@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.util.CookiesUtilities;
 
 public class TokenCookie {
+
     private static final String COOKIE_NAME = "oauth2_token";
 
     public static String getToken(HttpServletRequest request) {

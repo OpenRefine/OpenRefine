@@ -58,6 +58,7 @@ import org.openrefine.operations.ImmediateRowMapOperation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import org.openrefine.operations.OperationDescription;
 
 public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
 
@@ -184,6 +185,6 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return String.format("Copy recon judgments from column %s to %s", _fromColumnName, StringUtils.join(_toColumnNames));
+        return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames));
     }
 }

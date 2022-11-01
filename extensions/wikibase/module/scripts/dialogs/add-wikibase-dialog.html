@@ -1,0 +1,19 @@
+<div class="dialog-frame add-wikibase-dialog" style="width: 700px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <p bind="explainAddManifest"></p>
+    <div>
+      <p bind="explainAddManifestViaURL"></p>
+      <div class="input-container"><input aria-label="" bind="manifestURLInput"/></div>
+    </div>
+    <div>
+      <p bind="explainPasteManifest"></p>
+      <textarea aria-label="" bind="manifestTextarea"></textarea>
+      <p class="invalid-manifest" bind="invalidManifest"></p>
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="cancelButton"></button>
+      <button class="button" bind="addButton"></button>
+  </div>
+</div>

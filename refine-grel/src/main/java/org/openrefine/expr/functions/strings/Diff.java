@@ -33,13 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-
 import org.apache.commons.lang3.StringUtils;
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
-import org.openrefine.expr.EvalError;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class Diff extends PureFunction {
 
@@ -87,20 +89,21 @@ public class Diff extends PureFunction {
                             if ("years".equals(unit)) {
                                 return ChronoUnit.YEARS.between(c2, c1);
                             }
-                            return new EvalError("Unknown time unit " + unit);
+                            return new EvalError(EvalErrorMessage.unknown_time_unit(unit));
                         } catch (ArithmeticException arithmeticException) {
-                            return new EvalError("Number of " + unit + " between given dates causes long overflow.");
+                            return new EvalError(EvalErrorMessage.string_diff_long_overflow(unit));
                         }
                     }
                 }
             }
         }
-        return new EvalError("Unexpected arguments - expecting either 2 strings or 2 dates and a unit string");
+        return new EvalError(
+                EvalErrorMessage.expects_two_strings_or_two_dates_and_unit_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "For strings, takes two strings and compares them, returning a string. Returns the remainder of o2 starting with the first character where they differ. For dates, returns the difference in given time units. See the time unit table at https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit.";
+        return FunctionDescription.str_diff();
     }
 
     @Override

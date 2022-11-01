@@ -38,7 +38,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseUtils;
 import org.owasp.encoder.Encode;
@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.openrefine.util.ParsingUtilities;
 
-
 public class SavedConnectionCommand extends DatabaseCommand {
  
     private static final Logger logger = LoggerFactory.getLogger("SavedConnectionCommand");
@@ -56,12 +55,11 @@ public class SavedConnectionCommand extends DatabaseCommand {
     private static final Pattern CONN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9._-]*");
     private static final Pattern DATABASE_PORT_PATTERN = Pattern.compile("^[0-9]*");
     
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("SavedConnectionCommand::Get::connectionName::{}", request.getParameter("connectionName"));
         }
         
@@ -69,9 +67,9 @@ public class SavedConnectionCommand extends DatabaseCommand {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            if(connectionName == null || connectionName.isEmpty()) {
+            if (connectionName == null || connectionName.isEmpty()) {
                 writeSavedConnectionResponse(response);
-            }else {
+            } else {
            
                 DatabaseConfiguration savedConnection = DatabaseUtils.getSavedConnection(connectionName);
                 writeSavedConnectionResponse(response, savedConnection);
@@ -83,21 +81,19 @@ public class SavedConnectionCommand extends DatabaseCommand {
         }
     }
 
-    
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("SavedConnectionCommand::Delete Connection: {}", request.getParameter("connectionName"));
         }
 
         String connectionName  = request.getParameter("connectionName");
         
         DatabaseConfiguration savedConn = DatabaseUtils.getSavedConnection(connectionName);
-        if(savedConn == null) {
-            //logger.error("Connection With name:: {} does not exist!", request.getParameter("connectionName"));
+        if (savedConn == null) {
+            // logger.error("Connection With name:: {} does not exist!", request.getParameter("connectionName"));
             response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection with name " + connectionName + " does not exists!");
             response.flushBuffer();
             return;
@@ -112,7 +108,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
             writeSavedConnectionResponse(response);
           
         } catch (Exception e) {
-            logger.error("Exception while Deleting Connection with name: {}, error:{}",connectionName, e);
+            logger.error("Exception while Deleting Connection with name: {}, error:{}", connectionName, e);
         }
     }
 
@@ -133,22 +129,19 @@ public class SavedConnectionCommand extends DatabaseCommand {
             
             writer.writeStartObject();
             
-       
             writer.writeStringField("connectionName", savedConnection.getConnectionName());
             writer.writeStringField("databaseType", savedConnection.getDatabaseType());
             writer.writeStringField("databaseHost", savedConnection.getDatabaseHost());
             writer.writeNumberField("databasePort", savedConnection.getDatabasePort());
             writer.writeStringField("databaseName", savedConnection.getDatabaseName());
        
-            
             String dbPasswd = savedConnection.getDatabasePassword();
-            if(dbPasswd != null && !dbPasswd.isEmpty()) {
+            if (dbPasswd != null && !dbPasswd.isEmpty()) {
                 dbPasswd = DatabaseUtils.decrypt(savedConnection.getDatabasePassword());
             }
             writer.writeStringField("databasePassword", dbPasswd);
             writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());        
             writer.writeStringField("databaseUser", savedConnection.getDatabaseUser());
-
 
             writer.writeEndObject();
             writer.writeEndArray();
@@ -157,12 +150,13 @@ public class SavedConnectionCommand extends DatabaseCommand {
             writer.flush();
             writer.close();
             
-        }finally {
+        } finally {
             w.flush();
             w.close();
         }
         
     }
+
     /**
      * 
      * @param response
@@ -196,9 +190,8 @@ public class SavedConnectionCommand extends DatabaseCommand {
 
                 writer.writeStringField("databaseName", dbConfig.getDatabaseName());
 
-                
                 String dbPasswd = dbConfig.getDatabasePassword();
-                if(dbPasswd != null && !dbPasswd.isEmpty()) {
+                if (dbPasswd != null && !dbPasswd.isEmpty()) {
                     dbPasswd = DatabaseUtils.decrypt(dbConfig.getDatabasePassword());
                 }
                // writer.value(dbConfig.getDatabasePassword());
@@ -228,53 +221,49 @@ public class SavedConnectionCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
        
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("doPost Connection: {}", request.getParameter("connectionName"));
         }
        
-        
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         
-
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         
-        if(jdbcConfig.getConnectionName() == null) {
+        if (jdbcConfig.getConnectionName() == null) {
             response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Required!");
             response.flushBuffer();
             return;
         }
         
-        if(!validateInput(jdbcConfig.getConnectionName(), CONN_NAME_PATTERN)) {
+        if (!validateInput(jdbcConfig.getConnectionName(), CONN_NAME_PATTERN)) {
         	logger.warn("Invalid Connection Name: {}", jdbcConfig.getConnectionName());
         	response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
             response.flushBuffer();
             return;
         }
         
-        if(!validateInput("" + jdbcConfig.getDatabasePort(), DATABASE_PORT_PATTERN)) {
+        if (!validateInput("" + jdbcConfig.getDatabasePort(), DATABASE_PORT_PATTERN)) {
         	logger.warn("Invalid Database Port: {}", jdbcConfig.getDatabasePort());
         	response.sendError(HttpStatus.SC_BAD_REQUEST, "Database Port Invalid. Expecting Numeric values only");
             response.flushBuffer();
             return;
         }
         
-     
         DatabaseConfiguration savedConn = DatabaseUtils.getSavedConnection(jdbcConfig.getConnectionName());
-        if(savedConn != null) {
+        if (savedConn != null) {
             response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection with name " + jdbcConfig.getConnectionName() + " already exists!");
             response.flushBuffer();
             return;
         }
         
-      
-        if(jdbcConfig.getDatabasePassword() != null) {
-            //logger.debug("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
+        if (jdbcConfig.getDatabasePassword() != null) {
+            // logger.debug("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
            jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));
         }
         
@@ -291,9 +280,9 @@ public class SavedConnectionCommand extends DatabaseCommand {
    
     }
     
-    private boolean validateInput(String input, Pattern pattern){
+    private boolean validateInput(String input, Pattern pattern) {
         Matcher matcher = pattern.matcher(input);
-        if(matcher.matches()){
+        if (matcher.matches()) {
             return true;
         }
         return false;
@@ -303,42 +292,41 @@ public class SavedConnectionCommand extends DatabaseCommand {
     public void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
      
-        
-        if(logger.isDebugEnabled()) {
-            logger.debug("databaseType::{} " , request.getParameter("databaseHost"));
+        if (logger.isDebugEnabled()) {
+            logger.debug("databaseType::{} ", request.getParameter("databaseHost"));
         }
        // logger.info("databaseHost::{} " , request.getParameter("databaseServer"));
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         StringBuilder sb = new StringBuilder();
         boolean error = false;
-        if(jdbcConfig.getConnectionName() == null) {
+        if (jdbcConfig.getConnectionName() == null) {
             sb.append("Connection Name, ");
             error = true;
         }
-        if(jdbcConfig.getDatabaseHost() == null) {
+        if (jdbcConfig.getDatabaseHost() == null) {
             sb.append("Database Host, ");
             error = true;
         }
-        if(jdbcConfig.getDatabaseUser() == null) {
+        if (jdbcConfig.getDatabaseUser() == null) {
             sb.append("Database User, ");
             error = true;
         }
-        if(jdbcConfig.getDatabaseName() == null) {
+        if (jdbcConfig.getDatabaseName() == null) {
             sb.append("Database Name, ");
             error = true;
         }
-        if(error) {
+        if (error) {
             sb.append(" is missing");
             logger.debug("Connection Parameter errors::{}", sb.toString());
             response.sendError(HttpStatus.SC_BAD_REQUEST, sb.toString());
         }
        
-       if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
          logger.debug("Connection Config:: {}", jdbcConfig.getConnectionName());
        }
         
-        if(jdbcConfig.getDatabasePassword() != null) {
+        if (jdbcConfig.getDatabasePassword() != null) {
             jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));
          }
         
@@ -355,5 +343,4 @@ public class SavedConnectionCommand extends DatabaseCommand {
         }
     }
 
-    
 }

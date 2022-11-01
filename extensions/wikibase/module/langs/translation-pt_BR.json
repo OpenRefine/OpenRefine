@@ -1,0 +1,14 @@
+{
+    "wikibase-extension/quickstatements-export-name": "QuickStatements",
+    "wikibase-extension/wikibase-schema": "Esquema de Wikidata",
+    "wikibase-extension/export-wikibase-schema": "Exportar esquema de Wikidata",
+    "wikibase-extension/export-schema": "Exportar esquema",
+    "wikibase-extension/wikibase-edits": "Edições de Wikidata…",
+    "wikibase-extension/qs-file": "Ficheiro de QuickStatements",
+    "wikibase-extension/export-to-qs": "Exportar para QuickStatements",
+    "wikibase-extension/perform-edits-on-wikibase": "Carregar edições para Wikidata…",
+    "wikibase-extension/manage-wikibase-account": "Gerir conta de Wikidata…",
+    "wikibase-extension/import-wikibase-schema": "Importar esquema…",
+    "wikibase-extension/edit-wikibase-schema": "Editar esquema de Wikidata",
+    "wikibase-extension/menu-label": "Wikidata"
+}

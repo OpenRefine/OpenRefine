@@ -33,13 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
+import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
-import org.openrefine.expr.EvalError;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 public class Type extends PureFunction {
 
@@ -69,12 +70,12 @@ public class Type extends PureFunction {
             }
             return "undefined";
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string with the data type of o, such as undefined, string, number, boolean, etc.";
+        return FunctionDescription.fun_type();
     }
 
     @Override

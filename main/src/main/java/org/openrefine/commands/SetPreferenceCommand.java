@@ -35,6 +35,7 @@ package org.openrefine.commands;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.ProjectManager;
 import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
+import org.openrefine.util.LocaleUtils;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,6 +73,10 @@ public class SetPreferenceCommand extends Command {
             respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
+        }
+
+        if (prefName.equals("userLang")) {
+            LocaleUtils.setLocale(valueString);
         }
     }
 

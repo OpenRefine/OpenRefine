@@ -42,26 +42,20 @@ public class DatabaseQueryInfo {
         this.query = query;
     }
 
-    
     public DatabaseConfiguration getDbConfig() {
         return dbConfig;
     }
 
-    
     public void setDbConfig(DatabaseConfiguration databaseConfig) {
         this.dbConfig = databaseConfig;
     }
 
-    
     public String getQuery() {
         return query;
     }
 
-    
     public void setQuery(String query) {
         this.query = query;
     }
     
-    
-
 }

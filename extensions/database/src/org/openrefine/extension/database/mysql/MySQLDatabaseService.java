@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MySQLDatabaseService extends DatabaseService {
+
     private static final Logger logger = LoggerFactory.getLogger("MySQLDatabaseService");
     public static final String DB_NAME = "mysql";
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
@@ -60,7 +61,7 @@ public class MySQLDatabaseService extends DatabaseService {
         if (instance == null) {
             SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
             instance = new MySQLDatabaseService();
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("MySQLDatabaseService Instance: {}", instance);
             }
         }
@@ -68,22 +69,21 @@ public class MySQLDatabaseService extends DatabaseService {
     }
 
     @Override
-    public boolean testConnection(DatabaseConfiguration dbConfig) throws DatabaseServiceException{
+    public boolean testConnection(DatabaseConfiguration dbConfig) throws DatabaseServiceException {
         return MySQLConnectionManager.getInstance().testConnection(dbConfig);
       
     }
 
     @Override
-    public DatabaseInfo connect(DatabaseConfiguration dbConfig) throws DatabaseServiceException{
+    public DatabaseInfo connect(DatabaseConfiguration dbConfig) throws DatabaseServiceException {
         return getMetadata(dbConfig);
     }
    
     @Override
-    public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException{
-       try {
+    public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
                 Connection connection = MySQLConnectionManager.getInstance().getConnection(dbConfig, false);
-                Statement statement = connection.createStatement();
-                ResultSet queryResult = statement.executeQuery(query);
+        try (Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
                 java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
@@ -118,7 +118,7 @@ public class MySQLDatabaseService extends DatabaseService {
         } catch (SQLException e) {
             logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        }finally {
+        } finally {
             MySQLConnectionManager.getInstance().shutdown();
         }
     }
@@ -131,7 +131,7 @@ public class MySQLDatabaseService extends DatabaseService {
     private DatabaseInfo getMetadata(DatabaseConfiguration connectionInfo)  throws DatabaseServiceException {
         try {
             Connection connection = MySQLConnectionManager.getInstance().getConnection(connectionInfo, true);
-            if(connection != null) {
+            if (connection != null) {
                 java.sql.DatabaseMetaData metadata;
                 metadata = connection.getMetaData();
                 int dbMajorVersion = metadata.getDatabaseMajorVersion();
@@ -153,11 +153,10 @@ public class MySQLDatabaseService extends DatabaseService {
     }
 
     @Override
-    public ArrayList<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException{
-        try {
+    public ArrayList<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
             Connection connection = MySQLConnectionManager.getInstance().getConnection(dbConfig, true);
-            Statement statement = connection.createStatement();
-            ResultSet queryResult = statement.executeQuery(query);
+        try (Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
@@ -176,11 +175,13 @@ public class MySQLDatabaseService extends DatabaseService {
     @Override
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
-        try {
                 Connection connection = MySQLConnectionManager.getInstance().getConnection(dbConfig, false);
-                Statement statement = connection.createStatement();
+        Statement statement = null;
+        ResultSet queryResult = null;
+        try {
+            statement = connection.createStatement();
                 statement.setFetchSize(10);
-                ResultSet queryResult = statement.executeQuery(query);
+            queryResult = statement.executeQuery(query);
                 java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
                 int columnCount = metadata.getColumnCount();
                 int index = 0; 
@@ -200,6 +201,18 @@ public class MySQLDatabaseService extends DatabaseService {
         } catch (SQLException e) {
             logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+        } finally {
+            try {
+                if (queryResult != null) {
+                    queryResult.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

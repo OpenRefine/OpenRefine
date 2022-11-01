@@ -1,0 +1,21 @@
+<div class="dialog-frame wikibase-dialog" style="width: 700px">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <p bind="explainSelectWikibase"></p>
+    <div class="wikibase-list-wrapper">
+      <ol class="wikibase-list" bind="wikibaseList">
+        <!-- dynamically generated -->
+      </ol>
+    </div>
+  </div>
+  <div class="dialog-footer" style="justify-content: space-between" bind="dialogFooter">
+    <div class="dialog-footer-bg">
+      <button class="button" bind="addButton"></button>
+      <a class="button" bind="discoverManifestsButton" href="https://github.com/OpenRefine/wikibase-manifests" target="_blank"></a>
+    </div>
+    <div class="dialog-footer-bg">
+      <button class="button" bind="cancelButton"></button>
+      <button class="button" bind="okButton"></button>
+    </div>
+  </div>
+</div>

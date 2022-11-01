@@ -35,7 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.openrefine.util.ParsingUtilities;
 
-
-
 public class TestConnectCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("TestConnectCommand");
@@ -54,20 +52,18 @@ public class TestConnectCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
         
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("TestConnectCommand::Post::{}", databaseConfiguration); 
         }
         
-        
-        //ProjectManager.singleton.setBusy(true);
+        // ProjectManager.singleton.setBusy(true);
         try {
-            
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -89,7 +85,7 @@ public class TestConnectCommand extends DatabaseCommand {
                 
             } catch (DatabaseServiceException e) {
                 logger.error("TestConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
             } finally {
                 writer.flush();
                 writer.close();
@@ -99,11 +95,9 @@ public class TestConnectCommand extends DatabaseCommand {
             logger.error("TestConnectCommand::Post::Exception::{}", e);
             throw new ServletException(e);
         } finally {
-            //ProjectManager.singleton.setBusy(false);
+            // ProjectManager.singleton.setBusy(false);
         }
 
-        
     }
 
-    
 }

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
@@ -58,6 +59,7 @@ import org.openrefine.operations.OnError;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.overlay.OverlayModel;
 
 /**
  * Adds a new column by evaluating an expression, based on a given column.
@@ -117,13 +119,6 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
                 " using expression " + _expression;
     }
 
-    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName +
-                " based on column " + column.getName() +
-                " by filling " + cellsAtRows.size() +
-                " rows with " + _expression;
-    }
-
     @Override
     protected ColumnModel getNewColumnModel(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         ColumnModel columnModel = state.getColumnModel();
@@ -139,7 +134,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
             throws DoesNotApplyException {
         ColumnModel columnModel = state.getColumnModel();
         int columnIndex = RowMapChange.columnIndex(columnModel, _baseColumnName);
-        return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel);
+        return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel, state.getOverlayModels());
     }
 
     @Override
@@ -149,8 +144,8 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
-            Evaluable eval, ColumnModel columnModel) {
-        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel,
+                                              Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel, overlayModels,
                 0L);
         return new RowInRecordMapper() {
 

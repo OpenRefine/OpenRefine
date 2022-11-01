@@ -33,16 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import java.io.IOException;
-import java.util.Locale;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
-import org.openrefine.expr.EvalError;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.enums.CSVReaderNullFieldIndicator;
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class SmartSplit extends PureFunction {
 
@@ -94,15 +95,15 @@ public class SmartSplit extends PureFunction {
             try {
                 return parser.parseLine(s);
             } catch (IOException e) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " error: " + e.getMessage());
+                return new EvalError(EvalErrorMessage.error(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
+        return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern.";
+        return FunctionDescription.str_smart_split();
     }
 
     @Override

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.templating;
 
 class StaticFragment extends Fragment {
+
     final public String text;
 
     public StaticFragment(String text) {

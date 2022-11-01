@@ -33,14 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import java.util.TreeSet;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import org.openrefine.clustering.binning.Keyer;
 import org.openrefine.clustering.binning.NGramFingerprintKeyer;
 import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+
+import java.util.TreeSet;
 
 public class NGramFingerprint extends PureFunction {
 
@@ -61,7 +62,7 @@ public class NGramFingerprint extends PureFunction {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
+        return new EvalError(EvalErrorMessage.expects_at_least_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {
@@ -75,7 +76,7 @@ public class NGramFingerprint extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the n-gram fingerprint of s.";
+        return FunctionDescription.str_ngram_fingerprint();
     }
 
     @Override

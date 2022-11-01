@@ -1,4 +1,4 @@
-package org.openrefine.wikidata.commands;
+package org.openrefine.wikibase.commands;
 
 import java.io.IOException;
 import java.io.Writer;

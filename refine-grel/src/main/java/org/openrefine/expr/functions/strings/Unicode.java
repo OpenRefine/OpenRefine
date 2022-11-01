@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Unicode extends PureFunction {
@@ -55,7 +56,7 @@ public class Unicode extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings describing each character of s in their full unicode notation.";
+        return FunctionDescription.str_unicode();
     }
 
     @Override

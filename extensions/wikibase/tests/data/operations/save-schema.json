@@ -1,0 +1,37 @@
+{
+    "op": "wikidata/save-wikibase-schema",
+    "description": "Save Wikibase schema",
+    "schema": {
+      "entityEdits": [
+        {
+          "type": "wbitemeditexpr",
+          "subject": {
+            "label": "University of Oxford",
+            "type": "wbitemconstant",
+            "qid": "Q34433"
+          },
+          "statementGroups": [],
+          "nameDescs": [
+            {
+              "name_type": "LABEL",
+              "value": {
+                "language": {
+                  "id": "en",
+                  "label": "en",
+                  "type": "wblanguageconstant"
+                },
+                "type": "wbmonolingualexpr",
+                "value": {
+                  "type": "wbstringconstant",
+                  "value": "University of Oxford"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "siteIri": "http://www.wikidata.org/entity/",
+      "mediaWikiApiEndpoint":"https://www.wikidata.org/w/api.php",
+      "entityTypeSiteIRI": {}
+    }
+}

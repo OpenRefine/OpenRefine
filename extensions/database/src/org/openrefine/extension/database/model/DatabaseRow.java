@@ -36,27 +36,20 @@ public class DatabaseRow {
     
     private List<String> values;
 
-    
     public int getIndex() {
         return index;
     }
 
-    
     public void setIndex(int index) {
         this.index = index;
     }
 
-    
     public List<String> getValues() {
         return values;
     }
 
-    
     public void setValues(List<String> values) {
         this.values = values;
     }
     
-    
-    
-
 }

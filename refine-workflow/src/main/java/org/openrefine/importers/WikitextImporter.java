@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.common.base.CharMatcher;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.EncodingGuesser;
@@ -315,7 +316,7 @@ public class WikitextImporter extends ReaderImporter {
             if (value == null) {
                 value = "";
             }
-            value = value.trim();
+            value = CharMatcher.whitespace().trimFrom(value);
             cellStringBuilder = null;
             return value;
         }

@@ -112,6 +112,17 @@
             </includeOnlyProperties>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/marc4j/converter/impl/*CodeTableGenerated*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -154,7 +165,7 @@
 	</exclusion>
 	<exclusion>
           <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-slf4j-impl</artifactId>
+          <artifactId>log4j-slf4j2-impl</artifactId>
 	</exclusion>
 	<exclusion>
           <groupId>org.apache.logging.log4j</groupId>
@@ -345,6 +356,8 @@
       <version>${jetty.version}</version>
     </dependency>
 
+    <!-- ############################ -->
+
     <!-- test dependencies -->
 
     <dependency>
@@ -389,5 +402,12 @@
       <version>${log4j.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>${log4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>

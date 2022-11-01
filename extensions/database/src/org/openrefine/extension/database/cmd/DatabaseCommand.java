@@ -57,10 +57,11 @@ public abstract class DatabaseCommand extends Command {
         jdbcConfig.setDatabaseHost(request.getParameter("databaseServer"));
         
         String dbPort = request.getParameter("databasePort");
-        if(dbPort != null) {
+        if (dbPort != null) {
             try {
                 jdbcConfig.setDatabasePort(Integer.parseInt(dbPort));
-            }catch(NumberFormatException nfe) {}
+            } catch (NumberFormatException nfe) {
+            }
         }
       
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
@@ -68,31 +69,31 @@ public abstract class DatabaseCommand extends Command {
         jdbcConfig.setDatabaseName(request.getParameter("initialDatabase"));
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
         
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("JDBC Configuration: {}", jdbcConfig);
         }
         return jdbcConfig;
     }
+
     /**
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */
     protected void sendError(int status, HttpServletResponse response, Exception e)
             throws  IOException {
         
-       //logger.info("sendError::{}", writer);
+        // logger.info("sendError::{}", writer);
        response.sendError(status, e.getMessage());
 
     }
+
     /**
      * 
      * @param status
      * @param response
-     * @param writer
      * @param e
      * @throws IOException
      */
@@ -101,7 +102,7 @@ public abstract class DatabaseCommand extends Command {
         
         String message = "";
         
-        if(e.getSqlState() != null) {
+        if (e.getSqlState() != null) {
             
             message = message + "SqlCode:" + e.getSqlCode() + "SqlState" + e.getSqlState();
         }

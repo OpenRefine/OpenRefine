@@ -33,16 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions;
 
-import java.util.List;
-
-import org.openrefine.grel.PureFunction;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFields;
 import org.openrefine.expr.HasFieldsList;
 import org.openrefine.expr.util.JsonValueConverter;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+
+import java.util.List;
 
 public class Get extends PureFunction {
 
@@ -154,9 +154,7 @@ public class Get extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "If o has named fields, returns the field named 'from' of o. " +
-                "If o is an array, returns a sub-array o[from, to]. " +
-                "if o is a string, returns o.substring(from, to).";
+        return FunctionDescription.fun_get();
     }
 
     @Override

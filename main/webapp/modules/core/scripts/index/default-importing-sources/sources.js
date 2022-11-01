@@ -59,7 +59,7 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-locate-files').text($.i18n('core-index-import/locate-files'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
+  this._elmts.nextButton.on('click',function(evt) {
     if (self._elmts.fileInput[0].files.length === 0) {
       window.alert($.i18n('core-index-import/warning-data-file'));
     } else {
@@ -93,23 +93,38 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
-  this._elmts.form.submit(function(evt){
+  this._elmts.form.on('submit',function(evt) {
     evt.preventDefault();
-    var importUrl = self._elmts.urlInput[0].value.trim(); 
-    self._elmts.urlInput[0].value = importUrl;
-    if(!isUrlValid(importUrl)) {
-      window.alert($.i18n('core-index-import/warning-web-address'));
+    let errorString = '';
+    $(self._elmts.form).find('input:text').each(function () {
+      let url = this.value.trim();
+      if (url.length === 0) {
+        errorString += $.i18n('core-index-import/blank-url')+'\n';
+      } else if(!isUrlValid(url)) {
+        errorString += $.i18n('core-index-import/invalid-url')+' '+url+'\n';
+      }
+    });
+    if (errorString) {
+      window.alert($.i18n('core-index-import/warning-web-address')+"\n"+errorString);
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
     }
   });
-  this._elmts.addButton.click(function(evt) {
-    self._elmts.buttons.before(self._elmts.urlRow.clone());
+  this._elmts.addButton.on('click',function(evt) {
+    let newRow = self._elmts.urlRow.clone();
+    let trashButton = $('<a style="margin-left:0.2em;" href=""><img style="height:16px;" src="images/close.png"></a>');
+    trashButton.attr("title",$.i18n("core-index-import/remove-row"));
+    newRow.find('td').append(trashButton);
+    trashButton.on('click',function (e) {
+      e.preventDefault();
+      $(this).parent().parent().remove();
+    })
+    self._elmts.buttons.before(newRow);
   });
 };
 
 UrlImportingSourceUI.prototype.focus = function() {
-  this._elmts.urlInput.focus();
+  this._elmts.urlInput.trigger('focus');
 };
 
 /// Clipboard import
@@ -133,8 +148,8 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-clipboard').text($.i18n('core-index-import/clipboard-label'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
-    if ($.trim(self._elmts.textInput[0].value).length === 0) {
+  this._elmts.nextButton.on('click',function(evt) {
+    if (jQueryTrim(self._elmts.textInput[0].value).length === 0) {
       window.alert($.i18n('core-index-import/warning-clipboard'));
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/uploading-pasted-data'));
@@ -143,7 +158,7 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 ClipboardImportingSourceUI.prototype.focus = function() {
-  this._elmts.textInput.focus();
+  this._elmts.textInput.trigger('focus');
 };
 
 

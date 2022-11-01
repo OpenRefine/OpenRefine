@@ -53,7 +53,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-re-signin-another').text($.i18n('gdata-import/re-sign-in-another'));
   
   var self = this;
-  this._body.find('.gdata-signin.button').click(function() {
+  this._body.find('.gdata-signin.button').on('click',function() {
     GdataExtension.showAuthorizationDialog(
       function() {
         self._listDocuments();
@@ -64,20 +64,20 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       }
     );
   });
-  this._body.find('.gdata-signout.button').click(function() {
+  this._body.find('.gdata-signout.button').on('click',function() {
       $.get("command/gdata/deauthorize" );
       self._body.find('.gdata-page').hide();
       self._elmts.signinPage.show();
   });
   
-  this._elmts.urlNextButton.click(function(evt) {
-    var url = $.trim(self._elmts.urlInput[0].value);
+  this._elmts.urlNextButton.on('click',function(evt) {
+    var url = jQueryTrim(self._elmts.urlInput[0].value);
     if (url.length === 0) {
       window.alert($.i18n('gdata-source/alert-url'));
     } else {
       var doc = {};
       doc.docSelfLink = url;
-      if (doc.docSelfLink.contains('spreadsheet')) { // TODO: fragile?
+      if (doc.docSelfLink.includes('spreadsheet')) { // TODO: fragile?
         doc.type = 'spreadsheet';
       } else {
         doc.type = 'table';
@@ -135,44 +135,50 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   
   var renderDocument = function(doc) {
     var tr = table.insertRow(table.rows.length);
-    
-    var td = tr.insertCell(tr.cells.length);
-    if (doc.isStarred) {
-      $('<img>').attr('src', 'images/star.png').appendTo(td);
+
+    try {
+      var td = tr.insertCell(tr.cells.length);
+      if (doc.isStarred) {
+        $('<img>').attr('src', 'images/star.png').appendTo(td);
+      }
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>').text(doc.type).appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<a>')
+          .addClass('gdata-doc-title')
+          .attr('href', 'javascript:{}')
+          .text(doc.title)
+          .appendTo(td)
+          .on('click', function (evt) {
+            self._controller.startImportingDocument(doc);
+          });
+
+      $('<a>')
+          .addClass('gdata-doc-preview')
+          .attr('href', doc.docLink)
+          .attr('target', '_blank')
+          .text('preview')
+          .appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>')
+          .addClass('gdata-doc-authors')
+          .text((doc.authors) ? doc.authors.join(', ') : '<unknown>')
+          .appendTo(td);
+
+      td = tr.insertCell(tr.cells.length);
+      $('<span>')
+          .addClass('gdata-doc-date')
+          .text((doc.updated) ? formatRelativeDate(doc.updated) : '<unknown>')
+          .attr('title', (doc.updated) ? doc.updated : '<unknown>')
+          .appendTo(td);
+    } catch (e) {
+      console.log(e);
+      console.log('Error rendering Google Document "'+doc.title+'". Skipping...');
+      tr.remove();
     }
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>').text(doc.type).appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<a>')
-    .addClass('gdata-doc-title')
-    .attr('href', 'javascript:{}')
-    .text(doc.title)
-    .appendTo(td)
-    .click(function(evt) {
-      self._controller.startImportingDocument(doc);
-    });
-    
-    $('<a>')
-    .addClass('gdata-doc-preview')
-    .attr('href', doc.docLink)
-    .attr('target', '_blank')
-    .text('preview')
-    .appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>')
-    .addClass('gdata-doc-authors')
-    .text((doc.authors) ? doc.authors.join(', ') : '<unknown>')
-    .appendTo(td);
-    
-    td = tr.insertCell(tr.cells.length);
-    $('<span>')
-    .addClass('gdata-doc-date')
-    .text((doc.updated) ? formatRelativeDate(doc.updated) : '<unknown>')
-    .attr('title', (doc.updated) ? doc.updated : '<unknown>')
-    .appendTo(td);
   };
   
   if (o.status === 'error') {

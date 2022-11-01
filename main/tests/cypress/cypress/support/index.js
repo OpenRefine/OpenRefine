@@ -16,6 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 import './openrefine_api';
+import './ext_wikibase';
 
 let token;
 

@@ -28,16 +28,8 @@
  */
 package org.openrefine.extension.database;
 
-
 public enum DatabaseColumnType {
     
-    STRING,
-    NUMBER,
-    DATETIME,
-    LOCATION,
-    BOOLEAN,
-    DATE,
-    DOUBLE,
-    FLOAT
+    STRING, NUMBER, DATETIME, LOCATION, BOOLEAN, DATE, DOUBLE, FLOAT
 
 }

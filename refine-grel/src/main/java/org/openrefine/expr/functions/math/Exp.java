@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.math;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Exp extends PureFunction {
@@ -44,12 +48,12 @@ public class Exp extends PureFunction {
         if (args.length == 1 && args[0] instanceof Number) {
             return Math.exp(((Number) args[0]).doubleValue());
         }
-        return null;
+        return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns e to the power of n.";
+        return FunctionDescription.math_exp();
     }
 
     @Override

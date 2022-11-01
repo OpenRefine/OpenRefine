@@ -287,6 +287,35 @@ public class SqlExporterTests extends RefineTest {
     }
 
     @Test
+    public void testExportSqlWithSpecialCharacterInclusiveColumnNames() {
+        grid = createGrid(new String[] { "@column 0/", "@column 1/", "@column 2/", "@column 3/" },
+                new Serializable[][] {
+                        { "It's row0cell0", "It's row0cell1", "It's row0cell2", "It's row0cell3" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        String tableName = "sql_table_test";
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        optionsJson.put("trimColumnNames", true);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        try {
+            SUT.export(grid, projectMetadata, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (_column_0_,_column_1_,_column_2_,_column_3_) VALUES \n" +
+                "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+
+    }
+
+    @Test
     public void testExportSqlWithNullFields() {
         grid = createGrid(new String[] { "columnO", "column1", "column2" },
                 new Serializable[][] {

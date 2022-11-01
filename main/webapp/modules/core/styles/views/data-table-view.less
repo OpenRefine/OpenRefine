@@ -131,7 +131,6 @@ table {
   }
 
 th.column-header {
-  position: -webkit-sticky; /* Safari */ 
   position: sticky;
   top: 0;
   z-index: 1;
@@ -364,10 +363,15 @@ a.data-table-flag-off {
   
 .data-table-cell-editor-editor {
   display: block;
-  width: 98%;
-  height: 3em;
+  min-width: 392px;
+  min-height: 3em;
+  line-height: 1.1;
   font-family: monospace;
-  margin: 3px 0;
+  margin: 3px 0px;
+  }
+
+  .data-table-cell-editor {
+  min-width: fit-content;
   }
 
 .data-table-cell-editor-action {

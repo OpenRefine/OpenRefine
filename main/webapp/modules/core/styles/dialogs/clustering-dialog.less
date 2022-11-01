@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -33,8 +33,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import-less url("../theme.less");
 
+.clustering-dialog-body {
+  padding: 15px 15px 0 15px;
+  }
+
+.clustering-dialog-control-row {
+  margin: 1em 0;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  }
+
+.clustering-dialog-facet-row {
+  margin: 1em 0;
+  display: flex;
+  flex-flow: row;
+  column-gap: 5px;
+  }
+
 .clustering-dialog-table-container {
   height: 450px;
+  width: 650px;
   overflow: auto;
   border: 1px solid #aaa;
   }
@@ -71,7 +90,7 @@ table.clustering-dialog-entry-table a {
   }
 
 table.clustering-dialog-entry-table ul {
-  margin: 1em 0em 0em 0em;
+  margin: 1em 0 0 0;
   }
 
 table.clustering-dialog-entry-table a:hover {
@@ -108,7 +127,6 @@ table.clustering-dialog-entry-table a:hover {
   text-align: center;
   color: #888;
   }
-
 .clustering-dialog-value-focus {
   text-align: right;
   font-size: 80%;

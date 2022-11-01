@@ -22,7 +22,7 @@
  * SOFTWARE.
  ******************************************************************************/
 
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikibase.schema;
 
 import static org.testng.Assert.assertEquals;
 
@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;

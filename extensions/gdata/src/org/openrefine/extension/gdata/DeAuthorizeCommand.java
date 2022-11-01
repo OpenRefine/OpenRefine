@@ -46,6 +46,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 public class DeAuthorizeCommand extends Command {
 
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,7 +60,7 @@ public class DeAuthorizeCommand extends Command {
                 
                 // No method to do this in Google's client lib, so roll our own
                 HttpRequestFactory factory = HTTP_TRANSPORT.createRequestFactory();
-                GenericUrl url = new GenericUrl("https://accounts.google.com/o/oauth2/revoke?token="+sessionToken);
+                GenericUrl url = new GenericUrl("https://accounts.google.com/o/oauth2/revoke?token=" + sessionToken);
                 HttpRequest rqst = factory.buildGetRequest(url);
                 HttpResponse resp = rqst.execute();
                 if (resp.getStatusCode() != 200) {

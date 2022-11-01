@@ -40,6 +40,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.ColumnModel;
 
 public class BooleanCriterion extends Criterion {
+
     final static protected EvalError s_error = new EvalError("Not a boolean");
 
     @Override

@@ -12,11 +12,12 @@ You will see a command line window open when you run OpenRefine. Ignore that win
 
 No matter how you start OpenRefine, it will load its interface in your computer’s default browser. If you would like to use another browser instead, start OpenRefine and then point your chosen browser at the home screen: [http://127.0.0.1:3333/](http://127.0.0.1:3333/).
 
-OpenRefine works best on browsers based on Webkit, such as:
-*   Google Chrome
-*   Chromium
-*   Opera
-*   Microsoft Edge
+OpenRefine works best on browsers based on WebKit, such as:
+*   [Google Chrome](https://www.google.com/chrome/)
+*   [Chromium](https://ungoogled-software.github.io/)
+*   [Opera](https://www.opera.com/)
+*   [Microsoft Edge](https://www.microsoft.com/edge)
+*   [Safari](https://www.apple.com/safari/)
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer.
 
@@ -156,7 +157,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
-|-x|Additional Java configuration parameters (see Java documentation)||
+|-x|Additional Java configuration parameters (see Java documentation)|./refine -x refine.autosave=5 <br/>./refine -x refine.data_dir=/ <br/>./refine -x refine.development=false <br/> ./refine -x refine.headless=false <br/>./refine -x refine.host=127.0.0.1 <br/>./refine -x refine.port=3333 <br/>./refine -x refine.webapp=main/webapp|
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
@@ -319,7 +320,7 @@ From the home screen, look in the options to the left for <span class="menuItems
 To leave the Language Settings screen, click on the diamond “OpenRefine” logo.
 
 :::info Help us Translate OpenRefine
-We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
+We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](../technical-reference/translating) to make OpenRefine accessible to people in other languages.
 :::
 
 ### Preferences {#preferences}

@@ -33,17 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.arrays;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+import org.openrefine.util.JSONUtilities;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.openrefine.expr.EvalError;
-import org.openrefine.util.JSONUtilities;
 
 public class Sort extends PureFunction {
 
@@ -62,7 +63,8 @@ public class Sort extends PureFunction {
                         } else if (a[i] == null) {
                             r[i] = null;
                         } else {
-                            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of uniform type");
+                            // of uniform type");
+                            return new EvalError(EvalErrorMessage.expects_one_array_uniform(ControlFunctionRegistry.getFunctionName(this)));
                         }
                     }
                     Arrays.sort(r, Comparator.nullsLast(Comparator.naturalOrder()));
@@ -80,12 +82,12 @@ public class Sort extends PureFunction {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+        return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second.";
+        return FunctionDescription.arr_sort();
     }
 
     @Override

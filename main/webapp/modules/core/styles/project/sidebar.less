@@ -44,8 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   height: auto;
   margin: 5px;
   padding: 4px 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
+  border-radius: 4px;
   border: 1px solid #ccc;
   }
 
@@ -69,8 +68,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   text-align: center;
   background-color: #fff;
   padding: 4px 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
+  border-radius: 4px;
   border: 1px solid #ccc;
   }
 
@@ -201,6 +199,10 @@ a.history-entry.filtered-out > * {
   border-right: 0;
   }
 
+.history-panel-filter span {
+  padding-right: .25em;
+}
+
 .history-panel-body {
   background: @history_undone_background;
   overflow: auto;
@@ -264,5 +266,6 @@ table.history-extract-dialog-entries {
 textarea.history-operation-json {
   white-space: pre;
   font-family: monospace;
-  height: 450px;
+  min-height: 450px;
+  min-width: 374px;
   }

@@ -23,6 +23,7 @@
         <directory>src</directory>
       </resource>
     </resources>
+    <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
     <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
@@ -70,7 +71,7 @@
       <scope>provided</scope>
     </dependency>
 
-   <!-- add here the dependencies of your extension -->
+   <!-- test dependencies -->
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -78,6 +79,13 @@
       <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

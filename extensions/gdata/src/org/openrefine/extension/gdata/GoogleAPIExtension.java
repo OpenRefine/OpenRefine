@@ -35,6 +35,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class GoogleAPIExtension {
+
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
 
     // For a production release, the second parameter (default value) can be set
@@ -50,7 +51,7 @@ abstract public class GoogleAPIExtension {
     /** Global instance of the JSON factory. */
     protected static final JsonFactory JSON_FACTORY = new GsonFactory();
 
-    private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS};
+    private static final String[] SCOPES = { DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS };
     
     private static PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
     
@@ -61,6 +62,10 @@ abstract public class GoogleAPIExtension {
     
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
+        String host = request.getHeader("Host");
+        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
+            return "https://github.com/OpenRefine/OpenRefine/wiki/Google-Extension#missing-credentials";
+        }
         String authorizedUrl = makeRedirectUrl(module, request);
         String state = makeState(module, request);
         
@@ -77,8 +82,8 @@ abstract public class GoogleAPIExtension {
     private static String makeState(ButterflyModule module, HttpServletRequest request) {
     	String winname = request.getParameter("winname");
     	String cb = request.getParameter("cb");
-    	String json = "{\"winname\":\""+winname.replaceAll("\"", "\\\"")
-    			+"\",\"cb\":\""+cb.replaceAll("\"", "\\\"")+"\"}";
+        String json = "{\"winname\":\"" + winname.replaceAll("\"", "\\\"")
+                + "\",\"cb\":\"" + cb.replaceAll("\"", "\\\"") + "\"}";
     	return new String(Base64.getEncoder().encode(json.getBytes()));
     }
 
@@ -100,8 +105,7 @@ abstract public class GoogleAPIExtension {
         if (request.getQueryString() != null) {
           fullUrlBuf.append('?').append(request.getQueryString());
         }
-        AuthorizationCodeResponseUrl authResponse =
-            new AuthorizationCodeResponseUrl(fullUrlBuf.toString());
+        AuthorizationCodeResponseUrl authResponse = new AuthorizationCodeResponseUrl(fullUrlBuf.toString());
         // check for user-denied error
         if (authResponse.getError() != null) {
           // authorization denied...
@@ -120,6 +124,7 @@ abstract public class GoogleAPIExtension {
         Credential credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
 
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
+
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
                 credential.initialize(httpRequest);
@@ -139,7 +144,7 @@ abstract public class GoogleAPIExtension {
     }
     
     static String getSpreadsheetID(URL url) {
-        return getParamValue(url,"key");
+        return getParamValue(url, "key");
     }
     
     static private String getParamValue(URL url, String key) {
@@ -147,8 +152,8 @@ abstract public class GoogleAPIExtension {
         if (query != null) {
             String[] parts = query.split("&");
             for (String part : parts) {
-                if (part.startsWith(key+"=")) {
-                    int offset = key.length()+1;
+                if (part.startsWith(key + "=")) {
+                    int offset = key.length() + 1;
                     String tableId = part.substring(offset);
                     return tableId;
                 }
@@ -159,6 +164,7 @@ abstract public class GoogleAPIExtension {
     
     /**
      * Build and return an authorized Sheets API client service.
+     * 
      * @return an authorized Sheets API client service
      * @throws IOException
      */
@@ -176,6 +182,7 @@ abstract public class GoogleAPIExtension {
                 .setApplicationName(SERVICE_APP_NAME)
                 .setSheetsRequestInitializer(new SheetsRequestInitializer(API_KEY))
                 .setHttpRequestInitializer(new HttpRequestInitializer() {
+
                     @Override
                     public void initialize(HttpRequest httpRequest) throws IOException {
                         if (credential != null) {
@@ -188,13 +195,13 @@ abstract public class GoogleAPIExtension {
     }
 
     private static int getConnectTimeout() {
-        return prefStore.get(CONNECT_TIME_OUT_KEY) == null ? CONNECT_TIME_OUT_DEFAULT :
-            Integer.parseInt((String) prefStore.get(CONNECT_TIME_OUT_KEY));
+        return prefStore.get(CONNECT_TIME_OUT_KEY) == null ? CONNECT_TIME_OUT_DEFAULT
+                : Integer.parseInt((String) prefStore.get(CONNECT_TIME_OUT_KEY));
     }
     
     private static int getReadTimeout() {
-        return prefStore.get(READ_TIME_OUT_KEY) == null ? READ_TIME_OUT_DEFAULT :
-            Integer.parseInt((String) prefStore.get(READ_TIME_OUT_KEY));
+        return prefStore.get(READ_TIME_OUT_KEY) == null ? READ_TIME_OUT_DEFAULT
+                : Integer.parseInt((String) prefStore.get(READ_TIME_OUT_KEY));
     }
 
     public static String extractSpreadSheetId(String url)
@@ -209,7 +216,7 @@ abstract public class GoogleAPIExtension {
       try {
         urlAsUrl = new URL(url);
         String query = urlAsUrl.getQuery();
-        if ( query != null ) {
+            if (query != null) {
        
           String[] parts = query.split("&");
         
@@ -241,7 +248,7 @@ abstract public class GoogleAPIExtension {
             }
           }
         }
-      } catch ( MalformedURLException e ) {
+        } catch (MalformedURLException e) {
         // This is not a URL, maybe it is just an id
         String[] dottedParts = url.split("\\.");
         

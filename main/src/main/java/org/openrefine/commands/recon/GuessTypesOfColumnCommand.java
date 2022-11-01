@@ -48,6 +48,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.CharMatcher;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.GridState;
@@ -136,11 +137,10 @@ public class GuessTypesOfColumnCommand extends Command {
      * Run relevance searches for the first n cells in the given column and count the types of the results. Return a
      * sorted list of types, from most frequent to least.
      * 
-     * @param project
-     * @param column
+     * @param gridState
+     * @param cellIndex
      * @return
-     * @throws JSONException,
-     *             IOException
+     * @throws IOException
      */
     protected List<TypeGroup> guessTypes(GridState gridState, int cellIndex, String serviceUrl)
             throws IOException {
@@ -152,7 +152,7 @@ public class GuessTypesOfColumnCommand extends Command {
         for (IndexedRow row : gridState.getRows(0, sampleSize)) {
             Object value = row.getRow().getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
-                String s = value.toString().trim();
+                String s = CharMatcher.whitespace().trimFrom(value.toString());
                 if (!sampleSet.contains(s)) {
                     samples.add(s);
                     sampleSet.add(s);

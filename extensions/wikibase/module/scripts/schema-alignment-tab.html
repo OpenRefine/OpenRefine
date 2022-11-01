@@ -1,0 +1,24 @@
+<div id="schema-alignment-tab">
+    <div bind="schemaHeader">
+        <div class="schema-alignment-save"><button class="button button-primary" bind="saveButton"></button><br /><button class="button button-primary" bind="discardButton"></button></div>
+        <p class="panel-explanation"><label bind="targetWikibaseLabel" for="wikibase-instance-selector"></label> <select bind="wikibaseSelect" name="wikibase-instance-selector" id="wikibase-instance-selector"></select></p>
+        <p class="panel-explanation" bind="dialogExplanation"></p>
+        <div class="panel-explanation">
+          <label bind="templateLabel" for="wikibase-template-select"></label>
+          <select bind="templateSelect" name="wikibase-template-select" id="wikibase-template-select"></select>
+          <button bind="saveNewTemplateButton" class="button button-primary"></button>
+        </div>
+        <div style="clear: right"></div>
+        <div class="schema-alignment-dialog-columns-area" bind="columnsArea">
+        </div>
+    </div>
+    <div class="schema-alignment-dialog-canvas" bind="canvas">
+        <div class="schema-alignment-dialog-entity-edits-area" bind="entityEditsArea">
+                <div id="schema-alignment-entity-edits-container" bind="entityEditsContainer">
+                </div>
+                <div id="schema-alignment-entity-add-buttons" bind="entityAddButtons">
+                </div>
+        </div>
+    </div>
+</div>
+

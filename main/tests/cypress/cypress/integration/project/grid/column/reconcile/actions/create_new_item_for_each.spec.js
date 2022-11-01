@@ -1,5 +1,9 @@
 describe('Create new item for each cell', () => {
-    it('Test discard existing reconciliation judgments', () => {
+    afterEach(() => {
+        cy.addProjectForDeletion();
+    });
+    
+    it('Test mark to create new items in many cells, previously reconciled', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
@@ -27,4 +31,36 @@ describe('Create new item for each cell', () => {
         cy.getCell(5, 'species').find('.data-table-recon-new').should('to.contain', 'new');
 
     });
+
+    it('Test mark to create new items in many cells, previously reconciled', () => {
+        const fixture = [
+          ['identifier'],
+          ['2253634'],
+          ['2328088'],
+          ['2868241'],
+          [null],
+          ['8211794'],
+          [null],
+        ];
+
+        cy.loadAndVisitProject(fixture);
+
+        cy.columnActionClick('identifier', [
+          'Reconcile',
+          'Actions',
+          'Create a new item for each cell',
+        ]);
+
+        cy.get('.dialog-container .dialog-footer button').contains('OK').click();
+
+        // ensure column is reconciled
+        cy.assertColumnIsReconciled('identifier');
+
+        // ensure 4 rows are matched based on the identifier
+        cy.getCell(0, 'identifier').find('.data-table-recon-new').should('to.contain', 'new');
+        cy.getCell(1, 'identifier').find('.data-table-recon-new').should('to.contain', 'new');
+        cy.getCell(2, 'identifier').find('.data-table-recon-new').should('to.contain', 'new');
+        cy.getCell(4, 'identifier').find('.data-table-recon-new').should('to.contain', 'new');
+    });
 });
+

@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
+import org.openrefine.grel.PureFunction;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.openrefine.grel.PureFunction;
 
 public class RPartition extends PureFunction {
 

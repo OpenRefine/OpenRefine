@@ -1,0 +1,23 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody" style="position: relative; height: 100px">
+    <div class="wikidata-logo">
+      <a href="https://www.wikidata.org/" target="_blank">
+        <img src="extension/wikidata/images/Wikibase_logo.png" style="height: 100px" alt="Wikidata logo"/>
+      </a>
+    </div>
+    <div class="right-of-logo">
+      <p class="body-text" bind="explainLogIn"></p>
+      <div class="wikibase-user-management-area">
+        <div class="wikibase-user-logout" bind="logoutArea">
+          <p><span bind="loggedInAs"></span>
+            <a bind="loggedInUsername" target="_blank"></a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button class="button cancel-button" bind="cancelButton"></button>
+    <button class="button button-primary" bind="logoutButton"></button>
+  </div>
+</div>

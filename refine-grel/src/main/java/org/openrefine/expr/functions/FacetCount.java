@@ -33,16 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions;
 
-import java.util.Properties;
-
 import org.openrefine.FacetCountCacheManager;
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.util.StringValuesFacetState;
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
 import org.openrefine.grel.Function;
-import org.openrefine.model.Project;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.util.FacetCountException;
+
+import java.util.Properties;
 
 public class FacetCount implements Function {
 
@@ -64,13 +65,13 @@ public class FacetCount implements Function {
                 return new EvalError(e.getMessage());
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +
-                " expects a choice value, an expression as a string, and a column name");
+        // " expects a choice value, an expression as a string, and a column name");
+        return new EvalError(EvalErrorMessage.fun_facet_expects_value_expression_column(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName.";
+        return FunctionDescription.fun_facet_count();
     }
 
     @Override

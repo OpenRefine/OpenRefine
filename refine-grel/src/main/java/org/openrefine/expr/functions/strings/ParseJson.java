@@ -33,13 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import java.io.IOException;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
 import org.openrefine.util.ParsingUtilities;
+
+import java.io.IOException;
 
 public class ParseJson extends PureFunction {
 
@@ -53,7 +54,8 @@ public class ParseJson extends PureFunction {
                 try {
                     return ParsingUtilities.mapper.readTree(o1.toString());
                 } catch (IOException e) {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed: " + e.getMessage());
+                    // e.getMessage());
+                    return new EvalError(EvalErrorMessage.failed(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
                 }
             }
         }
@@ -62,7 +64,7 @@ public class ParseJson extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Parses a string as JSON.";
+        return FunctionDescription.str_parse_json();
     }
 
     @Override

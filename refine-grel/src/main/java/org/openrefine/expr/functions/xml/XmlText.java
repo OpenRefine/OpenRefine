@@ -34,11 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions.xml;
 
 import org.jsoup.nodes.Element;
+import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
-
-import org.openrefine.expr.EvalError;
 
 public class XmlText extends PureFunction {
 
@@ -53,17 +54,20 @@ public class XmlText extends PureFunction {
                 return e1.text();
 
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                        + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                // new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.
+                // Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_failed(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                + "' and expects a single XML or HTML element as an argument");
+        // Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_expects(ControlFunctionRegistry.getFunctionName(this),
+                new Type().call(args)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element.";
+        return FunctionDescription.xml_xmltext();
     }
 
     @Override

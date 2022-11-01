@@ -136,11 +136,10 @@ public class JythonEvaluable implements Evaluable {
 
             return unwrap(result);
         } catch (PyException e) {
-            return new EvalError(e.toString());
+            return new EvalError(e.getMessage());
         }
     }
 
-    
     protected Object unwrap(Object result) {
         if (result != null) {
             if (result instanceof JythonObjectWrapper) {

@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.openrefine.ProjectMetadata;
@@ -168,7 +169,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             if (strings.length > 0) {
                 retrievedColumnNames = new ArrayList<Object>();
                 for (String s : strings) {
-                    s = s.trim();
+                    s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
                         retrievedColumnNames.add(s);
                     }

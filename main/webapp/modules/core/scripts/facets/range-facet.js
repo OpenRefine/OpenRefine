@@ -153,33 +153,33 @@ class RangeFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.facetTitle.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-expression')+": " + this._config.expression).click(function() {
+    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-expression')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
         }
       });
     });
-    this._elmts.expressionDiv.text(this._config.expression).click(function() { 
+    this._elmts.expressionDiv.text(this._config.expression).on('click',function() { 
       self._editExpression(); 
     }).hide();
 
-    this._elmts.resetButton.click(function() {
+    this._elmts.resetButton.on('click',function() {
       self.reset();
       self._updateRest();
     });
     
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
 
-    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#bbccff", "#88aaee" ] });
+    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#668CFF", "#174092" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
 
-    this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+    this._elmts.sliderWidgetDiv.on("slide", function(evt, data) {
       self._from = data.from;
       self._to = data.to;
       self._setRangeIndicators();
-    }).bind("stop", function(evt, data) {
+    }).on("stop", function(evt, data) {
       self._from = data.from;
       self._to = data.to;
       self._selectNumeric = true;
@@ -202,7 +202,7 @@ class RangeFacet extends Facet {
     // ----------------- numeric -----------------
 
     var numericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
-    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(numericDiv).change(function() {
+    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(numericDiv).on('change',function() {
       self._selectNumeric = !self._selectNumeric;
       self._updateRest();
     });
@@ -215,7 +215,7 @@ class RangeFacet extends Facet {
     // ----------------- non-numeric -----------------
 
     var nonNumericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);    
-    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(nonNumericDiv).change(function() {
+    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(nonNumericDiv).on('change',function() {
       self._selectNonNumeric = !self._selectNonNumeric;
       self._updateRest();
     });
@@ -230,7 +230,7 @@ class RangeFacet extends Facet {
     // ----------------- blank -----------------
 
     var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);        
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).on('change',function() {
       self._selectBlank = !self._selectBlank;
       self._updateRest();
     });
@@ -245,7 +245,7 @@ class RangeFacet extends Facet {
     // ----------------- error -----------------
 
     var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
+    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).on('change',function() {
       self._selectError = !self._selectError;
       self._updateRest();
     });

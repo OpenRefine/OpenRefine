@@ -114,9 +114,9 @@ public class TemplatingExporter implements WriterExporter {
         }
 
         if (engine.getMode() == Mode.RowBased) {
-            template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), limit);
+            template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), limit);
         } else {
-            template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), limit);
+            template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), limit);
         }
     }
 

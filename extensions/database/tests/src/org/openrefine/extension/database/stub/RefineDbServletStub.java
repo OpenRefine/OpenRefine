@@ -78,11 +78,6 @@ public class RefineDbServletStub extends RefineServlet {
         return tempDir;
     }
 
-    @Override
-    public DatamodelRunner getCurrentDatamodelRunner() {
-        return runner;
-    }
-
     // -------------------helper methods--------------
     /**
      * Helper method for inserting a mock object

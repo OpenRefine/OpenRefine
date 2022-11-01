@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 
 public class StringFacet implements Facet {
 
@@ -20,7 +21,7 @@ public class StringFacet implements Facet {
         }
 
         @Override
-        public Facet apply(ColumnModel columnModel) {
+        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             return new StringFacet(columnModel.getColumnIndexByName(columnName), this);
         }
 

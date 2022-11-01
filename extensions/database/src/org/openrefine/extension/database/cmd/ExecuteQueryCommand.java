@@ -35,7 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
@@ -47,7 +47,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openrefine.util.ParsingUtilities;
 
-
 public class ExecuteQueryCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("ExecuteQueryCommand");
@@ -55,18 +54,18 @@ public class ExecuteQueryCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
+        if (!hasValidCSRFToken(request)) {
     		respondCSRFError(response);
     		return;
     	}
         
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
         String query = request.getParameter("queryString");
-        if(logger.isDebugEnabled()) {
-            logger.debug("QueryCommand::Post::DatabaseConfiguration::{}::Query::{} " ,databaseConfiguration, query);
+        if (logger.isDebugEnabled()) {
+            logger.debug("QueryCommand::Post::DatabaseConfiguration::{}::Query::{} ", databaseConfiguration, query);
         }
        
-        //ProjectManager.singleton.setBusy(true);
+        // ProjectManager.singleton.setBusy(true);
         try {
            
             response.setCharacterEncoding("UTF-8");
@@ -82,16 +81,14 @@ public class ExecuteQueryCommand extends DatabaseCommand {
                 response.setStatus(HttpStatus.SC_OK);
                 String jsonStr = mapperObj.writeValueAsString(databaseInfo);
                 
-                if(logger.isDebugEnabled()) {
-                    logger.debug("QueryCommand::Post::Result::{} " ,jsonStr);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("QueryCommand::Post::Result::{} ", jsonStr);
                 }
-                
                 
                 writer.writeStartObject();
                 writer.writeStringField("code", "ok");
                 writer.writeStringField("QueryResult", jsonStr);
                 writer.writeEndObject();
-               
                
             } catch (DatabaseServiceException e) {
                 logger.error("QueryCommand::Post::DatabaseServiceException::{}", e);
@@ -99,7 +96,7 @@ public class ExecuteQueryCommand extends DatabaseCommand {
 
             } catch (Exception e) {
                 logger.error("QueryCommand::Post::Exception::{}", e);
-                sendError(HttpStatus.SC_BAD_REQUEST,response, e);
+                sendError(HttpStatus.SC_BAD_REQUEST, response, e);
             } finally {
                 writer.flush();
                 writer.close();
@@ -113,7 +110,6 @@ public class ExecuteQueryCommand extends DatabaseCommand {
 //           // ProjectManager.singleton.setBusy(false);
 //        }
 
-        
     }
 
 }

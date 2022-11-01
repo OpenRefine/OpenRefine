@@ -33,15 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.arrays;
 
-import java.util.List;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
 import org.openrefine.util.JSONUtilities;
+
+import java.util.List;
 
 public class Reverse extends PureFunction {
 
@@ -74,12 +75,12 @@ public class Reverse extends PureFunction {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array");
+        return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Reverses array a.";
+        return FunctionDescription.arr_reverse();
     }
 
     @Override

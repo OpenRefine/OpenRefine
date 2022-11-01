@@ -1,0 +1,32 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+      <table width="100%">
+        <tbody>
+          <tr>
+            <td width="20%"><label for="modeId" bind="modeText"></label></td>
+            <td><select name="mode" bind="modeInput" id="modeId"></select></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div style="margin-top: 0.5em" bind="modeDescription" class="statement-configuration-description"></div></td>
+          </tr>
+          <tr>
+            <td><label for="strategyId" bind="strategyText"></label></td>
+            <td><select name="strategy" bind="strategyInput" id="strategyId"></select></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div style="margin-top: 0.5em" bind="strategyDescription" class="statement-configuration-description"></div></td>
+          </tr>
+          <tr>
+            <td><label for="strategyOptionsId" bind="strategyOptionsText"></label></td>
+            <td bind="strategyOptions" id="strategyOptionsId"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wikibase-statement-configuration-buttons">
+        <button class="button" bind="closeButton"></button>
+      </div>
+  </div>
+</div>

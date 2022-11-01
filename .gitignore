@@ -38,6 +38,7 @@ open-refine.log
 
 main/target/
 main/webapp/WEB-INF/lib/
+main/webapp/modules/core/3rdparty/
 server/target/
 extensions/*/target/
 extensions/*/module/MOD-INF/classes/
@@ -70,3 +71,6 @@ refine-dev.ini
 
 # Ignore Node modules that might inadvertently install at current path instead of user or configured env var NODE_PATH 
 node_modules/
+
+# Ignore the node_modules folder as they are dependencies to be installed by end-user
+main/webapp/node_modules

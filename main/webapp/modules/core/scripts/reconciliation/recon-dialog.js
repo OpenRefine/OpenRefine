@@ -51,11 +51,12 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
   this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  this._elmts.discoverServicesButton.html($.i18n('core-buttons/discover-services'));
 
-  this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
+  this._elmts.addStandardServiceButton.on('click',function() { self._onAddStandardService(); });
 
-  this._elmts.reconcileButton.click(function() { self._onOK(); });
-  this._elmts.cancelButton.click(function() { self._dismiss(); });
+  this._elmts.reconcileButton.on('click',function() { self._onOK(); });
+  this._elmts.cancelButton.on('click',function() { self._dismiss(); });
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
@@ -65,7 +66,7 @@ ReconDialog.prototype._createDialog = function() {
 ReconDialog.prototype._registerDialogServiceOpener = function() {
   var self = this;
 
-  $('.recon-dialog-service-opener').click(function() {
+  $('.recon-dialog-service-opener').on('click',function() {
     self._toggleServices();
   });
 }
@@ -120,7 +121,7 @@ ReconDialog.prototype._populateDialog = function() {
       .addClass("recon-dialog-service-selector")
       .text(service.name)
       .appendTo(self._elmts.serviceList)
-      .click(function() {
+      .on('click',function() {
     	self._toggleServices();
         self._selectService(record);
       });
@@ -129,7 +130,7 @@ ReconDialog.prototype._populateDialog = function() {
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(record.selector)
-      .click(function(event) {
+      .on('click',function(event) {
         ReconciliationManager.unregisterService(service, function() {
           self._refresh(-1);
         });
@@ -208,7 +209,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   var elmts = DOM.bind(dialog);
 
   elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
-  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url')+":");
+  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url'));
   elmts.addButton.html($.i18n('core-buttons/add-service'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
@@ -217,9 +218,9 @@ ReconDialog.prototype._onAddStandardService = function() {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(dismiss);
-  elmts.form.submit(function() {
-    var url = $.trim(elmts.input[0].value);
+  elmts.cancelButton.on('click',dismiss);
+  elmts.form.on('submit',function() {
+    var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
         self._refresh(index);
@@ -227,7 +228,7 @@ ReconDialog.prototype._onAddStandardService = function() {
     }
     dismiss();
   });
-  elmts.input.focus().select();
+  elmts.input.trigger('focus').trigger('select');
 };
 
 

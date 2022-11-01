@@ -120,11 +120,9 @@ public class DatabaseInfo {
         return columns;
     }
 
-    
     public List<DatabaseRow> getRows() {
         return rows;
     }
-    
     
     @Override
     public String toString() {

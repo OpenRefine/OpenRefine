@@ -33,13 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.math;
 
-import java.util.List;
-
-import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.grel.PureFunction;
-
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
+import org.openrefine.grel.PureFunction;
+
+import java.util.List;
 
 public class Sum extends PureFunction {
 
@@ -75,12 +76,12 @@ public class Sum extends PureFunction {
                 return total;
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of numbers");
+        return new EvalError(EvalErrorMessage.expects_array_of_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Return the sum of the numbers in the array. Ignores non-number items. Returns 0 if the array does not contain numbers.";
+        return FunctionDescription.math_sum();
     }
 
     @Override

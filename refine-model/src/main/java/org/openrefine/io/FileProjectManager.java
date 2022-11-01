@@ -41,11 +41,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.openrefine.util.LocaleUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -75,6 +77,8 @@ public class FileProjectManager extends ProjectManager {
     protected File _workspaceDir;
     protected DatamodelRunner            _latestRunner;
     protected HistoryEntryManager _historyEntryManager;
+
+    protected static boolean projectRemoved = false;
 
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
@@ -318,7 +322,9 @@ public class FileProjectManager extends ProjectManager {
                 logger.warn("Failed to save workspace");
                 return;
             }
-
+            // set the workspace to owner-only readable, because it can contain credentials
+            tempFile.setReadable(false, false);
+            tempFile.setReadable(true, true);
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
 
@@ -331,6 +337,7 @@ public class FileProjectManager extends ProjectManager {
             }
 
             tempFile.renameTo(file);
+            projectRemoved = false;
             logger.info("Saved workspace");
         }
     }
@@ -338,7 +345,7 @@ public class FileProjectManager extends ProjectManager {
     protected boolean saveNeeded() {
         boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
                 .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
-        return projectSaveNeeded || _preferenceStore.isDirty();
+        return projectSaveNeeded || _preferenceStore.isDirty() || projectRemoved;
     }
 
     protected void saveProjectMetadata() throws IOException {
@@ -373,7 +380,7 @@ public class FileProjectManager extends ProjectManager {
                 deleteDir(dir);
             }
         }
-
+        projectRemoved = true;
         saveWorkspace();
     }
 
@@ -414,6 +421,9 @@ public class FileProjectManager extends ProjectManager {
         if (file.exists() || file.canRead()) {
             try {
                 ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+
+                LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
+
                 found = true;
             } catch (IOException e) {
                 logger.warn(e.toString());

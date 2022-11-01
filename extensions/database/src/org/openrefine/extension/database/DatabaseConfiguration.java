@@ -28,7 +28,6 @@
  */
 package org.openrefine.extension.database;
 
-
 public class DatabaseConfiguration {
     
     private String connectionName;
@@ -40,9 +39,8 @@ public class DatabaseConfiguration {
     private String databaseName;
     private String databaseSchema;
     
-    //optional parameters
+    // optional parameters
     private boolean useSSL;
-
 
     public String getConnectionName() {
         return connectionName;
@@ -108,8 +106,6 @@ public class DatabaseConfiguration {
         this.databaseSchema = initialSchema;
     }
   
-   
-
     public boolean isUseSSL() {
         return useSSL;
     }
@@ -126,6 +122,4 @@ public class DatabaseConfiguration {
                 + databaseSchema + ", useSSL=" + useSSL + "]";
     }
     
-    
-
 }

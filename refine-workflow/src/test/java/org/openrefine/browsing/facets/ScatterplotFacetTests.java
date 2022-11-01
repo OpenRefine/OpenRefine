@@ -184,7 +184,7 @@ public class ScatterplotFacetTests extends RefineTest {
     @Test
     public void testFilterRows() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
-        ScatterplotFacet facet = config.apply(grid.getColumnModel());
+        ScatterplotFacet facet = config.apply(grid.getColumnModel(), Collections.emptyMap());
         RowFilter filter = facet.getAggregator().getRowFilter();
 
         assertTrue(filter.filterRow(0, grid.getRow(0)));
