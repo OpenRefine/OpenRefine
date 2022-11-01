@@ -109,6 +109,7 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
   options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
+  options.forceText = this._optionContainerElmts.forceTextCheckbox[0].checked;
 
   options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;
 
@@ -141,6 +142,7 @@ Refine.ExcelParserUI.prototype._initialize = function() {
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
+  $('#or-force-text').html($.i18n('core-index-parser/force-text'));
 
   var sheetTable = this._optionContainerElmts.sheetRecordContainer[0];
   $.each(this._config.sheetRecords, function(i, v) {
@@ -193,6 +195,9 @@ Refine.ExcelParserUI.prototype._initialize = function() {
   }
   if (this._config.includeArchiveFileName) {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
+  }
+  if (this._config.forceText) {
+    this._optionContainerElmts.forceTextCheckbox.prop("checked", true);
   }
 
   if (this._config.disableAutoPreview) {

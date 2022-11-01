@@ -42,12 +42,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -68,6 +69,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ExcelImporter extends TabularImportingParserBase {
 
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
+    static final DataFormatter dataFormatter = new DataFormatter();
 
     public ExcelImporter() {
         super(true);
@@ -78,6 +80,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
+        JSONUtilities.safePut(options, "forceText", false);
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
@@ -169,6 +172,12 @@ public class ExcelImporter extends TabularImportingParserBase {
             return;
         }
 
+        final boolean forceText;
+        if (options.get("forceText") != null) {
+            forceText = options.get("forceText").asBoolean(false);
+        } else {
+            forceText = false;
+        }
         ArrayNode sheets = (ArrayNode) options.get("sheets");
 
         for (int i = 0; i < sheets.size(); i++) {
@@ -202,7 +211,7 @@ public class ExcelImporter extends TabularImportingParserBase {
 
                             org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
                             if (sourceCell != null) {
-                                cell = extractCell(sourceCell);
+                                cell = extractCell(sourceCell, forceText);
                             }
                             cells.add(cell);
                         }
@@ -222,6 +231,14 @@ public class ExcelImporter extends TabularImportingParserBase {
                     limit,
                     options,
                     exceptions);
+        }
+    }
+
+    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, boolean forceText) {
+        if (forceText) {
+            return new Cell(dataFormatter.formatCellValue(cell), null);
+        } else {
+            return extractCell(cell);
         }
     }
 
