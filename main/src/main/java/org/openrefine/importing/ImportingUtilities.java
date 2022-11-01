@@ -625,8 +625,8 @@ public class ImportingUtilities {
             if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
                 TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
                 if (archiveInputStream.getNextTarEntry() != null) {
-                     // It's a tar archive
-                     return archiveInputStream;
+                    // It's a tar archive
+                    return archiveInputStream;
                 }
                 // It's not a tar archive, so it must be gzip compressed (or something else)
                 return null;
@@ -794,7 +794,8 @@ public class ImportingUtilities {
         return NumberFormat.getIntegerInstance().format(bytes);
     }
 
-    static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, DatamodelRunner runner, List<Exception> exceptions) {
+    static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, DatamodelRunner runner,
+            List<Exception> exceptions) {
         ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
@@ -835,14 +836,14 @@ public class ImportingUtilities {
         long projectId = Project.generateID();
         if (synchronous) {
             createProjectSynchronously(
-                job, format, optionObj, exceptions, record, projectId, runner);
+                    job, format, optionObj, exceptions, record, projectId, runner);
         } else {
             new Thread() {
 
                 @Override
                 public void run() {
                     createProjectSynchronously(
-                        job, format, optionObj, exceptions, record, projectId, runner);
+                            job, format, optionObj, exceptions, record, projectId, runner);
                 }
             }.start();
         }
@@ -850,14 +851,13 @@ public class ImportingUtilities {
     }
 
     static private void createProjectSynchronously(
-        final ImportingJob job,
-        final String format,
-        final ObjectNode optionObj,
-        final List<Exception> exceptions,
-        final ImportingFormat record,
-        final long projectId,
-        final DatamodelRunner runner
-    ) {
+            final ImportingJob job,
+            final String format,
+            final ObjectNode optionObj,
+            final List<Exception> exceptions,
+            final ImportingFormat record,
+            final long projectId,
+            final DatamodelRunner runner) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
         Project newProject = null;
         try {

@@ -132,7 +132,7 @@ public class ExcelImporter extends InputStreamImporter {
 
     @Override
     public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
-                String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+            String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
@@ -212,13 +212,12 @@ public class ExcelImporter extends InputStreamImporter {
             // TODO: Do we need to preserve the original filename? Take first piece before #?
 //           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             gridStates.add(tabularParserHelper.parseOneFile(
-                runner,
-                metadata,
-                job,
-                fileSource + "#" + sheet.getSheetName(),
-                archiveFileName,
-                dataReader, limit, options
-            ));
+                    runner,
+                    metadata,
+                    job,
+                    fileSource + "#" + sheet.getSheetName(),
+                    archiveFileName,
+                    dataReader, limit, options));
         }
 
         return mergeGridStates(gridStates);

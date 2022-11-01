@@ -71,7 +71,8 @@ public class Template {
         _separator = separator;
     }
 
-    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels, int limit) throws IOException {
+    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
@@ -90,7 +91,8 @@ public class Template {
         }
     }
 
-    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels, int limit) throws IOException {
+    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
@@ -116,7 +118,7 @@ public class Template {
     }
 
     public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings,
-                              ColumnModel columnModel, Map<String, OverlayModel> overlayModels, Record record)
+            ColumnModel columnModel, Map<String, OverlayModel> overlayModels, Record record)
             throws IOException {
         if (total > 0 && _separator != null) {
             writer.write(_separator);

@@ -148,7 +148,7 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void canParseDeeplyNestedSample() throws Exception {
-       GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
+        GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
         assertGridEquals(grid, expectedGrid);
     }

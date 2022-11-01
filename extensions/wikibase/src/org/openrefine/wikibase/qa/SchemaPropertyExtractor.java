@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.qa;
 
 import java.util.*;

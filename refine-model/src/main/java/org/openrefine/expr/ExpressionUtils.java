@@ -69,24 +69,25 @@ public class ExpressionUtils {
     }
 
     /**
-     * Prepares the context for the evaluation of an expression by storing
-     * certain context objects within the supplied bindings.
-     *  @param bindings
-     *      the dictionary representing the variables available in the expression's context
+     * Prepares the context for the evaluation of an expression by storing certain context objects within the supplied
+     * bindings.
+     * 
+     * @param bindings
+     *            the dictionary representing the variables available in the expression's context
      * @param columnModel
-     *      the list of column metadata for the project being currently evaluated
+     *            the list of column metadata for the project being currently evaluated
      * @param row
-     *      the row on which the expression is evaluated
+     *            the row on which the expression is evaluated
      * @param rowIndex
-     *      the index of the row on which the expression is evaluated
+     *            the index of the row on which the expression is evaluated
      * @param record
-     *      the enclosing record, if available (only in records mode)
+     *            the enclosing record, if available (only in records mode)
      * @param columnName
-     *      the name of the base column for the expression
+     *            the name of the base column for the expression
      * @param cell
-     * the cell at the intersection of the base column and current row
+     *            the cell at the intersection of the base column and current row
      * @param overlayModels
-     * the overlay models stored in the grid on which the expression is evaluated
+     *            the overlay models stored in the grid on which the expression is evaluated
      */
     static public void bind(
             Properties bindings,

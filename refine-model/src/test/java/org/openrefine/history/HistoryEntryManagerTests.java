@@ -88,7 +88,7 @@ public class HistoryEntryManagerTests {
         File tempFile = TestUtils.createTempDirectory("testhistory");
         sut.save(history, tempFile);
 
-		History recovered = sut.load(runner, tempFile);
+        History recovered = sut.load(runner, tempFile);
         Assert.assertEquals(recovered.getPosition(), 1);
         GridState state = recovered.getCurrentGridState();
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);

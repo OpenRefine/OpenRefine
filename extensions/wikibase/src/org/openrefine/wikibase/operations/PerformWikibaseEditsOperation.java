@@ -87,10 +87,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
-    
+
     static final String description = "Perform Wikibase edits";
     static final protected String changeDataId = "newEntities";
-    
+
     // only used for backwards compatibility, these things are configurable through
     // the manifest now.
     static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
@@ -135,7 +135,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -143,51 +143,51 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     public Process createProcess(Project project)
             throws Exception {
         GridState currentGridState = project.getCurrentGridState();
-		return new PerformEditsProcess(
-				project.getHistory(),
-				project.getProcessManager(),
-				currentGridState,
-				createEngine(currentGridState),
-				editGroupsUrlSchema,
-				summary);
+        return new PerformEditsProcess(
+                project.getHistory(),
+                project.getProcessManager(),
+                currentGridState,
+                createEngine(currentGridState),
+                editGroupsUrlSchema,
+                summary);
     }
 
     static public class PerformWikibaseEditsChange implements Change {
-     
+
         public PerformWikibaseEditsChange() {
         }
-        
-		@Override
-		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-			ChangeData<RowNewReconUpdate> changeData = null;
-			try {
-				changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer());
-			} catch (IOException e) {
-				throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
-			}
-			NewReconRowJoiner joiner = new NewReconRowJoiner();
-			GridState joined = projectState.join(changeData, joiner, projectState.getColumnModel());
-			GridState updated = ReconStatsImpl.updateReconStats(joined);
-			return updated;
-		}
 
-		@Override
-		public boolean isImmediate() {
-			return false;
-		}
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+            ChangeData<RowNewReconUpdate> changeData = null;
+            try {
+                changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer());
+            } catch (IOException e) {
+                throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
+            }
+            NewReconRowJoiner joiner = new NewReconRowJoiner();
+            GridState joined = projectState.join(changeData, joiner, projectState.getColumnModel());
+            GridState updated = ReconStatsImpl.updateReconStats(joined);
+            return updated;
+        }
 
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public boolean isImmediate() {
+            return false;
+        }
+
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     }
 
     public class PerformEditsProcess extends LongRunningProcess implements Runnable {
 
-    	protected History _history;
-    	protected ProcessManager _processManager;
+        protected History _history;
+        protected ProcessManager _processManager;
         protected GridState _grid;
         protected Engine _engine;
         protected WikibaseSchema _schema;
@@ -196,7 +196,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected List<String> _tags;
         protected final long _historyEntryID;
 
-        protected PerformEditsProcess(History history, ProcessManager processManager, GridState grid, Engine engine, String editGroupsUrlSchema, String summary) {
+        protected PerformEditsProcess(History history, ProcessManager processManager, GridState grid, Engine engine,
+                String editGroupsUrlSchema, String summary) {
             super(description);
             this._history = history;
             this._processManager = processManager;
@@ -278,31 +279,32 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     break;
                 }
             }
-            
+
             // Saving the ids of the newly created entities should take much less time
             // hence it is okay to do it only when we reached progress 100.
             NewReconChangeDataProducer rowMapper = new NewReconChangeDataProducer(newEntityLibrary);
             ChangeData<RowNewReconUpdate> changeData = _grid.mapRows(RowFilter.ANY_ROW, rowMapper);
             try {
-				_history.getChangeDataStore().store(changeData , _historyEntryID, changeDataId, new RowNewReconUpdateSerializer(), Optional.empty());
-	
-	            _progress = 100;
-	
-	            if (!_canceled) {
-	            	
-	                Change change = new PerformWikibaseEditsChange();
-	                
-	                HistoryEntry entry = new HistoryEntry(
-	                		_historyEntryID,
-	                		_description,
-	                		PerformWikibaseEditsOperation.this,
-	                		change);
-	
-	                _history.addEntry(entry);
-	                _processManager.onDoneProcess(this);
-	            }
-            } catch(Exception e) {
-            	_processManager.onFailedProcess(this, e);
+                _history.getChangeDataStore().store(changeData, _historyEntryID, changeDataId, new RowNewReconUpdateSerializer(),
+                        Optional.empty());
+
+                _progress = 100;
+
+                if (!_canceled) {
+
+                    Change change = new PerformWikibaseEditsChange();
+
+                    HistoryEntry entry = new HistoryEntry(
+                            _historyEntryID,
+                            _description,
+                            PerformWikibaseEditsOperation.this,
+                            change);
+
+                    _history.addEntry(entry);
+                    _processManager.onDoneProcess(this);
+                }
+            } catch (Exception e) {
+                _processManager.onFailedProcess(this, e);
             }
         }
 
@@ -311,108 +313,107 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             return this;
         }
     }
-    
+
     protected static class RowNewReconUpdate implements Serializable {
 
-		private static final long serialVersionUID = 4071296846913437839L;
-		private final Map<Integer, String> newEntities;
-    	
-    	@JsonCreator
-    	protected RowNewReconUpdate(
-    			@JsonProperty("newEntities")
-    			Map<Integer, String> newEntities) {
-    		this.newEntities = newEntities;
-    	}
-    	
-    	@JsonProperty("newEntities")
-    	public Map<Integer, String> getNewEntities() {
-    		return newEntities;
-    	}
+        private static final long serialVersionUID = 4071296846913437839L;
+        private final Map<Integer, String> newEntities;
+
+        @JsonCreator
+        protected RowNewReconUpdate(
+                @JsonProperty("newEntities") Map<Integer, String> newEntities) {
+            this.newEntities = newEntities;
+        }
+
+        @JsonProperty("newEntities")
+        public Map<Integer, String> getNewEntities() {
+            return newEntities;
+        }
     }
-    
+
     protected static class NewReconChangeDataProducer implements RowChangeDataProducer<RowNewReconUpdate> {
 
-		private static final long serialVersionUID = -1754921123832421920L;
-		protected final NewEntityLibrary library;
-    	
-    	protected NewReconChangeDataProducer(NewEntityLibrary newItemLibrary) {
-    		library = newItemLibrary;
-    	}
+        private static final long serialVersionUID = -1754921123832421920L;
+        protected final NewEntityLibrary library;
 
-		@Override
-		public RowNewReconUpdate call(long rowId, Row row) {
-			Map<Integer, String> map = new HashMap<>();
-			List<Cell> cells = row.getCells();
-			for (int i = 0; i != cells.size(); i++) {
-				Cell cell = cells.get(i);
-				if (cell != null && cell.recon != null &&
-						Judgment.New.equals(cell.recon.judgment)) {
-					long id = cell.recon.id;
-					String qid = library.getId(id);
-					if (qid != null) {
-						map.put(i, qid);
-					}
-				}
-			}
-			if (map.isEmpty()) {
-				return null;
-			} else {
-				return new RowNewReconUpdate(map);
-			}
-		}
-    	
+        protected NewReconChangeDataProducer(NewEntityLibrary newItemLibrary) {
+            library = newItemLibrary;
+        }
+
+        @Override
+        public RowNewReconUpdate call(long rowId, Row row) {
+            Map<Integer, String> map = new HashMap<>();
+            List<Cell> cells = row.getCells();
+            for (int i = 0; i != cells.size(); i++) {
+                Cell cell = cells.get(i);
+                if (cell != null && cell.recon != null &&
+                        Judgment.New.equals(cell.recon.judgment)) {
+                    long id = cell.recon.id;
+                    String qid = library.getId(id);
+                    if (qid != null) {
+                        map.put(i, qid);
+                    }
+                }
+            }
+            if (map.isEmpty()) {
+                return null;
+            } else {
+                return new RowNewReconUpdate(map);
+            }
+        }
+
     }
-    
+
     protected static class NewReconRowJoiner implements RowChangeDataJoiner<RowNewReconUpdate> {
 
-		private static final long serialVersionUID = -1042195464154951531L;
+        private static final long serialVersionUID = -1042195464154951531L;
 
-		@Override
-		public Row call(long rowId, Row row, RowNewReconUpdate changeData) {
-			if (changeData == null) {
-				return row;
-			}
-			Row newRow = row;
-			for (Entry<Integer, String> t : changeData.getNewEntities().entrySet()) {
-				Cell cell = row.getCell(t.getKey());
+        @Override
+        public Row call(long rowId, Row row, RowNewReconUpdate changeData) {
+            if (changeData == null) {
+                return row;
+            }
+            Row newRow = row;
+            for (Entry<Integer, String> t : changeData.getNewEntities().entrySet()) {
+                Cell cell = row.getCell(t.getKey());
                 if (cell == null || cell.recon == null) {
                     continue;
                 }
                 Recon recon = cell.recon;
                 if (Recon.Judgment.New.equals(recon.judgment)) {
-                	ReconCandidate newMatch = new ReconCandidate(t.getValue(), cell.value.toString(),
-					new String[0], 100);
-					recon = recon
-                			.withJudgment(Recon.Judgment.Matched)
-                			.withMatch(newMatch)
-                			.withCandidate(newMatch);
-                    
+                    ReconCandidate newMatch = new ReconCandidate(t.getValue(), cell.value.toString(),
+                            new String[0], 100);
+                    recon = recon
+                            .withJudgment(Recon.Judgment.Matched)
+                            .withMatch(newMatch)
+                            .withCandidate(newMatch);
+
                 }
                 Cell newCell = new Cell(cell.value, recon);
-				newRow = newRow.withCell(t.getKey(), newCell);
-			}
-			return newRow;
-		}
-    	
+                newRow = newRow.withCell(t.getKey(), newCell);
+            }
+            return newRow;
+        }
+
     }
-    
+
     protected static class RowNewReconUpdateSerializer implements ChangeDataSerializer<RowNewReconUpdate> {
 
-		private static final long serialVersionUID = -165445357950934740L;
+        private static final long serialVersionUID = -165445357950934740L;
 
-		@Override
-		public String serialize(RowNewReconUpdate changeDataItem) {
-			try {
-				return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
-			} catch (JsonProcessingException e) {
-				throw new UncheckedIOException(e);
-			}
-		}
+        @Override
+        public String serialize(RowNewReconUpdate changeDataItem) {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
+            } catch (JsonProcessingException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
 
-		@Override
-		public RowNewReconUpdate deserialize(String serialized) throws IOException {
-			return ParsingUtilities.mapper.readValue(serialized, RowNewReconUpdate.class);
-		}
-    	
+        @Override
+        public RowNewReconUpdate deserialize(String serialized) throws IOException {
+            return ParsingUtilities.mapper.readValue(serialized, RowNewReconUpdate.class);
+        }
+
     }
 }

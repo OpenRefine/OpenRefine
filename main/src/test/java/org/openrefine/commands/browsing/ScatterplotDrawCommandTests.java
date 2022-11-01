@@ -28,10 +28,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ScatterplotDrawCommandTests extends CommandTestBase {
-	protected Command command = null;
-	protected Project project = null;
-	protected ServletOutputStream outputStream;
-	
+
+    protected Command command = null;
+    protected Project project = null;
+    protected ServletOutputStream outputStream;
+
     @BeforeMethod
     public void setUp() {
         FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);

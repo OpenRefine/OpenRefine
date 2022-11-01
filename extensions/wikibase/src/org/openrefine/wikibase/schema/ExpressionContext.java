@@ -69,13 +69,13 @@ public class ExpressionContext {
      *            ignored)
      */
     public ExpressionContext(
-    		String baseIRI,
-    		Map<String, String> entityTypeBaseIRIs,
-    		String mediaWikiApiEndpoint,
-    		long rowId,
-    		Row row,
-    		ColumnModel columnModel,
-    		QAWarningStore warningStore) {
+            String baseIRI,
+            Map<String, String> entityTypeBaseIRIs,
+            String mediaWikiApiEndpoint,
+            long rowId,
+            Row row,
+            ColumnModel columnModel,
+            QAWarningStore warningStore) {
         Validate.notNull(baseIRI);
         this.baseIRI = baseIRI;
         this.entityTypeIRIs = entityTypeBaseIRIs;
@@ -91,9 +91,9 @@ public class ExpressionContext {
     public String getBaseIRI() {
         return baseIRI;
     }
-    
+
     public String getBaseIRIForEntityType(String entityType) {
-    	return entityTypeIRIs.getOrDefault(entityType, baseIRI);
+        return entityTypeIRIs.getOrDefault(entityType, baseIRI);
     }
 
     public String getMediaWikiApiEndpoint() {

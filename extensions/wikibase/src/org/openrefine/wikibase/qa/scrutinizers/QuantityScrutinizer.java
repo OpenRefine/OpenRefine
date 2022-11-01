@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
  *
  */
 public class QuantityScrutinizer extends SnakScrutinizer {
-    
+
     public static final String boundsDisallowedType = "bounds-disallowed";
     public static final String integerConstraintType = "values-should-be-integers";
     public static final String invalidUnitType = "invalid-unit";

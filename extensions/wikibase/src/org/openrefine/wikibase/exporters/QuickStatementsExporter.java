@@ -60,7 +60,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities. QuickStatements does not support creating two new entities which refer to each other. Consider uploading your edits directly with OpenRefine.";
     public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikibase first.";
-    
+
     protected final QSSnakPrinter mainSnakPrinter;
     protected final QSSnakPrinter referenceSnakPrinter;
 
@@ -73,10 +73,10 @@ public class QuickStatementsExporter implements WriterExporter {
     public String getContentType() {
         return "text/plain";
     }
-    
-	@Override
-	public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
-			Writer writer) throws IOException {
+
+    @Override
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
+            Writer writer) throws IOException {
         WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
             writer.write(noSchemaErrorMessage);
@@ -129,8 +129,8 @@ public class QuickStatementsExporter implements WriterExporter {
         if (errorMessage != null) {
             writer.write(errorMessage);
         } else {
-        translateItemList(items, writer);
-    }
+            translateItemList(items, writer);
+        }
     }
 
     public void translateItemList(List<EntityEdit> updates, Writer writer)

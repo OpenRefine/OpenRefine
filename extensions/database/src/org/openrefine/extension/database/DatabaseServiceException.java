@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database;
 
 import java.sql.SQLException;
@@ -33,11 +34,11 @@ import java.sql.SQLException;
 public class DatabaseServiceException extends Exception {
 
     private static final long serialVersionUID = 1L;
-    
+
     private boolean sqlException;
     private String sqlState;
     private int sqlCode;
-   
+
     public DatabaseServiceException(String exception) {
         super(exception);
     }
@@ -47,7 +48,7 @@ public class DatabaseServiceException extends Exception {
         this.sqlException = sqlException;
         this.sqlState = sqlState;
         this.sqlCode = sqlCode;
-        
+
     }
 
     public boolean isSqlException() {

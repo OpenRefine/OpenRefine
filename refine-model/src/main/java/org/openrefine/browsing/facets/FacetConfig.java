@@ -55,8 +55,8 @@ public interface FacetConfig {
      * @param columnModel
      *            the header of the table the facet is applied to.
      * @param overlayModels
-     *            the overlay models of the table the facet is applied to (can be accessed by expressions evaluated
-     *            by the facet)
+     *            the overlay models of the table the facet is applied to (can be accessed by expressions evaluated by
+     *            the facet)
      * @return a computed facet on the given project.
      */
     public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels);

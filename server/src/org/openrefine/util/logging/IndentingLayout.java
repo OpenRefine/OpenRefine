@@ -29,7 +29,6 @@
  *    Original code:  http://simile.mit.edu/repository/tracer/trunk/
  */
 
-
 package org.openrefine.util.logging;
 
 import java.nio.charset.Charset;

@@ -121,13 +121,13 @@ public abstract class ProjectManager {
 
     public void dispose() {
         save(true); // complete save
-        
+
         for (Project project : _projects.values()) {
             if (project != null) {
                 project.dispose();
             }
         }
-        
+
         _projects.clear();
         _projectsMetadata.clear();
     }
@@ -159,7 +159,9 @@ public abstract class ProjectManager {
 
     /**
      * Return the change data store for a given project
-     * @param runner TODO
+     * 
+     * @param runner
+     *            TODO
      * @param projectId
      */
     public abstract ChangeDataStore getChangeDataStore(long projectID, DatamodelRunner runner);
@@ -168,7 +170,8 @@ public abstract class ProjectManager {
      * Return the cached grid store for a given project
      * 
      * @param projectId
-     * @param runner TODO
+     * @param runner
+     *            TODO
      * @return
      */
     public abstract CachedGridStore getCachedGridStore(long projectId, DatamodelRunner runner);
@@ -185,7 +188,8 @@ public abstract class ProjectManager {
      * Loads a project from the data store into memory
      * 
      * @param id
-     * @param runner TODO
+     * @param runner
+     *            TODO
      * @return
      * @throws IOException
      */
@@ -242,8 +246,10 @@ public abstract class ProjectManager {
     /**
      * Ensures a project is saved in the workspace and its grid states are read from there.
      * 
-     * @param id the project id to load
-     * @param runner TODO
+     * @param id
+     *            the project id to load
+     * @param runner
+     *            TODO
      * @throws IOException
      */
     public abstract void reloadProjectFromWorkspace(long id, DatamodelRunner runner) throws IOException;
@@ -556,11 +562,10 @@ public abstract class ProjectManager {
      * data store
      * 
      * @param id
-     *     the id of the project
+     *            the id of the project
      * @param runner
-     *     the datamodel runner to load the project (if not loaded yet)
-     * @return
-     *     the project with the matching id, or null if it can't be found
+     *            the datamodel runner to load the project (if not loaded yet)
+     * @return the project with the matching id, or null if it can't be found
      */
     public Project getProject(long id, DatamodelRunner runner) {
         synchronized (this) {
@@ -569,7 +574,7 @@ public abstract class ProjectManager {
             } else {
                 Project project = null;
                 try {
-					project = loadProject(id, runner);
+                    project = loadProject(id, runner);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -585,17 +590,16 @@ public abstract class ProjectManager {
      * Gets the required project, assuming it has already been leaded.
      * 
      * @param id
-     *      the id of the project
+     *            the id of the project
      * @return null if the project is not loaded yet.
      */
     public Project getLoadedProject(long id) {
         return _projects.get(id);
     }
-    
+
     /**
      * @return the latest datamodel runner used to load a project
-     * @todo remove this, and create a way to load the datamodel runner
-     * that was used last for a given project instead
+     * @todo remove this, and create a way to load the datamodel runner that was used last for a given project instead
      */
     @JsonIgnore
     public abstract DatamodelRunner getLatestDatamodelRunner();

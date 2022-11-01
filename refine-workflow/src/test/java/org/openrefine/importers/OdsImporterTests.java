@@ -112,7 +112,7 @@ public class OdsImporterTests extends ImporterTest {
         try {
             parseOneFile(SUT, stream);
             fail("No exception thrown when parsing an empty ODS file");
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             assertEquals(e.getMessage(),
                     "Attempted to parse file as Ods file but failed. " +

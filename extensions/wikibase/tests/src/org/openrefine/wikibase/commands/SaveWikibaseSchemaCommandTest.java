@@ -109,7 +109,6 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
         TestUtils.assertEqualsAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 
-
     @Test
     public void testInvalidSchemaJson()
             throws ServletException, IOException {

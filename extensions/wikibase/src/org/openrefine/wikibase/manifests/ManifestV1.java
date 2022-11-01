@@ -53,7 +53,7 @@ public class ManifestV1 implements Manifest {
 
         JsonNode reconciliation = manifest.path("reconciliation");
         reconServiceEndpoint = reconciliation.path("endpoint").textValue();
-        
+
         JsonNode editGroups = manifest.path("editgroups");
         editGroupsUrlSchema = editGroups.path("url_schema").textValue();
     }
@@ -108,31 +108,31 @@ public class ManifestV1 implements Manifest {
         return editGroupsUrlSchema;
     }
 
-	@Override
-	public String getReconServiceEndpoint(String entityType) {
-		if (ITEM_TYPE.equals(entityType)) {
-			return reconServiceEndpoint;
-		}
-		return null;
-	}
+    @Override
+    public String getReconServiceEndpoint(String entityType) {
+        if (ITEM_TYPE.equals(entityType)) {
+            return reconServiceEndpoint;
+        }
+        return null;
+    }
 
-	@Override
-	public String getEntityTypeSiteIri(String entityType) {
-		if (ITEM_TYPE.equals(entityType) || PROPERTY_TYPE.equals(entityType)) {
-			return siteIri;
-		}
-		return null;
-	}
-	
-	@Override
-	public String getMediaWikiApiEndpoint(String entityType) {
-		return getMediaWikiApiEndpoint();
-	}
+    @Override
+    public String getEntityTypeSiteIri(String entityType) {
+        if (ITEM_TYPE.equals(entityType) || PROPERTY_TYPE.equals(entityType)) {
+            return siteIri;
+        }
+        return null;
+    }
 
-	@Override
-	public List<String> getAvailableEntityTypes() {
-		return Arrays.asList(ITEM_TYPE, PROPERTY_TYPE);
-	}
+    @Override
+    public String getMediaWikiApiEndpoint(String entityType) {
+        return getMediaWikiApiEndpoint();
+    }
+
+    @Override
+    public List<String> getAvailableEntityTypes() {
+        return Arrays.asList(ITEM_TYPE, PROPERTY_TYPE);
+    }
 
     @Override
     public boolean hideStructuredFieldsInMediaInfo() {

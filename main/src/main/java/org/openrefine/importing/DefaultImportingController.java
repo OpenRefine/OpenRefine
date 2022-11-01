@@ -219,7 +219,7 @@ public class DefaultImportingController implements ImportingController {
         }
 
         DatamodelRunner runner = RefineServlet.getDatamodelRunner();
-        
+
         String format = request.getParameter("format");
         ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
         if (formatRecord != null && formatRecord.parser != null) {

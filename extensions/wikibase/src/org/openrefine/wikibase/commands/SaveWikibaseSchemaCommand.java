@@ -49,9 +49,9 @@ public class SaveWikibaseSchemaCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             Project project = getProject(request);

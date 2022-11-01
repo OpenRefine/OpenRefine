@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 /**
@@ -8,5 +9,6 @@ package org.openrefine.model;
  */
 
 public interface RowCellMapper {
+
     public Cell apply(long rowId, Row row);
 }

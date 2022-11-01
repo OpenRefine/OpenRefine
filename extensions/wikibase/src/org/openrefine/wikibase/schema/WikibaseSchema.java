@@ -69,7 +69,7 @@ public class WikibaseSchema implements OverlayModel {
 
     @JsonProperty("siteIri")
     protected String siteIri;
-    
+
     @JsonProperty("entityTypeSiteIRI")
     protected Map<String, String> entityTypeSiteIri;
 
@@ -84,7 +84,7 @@ public class WikibaseSchema implements OverlayModel {
      * TODO remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
-    	entityTypeSiteIri = Collections.emptyMap();
+        entityTypeSiteIri = Collections.emptyMap();
         validated = false;
     }
 
@@ -94,9 +94,9 @@ public class WikibaseSchema implements OverlayModel {
     @JsonCreator
     public WikibaseSchema(@JsonProperty("entityEdits") List<WbExpression<? extends EntityEdit>> exprs,
             @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
-                          @JsonProperty("siteIri") String siteIri,
-                          @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
-                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
+            @JsonProperty("siteIri") String siteIri,
+            @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
+            @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.entityEditExprs = new ArrayList<>();
         if (exprs != null) {
             entityEditExprs.addAll(exprs);
@@ -137,7 +137,7 @@ public class WikibaseSchema implements OverlayModel {
     public String getSiteIri() {
         return siteIri;
     }
-    
+
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
@@ -202,14 +202,14 @@ public class WikibaseSchema implements OverlayModel {
         }
         List<EntityEdit> result = new ArrayList<>();
         for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
-        	ExpressionContext ctxt = new ExpressionContext(
-        			siteIri,
-        			entityTypeSiteIri,
-        			mediaWikiApiEndpoint,
-        			indexedRow.getIndex(),
-        			indexedRow.getRow(),
-        			grid.getColumnModel(),
-        			warningStore);
+            ExpressionContext ctxt = new ExpressionContext(
+                    siteIri,
+                    entityTypeSiteIri,
+                    mediaWikiApiEndpoint,
+                    indexedRow.getIndex(),
+                    indexedRow.getRow(),
+                    grid.getColumnModel(),
+                    warningStore);
             try {
                 result.addAll(evaluateEntityDocuments(ctxt));
             } catch (QAWarningException e) {
@@ -228,7 +228,7 @@ public class WikibaseSchema implements OverlayModel {
     }
 
     static public WikibaseSchema reconstruct(String json) throws IOException {
-    	return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
+        return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
     }
 
     static public WikibaseSchema load(Project project, String obj)

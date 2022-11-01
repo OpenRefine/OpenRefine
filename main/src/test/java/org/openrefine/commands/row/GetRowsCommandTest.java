@@ -53,14 +53,14 @@ public class GetRowsCommandTest extends CommandTestBase {
 
     @BeforeMethod
     public void setUp() {
-        project = createProject(new String[] {"foo", "bar"},
-        		new Serializable[][] {
-        			{"a", "b"},
-        			{null, "c"},
-        			{"d", "e"},
-        			{"", "f"},
-        			{"g", "h"}
-        		});
+        project = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { null, "c" },
+                        { "d", "e" },
+                        { "", "f" },
+                        { "g", "h" }
+                });
         command = new GetRowsCommand();
 
         when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));

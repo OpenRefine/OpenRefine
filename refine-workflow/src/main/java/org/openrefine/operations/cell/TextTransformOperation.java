@@ -124,7 +124,8 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     @Override
     protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
-        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError, _repeat ? _repeatCount : 0);
+        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError,
+                _repeat ? _repeatCount : 0);
     }
 
     @Override
@@ -140,8 +141,8 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     }
 
     protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel,
-                                                 Map<String, OverlayModel> overlayModels,
-                                                 Evaluable eval, OnError onError, int repeatCount) {
+            Map<String, OverlayModel> overlayModels,
+            Evaluable eval, OnError onError, int repeatCount) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 2272064171042189466L;

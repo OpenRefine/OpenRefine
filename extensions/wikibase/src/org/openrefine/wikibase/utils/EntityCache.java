@@ -72,7 +72,7 @@ public class EntityCache {
                             throws Exception {
                         Map<String, EntityDocument> entityDocumentMap = fetcher
                                 .getEntityDocuments(StreamSupport.stream(entityIds.spliterator(), false)
-                                .collect(Collectors.toList()));
+                                        .collect(Collectors.toList()));
                         if (!entityDocumentMap.isEmpty()) {
                             return entityDocumentMap;
                         } else {
@@ -102,7 +102,7 @@ public class EntityCache {
         }
         return entityCache;
     }
-    
+
     /**
      * Provided for testability.
      * 
@@ -110,7 +110,7 @@ public class EntityCache {
      * @param cache
      */
     public static void setEntityCache(String siteIri, EntityCache cache) {
-    	entityCacheMap.put(siteIri, cache);
+        entityCacheMap.put(siteIri, cache);
     }
 
     public List<EntityDocument> getMultipleDocuments(List<EntityIdValue> entityIds) throws ExecutionException {
@@ -122,7 +122,7 @@ public class EntityCache {
         return getEntityCache(entityPrefix, mediaWikiApiEndpoint).get(id);
     }
 
-	public static void removeEntityCache(String siteIri) {
-		entityCacheMap.remove(siteIri);
-	}
+    public static void removeEntityCache(String siteIri) {
+        entityCacheMap.remove(siteIri);
+    }
 }

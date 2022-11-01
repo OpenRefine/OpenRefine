@@ -26,14 +26,15 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.model;
 
 import java.util.List;
 
 public class DatabaseRow {
-    
+
     private int index;
-    
+
     private List<String> values;
 
     public int getIndex() {
@@ -51,5 +52,5 @@ public class DatabaseRow {
     public void setValues(List<String> values) {
         this.values = values;
     }
-    
+
 }

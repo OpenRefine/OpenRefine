@@ -5,7 +5,7 @@ import org.openrefine.clustering.binning.Keyer;
 import org.apache.commons.codec.language.DaitchMokotoffSoundex;
 
 public class DaitchMokotoffKeyer extends Keyer {
-    
+
     protected DaitchMokotoffSoundex encoder = new DaitchMokotoffSoundex();
 
     @Override

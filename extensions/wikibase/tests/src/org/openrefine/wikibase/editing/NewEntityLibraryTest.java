@@ -35,7 +35,6 @@ import org.testng.annotations.Test;
 
 public class NewEntityLibraryTest extends RefineTest {
 
-
     private NewEntityLibrary library;
 
     @BeforeMethod

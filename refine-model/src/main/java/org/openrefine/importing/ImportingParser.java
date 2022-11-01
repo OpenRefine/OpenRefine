@@ -44,10 +44,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public interface ImportingParser {
 
     /**
-     * Create data sufficient for the parser UI on the client side to do its work.
-     * For example, an XML parser UI would need to know some sample elements so it
-     * can let the user pick which the path to the record elements.
-     * @param runner 
+     * Create data sufficient for the parser UI on the client side to do its work. For example, an XML parser UI would
+     * need to know some sample elements so it can let the user pick which the path to the record elements.
+     * 
+     * @param runner
      * @param job
      * @param fileRecords
      * @param format
@@ -55,14 +55,15 @@ public interface ImportingParser {
      * @return ObjectNode options
      */
     public ObjectNode createParserUIInitializationData(
-        DatamodelRunner runner,
+            DatamodelRunner runner,
             ImportingJob job,
             List<ImportingFileRecord> fileRecords,
             String format);
 
     /**
      * 
-     * @param runner TODO
+     * @param runner
+     *            TODO
      * @param metadata
      * @param job
      * @param fileRecords
@@ -70,16 +71,14 @@ public interface ImportingParser {
      * @param limit
      *            maximum number of rows to create
      * @param options
-     *            custom options put together by the UI corresponding to this
-     *            parser, which the parser should understand
+     *            custom options put together by the UI corresponding to this parser, which the parser should understand
      * @param project
      */
     public GridState parse(
-        DatamodelRunner runner,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        List<ImportingFileRecord> fileRecords,
-        String format,
-        long limit, ObjectNode options
-    ) throws Exception;
+            DatamodelRunner runner,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            List<ImportingFileRecord> fileRecords,
+            String format,
+            long limit, ObjectNode options) throws Exception;
 }

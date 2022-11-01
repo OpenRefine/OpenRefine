@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.project;
 
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,14 +70,13 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
     String PROJECT_ID = "1234";
     String SUBJECT = "subject for project";
 
-
     @BeforeMethod
     public void SetUp() throws Exception {
 
         SUT = new SetProjectMetadataCommand();
 
-        proj = createProject(new String[]{"column 1", "column 2"}, new Serializable[][] {{"foo","bar"},{"test","data"}});
-        
+        proj = createProject(new String[] { "column 1", "column 2" }, new Serializable[][] { { "foo", "bar" }, { "test", "data" } });
+
         ProjectMetadata metadata = proj.getMetadata();
         metadata.setUserMetadata((ArrayNode) ParsingUtilities.mapper.readTree("[ {name: \"clientID\", display: true} ]"));
         ProjectManager.singleton.saveMetadata(metadata, proj.getId());

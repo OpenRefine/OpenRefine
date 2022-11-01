@@ -1,3 +1,4 @@
+
 package org.openrefine.extension.gdata;
 
 import javax.servlet.http.Cookie;
@@ -17,7 +18,7 @@ public class TokenCookie {
 
     public static void setToken(HttpServletRequest request,
             HttpServletResponse response, String token, String expiresInSeconds) {
-        CookiesUtilities.setCookie(request, response, COOKIE_NAME, token, 
+        CookiesUtilities.setCookie(request, response, COOKIE_NAME, token,
                 Integer.parseInt(expiresInSeconds));
     }
 

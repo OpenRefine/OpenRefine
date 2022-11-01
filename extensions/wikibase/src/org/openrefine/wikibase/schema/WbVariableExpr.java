@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.schema;
+
 import org.openrefine.model.Cell;
 import org.openrefine.wikibase.schema.ExpressionContext;
 import org.openrefine.wikibase.schema.WbExpression;

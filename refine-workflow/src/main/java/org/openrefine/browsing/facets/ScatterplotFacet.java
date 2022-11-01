@@ -329,7 +329,8 @@ public class ScatterplotFacet implements Facet {
 
     final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
 
-    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY, ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels) {
         this.config = config;
         this.overlayModels = overlayModels;
 

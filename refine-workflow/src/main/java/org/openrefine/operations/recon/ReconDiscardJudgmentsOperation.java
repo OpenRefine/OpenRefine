@@ -79,7 +79,7 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
     @Override
     public String getDescription() {
         return _clearData ?
-                // "Discard recon judgments and clear recon data for cells in column " + _columnName :
+        // "Discard recon judgments and clear recon data for cells in column " + _columnName :
                 OperationDescription.recon_discard_judgments_clear_data_brief(_columnName) :
                 // "Discard recon judgments for cells in column " + _columnName
                 OperationDescription.recon_discard_judgments_brief(_columnName);

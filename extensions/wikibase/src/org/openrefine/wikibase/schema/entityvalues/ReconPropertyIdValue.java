@@ -33,10 +33,10 @@ public class ReconPropertyIdValue extends ReconEntityIdValue implements Property
         super(recon, cellValue);
     }
 
-	@Override
-	public boolean isPlaceholder() {
-		return isNew();
-	}
+    @Override
+    public boolean isPlaceholder() {
+        return isNew();
+    }
 
     @Override
     public String getEntityType() {

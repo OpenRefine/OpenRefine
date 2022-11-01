@@ -26,14 +26,15 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.model;
 
 import org.openrefine.extension.database.DatabaseConfiguration;
 
 public class DatabaseQueryInfo {
-    
+
     private DatabaseConfiguration dbConfig;
-    
+
     private String query;
 
     public DatabaseQueryInfo(DatabaseConfiguration databaseConfig, String query) {
@@ -57,5 +58,5 @@ public class DatabaseQueryInfo {
     public void setQuery(String query) {
         this.query = query;
     }
-    
+
 }

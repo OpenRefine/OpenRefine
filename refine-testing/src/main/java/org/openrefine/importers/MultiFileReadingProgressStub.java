@@ -1,3 +1,4 @@
+
 package org.openrefine.importers;
 
 public class MultiFileReadingProgressStub implements MultiFileReadingProgress {

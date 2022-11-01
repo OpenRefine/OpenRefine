@@ -303,8 +303,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated Use
-     *             {@link XmlImportUtilities#findRecord(ColumnIndexAllocator, List<Row>, TreeReader, String[], int, ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated Use {@link XmlImportUtilities#findRecord(ColumnIndexAllocator, List<Row>, TreeReader, String[], int,
+     *             ImportColumnGroup, int, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void findRecord(
@@ -414,8 +414,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param rootColumnGroup
      * @param parameter
      * @throws TreeReaderException
-     * @deprecated Use
-     *             {@link XmlImportUtilities#processRecord(ColumnIndexAllocator, List<Row>, TreeReader, ImportColumnGroup, boolean, boolean, boolean)}
+     * @deprecated Use {@link XmlImportUtilities#processRecord(ColumnIndexAllocator, List<Row>, TreeReader,
+     *             ImportColumnGroup, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void processRecord(

@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.pgsql;
 
 import java.sql.Connection;
@@ -38,15 +39,14 @@ import org.openrefine.extension.database.SQLType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class PgSQLConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("PgSQLConnectionManager");
-    private Connection connection; 
+    private Connection connection;
     private SQLType type;
 
     private static PgSQLConnectionManager instance;
-    
+
     /**
      * 
      * @param type
@@ -57,7 +57,7 @@ public class PgSQLConnectionManager {
         type = SQLType.forName(PgSQLDatabaseService.DB_NAME);
 
     }
-  
+
     /**
      * Create a new instance of this connection manager.
      *
@@ -68,9 +68,9 @@ public class PgSQLConnectionManager {
     public static PgSQLConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("::Creating new PgSQL ConnectionManager ::"); 
+                logger.debug("::Creating new PgSQL ConnectionManager ::");
             }
-            
+
             instance = new PgSQLConnectionManager();
 
         }
@@ -93,23 +93,23 @@ public class PgSQLConnectionManager {
      * @return
      */
     public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
-        
+
         try {
-                boolean connResult = false;
-              
-                Connection conn = getConnection(databaseConfiguration, true);
+            boolean connResult = false;
+
+            Connection conn = getConnection(databaseConfiguration, true);
             if (conn != null) {
-                    connResult = true;
-                    conn.close();
-                }
-                
-                return connResult;
-       
+                connResult = true;
+                conn.close();
+            }
+
+            return connResult;
+
         } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
-      
+
     }
 
     /**
@@ -121,13 +121,13 @@ public class PgSQLConnectionManager {
             throws DatabaseServiceException {
         try {
 
-           // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
+            // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
 
             if (connection != null && !forceNewConnection) {
-               // logger.info("connection closed::{}", connection.isClosed());
+                // logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Returning existing connection::{}", connection); 
+                        logger.debug("Returning existing connection::{}", connection);
                     }
                     return connection;
                 }
@@ -149,10 +149,10 @@ public class PgSQLConnectionManager {
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } 
+        }
     }
 
-    public  void shutdown() {
+    public void shutdown() {
 
         if (connection != null) {
             try {
@@ -161,14 +161,14 @@ public class PgSQLConnectionManager {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
- 
+
     }
-  
+
     private static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-       
-            int port = dbConfig.getDatabasePort();
-            return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
-                    + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
-        
+
+        int port = dbConfig.getDatabasePort();
+        return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
+                + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
+
     }
 }

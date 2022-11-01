@@ -94,8 +94,8 @@ public class HistoryEntryManager {
         GridState gridState = runner.loadGridState(gridFile);
         return new History(
                 gridState,
-    	        getChangeDataStore(runner, dir),
-    	        getCachedGridStore(runner, dir),
+                getChangeDataStore(runner, dir),
+                getCachedGridStore(runner, dir),
                 metadata.entries,
                 metadata.position);
     }

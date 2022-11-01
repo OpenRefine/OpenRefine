@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.operations;
 
 import java.util.HashMap;
@@ -52,16 +53,16 @@ public class SaveWikibaseSchemaOperation implements Operation {
 
     }
 
-	@Override
-	public String getDescription() {
-		return operationDescription;
-	}
-	
-	@Override
-	public Change createChange() {
-		Change change = new WikibaseSchemaChange(_schema);
-		return change;
-	}
+    @Override
+    public String getDescription() {
+        return operationDescription;
+    }
+
+    @Override
+    public Change createChange() {
+        Change change = new WikibaseSchemaChange(_schema);
+        return change;
+    }
 
     static public class WikibaseSchemaChange implements Change {
 
@@ -72,25 +73,24 @@ public class SaveWikibaseSchemaOperation implements Operation {
         public WikibaseSchemaChange(WikibaseSchema newSchema) {
             _newSchema = newSchema;
         }
-        
 
-		@Override
-		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-			Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
-			newModels.put(overlayModelKey, _newSchema);
-			return projectState.withOverlayModels(newModels);
-		}
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+            Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
+            newModels.put(overlayModelKey, _newSchema);
+            return projectState.withOverlayModels(newModels);
+        }
 
-		@Override
-		public boolean isImmediate() {
-			return true;
-		}
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
 
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     }
 

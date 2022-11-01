@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -95,12 +96,12 @@ public abstract class EditScrutinizer {
      * @return false if any necessary dependency is missing, true otherwise.
      */
     public abstract boolean prepareDependencies();
-    
+
     /**
      * Called before an edit batch is scrutinized.
      */
     public void batchIsBeginning() {
-        
+
     }
 
     /**
@@ -134,19 +135,19 @@ public abstract class EditScrutinizer {
      *            the {@link ItemEdit} to scrutinize
      */
     public abstract void scrutinize(MediaInfoEdit edit);
-    
+
     /**
      * Method called once the edit batch has been read entirely
      */
     public void batchIsFinished() {
-        
+
     }
-    
+
     /**
      * Emits an issue that will be reported to the user, after merging with other issues of the same kind.
      * 
      * @param warning
-     *    the issue to report
+     *            the issue to report
      */
     protected void addIssue(QAWarning warning) {
         _store.addWarning(warning);

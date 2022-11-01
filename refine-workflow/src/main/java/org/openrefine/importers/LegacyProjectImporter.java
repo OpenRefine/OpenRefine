@@ -46,8 +46,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class LegacyProjectImporter extends InputStreamImporter {
 
     @Override
-	public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-			String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         // open the project archive
         if (!fileSource.endsWith(".tar")) {
             inputStream = new GZIPInputStream(inputStream);

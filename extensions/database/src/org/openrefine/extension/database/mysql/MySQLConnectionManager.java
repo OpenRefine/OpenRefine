@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.mysql;
 
 import java.sql.Connection;
@@ -41,11 +42,11 @@ import org.slf4j.LoggerFactory;
 public class MySQLConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("MySQLConnectionManager");
-    private Connection connection; 
+    private Connection connection;
     private SQLType type;
 
     private static MySQLConnectionManager instance;
-    
+
     /**
      * 
      * @param type
@@ -56,7 +57,7 @@ public class MySQLConnectionManager {
         type = SQLType.forName(MySQLDatabaseService.DB_NAME);
 
     }
-  
+
     /**
      * Create a new instance of this connection manager.
      *
@@ -89,23 +90,23 @@ public class MySQLConnectionManager {
      * @return
      */
     public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
-        
+
         try {
-                boolean connResult = false;
-              
-                Connection conn = getConnection(databaseConfiguration, true);
+            boolean connResult = false;
+
+            Connection conn = getConnection(databaseConfiguration, true);
             if (conn != null) {
-                    connResult = true;
-                    conn.close();
-                }
-                
-                return connResult;
-       
+                connResult = true;
+                conn.close();
+            }
+
+            return connResult;
+
         } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
-      
+
     }
 
     /**
@@ -121,26 +122,26 @@ public class MySQLConnectionManager {
                 // logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Returning existing connection::{}", connection); 
+                        logger.debug("Returning existing connection::{}", connection);
                     }
-                    
+
                     return connection;
                 }
             }
             String dbURL = getDatabaseUrl(databaseConfiguration);
             Class.forName(type.getClassPath());
-            
+
             // logger.info("*** type.getClassPath() ::{}, {}**** ", type.getClassPath());
-            
+
             DriverManager.setLoginTimeout(10);
-            
+
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
             if (logger.isDebugEnabled()) {
-                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL); 
+                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
             }
-            
+
             return connection;
 
         } catch (ClassNotFoundException e) {
@@ -149,10 +150,10 @@ public class MySQLConnectionManager {
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } 
+        }
     }
 
-    public  void shutdown() {
+    public void shutdown() {
 
         if (connection != null) {
             try {
@@ -161,14 +162,14 @@ public class MySQLConnectionManager {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
- 
+
     }
-    
-    private  String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-       
-            int port = dbConfig.getDatabasePort();
-            return "jdbc:" + dbConfig.getDatabaseType() + "://" + dbConfig.getDatabaseHost()
-                    + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName() + "?useSSL=" + dbConfig.isUseSSL();
-        
+
+    private String getDatabaseUrl(DatabaseConfiguration dbConfig) {
+
+        int port = dbConfig.getDatabasePort();
+        return "jdbc:" + dbConfig.getDatabaseType() + "://" + dbConfig.getDatabaseHost()
+                + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName() + "?useSSL=" + dbConfig.isUseSSL();
+
     }
 }

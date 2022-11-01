@@ -112,48 +112,44 @@ public class ImporterTest extends RefineTest {
 
     protected GridState parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-            runner,
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            reader, -1, options
-        );
+                runner,
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                reader, -1, options);
     }
 
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
         return parser.parseOneFile(
-            runner,
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            inputStream, -1, options
-        );
+                runner,
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                inputStream, -1, options);
     }
 
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-            runner,
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            inputStream, -1, options
-        );
+                runner,
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                inputStream, -1, options);
     }
 
     protected GridState parseOneFile(URIImporter parser, String sparkURI) throws Exception {
         return parser.parseOneFile(
-            runner,
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            sparkURI,
-            -1,
-            options, mock(MultiFileReadingProgress.class)
-        );
+                runner,
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                sparkURI,
+                -1,
+                options, mock(MultiFileReadingProgress.class));
     }
 
     protected GridState parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {

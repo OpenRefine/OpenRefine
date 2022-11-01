@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.cmd;
 
 import java.io.IOException;
@@ -53,36 +54,36 @@ public class TestConnectCommand extends DatabaseCommand {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+            respondCSRFError(response);
+            return;
+        }
+
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
         if (logger.isDebugEnabled()) {
-            logger.debug("TestConnectCommand::Post::{}", databaseConfiguration); 
+            logger.debug("TestConnectCommand::Post::{}", databaseConfiguration);
         }
-        
+
         // ProjectManager.singleton.setBusy(true);
         try {
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-           
+
             Writer w = response.getWriter();
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            
+
             try {
-                
+
                 boolean connectionTestResult = DatabaseService.get(databaseConfiguration.getDatabaseType())
                         .testConnection(databaseConfiguration);
-                
+
                 response.setStatus(HttpStatus.SC_OK);
                 writer.writeStartObject();
-                
+
                 writer.writeBooleanField("connectionResult", connectionTestResult);
                 writer.writeStringField("code", "ok");
                 writer.writeEndObject();
-                
+
             } catch (DatabaseServiceException e) {
                 logger.error("TestConnectCommand::Post::DatabaseServiceException::{}", e);
                 sendError(HttpStatus.SC_UNAUTHORIZED, response, e);

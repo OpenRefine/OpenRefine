@@ -91,8 +91,7 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
     @Test
     public void testValidate() throws ModelException {
         ColumnModel columnModel = new ColumnModel(
-                Arrays.asList(new ColumnMetadata("column A"), new ColumnMetadata("column B"))
-        );
+                Arrays.asList(new ColumnMetadata("column A"), new ColumnMetadata("column B")));
 
         hasNoValidationError(expr, columnModel);
         hasValidationError("Null snak in reference", new WbReferenceExpr(Arrays.asList(

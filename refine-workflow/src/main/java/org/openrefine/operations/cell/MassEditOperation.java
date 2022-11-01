@@ -189,7 +189,8 @@ public class MassEditOperation extends EngineDependentOperation {
         @Override
         public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
             int columnIdx = columnIndex(state.getColumnModel(), _columnName);
-            return mapper(columnIdx, _evaluable, _columnName, state.getColumnModel(), state.getOverlayModels(), _fromTo, _fromBlankTo, _fromErrorTo);
+            return mapper(columnIdx, _evaluable, _columnName, state.getColumnModel(), state.getOverlayModels(), _fromTo, _fromBlankTo,
+                    _fromErrorTo);
         }
 
         @Override

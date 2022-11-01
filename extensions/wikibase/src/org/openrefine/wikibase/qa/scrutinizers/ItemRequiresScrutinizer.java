@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.ArrayList;

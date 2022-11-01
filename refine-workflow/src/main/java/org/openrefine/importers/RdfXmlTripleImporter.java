@@ -38,5 +38,5 @@ public class RdfXmlTripleImporter extends RdfTripleImporter {
     public RdfXmlTripleImporter() {
         super(RdfTripleImporter.Mode.RDFXML);
     }
-    
+
 }

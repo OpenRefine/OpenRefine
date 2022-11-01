@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {
-    
+
     public static final String type = "forbidden-value";
     public String allowedValuesConstraintQid;
     public String allowedValuesConstraintPid;
@@ -81,7 +82,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
             disallowedValues = constraint.disallowedValues;
         }
         if ((allowedValues != null && !allowedValues.contains(value)) ||
-           (disallowedValues != null && disallowedValues.contains(value))) {
+                (disallowedValues != null && disallowedValues.contains(value))) {
             QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
             issue.setProperty("property_entity", pid);
             issue.setProperty("example_value_entity", value);

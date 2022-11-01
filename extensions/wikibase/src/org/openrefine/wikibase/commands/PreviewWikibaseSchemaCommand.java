@@ -51,12 +51,12 @@ import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 public class PreviewWikibaseSchemaCommand extends Command {
-	
-	/**
+
+    /**
      * This command uses POST but is left CSRF-unprotected since it does not incur a side effect or state change in the
      * backend. The reason why it uses POST is to make sure large schemas and engines can be passed as parameters.
-	 */
-    
+     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -122,7 +122,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
             inspector.inspect(editBatch, schema);
-            
+
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
             List<EntityEdit> nonNullEdits = scheduler.schedule(editBatch).stream()

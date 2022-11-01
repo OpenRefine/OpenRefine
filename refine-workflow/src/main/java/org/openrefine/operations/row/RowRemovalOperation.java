@@ -71,29 +71,29 @@ public class RowRemovalOperation extends EngineDependentOperation {
 
         public RowRemovalChange(EngineConfig engineConfig) {
             super(engineConfig);
-                }
-
-                @Override
-                public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-                    Engine engine = getEngine(projectState);
-                    if (Mode.RowBased.equals(engine.getMode())) {
-                        return projectState.removeRows(engine.combinedRowFilters());
-                    } else {
-                        return projectState.removeRecords(engine.combinedRecordFilters());
-                    }
-                }
-
-                @Override
-                public boolean isImmediate() {
-                    return true;
-                }
-
-                @Override
-                public DagSlice getDagSlice() {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-
-            }
-
         }
+
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+            Engine engine = getEngine(projectState);
+            if (Mode.RowBased.equals(engine.getMode())) {
+                return projectState.removeRows(engine.combinedRowFilters());
+            } else {
+                return projectState.removeRecords(engine.combinedRecordFilters());
+            }
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    }
+
+}

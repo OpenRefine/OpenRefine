@@ -45,7 +45,7 @@ public class ATan2 extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2  && args[0] instanceof Number
+        if (args.length == 2 && args[0] instanceof Number
                 && args[1] instanceof Number) {
             return Math.atan2(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }

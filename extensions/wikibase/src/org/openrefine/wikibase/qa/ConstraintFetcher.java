@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.qa;
 
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class ConstraintFetcher {
     private String wikibaseConstraintPid;
 
     private EntityCache entityCache;
-    
+
     public ConstraintFetcher(EntityCache cache, String wikibaseConstraintPid) {
         entityCache = cache;
         this.wikibaseConstraintPid = wikibaseConstraintPid;
@@ -73,7 +74,7 @@ public class ConstraintFetcher {
      * Gets all the constraint statements for a given property
      * 
      * @param pid
-     *             the id of the property to retrieve the constraints for
+     *            the id of the property to retrieve the constraints for
      * @return the list of constraint statements
      */
     private List<Statement> getConstraintStatements(PropertyIdValue pid) {

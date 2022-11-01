@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.util.ParsingUtilities;
 
 public class ManifestV2 implements Manifest {
-	
+
     private String version;
     private String name;
     private String siteIri;
@@ -29,11 +29,11 @@ public class ManifestV2 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private boolean hideStructuredFieldsInMediaInfo;
-    
+
     private Map<String, EntityTypeSettings> entityTypeSettings;
-    
+
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
-    
+
     public ManifestV2(JsonNode manifest) throws JsonParseException, JsonMappingException, IOException {
         version = manifest.path("version").textValue();
 
@@ -62,7 +62,7 @@ public class ManifestV2 implements Manifest {
 
         JsonNode entityTypesJson = manifest.path("entity_types");
         entityTypeSettings = ParsingUtilities.mapper.readValue(
-        		ParsingUtilities.mapper.treeAsTokens(entityTypesJson), 
+                ParsingUtilities.mapper.treeAsTokens(entityTypesJson),
                 new TypeReference<Map<String, EntityTypeSettings>>() {
                 });
         JsonNode editGroups = manifest.path("editgroups");
@@ -70,23 +70,23 @@ public class ManifestV2 implements Manifest {
         hideStructuredFieldsInMediaInfo = editGroups.path("hide_structured_fields_in_mediainfo").asBoolean(false);
     }
 
-	private static class EntityTypeSettings {
-		
-		protected String siteIri;
-		protected String reconEndpoint;
-		protected String mediaWikiApi;
-		
-		@JsonCreator
-		protected EntityTypeSettings(
-				@JsonProperty("site_iri") String siteIri,
-				@JsonProperty("reconciliation_endpoint") String reconEndpoint,
-				@JsonProperty("mediawiki_api") String mediawikiEndpoint) {
-			this.siteIri = siteIri;
-			this.reconEndpoint = reconEndpoint;
-			this.mediaWikiApi = mediawikiEndpoint;
-		}
-	}
-	
+    private static class EntityTypeSettings {
+
+        protected String siteIri;
+        protected String reconEndpoint;
+        protected String mediaWikiApi;
+
+        @JsonCreator
+        protected EntityTypeSettings(
+                @JsonProperty("site_iri") String siteIri,
+                @JsonProperty("reconciliation_endpoint") String reconEndpoint,
+                @JsonProperty("mediawiki_api") String mediawikiEndpoint) {
+            this.siteIri = siteIri;
+            this.reconEndpoint = reconEndpoint;
+            this.mediaWikiApi = mediawikiEndpoint;
+        }
+    }
+
     @Override
     public String getVersion() {
         return version;
@@ -137,37 +137,37 @@ public class ManifestV2 implements Manifest {
         return editGroupsUrlSchema;
     }
 
-	@Override
-	public String getReconServiceEndpoint(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.reconEndpoint;
-	}
+    @Override
+    public String getReconServiceEndpoint(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.reconEndpoint;
+    }
 
-	@Override
-	public String getEntityTypeSiteIri(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.siteIri;
-	}
-	
-	@Override
-	public String getMediaWikiApiEndpoint(String entityType) {
-		EntityTypeSettings setting = entityTypeSettings.get(entityType);
-		if (setting == null) {
-			return null;
-		}
-		return setting.mediaWikiApi != null ? setting.mediaWikiApi : getMediaWikiApiEndpoint();
-	}
+    @Override
+    public String getEntityTypeSiteIri(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.siteIri;
+    }
 
-	@Override
-	public List<String> getAvailableEntityTypes() {
-		return entityTypeSettings.keySet().stream().collect(Collectors.toList());
-	}
+    @Override
+    public String getMediaWikiApiEndpoint(String entityType) {
+        EntityTypeSettings setting = entityTypeSettings.get(entityType);
+        if (setting == null) {
+            return null;
+        }
+        return setting.mediaWikiApi != null ? setting.mediaWikiApi : getMediaWikiApiEndpoint();
+    }
+
+    @Override
+    public List<String> getAvailableEntityTypes() {
+        return entityTypeSettings.keySet().stream().collect(Collectors.toList());
+    }
 
     @Override
     public boolean hideStructuredFieldsInMediaInfo() {

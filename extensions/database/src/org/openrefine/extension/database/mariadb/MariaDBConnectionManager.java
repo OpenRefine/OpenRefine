@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.mariadb;
 
 import java.sql.Connection;
@@ -38,16 +39,14 @@ import org.openrefine.extension.database.SQLType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class MariaDBConnectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger("MariaDBConnectionManager");
-    private Connection connection; 
+    private Connection connection;
     private SQLType type;
 
     private static MariaDBConnectionManager instance;
-    
+
     /**
      * 
      * @param type
@@ -58,7 +57,7 @@ public class MariaDBConnectionManager {
         type = SQLType.forName(MariaDBDatabaseService.DB_NAME);
 
     }
-  
+
     /**
      * Create a new instance of this connection manager.
      *
@@ -91,23 +90,23 @@ public class MariaDBConnectionManager {
      * @return
      */
     public boolean testConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
-        
+
         try {
-                boolean connResult = false;
-              
-                Connection conn = getConnection(databaseConfiguration, true);
+            boolean connResult = false;
+
+            Connection conn = getConnection(databaseConfiguration, true);
             if (conn != null) {
-                    connResult = true;
-                    conn.close();
-                }
-                
-                return connResult;
-       
+                connResult = true;
+                conn.close();
+            }
+
+            return connResult;
+
         } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
-      
+
     }
 
     /**
@@ -119,15 +118,15 @@ public class MariaDBConnectionManager {
             throws DatabaseServiceException {
         try {
 
-           // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
+            // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
 
             if (connection != null && !forceNewConnection) {
-               // logger.debug("connection closed::{}", connection.isClosed());
+                // logger.debug("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Returning existing connection::{}", connection);
                     }
-                    
+
                     return connection;
                 }
             }
@@ -139,9 +138,9 @@ public class MariaDBConnectionManager {
                     databaseConfiguration.getDatabasePassword());
 
             if (logger.isDebugEnabled()) {
-                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL); 
+                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
             }
-            
+
             return connection;
 
         } catch (ClassNotFoundException e) {
@@ -150,10 +149,10 @@ public class MariaDBConnectionManager {
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } 
+        }
     }
 
-    public  void shutdown() {
+    public void shutdown() {
 
         if (connection != null) {
             try {
@@ -162,14 +161,14 @@ public class MariaDBConnectionManager {
                 logger.warn("Non-Managed connection could not be closed. Whoops!", e);
             }
         }
- 
+
     }
-    
+
     private static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-       
-            int port = dbConfig.getDatabasePort();
-            return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
-                    + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
-        
+
+        int port = dbConfig.getDatabasePort();
+        return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + "://" + dbConfig.getDatabaseHost()
+                + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();
+
     }
 }

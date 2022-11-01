@@ -60,17 +60,17 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
 
         schema = WikibaseSchema.reconstruct(schemaJson);
         manifest = ManifestParser.parse(manifestJson);
-        grid = createGrid(new String[] { "a", "b"},
-                new Serializable[][]{
+        grid = createGrid(new String[] { "a", "b" },
+                new Serializable[][] {
                         { "c", "d" },
                         { "e", "f" }
                 })
-                .withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
+                        .withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
         ProjectManager.singleton.getPreferenceStore().put("wikibase.manifests", ParsingUtilities.mapper.readTree("[" + manifestJson + "]"));
         row = grid.getRow(0L);
         rowId = 0;
         bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null,"a", row.getCell(0), grid.getOverlayModels());
+        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
     public void testNoSchema() {
         grid = grid.withOverlayModels(Collections.emptyMap());
         bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null,"a", row.getCell(0), grid.getOverlayModels());
+        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels());
 
         Object returnValue = SUT.call(bindings, new Object[] {});
         assertEquals(returnValue, new EvalError("No wikibase schema associated with this project"));

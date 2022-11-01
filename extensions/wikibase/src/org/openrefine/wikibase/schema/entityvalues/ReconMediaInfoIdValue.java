@@ -35,10 +35,10 @@ public class ReconMediaInfoIdValue extends ReconEntityIdValue implements MediaIn
         super(recon, cellValue);
     }
 
-	@Override
-	public boolean isPlaceholder() {
-		return isNew();
-	}
+    @Override
+    public boolean isPlaceholder() {
+        return isNew();
+    }
 
     @Override
     public String getEntityType() {

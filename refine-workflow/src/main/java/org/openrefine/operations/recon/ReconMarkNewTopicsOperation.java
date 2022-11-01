@@ -121,13 +121,13 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
     protected ReconConfig getNewReconConfig(ColumnMetadata column) {
         return column.getReconConfig() != null ? column.getReconConfig()
                 : new StandardReconConfig(
-                _service,
-                _identifierSpace,
-                _schemaSpace,
-                null,
-                false,
-                Collections.emptyList(),
-                0);
+                        _service,
+                        _identifierSpace,
+                        _schemaSpace,
+                        null,
+                        false,
+                        Collections.emptyList(),
+                        0);
     }
 
     @Override

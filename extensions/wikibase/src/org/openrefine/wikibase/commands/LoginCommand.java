@@ -70,9 +70,9 @@ public class LoginCommand extends Command {
     static final String CONSUMER_SECRET = "wb-consumer-secret";
     static final String ACCESS_TOKEN = "wb-access-token";
     static final String ACCESS_SECRET = "wb-access-secret";
-    
+
     static final Pattern cookieKeyDisallowedCharacters = Pattern.compile("[^a-zA-Z0-9\\-!#$%&'*+.?\\^_`|~]");
-    
+
     protected ConnectionManager manager = null;
 
     @Override
@@ -84,7 +84,7 @@ public class LoginCommand extends Command {
         }
 
         if (manager == null) {
-        	manager = ConnectionManager.getInstance();
+            manager = ConnectionManager.getInstance();
         }
 
         String mediawikiApiEndpoint = removeCRLF(request.getParameter(API_ENDPOINT));
@@ -280,7 +280,7 @@ public class LoginCommand extends Command {
             return str.replaceAll("[\n\r]", "");
         }
     }
-    
+
     /**
      * Removes special characters from cookie keys, replacing them by hyphens.
      */
@@ -289,7 +289,7 @@ public class LoginCommand extends Command {
         return matcher.replaceAll("-");
     }
 
-	protected void setConnectionManager(ConnectionManager connectionManager) {
-		this.manager = connectionManager;
-	}
+    protected void setConnectionManager(ConnectionManager connectionManager) {
+        this.manager = connectionManager;
+    }
 }

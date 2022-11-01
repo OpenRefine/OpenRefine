@@ -26,17 +26,18 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.model;
 
 import org.openrefine.extension.database.DatabaseColumnType;
 
 public class DatabaseColumn {
-   
+
     private String name;
     private int size;
     private DatabaseColumnType type;
     private String label;
-    
+
     public DatabaseColumnType getType() {
         return type;
     }
@@ -87,5 +88,5 @@ public class DatabaseColumn {
     public String toString() {
         return "DatabaseColumn [name=" + name + ", size=" + size + ", type=" + type + ", label=" + label + "]";
     }
-    
+
 }

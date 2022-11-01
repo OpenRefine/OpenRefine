@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.cmd;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.commands.Command;
 
 public abstract class DatabaseCommand extends Command {
-    
+
     private static final Logger logger = LoggerFactory.getLogger("DatabaseCommand");
 
     /**
@@ -55,7 +56,7 @@ public abstract class DatabaseCommand extends Command {
         jdbcConfig.setConnectionName(request.getParameter("connectionName"));
         jdbcConfig.setDatabaseType(request.getParameter("databaseType"));
         jdbcConfig.setDatabaseHost(request.getParameter("databaseServer"));
-        
+
         String dbPort = request.getParameter("databasePort");
         if (dbPort != null) {
             try {
@@ -63,12 +64,12 @@ public abstract class DatabaseCommand extends Command {
             } catch (NumberFormatException nfe) {
             }
         }
-      
+
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
         jdbcConfig.setDatabasePassword(request.getParameter("databasePassword"));
         jdbcConfig.setDatabaseName(request.getParameter("initialDatabase"));
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
-        
+
         if (logger.isDebugEnabled()) {
             logger.debug("JDBC Configuration: {}", jdbcConfig);
         }
@@ -83,10 +84,10 @@ public abstract class DatabaseCommand extends Command {
      * @throws IOException
      */
     protected void sendError(int status, HttpServletResponse response, Exception e)
-            throws  IOException {
-        
+            throws IOException {
+
         // logger.info("sendError::{}", writer);
-       response.sendError(status, e.getMessage());
+        response.sendError(status, e.getMessage());
 
     }
 
@@ -99,16 +100,16 @@ public abstract class DatabaseCommand extends Command {
      */
     protected void sendError(int status, HttpServletResponse response, DatabaseServiceException e)
             throws IOException {
-        
+
         String message = "";
-        
+
         if (e.getSqlState() != null) {
-            
+
             message = message + "SqlCode:" + e.getSqlCode() + "SqlState" + e.getSqlState();
         }
-        
+
         message = message + e.getMessage();
-    
+
         response.sendError(status, e.getMessage());
 
     }

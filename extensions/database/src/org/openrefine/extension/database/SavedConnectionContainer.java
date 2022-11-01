@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database;
 
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.List;
 public class SavedConnectionContainer {
 
     private List<DatabaseConfiguration> savedConnections;
-    
+
     public List<DatabaseConfiguration> getSavedConnections() {
         return savedConnections;
     }
@@ -48,7 +49,7 @@ public class SavedConnectionContainer {
     }
 
     public SavedConnectionContainer() {
-    
+
     }
-    
+
 }

@@ -28,7 +28,7 @@ public class GuessTypesOfColumnCommandTests extends CommandTestBase {
     @BeforeMethod
     public void setUpCommand() {
         command = new GuessTypesOfColumnCommand();
-		((GuessTypesOfColumnCommand)command).setSampleSize(2);
+        ((GuessTypesOfColumnCommand) command).setSampleSize(2);
         project = createProject(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -42,7 +42,7 @@ public class GuessTypesOfColumnCommandTests extends CommandTestBase {
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
-		TestUtils.assertEqualsAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 
     @Test

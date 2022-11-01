@@ -277,8 +277,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("column A"),
                 new ColumnMetadata("column B"),
-                new ColumnMetadata("column C")
-        ));
+                new ColumnMetadata("column C")));
 
         hasNoValidationError(new Wrapper(statementExpr), columnModel);
         hasNoValidationError(new Wrapper(statementDeleteExpr), columnModel);

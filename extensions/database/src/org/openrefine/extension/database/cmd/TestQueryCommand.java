@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.cmd;
 
 import java.io.IOException;
@@ -50,46 +51,46 @@ import org.openrefine.util.ParsingUtilities;
 public class TestQueryCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("TestQueryCommand");
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-       
+            respondCSRFError(response);
+            return;
+        }
+
         DatabaseConfiguration dbConfig = getJdbcConfiguration(request);
         String query = request.getParameter("query");
-        
+
         if (logger.isDebugEnabled()) {
             logger.debug("TestQueryCommand::Post::DatabaseConfiguration::{}::Query::{} ", dbConfig, query);
         }
-      
+
         // ProjectManager.singleton.setBusy(true);
         try {
-           
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             Writer w = response.getWriter();
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            
+
             try {
                 DatabaseInfo databaseInfo = DatabaseService.get(dbConfig.getDatabaseType())
                         .testQuery(dbConfig, query);
                 ObjectMapper mapperObj = new ObjectMapper();
-               
+
                 response.setStatus(HttpStatus.SC_OK);
                 String jsonStr = mapperObj.writeValueAsString(databaseInfo);
                 if (logger.isDebugEnabled()) {
                     logger.debug("TestQueryCommand::Post::Result::{} ", jsonStr);
                 }
-                
+
                 writer.writeStartObject();
                 writer.writeStringField("code", "ok");
                 writer.writeStringField("QueryResult", jsonStr);
                 writer.writeEndObject();
-               
+
             } catch (DatabaseServiceException e) {
                 logger.error("TestQueryCommand::Post::DatabaseServiceException::{}", e);
                 sendError(HttpStatus.SC_BAD_REQUEST, response, e);

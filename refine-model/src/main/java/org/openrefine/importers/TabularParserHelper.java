@@ -76,8 +76,8 @@ public class TabularParserHelper {
     }
 
     public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
-    		String fileSource, String archiveFileName, TableDataReader dataReader,
-    		long limit, ObjectNode options) throws Exception {
+            String fileSource, String archiveFileName, TableDataReader dataReader,
+            long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);

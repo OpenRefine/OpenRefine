@@ -81,7 +81,7 @@ public class CreateProjectCommand extends Command {
                     request, response, parameters, job);
 
             DatamodelRunner runner = RefineServlet.getDatamodelRunner();
-            
+
             String format = parameters.getProperty("format");
 
             // If a format is specified, it might still be wrong, so we need
@@ -121,7 +121,7 @@ public class CreateProjectCommand extends Command {
             } else {
                 ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
-                    runner, job, job.getSelectedFileRecords(), format);
+                        runner, job, job.getSelectedFileRecords(), format);
             }
             adjustLegacyOptions(format, parameters, optionObj);
 

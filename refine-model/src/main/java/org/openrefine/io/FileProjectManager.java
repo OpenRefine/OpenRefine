@@ -75,7 +75,7 @@ public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File _workspaceDir;
-    protected DatamodelRunner            _latestRunner;
+    protected DatamodelRunner _latestRunner;
     protected HistoryEntryManager _historyEntryManager;
 
     protected static boolean projectRemoved = false;
@@ -83,8 +83,8 @@ public class FileProjectManager extends ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     /**
-     * Initializes the project manager to store its workspace in a specific directory,
-     * and provide a default datamodel runner.
+     * Initializes the project manager to store its workspace in a specific directory, and provide a default datamodel
+     * runner.
      * 
      * @param runner
      * @param dir
@@ -95,14 +95,14 @@ public class FileProjectManager extends ProjectManager {
         }
         logger.info("Using workspace directory: {}", dir.getAbsolutePath());
         singleton = new FileProjectManager(dir, runner);
-        
+
         // This needs our singleton set, thus the unconventional control flow
         ((FileProjectManager) singleton).recover();
     }
-    
+
     /**
-     * Initializes the project manager to store its workspace in a specific directory,
-     * without a default datamodel runner.
+     * Initializes the project manager to store its workspace in a specific directory, without a default datamodel
+     * runner.
      * 
      * @param dir
      */
@@ -112,7 +112,7 @@ public class FileProjectManager extends ProjectManager {
         }
         logger.info("Using workspace directory: {}", dir.getAbsolutePath());
         singleton = new FileProjectManager(dir, null);
-        
+
         // This needs our singleton set, thus the unconventional control flow
         ((FileProjectManager) singleton).recover();
     }
@@ -550,7 +550,7 @@ public class FileProjectManager extends ProjectManager {
             _projects.remove(id);
             loadProject(id, runner);
         }
-        }
+    }
 
     @Override
     @JsonIgnore

@@ -2,6 +2,7 @@
 package org.openrefine.util.threads;
 
 //========================================================================
+
 //$$Id: ThreadPoolExecutorAdapter.java,v 1.3 2007/11/02 12:39:41 ludovic_orban Exp $$
 //
 //------------------------------------------------------------------------
@@ -15,7 +16,6 @@ package org.openrefine.util.threads;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
-
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;

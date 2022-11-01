@@ -125,7 +125,7 @@ public class ConnectionManager {
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String consumerToken, String consumerSecret,
-                         String accessToken, String accessSecret) {
+            String accessToken, String accessSecret) {
         OAuthApiConnection connection = new OAuthApiConnection(mediaWikiApiEndpoint,
                 consumerToken, consumerSecret,
                 accessToken, accessSecret);
@@ -177,7 +177,8 @@ public class ConnectionManager {
 
     /**
      * For testability.
-     * @throws IOException 
+     * 
+     * @throws IOException
      */
     BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

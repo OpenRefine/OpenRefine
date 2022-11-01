@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.schema;
+
 import org.openrefine.model.Cell;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.wikibase.qa.QAWarning;
@@ -84,7 +86,8 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
                         throw new QAWarningException(warning);
                     }
                 } catch (IllegalArgumentException e) {
-                    QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", QAWarning.Severity.CRITICAL, 1);
+                    QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "",
+                            QAWarning.Severity.CRITICAL, 1);
                     warning.setProperty("example", cell.recon.match.id);
                     throw new QAWarningException(warning);
                 }

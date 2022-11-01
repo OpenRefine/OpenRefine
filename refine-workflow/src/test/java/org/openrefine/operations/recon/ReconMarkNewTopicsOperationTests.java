@@ -146,7 +146,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testReconJudgeSimilarCellsIndividually() throws DoesNotApplyException, ModelException {
-        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace).createChange();
+        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace)
+                .createChange();
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);

@@ -693,8 +693,8 @@ public class WikitextImporter extends ReaderImporter {
     }
 
     @Override
-	public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-			String archiveFileName, Reader reader, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, Reader reader, long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
 

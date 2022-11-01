@@ -92,12 +92,14 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         Change change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange();
         ChangeContext context = mock(ChangeContext.class);
-        PerformWikibaseEditsOperation.RowNewReconUpdate rowNewReconUpdate = new PerformWikibaseEditsOperation.RowNewReconUpdate(Collections.singletonMap(0, "Q789"));
+        PerformWikibaseEditsOperation.RowNewReconUpdate rowNewReconUpdate = new PerformWikibaseEditsOperation.RowNewReconUpdate(
+                Collections.singletonMap(0, "Q789"));
         ChangeData<PerformWikibaseEditsOperation.RowNewReconUpdate> changeData = runner().create(
                 Collections.singletonList(new IndexedData<PerformWikibaseEditsOperation.RowNewReconUpdate>(0L, rowNewReconUpdate)));
 
-        when(context.<PerformWikibaseEditsOperation.RowNewReconUpdate> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId), Mockito.any()))
-                .thenReturn(changeData);
+        when(context.<PerformWikibaseEditsOperation.RowNewReconUpdate> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
+                Mockito.any()))
+                        .thenReturn(changeData);
 
         GridState applied = change.apply(grid, context);
 

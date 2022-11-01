@@ -17,8 +17,7 @@ public class WbVariableExprTest extends WbExpressionTest<StringValue> {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("column A"),
                 new ColumnMetadata("column B"),
-                new ColumnMetadata("column C")
-        ));
+                new ColumnMetadata("column C")));
 
         hasNoValidationError(new WbStringVariable("column A"), columnModel);
         hasValidationError("Column 'foo' does not exist", new WbStringVariable("foo"), columnModel);

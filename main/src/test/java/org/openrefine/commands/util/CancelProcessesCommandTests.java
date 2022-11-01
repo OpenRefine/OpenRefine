@@ -69,6 +69,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
     ProjectManager projMan = null;
     Project proj = null;
     ProcessManager processMan = null;
+
     @BeforeMethod
     public void SetUp() {
         projMan = mock(ProjectManager.class);
@@ -191,24 +192,24 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-            when(projMan.getProject(anyLong(), any())).thenReturn(proj);
-            when(proj.getProcessManager()).thenReturn(processMan);
+        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
+        when(proj.getProcessManager()).thenReturn(processMan);
 
-            // run
-            try {
-                SUT.doPost(request, response);
-            } catch (ServletException e) {
-                Assert.fail();
-            } catch (IOException e) {
-                Assert.fail();
-            }
+        // run
+        try {
+            SUT.doPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
 
-            verify(request, times(1)).getParameter("project");
+        verify(request, times(1)).getParameter("project");
 
-            verify(processMan, times(1)).cancelAll();
-            verify(response).setCharacterEncoding("UTF-8");
-            //omitted other verifications for brevity.
-            //assumption is that expecting response.setCharacterEncoding times(3)
-            //implies it has Command.respondException has been called as expected
-     }
+        verify(processMan, times(1)).cancelAll();
+        verify(response).setCharacterEncoding("UTF-8");
+        // omitted other verifications for brevity.
+        // assumption is that expecting response.setCharacterEncoding times(3)
+        // implies it has Command.respondException has been called as expected
+    }
 }

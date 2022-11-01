@@ -55,7 +55,7 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
 
     }
 
-	/**
+    /**
      * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      *
      * @param columnName
@@ -78,23 +78,23 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
             String entityType = null;
             try {
                 EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
-            if (entityIdValue instanceof ItemIdValue) {
-                reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
-                entityType = "item";
-            } else if (entityIdValue instanceof MediaInfoIdValue) {
-                reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
-                entityType = "mediainfo";
-            } else if (entityIdValue instanceof PropertyIdValue) {
-                reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
-                entityType = "property";
-            }
+                if (entityIdValue instanceof ItemIdValue) {
+                    reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
+                    entityType = "item";
+                } else if (entityIdValue instanceof MediaInfoIdValue) {
+                    reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
+                    entityType = "mediainfo";
+                } else if (entityIdValue instanceof PropertyIdValue) {
+                    reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
+                    entityType = "property";
+                }
             } catch (IllegalArgumentException e) {
                 QAWarning warning = new QAWarning(WbEntityVariable.INVALID_ENTITY_ID_FORMAT_WARNING_TYPE, "", Severity.CRITICAL, 1);
                 warning.setProperty("example", cell.recon.match.id);
                 throw new QAWarningException(warning);
             }
             if (reconEntityIdValue == null) {
-            	throw new SkipSchemaExpressionException();
+                throw new SkipSchemaExpressionException();
             }
 
             if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRIForEntityType(entityType))) {

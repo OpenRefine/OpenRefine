@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.gdata;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class DeAuthorizeCommand extends Command {
 
             String sessionToken = TokenCookie.getToken(request);
             if (sessionToken != null) {
-                
+
                 // No method to do this in Google's client lib, so roll our own
                 HttpRequestFactory factory = HTTP_TRANSPORT.createRequestFactory();
                 GenericUrl url = new GenericUrl("https://accounts.google.com/o/oauth2/revoke?token=" + sessionToken);
@@ -66,7 +67,7 @@ public class DeAuthorizeCommand extends Command {
                 if (resp.getStatusCode() != 200) {
                     respond(response, String.valueOf(resp.getStatusCode()), resp.getStatusMessage());
                 }
-                
+
                 TokenCookie.deleteToken(request, response);
             }
             respond(response, "200 OK", "");

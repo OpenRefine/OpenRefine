@@ -67,7 +67,7 @@ import com.google.api.services.drive.model.File.ContentHints.Thumbnail;
 public class UploadCommand extends Command {
 
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");
-    
+
     private static final String METADATA_DESCRIPTION = "OpenRefine project dump";
     private static final String METADATA_ICON_FILE = "logo-openrefine-550.png";
 
@@ -76,10 +76,10 @@ public class UploadCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+            respondCSRFError(response);
+            return;
+        }
+
         String token = TokenCookie.getToken(request);
         if (token == null) {
             HttpUtilities.respond(response, "error", "Not authorized");
@@ -92,15 +92,15 @@ public class UploadCommand extends Command {
             Engine engine = getEngine(request, project);
             Properties params = ExportRowsCommand.getRequestParameters(request);
             String name = params.getProperty("name");
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            
+
             Writer w = response.getWriter();
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             try {
                 writer.writeStartObject();
-                
+
                 List<Exception> exceptions = new LinkedList<Exception>();
                 String url = upload(project, engine, params, token, name, exceptions);
                 // The URL can be non-null even if it doesn't fail
@@ -158,45 +158,45 @@ public class UploadCommand extends Command {
     private String uploadOpenRefineProject(Project project, String token,
             String name, List<Exception> exceptions) {
         FileOutputStream fos = null;
-        
+
         try {
-            java.io.File filePath = java.io.File.createTempFile(name, ".tgz"); 
+            java.io.File filePath = java.io.File.createTempFile(name, ".tgz");
             filePath.deleteOnExit();
-            
+
             fos = new FileOutputStream(filePath);
             FileProjectManager.gzipTarToOutputStream(project, fos);
 
             Thumbnail tn = new Thumbnail();
             tn.setMimeType("image/x-icon").encodeImage(getIconImage());
             ContentHints contentHints = new ContentHints();
-            contentHints.setThumbnail(tn); 
+            contentHints.setThumbnail(tn);
 
             File fileMetadata = new File();
             fileMetadata.setName(name + ".tar.gz")
-                .setDescription(METADATA_DESCRIPTION)
-                .setContentHints(contentHints);
+                    .setDescription(METADATA_DESCRIPTION)
+                    .setContentHints(contentHints);
             FileContent projectContent = new FileContent("application/x-gzip", filePath);
             File file = GoogleAPIExtension.getDriveService(token)
                     .files().create(fileMetadata, projectContent)
-                .setFields("id")
-                .execute();
+                    .setFields("id")
+                    .execute();
             logger.info("File ID: " + file.getId());
-            
+
             return file.getId();
         } catch (IOException e) {
             logger.error(ExceptionUtils.getStackTrace(e));
             exceptions.add(e);
-        } 
-        
+        }
+
         return null;
     }
 
     static private String uploadSpreadsheet(
             final Project project, final Engine engine, final Properties params,
             String token, String name, List<Exception> exceptions) {
-        
+
         Drive driveService = GoogleAPIExtension.getDriveService(token);
-        
+
         try {
             File body = new File();
             body.setName(name);
@@ -205,16 +205,16 @@ public class UploadCommand extends Command {
             body.setMimeType("application/vnd.google-apps.spreadsheet");
 
             File file = driveService.files().create(body).execute();
-            String spreadsheetId =  file.getId();
+            String spreadsheetId = file.getId();
 
             SpreadsheetSerializer serializer = new SpreadsheetSerializer(
                     GoogleAPIExtension.getSheetsService(token),
                     spreadsheetId,
                     exceptions);
-            
+
             CustomizableTabularExporterUtilities.exportRows(
                     project.getCurrentGridState(), engine, params, serializer, SortingConfig.NO_SORTING);
-            
+
             return serializer.getUrl();
         } catch (IOException e) {
             logger.error(ExceptionUtils.getStackTrace(e));

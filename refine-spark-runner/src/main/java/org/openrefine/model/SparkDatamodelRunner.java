@@ -72,7 +72,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         context = new JavaSparkContext(
                 new SparkConf()
                         .setAppName("OpenRefine")
-                .setMaster(sparkMasterURI));
+                        .setMaster(sparkMasterURI));
         context.setLogLevel("WARN");
         context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
 

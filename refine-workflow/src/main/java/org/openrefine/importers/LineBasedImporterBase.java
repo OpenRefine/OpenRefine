@@ -111,8 +111,8 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-	public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
-			String fileSource, String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+            String fileSource, String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);
         int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 0), 0);

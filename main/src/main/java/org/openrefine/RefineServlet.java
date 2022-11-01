@@ -185,37 +185,37 @@ public class RefineServlet extends Butterfly {
                     if (s_singleton != null) {
                         Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
                     }
-                if (request.getMethod().equals("GET")) {
-                    if (!logger.isTraceEnabled() && command.logRequests()) {
-                        logger.info("GET {}", request.getPathInfo());
+                    if (request.getMethod().equals("GET")) {
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("GET {}", request.getPathInfo());
+                        }
+                        logger.trace("> GET {}", commandKey);
+                        command.doGet(request, response);
+                        logger.trace("< GET {}", commandKey);
+                    } else if (request.getMethod().equals("POST")) {
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("POST {}", request.getPathInfo());
+                        }
+                        logger.trace("> POST {}", commandKey);
+                        command.doPost(request, response);
+                        logger.trace("< POST {}", commandKey);
+                    } else if (request.getMethod().equals("PUT")) {
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("PUT {}", request.getPathInfo());
+                        }
+                        logger.trace("> PUT {}", commandKey);
+                        command.doPut(request, response);
+                        logger.trace("< PUT {}", commandKey);
+                    } else if (request.getMethod().equals("DELETE")) {
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("DELETE {}", request.getPathInfo());
+                        }
+                        logger.trace("> DELETE {}", commandKey);
+                        command.doDelete(request, response);
+                        logger.trace("< DELETE {}", commandKey);
+                    } else {
+                        response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                     }
-                    logger.trace("> GET {}", commandKey);
-                    command.doGet(request, response);
-                    logger.trace("< GET {}", commandKey);
-                } else if (request.getMethod().equals("POST")) {
-                    if (!logger.isTraceEnabled() && command.logRequests()) {
-                        logger.info("POST {}", request.getPathInfo());
-                    }
-                    logger.trace("> POST {}", commandKey);
-                    command.doPost(request, response);
-                    logger.trace("< POST {}", commandKey);
-                } else if (request.getMethod().equals("PUT")) {
-                    if (!logger.isTraceEnabled() && command.logRequests()) {
-                        logger.info("PUT {}", request.getPathInfo());
-                    }
-                    logger.trace("> PUT {}", commandKey);
-                    command.doPut(request, response);
-                    logger.trace("< PUT {}", commandKey);
-                } else if (request.getMethod().equals("DELETE")) {
-                    if (!logger.isTraceEnabled() && command.logRequests()) {
-                        logger.info("DELETE {}", request.getPathInfo());
-                    }
-                    logger.trace("> DELETE {}", commandKey);
-                    command.doDelete(request, response);
-                    logger.trace("< DELETE {}", commandKey);
-                } else {
-                    response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
-                }
                 } finally {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
@@ -316,10 +316,13 @@ public class RefineServlet extends Butterfly {
     /**
      * Register a single command. Used by extensions.
      *
-     * @param module the module the command belongs to
-     * @param commandName command verb for command
-     * @param commandObject object implementing the command
-     *            
+     * @param module
+     *            the module the command belongs to
+     * @param commandName
+     *            command verb for command
+     * @param commandObject
+     *            object implementing the command
+     * 
      * @return true if command was loaded and registered successfully
      */
     static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {
@@ -347,30 +350,30 @@ public class RefineServlet extends Butterfly {
     }
 
     static public DatamodelRunner getDatamodelRunner() {
-    	if (s_runner == null) {
-    		// load the datamodel runner
+        if (s_runner == null) {
+            // load the datamodel runner
             String runnerClassName = System.getProperty("refine.runner.class");
             if (runnerClassName == null || runnerClassName.isEmpty()) {
-            	runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
+                runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
             }
             try {
-            	logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
-            	Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
-            	RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
-    			s_runner = (DatamodelRunner)runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
-    		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-    				| NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
-    			e1.printStackTrace();
-    			throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
-    		}
-    	}
+                logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
+                Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
+                RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
+                s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
+                e1.printStackTrace();
+                throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
+            }
+        }
         return s_runner;
     }
 
     // introduced for testing purposes (to avoid stubbing a static method)
     // TODO To be refactored.
     public static void setDatamodelRunner(DatamodelRunner runner) {
-    	s_runner = runner;
+        s_runner = runner;
     }
 
     private static class ServletRunnerConfiguration extends RunnerConfiguration {

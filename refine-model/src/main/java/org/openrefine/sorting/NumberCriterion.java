@@ -47,6 +47,7 @@ public class NumberCriterion extends Criterion {
     @Override
     public KeyMaker createKeyMaker(ColumnModel columnModel) {
         return new KeyMaker(columnModel, columnName) {
+
             @Override
             protected Serializable makeKey(Serializable value) {
                 if (ExpressionUtils.isNonBlankData(value)) {

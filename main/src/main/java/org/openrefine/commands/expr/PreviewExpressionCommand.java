@@ -205,15 +205,17 @@ public class PreviewExpressionCommand extends Command {
                     for (IndexedRow indexedRow : rows) {
                         Cell cell = indexedRow.getRow().getCell(cellIndex);
                         Record record = null;
-                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
-                                repeat, repeatCount));
+                        evaluated.add(
+                                evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
+                                        repeat, repeatCount));
                     }
                 } else {
                     List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
                     for (Record record : records) {
                         for (IndexedRow indexedRow : record.getIndexedRows()) {
                             Cell cell = indexedRow.getRow().getCell(cellIndex);
-                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
+                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels,
+                                    project.getId(), eval,
                                     repeat, repeatCount));
                         }
                     }

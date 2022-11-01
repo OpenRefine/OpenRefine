@@ -69,11 +69,11 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
     @Test
     public void testValidate() throws ModelException {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
-            new ColumnMetadata("column A"),
-            new ColumnMetadata("column B"),
-            new ColumnMetadata("column C"),
-            new ColumnMetadata("column D"),
-            new ColumnMetadata("column E")));
+                new ColumnMetadata("column A"),
+                new ColumnMetadata("column B"),
+                new ColumnMetadata("column C"),
+                new ColumnMetadata("column D"),
+                new ColumnMetadata("column E")));
 
         hasNoValidationError(expr, columnModel);
         hasValidationError("No subject item id provided", new WbItemEditExpr(null, null, null), columnModel);

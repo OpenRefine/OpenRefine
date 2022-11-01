@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikibase.schema;
+
 import org.openrefine.model.Cell;
 import org.openrefine.wikibase.schema.ExpressionContext;
 import org.openrefine.wikibase.schema.WbVariableExpr;
@@ -57,10 +59,10 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     public StringValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         if (cell != null && cell.value != null && !cell.value.toString().isEmpty()) {
-        	String stringValue = cell.value.toString();
+            String stringValue = cell.value.toString();
             if (cell.value instanceof Double && ((Double) cell.value) % 1 == 0) {
                 stringValue = Long.toString(((Double) cell.value).longValue());
-        	}
+            }
             return Datamodel.makeStringValue(stringValue.trim());
         }
         throw new SkipSchemaExpressionException();

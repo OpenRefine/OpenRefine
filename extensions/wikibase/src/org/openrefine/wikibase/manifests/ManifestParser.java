@@ -40,11 +40,11 @@ public final class ManifestParser {
         if ("1".equals(majorVersion)) {
             return new ManifestV1(manifestJson);
         } else if ("2".equals(majorVersion)) {
-        	try {
+            try {
                 return new ManifestV2(manifestJson);
-			} catch (IOException e) {
-				throw new ManifestException("invalid manifest format: " + e.getMessage());
-			}
+            } catch (IOException e) {
+                throw new ManifestException("invalid manifest format: " + e.getMessage());
+            }
         } else {
             throw new ManifestException("unsupported manifest version: " + version);
         }

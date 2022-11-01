@@ -26,8 +26,8 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.openrefine.extension.database;
 
+package org.openrefine.extension.database;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public final class SQLType {
         }
         return null;
     }
-    
+
     public String getClassPath() {
         return this.driverContainer.classpath;
     }

@@ -49,7 +49,7 @@ public class WikibaseIssuesFunction implements Function {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() does not expect any arguments");
         }
 
-        Map<String, OverlayModel> overlayModels = (Map<String,OverlayModel>)bindings.get("overlayModels");
+        Map<String, OverlayModel> overlayModels = (Map<String, OverlayModel>) bindings.get("overlayModels");
 
         // Fetch schema
         OverlayModel overlayModel = overlayModels.get("wikibaseSchema");

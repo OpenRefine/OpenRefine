@@ -121,10 +121,10 @@ public class LoadLanguageCommand extends Command {
             ObjectNode json = LoadLanguageCommand.loadLanguage(this.servlet, modname, langs[i]);
             if (json == null) continue;
 
-                bestLang = langs[i];
-                if (translations == null) {
-                    translations = json;
-                } else {
+            bestLang = langs[i];
+            if (translations == null) {
+                translations = json;
+            } else {
                 translations = LoadLanguageCommand.mergeLanguages(json, translations);
             }
         }

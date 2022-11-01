@@ -83,10 +83,10 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (job.canceled) {
                 break;
             }
-            
-            long fileLimit = limit < 0 ? limit : Math.max(limit-totalRows,1L);
+
+            long fileLimit = limit < 0 ? limit : Math.max(limit - totalRows, 1L);
             GridState gridState = parseOneFile(runner, metadata, job, fileRecord, fileLimit, options, progress);
-			gridStates.add(gridState);
+            gridStates.add(gridState);
             totalRows += gridState.rowCount();
 
             if (limit > 0 && totalRows >= limit) {
@@ -112,52 +112,54 @@ abstract public class ImportingParserBase implements ImportingParser {
             current = ImporterUtilities.mergeGridStates(current, gridStates.get(i));
         }
         return current;
-	}
+    }
 
-	public GridState parseOneFile(
-        DatamodelRunner runner,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        ImportingFileRecord fileRecord,
-        long limit,
-        ObjectNode options, final MultiFileReadingProgress progress
-    ) throws Exception {
-        
+    public GridState parseOneFile(
+            DatamodelRunner runner,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            ImportingFileRecord fileRecord,
+            long limit,
+            ObjectNode options, final MultiFileReadingProgress progress) throws Exception {
+
         String fileSource = fileRecord.getFileSource();
         String archiveFileName = fileRecord.getArchiveFileName();
 
         progress.startFile(fileSource);
         ObjectNode optionsCopy = options.deepCopy();
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
-       
-    	if (this instanceof URIImporter) {
-    		return ((URIImporter)this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
-    	} else {
-    		final File file = fileRecord.getFile(job.getRawDataDir());
-    		try {
-	            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
-	            try {
-	                if (this instanceof InputStreamImporter) {
-	                    return ((InputStreamImporter)this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream, limit, options);
-	                } else {
-	                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
-	                    if (commonEncoding != null && commonEncoding.isEmpty()) {
-	                        commonEncoding = null;
-	                    }
-	                    
-	                    Reader reader = ImporterUtilities.getReaderFromStream(
-	                        inputStream, fileRecord, commonEncoding);
-	                    
-	                    return ((ReaderImporter)this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit, options);
-	                }
-	            } finally {
-	                inputStream.close();
-	            }
-    		} finally {
-    	        progress.endFile(fileSource, file.length());
-	        }
-    	}
-        
+
+        if (this instanceof URIImporter) {
+            return ((URIImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName,
+                    fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
+        } else {
+            final File file = fileRecord.getFile(job.getRawDataDir());
+            try {
+                InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+                try {
+                    if (this instanceof InputStreamImporter) {
+                        return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
+                                limit, options);
+                    } else {
+                        String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+                        if (commonEncoding != null && commonEncoding.isEmpty()) {
+                            commonEncoding = null;
+                        }
+
+                        Reader reader = ImporterUtilities.getReaderFromStream(
+                                inputStream, fileRecord, commonEncoding);
+
+                        return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
+                                options);
+                    }
+                } finally {
+                    inputStream.close();
+                }
+            } finally {
+                progress.endFile(fileSource, file.length());
+            }
+        }
+
     }
 
     private void pushImportingOptions(ProjectMetadata metadata, String fileSource, String archiveFileName, ObjectNode options) {

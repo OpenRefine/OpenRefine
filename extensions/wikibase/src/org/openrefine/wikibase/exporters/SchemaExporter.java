@@ -14,19 +14,19 @@ import org.openrefine.wikibase.schema.WikibaseSchema;
 
 public class SchemaExporter implements WriterExporter {
 
-	@Override
-	public String getContentType() {
-		return "application/octet-stream";
-	}
+    @Override
+    public String getContentType() {
+        return "application/octet-stream";
+    }
 
-	@Override
-	public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
-			Writer writer) throws IOException {
-		WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
+    @Override
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
+            Writer writer) throws IOException {
+        WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
             schema = new WikibaseSchema();
         }
         ParsingUtilities.mapper.writeValue(writer, schema);
-	}
+    }
 
 }

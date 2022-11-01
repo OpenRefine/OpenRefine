@@ -85,8 +85,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
                 new ColumnMetadata("column B"),
                 new ColumnMetadata("column C"),
                 new ColumnMetadata("column D"),
-                new ColumnMetadata("column E")
-        ));
+                new ColumnMetadata("column E")));
 
         hasNoValidationError(expr, columnModel);
         hasValidationError("No subject provided", new WbMediaInfoEditExpr(null, null, null, null, null, null, false));

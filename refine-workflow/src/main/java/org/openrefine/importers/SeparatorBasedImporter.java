@@ -100,8 +100,8 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-	public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-			String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
 
@@ -121,10 +121,10 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, charset, limit)
                     : runner.loadTextFile(sparkURI, progress, charset);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
-			return tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
+            return tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
         } else {
             // otherwise, go for the efficient route, using line-based parsing
-        	return super.parseOneFile(runner, metadata, job, fileSource, archiveFileName, sparkURI, limit, options, progress);
+            return super.parseOneFile(runner, metadata, job, fileSource, archiveFileName, sparkURI, limit, options, progress);
         }
     }
 

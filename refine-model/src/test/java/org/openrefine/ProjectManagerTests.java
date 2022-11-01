@@ -66,7 +66,7 @@ public class ProjectManagerTests {
     ProcessManager procmgr;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         runner = mock(DatamodelRunner.class);
         pm = new ProjectManagerStub(runner);
         SUT = spy(pm);
@@ -215,7 +215,7 @@ public class ProjectManagerTests {
         SUT.registerProject(proj, meta);
     }
 
-    protected void AssertProjectRegistered(){
+    protected void AssertProjectRegistered() {
         Assert.assertEquals(SUT.getProject(project.getId(), runner), project);
         Assert.assertEquals(SUT.getProjectMetadata(project.getId()), metadata);
     }

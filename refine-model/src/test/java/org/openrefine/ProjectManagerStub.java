@@ -51,7 +51,7 @@ import org.openrefine.model.changes.LazyChangeDataStore;
  */
 public class ProjectManagerStub extends ProjectManager {
 
-	private DatamodelRunner runner;
+    private DatamodelRunner runner;
 
     public ProjectManagerStub(DatamodelRunner runner) {
         this.runner = runner;

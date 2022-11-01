@@ -54,8 +54,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class PCAxisImporter extends ReaderImporter {
+
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             DatamodelRunner runner,
@@ -75,23 +76,22 @@ public class PCAxisImporter extends ReaderImporter {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            Reader reader, long limit, ObjectNode options
-        ) throws Exception {
+            Reader reader, long limit, ObjectNode options) throws Exception {
         LineNumberReader lnReader = new LineNumberReader(reader);
         List<Exception> exceptions = new ArrayList<>();
         TableDataReader dataReader = new PCAxisTableDataReader(lnReader, exceptions);
-        
+
         // Stuff these settings to get TabularImportingParserBase.readTable
         // to behave as we want.
         JSONUtilities.safePut(options, "ignoreLines", -1);
         JSONUtilities.safePut(options, "headerLines", 1);
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-        
+
         TabularParserHelper tabularParsingHelper = new TabularParserHelper();
         GridState grid = tabularParsingHelper.parseOneFile(
-            runner, metadata, job, fileSource, "",
-             dataReader, limit, options);
+                runner, metadata, job, fileSource, "",
+                dataReader, limit, options);
         if (!exceptions.isEmpty()) {
             throw exceptions.get(0);
         }

@@ -80,7 +80,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
         RefineServlet.setDatamodelRunner(new TestingDatamodelRunner());
     }
-    
+
     @AfterMethod
     public void tearDownRunner() {
         RefineServlet.setDatamodelRunner(null);

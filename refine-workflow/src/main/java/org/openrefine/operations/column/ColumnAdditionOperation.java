@@ -144,8 +144,9 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
-                                              Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
-        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel, overlayModels,
+            Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel,
+                overlayModels,
                 0L);
         return new RowInRecordMapper() {
 

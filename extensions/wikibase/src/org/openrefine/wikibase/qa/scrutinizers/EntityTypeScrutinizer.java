@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.List;
@@ -11,9 +12,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-
 public class EntityTypeScrutinizer extends SnakScrutinizer {
-    
+
     public final static String type = "invalid-entity-type";
     public String allowedEntityTypesQid;
     public String wikibaseItemQid;
