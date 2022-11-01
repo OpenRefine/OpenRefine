@@ -15,7 +15,7 @@
     "netlify:build:deployPreview": "docusaurus write-translations && yarn build"
   },
   "dependencies": {
-    "@crowdin/cli": "^3.8.1",
+    "@crowdin/cli": "^3.9.0",
     "@docusaurus/core": "^2.1.0",
     "@docusaurus/preset-classic": "^2.1.0",
     "clsx": "^1.2.1",
