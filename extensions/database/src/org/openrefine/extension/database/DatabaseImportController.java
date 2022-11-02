@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.extension.database.model.DatabaseColumn;
@@ -272,7 +273,7 @@ public class DatabaseImportController implements ImportingController {
 
         try {
             GridState grid = tabularParserHelper.parseOneFile(
-                    RefineServlet.getDatamodelRunner(),
+                    RefineModel.getRunner(),
                     metadata,
                     job, // fileSource
                     querySource, // archiveFileName
@@ -400,7 +401,7 @@ public class DatabaseImportController implements ImportingController {
 
         try {
             GridState grid = tabularParserHelper.parseOneFile(
-                    RefineServlet.getDatamodelRunner(),
+                    RefineModel.getRunner(),
                     metadata,
                     job, // fileSource
                     querySource, // archiveFileName

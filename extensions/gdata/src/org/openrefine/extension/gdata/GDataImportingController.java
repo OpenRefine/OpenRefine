@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.DefaultImportingController;
@@ -251,7 +252,7 @@ public class GDataImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        DatamodelRunner runner = RefineModel.getRunner();
         GridState grid = null;
         try {
             grid = GDataImporter.parse(
@@ -323,7 +324,7 @@ public class GDataImportingController implements ImportingController {
                 pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
                 pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
 
-                DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+                DatamodelRunner runner = RefineModel.getRunner();
                 GridState grid = null;
                 try {
                     grid = GDataImporter.parse(

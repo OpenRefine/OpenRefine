@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
-import org.openrefine.RefineServlet;
+import org.openrefine.RefineModel;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.FormatRegistry;
@@ -80,7 +80,7 @@ public class CreateProjectCommand extends Command {
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job);
 
-            DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+            DatamodelRunner runner = RefineModel.getRunner();
 
             String format = parameters.getProperty("format");
 

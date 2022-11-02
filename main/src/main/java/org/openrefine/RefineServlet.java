@@ -138,7 +138,8 @@ public class RefineServlet extends Butterfly {
         logger.error("initializing FileProjectManager with dir");
         logger.error(data);
         s_dataDir = new File(data);
-        FileProjectManager.initialize(getDatamodelRunner(), s_dataDir);
+        initDatamodelRunner();
+        FileProjectManager.initialize(RefineModel.getRunner(), s_dataDir);
         ImportingManager.initialize(this);
 
         long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
@@ -347,7 +348,7 @@ public class RefineServlet extends Butterfly {
         return RefineModel.getUserAgent();
     }
 
-    static public DatamodelRunner getDatamodelRunner() {
+    static public void initDatamodelRunner() {
         if (RefineModel.getRunner() == null) {
             // load the datamodel runner
             String runnerClassName = System.getProperty("refine.runner.class");
@@ -366,7 +367,6 @@ public class RefineServlet extends Butterfly {
                 throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
             }
         }
-        return RefineModel.getRunner();
     }
 
     private static class ServletRunnerConfiguration extends RunnerConfiguration {
