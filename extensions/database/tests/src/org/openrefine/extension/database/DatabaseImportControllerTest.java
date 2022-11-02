@@ -24,6 +24,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.stub.RefineDbServletStub;
@@ -62,6 +63,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         DatamodelRunner runner = new TestingDatamodelRunner();
+        RefineModel.setRunner(runner);
         FileProjectManager.initialize(runner, dir);
 
         servlet = new RefineDbServletStub();
