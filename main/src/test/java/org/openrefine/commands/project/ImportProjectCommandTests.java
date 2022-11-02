@@ -104,7 +104,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId, runner()).getCurrentGridState();
+        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
 
         assertGridEquals(grid, expectedGrid);
     }
@@ -118,7 +118,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId, runner()).getCurrentGridState();
+        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
 
         assertGridEquals(grid, expectedGrid);
     }

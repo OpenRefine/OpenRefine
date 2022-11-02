@@ -1,6 +1,8 @@
 
 package org.openrefine;
 
+import org.openrefine.model.DatamodelRunner;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,16 @@ public class RefineModel {
             this.from = from;
             this.to = to;
         }
+    }
+
+    private static DatamodelRunner runner = null;
+
+    public static DatamodelRunner getRunner() {
+        return runner;
+    }
+
+    public static void setRunner(DatamodelRunner newRunner) {
+        runner = newRunner;
     }
 
     private static final List<ClassMapping> classMappings = new ArrayList<ClassMapping>();

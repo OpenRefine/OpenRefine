@@ -35,12 +35,6 @@ public class CommandTestBase extends RefineTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        RefineServlet.setDatamodelRunner(new TestingDatamodelRunner());
-    }
-
-    @AfterMethod
-    public void tearDownRunner() {
-        RefineServlet.setDatamodelRunner(null);
     }
 
     /**

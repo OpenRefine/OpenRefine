@@ -113,6 +113,7 @@ public class RefineTest {
                     "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
                     "UTF-8"); // JSON is always UTF-8
+            RefineModel.setRunner(runner());
             FileProjectManager.initialize(runner(), workspaceDir);
 
         } catch (IOException e) {

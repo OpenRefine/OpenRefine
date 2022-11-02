@@ -342,8 +342,8 @@ public class GDataImportingController implements ImportingController {
                         job.setError(exceptions);
                     } else {
                         long projectId = Project.generateID();
-                        ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId, runner);
-                        CachedGridStore cachedGridStore = ProjectManager.singleton.getCachedGridStore(projectId, runner);
+                        ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+                        CachedGridStore cachedGridStore = ProjectManager.singleton.getCachedGridStore(projectId);
                         Project project = new Project(projectId, grid, changeDataStore, cachedGridStore);
                         job.setProject(project);
 

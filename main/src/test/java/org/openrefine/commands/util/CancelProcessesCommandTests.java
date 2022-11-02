@@ -136,7 +136,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
 
         // run
@@ -169,7 +169,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any()))
+        when(projMan.getProject(anyLong()))
                 .thenReturn(null);
 
         // run
@@ -192,7 +192,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
 
         // run
