@@ -46,6 +46,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
@@ -180,7 +181,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        DatamodelRunner runner = RefineModel.getRunner();
         ImportingUtilities.previewParse(job, format, optionObj, runner, exceptions);
 
         Writer w = response.getWriter();
@@ -218,7 +219,7 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
 
-        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        DatamodelRunner runner = RefineModel.getRunner();
 
         String format = request.getParameter("format");
         ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
@@ -259,7 +260,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        DatamodelRunner runner = RefineModel.getRunner();
         ImportingUtilities.createProject(job, format, optionObj, runner, exceptions, false);
 
         HttpUtilities.respond(response, "ok", "done");

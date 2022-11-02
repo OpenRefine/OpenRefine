@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.ProjectManager;
+import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
@@ -80,7 +81,7 @@ public class CreateProjectCommand extends Command {
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job);
 
-            DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+            DatamodelRunner runner = RefineModel.getRunner();
 
             String format = parameters.getProperty("format");
 
