@@ -80,13 +80,13 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    protected Project loadProject(long id, DatamodelRunner runner) {
+    protected Project loadProject(long id) {
         // empty
         return null;
     }
 
     @Override
-    public void reloadProjectFromWorkspace(long id, DatamodelRunner runner) throws IOException {
+    public void reloadProjectFromWorkspace(long id) throws IOException {
         // empty
     }
 
@@ -119,18 +119,13 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public ChangeDataStore getChangeDataStore(long projectID, DatamodelRunner runner) {
+    public ChangeDataStore getChangeDataStore(long projectID) {
         return new LazyChangeDataStore();
     }
 
     @Override
-    public CachedGridStore getCachedGridStore(long projectId, DatamodelRunner runner) {
+    public CachedGridStore getCachedGridStore(long projectId) {
         return new LazyCachedGridStore();
-    }
-
-    @Override
-    public DatamodelRunner getLatestDatamodelRunner() {
-        return runner;
     }
 
 }

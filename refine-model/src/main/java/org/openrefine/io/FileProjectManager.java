@@ -74,7 +74,7 @@ public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File _workspaceDir;
-    protected DatamodelRunner _latestRunner;
+    protected DatamodelRunner _runner;
     protected HistoryEntryManager _historyEntryManager;
 
     protected static boolean projectRemoved = false;
@@ -117,7 +117,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected FileProjectManager(File dir, DatamodelRunner runner) {
-        _latestRunner = runner;
+        _runner = runner;
         _workspaceDir = dir;
         _historyEntryManager = new HistoryEntryManager();
         if (!_workspaceDir.exists() && !_workspaceDir.mkdirs()) {
@@ -287,15 +287,14 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public Project loadProject(long id, DatamodelRunner runner) throws IOException {
+    public Project loadProject(long id) throws IOException {
         File dir = getProjectDir(id);
         History history;
         try {
-            history = _historyEntryManager.load(runner, dir);
+            history = _historyEntryManager.load(_runner, dir);
         } catch (DoesNotApplyException e) {
             throw new IOException(e);
         }
-        _latestRunner = runner;
         return new Project(id, history);
     }
 
@@ -529,17 +528,17 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public ChangeDataStore getChangeDataStore(long projectID, DatamodelRunner runner) {
-        return _historyEntryManager.getChangeDataStore(runner, getProjectDir(projectID));
+    public ChangeDataStore getChangeDataStore(long projectID) {
+        return _historyEntryManager.getChangeDataStore(_runner, getProjectDir(projectID));
     }
 
     @Override
-    public CachedGridStore getCachedGridStore(long projectId, DatamodelRunner runner) {
-        return _historyEntryManager.getCachedGridStore(runner, getProjectDir(projectId));
+    public CachedGridStore getCachedGridStore(long projectId) {
+        return _historyEntryManager.getCachedGridStore(_runner, getProjectDir(projectId));
     }
 
     @Override
-    public void reloadProjectFromWorkspace(long id, DatamodelRunner runner) throws IOException {
+    public void reloadProjectFromWorkspace(long id) throws IOException {
         ensureProjectSaved(id);
         synchronized (this) {
             Project project = _projects.get(id);
@@ -547,14 +546,8 @@ public class FileProjectManager extends ProjectManager {
                 project.dispose();
             }
             _projects.remove(id);
-            loadProject(id, runner);
+            loadProject(id);
         }
-    }
-
-    @Override
-    @JsonIgnore
-    public DatamodelRunner getLatestDatamodelRunner() {
-        return _latestRunner;
     }
 
 }

@@ -869,8 +869,8 @@ public class ImportingUtilities {
                     format,
                     -1,
                     optionObj);
-            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId, runner);
-            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId, runner);
+            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
             newProject = new Project(projectId, state, dataStore, gridStore);
             job.setProject(newProject);
         } catch (Exception e) {
@@ -882,7 +882,7 @@ public class ImportingUtilities {
 
                 ProjectManager.singleton.registerProject(newProject, pm);
                 try {
-                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId, runner);
+                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId);
                     job.setProjectID(newProject.getId());
                     job.setState("created-project");
                 } catch (IOException e) {

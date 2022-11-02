@@ -58,7 +58,6 @@ import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
@@ -174,11 +173,8 @@ public abstract class Command {
         } catch (NumberFormatException e) {
             throw new ServletException("Can't find project: badly formatted id #", e);
         }
-        DatamodelRunner runner = ProjectManager.singleton.getLatestDatamodelRunner();
-        if (runner == null) {
-            runner = RefineServlet.getDatamodelRunner();
-        }
-        Project p = ProjectManager.singleton.getProject(id, runner);
+
+        Project p = ProjectManager.singleton.getProject(id);
         if (p != null) {
             return p;
         } else {

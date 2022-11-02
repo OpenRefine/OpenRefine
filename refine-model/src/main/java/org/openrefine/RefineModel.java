@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openrefine.model.DatamodelRunner;
+
 /**
  * Utility class to retrieve the version number of OpenRefine efficiently, and provide class aliasing independently of
  * Butterfly.
@@ -26,6 +28,16 @@ public class RefineModel {
             this.from = from;
             this.to = to;
         }
+    }
+
+    private static DatamodelRunner runner = null;
+
+    public static DatamodelRunner getRunner() {
+        return runner;
+    }
+
+    public static void setRunner(DatamodelRunner newRunner) {
+        runner = newRunner;
     }
 
     private static final List<ClassMapping> classMappings = new ArrayList<ClassMapping>();

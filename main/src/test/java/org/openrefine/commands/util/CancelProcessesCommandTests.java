@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.util;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -137,7 +136,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
 
         // run
@@ -170,7 +169,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any()))
+        when(projMan.getProject(anyLong()))
                 .thenReturn(null);
 
         // run
@@ -193,7 +192,7 @@ public class CancelProcessesCommandTests extends CommandTestBase {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
+        when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
 
         // run

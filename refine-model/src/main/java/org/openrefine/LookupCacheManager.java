@@ -41,7 +41,7 @@ public class LookupCacheManager {
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
         String key = targetProject + ";" + targetColumn;
 
-        Project project = ProjectManager.singleton.getProject(targetProject, ProjectManager.singleton.getLatestDatamodelRunner());
+        Project project = ProjectManager.singleton.getProject(targetProject);
         if (project == null) {
             throw new LookupException(String.format("Project %d could not be found", targetProject));
         }

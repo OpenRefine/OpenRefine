@@ -408,8 +408,8 @@ public class DatabaseImportController implements ImportingController {
                     new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
                     limit, options);
             long projectId = Project.generateID();
-            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId, RefineServlet.getDatamodelRunner());
-            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId, RefineServlet.getDatamodelRunner());
+            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
             job.setProject(new Project(projectId, grid, dataStore, gridStore));
         } catch (Exception e) {
             exceptions.add(e);

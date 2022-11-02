@@ -79,7 +79,6 @@ public class RefineServlet extends Butterfly {
 
     static private RefineServlet s_singleton;
     static private File s_dataDir;
-    static private DatamodelRunner s_runner;
 
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
@@ -139,7 +138,7 @@ public class RefineServlet extends Butterfly {
         logger.error("initializing FileProjectManager with dir");
         logger.error(data);
         s_dataDir = new File(data);
-        FileProjectManager.initialize(s_runner, s_dataDir);
+        FileProjectManager.initialize(getDatamodelRunner(), s_dataDir);
         ImportingManager.initialize(this);
 
         long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
@@ -349,7 +348,7 @@ public class RefineServlet extends Butterfly {
     }
 
     static public DatamodelRunner getDatamodelRunner() {
-        if (s_runner == null) {
+        if (RefineModel.getRunner() == null) {
             // load the datamodel runner
             String runnerClassName = System.getProperty("refine.runner.class");
             if (runnerClassName == null || runnerClassName.isEmpty()) {
@@ -359,20 +358,15 @@ public class RefineServlet extends Butterfly {
                 logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
                 Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
                 RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
-                s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
+                RefineModel.setRunner(
+                        (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
                 e1.printStackTrace();
                 throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
             }
         }
-        return s_runner;
-    }
-
-    // introduced for testing purposes (to avoid stubbing a static method)
-    // TODO To be refactored.
-    public static void setDatamodelRunner(DatamodelRunner runner) {
-        s_runner = runner;
+        return RefineModel.getRunner();
     }
 
     private static class ServletRunnerConfiguration extends RunnerConfiguration {
