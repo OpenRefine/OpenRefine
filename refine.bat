@@ -75,20 +75,7 @@ goto end
 set OPTS=
 
 :endConfigReading
-
-rem --- Check JAVA_HOME ---------------------------------------------
-
-if not "%JAVA_HOME%" == "" goto gotJavaHome
-echo You must set JAVA_HOME to point at your Java Development Kit installation
-echo.
-echo If you don't know how to do this, follow the instructions at
-echo.
-echo   http://bit.ly/1c2gkR
-echo.
-
-goto fail
-:gotJavaHome
-
+														 
 rem --- Argument parsing --------------------------------------------
 
 :loop
@@ -158,6 +145,19 @@ for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
 )
 
 :endArgumentParsing
+
+rem --- Check JAVA_HOME ---------------------------------------------
+
+if not "%JAVA_HOME%" == "" goto gotJavaHome
+echo You must set JAVA_HOME to point at your Java Development Kit installation
+echo.
+echo If you don't know how to do this, follow the instructions at
+echo.
+echo   http://bit.ly/1c2gkR
+echo.
+
+goto fail
+:gotJavaHome			
 
 rem --- Fold in Environment Vars --------------------------------------------
 
