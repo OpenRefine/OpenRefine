@@ -293,8 +293,15 @@ Cypress.Commands.add('waitForImportUpdate', () => {
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
 Cypress.Commands.add('typeExpression', (expression) => {
-  cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(500); // eslint-disable-line
+  let expressionLength = expression.length;
+  if(expressionLength <= 30) {
+    cy.get('textarea.expression-preview-code').type(expression);
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression);
+  } else {
+    cy.get('textarea.expression-preview-code').type(expression);
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression.substring(0,30) + ' ...');
+  }
+
 });
 
 /**
