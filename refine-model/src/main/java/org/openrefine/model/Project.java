@@ -90,7 +90,7 @@ public class Project {
      * Restores a project from a saved state.
      * 
      * @param id
-     * @param initialState
+     * @param history
      */
     public Project(
             long id,

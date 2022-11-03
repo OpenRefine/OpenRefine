@@ -102,7 +102,13 @@ public class History {
      * Constructs a history with an initial grid and a list of history entries.
      * 
      * @param initialGrid
-     * @param metadata
+     *            the first grid of the project, at creation time
+     * @param dataStore
+     *            where change data is stored for all changes of the project
+     * @param entries
+     *            the list of entries of the history
+     * @param position
+     *            the current position in the history
      * @throws DoesNotApplyException
      */
     public History(
@@ -245,8 +251,7 @@ public class History {
 
     /**
      * Makes sure the current grid state is cached on disk, to make project loading faster
-     * 
-     * @throws DoesNotApplyException
+     *
      * @throws IOException
      */
     public void cacheCurrentGridState() throws IOException {

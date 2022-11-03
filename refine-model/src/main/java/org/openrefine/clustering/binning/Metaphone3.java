@@ -293,9 +293,6 @@ public class Metaphone3 {
 
     /**
      * Adds an encoding character to the encoded key value string - one parameter version.
-     * 
-     * @param main
-     *            primary encoding character to be added to encoded key string.
      */
     void MetaphAdd(String in) {
         if (!(in.equals("A")

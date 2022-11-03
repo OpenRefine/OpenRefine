@@ -18,9 +18,6 @@ public interface Combiner<T> extends Serializable {
      * summing all the statistics internally. This function is required to be associative: sum(a, sum(b, c)) ==
      * sum(sum(a, b), c)
      *
-     * @param other
-     *            the other facet statistics to add to the current instance. It is required to stem from the same facet
-     *            as the current instance.
      * @return the sum of both facet statistics
      */
     public T sum(T first, T second);

@@ -155,7 +155,7 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * If true, calling {@link rowCount()} will not trigger any Spark job as a cached value will be returned instead.
+     * If true, calling {@link #rowCount()} will not trigger any Spark job as a cached value will be returned instead.
      */
     @JsonIgnore
     public boolean isRowCountCached() {
@@ -163,7 +163,8 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * If true, calling {@link recordCount()} will not trigger any Spark job as a cached value will be returned instead.
+     * If true, calling {@link #recordCount()} will not trigger any Spark job as a cached value will be returned
+     * instead.
      */
     @JsonIgnore
     public boolean isRecordCountCached() {
@@ -199,8 +200,11 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * @todo override this to do the fetching more efficiently: * separate all indices by the partitions they belong to
-     *       * run a job for each partition with non-empty indices * gather all results and return
+     * TODO: override this to do the fetching more efficiently:
+     * <ul>
+     * <li>separate all indices by the partitions they belong to</li>
+     * <li>separate all indices by the partitions they belong to</li>
+     * </ul>
      */
     @Override
     public List<IndexedRow> getRows(List<Long> rowIndices) {

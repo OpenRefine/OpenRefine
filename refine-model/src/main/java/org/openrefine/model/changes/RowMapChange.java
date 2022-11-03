@@ -20,7 +20,7 @@ import org.openrefine.overlay.OverlayModel;
  * mode, this change is applied on each row of the filtered records.
  * 
  * This class can also be subclassed by changes which ignore the engine, by initializing the engine config with
- * {@link EngineConfig.ALL_ROWS}.
+ * {@link EngineConfig#ALL_ROWS}.
  * 
  * @author Antonin Delpeuch
  *
@@ -29,11 +29,11 @@ public abstract class RowMapChange extends EngineDependentChange {
 
     /**
      * Stores the new column model to be applied on the new grid, and the row mappers used to derive the new grid.
-     * 
+     * <p>
      * The positive mapper is applied to the rows matched by the filter, the negative one is applied to the other rows.
-     * 
-     * Computing both the ColumnModel and the RowMappers can be useful in certain situations (such as
-     * {@link ColumnSplitChange}) where computing both separately would be wasteful.
+     * <p>
+     * Computing both the {@link ColumnModel} and the {@link RowMapper}s can be useful in certain situations where
+     * computing both separately would be wasteful.
      * 
      * @author Antonin Delpeuch
      *
@@ -69,8 +69,8 @@ public abstract class RowMapChange extends EngineDependentChange {
 
     /**
      * Returns the function that is applied to each row and row index, the new column model applied to the grid, and the
-     * new overlay models. Computing these in one go can be useful in certain situations (such as
-     * {@link ColumnSplitChange}).
+     * new overlay models. Computing these in one go can be useful in certain situations, for instance when the number
+     * of columns added to the column model depends on the data.
      * 
      * If a subclass needs to return only one non-default value out of mapper, column model and overlay models it can
      * instead override the corresponding method.

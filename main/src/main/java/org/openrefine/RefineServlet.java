@@ -360,7 +360,8 @@ public class RefineServlet extends Butterfly {
                 logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
                 Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
                 RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
-                RefineModel.setRunner((DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
+                RefineModel.setRunner(
+                        (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
                 e1.printStackTrace();

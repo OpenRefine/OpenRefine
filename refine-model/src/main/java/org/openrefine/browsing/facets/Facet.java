@@ -51,7 +51,7 @@ public interface Facet {
 
     /**
      * An aggregator used to populate the facet state for this facet. It should accept the initial state returned by
-     * {@link getInitialFacetState}.
+     * {@link Facet#getInitialFacetState()}.
      */
     public FacetAggregator<?> getAggregator();
 

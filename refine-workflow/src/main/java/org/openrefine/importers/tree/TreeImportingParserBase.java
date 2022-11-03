@@ -61,7 +61,7 @@ import org.openrefine.util.JSONUtilities;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Abstract class for importer parsers which handle tree-shaped data (currently XML & JSON).
+ * Abstract class for importer parsers which handle tree-shaped data (currently XML and JSON).
  */
 abstract public class TreeImportingParserBase extends ImportingParserBase {
 
