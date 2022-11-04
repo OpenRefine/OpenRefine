@@ -50,6 +50,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.*;
+import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;

@@ -40,9 +40,10 @@ import java.util.Properties;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
-import org.openrefine.model.*;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.openrefine.model.*;
+import org.openrefine.model.Record;
 import org.openrefine.overlay.OverlayModel;
 
 /**
