@@ -249,7 +249,7 @@ describe(__filename, function () {
     // Star the expression
     loadExpressionPanel();
     cy.get('#expression-preview-tabs li').contains('History').click();
-    cy.get('.expression-preview-table-wrapper tr td')
+    cy.get('tbody > tr:nth-child(2) > td:nth-child(5)')
       .contains(uniqueExpression)
       .parent()
       .find('a.data-table-star-off')
