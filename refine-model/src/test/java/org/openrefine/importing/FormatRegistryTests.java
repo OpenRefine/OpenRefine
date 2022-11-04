@@ -29,17 +29,9 @@ package org.openrefine.importing;
 
 import static org.testng.Assert.assertEquals;
 
-import org.openrefine.importers.ImporterTest;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class FormatRegistryTests extends ImporterTest {
-
-    @Override
-    @BeforeMethod
-    public void setUp() {
-        super.setUp();
-    }
+public class FormatRegistryTests {
 
     @Test
     public void testStructuredNameSuffixFallback() {
