@@ -132,6 +132,7 @@ jobs:
       run: mvn jacoco:prepare-agent test
       env:
         HADOOP_HOME: ${{ github.workspace }}\refine-spark-runner\hadoop
+        HADOOP_HOME_BIN: ${{ github.workspace }}\refine-spark-runner\hadoop\bin
 
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
