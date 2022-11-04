@@ -21,10 +21,10 @@ public abstract class FacetAggregator<T extends FacetState> extends RowInRecordA
     public abstract RowInRecordFilter getRowFilter();
 
     /**
-     * Like {@link RowAggregator.withRow} except that this method is called on rows that are excluded by at least two
-     * facets, so the values in this row do not normally count towards the statistics displayed in facets. This is
-     * useful for facets which require computing global statistics on the entire dataset regardless of which filtering
-     * is in place.
+     * Like {@link RowAggregator#withRow(Object, long, Row)}} except that this method is called on rows that are
+     * excluded by at least two facets, so the values in this row do not normally count towards the statistics displayed
+     * in facets. This is useful for facets which require computing global statistics on the entire dataset regardless
+     * of which filtering is in place.
      * 
      * @param rowId
      *            the row id of the row to ingest

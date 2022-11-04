@@ -21,7 +21,7 @@ describe('Create new item for each cell', () => {
         ]);
 
         // check notification and ensure no rows it matched anymore
-        cy.assertNotificationContainingText('Mark to create new items for 6 cells in column species, one item for each cell');
+        cy.assertNotificationContainingText('Mark to create new items for cells in column species, one item for each cell');
 
         cy.getCell(0, 'species').find('.data-table-recon-new').should('to.contain', 'new');
         cy.getCell(1, 'species').find('.data-table-recon-new').should('to.contain', 'new');
@@ -32,7 +32,7 @@ describe('Create new item for each cell', () => {
 
     });
 
-    it('Test mark to create new items in many cells, previously reconciled', () => {
+    it('Test mark to create new items in many cells, previously unreconciled', () => {
         const fixture = [
           ['identifier'],
           ['2253634'],

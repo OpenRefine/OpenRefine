@@ -58,7 +58,8 @@ public abstract class ClustererConfig {
     /**
      * Instantiate the configuration on a particular project.
      * 
-     * @param project
+     * @param state
+     *            the state of the grid in the project
      * @return
      */
     public abstract Clusterer apply(GridState state);

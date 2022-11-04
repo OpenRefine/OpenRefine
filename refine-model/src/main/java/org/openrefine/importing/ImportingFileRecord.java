@@ -172,8 +172,6 @@ public class ImportingFileRecord {
      * 
      * @param rawDataDir
      *            the directory where the files pertaining to the corresponding importing
-     * @param hdfs
-     *            the Hadoop file system, to read Spark URIs
      * @return the length of the file in bytes
      */
     public long getSize(File rawDataDir) {

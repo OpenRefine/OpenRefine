@@ -45,8 +45,9 @@ import org.apache.logging.log4j.core.layout.AbstractStringLayout;
 
 /**
  * This is a special Log4j log formatter that is capable of reacting on special log messages and 'indent' the logs
- * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are ">
- * method()" and "< method()" where > and < are used to indicate respectively "entering" and "exiting".
+ * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are
+ * {@code >
+ * method()} and {@code < method()} where &gt; and &lt; are used to indicate respectively "entering" and "exiting".
  */
 @Plugin(name = "IndentingLayout", elementType = Layout.ELEMENT_TYPE, category = Node.CATEGORY, printObject = true)
 public class IndentingLayout extends AbstractStringLayout {

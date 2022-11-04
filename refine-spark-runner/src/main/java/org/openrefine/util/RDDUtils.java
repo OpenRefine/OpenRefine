@@ -72,13 +72,12 @@ public class RDDUtils {
     /**
      * Efficiently filters a RDD which has a RangePartitioner (any sorted RDD) by pruning partitions which cannot
      * contain keys outside the range, or falls back on regular filter if no RangePartitioner is available.
-     * 
-     * Workaround for https://issues.apache.org/jira/browse/SPARK-31518, which will be fixed in 3.1.0
-     * 
-     * @todo remove this once 3.1.0 is released
-     * 
-     * @param <K>
-     *            type of keys
+     * <p>
+     * Workaround for <a href="https://issues.apache.org/jira/browse/SPARK-31518">SPARK-31518</a>, which will be fixed
+     * in 3.1.0
+     * <p>
+     * TODO remove this once 3.1.0 is released
+     *
      * @param <V>
      *            type of values
      * @param rdd

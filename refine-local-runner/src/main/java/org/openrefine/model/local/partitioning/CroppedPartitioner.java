@@ -25,7 +25,7 @@ public class CroppedPartitioner<T> implements Partitioner<T> {
      *            the number of partitions which were dropped from that PLL
      * @param atEnd
      *            true if the partitions were dropped at the end, false if at the beginning
-     * @see {@link #crop(Partitioner, int, boolean)} which attempts to preserve the partioner type
+     * @see #crop(Partitioner, int, boolean) which attempts to preserve the partioner type
      */
     protected CroppedPartitioner(Partitioner<T> parent, int partitionsToDrop, boolean atEnd) {
         this.parent = parent;
@@ -53,7 +53,7 @@ public class CroppedPartitioner<T> implements Partitioner<T> {
     /**
      * Constructs the partitioner based on the partitioner for the uncropped PLL.
      * 
-     * @param parent
+     * @param partitioner
      *            the partitioner for the original PLL
      * @param partitionsToDrop
      *            the number of partitions which were dropped from that PLL

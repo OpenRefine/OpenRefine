@@ -13,11 +13,11 @@ import org.apache.hadoop.fs.RemoteIterator;
 
 /**
  * A file system which enforces that file names are alphabetically sorted when listing the contents of a directory.
- * 
+ * <p>
  * This is important to preserve the ordering of RDDs serialized to disk, as partitions need to be read in the correct
  * order. This ought to be in Spark itself, but sadly it has not made it there yet.
- * 
- * {@link https://issues.apache.org/jira/browse/SPARK-5300}
+ * <p>
+ * <a href="https://issues.apache.org/jira/browse/SPARK-5300">See the corresponding Spark issue.</a>
  * 
  * @author Antonin Delpeuch
  *

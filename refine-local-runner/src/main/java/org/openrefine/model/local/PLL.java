@@ -28,16 +28,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 
+import org.openrefine.model.GridState;
 import org.openrefine.process.ProgressReporter;
 
 /**
  * A Partitioned Lazy List (PLL) is a lazily-computed immutable container data structure to represent lists of elements.
- * 
+ * <p>
  * It is split into contiguous partitions, enabling efficient parallel processing. It is analogous to Spark's Resilient
  * Distributed Datasets (RDD) in spirit, but it is not designed for distributed contexts: a PLL is local to a given JVM.
  * This removes the need for any serialization of jobs or of shuffled data. The API offered by PLL is also more modest,
- * since its only purpose is to fulfill the requirements of the GridState interface.
- * 
+ * since its only purpose is to fulfill the requirements of the {@link GridState} interface.
+ * <p>
  * Running Spark in standalone mode is only designed for local testing and does not remove the overhead of serialization
  * and scheduling.
  * 
@@ -63,10 +64,10 @@ public abstract class PLL<T> {
     /**
      * Iterate over the elements of the given partition. This is the method that should implemented by subclasses. As
      * this method forces computation, ignoring any caching, consumers should not call it directly but rather use
-     * {@link iterate(Partition)}.
+     * {@link #iterate(Partition)}.
      * 
-     * @param index
-     *            the index of the partition to iterate over
+     * @param partition
+     *            the partition to iterate over
      * @return
      */
     protected abstract Stream<T> compute(Partition partition);
@@ -87,8 +88,8 @@ public abstract class PLL<T> {
      * Iterate over the elements of the given partition. If the contents of this PLL have been cached, this will iterate
      * from the cache instead.
      * 
-     * @param index
-     *            the index of the partition to iterate over
+     * @param partition
+     *            the partition to iterate over
      * @return
      */
     public Stream<T> iterate(Partition partition) {
@@ -408,7 +409,7 @@ public abstract class PLL<T> {
 
     /**
      * Indexes the collection in sequential order. This creates a partitioner, making it efficient to retrieve an
-     * element by index with {@link PairPLL.get}.
+     * element by index with {@link PairPLL#get}.
      */
     public PairPLL<Long, T> zipWithIndex() {
         return IndexedPLL.index(this);

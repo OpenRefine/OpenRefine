@@ -14,11 +14,11 @@ import scala.reflect.ClassTag;
 /**
  * A RDD obtained by adding a specified partitioner on an existing RDD. This does not repartition the RDD using the
  * partitioner: it just assumes that the RDD is already appropriately partitioned.
- * 
- * Workaround for https://issues.apache.org/jira/browse/SPARK-1061
- * 
- * @todo add the ability to verify that the RDD is indeed correctly partitioned when iterating on it.
- * 
+ * <p>
+ * Workaround for <a href="https://issues.apache.org/jira/browse/SPARK-1061">SPARK-1061</a>
+ * <p>
+ * TODO add the ability to verify that the RDD is indeed correctly partitioned when iterating on it.
+ *
  * @author Antonin Delpeuch
  */
 public class PartitionedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
@@ -41,7 +41,7 @@ public class PartitionedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>
     /**
      * Creates a new RDD depending on the provided RDD, and applying the given partitioner.
      * 
-     * @param pairRDD
+     * @param parent
      *            the RDD assumed to be sorted using the partitioner
      * @param partitioner
      * @param tupleClassTag

@@ -70,9 +70,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
     /**
      * Returns the number of passes done on the dataset when computing the column count. Override this if you override
      * {@link #getColumnCount(GridState, RowMapper, ObjectNode)} so that progress reporting is appropriately adapted.
-     * 
-     * @param rawCells
-     * @param rowMapper
+     *
      * @param options
      * @return
      */

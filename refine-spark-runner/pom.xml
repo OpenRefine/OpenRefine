@@ -50,6 +50,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
+          <!-- added for Spark -->
+          <argLine>--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED -Djava.library.path=${env.HADOOP_HOME_BIN}</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/conf/suite.xml</suiteXmlFile>
           </suiteXmlFiles>

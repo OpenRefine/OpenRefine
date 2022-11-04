@@ -247,8 +247,7 @@ public class ImportingJob {
 
     /**
      * Returns the most common format among the selected files.
-     * 
-     * @param fileSelectionArray
+     *
      * @return the most common format found, or null if no format could be guessed.
      */
     @JsonIgnore

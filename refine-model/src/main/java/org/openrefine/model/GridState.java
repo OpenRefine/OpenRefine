@@ -75,8 +75,9 @@ public interface GridState {
     public List<IndexedRow> getRows(long start, int limit);
 
     /**
-     * Returns a list of rows corresponding to the row indices supplied. By default this calls {@link getRow(long)} on
-     * all values, but implementations can override this to more efficient strategies if available.
+     * Returns a list of rows corresponding to the row indices supplied. By default, this calls
+     * {@link GridState#getRow(long)} on all values, but implementations can override this to more efficient strategies
+     * if available.
      * 
      * @param rowIndices
      *            the indices of the rows to lookup
@@ -113,12 +114,12 @@ public interface GridState {
 
     /**
      * Iterate over rows matched by a filter, in the order determined by a sorting configuration. This might not require
-     * loading all rows in memory at once, but might be less efficient than {@link collectRows()} if all rows are to be
+     * loading all rows in memory at once, but might be less efficient than {@link #collectRows()} if all rows are to be
      * stored in memory downstream.
-     * 
-     * @todo users of this method might actually be required to iterate up to the end of the iterator to avoid resource
-     *       leaks with some implementations. This should be clarified by the interface. Consider exposing a closeable
-     *       iterable instead.
+     * <p>
+     * TODO users of this method might actually be required to iterate up to the end of the iterator to avoid resource
+     * leaks with some implementations. This should be clarified by the interface. Consider exposing a closeable
+     * iterable instead.
      */
     public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig);
 
@@ -190,7 +191,7 @@ public interface GridState {
 
     /**
      * Iterate over records matched by a filter, ordered according to the sorting configuration. This might not require
-     * loading all records in memory at once, but might be less efficient than {@link collectRecords()} if all records
+     * loading all records in memory at once, but might be less efficient than {@link #collectRecords()} if all records
      * are to be stored in memory downstream.
      */
     public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig);
@@ -245,8 +246,6 @@ public interface GridState {
      * 
      * @param file
      *            the directory where to save the grid state
-     * @throws IOException
-     * @throws InterruptedException
      */
     public void saveToFile(File file) throws IOException;
 
@@ -257,8 +256,6 @@ public interface GridState {
      *            the directory where to save the grid state
      * @param progressReporter
      *            reports the progress of the writing process
-     * @throws IOException
-     * @throws InterruptedException
      */
     public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException;
 
@@ -330,16 +327,12 @@ public interface GridState {
      *            the mapper to apply to the grid
      * @param newColumnModel
      *            the column model to apply to the new grid
-     * @return
      */
     public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel);
 
     /**
      * Returns a new grid state, where the records have been mapped by the mapper
-     * 
-     * @param filter
-     *            the subset of records to which the mapper should be applied. This object and its dependencies are
-     *            required to be serializable.
+     *
      * @param mapper
      *            the function used to transform records This object and its dependencies are required to be
      *            serializable.
@@ -387,9 +380,9 @@ public interface GridState {
 
     /**
      * Only keep the first rows.
-     * 
-     * By default, this uses {@link GridState.removeRows} to remove the last rows, but implementations can override this
-     * for efficiency.
+     * <p>
+     * By default, this uses {@link #removeRows(RowFilter)} to remove the last rows, but implementations can override
+     * this for efficiency.
      * 
      * @param rowLimit
      *            the number of rows to keep
@@ -401,8 +394,8 @@ public interface GridState {
 
     /**
      * Drop the first rows.
-     * 
-     * By default, this uses {@link GridState.removeRows} to remove the first rows, but implementations can override
+     * <p>
+     * By default, this uses {@link #removeRows(RowFilter)} to remove the first rows, but implementations can override
      * this for efficiency.
      * 
      * @param rowsToDrop
@@ -418,6 +411,7 @@ public interface GridState {
     /**
      * Extract change data by applying a function to each filtered row. The calls to the change data producer are
      * batched if requested by the producer.
+     * <p>
      * 
      * @param <T>
      *            the type of change data that is serialized to disk for each row
@@ -425,7 +419,6 @@ public interface GridState {
      *            a filter to select which rows to map
      * @param rowMapper
      *            produces the change data for each row
-     * @return
      * @throws IllegalStateException
      *             if the row mapper returns a batch of results with a different size than the batch of rows it was
      *             called on
@@ -442,7 +435,6 @@ public interface GridState {
      *            a filter to select which rows to map
      * @param recordMapper
      *            produces the change data for each record
-     * @return
      * @throws IllegalStateException
      *             if the record mapper returns a batch of results with a different size than the batch of records it
      *             was called on
@@ -460,7 +452,6 @@ public interface GridState {
      *            produces the new row by joining the old row with change data
      * @param newColumnModel
      *            the column model to apply to the new grid
-     * @return
      */
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
@@ -476,7 +467,6 @@ public interface GridState {
      *            produces the new row by joining the old row with change data
      * @param newColumnModel
      *            the column model to apply to the new grid
-     * @return
      */
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
@@ -487,11 +477,10 @@ public interface GridState {
      *            the type of change data that was serialized to disk for each record
      * @param changeData
      *            the serialized change data
-     * @param rowJoiner
+     * @param recordJoiner
      *            produces the new list of rows by joining the old record with change data
      * @param newColumnModel
      *            the column model to apply to the new grid
-     * @return
      */
     public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel);
 
@@ -500,7 +489,7 @@ public interface GridState {
     /**
      * Creates a new grid state containing all rows in this grid, followed by all rows in the other grid supplied. The
      * overlay models of this grid have priority over the others.
-     * 
+     * <p>
      * The two grid states are required to have the same number of columns.
      * 
      * @param other

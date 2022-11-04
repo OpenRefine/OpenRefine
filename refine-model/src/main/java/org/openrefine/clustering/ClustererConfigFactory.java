@@ -16,8 +16,8 @@ import org.openrefine.clustering.binning.BinningClusterer.BinningClustererConfig
  * Registry where clusterers are registered, to make this extensible.
  * 
  * If you want to implement a new clusterer, it is likely that it is actually a binning or distance-based clusterer, so
- * you might be able to reuse the {@class kNNClusterer} or {@class BinningClusterer} by implementing a
- * {@class ClusteringDistance} or {@class Keyer} instead.
+ * you might be able to reuse the kNNClusterer or {@link org.openrefine.clustering.binning.BinningClusterer} by
+ * implementing a ClusteringDistance or {@link org.openrefine.clustering.binning.Keyer} instead.
  * 
  * @author Antonin Delpeuch
  *

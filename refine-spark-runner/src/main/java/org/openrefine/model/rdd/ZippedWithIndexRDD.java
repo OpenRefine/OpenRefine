@@ -24,9 +24,10 @@ import scala.reflect.ClassTag;
 
 /**
  * A RDD which adds an index to its elements. This index is used as key, not as value, unlike Spark's
- * {@link RDD.zipWithIndex()}.
- * 
+ * {@link RDD#zipWithIndex()}.
+ * <p>
  * This RDD is equipped with a partitioner, from {@link SortedRDD}.
+ * <p>
  * 
  * @author Antonin Delpeuch
  *

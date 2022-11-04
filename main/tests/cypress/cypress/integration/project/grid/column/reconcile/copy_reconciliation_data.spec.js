@@ -39,7 +39,7 @@ describe('Copy reconciliation data', () => {
     cy.get('.dialog-container .dialog-footer button').contains('Copy').click();
 
     cy.assertNotificationContainingText(
-      'Copy 4 recon judgments from column species to duplicated_column'
+      'Copy recon judgments from column species to [duplicated_column]'
     );
 
     // ensure 4 are matched on the duplicate column

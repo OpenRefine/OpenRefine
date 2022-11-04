@@ -332,8 +332,7 @@
       <plugin>
 	  <groupId>org.codehaus.mojo</groupId>
 	  <artifactId>build-helper-maven-plugin</artifactId>
-	  <version>${build-helper-maven-plugin.version}</version>
-	  <inherited>false</inherited>
+	 <inherited>false</inherited>
 	  <executions>
 	    <!-- Attach tar.gz artifact for linux -->
 	    <execution>

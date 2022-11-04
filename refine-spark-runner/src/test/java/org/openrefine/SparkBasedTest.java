@@ -28,7 +28,7 @@ public class SparkBasedTest {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
             try {
-                System.setProperty("hadoop.home.dir", new File("../server/lib-local/native/windows/hadoop").getCanonicalPath());
+                System.setProperty("hadoop.home.dir", new File("../refine-spark-runner/hadoop").getCanonicalPath());
             } catch (IOException e) {
                 logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
             }

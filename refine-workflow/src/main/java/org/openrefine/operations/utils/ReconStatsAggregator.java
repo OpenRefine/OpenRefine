@@ -23,7 +23,7 @@ public class ReconStatsAggregator implements RowAggregator<ReconStatsAggregator.
 
     /**
      * Updates the recon statistics on the columns designated by the supplied indices.
-     * 
+     * <p>
      * Only the columns that have at least one reconciled cell are updated. Their recon config is also updated to the
      * supplied one. Other columns have their recon stats and config cleared.
      */
@@ -48,8 +48,8 @@ public class ReconStatsAggregator implements RowAggregator<ReconStatsAggregator.
     }
 
     /**
-     * Wrapper introduced to satisfy the type bound of aggregateRows (List<ReconStats> is not recognized as serializable
-     * on its own).
+     * Wrapper introduced to satisfy the type bound of aggregateRows ({@code List<ReconStats>} is not recognized as
+     * serializable on its own).
      * 
      * @author Antonin Delpeuch
      *

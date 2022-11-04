@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Serializable;
 
 /**
- * Helper class to represent an item in the map from row ids to change values in the context of a {@class ChangeData}
+ * Helper class to represent an item in the map from row ids to change values in the context of a {@link ChangeData}
  * object.
  * 
  * @author Antonin Delpeuch

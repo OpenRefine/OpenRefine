@@ -76,8 +76,8 @@ public interface Evaluable extends Serializable {
      * 
      * @param baseColumn
      *            the name of the column this expression is based on (null if none)
-     * @returns null if the columns could not be isolated: in this case, the expression might depend on all columns in
-     *          the project.
+     * @return null if the columns could not be isolated: in this case, the expression might depend on all columns in
+     *         the project.
      */
     public default Set<String> getColumnDependencies(String baseColumn) {
         return null;
@@ -85,7 +85,7 @@ public interface Evaluable extends Serializable {
 
     /**
      * Translates this expression by simultaneously substituting column names as the supplied map specifies.
-     * 
+     * <p>
      * This is only possible if the extraction of column dependencies with {@link #getColumnDependencies(String)}
      * succeeds (return a non-null value).
      * 

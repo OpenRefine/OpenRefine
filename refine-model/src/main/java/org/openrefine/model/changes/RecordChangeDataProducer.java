@@ -18,11 +18,7 @@ import org.openrefine.model.Record;
 public interface RecordChangeDataProducer<T> extends Serializable {
 
     /**
-     * Compute the change data on a given row.
-     * 
-     * @param rowId
-     * @param row
-     * @return
+     * Compute the change data on a given record.
      */
     public T call(Record record);
 
@@ -30,7 +26,7 @@ public interface RecordChangeDataProducer<T> extends Serializable {
      * Compute the change data on a batch of consecutive records. This defaults to individual calls if the method is not
      * overridden.
      * 
-     * @param rows
+     * @param records
      *            the list of records to fetch change data on
      * @return a list of the same size
      */

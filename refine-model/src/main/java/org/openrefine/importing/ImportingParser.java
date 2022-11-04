@@ -61,18 +61,22 @@ public interface ImportingParser {
             String format);
 
     /**
-     * 
+     * Main method of the parser: parse a grid out of input files
+     *
      * @param runner
-     *            TODO
+     *            the datamodel runner to use to create the grid
      * @param metadata
+     *            the project metadata, to which the importer can contribute
      * @param job
+     *            the importing job, useful to report importing progress
      * @param fileRecords
+     *            the files to import
      * @param format
+     *            the identifier for the format
      * @param limit
      *            maximum number of rows to create
      * @param options
      *            custom options put together by the UI corresponding to this parser, which the parser should understand
-     * @param project
      */
     public GridState parse(
             DatamodelRunner runner,
@@ -80,5 +84,6 @@ public interface ImportingParser {
             ImportingJob job,
             List<ImportingFileRecord> fileRecords,
             String format,
-            long limit, ObjectNode options) throws Exception;
+            long limit,
+            ObjectNode options) throws Exception;
 }

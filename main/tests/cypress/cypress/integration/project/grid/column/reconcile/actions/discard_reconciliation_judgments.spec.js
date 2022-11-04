@@ -30,7 +30,7 @@ describe('Discard reconciliation judgments', () => {
         ]);
 
         // check notification and ensure no rows it matched anymore
-        cy.assertNotificationContainingText('Discard recon judgments for 6 cells');
+        cy.assertNotificationContainingText('Discard recon judgments for cells in column species');
         // Check that all matches are gone (they contains Choose new match )
         cy.get('table.data-table td .data-table-cell-content').should(
             'not.to.contain',

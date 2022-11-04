@@ -107,6 +107,9 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && cell.recon != null) {
+                    if (clearData) {
+                        return row.withCell(columnIndex, new Cell(cell.value, null));
+                    }
                     Recon newRecon = cell.recon
                             .withMatch(null)
                             .withMatchRank(-1)

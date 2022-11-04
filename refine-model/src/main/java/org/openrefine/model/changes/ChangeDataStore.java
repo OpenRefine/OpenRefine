@@ -9,7 +9,7 @@ import org.openrefine.process.ProgressReporter;
 /**
  * Stores and retrieves {@link ChangeData} objects keyed by a pair: - the id of the change it belongs to - a string id
  * for which part of the change it represents (such that changes can potentially register multiple change data)
- * 
+ * <p>
  * A serializer is provided for both methods if they want to store the change data physically somewhere.
  * 
  * @author Antonin Delpeuch
@@ -50,8 +50,6 @@ public interface ChangeDataStore {
      * @param historyEntryId
      * @param dataId
      * @param serializer
-     * @return
-     * @throws IOException
      */
     public <T> ChangeData<T> retrieve(
             long historyEntryId,
@@ -63,7 +61,6 @@ public interface ChangeDataStore {
      * Discards all change data objects which belong to a given history entry id.
      * 
      * @param historyEntryId
-     * @throws IOException
      */
     public void discardAll(long historyEntryId);
 

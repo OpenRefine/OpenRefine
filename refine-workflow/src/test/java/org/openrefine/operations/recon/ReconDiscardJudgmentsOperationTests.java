@@ -114,4 +114,29 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         assertGridEquals(applied, expected);
     }
 
+    @Test
+    public void testClearReconOperation() throws DoesNotApplyException, ModelException {
+        Change change = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", true).createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(2, 0, 0);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
+    }
+
 }

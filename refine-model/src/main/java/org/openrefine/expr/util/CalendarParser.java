@@ -69,12 +69,12 @@ class ParserState {
     /** value indicating an unset variable. */
     static final int UNSET = Integer.MIN_VALUE;
 
-    /** <code>true</code> if year should appear before month. */
-    private boolean yearBeforeMonth;
-    /** <code>true</code> if year should appear before day. */
-    private boolean yearBeforeDay;
-    /** <code>true</code> if month should appear before day. */
-    private boolean monthBeforeDay;
+    /** {@code true} if year should appear before month. */
+    private final boolean yearBeforeMonth;
+    /** {@code true} if year should appear before day. */
+    private final boolean yearBeforeDay;
+    /** {@code true} if month should appear before day. */
+    private final boolean monthBeforeDay;
 
     /** year. */
     private int year;
@@ -91,17 +91,17 @@ class ParserState {
     /** millisecond (0-999). */
     private int milli;
 
-    /** <code>true</code> if time is after noon. */
+    /** {@code true} if time is after noon. */
     private boolean timePostMeridian;
 
-    /** time zone (use default time zone if this is <code>null</code>). */
+    /** time zone (use default time zone if this is {@code null}). */
     private TimeZone timeZone;
 
     /**
      * Create parser state for the specified order.
      * 
      * @param order
-     *            <code>YY_MM_DD</code>, <code>MM_DD_YY</code>, etc.
+     *            {@code YY_MM_DD}, {@code MM_DD_YY}, etc.
      */
     ParserState(int order) {
         yearBeforeMonth = (order & YEAR_BEFORE_MONTH) == YEAR_BEFORE_MONTH;
@@ -174,7 +174,7 @@ class ParserState {
     /**
      * Get time zone.
      * 
-     * @return time zone (<code>null</code> if none was specified)
+     * @return time zone ({@code null} if none was specified)
      */
     TimeZone getTimeZone() {
         return timeZone;
@@ -192,7 +192,7 @@ class ParserState {
     /**
      * Is day of month value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isDateSet() {
         return (day != UNSET);
@@ -201,7 +201,7 @@ class ParserState {
     /**
      * Is hour value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isHourSet() {
         return (hour != UNSET);
@@ -210,7 +210,7 @@ class ParserState {
     /**
      * Is millisecond value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isMillisecondSet() {
         return (milli != UNSET);
@@ -219,7 +219,7 @@ class ParserState {
     /**
      * Is minute value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isMinuteSet() {
         return (minute != UNSET);
@@ -228,7 +228,7 @@ class ParserState {
     /**
      * Is a numeric month placed before a numeric day of month?
      * 
-     * @return <code>true</code> if month is before day of month
+     * @return {@code true} if month is before day of month
      */
     boolean isMonthBeforeDay() {
         return monthBeforeDay;
@@ -237,7 +237,7 @@ class ParserState {
     /**
      * Is month value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isMonthSet() {
         return (month != UNSET);
@@ -246,7 +246,7 @@ class ParserState {
     /**
      * Is second value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isSecondSet() {
         return (second != UNSET);
@@ -255,7 +255,7 @@ class ParserState {
     /**
      * Is the time post-meridian (i.e. afternoon)?
      * 
-     * @return <code>true</code> if time is P.M.
+     * @return {@code true} if time is P.M.
      */
     boolean isTimePostMeridian() {
         return (timePostMeridian || hour > 12);
@@ -264,7 +264,7 @@ class ParserState {
     /**
      * Is a numeric year placed before a numeric day of month?
      * 
-     * @return <code>true</code> if year is before day of month
+     * @return {@code true} if year is before day of month
      */
     boolean isYearBeforeDay() {
         return yearBeforeDay;
@@ -273,7 +273,7 @@ class ParserState {
     /**
      * Is a numeric year placed before a numeric month?
      * 
-     * @return <code>true</code> if year is before month
+     * @return {@code true} if year is before month
      */
     boolean isYearBeforeMonth() {
         return yearBeforeMonth;
@@ -282,7 +282,7 @@ class ParserState {
     /**
      * Is year value set?
      * 
-     * @return <code>true</code> if a value has been assigned
+     * @return {@code true} if a value has been assigned
      */
     boolean isYearSet() {
         return (year != UNSET);
@@ -456,7 +456,7 @@ class ParserState {
      * Set the AM/PM indicator value.
      * 
      * @param val
-     *            <code>true</code> if time represented is after noon
+     *            {@code true} if time represented is after noon
      */
     void setTimePostMeridian(boolean val) {
         timePostMeridian = val;
@@ -548,7 +548,7 @@ public class CalendarParser {
     /** value indicating an unset variable. */
     private static final int UNSET = ParserState.UNSET;
 
-    /** set to <code>true</code> to enable debugging. */
+    /** set to {@code true} to enable debugging. */
     private static final boolean DEBUG = false;
 
     /** list of weekday names. */
@@ -570,7 +570,7 @@ public class CalendarParser {
      * @param cal
      *            object containing time
      * @param needSpace
-     *            <tt>true</tt> if a space character should be inserted before any data
+     *            {@code true} if a space character should be inserted before any data
      */
     private static final void appendTimeString(StringBuffer buf, Calendar cal, boolean needSpace) {
         final int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -675,7 +675,7 @@ public class CalendarParser {
 
     /**
      * Translate a string representation of an ordinal number to the appropriate numeric value.<br>
-     * For example, <tt>"1st"</tt> would return <tt>1</tt>, <tt>"23rd"</tt> would return <tt>23</tt>, etc.
+     * For example, {@code "1st"} would return {@code 1}, {@code "23rd"} would return <tt>23</tt>, etc.
      * 
      * @param str
      *            ordinal string
@@ -708,7 +708,7 @@ public class CalendarParser {
      * @param place
      *            place ID
      * 
-     * @return place name (<code>"hour"</code>, <code>"minute"</code>, etc.
+     * @return place name ({@code "hour"}, <code>"minute"</code>, etc.
      */
     private static final String getTimePlaceString(int place) {
         switch (place) {
@@ -733,7 +733,7 @@ public class CalendarParser {
      * @param str
      *            weekday name to check
      * 
-     * @return <code>true</code> if the supplied string is a weekday name.
+     * @return {@code true} if the supplied string is a weekday name.
      */
     private static final boolean isWeekdayName(String str) {
         if (str == null || str.length() < 3) {
@@ -754,7 +754,7 @@ public class CalendarParser {
     /**
      * Load list of time zones if sun.util.calendar.ZoneInfo exists.
      * 
-     * @return <code>null</code> if time zone list cannot be loaded.
+     * @return {@code null} if time zone list cannot be loaded.
      */
     private static final String[] loadTimeZoneNames() {
         Class<?> zoneInfo;
@@ -766,14 +766,14 @@ public class CalendarParser {
 
         Method method;
         try {
-            method = zoneInfo.getDeclaredMethod("getAvailableIDs", new Class[0]);
+            method = zoneInfo.getDeclaredMethod("getAvailableIDs");
         } catch (NoSuchMethodException nsme) {
             return null;
         }
 
         Object result;
         try {
-            result = method.invoke((Object) null);
+            result = method.invoke(null);
         } catch (IllegalAccessException iae) {
             return null;
         } catch (InvocationTargetException ite) {
@@ -810,10 +810,9 @@ public class CalendarParser {
                         if (finalList == null) {
                             numSaved++;
                         } else {
-                            StringBuffer dst = new StringBuffer();
-                            dst.append(tmpList[j].charAt(0));
-                            dst.append("DT");
-                            finalList[numSaved++] = dst.toString();
+                            String dst = tmpList[j].charAt(0) +
+                                    "DT";
+                            finalList[numSaved++] = dst;
                         }
                     }
                 }
@@ -825,13 +824,13 @@ public class CalendarParser {
 
     /**
      * Convert the supplied month name to its numeric representation. <br>
-     * For example, <tt>"January"</tt> (or any substring) would return <tt>1</tt> and <tt>"December"</tt> would return
-     * <tt>12</tt>.
+     * For example, {@code "January"} (or any substring) would return {@code 1} and {@code "December"} would return
+     * {@code 12}.
      * 
      * @param str
      *            month name
      * 
-     * @return the numeric month, or <tt>CalendarParser.UNSET</tt> if the supplied string is not a valid month name.
+     * @return the numeric month, or {@link CalendarParser#UNSET} if the supplied string is not a valid month name.
      */
     public static int monthNameToNumber(String str) {
         if (str != null && str.length() >= 3) {
@@ -873,8 +872,8 @@ public class CalendarParser {
      * @param dateStr
      *            date string
      * @param order
-     *            order in which pieces of numeric strings are assigned (should be one of <tt>YY_MM_DD</tt>,
-     *            <tt>MM_DD_YY</tt>, etc.)
+     *            order in which pieces of numeric strings are assigned (should be one of {@code YY_MM_DD},
+     *            {@code MM_DD_YY}, etc.)
      * 
      * @return parsed date
      * 
@@ -897,10 +896,10 @@ public class CalendarParser {
      * @param dateStr
      *            date string
      * @param order
-     *            order in which pieces of numeric strings are assigned (should be one of <tt>YY_MM_DD</tt>,
-     *            <tt>MM_DD_YY</tt>, etc.)
+     *            order in which pieces of numeric strings are assigned (should be one of {@code YY_MM_DD},
+     *            {@code MM_DD_YY}, etc.)
      * @param ignoreChanges
-     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt> being changed to <tt>Mar 3</tt>.
+     *            if {@code true}, ignore date changes such as {@code Feb 31} being changed to {@code Mar 3}.
      * 
      * @return parsed date
      * 
@@ -1928,7 +1927,7 @@ public class CalendarParser {
             if (needSpace) {
                 buf.append(' ');
             }
-            buf.append(MONTHS[calMonth][1].substring(0, 3));
+            buf.append(MONTHS[calMonth][1], 0, 3);
             needSpace = true;
         }
         if (calYear > UNSET) {

@@ -96,7 +96,7 @@ public class Parser {
     }
 
     /**
-     * <expression> := <sub-expression> | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
+     * {@code <expression> := <sub-expression> | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>}
      */
     protected GrelExpr parseExpression() throws ParsingException {
         GrelExpr sub = parseSubExpression();
@@ -118,7 +118,7 @@ public class Parser {
     }
 
     /**
-     * <sub-expression> := <term> | <sub-expression> [ "+" "-" ] <term>
+     * {@code <sub-expression> := <term> | <sub-expression> [ "+" "-" ] <term>}
      */
     protected GrelExpr parseSubExpression() throws ParsingException {
         GrelExpr sub = parseTerm();
@@ -140,7 +140,7 @@ public class Parser {
     }
 
     /**
-     * <term> := <factor> | <term> [ "*" "/" "%" ] <factor>
+     * {@code <term> := <factor> | <term> [ "*" "/" "%" ] <factor>}
      */
     protected GrelExpr parseTerm() throws ParsingException {
         GrelExpr factor = parseFactor();
@@ -162,10 +162,10 @@ public class Parser {
     }
 
     /**
-     * <term> := <term-start> ( <path-segment> )* <term-start> := <string> | <number> | - <number> | <regex> |
-     * <identifier> | <identifier> ( <expression-list> )
+     * {@code <term> := <term-start> ( <path-segment> )* <term-start> := <string> | <number> | - <number> | <regex> |
+     * <identifier> | <identifier> ( <expression-list> )}
      *
-     * <path-segment> := "[" <expression-list> "]" | "." <identifier> | "." <identifier> "(" <expression-list> ")"
+     * {@code <path-segment> := "[" <expression-list> "]" | "." <identifier> | "." <identifier> "(" <expression-list> ")"}
      *
      */
     protected GrelExpr parseFactor() throws ParsingException {
@@ -298,7 +298,7 @@ public class Parser {
     }
 
     /**
-     * <expression-list> := <empty> | <expression> ( "," <expression> )*
+     * {@code <expression-list> := <empty> | <expression> ( "," <expression> )*}
      *
      */
     protected List<GrelExpr> parseExpressionList(String closingDelimiter) throws ParsingException {
