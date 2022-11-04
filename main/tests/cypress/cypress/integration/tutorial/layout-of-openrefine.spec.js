@@ -31,7 +31,7 @@ describe(__filename, function () {
     // Note how the numbering has changed - indicating that several rows are related to the same record
     cy.get('span[bind="modeSelectors"]').contains('records').click();
 
-    cy.get('#summary-bar').should('to.contain', '100,1 records');
+    cy.get('#summary-bar').should('to.contain', '1,001 records');
 
     /** ************
     Joining Cells
