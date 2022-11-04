@@ -80,8 +80,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -99,8 +100,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -124,8 +126,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "234" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, true, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -148,8 +151,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -171,8 +175,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -191,8 +196,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1" + inputSeparator + " 12" + inputSeparator + " data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, true, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -211,8 +217,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, false, false, true);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -231,8 +238,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, false, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -251,8 +259,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, true, false, true);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -271,8 +280,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1" + inputSeparator + inputSeparator + " data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, true, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -293,8 +303,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -318,8 +329,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 + inputSeparator + "data6";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -348,8 +360,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + inputSeparator + "data2";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -372,8 +385,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 1, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -397,8 +411,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 1, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -426,8 +441,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 1, 3, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -460,8 +476,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
 
         try {
+            stageString(input);
             prepareOptions(sep, 2, 2, 3, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -486,8 +503,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 0, false, true);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -507,8 +525,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -530,8 +549,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -553,8 +573,9 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "'data1'" + inputSeparator + "'data2'" + inputSeparator + "'data3'";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -577,8 +598,9 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
 
         try {
+            stageString(input);
             prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]", false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -594,12 +616,11 @@ public class TsvCsvImporterTests extends ImporterTest {
     // ---------------------read tests------------------------
     @Test
     public void readCsvWithProperties() {
-        StringReader reader = new StringReader(SAMPLE_ROW);
-
-        prepareOptions(",", -1, 0, 0, 0, true, true);
+         prepareOptions(",", -1, 0, 0, 0, true, true);
 
         try {
-            parseOneFile(SUT, reader);
+            stageString(SAMPLE_ROW);
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }
@@ -614,12 +635,12 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test
     public void readCsvWithPropertiesIgnoreQuotes() {
         String input = "data1,data2\",data3,data4";
-        StringReader reader = new StringReader(input);
 
         prepareOptions(",", -1, 0, 0, 0, true, true);
 
         try {
-            parseOneFile(SUT, reader);
+            stageString(input);
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);
         }

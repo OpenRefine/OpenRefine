@@ -37,12 +37,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.refine.importers.tree.ImportColumnGroup;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -111,7 +111,7 @@ public class XmlImporterTests extends ImporterTest {
     @Test
     public void setsProjectMetadata() throws IOException {
         // Setup a file record to import
-        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), "UTF-8");
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), StandardCharsets.UTF_8);
         List<ObjectNode> fileRecords = new ArrayList<>();
         fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
                 "{\"location\": \"test-file.xml\",\"fileName\": \"test-file.xml\"}"));
@@ -425,10 +425,11 @@ public class XmlImporterTests extends ImporterTest {
 
     private void RunTest(String testString, ObjectNode objectNode) {
         try {
-            inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
+            stageString(testString);
+        } catch (IOException e1) {
             Assert.fail();
         }
+
 
         try {
             parseOneFile(SUT, inputStream, objectNode);
@@ -439,7 +440,7 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Override
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
         parseOneInputStream(parser, inputStream, options);
     }
 }

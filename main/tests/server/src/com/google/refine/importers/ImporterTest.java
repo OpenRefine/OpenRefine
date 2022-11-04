@@ -30,13 +30,14 @@ package com.google.refine.importers;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -60,6 +61,8 @@ public abstract class ImporterTest extends RefineTest {
     protected ImportingJob job;
     protected RefineServlet servlet;
     protected ObjectNode options;
+    protected ObjectNode fileRecord;
+    protected ImporterUtilities.MultiFileReadingProgress progress = new NullProgress();
 
     public void setUp() {
         // FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
@@ -73,6 +76,11 @@ public abstract class ImporterTest extends RefineTest {
         when(job.getRetrievalRecord()).thenReturn(ParsingUtilities.mapper.createObjectNode());
 
         options = Mockito.mock(ObjectNode.class);
+        when(options.deepCopy()).thenReturn(options);
+
+        fileRecord = ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", "file:/dev/null", "file-source#worksheet"));
+
     }
 
     public void tearDown() {
@@ -85,75 +93,76 @@ public abstract class ImporterTest extends RefineTest {
         options = null;
     }
 
-    protected void parseOneFile(ImportingParserBase parser, Reader reader) {
+    @Deprecated
+    void parseOneFile(ImportingParserBase parser, Reader reader) throws IOException {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
                 project,
                 metadata,
                 job,
-                "file-source",
-                reader,
+                fileRecord, //"file-source",
                 -1,
                 options,
-                exceptions);
+                exceptions,
+                progress);
         assertEquals(exceptions.size(), 0);
         project.update();
     }
 
-    protected void parseOneFile(ImportingParserBase parser, InputStream inputStream) {
+    @Deprecated
+    void parseOneFile(ImportingParserBase parser, InputStream inputStream) throws IOException {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
                 project,
                 metadata,
                 job,
-                "file-source",
-                inputStream,
+                fileRecord,
                 -1,
                 options,
-                exceptions);
+                exceptions,
+                progress);
         assertEquals(exceptions.size(), 0);
         project.update();
     }
 
-    protected List<Exception> parseOneFileAndReturnExceptions(ImportingParserBase parser, InputStream inputStream) {
-        List<Exception> exceptions = new ArrayList<Exception>();
+    protected void parseOneFile(@NotNull ImportingParserBase parser) throws IOException {
+        List<Exception> exceptions = new ArrayList<>();
         parser.parseOneFile(
                 project,
                 metadata,
                 job,
-                "file-source",
-                inputStream,
+                fileRecord,
                 -1,
                 options,
-                exceptions);
+                exceptions,
+                progress);
+        assertEquals(exceptions.size(), 0);
+        project.update();
+    }
+
+
+    protected List<Exception> parseOneFileAndReturnExceptions(@NotNull ImportingParserBase parser)
+            throws IOException {
+        List<Exception> exceptions = new ArrayList<>();
+        parser.parseOneFile(
+                project,
+                metadata,
+                job,
+                fileRecord,
+                -1,
+                options,
+                exceptions,
+                progress);
         project.update();
         return exceptions;
     }
 
-    protected void parseOneFile(TreeImportingParserBase parser, Reader reader) {
-        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
-        parser.parseOneFile(
-                project,
-                metadata,
-                job,
-                "file-source",
-                reader,
-                rootColumnGroup,
-                -1,
-                options,
-                exceptions);
-        assertEquals(exceptions.size(), 0);
-        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.columnModel.update();
-    }
-
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
         parseOneInputStreamAsReader(parser, inputStream, options);
     }
 
     protected void parseOneInputStream(
-            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+            @NotNull TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -161,17 +170,17 @@ public abstract class ImporterTest extends RefineTest {
                 project,
                 metadata,
                 job,
-                "file-source",
-                inputStream,
+                fileRecord, //"file-source",
                 rootColumnGroup,
                 -1,
                 options,
-                exceptions);
+                exceptions,
+                progress);
         postProcessProject(project, rootColumnGroup, exceptions);
     }
 
     protected void parseOneInputStreamAsReader(
-            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+            @NotNull TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -180,12 +189,12 @@ public abstract class ImporterTest extends RefineTest {
                 project,
                 metadata,
                 job,
-                "file-source",
-                reader,
+                fileRecord, //"file-source",
                 rootColumnGroup,
                 -1,
                 options,
-                exceptions);
+                exceptions,
+                progress);
         postProcessProject(project, rootColumnGroup, exceptions);
 
         try {
@@ -196,7 +205,7 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     protected void postProcessProject(
-            Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
+            Project project, ImportColumnGroup rootColumnGroup, @NotNull List<Exception> exceptions) {
 
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.update();
@@ -205,5 +214,44 @@ public abstract class ImporterTest extends RefineTest {
             e.printStackTrace();
         }
         assertEquals(exceptions.size(), 0);
+    }
+
+    @NotNull
+    protected void stageFile(File spreadsheet) throws IOException {
+        FileUtils.copyFile(spreadsheet, new File(job.getRawDataDir(), spreadsheet.getName()));
+        initMetadata(spreadsheet.getName());
+    }
+
+    @NotNull
+    protected void stageResource(String name) throws IOException {
+        FileUtils.copyURLToFile(ClassLoader.getSystemResource(name),
+                new File(job.getRawDataDir(), name));
+        initMetadata(name);
+    }
+
+    protected void stageString(String contents) throws IOException {
+        FileUtils.writeStringToFile( new File(job.getRawDataDir(), "foo"), contents, StandardCharsets.UTF_8);
+        initMetadata("foo");
+    }
+
+    protected void stageString(String filename, String contents) throws IOException {
+        FileUtils.writeStringToFile( new File(job.getRawDataDir(), filename), contents, StandardCharsets.UTF_8);
+        initMetadata(filename);
+    }
+
+    private void initMetadata(String filename) throws JsonProcessingException {
+        fileRecord = ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"location\": \"%1$s\",\"fileName\": \"%1$s\"}", filename));
+    }
+
+    private class NullProgress implements ImporterUtilities.MultiFileReadingProgress {
+        @Override
+        public void startFile(String fileSource) {}
+
+        @Override
+        public void readingFile(String fileSource, long bytesRead) {}
+
+        @Override
+        public void endFile(String fileSource, long bytesRead) {}
     }
 }

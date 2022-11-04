@@ -80,35 +80,12 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         super(useInputStream);
     }
 
-    /**
-     * @param project
-     * @param metadata
-     * @param job
-     * @param reader
-     * @param fileSource
-     * @param limit
-     * @param options
-     * @param exceptions
-     * @deprecated 2020-07-23 Use
-     *             {@link TabularImportingParserBase#readTable(Project, ImportingJob, TableDataReader, int, ObjectNode, List)}
-     */
-    @Deprecated
     static public void readTable(
             Project project,
             ProjectMetadata metadata,
             ImportingJob job,
             TableDataReader reader,
             String fileSource,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
-        readTable(project, job, reader, limit, options, exceptions);
-    }
-
-    static public void readTable(
-            Project project,
-            ImportingJob job,
-            TableDataReader reader,
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
@@ -128,7 +105,18 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
+        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
+
+        int filenameColumnIndex = -1;
+        if (includeFileSources) {
+            List<String> columnNames = project.columnModel.getColumnNames();
+            if (columnNames.size() > 1 && "Archive".equals(columnNames.get(0)) && "File".equals(columnNames.get(1))) {
+                filenameColumnIndex = 1;
+            } else  if (columnNames.size() > 0 && "File".equals(columnNames.get(0))) {
+                filenameColumnIndex = 0;
+            }
+        }
 
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
@@ -203,6 +191,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         }
 
                         if (rowHasData || storeBlankRows) {
+                            if (filenameColumnIndex >= 0) {
+                                row.setCell(filenameColumnIndex, new Cell(fileSource, null));
+                            }
                             project.rows.add(row);
                         }
 

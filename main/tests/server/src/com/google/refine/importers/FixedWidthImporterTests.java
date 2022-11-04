@@ -27,6 +27,7 @@
 
 package com.google.refine.importers;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import org.slf4j.LoggerFactory;
@@ -70,8 +71,8 @@ public class FixedWidthImporterTests extends ImporterTest {
 
     // ---------------------read tests------------------------
     @Test
-    public void readFixedWidth() {
-        StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
+    public void readFixedWidth() throws IOException {
+        stageString(SAMPLE_ROW + "\nTooShort");
 
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
@@ -92,7 +93,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
         try {
-            parseOneFile(SUT, reader);
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }

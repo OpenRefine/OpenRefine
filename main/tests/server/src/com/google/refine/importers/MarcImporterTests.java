@@ -40,9 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -84,15 +83,11 @@ public class MarcImporterTests extends XmlImporterTests {
     @Test
     public void readMarcFileWithUnicode() throws FileNotFoundException, IOException {
         final String FILE = "scriblio.mrc";
-        String filename = ClassLoader.getSystemResource(FILE).getPath();
-        // File is assumed to be in job.getRawDataDir(), so copy it there
-        FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
-        List<ObjectNode> fileRecords = new ArrayList<>();
-        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(String.format("{\"location\": \"%s\"}", FILE)));
+        stageResource(FILE);
 
         // NOTE: This has the side effect of creating scriblio.mrc.xml
         ObjectNode options = SUT.createParserUIInitializationData(
-                job, fileRecords, "binary/marc");
+                job, Arrays.asList(fileRecord), "binary/marc");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
@@ -101,7 +96,7 @@ public class MarcImporterTests extends XmlImporterTests {
         JSONUtilities.safePut(options, "trimStrings", true);
         JSONUtilities.safePut(options, "storeEmptyStrings", false);
 
-        File xmlFile = ImportingUtilities.getFile(job, fileRecords.get(0));
+        File xmlFile = ImportingUtilities.getFile(job, fileRecord);
         InputStream inputStream = new FileInputStream(xmlFile);
         parseOneFile(SUT, inputStream, options);
         assertEquals(project.rows.size(), 30);

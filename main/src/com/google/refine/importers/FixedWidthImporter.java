@@ -135,7 +135,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
             }
         };
 
-        TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
+        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
     }
 
     /**

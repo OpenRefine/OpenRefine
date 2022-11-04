@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -88,11 +89,8 @@ public class OdsImporterTests extends ImporterTest {
 
     @Test
     public void readOds() throws FileNotFoundException, IOException {
-
-        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper
-                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
-        whenGetArrayOption("sheets", options, sheets);
+        stageResource("films.ods");
+        initMetadata("films.ods", 1);
 
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 1);
@@ -100,10 +98,8 @@ public class OdsImporterTests extends ImporterTest {
         whenGetIntegerOption("limit", options, ROWS);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
-        InputStream stream = ClassLoader.getSystemResourceAsStream("films.ods");
-
         try {
-            parseOneFile(SUT, stream);
+            parseOneFile(SUT);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
@@ -129,11 +125,8 @@ public class OdsImporterTests extends ImporterTest {
 
     @Test
     public void showErrorDialogWhenWrongFormat() throws FileNotFoundException, IOException {
-
-        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper
-                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
-        whenGetArrayOption("sheets", options, sheets);
+        stageResource("NoData_NoSpreadsheet.ods");
+        initMetadata("NoData_NoSpreadsheet.ods", 1);
 
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 1);
@@ -141,10 +134,9 @@ public class OdsImporterTests extends ImporterTest {
         whenGetIntegerOption("limit", options, ROWS);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
-        InputStream stream = ClassLoader.getSystemResourceAsStream("NoData_NoSpreadsheet.ods");
 
         try {
-            List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT, stream);
+            List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT);
             assertEquals(exceptions.size(), 1);
             Exception NPE = exceptions.get(0);
             assertEquals(NPE.getMessage(),
@@ -155,5 +147,15 @@ public class OdsImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
+    }
+
+    private void initMetadata(String spreadsheet, int sheetCount) throws JsonProcessingException {
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        for (int i = 0; i < sheetCount; i++) {
+            sheets.add(ParsingUtilities.mapper
+                    .readTree(String.format("{name: \"%1$s#Test Sheet %2$d\", fileNameAndSheetIndex: \"%1$s#%2$d\", rows: 31, selected: true}",
+                            spreadsheet, i)));
+        }
+        whenGetArrayOption("sheets", options, sheets);
     }
 }

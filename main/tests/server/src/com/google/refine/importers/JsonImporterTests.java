@@ -647,15 +647,10 @@ public class JsonImporterTests extends ImporterTest {
 
     private void RunTest(String testString, ObjectNode options) {
         try {
-            inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
-
-        try {
-            parseOneInputStream(SUT, inputStream, options);
-        } catch (Exception e) {
-            Assert.fail();
+            stageString(testString);
+            parseOneFile(SUT);
+        } catch (IOException e) {
+            Assert.fail("JSON importer test failed", e);
         }
     }
 

@@ -64,8 +64,9 @@ public class LineBasedImporterTests extends ImporterTest {
         String input = "col1\ndata1";
 
         try {
+            stageString(input);
             prepareOptions("\\r?\\n", 1, 1, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             fail("Exception during file parse", e);
         }
@@ -82,8 +83,9 @@ public class LineBasedImporterTests extends ImporterTest {
         String input = "data1\r\ndata2\ndata3\rdata4";
 
         try {
+            stageString(input);
             prepareOptions("\\r?\\n", 1, 0, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             fail("Exception during file parse", e);
         }
@@ -100,8 +102,9 @@ public class LineBasedImporterTests extends ImporterTest {
         String input = "dataa,datab,datac,datad".replace(",", sep);
 
         try {
+            stageString(input);
             prepareOptions(pattern, 1, 0, false);
-            parseOneFile(SUT, new StringReader(input));
+            parseOneFile(SUT);
         } catch (Exception e) {
             fail("Exception during file parse", e);
         }

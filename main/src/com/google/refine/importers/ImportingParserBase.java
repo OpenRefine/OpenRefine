@@ -156,7 +156,8 @@ abstract public class ImportingParserBase implements ImportingParser {
                     if (archiveColumnIndex >= 0) {
                         row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
                     }
-                    if (filenameColumnIndex >= 0) {
+                    // Only set the filename if it wasn't set by one of our subclasses (e.g. ExcelImporter which appends worksheet name)
+                    if (filenameColumnIndex >= 0 && row.getCell(filenameColumnIndex) == null) {
                         row.setCell(filenameColumnIndex, new Cell(fileSource, null));
                     }
                 }
@@ -177,15 +178,6 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     /**
      * Parsing method to be implemented by Reader-based parsers. ie those initialized with useInputStream == false
-     * 
-     * @param project
-     * @param metadata
-     * @param job
-     * @param fileSource
-     * @param reader
-     * @param limit
-     * @param options
-     * @param exceptions
      */
     public void parseOneFile(
             Project project,
@@ -199,6 +191,9 @@ abstract public class ImportingParserBase implements ImportingParser {
         throw new NotImplementedException();
     }
 
+    /**
+     * Parsing method to be implemented by InputStream-based parsers. ie those initialized with useInputStream == false
+     */
     public void parseOneFile(
             Project project,
             ProjectMetadata metadata,
@@ -211,10 +206,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         throw new NotImplementedException();
     }
 
-    /**
-     * @deprecated 2020-07-21 by tfmorris. This will become private in a future release.
-     */
-    @Deprecated
+
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
         String fileNameColumnName = "File"; // TODO: Localize?
         int columnId = archiveColumnAdded ? 1 : 0;
