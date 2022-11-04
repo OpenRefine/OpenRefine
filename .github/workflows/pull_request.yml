@@ -123,10 +123,10 @@ jobs:
       run: |
         mvn formatter:validate
 
-    - name: Adapt PATH for Hadoop binaries
+    - name: Adapt PATH for Hadoop binaries
       id: path_hadoop_binaries
       run: |
-        echo "${GITHUB_WORKSPACE}\\refine-spark-runner\\hadoop\\bin" >> $GITHUB_PATH
+        "${{ github.workspace }}\\refine-spark-runner\\hadoop\\bin" >> $GITHUB_PATH
 
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
