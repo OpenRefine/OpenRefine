@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A row with its row index. Equivalent to Tuple2<long, Row> but serializable and deserializable with Jackson easily.
- * Serialization keys are kept short to reduce the memory overhead.
+ * A row with its row index. Equivalent to {@code Tuple2<long, Row>} but serializable and deserializable with Jackson
+ * easily. Serialization keys are kept short to reduce the memory overhead.
  * 
  * @author Antonin Delpeuch
  */

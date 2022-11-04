@@ -28,7 +28,7 @@ describe('Match each cell to its best candidate', () => {
         ]);
 
         cy.assertNotificationContainingText(
-            'Match each of 6 cells to its best candidate'
+            'Match each cell to its best recon candidate in column species'
         );
 
         // ensure all cells contains 'Choose new match'

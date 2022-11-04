@@ -70,6 +70,7 @@ public interface Manifest {
      * 
      * @deprecated use {@link #getReconServiceEndpoint(String)} with "item" as argument
      */
+    @Deprecated
     String getReconServiceEndpoint();
 
     /**

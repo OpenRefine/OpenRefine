@@ -43,6 +43,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -128,6 +129,11 @@ public class RefineServlet extends Butterfly {
         logger.info("Starting " + FULLNAME + "...");
 
         s_singleton = this;
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
 
         logger.trace("> initialize");
 
@@ -360,7 +366,8 @@ public class RefineServlet extends Butterfly {
                 logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
                 Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
                 RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
-                RefineModel.setRunner((DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
+                RefineModel.setRunner(
+                        (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
                 e1.printStackTrace();

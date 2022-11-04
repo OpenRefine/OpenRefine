@@ -8,8 +8,8 @@ import java.util.Set;
 
 /**
  * A GREL expression, which can be evaluated in a given context.
- * 
- * This is introduced to serve as base class for all GREL expressions, instead of {@class org.openrefine.expr.Evaluable}
+ * <p>
+ * This is introduced to serve as base class for all GREL expressions, instead of {@link org.openrefine.expr.Evaluable}
  * which is the base class for all evaluables in OpenRefine.
  * 
  * @author Antonin Delpeuch
@@ -32,8 +32,8 @@ public interface GrelExpr extends Serializable {
     public String toString();
 
     /**
-     * @returns true when the expression can be evaluated purely based on the local context (see
-     *          {@link org.openrefine.expr.Evaluable}).
+     * @return true when the expression can be evaluated purely based on the local context (see
+     *         {@link org.openrefine.expr.Evaluable}).
      */
     public boolean isLocal();
 
@@ -42,14 +42,14 @@ public interface GrelExpr extends Serializable {
      * 
      * @param baseColumn
      *            the name of the column this expression is based on (null if none)
-     * @returns null if the columns could not be isolated: in this case, the expression might depend on all columns in
-     *          the project.
+     * @return null if the columns could not be isolated: in this case, the expression might depend on all columns in
+     *         the project.
      */
     public Set<String> getColumnDependencies(String baseColumn);
 
     /**
      * Translates this expression by simultaneously substituting column names as the supplied map specifies.
-     * 
+     * <p>
      * This is only possible if the extraction of column dependencies with {@link #getColumnDependencies(String)}
      * succeeds (return a non-null value).
      * 

@@ -245,8 +245,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated 2020-07-23 Use
-     *             {@link XmlImportUtilities#importTreeData(TreeReader, Project, String[], ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated 2020-07-23 Use the version of this method which expands all parameters in the signature of the
+     *             function
      */
     @Deprecated
     static public void importTreeData(
@@ -303,8 +303,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated Use {@link XmlImportUtilities#findRecord(ColumnIndexAllocator, List<Row>, TreeReader, String[], int,
-     *             ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated Use the version of this method which expands all parameters in the signature of the function
      */
     @Deprecated
     static protected void findRecord(
@@ -414,8 +413,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param rootColumnGroup
      * @param parameter
      * @throws TreeReaderException
-     * @deprecated Use {@link XmlImportUtilities#processRecord(ColumnIndexAllocator, List<Row>, TreeReader,
-     *             ImportColumnGroup, boolean, boolean, boolean)}
+     * @deprecated Use the version of this method which expands all parameters in the signature of the function
      */
     @Deprecated
     static protected void processRecord(
@@ -464,7 +462,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * processFieldAsRecord parses Tree data for a single element and it's sub-elements, adding the parsed data as a row
+     * processFieldAsRecord parses Tree data for a single element and its sub-elements, adding the parsed data as a row
      * to the project
      * 
      * @param columnIndexAllocator

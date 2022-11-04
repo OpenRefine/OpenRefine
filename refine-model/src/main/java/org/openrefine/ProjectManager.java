@@ -240,7 +240,8 @@ public abstract class ProjectManager {
     /**
      * Ensures a project is saved in the workspace and its grid states are read from there.
      *
-     * @param id the project id to load
+     * @param id
+     *            the project id to load
      * @throws IOException
      */
     public abstract void reloadProjectFromWorkspace(long id) throws IOException;
@@ -552,7 +553,8 @@ public abstract class ProjectManager {
      * Gets the required project from the data store If project does not already exist in memory, it is loaded from the
      * data store
      *
-     * @param id the id of the project
+     * @param id
+     *            the id of the project
      * @return the project with the matching id, or null if it can't be found
      */
     public Project getProject(long id) {
