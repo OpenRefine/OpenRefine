@@ -384,7 +384,7 @@
                   <skipAttach>${skipCreateExe}</skipAttach>
                   <artifacts>
                       <artifact>
-                          <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+                          <file>packaging/target/${project.artifactId}-win-with-java-${project.version}.zip</file>
                           <type>zip</type>
                           <classifier>win-with-java</classifier>
                       </artifact>
