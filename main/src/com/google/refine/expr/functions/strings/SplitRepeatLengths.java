@@ -54,13 +54,19 @@ public class SplitRepeatLengths implements Function {
         ArrayList<String> dynamicResults = new ArrayList<>();
         int startPointer = 0;
         int endPointer = 0;
-        while (endPointer < inputString.length()) {
+        out: while (endPointer < inputString.length()) {
             for (int i = 1; i < args.length; i++) {
                 Object o2 = args[i];
                 if (o2 instanceof Number) {
-                    endPointer = Math.min(((Number) o2).intValue(), inputString.length());
+                    endPointer = Math.min(endPointer + ((Number) o2).intValue(), inputString.length());
+                    if (endPointer >= inputString.length()) {
+                        dynamicResults.add(inputString.substring(startPointer));
+                        break out;
+                    }
                     dynamicResults.add(inputString.substring(startPointer, endPointer));
-                    startPointer += endPointer;
+                    startPointer = endPointer;
+                } else {
+                    return new EvalError(EvalErrorMessage.unable_to_parse_as_number());
                 }
             }
         }
