@@ -71,16 +71,29 @@ public class GetRowsCommand extends Command {
 
         @JsonUnwrapped
         protected final Row row;
+
+        /**
+         * The logical row index (meaning the one from the original, unsorted grid)
+         */
         @JsonProperty("i")
         protected final long rowIndex;
         @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
         protected final Long recordIndex;
 
-        protected WrappedRow(Row rowOrRecord, long rowIndex, Long recordIndex) {
+        /**
+         * The row index used for pagination (which can be different from the logical one if a temporary sort is applied)
+         */
+        @JsonProperty("k")
+        protected final long paginationIndex;
+
+        // TODO add indices for pagination purposes
+
+        protected WrappedRow(Row rowOrRecord, long rowIndex, Long recordIndex, long paginationIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
+            this.paginationIndex = paginationIndex;
         }
     }
 
@@ -148,7 +161,11 @@ public class GetRowsCommand extends Command {
     protected static List<WrappedRow> recordToWrappedRows(Record record) {
         List<Row> rows = record.getRows();
         return IntStream.range(0, rows.size())
-                .mapToObj(i -> new WrappedRow(rows.get(i), record.getStartRowId() + i, i == 0 ? record.getStartRowId() : null))
+                .mapToObj(i -> new WrappedRow(
+                        rows.get(i),
+                        record.getLogicalStartRowId() + i,
+                        i == 0 ? record.getLogicalStartRowId() : null,
+                        record.getStartRowId() + i))
                 .collect(Collectors.toList());
     }
 
@@ -205,15 +222,21 @@ public class GetRowsCommand extends Command {
             if (engine.getMode() == Mode.RowBased) {
                 totalCount = entireGrid.rowCount();
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
-                List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, sortingConfig, start, limit);
+                GridState sortedGrid = entireGrid;
+                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                    // TODO cache this appropriately
+                    sortedGrid = entireGrid.reorderRows(sortingConfig, false);
+                }
+                List<IndexedRow> rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);
 
                 wrappedRows = rows.stream()
-                        .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
+                        .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getLogicalIndex(), null, tuple.getIndex()))
                         .collect(Collectors.toList());
                 if (engineConfig.isNeutral()) {
                     filtered = totalCount;
                     processed = totalCount;
                 } else {
+                    // still using the unsorted grid for performance considerations
                     if (engineConfig.getAggregationLimit() == null) {
                         filtered = entireGrid.countMatchingRows(combinedRowFilters);
                         processed = totalCount;
@@ -227,7 +250,12 @@ public class GetRowsCommand extends Command {
             } else {
                 totalCount = entireGrid.recordCount();
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-                List<Record> records = entireGrid.getRecords(combinedRecordFilters, sortingConfig, start, limit);
+                GridState sortedGrid = entireGrid;
+                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                    // TODO cache this appropriately
+                    sortedGrid = entireGrid.reorderRecords(sortingConfig, false);
+                }
+                List<Record> records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit);
 
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())
@@ -237,6 +265,7 @@ public class GetRowsCommand extends Command {
                     filtered = totalCount;
                     processed = totalCount;
                 } else {
+                    // still using the unsorted grid for performance considerations
                     if (engineConfig.getAggregationLimit() == null) {
                         filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
                         processed = totalCount;

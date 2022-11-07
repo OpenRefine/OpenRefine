@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.openrefine.SparkBasedTest;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.testng.Assert;
@@ -22,7 +23,7 @@ public class RecordRDDTests extends SparkBasedTest {
 
     @Test(dataProvider = "partitionNumbers")
     public void testSplitRecordsOverPartitions(int numPartitions) {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
+        JavaPairRDD<Long, IndexedRow> rdd = indexedRowRDD(new Serializable[][] {
                 { "a", "b" },
                 { "", "c" },
                 { null, "d" },
@@ -50,7 +51,7 @@ public class RecordRDDTests extends SparkBasedTest {
 
     @Test(dataProvider = "partitionNumbers")
     public void testNoRecordKey(int numPartitions) {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
+        JavaPairRDD<Long, IndexedRow> rdd = indexedRowRDD(new Serializable[][] {
                 { "", "b" },
                 { "", "c" },
                 { null, "d" },
@@ -72,7 +73,7 @@ public class RecordRDDTests extends SparkBasedTest {
 
     @Test(dataProvider = "partitionNumbers")
     public void testAllBlank(int numPartitions) {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
+        JavaPairRDD<Long, IndexedRow> rdd = indexedRowRDD(new Serializable[][] {
                 { "", null },
                 { "", "" },
                 { null, null },
@@ -93,7 +94,7 @@ public class RecordRDDTests extends SparkBasedTest {
 
     @Test(dataProvider = "partitionNumbers")
     public void testCustomRecordKey(int numPartitions) {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
+        JavaPairRDD<Long, IndexedRow> rdd = indexedRowRDD(new Serializable[][] {
                 { "a", "b" },
                 { "", "c" },
                 { null, "d" },
@@ -121,7 +122,7 @@ public class RecordRDDTests extends SparkBasedTest {
 
     @Test
     public void testPartitioner() {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
+        JavaPairRDD<Long, IndexedRow> rdd = indexedRowRDD(new Serializable[][] {
                 { "a", "b" },
                 { "", "c" },
                 { null, "d" },
@@ -131,7 +132,7 @@ public class RecordRDDTests extends SparkBasedTest {
                 { null, "i" },
                 { "j", "k" },
         }, 4);
-        JavaPairRDD<Long, Row> sortedRDD = SortedRDD.assumeSorted(rdd);
+        JavaPairRDD<Long, IndexedRow> sortedRDD = SortedRDD.assumeSorted(rdd);
         Partitioner partitioner = sortedRDD.partitioner().get();
 
         // preliminary check that the data is partitioned as we expect for this test

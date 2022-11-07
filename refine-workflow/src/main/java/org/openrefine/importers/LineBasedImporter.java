@@ -54,7 +54,7 @@ public class LineBasedImporter extends LineBasedImporterBase {
             // so we resort to loading everything in memory
             List<Row> newRows = new ArrayList<>();
             List<Cell> currentCells = new ArrayList<>();
-            for (IndexedRow row : parsed.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow row : parsed.iterateRows(RowFilter.ANY_ROW)) {
                 currentCells.add(row.getRow().getCell(0));
                 if (currentCells.size() >= linesPerRow) {
                     newRows.add(new Row(currentCells));

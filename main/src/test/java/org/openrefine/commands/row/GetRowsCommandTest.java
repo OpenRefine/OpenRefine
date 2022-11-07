@@ -82,6 +82,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -89,6 +90,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
@@ -99,7 +101,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("limit")).thenReturn("2");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
@@ -116,6 +118,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
@@ -150,6 +153,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
@@ -179,6 +183,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -186,6 +191,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
@@ -214,6 +220,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -221,6 +228,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
@@ -256,6 +264,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0," +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -263,6 +272,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
