@@ -1,5 +1,6 @@
 {
   "integrationFolder": "./cypress/integration",
+  "keystrokeDelay": 0,
   "viewportWidth": 1280,
   "viewportHeight": 768,
   "retries": {
