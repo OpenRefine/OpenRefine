@@ -65,6 +65,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+/**
+ * Retrieves rows from a project (or importing job).
+ *
+ * Those rows can be requested as either: - the batch of rows starting at a given index (included), up to a certain size
+ * - the batch of rows ending at a given index (excluded), again up to a given size. Filters (defined by facets) and the
+ * row/record mode toggle can also be provided.
+ */
 public class GetRowsCommand extends Command {
 
     protected static class WrappedRow {
@@ -82,7 +89,8 @@ public class GetRowsCommand extends Command {
         protected final Long recordIndex;
 
         /**
-         * The row index used for pagination (which can be different from the logical one if a temporary sort is applied)
+         * The row index used for pagination (which can be different from the logical one if a temporary sort is
+         * applied)
          */
         @JsonProperty("k")
         protected final long paginationIndex;
@@ -125,21 +133,47 @@ public class GetRowsCommand extends Command {
          */
         @JsonProperty("total")
         protected final long totalCount;
+        /**
+         * Total number of rows in the unfiltered grid (needed to provide a link to the last page)
+         */
+        @JsonProperty("totalRows")
+        protected final long totalRows;
 
         @JsonProperty("start")
-        protected final long start;
+        @JsonInclude(Include.NON_NULL)
+        protected final Long start;
+        @JsonProperty("end")
+        @JsonInclude(Include.NON_NULL)
+        protected final Long end;
         @JsonProperty("limit")
         protected final int limit;
 
+        /**
+         * The value to use as 'end' when fetching the page before this one. Can be null if there is no such page.
+         */
+        @JsonProperty("previousPageId")
+        @JsonInclude(Include.NON_NULL)
+        protected final Long previousPageId;
+        /**
+         * The value to use as 'start' when fetching the page after this one. Can be null if there is no such page.
+         */
+        @JsonProperty("nextPageId")
+        @JsonInclude(Include.NON_NULL)
+        protected final Long nextPageId;
+
         protected JsonResult(Mode mode, List<WrappedRow> rows, long filtered,
-                long processed, long totalCount, long start, int limit) {
+                long processed, long totalCount, long totalRows, long start, long end, int limit, Long previousPageId, Long nextPageId) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
             this.processed = processed;
             this.totalCount = totalCount;
-            this.start = start;
+            this.totalRows = totalRows;
+            this.start = start == -1 ? null : start;
+            this.end = end == -1 ? null : end;
             this.limit = Math.min(rows.size(), limit);
+            this.previousPageId = previousPageId;
+            this.nextPageId = nextPageId;
         }
     }
 
@@ -189,19 +223,18 @@ public class GetRowsCommand extends Command {
             }
 
             Engine engine = getEngine(request, project);
-            String callback = request.getParameter("callback");
             GridState entireGrid = project.getCurrentGridState();
 
-            long start = getLongParameter(request, "start", 0);
+            long start = getLongParameter(request, "start", -1L);
+            long end = getLongParameter(request, "end", -1L);
             int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
 
             response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
+            response.setHeader("Content-Type", "application/json");
 
-            PrintWriter writer = response.getWriter();
-            if (callback != null) {
-                writer.write(callback);
-                writer.write("(");
+            if ((start == -1L) == (end == -1L)) {
+                respondException(response, new IllegalArgumentException("Exactly one of 'start' and 'end' should be provided."));
+                return;
             }
 
             SortingConfig sortingConfig = SortingConfig.NO_SORTING;
@@ -211,6 +244,8 @@ public class GetRowsCommand extends Command {
                     sortingConfig = SortingConfig.reconstruct(sortingJson);
                 }
             } catch (IOException e) {
+                respondException(response, e);
+                return;
             }
 
             long filtered;
@@ -227,7 +262,12 @@ public class GetRowsCommand extends Command {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRows(sortingConfig, false);
                 }
-                List<IndexedRow> rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);
+                List<IndexedRow> rows;
+                if (start != -1L) {
+                    rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);
+                } else {
+                    rows = sortedGrid.getRowsBefore(combinedRowFilters, end, limit);
+                }
 
                 wrappedRows = rows.stream()
                         .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getLogicalIndex(), null, tuple.getIndex()))
@@ -255,7 +295,12 @@ public class GetRowsCommand extends Command {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRecords(sortingConfig, false);
                 }
-                List<Record> records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit);
+                List<Record> records;
+                if (start != -1L) {
+                    records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit);
+                } else {
+                    records = sortedGrid.getRecordsBefore(combinedRecordFilters, end, limit);
+                }
 
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())
@@ -278,19 +323,33 @@ public class GetRowsCommand extends Command {
                 }
             }
 
-            JsonResult result = new JsonResult(engine.getMode(),
-                    wrappedRows, filtered, processed,
-                    totalCount, start, limit);
-
-            ParsingUtilities.defaultWriter.writeValue(writer, result);
-            if (callback != null) {
-                writer.write(")");
+            // Compute the indices of the previous and next pages
+            Long previousPageId = null;
+            Long nextPageId = null;
+            if (start != -1L) {
+                if (start > 0) {
+                    previousPageId = start;
+                }
+                if (!wrappedRows.isEmpty()) {
+                    nextPageId = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
+                }
+            } else {
+                if (!wrappedRows.isEmpty() && wrappedRows.get(0).paginationIndex > 0) {
+                    previousPageId = wrappedRows.get(0).paginationIndex;
+                }
+                nextPageId = end;
             }
 
             // metadata refresh for row mode and record mode
             if (project.getMetadata() != null) {
                 project.getMetadata().setRowCount(totalCount);
             }
+
+            JsonResult result = new JsonResult(engine.getMode(),
+                    wrappedRows, filtered, processed,
+                    totalCount, entireGrid.rowCount(), start, end, limit, previousPageId, nextPageId);
+
+            respondJSON(response, result);
         } catch (Exception e) {
             respondException(response, e);
         }

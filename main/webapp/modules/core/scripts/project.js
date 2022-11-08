@@ -502,7 +502,11 @@ Refine.columnNameToColumnIndex = function(columnName) {
   return -1;
 };
 
-Refine.fetchRows = function(start, limit, onDone, sorting) {
+/*
+  Fetch rows after or before a given row id. The engine configuration can also
+  be used to set filters (facets) or switch between rows/records mode.
+*/
+Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
   var body = {
     engine: JSON.stringify(ui.browsingEngine.getJSON())
   };
@@ -511,7 +515,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
   }
 
   $.post(
-    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
+    "command/core/get-rows?" + $.param({ ...paginationOptions, project: theProject.id, limit: limit }),
     body,
     function(data) {
       if(data.code === "error") {

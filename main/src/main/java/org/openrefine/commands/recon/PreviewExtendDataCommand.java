@@ -139,7 +139,7 @@ public class PreviewExtendDataCommand extends Command {
             if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                 sorted = sorted.reorderRows(sortingConfig, false);
             }
-            List<IndexedRow> previewRows = state.getRowsAfter(engine.combinedRowFilters(),0, limit);
+            List<IndexedRow> previewRows = state.getRowsAfter(engine.combinedRowFilters(), 0, limit);
             for (IndexedRow indexedRow : previewRows) {
                 try {
                     Row row = indexedRow.getRow();

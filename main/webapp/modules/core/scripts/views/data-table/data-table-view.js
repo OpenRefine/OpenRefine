@@ -44,7 +44,7 @@ function DataTableView(div) {
   this._columnHeaderUIs = [];
   this._shownulls = false;
 
-  this._showRows(0);
+  this._showRows({start: 0});
 }
 
 DataTableView._extenders = [];
@@ -82,7 +82,13 @@ DataTableView.prototype.resize = function() {
 };
 
 DataTableView.prototype.update = function(onDone) {
-  this._showRows(0, onDone);
+  var paginationOptions = {};
+  if (theProject.rowModel.start !== undefined) {
+    paginationOptions.start = theProject.rowModel.start;
+  } else {
+    paginationOptions.end = theProject.rowModel.end;
+  }
+  this._showRows(paginationOptions, onDone);
 };
 
 DataTableView.prototype.render = function() {
@@ -163,12 +169,18 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
   var self = this;
 
-  var from = (theProject.rowModel.start + 1);
-  var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
+  var rowIds = theProject.rowModel.rows.map(row => row.k);
+  if (theProject.rowModel.start !== undefined) {
+     rowIds.push(theProject.rowModel.start);
+  } else {
+     rowIds.push(theProject.rowModel.end);
+  }
+  var minRowId = Math.min(... rowIds);
+  var maxRowId = Math.max(... rowIds);
 
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start > 0) {
+  if (theProject.rowModel.previousPageId !== undefined) {
     firstPage.addClass("action").on('click',function(evt) { self._onClickFirstPage(this, evt); });
     previousPage.addClass("action").on('click',function(evt) { self._onClickPreviousPage(this, evt); });
   } else {
@@ -176,11 +188,11 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  $('<span>').addClass("viewpanel-pagingcount").html(" " + from + " - " + to + " ").appendTo(pagingControls);
+  $('<span>').addClass("viewpanel-pagingcount").html(" " + (minRowId + 1) + " - " + (maxRowId + 1) + " ").appendTo(pagingControls);
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
+  if (theProject.rowModel.nextPageId) {
     nextPage.addClass("action").on('click',function(evt) { self._onClickNextPage(this, evt); });
     lastPage.addClass("action").on('click',function(evt) { self._onClickLastPage(this, evt); });
   } else {
@@ -403,9 +415,9 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   }
 };
 
-DataTableView.prototype._showRows = function(start, onDone) {
+DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
-  Refine.fetchRows(start, this._pageSize, function() {
+  Refine.fetchRows(paginationOptions, this._pageSize, function() {
     self.render();
 
     if (onDone) {
@@ -415,19 +427,19 @@ DataTableView.prototype._showRows = function(start, onDone) {
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
-  this._showRows(theProject.rowModel.start - this._pageSize);
+  this._showRows({end: theProject.rowModel.previousPageId});
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
-  this._showRows(theProject.rowModel.start + this._pageSize);
+  this._showRows({start: theProject.rowModel.nextPageId});
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
-  this._showRows(0);
+  this._showRows({start: 0});
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows(Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) * this._pageSize);
+  this._showRows({end: theProject.rowModel.totalRows});
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {
