@@ -31,7 +31,7 @@ describe(__filename, function () {
       2
     );
 
-    cy.get('#refine-tabs-facets a').contains('Remove all').click();
+    cy.get('a.button.button-pill-right').contains('Remove all').click();
     cy.get('#refine-tabs-facets .facets-container .facet-container').should(
       'have.length',
       0
@@ -252,13 +252,10 @@ describe(__filename, function () {
 
     // do a basic facetting, expect 1 row
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('ALLSPICE,GROUND')
       .parent()
-      .find('.facet-choice-toggle')
+      .trigger('mouseover')
+      .contains('include')
       .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
@@ -284,13 +281,10 @@ describe(__filename, function () {
 
     // do a basic facetting, expect 1 row
     cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice-toggle')
-      .invoke('attr', 'style', 'visibility:visible');
-    cy.getFacetContainer('Shrt_Desc')
-      .find('.facet-choice')
       .contains('ALLSPICE,GROUND')
       .parent()
-      .find('.facet-choice-toggle')
+      .trigger('mouseover')
+      .contains('include')
       .click();
     cy.get('#tool-panel').contains('1 matching rows');
 
@@ -345,7 +339,7 @@ describe(__filename, function () {
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
     cy.getFacetContainer('Water').within(() => {
-      cy.get('.facet-choice')
+      cy.get('div.facet-body-inner > div:nth-child(8)')
         .contains('15.87')
         .parent()
         .trigger('mouseover')

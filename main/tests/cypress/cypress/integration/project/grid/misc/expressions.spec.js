@@ -199,7 +199,7 @@ describe(__filename, function () {
     // Use it
     loadExpressionPanel();
     cy.get('#expression-preview-tabs li').contains('History').click();
-    cy.get('#expression-preview-tabs-history tr td')
+    cy.get('tbody > tr:nth-child(2) > td:nth-child(5)')
       .contains(uniqueExpression)
       .parent()
       .find('a')
