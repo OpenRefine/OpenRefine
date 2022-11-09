@@ -81,12 +81,14 @@ DataTableView.prototype.resize = function() {
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
 };
 
-DataTableView.prototype.update = function(onDone) {
-  var paginationOptions = {};
-  if (theProject.rowModel.start !== undefined) {
-    paginationOptions.start = theProject.rowModel.start;
-  } else {
-    paginationOptions.end = theProject.rowModel.end;
+DataTableView.prototype.update = function(onDone, preservePage) {
+  var paginationOptions = { start: 0 };
+  if (preservePage) {
+    if (theProject.rowModel.start !== undefined) {
+      paginationOptions.start = theProject.rowModel.start;
+    } else {
+      paginationOptions.end = theProject.rowModel.end;
+    }
   }
   this._showRows(paginationOptions, onDone);
 };
@@ -212,7 +214,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     } else {
       a.text(pageSize).addClass("action").on('click',function(evt) {
         self._pageSize = pageSize;
-        self.update();
+        self.update(undefined, true);
       });
     }
   };
@@ -752,14 +754,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unstar-rows'),
           id: "core/unstar-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
@@ -767,14 +769,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/flag-rows'),
           id: "core/flag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},

@@ -315,8 +315,9 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
     pushFunction(Refine.reinitializeProjectData);
   }
   if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
+    var preservePage = options.rowIdsPreserved && (options.recordIdsPreserved || ui.browsingEngine.getMode() === "row-based");
     pushFunction(function(onDone) {
-      ui.dataTableView.update(onDone);
+      ui.dataTableView.update(onDone, preservePage);
     });
     pushFunction(function(onDone) {
       ui.browsingEngine.update(onDone);
