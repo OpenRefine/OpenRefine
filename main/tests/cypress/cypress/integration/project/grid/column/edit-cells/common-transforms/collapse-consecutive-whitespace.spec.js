@@ -3,8 +3,9 @@ describe(__filename, function () {
     const fixture = [
       ['NDB_No', 'Shrt_Desc'],
       ['01001', 'THIS    IS A     TEST'],
-      ['01002', 'THIS    IS ANOTHER     TEST'], // this line contains U+00A0 (non-breaking space)
-      ['01003', 'THIS IS a THIRD TEST'], // this one too
+      // Test NBSP, Java whitespace (HT, LF, VT, FF, CR, BS), & a variety of widths of Unicode spaces
+      ['01002', 'THIS \u00A0  IS\t\n\x0B\f\r\b ANOTHER \u2000\u2001\u2002\u2003\u2004\u200A\u3000    TEST'],
+      ['01003', 'THIS IS a\u00A0THIRD TEST'],
     ];
     cy.loadAndVisitProject(fixture);
 
