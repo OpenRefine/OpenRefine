@@ -21,7 +21,7 @@ To let your users contribute to your Wikibase instance with OpenRefine, you will
 
 To work with OpenRefine, your Wikibase instance needs an associated reconciliation service for each editable entity type:
 
-* To enable editing items (entities with an identifier starting with Q), you can deploy [a Python wrapper](https://github.com/wetneb/openrefine-wikibase) for this. It exposes a reconciliation service for items, built on top of Wikibase's own API and its Query Service.
+* To enable editing items (entities with an identifier starting with Q), you can deploy [a Python wrapper](https://gitlab.com/nfdi4culture/ta1-data-enrichment/openrefine-wikibase) for this. It exposes a reconciliation service for items, built on top of Wikibase's own API and its Query Service.
   Note that this service requires the [UniversalLanguageSelector extension](https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:UniversalLanguageSelector) should be installed.
 
 * To enable editing media files (if your Wikibase instance accepts file uploads), you can use [another Python wrapper](https://github.com/wikimedia/labs-tools-commons-recon-service) which exposes a reconciliation service for media files.
