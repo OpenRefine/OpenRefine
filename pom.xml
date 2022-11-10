@@ -96,7 +96,7 @@
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
-    <httpclient5.version>5.1.3</httpclient5.version>
+    <httpclient5.version>5.2</httpclient5.version>
     <httpcore.version>4.4.15</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
