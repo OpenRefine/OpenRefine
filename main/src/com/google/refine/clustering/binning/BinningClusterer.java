@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -134,7 +135,7 @@ public class BinningClusterer extends Clusterer {
         Object[] _params;
         BinningParameters _parameters;
 
-        Map<String, Map<String, Integer>> _map = new HashMap<String, Map<String, Integer>>();
+        Map<String, Map<String, Integer>> _map = new LinkedHashMap<String, Map<String, Integer>>();
 
         public BinningRowVisitor(Keyer k, BinningParameters parameters) {
             _keyer = k;
