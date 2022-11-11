@@ -524,7 +524,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.5.0</version>
+              <version>4.6.0</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
