@@ -6,7 +6,7 @@ describe('Copy reconciliation data', () => {
   it('Copy reconciliation data from species to species_copy', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
-    cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
+    cy.get('#or-import-locate').should('to.contain', 'Locate an existing Refine project file');
 
     //we're using here the "automatched" project, so we can test that the facet contains choice for matched and non-matched judgments
     cy.get('#project-tar-file-input').attachFile('reconciled-project-automatch.zip')

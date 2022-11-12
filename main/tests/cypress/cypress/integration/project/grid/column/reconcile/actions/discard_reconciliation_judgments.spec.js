@@ -6,7 +6,7 @@ describe('Discard reconciliation judgments', () => {
     it('Test discard existing reconciliation judgments', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');
-        cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
+        cy.get('#or-import-locate').should('to.contain', 'Locate an existing Refine project file');
 
         //we're using here the "automatched" project, to have some rows that are matched
         cy.get('#project-tar-file-input').attachFile('reconciled-project-automatch.zip')

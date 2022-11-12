@@ -61,16 +61,17 @@ describe(__filename, function () {
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     cy.navigateTo('Language settings');
-    cy.get('tbody').should('to.contain', 'Select preferred language');
+    cy.get('#project-upload-form > table > tbody > tr:nth-child(1) > td > label').should(
+        'to.contain', 'Select preferred language');
 
     cy.navigateTo('Import project');
-    cy.get('tbody').should(
+    cy.get('#or-import-locate').should(
       'to.contain',
       'Locate an existing Refine project file (.tar or .tar.gz)'
     );
 
     cy.navigateTo('Create project');
-    cy.get('.create-project-ui-panel').should(
+    cy.get('#or-import-parsopt').should(
       'to.contain',
       'Configure parsing options'
     );
