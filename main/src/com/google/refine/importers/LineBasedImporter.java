@@ -32,7 +32,11 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +59,8 @@ public class LineBasedImporter extends TabularImportingParserBase {
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
+        JSONUtilities.safePut(options, "separator", "\\r?\\n");
+
         JSONUtilities.safePut(options, "linesPerRow", 1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
@@ -72,6 +78,13 @@ public class LineBasedImporter extends TabularImportingParserBase {
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
+        String sepStr = JSONUtilities.getString(options, "separator", "\\r?\\n");
+        if (sepStr == null || "".equals(sepStr)) {
+            sepStr = "\\r?\\n";
+        }
+        sepStr = StringEscapeUtils.unescapeJava(sepStr);
+        Pattern sep = Pattern.compile(sepStr);
+
         final int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
 
         final List<Object> columnNames;
@@ -87,15 +100,16 @@ public class LineBasedImporter extends TabularImportingParserBase {
             JSONUtilities.safePut(options, "headerLines", 0);
         }
 
-        final LineNumberReader lnReader = new LineNumberReader(reader);
+        final Scanner lnReader = new Scanner(reader);
+        lnReader.useDelimiter(sep);
 
         try {
             int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
             while (skip > 0) {
-                lnReader.readLine();
+                lnReader.next();
                 skip--;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Error reading line-based file", e);
         }
         JSONUtilities.safePut(options, "ignoreLines", -1);
@@ -112,15 +126,11 @@ public class LineBasedImporter extends TabularImportingParserBase {
                 } else {
                     List<Object> cells = null;
                     for (int i = 0; i < linesPerRow; i++) {
-                        String line = lnReader.readLine();
-                        if (i == 0) {
-                            if (line == null) {
-                                return null;
-                            } else {
+                        if (lnReader.hasNext()) {
+                            String line = lnReader.next();
+                            if (i == 0) {
                                 cells = new ArrayList<Object>(linesPerRow);
-                                cells.add(line);
                             }
-                        } else if (line != null) {
                             cells.add(line);
                         } else {
                             break;
