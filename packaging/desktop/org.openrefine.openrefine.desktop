@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=OpenRefine
+Comment=powerful tool for working with messy data
+Comment[de]=mächtiges Werkzeug zum Arbeiten mit ungeordneten Daten
+Icon=openrefine
+Exec=openrefine
+Terminal=false
+Categories=Utility;FileTools;
+Keywords=marc;text;csv;wikidata;odf;
+
