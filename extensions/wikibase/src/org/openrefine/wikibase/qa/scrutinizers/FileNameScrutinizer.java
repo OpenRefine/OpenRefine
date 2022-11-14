@@ -21,7 +21,6 @@ public class FileNameScrutinizer extends EditScrutinizer {
     public static final int maxFileNameLength = 240;
     public static final Pattern forbiddenFileNameChars = Pattern.compile(
             ".*([^ %!\"$&'()*,\\-./0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
-    public static final Pattern normalizedFileNameChars = Pattern.compile("[:/\\\\]");
 
     public static final String duplicateFileNamesInBatchType = "duplicate-file-names-in-batch";
     public static final String fileNamesAlreadyExistOnWikiType = "file-names-already-exist-on-wiki";
@@ -49,13 +48,12 @@ public class FileNameScrutinizer extends EditScrutinizer {
 
     /**
      * Attempt of a local implementation of the file name normalization that is done in MediaWiki. Assumes a non-empty
-     * file name as input.
+     * file name as input. This assumes that some special characters have been replaced already: `:`, `/` and `\`
      * 
      * @return
      */
     protected String normalizeFileName(String filename) {
-        String replaced = filename.replaceAll(normalizedFileNameChars.pattern(), "-")
-                .replaceAll("_", " ");
+        String replaced = filename.replaceAll("_", " ");
         return replaced.substring(0, 1).toUpperCase() + replaced.substring(1);
     }
 

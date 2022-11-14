@@ -289,6 +289,8 @@
     "warnings-messages/missing-file-name-extension/body": "The file names provided for files to be uploaded must end with a file extension, which is not the case for file names such as <span class=\"wb-issue-preformat\">{example_filename}.",
     "warnings-messages/inconsistent-file-name-and-path-extension/title": "Inconsistent extensions between file paths and file names",
     "warnings-messages/inconsistent-file-name-and-path-extension/body": "Some file paths and their corresponding target file name on the wiki have different extensions, such as <span class=\"wb-issue-preformat\">{example_filepath}</span> and <span class=\"wb-issue-preformat\">{example_filename}</span>.",
+    "warnings-messages/replaced-characters-in-filename/title": "Some special characters in file names will be replaced",
+    "warnings-messages/replaced-characters-in-filename/body": "The characaters <span class=\"wb-issue-preformat\">:/\\</span> will be replaced by <span class=\"wb-issue-preformat\">-</span>. For instance, filename <span class=\"wb-issue-preformat\">{original}</span> will become <span class=\"wb-issue-preformat\">{normalized}</span>.",
     "wikibase-statement-settings/dialog-header": "Statement settings",
     "wikibase-statement-settings/mode-label": "Editing mode",
     "wikibase-statement-settings/strategy-label": "Matching strategy",
