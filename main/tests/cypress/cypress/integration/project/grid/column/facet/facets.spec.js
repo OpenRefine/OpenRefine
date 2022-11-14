@@ -66,7 +66,7 @@ describe(__filename, function () {
       .find('.facet-choice:first-child')
       .should('have.class', 'facet-choice-selected');
 
-    cy.get('#refine-tabs-facets a').contains('Reset all').click();
+    cy.get('a.button.button-pill-left').contains('Reset all').click();
 
     // all facets selections should be gone
     cy.getFacetContainer('Water')
