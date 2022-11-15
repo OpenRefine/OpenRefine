@@ -152,7 +152,7 @@ describe(__filename, function () {
     cy.get('span:contains("records")').should('length',3);
     cy.get('tr td:nth-child(3)').then((recordNumber) => {
       for (let i = 1; i <= 3; i++) {
-       expect(recordNumber.text()).to.contain(i);
+      expect(recordNumber.text()).to.contain(i);
       }
     });
 
