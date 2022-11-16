@@ -25,13 +25,13 @@
   <mailingLists>
     <mailingList>
       <name>Dev</name>
-        <post>openrefine-dev@googlegroups.com</post>
-        <archive>https://groups.google.com/group/openrefine-dev/</archive>
+        <post>openrefine+dev@discoursemail.com</post>
+        <archive>https://forum.openrefine.org/c/8</archive>
      </mailingList>
      <mailingList>
        <name>Users</name>
-       <post>openrefine@googlegroups.com</post>
-       <archive>https://groups.google.com/group/openrefine/</archive>
+       <post>openrefine+support@discoursemail.com</post>
+       <archive>https://forum.openrefine.org/c/support/12</archive>
      </mailingList>
   </mailingLists>
   <scm>
