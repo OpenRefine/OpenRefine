@@ -27,12 +27,11 @@
 
 package com.google.refine.importers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -100,17 +99,16 @@ public class LineBasedImporter extends TabularImportingParserBase {
             JSONUtilities.safePut(options, "headerLines", 0);
         }
 
-        final Scanner lnReader = new Scanner(reader);
+        final Scanner lnReader = new Scanner(new BufferedReader(reader));
         lnReader.useDelimiter(sep);
 
-        try {
-            int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
-            while (skip > 0) {
-                lnReader.next();
-                skip--;
-            }
-        } catch (Exception e) {
-            logger.error("Error reading line-based file", e);
+        int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
+        while (skip > 0) {
+            lnReader.next();
+            skip--;
+        }
+        if (lnReader.ioException() != null) {
+            logger.error("Error reading line-based file", lnReader.ioException());
         }
         JSONUtilities.safePut(options, "ignoreLines", -1);
 
