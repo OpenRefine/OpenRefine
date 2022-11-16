@@ -361,7 +361,7 @@
             <groupId>net.sf.launch4j</groupId>
             <artifactId>launch4j</artifactId>
             <classifier>core</classifier>
-            <version>3.14</version>
+            <version>3.50</version>
           </dependency>
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
