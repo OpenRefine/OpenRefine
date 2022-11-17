@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2018, 2022 OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,9 @@
 package com.google.refine.importers;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -88,11 +88,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
 
         final List<Object> columnNames;
         if (options.has("columnNames")) {
-            columnNames = new ArrayList<Object>();
-            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-            for (String s : strings) {
-                columnNames.add(s);
-            }
+            columnNames = new ArrayList<>(Arrays.asList(JSONUtilities.getStringArray(options, "columnNames")));
             JSONUtilities.safePut(options, "headerLines", 1);
         } else {
             columnNames = null;
@@ -117,7 +113,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
             boolean usedColumnNames = false;
 
             @Override
-            public List<Object> getNextRowOfCells() throws IOException {
+            public List<Object> getNextRowOfCells() {
                 if (columnNames != null && !usedColumnNames) {
                     usedColumnNames = true;
                     return columnNames;
@@ -127,7 +123,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
                         if (lnReader.hasNext()) {
                             String line = lnReader.next();
                             if (i == 0) {
-                                cells = new ArrayList<Object>(linesPerRow);
+                                cells = new ArrayList<>(linesPerRow);
                             }
                             cells.add(line);
                         } else {

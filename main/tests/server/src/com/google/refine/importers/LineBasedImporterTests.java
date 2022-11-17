@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2022 OpenRefine contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,11 @@
 package com.google.refine.importers;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.io.StringReader;
+
+import static org.testng.Assert.*;
 
 public class LineBasedImporterTests extends ImporterTest {
 
@@ -66,14 +67,14 @@ public class LineBasedImporterTests extends ImporterTest {
             prepareOptions("\\r?\\n", 1, 1, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
+            fail("Exception during file parse", e);
         }
 
-        Assert.assertEquals(project.columnModel.columns.size(), 1);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        assertEquals(project.columnModel.columns.size(), 1);
+        assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        assertEquals(project.rows.size(), 1);
+        assertEquals(project.rows.get(0).cells.size(), 1);
+        assertEquals(project.rows.get(0).cells.get(0).value, "data1");
     }
 
     @Test()
@@ -84,14 +85,14 @@ public class LineBasedImporterTests extends ImporterTest {
             prepareOptions("\\r?\\n", 1, 0, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
+            fail("Exception during file parse", e);
         }
 
-        Assert.assertEquals(project.rows.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "data2");
-        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "data3\rdata4");
+        assertEquals(project.rows.size(), 3);
+        assertEquals(project.rows.get(0).cells.size(), 1);
+        assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        assertEquals(project.rows.get(1).cells.get(0).value, "data2");
+        assertEquals(project.rows.get(2).cells.get(0).value, "data3\rdata4");
     }
 
     @Test(dataProvider = "LineBasedImporter-Separators")
@@ -102,15 +103,15 @@ public class LineBasedImporterTests extends ImporterTest {
             prepareOptions(pattern, 1, 0, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
+            fail("Exception during file parse", e);
         }
 
-        Assert.assertEquals(project.rows.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "dataa");
-        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "datab");
-        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "datac");
-        Assert.assertEquals(project.rows.get(3).cells.get(0).value, "datad");
+        assertEquals(project.rows.size(), 4);
+        assertEquals(project.rows.get(0).cells.size(), 1);
+        assertEquals(project.rows.get(0).cells.get(0).value, "dataa");
+        assertEquals(project.rows.get(1).cells.get(0).value, "datab");
+        assertEquals(project.rows.get(2).cells.get(0).value, "datac");
+        assertEquals(project.rows.get(3).cells.get(0).value, "datad");
     }
 
     @DataProvider(name = "LineBasedImporter-Separators")
@@ -118,14 +119,6 @@ public class LineBasedImporterTests extends ImporterTest {
         return new Object[][] {
                 { "\\r?\\n", "\n" }, { "\\\\*%%\\\\*", "*%%*" }, { ",", "," }, { "[0-9]", "1" }
         };
-    }
-
-    protected void prepareOptions(
-            String sep) {
-        whenGetStringOption("separator", options, sep);
-        whenGetIntegerOption("linesPerRow", options, 1);
-        whenGetIntegerOption("headerLines", options, 0);
-        whenGetBooleanOption("guessCellValueTypes", options, false);
     }
 
     protected void prepareOptions(
