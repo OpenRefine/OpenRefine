@@ -36,7 +36,7 @@ package com.google.refine.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +135,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         String tag = "library";
 
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
@@ -153,7 +153,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         String tag = "book";
 
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
@@ -172,7 +172,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         String tag = "";
 
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
@@ -518,17 +518,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         Assert.assertNotNull(record);
         Assert.assertNotNull(record.rows);
-        // Assert.assertNotNull(record.columnEmptyRowIndices);
         Assert.assertEquals(record.rows.size(), 1);
-        // Assert.assertEquals(record.columnEmptyRowIndices.size(), 2);
         Assert.assertNotNull(record.rows.get(0));
-        // Assert.assertNotNull(record.columnEmptyRowIndices.get(0));
-        // Assert.assertNotNull(record.columnEmptyRowIndices.get(1));
         Assert.assertEquals(record.rows.get(0).size(), 1);
         Assert.assertNotNull(record.rows.get(0).get(0));
         Assert.assertEquals(record.rows.get(0).get(0).value, "Author1, The");
-        // Assert.assertEquals(record.columnEmptyRowIndices.get(0).intValue(),0);
-        // Assert.assertEquals(record.columnEmptyRowIndices.get(1).intValue(),1);
 
     }
 
@@ -632,11 +626,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     public void loadData(String xml) {
-        try {
-            inputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
+        inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
     }
 
     public void ParserSkip() {
@@ -653,9 +643,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             parser = new XmlParser(inputStream);
             return parser;
-        } catch (XMLStreamException e) {
-            return null;
-        } catch (IOException e) {
+        } catch (XMLStreamException | IOException e) {
             return null;
         }
     }
@@ -666,9 +654,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     private String _getXmlDataFromFile(String fileName) throws IOException {
-        InputStream in = this.getClass().getClassLoader()
-                .getResourceAsStream(fileName);
-        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-        return content;
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        if (in == null) {
+            logger.warn("Failed to find resource: " + fileName);
+            return null;
+        }
+        return org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
     }
 }

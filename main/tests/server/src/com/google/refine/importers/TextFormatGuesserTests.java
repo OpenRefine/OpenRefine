@@ -37,12 +37,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -80,13 +79,13 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void xlsTextGuessTest() throws FileNotFoundException, IOException {
+    public void xlsTextGuessTest() throws IOException {
         // Test an XLSX file without the correct file extension
         String dir = ClassLoader.getSystemResource("Colorado-Municipalities-small-xlsx.gz").getPath();
-        InputStream is = new GZIPInputStream(new FileInputStream(new File(dir)));
+        InputStream is = new GZIPInputStream(new FileInputStream(dir));
         File tmp = File.createTempFile("openrefinetests-textguesser", "");
         FileUtils.copyInputStreamToFile(is, tmp);
-        String format = guesser.guess(tmp, "UTF-8", "text");
+        String format = guesser.guess(tmp, StandardCharsets.UTF_8.toString(), "text");
         assertEquals(format, "binary");
     }
 
@@ -115,7 +114,7 @@ public class TextFormatGuesserTests extends ImporterTest {
         dir = dir.substring(0, dir.lastIndexOf('/'));
         File testDataDir = new File(dir);
         for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
-            String format = guesser.guess(new File(dir, testFile), "UTF-8", "text");
+            String format = guesser.guess(new File(dir, testFile), StandardCharsets.UTF_8.toString(), "text");
             assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
         }
     }
@@ -133,19 +132,19 @@ public class TextFormatGuesserTests extends ImporterTest {
         testWikiTableString(input);
     }
 
-    private void testWikiTableString(String input) throws IOException, FileNotFoundException {
+    private void testWikiTableString(String input) throws IOException {
         File tmp = File.createTempFile("openrefinetests-textguesser", "");
         OutputStreamWriter writer = new OutputStreamWriter(
                 new FileOutputStream(tmp),
-                Charset.forName("UTF-8").newEncoder());
+                StandardCharsets.UTF_8.newEncoder());
         writer.write(input);
         writer.close();
-        String format = guesser.guess(tmp, "UTF-8", "text");
+        String format = guesser.guess(tmp, StandardCharsets.UTF_8.toString(), "text");
         assertEquals(format, "text/wiki");
     }
 
     @Test
-    public void guessTableWithMisplacedHeaders() throws FileNotFoundException, IOException {
+    public void guessTableWithMisplacedHeaders() throws IOException {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"
@@ -160,7 +159,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithLinks() throws FileNotFoundException, IOException {
+    public void guessTableWithLinks() throws IOException {
 
         // Data credits: Wikipedia contributors,
         // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
@@ -178,7 +177,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void readStyledTableWithHeader() throws FileNotFoundException, IOException {
+    public void readStyledTableWithHeader() throws IOException {
         // Data credits: Wikipedia contributors,
         // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
@@ -203,7 +202,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithSpanningCells() throws FileNotFoundException, IOException {
+    public void guessTableWithSpanningCells() throws IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{| class=\"wikitable\"\n"
                 + "!colspan=\"6\"|Shopping List\n"
@@ -223,7 +222,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithReferences() throws FileNotFoundException, IOException {
+    public void guessTableWithReferences() throws IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
                 + "! price\n"
@@ -239,7 +238,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithReferencesTemplates() throws FileNotFoundException, IOException {
+    public void guessTableWithReferencesTemplates() throws IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
                 + "! price\n"
@@ -255,7 +254,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithTemplates() throws FileNotFoundException, IOException {
+    public void guessTableWithTemplates() throws IOException {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"

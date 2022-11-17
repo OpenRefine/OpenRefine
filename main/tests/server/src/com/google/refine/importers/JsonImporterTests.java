@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
@@ -119,13 +120,10 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
-        try {
-            inputStream = new ByteArrayInputStream(errJSON.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
+        inputStream = new ByteArrayInputStream(errJSON.getBytes(StandardCharsets.UTF_8));
+
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
 
         SUT.parseOneFile(
                 project,
@@ -292,7 +290,7 @@ public class JsonImporterTests extends ImporterTest {
         String sampleJson2 = "{\"field\":{}}";
         String sampleJson3 = "{\"field\":[{},{}]}";
 
-        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes(StandardCharsets.UTF_8)));
         Token token = Token.Ignorable;
         int i = 0;
         try {
@@ -311,7 +309,7 @@ public class JsonImporterTests extends ImporterTest {
             // silent
         }
 
-        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes(StandardCharsets.UTF_8)));
         token = Token.Ignorable;
         i = 0;
         try {
@@ -330,7 +328,7 @@ public class JsonImporterTests extends ImporterTest {
             // silent
         }
 
-        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes(StandardCharsets.UTF_8)));
         token = Token.Ignorable;
         i = 0;
         try {
@@ -363,7 +361,7 @@ public class JsonImporterTests extends ImporterTest {
         // Use un-escaped tabs here.
         String sampleJson = "{\"\tfield\":\t\"\tvalue\"}";
 
-        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes(StandardCharsets.UTF_8)));
         Token token = Token.Ignorable;
         int i = 0;
         try {
@@ -455,7 +453,7 @@ public class JsonImporterTests extends ImporterTest {
         String fileName = "grid_small.json";
         RunComplexJSONTest(getComplexJSON(fileName));
 
-        logger.debug("************************ columnu number:" + project.columnModel.columns.size() +
+        logger.debug("************************ column number:" + project.columnModel.columns.size() +
                 ". \tcolumn groups number:" + project.columnModel.columnGroups.size() +
                 ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount());
 
@@ -648,7 +646,8 @@ public class JsonImporterTests extends ImporterTest {
     private void RunTest(String testString, ObjectNode options) {
         try {
             stageString(testString);
-            parseOneFile(SUT);
+//            parseOneFile(SUT);
+            parseOneInputStream(SUT, inputStream, options);
         } catch (IOException e) {
             Assert.fail("JSON importer test failed", e);
         }
@@ -657,7 +656,7 @@ public class JsonImporterTests extends ImporterTest {
     private String getComplexJSON(String fileName) throws IOException {
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream(fileName);
-        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+        String content = org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
 
         return content;
     }

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -134,11 +135,11 @@ public class WikitextImporterTests extends ImporterTest {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"
-                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || https://www.cedefop.europa.eu/\n"
                 + "|-\n"
-                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [https://www.eurofound.europa.eu/]\n"
                 + "|-\n"
-                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [https://www.emcdda.europa.eu/ europa.eu]\n"
                 + "|-\n"
                 + "|}\n";
 
@@ -161,14 +162,14 @@ public class WikitextImporterTests extends ImporterTest {
 
             // Reconciled cells
             Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
-            Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
+            Assert.assertNull(project.rows.get(0).cells.get(1).recon);
             Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
             Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
 
             // various ways to input external links
-            Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
-            Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
-            // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://www.cedefop.europa.eu/");
+            Assert.assertEquals(project.rows.get(1).cells.get(2).value, "https://www.eurofound.europa.eu/");
+            Assert.assertEquals(project.rows.get(2).cells.get(2).value, "https://www.emcdda.europa.eu/");
+            // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "https://www.cedefop.europa.eu/");
             // unfortunately the above does not seem to be supported by the parser (parsed as blank instead)
         }
     }
@@ -188,11 +189,11 @@ public class WikitextImporterTests extends ImporterTest {
                 + "! style=\"text-align:left; width: 6em\" | Gründung\n"
                 + "! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
                 + "|-\n"
-                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [https://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
                 + "|-\n"
-                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [https://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
                 + "|-\n"
-                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [https://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
                 + "|-\n"
                 + "|}\n";
 
@@ -249,7 +250,7 @@ public class WikitextImporterTests extends ImporterTest {
                 + "! fruit\n"
                 + "! merchant\n"
                 + "|-\n"
-                + "| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
+                + "| a || b <ref name=\"myref\"> See [https://gnu.org here]</ref>  || c <ref name=\"ms\"> or https://microsoft.com/ </ref>\n"
                 + "|-\n"
                 + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
                 + "|-\n"
@@ -263,10 +264,10 @@ public class WikitextImporterTests extends ImporterTest {
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
-        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "https://gnu.org");
+        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "https://microsoft.com/");
+        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "https://gnu.org");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "https://microsoft.com/");
     }
 
     @Test
@@ -277,7 +278,7 @@ public class WikitextImporterTests extends ImporterTest {
                 + "! fruit\n"
                 + "! merchant\n"
                 + "|-\n"
-                + "| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
+                + "| a || b <ref name=\"myref\">{{cite web|url=https://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=https://microsoft.com/|title=BLah}} </ref>\n"
                 + "|-\n"
                 + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
                 + "|-\n"
@@ -291,10 +292,10 @@ public class WikitextImporterTests extends ImporterTest {
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
-        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "https://gnu.org");
+        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "https://microsoft.com/");
+        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "https://gnu.org");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "https://microsoft.com/");
     }
 
     /**
@@ -345,6 +346,6 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetBooleanOption("includeRawTemplates", options, true);
         whenGetStringOption("wikiUrl", options, wikiUrl);
         whenGetStringOption("reconService", options, reconEndpoint);
-        whenGetStringOption("encoding", options, "utf-8");
+        whenGetStringOption("encoding", options, StandardCharsets.UTF_8.toString());
     }
 }
