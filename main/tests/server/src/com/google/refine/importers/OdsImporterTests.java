@@ -40,11 +40,11 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class OdsImporterTests extends ImporterTest {
     }
 
     @Test
-    public void readOds() throws FileNotFoundException, IOException {
+    public void readOds() throws IOException {
         stageResource("films.ods");
         initMetadata("films.ods", 1);
 
@@ -114,7 +114,7 @@ public class OdsImporterTests extends ImporterTest {
         assertFalse((Boolean) row.getCellValue(7));
         assertTrue((Boolean) project.rows.get(1).getCellValue(7));
 
-        assertNull((String) project.rows.get(2).getCellValue(2));
+        assertNull(project.rows.get(2).getCellValue(2));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -124,7 +124,7 @@ public class OdsImporterTests extends ImporterTest {
     }
 
     @Test
-    public void showErrorDialogWhenWrongFormat() throws FileNotFoundException, IOException {
+    public void showErrorDialogWhenWrongFormat() throws IOException {
         stageResource("NoData_NoSpreadsheet.ods");
         initMetadata("NoData_NoSpreadsheet.ods", 1);
 
@@ -136,6 +136,7 @@ public class OdsImporterTests extends ImporterTest {
 
 
         try {
+            Logger.getLogger("").setLevel(Level.OFF);  // disable annoying logging since we expect this to fail
             List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT);
             assertEquals(exceptions.size(), 1);
             Exception NPE = exceptions.get(0);
