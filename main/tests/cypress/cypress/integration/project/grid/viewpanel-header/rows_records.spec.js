@@ -133,13 +133,12 @@ describe(__filename, function () {
     cy.addProjectForDeletion();
   });
 
-  it('ensures rows and records display same in csv file', function () {
+  it.only('ensures rows and records display same in csv file', function () {
     cy.loadAndVisitProject('food.small');
 
     cy.get('span[bind="modeSelectors"]').contains('records').click();
     cy.get('.data-table tbody').find('tr').should('have.length', 10);
 
-    cy.get('body[ajax_in_progress="true"]');
     cy.get('body[ajax_in_progress="false"]');
 
     cy.get('span[bind="modeSelectors"]').contains('rows').click();
