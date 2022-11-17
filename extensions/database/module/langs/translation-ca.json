@@ -1,5 +1,6 @@
 {
     "database-import/importer-name": "Base de dades",
     "database-import/title": "Servidors de bases de dades",
-    "database-import/preparing": "Preparant el resultat…"
+    "database-import/preparing": "Preparant el resultat…",
+    "database-import/checking": "Validant la consulta…"
 }
