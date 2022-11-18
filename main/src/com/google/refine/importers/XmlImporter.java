@@ -66,6 +66,7 @@ import com.google.refine.util.ParsingUtilities;
 public class XmlImporter extends TreeImportingParserBase {
 
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
+    static final int PREFIX_SIZE_LIMIT = 100;
 
     public XmlImporter() {
         super(true);
@@ -337,9 +338,8 @@ public class XmlImporter extends TreeImportingParserBase {
         PushbackInputStream pis = new PushbackInputStream(inputStream);
         int b;
         int count = 0;
-        while (count < 100 && (b = pis.read()) >= 0) {
-            // FIXME: This will never be triggered
-            if (++count > 100) {
+        while (count < PREFIX_SIZE_LIMIT && (b = pis.read()) >= 0) {
+            if (++count == PREFIX_SIZE_LIMIT) {
                 throw new XMLStreamException(
                         "File starts with too much non-XML content to skip over");
             } else if (b == '<') {
