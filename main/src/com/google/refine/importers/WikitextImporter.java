@@ -89,7 +89,6 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.ReconStats;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
-import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;
 
 import de.fau.cs.osr.ptk.common.AstVisitor;
@@ -190,10 +189,10 @@ public class WikitextImporter extends TabularImportingParserBase {
             this.blankSpanningCells = blankSpanningCells;
             this.includeRawTemplates = includeRawTemplates;
             caption = null;
-            rows = new ArrayList<List<String>>();
-            references = new ArrayList<List<String>>();
-            wikilinkedCells = new ArrayList<WikilinkedCell>();
-            spanningCells = new ArrayList<SpanningCell>();
+            rows = new ArrayList<>();
+            references = new ArrayList<>();
+            wikilinkedCells = new ArrayList<>();
+            spanningCells = new ArrayList<>();
             cellStringBuilder = null;
             xmlAttrStringBuilder = null;
             currentRowReferences = null;
@@ -206,8 +205,8 @@ public class WikitextImporter extends TabularImportingParserBase {
             rowspan = 0;
             rowId = 0;
             spanningCellIdx = 0;
-            internalLinksInCell = new ArrayList<String>();
-            namedReferences = new HashMap<String, String>();
+            internalLinksInCell = new ArrayList<>();
+            namedReferences = new HashMap<>();
         }
 
         @Override
@@ -242,8 +241,8 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
 
         private void startRow() {
-            currentRow = new ArrayList<String>();
-            currentRowReferences = new ArrayList<String>();
+            currentRow = new ArrayList<>();
+            currentRowReferences = new ArrayList<>();
             spanningCellIdx = 0;
             addSpanningCells();
         }
@@ -568,8 +567,8 @@ public class WikitextImporter extends TabularImportingParserBase {
 
     public class WikiTableDataReader implements TableDataReader {
 
-        private int currentRow = 0;
-        private WikitextTableVisitor visitor = null;
+        private int currentRow;
+        private WikitextTableVisitor visitor;
         private List<List<Recon>> reconList = null;
         private List<Boolean> columnReconciled = null;
         private List<Boolean> columnReferenced = null;
@@ -581,7 +580,7 @@ public class WikitextImporter extends TabularImportingParserBase {
 
             if (references) {
                 // Check which column had references
-                columnReferenced = new ArrayList<Boolean>();
+                columnReferenced = new ArrayList<>();
                 for (List<String> row : this.visitor.references) {
                     for (int i = 0; i != row.size(); i++) {
                         while (i >= columnReferenced.size()) {
@@ -606,7 +605,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             }
 
             if (origRow != null) {
-                row = new ArrayList<Object>();
+                row = new ArrayList<>();
                 for (int i = 0; i < origRow.size(); i++) {
                     Recon recon = null;
                     if (currentRow >= 0 && reconList != null) {
@@ -621,7 +620,7 @@ public class WikitextImporter extends TabularImportingParserBase {
 
                     // if we should add reference columns…
                     if (columnReferenced != null && i < columnReferenced.size() && columnReferenced.get(i)) {
-                        String refValue = null;
+                        String refValue;
                         // for headers
                         if (currentRow == -1) {
                             refValue = origRow.get(i) + "_ref";
@@ -646,11 +645,11 @@ public class WikitextImporter extends TabularImportingParserBase {
             }
 
             // Init the list of recons
-            reconList = new ArrayList<List<Recon>>();
-            columnReconciled = new ArrayList<Boolean>();
+            reconList = new ArrayList<>();
+            columnReconciled = new ArrayList<>();
             for (int i = 0; i < this.visitor.rows.size(); i++) {
                 int rowSize = this.visitor.rows.get(i).size();
-                List<Recon> recons = new ArrayList<Recon>(rowSize);
+                List<Recon> recons = new ArrayList<>(rowSize);
                 for (int j = 0; j < rowSize; j++) {
                     recons.add(null);
                     if (j >= columnReconciled.size())
@@ -664,7 +663,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             int i = 0;
             int totalSize = this.visitor.wikilinkedCells.size();
             while (i < totalSize) {
-                List<ReconJob> jobs = new ArrayList<ReconJob>();
+                List<ReconJob> jobs = new ArrayList<>();
                 int batchStart = i;
                 while (i < batchStart + batchSize && i < totalSize) {
                     WikilinkedCell cell = this.visitor.wikilinkedCells.get(i);
@@ -775,7 +774,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 "",
                 "entity",
                 true,
-                new ArrayList<ColumnDetail>(),
+                new ArrayList<>(),
                 1);
         return cfg;
     }

@@ -97,8 +97,7 @@ public class MarcImporter extends XmlImporter {
                 logger.error("Failed to create temporary XML file from MARC file", e);
             }
         }
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        return options;
-    };
+        return super.createParserUIInitializationData(job, fileRecords, format);
+    }
 
 }

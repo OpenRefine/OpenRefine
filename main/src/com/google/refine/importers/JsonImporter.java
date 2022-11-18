@@ -107,8 +107,8 @@ public class JsonImporter extends TreeImportingParserBase {
         return options;
     }
 
-    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state, JsonToken token)
-            throws JsonParseException, IOException {
+    static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state, JsonToken token)
+            throws IOException {
         if (token != null) {
             switch (token) {
                 case START_ARRAY:
@@ -139,7 +139,7 @@ public class JsonImporter extends TreeImportingParserBase {
         return null;
     }
 
-    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state) {
+    static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state) {
         try {
             JsonToken token = parser.nextToken();
             state.tokenCount++;
@@ -149,7 +149,7 @@ public class JsonImporter extends TreeImportingParserBase {
         }
     }
 
-    final static private ObjectNode parseObjectForPreview(JsonParser parser, PreviewParsingState state) {
+    static private ObjectNode parseObjectForPreview(JsonParser parser, PreviewParsingState state) {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         loop: while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
             try {
@@ -166,7 +166,6 @@ public class JsonImporter extends TreeImportingParserBase {
                         JSONUtilities.safePut(result, fieldName, fieldValue);
                         break;
                     case END_OBJECT:
-                        break loop;
                     default:
                         break loop;
                 }
@@ -177,7 +176,7 @@ public class JsonImporter extends TreeImportingParserBase {
         return result;
     }
 
-    final static private ArrayNode parseArrayForPreview(JsonParser parser, PreviewParsingState state) {
+    static private ArrayNode parseArrayForPreview(JsonParser parser, PreviewParsingState state) {
         ArrayNode result = ParsingUtilities.mapper.createArrayNode();
         loop: while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
             try {
@@ -275,7 +274,7 @@ public class JsonImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public String getFieldName() throws TreeReaderException {
+        public String getFieldName() {
             return fieldName;
         }
 
@@ -288,7 +287,7 @@ public class JsonImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public String getFieldValue() throws TreeReaderException {
+        public String getFieldValue() {
             return fieldValue.toString();
         }
 
@@ -310,15 +309,15 @@ public class JsonImporter extends TreeImportingParserBase {
                         return parser.getText();
                     case VALUE_NUMBER_INT:
                         if (parser.getNumberType() == NumberType.INT || parser.getNumberType() == NumberType.LONG) {
-                            return Long.valueOf(parser.getLongValue());
+                            return parser.getLongValue();
                         } else {
                             return parser.getNumberValue();
                         }
                     case VALUE_NUMBER_FLOAT:
                         if (parser.getNumberType() == NumberType.FLOAT) {
-                            return Float.valueOf(parser.getFloatValue());
+                            return parser.getFloatValue();
                         } else if (parser.getNumberType() == NumberType.DOUBLE) {
-                            return Double.valueOf(parser.getDoubleValue());
+                            return parser.getDoubleValue();
                         } else {
                             return parser.getNumberValue();
                         }
@@ -371,33 +370,23 @@ public class JsonImporter extends TreeImportingParserBase {
         protected Token mapToToken(JsonToken token) {
             switch (token) {
                 case START_ARRAY:
-                    return Token.StartEntity;
-                case END_ARRAY:
-                    return Token.EndEntity;
                 case START_OBJECT:
                     return Token.StartEntity;
+                case END_ARRAY:
                 case END_OBJECT:
                     return Token.EndEntity;
                 case VALUE_STRING:
-                    return Token.Value;
-                case FIELD_NAME:
-                    return Token.Ignorable; // returned by the getLocalName function()
                 case VALUE_NUMBER_INT:
-                    return Token.Value;
-                // Json does not have START_DOCUMENT token type (so ignored as default)
-                // Json does not have END_DOCUMENT token type (so ignored as default)
+// Json does not have START_DOCUMENT token type (so ignored as default)
+                    // Json does not have END_DOCUMENT token type (so ignored as default)
                 case VALUE_TRUE:
-                    return Token.Value;
                 case VALUE_NUMBER_FLOAT:
-                    return Token.Value;
                 case VALUE_NULL:
-                    return Token.Value;
                 case VALUE_FALSE:
-                    return Token.Value;
+                    return Token.Value;// returned by the getLocalName function()
                 case VALUE_EMBEDDED_OBJECT:
-                    return Token.Ignorable;
                 case NOT_AVAILABLE:
-                    return Token.Ignorable;
+                case FIELD_NAME:
                 default:
                     return Token.Ignorable;
             }

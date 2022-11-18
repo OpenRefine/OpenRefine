@@ -86,9 +86,8 @@ public class XmlImporter extends TreeImportingParserBase {
             if (fileRecords.size() > 0) {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                InputStream is = new FileInputStream(file);
 
-                try {
+                try (InputStream is = new FileInputStream(file)) {
                     XMLStreamReader parser = createXMLStreamReader(is);
                     PreviewParsingState state = new PreviewParsingState();
 
@@ -101,14 +100,10 @@ public class XmlImporter extends TreeImportingParserBase {
                                 JSONUtilities.safePut(options, "dom", rootElement);
                                 break;
                             }
-                        } else {
-                            // ignore everything else
                         }
                     }
                 } catch (XMLStreamException e) {
                     logger.warn("Error generating parser UI initialization data for XML file", e);
-                } finally {
-                    is.close();
                 }
             }
         } catch (IOException e) {
@@ -118,7 +113,7 @@ public class XmlImporter extends TreeImportingParserBase {
         return options;
     }
 
-    final static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) {
+    static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         {
             String name = parser.getLocalName();
@@ -180,8 +175,6 @@ public class XmlImporter extends TreeImportingParserBase {
                     ObjectNode childElement = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(childElement, "t", parser.getText());
                     children.add(childElement);
-                } else {
-                    // ignore everything else
                 }
             }
         } catch (XMLStreamException e) {
@@ -203,9 +196,7 @@ public class XmlImporter extends TreeImportingParserBase {
         try {
             parseOneFile(project, metadata, job, fileSource,
                     new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
-        } catch (XMLStreamException e) {
-            exceptions.add(e);
-        } catch (IOException e) {
+        } catch (XMLStreamException | IOException e) {
             exceptions.add(e);
         }
     }
@@ -229,7 +220,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 throw new TreeReaderException(e);
             }
 
-            int currentToken = -1;
+            int currentToken;
             try {
                 currentToken = parser.next();
             } catch (XMLStreamException e) {
@@ -254,31 +245,19 @@ public class XmlImporter extends TreeImportingParserBase {
                 case XMLStreamConstants.END_ELEMENT:
                     return Token.EndEntity;
                 case XMLStreamConstants.CHARACTERS:
-                    return Token.Value;
-                case XMLStreamConstants.START_DOCUMENT:
-                    return Token.Ignorable;
-                case XMLStreamConstants.END_DOCUMENT:
-                    return Token.Ignorable;
                 case XMLStreamConstants.SPACE:
                     return Token.Value;
-                case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    return Token.Ignorable;
-                case XMLStreamConstants.NOTATION_DECLARATION:
-                    return Token.Ignorable;
-                case XMLStreamConstants.NAMESPACE:
-                    return Token.Ignorable;
-                case XMLStreamConstants.ENTITY_REFERENCE:
-                    return Token.Ignorable;
-                case XMLStreamConstants.DTD:
-                    return Token.Ignorable;
-                case XMLStreamConstants.COMMENT:
-                    return Token.Ignorable;
-                case XMLStreamConstants.CDATA:
-                    return Token.Ignorable;
-                case XMLStreamConstants.ATTRIBUTE:
-                    return Token.Ignorable;
                 case WHITESPACE_CHARACTERS_TOKEN:
-                    return Token.Ignorable;
+                case XMLStreamConstants.ATTRIBUTE:
+                case XMLStreamConstants.CDATA:
+                case XMLStreamConstants.COMMENT:
+                case XMLStreamConstants.DTD:
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                case XMLStreamConstants.NAMESPACE:
+                case XMLStreamConstants.NOTATION_DECLARATION:
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                case XMLStreamConstants.END_DOCUMENT:
+                case XMLStreamConstants.START_DOCUMENT:
                 default:
                     return Token.Ignorable;
             }
@@ -299,7 +278,7 @@ public class XmlImporter extends TreeImportingParserBase {
         }
 
         @Override
-        public String getFieldName() throws TreeReaderException {
+        public String getFieldName() {
             try {
                 return parser.getLocalName();
             } catch (IllegalStateException e) {
@@ -344,7 +323,7 @@ public class XmlImporter extends TreeImportingParserBase {
         }
     }
 
-    final static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException, IOException {
+    static private XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException, IOException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, true);
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
@@ -353,12 +332,13 @@ public class XmlImporter extends TreeImportingParserBase {
         return factory.createXMLStreamReader(wrapPrefixRemovingInputStream(inputStream));
     }
 
-    final static private InputStream wrapPrefixRemovingInputStream(InputStream inputStream)
+    static private InputStream wrapPrefixRemovingInputStream(InputStream inputStream)
             throws XMLStreamException, IOException {
         PushbackInputStream pis = new PushbackInputStream(inputStream);
         int b;
         int count = 0;
         while (count < 100 && (b = pis.read()) >= 0) {
+            // FIXME: This will never be triggered
             if (++count > 100) {
                 throw new XMLStreamException(
                         "File starts with too much non-XML content to skip over");

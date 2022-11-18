@@ -110,7 +110,7 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void setsProjectMetadata() throws IOException {
-        // Setup a file record to import
+        // Set up a file record to import
         FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), StandardCharsets.UTF_8);
         List<ObjectNode> fileRecords = new ArrayList<>();
         fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
@@ -127,7 +127,7 @@ public class XmlImporterTests extends ImporterTest {
                 "text/json",
                 -1,
                 options,
-                new ArrayList<Exception>());
+                new ArrayList<>());
 
         assertNotNull(metadata.getModified());
         assertNotNull(metadata.getCreated());
@@ -249,7 +249,7 @@ public class XmlImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "includeFileSources", true);
 
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
 
         SUT.parse(
                 project,
@@ -423,24 +423,18 @@ public class XmlImporterTests extends ImporterTest {
         RunTest(testString, getOptions(job, SUT));
     }
 
-    private void RunTest(String testString, ObjectNode objectNode) {
+    private void RunTest(String testString, ObjectNode options) {
         try {
             stageString(testString);
         } catch (IOException e1) {
             Assert.fail();
         }
 
-
         try {
-            parseOneFile(SUT, inputStream, objectNode);
+            parseOneTreeFile(SUT, options);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
         }
-    }
-
-    @Override
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
-        parseOneInputStream(parser, inputStream, options);
     }
 }

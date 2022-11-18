@@ -81,13 +81,10 @@ public class ExcelImporter extends TabularImportingParserBase {
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
-            for (int index = 0; index < fileRecords.size(); index++) {
-                ObjectNode fileRecord = fileRecords.get(index);
+            for (ObjectNode fileRecord : fileRecords) {
                 File file = ImportingUtilities.getFile(job, fileRecord);
 
-                Workbook wb = null;
-                try {
-                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) : new HSSFWorkbook(new POIFSFileSystem(file));
+                try (Workbook wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) : new HSSFWorkbook(new POIFSFileSystem(file))) {
 
                     int sheetCount = wb.getNumberOfSheets();
                     for (int i = 0; i < sheetCount; i++) {
@@ -98,16 +95,8 @@ public class ExcelImporter extends TabularImportingParserBase {
                         JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getSheetName());
                         JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                         JSONUtilities.safePut(sheetRecord, "rows", rows);
-                        if (rows > 1) {
-                            JSONUtilities.safePut(sheetRecord, "selected", true);
-                        } else {
-                            JSONUtilities.safePut(sheetRecord, "selected", false);
-                        }
+                        JSONUtilities.safePut(sheetRecord, "selected", rows > 1);
                         JSONUtilities.append(sheetRecords, sheetRecord);
-                    }
-                } finally {
-                    if (wb != null) {
-                        wb.close();
                     }
                 }
             }
@@ -132,7 +121,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
-        Workbook wb = null;
+        Workbook wb;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
         }
@@ -172,7 +161,7 @@ public class ExcelImporter extends TabularImportingParserBase {
         ArrayNode sheets = (ArrayNode) options.get("sheets");
 
         for (int i = 0; i < sheets.size(); i++) {
-            String[] fileNameAndSheetIndex = new String[2];
+            String[] fileNameAndSheetIndex;
             ObjectNode sheetObj = (ObjectNode) sheets.get(i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
@@ -188,12 +177,12 @@ public class ExcelImporter extends TabularImportingParserBase {
                 int nextRow = 0;
 
                 @Override
-                public List<Object> getNextRowOfCells() throws IOException {
+                public List<Object> getNextRowOfCells() {
                     if (nextRow > lastRow) {
                         return null;
                     }
 
-                    List<Object> cells = new ArrayList<Object>();
+                    List<Object> cells = new ArrayList<>();
                     org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
                     if (row != null) {
                         short lastCell = row.getLastCellNum();

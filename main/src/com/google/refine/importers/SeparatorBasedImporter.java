@@ -40,10 +40,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +103,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
             if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<Object>();
+                retrievedColumnNames = new ArrayList<>();
                 for (String s : strings) {
                     s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
@@ -123,7 +121,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
         final List<Object> columnNames = retrievedColumnNames;
 
-        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        char quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
             quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
@@ -165,9 +163,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
             throws IOException {
 
-        ArrayList<Object> cells = new ArrayList<Object>();
         String[] tokens = parser.parseLineMulti(line);
-        cells.addAll(Arrays.asList(tokens));
+        ArrayList<Object> cells = new ArrayList<>(Arrays.asList(tokens));
         while (parser.isPending()) {
             tokens = parser.parseLineMulti(lnReader.readLine());
             cells.addAll(Arrays.asList(tokens));
@@ -208,16 +205,14 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
     }
 
-    // TODO: Move this to the CSV project?
     static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
             InputStream is = new FileInputStream(file);
             Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
-            LineNumberReader lineNumberReader = new LineNumberReader(reader);
 
-            try {
-                List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
-                Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
+            try (is; reader; LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
+                List<Separator> separators = new ArrayList<>();
+                Map<Character, Separator> separatorMap = new HashMap<>();
 
                 int totalChars = 0;
                 int lineCount = 0;
@@ -272,7 +267,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                                         / ((double) lineCount * (lineCount - 1)));
                     }
 
-                    Collections.sort(separators, new Comparator<Separator>() {
+                    separators.sort(new Comparator<>() {
 
                         @Override
                         public int compare(Separator sep0, Separator sep1) {
@@ -287,13 +282,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     }
 
                 }
-            } finally {
-                lineNumberReader.close();
-                reader.close();
-                is.close();
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

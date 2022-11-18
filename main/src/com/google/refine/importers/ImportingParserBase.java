@@ -124,8 +124,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 
         progress.startFile(fileSource);
         try {
-            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
-            try {
+            try (InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress)) {
 
                 if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
                         && archiveFileName != null) {
@@ -168,8 +167,6 @@ abstract public class ImportingParserBase implements ImportingParser {
                 // TODO: This will save a separate copy for each file in the import, but they're
                 // going to be mostly the same
                 metadata.appendImportOptionMetadata(fileOptions);
-            } finally {
-                inputStream.close();
             }
         } finally {
             progress.endFile(fileSource, file.length());

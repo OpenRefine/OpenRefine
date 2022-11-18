@@ -36,11 +36,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -81,13 +79,13 @@ public class MarcImporterTests extends XmlImporterTests {
     }
 
     @Test
-    public void readMarcFileWithUnicode() throws FileNotFoundException, IOException {
+    public void readMarcFileWithUnicode() throws IOException {
         final String FILE = "scriblio.mrc";
         stageResource(FILE);
 
         // NOTE: This has the side effect of creating scriblio.mrc.xml
         ObjectNode options = SUT.createParserUIInitializationData(
-                job, Arrays.asList(fileRecord), "binary/marc");
+                job, Collections.singletonList(fileRecord), "binary/marc");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");

@@ -42,31 +42,31 @@ import java.io.Serializable;
  */
 public interface TreeReader {
 
-    public enum Token {
+    enum Token {
         Ignorable, StartEntity, EndEntity, Value
         // append additional tokens only if necessary (most should be just mapped to Value or Ignorable)
     }
 
-    public Token current() throws TreeReaderException; // aka getCurrentToken
+    Token current() throws TreeReaderException; // aka getCurrentToken
 
-    public boolean hasNext() throws TreeReaderException;
+    boolean hasNext() throws TreeReaderException;
 
-    public Token next() throws TreeReaderException;
+    Token next() throws TreeReaderException;
 
-    public String getFieldName() throws TreeReaderException;
+    String getFieldName() throws TreeReaderException;
 
-    public String getPrefix();
+    String getPrefix();
 
     @Deprecated
-    public String getFieldValue() throws TreeReaderException;
+    String getFieldValue() throws TreeReaderException;
 
-    public Serializable getValue() throws TreeReaderException;
+    Serializable getValue() throws TreeReaderException;
 
-    public int getAttributeCount();
+    int getAttributeCount();
 
-    public String getAttributeValue(int index);
+    String getAttributeValue(int index);
 
-    public String getAttributePrefix(int index);
+    String getAttributePrefix(int index);
 
-    public String getAttributeLocalName(int index);
+    String getAttributeLocalName(int index);
 }

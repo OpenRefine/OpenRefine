@@ -36,16 +36,12 @@ package com.google.refine.importers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -62,12 +58,9 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-@SuppressWarnings("deprecation")
 public class OdsImporter extends TabularImportingParserBase {
 
     final static Logger logger = LoggerFactory.getLogger("open office");
@@ -85,8 +78,7 @@ public class OdsImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            for (int index = 0; index < fileRecords.size(); index++) {
-                ObjectNode fileRecord = fileRecords.get(index);
+            for (ObjectNode fileRecord : fileRecords) {
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
@@ -101,11 +93,7 @@ public class OdsImporter extends TabularImportingParserBase {
                     JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
-                    if (rows > 0) {
-                        JSONUtilities.safePut(sheetRecord, "selected", true);
-                    } else {
-                        JSONUtilities.safePut(sheetRecord, "selected", false);
-                    }
+                    JSONUtilities.safePut(sheetRecord, "selected", rows > 0);
                     JSONUtilities.append(sheetRecords, sheetRecord);
                 }
             }
@@ -155,7 +143,7 @@ public class OdsImporter extends TabularImportingParserBase {
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
         for (int i = 0; i < sheets.size(); i++) {
-            String[] fileNameAndSheetIndex = new String[2];
+            String[] fileNameAndSheetIndex;
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
@@ -169,15 +157,15 @@ public class OdsImporter extends TabularImportingParserBase {
             TableDataReader dataReader = new TableDataReader() {
 
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
+                Map<String, Recon> reconMap = new HashMap<>();
 
                 @Override
-                public List<Object> getNextRowOfCells() throws IOException {
+                public List<Object> getNextRowOfCells() {
                     if (nextRow > lastRow) {
                         return null;
                     }
 
-                    List<Object> cells = new ArrayList<Object>();
+                    List<Object> cells = new ArrayList<>();
                     OdfTableRow row = table.getRowByIndex(nextRow++);
                     int maxCol = 0;
                     if (row != null) {
@@ -216,7 +204,7 @@ public class OdsImporter extends TabularImportingParserBase {
         // TODO: how can we tell if a cell contains an error?
         // String formula = cell.getFormula();
 
-        Serializable value = null;
+        Serializable value;
         // "boolean", "currency", "date", "float", "percentage", "string" or "time"
         String cellType = cell.getValueType();
         if ("boolean".equals(cellType)) {

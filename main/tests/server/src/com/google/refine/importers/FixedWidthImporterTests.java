@@ -28,7 +28,6 @@
 package com.google.refine.importers;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

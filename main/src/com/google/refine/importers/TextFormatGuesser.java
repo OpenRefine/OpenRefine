@@ -33,7 +33,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.apache.commons.io.input.BoundedInputStream;
@@ -54,7 +53,6 @@ public class TextFormatGuesser implements FormatGuesser {
             if (isCompressed(file)) {
                 return "binary";
             }
-            ;
 
             InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
             try (BufferedReader reader = new BufferedReader(
@@ -124,8 +122,6 @@ public class TextFormatGuesser implements FormatGuesser {
                 }
                 return "text/line-based";
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

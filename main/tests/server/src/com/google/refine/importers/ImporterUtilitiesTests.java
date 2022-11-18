@@ -92,7 +92,7 @@ public class ImporterUtilitiesTests extends RefineTest {
 
     @Test
     public void appendColumnName() {
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
 
         ImporterUtilities.appendColumnName(columnNames, 0, "foo");
         ImporterUtilities.appendColumnName(columnNames, 1, "bar");
@@ -103,7 +103,7 @@ public class ImporterUtilitiesTests extends RefineTest {
 
     @Test
     public void appendColumnNameFromMultipleRows() {
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
 
         ImporterUtilities.appendColumnName(columnNames, 0, "foo");
         ImporterUtilities.appendColumnName(columnNames, 0, "bar");
@@ -116,7 +116,7 @@ public class ImporterUtilitiesTests extends RefineTest {
         String VALUE_1 = "value1";
         String VALUE_2 = "value2";
         Row row = new Row(2);
-        ArrayList<String> columnNames = new ArrayList<String>(2);
+        ArrayList<String> columnNames = new ArrayList<>(2);
         columnNames.add(VALUE_1);
         columnNames.add(VALUE_2);
 
@@ -134,7 +134,7 @@ public class ImporterUtilitiesTests extends RefineTest {
             row.cells.add(new Cell("value" + i, null));
         }
 
-        ArrayList<String> columnNames = new ArrayList<String>(2);
+        ArrayList<String> columnNames = new ArrayList<>(2);
 
         ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
 
@@ -145,7 +145,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     @Test
     public void setupColumns() {
         Project project = new Project();
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
         columnNames.add("col2");
         columnNames.add("");
@@ -158,7 +158,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     @Test
     public void testGetOrAllocateColumn() {
         Project project = new Project();
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         columnNames.add("Column 1");
         columnNames.add("Column 2");
         columnNames.add("Column 3");
@@ -170,7 +170,7 @@ public class ImporterUtilitiesTests extends RefineTest {
 
         // This will mock the situation of importing another sheet from the same file.
         // Expect newColumnNames can be updated using column names.
-        List<String> newColumnNames = new ArrayList<String>();
+        List<String> newColumnNames = new ArrayList<>();
         Column c0 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 0, false);
         Column c1 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 1, false);
         Assert.assertEquals(c0.getName(), "Column 1");

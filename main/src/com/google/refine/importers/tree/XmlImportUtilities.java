@@ -78,7 +78,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      *            The element name (can be qualified) to search for
      * @return If the tag is found, an array of strings is returned. If the tag is at the top level, the tag will be the
      *         only item in the array. If the tag is nested beneath the top level, the array is filled with the
-     *         hierarchy with the tag name at the last index null if the the tag is not found.
+     *         hierarchy with the tag name at the last index null if the tag is not found.
      * @throws TreeReaderException
      */
     static protected List<String> detectRecordElement(TreeReader parser, String tag) throws TreeReaderException {

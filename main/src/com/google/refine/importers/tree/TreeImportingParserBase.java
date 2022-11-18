@@ -117,8 +117,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
 
         progress.startFile(fileSource);
         try {
-            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
-            try {
+            try (InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress)) {
 
                 if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
                         && archiveFileName != null) {
@@ -160,8 +159,6 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                 // TODO: This will save a separate copy for each file in the import, but they're
                 // going to be mostly the same
                 metadata.appendImportOptionMetadata(fileOptions);
-            } finally {
-                inputStream.close();
             }
         } finally {
             progress.endFile(fileSource, file.length());

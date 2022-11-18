@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -113,7 +114,7 @@ public class TextFormatGuesserTests extends ImporterTest {
         String dir = ClassLoader.getSystemResource("food.csv").getPath();
         dir = dir.substring(0, dir.lastIndexOf('/'));
         File testDataDir = new File(dir);
-        for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
+        for (String testFile : Objects.requireNonNull(testDataDir.list(new PatternFilenameFilter(".+\\." + extension)))) {
             String format = guesser.guess(new File(dir, testFile), StandardCharsets.UTF_8.toString(), "text");
             assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
         }
@@ -166,11 +167,11 @@ public class TextFormatGuesserTests extends ImporterTest {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"
-                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || https://www.cedefop.europa.eu/\n"
                 + "|-\n"
-                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [https://www.eurofound.europa.eu/]\n"
                 + "|-\n"
-                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [https://www.emcdda.europa.eu/ europa.eu]\n"
                 + "|-\n"
                 + "|}\n";
         testWikiTableString(input);
@@ -191,11 +192,11 @@ public class TextFormatGuesserTests extends ImporterTest {
                 + "! style=\"text-align:left; width: 6em\" | Gründung\n"
                 + "! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
                 + "|-\n"
-                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [https://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
                 + "|-\n"
-                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [https://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
                 + "|-\n"
-                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [https://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
                 + "|-\n"
                 + "|}\n";
         testWikiTableString(input);
@@ -229,7 +230,7 @@ public class TextFormatGuesserTests extends ImporterTest {
                 + "! fruit\n"
                 + "! merchant\n"
                 + "|-\n"
-                + "| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
+                + "| a || b <ref name=\"myref\"> See [https://gnu.org here]</ref>  || c <ref name=\"ms\"> or https://microsoft.com/ </ref>\n"
                 + "|-\n"
                 + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
                 + "|-\n"
@@ -245,7 +246,7 @@ public class TextFormatGuesserTests extends ImporterTest {
                 + "! fruit\n"
                 + "! merchant\n"
                 + "|-\n"
-                + "| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
+                + "| a || b <ref name=\"myref\">{{cite web|url=https://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=https://microsoft.com/|title=BLah}} </ref>\n"
                 + "|-\n"
                 + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
                 + "|-\n"

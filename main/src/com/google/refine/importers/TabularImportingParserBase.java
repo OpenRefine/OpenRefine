@@ -51,9 +51,9 @@ import com.google.refine.util.JSONUtilities;
 
 abstract public class TabularImportingParserBase extends ImportingParserBase {
 
-    static public interface TableDataReader {
+    public interface TableDataReader {
 
-        public List<Object> getNextRowOfCells() throws IOException;
+        List<Object> getNextRowOfCells() throws IOException;
     }
 
     @Override
@@ -82,7 +82,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
     static public void readTable(
             Project project,
-            ProjectMetadata metadata,
+            ProjectMetadata ignoredMetadata,
             ImportingJob job,
             TableDataReader reader,
             String fileSource,
@@ -118,10 +118,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
             }
         }
 
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         boolean hasOurOwnColumnNames = headerLines > 0;
 
-        List<Object> cells = null;
+        List<Object> cells;
         int rowsWithData = 0;
 
         try {

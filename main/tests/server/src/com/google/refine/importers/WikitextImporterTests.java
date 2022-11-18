@@ -128,6 +128,7 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
 
+    @Test(enabled = false)
     public void readTableWithLinks() throws Exception {
 
         // Data credits: Wikipedia contributors,

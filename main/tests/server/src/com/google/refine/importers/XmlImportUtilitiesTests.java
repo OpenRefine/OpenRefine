@@ -50,7 +50,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.XmlImporter.XmlParser;
 import com.google.refine.importers.tree.ImportColumn;
 import com.google.refine.importers.tree.ImportColumnGroup;
@@ -621,10 +620,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(XmlImporterTests.getSample());
     }
 
-    public void loadSampleJson() {
-        loadData(JsonImporterTests.getSample());
-    }
-
     public void loadData(String xml) {
         inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
     }
@@ -646,11 +641,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (XMLStreamException | IOException e) {
             return null;
         }
-    }
-
-    public TreeReader createJsonParser() {
-        parser = new JSONTreeReader(inputStream);
-        return parser;
     }
 
     private String _getXmlDataFromFile(String fileName) throws IOException {

@@ -35,7 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
@@ -93,38 +92,6 @@ public abstract class ImporterTest extends RefineTest {
         options = null;
     }
 
-    @Deprecated
-    void parseOneFile(ImportingParserBase parser, Reader reader) throws IOException {
-        List<Exception> exceptions = new ArrayList<Exception>();
-        parser.parseOneFile(
-                project,
-                metadata,
-                job,
-                fileRecord, //"file-source",
-                -1,
-                options,
-                exceptions,
-                progress);
-        assertEquals(exceptions.size(), 0);
-        project.update();
-    }
-
-    @Deprecated
-    void parseOneFile(ImportingParserBase parser, InputStream inputStream) throws IOException {
-        List<Exception> exceptions = new ArrayList<Exception>();
-        parser.parseOneFile(
-                project,
-                metadata,
-                job,
-                fileRecord,
-                -1,
-                options,
-                exceptions,
-                progress);
-        assertEquals(exceptions.size(), 0);
-        project.update();
-    }
-
     protected void parseOneFile(@NotNull ImportingParserBase parser) throws IOException {
         List<Exception> exceptions = new ArrayList<>();
         parser.parseOneFile(
@@ -161,16 +128,16 @@ public abstract class ImporterTest extends RefineTest {
         parseOneInputStreamAsReader(parser, inputStream, options);
     }
 
-    protected void parseOneInputStream(
-            @NotNull TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
+    protected void parseOneTreeFile(
+            @NotNull TreeImportingParserBase parser, ObjectNode options) throws IOException {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
 
         parser.parseOneFile(
                 project,
                 metadata,
                 job,
-                fileRecord, //"file-source",
+                fileRecord,
                 rootColumnGroup,
                 -1,
                 options,
@@ -182,9 +149,8 @@ public abstract class ImporterTest extends RefineTest {
     protected void parseOneInputStreamAsReader(
             @NotNull TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) throws IOException {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
 
-        Reader reader = new InputStreamReader(inputStream);
         parser.parseOneFile(
                 project,
                 metadata,
@@ -197,11 +163,6 @@ public abstract class ImporterTest extends RefineTest {
                 progress);
         postProcessProject(project, rootColumnGroup, exceptions);
 
-        try {
-            reader.close();
-        } catch (IOException e) {
-            // ignore errors on close
-        }
     }
 
     protected void postProcessProject(
@@ -216,13 +177,11 @@ public abstract class ImporterTest extends RefineTest {
         assertEquals(exceptions.size(), 0);
     }
 
-    @NotNull
     protected void stageFile(File spreadsheet) throws IOException {
         FileUtils.copyFile(spreadsheet, new File(job.getRawDataDir(), spreadsheet.getName()));
         initMetadata(spreadsheet.getName());
     }
 
-    @NotNull
     protected void stageResource(String name) throws IOException {
         FileUtils.copyURLToFile(ClassLoader.getSystemResource(name),
                 new File(job.getRawDataDir(), name));
@@ -239,12 +198,12 @@ public abstract class ImporterTest extends RefineTest {
         initMetadata(filename);
     }
 
-    private void initMetadata(String filename) throws JsonProcessingException {
+    private void initMetadata(String filename) {
         fileRecord = ParsingUtilities.evaluateJsonStringToObjectNode(
                 String.format("{\"location\": \"%1$s\",\"fileName\": \"%1$s\"}", filename));
     }
 
-    private class NullProgress implements ImporterUtilities.MultiFileReadingProgress {
+    private static class NullProgress implements ImporterUtilities.MultiFileReadingProgress {
         @Override
         public void startFile(String fileSource) {}
 

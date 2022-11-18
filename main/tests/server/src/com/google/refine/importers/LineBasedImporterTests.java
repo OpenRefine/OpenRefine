@@ -30,8 +30,6 @@ package com.google.refine.importers;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.*;
 
-import java.io.StringReader;
-
 import static org.testng.Assert.*;
 
 public class LineBasedImporterTests extends ImporterTest {

@@ -63,6 +63,7 @@ public class ImporterUtilities {
                 try {
                     return Long.parseLong(text2);
                 } catch (NumberFormatException e) {
+                    // Ignore possible exception for now so we can try floating point conversion
                 }
 
                 try {
@@ -71,6 +72,7 @@ public class ImporterUtilities {
                         return d;
                     }
                 } catch (NumberFormatException e) {
+                    // If we get a format exception here too, just return our original text
                 }
             }
         }
@@ -85,6 +87,7 @@ public class ImporterUtilities {
                 try {
                     value = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
+                    // if we can't parse the value as an integer, fall through and return the default
                 }
             }
         }
@@ -130,7 +133,7 @@ public class ImporterUtilities {
             int index, boolean hasOurOwnColumnNames) {
         if (index < currentFileColumnNames.size()) {
             return project.columnModel.getColumnByName(currentFileColumnNames.get(index));
-        } else if (index >= currentFileColumnNames.size()) {
+        } else {
             String prefix = OpenRefineMessage.importer_utilities_column() + " ";
             int i = index + 1;
             while (true) {
@@ -158,13 +161,11 @@ public class ImporterUtilities {
                     return column;
                 }
             }
-        } else {
-            throw new RuntimeException("Unexpected code path");
         }
     }
 
     static public void setupColumns(Project project, List<String> columnNames) {
-        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
+        Map<String, Integer> nameToIndex = new HashMap<>();
         for (int c = 0; c < columnNames.size(); c++) {
             String cell = CharMatcher.whitespace().trimFrom(columnNames.get(c));
             if (cell.isEmpty()) {
@@ -195,13 +196,13 @@ public class ImporterUtilities {
         }
     }
 
-    static public interface MultiFileReadingProgress {
+    public interface MultiFileReadingProgress {
 
-        public void startFile(String fileSource);
+        void startFile(String fileSource);
 
-        public void readingFile(String fileSource, long bytesRead);
+        void readingFile(String fileSource, long bytesRead);
 
-        public void endFile(String fileSource, long bytesRead);
+        void endFile(String fileSource, long bytesRead);
     }
 
     static public MultiFileReadingProgress createMultiFileReadingProgress(

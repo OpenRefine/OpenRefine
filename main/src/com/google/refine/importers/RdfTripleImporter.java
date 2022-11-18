@@ -57,7 +57,7 @@ import com.google.refine.model.Row;
 
 public class RdfTripleImporter extends ImportingParserBase {
 
-    private Mode mode;
+    private final Mode mode;
 
     public enum Mode {
         RDFXML, NT, N3, TTL, JSONLD
@@ -109,7 +109,7 @@ public class RdfTripleImporter extends ImportingParserBase {
         StmtIterator triples = model.listStatements();
 
         try {
-            Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
+            Map<String, List<Row>> subjectToRows = new LinkedHashMap<>();
             Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
             project.columnModel.addColumn(0, subjectColumn, false);
             project.columnModel.setKeyColumnIndex(0);
@@ -144,7 +144,7 @@ public class RdfTripleImporter extends ImportingParserBase {
                         row.setCell(cellIndex, new Cell(object, null));
                     }
                 } else {
-                    List<Row> rows = new ArrayList<Row>();
+                    List<Row> rows = new ArrayList<>();
                     subjectToRows.put(subject, rows);
 
                     Row row = new Row(project.columnModel.getMaxCellIndex() + 1);

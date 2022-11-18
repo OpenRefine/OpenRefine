@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.StringReader;
-
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -168,7 +166,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readDoesNotTrimLeadingTrailingWhitespace(String sep) {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
@@ -210,7 +208,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readTrimsLeadingTrailingWhitespaceOnTrimStrings(String sep) {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
@@ -231,7 +229,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readDoesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(String sep) {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
@@ -252,7 +250,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void trimAndAutodetectDatatype(String sep) {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
@@ -352,7 +350,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(5).value, "data6");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readQuotedData(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
@@ -458,7 +456,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readIgnore3_Header2_Skip2_limit2(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
@@ -517,7 +515,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readWithMultiLinedQuotedData(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
@@ -541,7 +539,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readWithMultiLinedQuotedDataAndBlankLines(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;

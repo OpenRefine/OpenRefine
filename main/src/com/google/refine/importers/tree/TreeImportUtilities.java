@@ -35,7 +35,6 @@ package com.google.refine.importers.tree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -52,13 +51,7 @@ public abstract class TreeImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("TreeImportUtilities");
 
     static protected void sortRecordElementCandidates(List<RecordElementCandidate> list) {
-        Collections.sort(list, new Comparator<RecordElementCandidate>() {
-
-            @Override
-            public int compare(RecordElementCandidate o1, RecordElementCandidate o2) {
-                return o2.count - o1.count;
-            }
-        });
+        list.sort((o1, o2) -> o2.count - o1.count);
     }
 
     static public void createColumnsFromImport(
@@ -66,29 +59,22 @@ public abstract class TreeImportUtilities {
             ImportColumnGroup columnGroup) {
         int startColumnIndex = project.columnModel.columns.size();
 
-        List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
-        Collections.sort(columns, new Comparator<ImportColumn>() {
-
-            @Override
-            public int compare(ImportColumn o1, ImportColumn o2) {
-                if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
-                    return o1.blankOnFirstRow ? 1 : -1;
-                }
-
-                return o2.nonBlankCount - o1.nonBlankCount;
+        List<ImportColumn> columns = new ArrayList<>(columnGroup.columns.values());
+        columns.sort((o1, o2) -> {
+            if (o1.blankOnFirstRow != o2.blankOnFirstRow) {
+                return o1.blankOnFirstRow ? 1 : -1;
             }
+            return o2.nonBlankCount - o1.nonBlankCount;
         });
 
-        for (int i = 0; i < columns.size(); i++) {
-            ImportColumn c = columns.get(i);
-
-            Column column = new com.google.refine.model.Column(c.cellIndex, c.name);
+        for (ImportColumn c : columns) {
+            Column column = new Column(c.cellIndex, c.name);
             project.columnModel.columns.add(column);
         }
 
         // The LinkedHashMap iterator will guaranteed that the list is arranged in order found
-        List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
-        Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
+        List<ImportColumnGroup> subgroups = new ArrayList<>(columnGroup.subgroups.values());
+        subgroups.sort(new Comparator<>() {
 
             @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
@@ -153,7 +139,7 @@ public abstract class TreeImportUtilities {
 
         List<Cell> row = record.rows.get(rowIndex);
         if (row == null) {
-            row = new ArrayList<Cell>();
+            row = new ArrayList<>();
             record.rows.set(rowIndex, row);
         }
 
@@ -211,7 +197,7 @@ public abstract class TreeImportUtilities {
     }
 
     static protected ImportColumnGroup createColumnGroup(
-            Project project,
+            Project ignoredProject,
             ImportColumnGroup columnGroup,
             String localName) {
         ImportColumnGroup newGroup = new ImportColumnGroup();
