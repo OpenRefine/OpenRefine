@@ -621,8 +621,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     private static String getSampleWithError() {
-        String sb =
-                "[" +
+        String sb = "[" +
                 "{\"id\":" + "\"\n\";" +
                 "]";
         return sb;

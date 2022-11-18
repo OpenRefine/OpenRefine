@@ -248,17 +248,17 @@ public class XmlImporter extends TreeImportingParserBase {
                 case XMLStreamConstants.CHARACTERS:
                 case XMLStreamConstants.SPACE:
                     return Token.Value;
-                case WHITESPACE_CHARACTERS_TOKEN:
-                case XMLStreamConstants.ATTRIBUTE:
-                case XMLStreamConstants.CDATA:
-                case XMLStreamConstants.COMMENT:
-                case XMLStreamConstants.DTD:
-                case XMLStreamConstants.ENTITY_REFERENCE:
-                case XMLStreamConstants.NAMESPACE:
-                case XMLStreamConstants.NOTATION_DECLARATION:
-                case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                case XMLStreamConstants.END_DOCUMENT:
                 case XMLStreamConstants.START_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                case XMLStreamConstants.NOTATION_DECLARATION:
+                case XMLStreamConstants.NAMESPACE:
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                case XMLStreamConstants.DTD:
+                case XMLStreamConstants.COMMENT:
+                case XMLStreamConstants.CDATA:
+                case XMLStreamConstants.ATTRIBUTE:
+                case WHITESPACE_CHARACTERS_TOKEN:
                 default:
                     return Token.Ignorable;
             }

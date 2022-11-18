@@ -614,7 +614,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     // ---------------------read tests------------------------
     @Test
     public void readCsvWithProperties() {
-         prepareOptions(",", -1, 0, 0, 0, true, true);
+        prepareOptions(",", -1, 0, 0, 0, true, true);
 
         try {
             stageString(SAMPLE_ROW);

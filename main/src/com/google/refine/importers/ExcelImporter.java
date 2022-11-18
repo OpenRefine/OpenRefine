@@ -84,7 +84,8 @@ public class ExcelImporter extends TabularImportingParserBase {
             for (ObjectNode fileRecord : fileRecords) {
                 File file = ImportingUtilities.getFile(job, fileRecord);
 
-                try (Workbook wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) : new HSSFWorkbook(new POIFSFileSystem(file))) {
+                try (Workbook wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file)
+                        : new HSSFWorkbook(new POIFSFileSystem(file))) {
 
                     int sheetCount = wb.getNumberOfSheets();
                     for (int i = 0; i < sheetCount; i++) {

@@ -143,10 +143,9 @@ public class OdsImporter extends TabularImportingParserBase {
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
         for (int i = 0; i < sheets.size(); i++) {
-            String[] fileNameAndSheetIndex;
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
-            fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
+            String[] fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
 
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;

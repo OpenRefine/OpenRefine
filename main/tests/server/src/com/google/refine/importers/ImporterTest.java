@@ -107,7 +107,6 @@ public abstract class ImporterTest extends RefineTest {
         project.update();
     }
 
-
     protected List<Exception> parseOneFileAndReturnExceptions(@NotNull ImportingParserBase parser)
             throws IOException {
         List<Exception> exceptions = new ArrayList<>();
@@ -155,7 +154,7 @@ public abstract class ImporterTest extends RefineTest {
                 project,
                 metadata,
                 job,
-                fileRecord, //"file-source",
+                fileRecord, // "file-source",
                 rootColumnGroup,
                 -1,
                 options,
@@ -189,12 +188,12 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     protected void stageString(String contents) throws IOException {
-        FileUtils.writeStringToFile( new File(job.getRawDataDir(), "foo"), contents, StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "foo"), contents, StandardCharsets.UTF_8);
         initMetadata("foo");
     }
 
     protected void stageString(String filename, String contents) throws IOException {
-        FileUtils.writeStringToFile( new File(job.getRawDataDir(), filename), contents, StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), filename), contents, StandardCharsets.UTF_8);
         initMetadata(filename);
     }
 
@@ -204,13 +203,17 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     private static class NullProgress implements ImporterUtilities.MultiFileReadingProgress {
-        @Override
-        public void startFile(String fileSource) {}
 
         @Override
-        public void readingFile(String fileSource, long bytesRead) {}
+        public void startFile(String fileSource) {
+        }
 
         @Override
-        public void endFile(String fileSource, long bytesRead) {}
+        public void readingFile(String fileSource, long bytesRead) {
+        }
+
+        @Override
+        public void endFile(String fileSource, long bytesRead) {
+        }
     }
 }

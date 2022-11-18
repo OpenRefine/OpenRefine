@@ -134,9 +134,8 @@ public class OdsImporterTests extends ImporterTest {
         whenGetIntegerOption("limit", options, ROWS);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
-
         try {
-            Logger.getLogger("").setLevel(Level.OFF);  // disable annoying logging since we expect this to fail
+            Logger.getLogger("").setLevel(Level.OFF); // disable annoying logging since we expect this to fail
             List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT);
             assertEquals(exceptions.size(), 1);
             Exception NPE = exceptions.get(0);
@@ -154,7 +153,8 @@ public class OdsImporterTests extends ImporterTest {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         for (int i = 0; i < sheetCount; i++) {
             sheets.add(ParsingUtilities.mapper
-                    .readTree(String.format("{name: \"%1$s#Test Sheet %2$d\", fileNameAndSheetIndex: \"%1$s#%2$d\", rows: 31, selected: true}",
+                    .readTree(String.format(
+                            "{name: \"%1$s#Test Sheet %2$d\", fileNameAndSheetIndex: \"%1$s#%2$d\", rows: 31, selected: true}",
                             spreadsheet, i)));
         }
         whenGetArrayOption("sheets", options, sheets);

@@ -155,7 +155,8 @@ abstract public class ImportingParserBase implements ImportingParser {
                     if (archiveColumnIndex >= 0) {
                         row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
                     }
-                    // Only set the filename if it wasn't set by one of our subclasses (e.g. ExcelImporter which appends worksheet name)
+                    // Only set the filename if it wasn't set by one of our subclasses (e.g. ExcelImporter which appends
+                    // worksheet name)
                     if (filenameColumnIndex >= 0 && row.getCell(filenameColumnIndex) == null) {
                         row.setCell(filenameColumnIndex, new Cell(fileSource, null));
                     }
@@ -202,7 +203,6 @@ abstract public class ImportingParserBase implements ImportingParser {
             List<Exception> exceptions) {
         throw new NotImplementedException();
     }
-
 
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
         String fileNameColumnName = "File"; // TODO: Localize?

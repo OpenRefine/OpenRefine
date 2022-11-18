@@ -265,7 +265,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void readMultiSheetXlsFilesource() throws  IOException {
+    public void readMultiSheetXlsFilesource() throws IOException {
         stageFile(xlsFileWithMultiSheets);
         initMetadata(xlsFileWithMultiSheets.getName(), 3);
 
@@ -309,7 +309,6 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
-
 
     @Test
     public void readMultiSheetXlsx() throws IOException {
@@ -455,7 +454,8 @@ public class ExcelImporterTests extends ImporterTest {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         for (int i = 0; i < sheetCount; i++) {
             sheets.add(ParsingUtilities.mapper
-                    .readTree(String.format("{name: \"%1$s#Test Sheet %2$d\", fileNameAndSheetIndex: \"%1$s#%2$d\", rows: 31, selected: true}",
+                    .readTree(String.format(
+                            "{name: \"%1$s#Test Sheet %2$d\", fileNameAndSheetIndex: \"%1$s#%2$d\", rows: 31, selected: true}",
                             spreadsheet, i)));
         }
         whenGetArrayOption("sheets", options, sheets);

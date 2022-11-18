@@ -370,23 +370,33 @@ public class JsonImporter extends TreeImportingParserBase {
         protected Token mapToToken(JsonToken token) {
             switch (token) {
                 case START_ARRAY:
-                case START_OBJECT:
                     return Token.StartEntity;
                 case END_ARRAY:
+                    return Token.EndEntity;
+                case START_OBJECT:
+                    return Token.StartEntity;
                 case END_OBJECT:
                     return Token.EndEntity;
                 case VALUE_STRING:
-                case VALUE_NUMBER_INT:
-// Json does not have START_DOCUMENT token type (so ignored as default)
-                    // Json does not have END_DOCUMENT token type (so ignored as default)
-                case VALUE_TRUE:
-                case VALUE_NUMBER_FLOAT:
-                case VALUE_NULL:
-                case VALUE_FALSE:
-                    return Token.Value;// returned by the getLocalName function()
-                case VALUE_EMBEDDED_OBJECT:
-                case NOT_AVAILABLE:
+                    return Token.Value;
                 case FIELD_NAME:
+                    return Token.Ignorable; // returned by the getLocalName function()
+                case VALUE_NUMBER_INT:
+                    return Token.Value;
+                // Json does not have START_DOCUMENT token type (so ignored as default)
+                // Json does not have END_DOCUMENT token type (so ignored as default)
+                case VALUE_TRUE:
+                    return Token.Value;
+                case VALUE_NUMBER_FLOAT:
+                    return Token.Value;
+                case VALUE_NULL:
+                    return Token.Value;
+                case VALUE_FALSE:
+                    return Token.Value;
+                case VALUE_EMBEDDED_OBJECT:
+                    return Token.Ignorable;
+                case NOT_AVAILABLE:
+                    return Token.Ignorable;
                 default:
                     return Token.Ignorable;
             }

@@ -113,7 +113,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
             List<String> columnNames = project.columnModel.getColumnNames();
             if (columnNames.size() > 1 && "Archive".equals(columnNames.get(0)) && "File".equals(columnNames.get(1))) {
                 filenameColumnIndex = 1;
-            } else  if (columnNames.size() > 0 && "File".equals(columnNames.get(0))) {
+            } else if (columnNames.size() > 0 && "File".equals(columnNames.get(0))) {
                 filenameColumnIndex = 0;
             }
         }
