@@ -95,7 +95,6 @@
     "wikibase-schema/preview-explanation": "Dit tabblad toont de eerste bewerkingen (van $1) die zullen worden gemaakt zodra je de wijzigingen uploadt naar <a href=\"$2\" target=\"_blank\">$3</a>. Je kan facetten gebruiken om de bewerkingen op bepaalde items te inspecteren.",
     "wikibase-schema/incompatible-site-iri-reconciled-column": "Deze kolom is gereconciled met de identificatieruimte $1, maar deze invoer vereist een kolom die is gereconciled met $2.",
     "wikibase-account/explain-bot-passwords": "Het is aan te bevelen om aan te melden met <a href=\"$1\" target=\"_blank\">bot-wachtwoorden</a>. Zie deze <a href=\"https://docs.openrefine.org/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">wikipagina</a> voor informatie hoe je er een verkrijgt.",
-    "wikibase-account/bot-passwords-alert": "Het lijkt erop dat je jouw hoofdwachtwoord gebruikt om in te loggen. We raden aan om een bot-wachtwoord te gebruiken. Voor een bot-wachtwoord moet de gebruikersnaam in de form \"jewikidatagebruikersnaam@jebotnaam\" ingevoerd worden.",
     "wikibase-schema/configure-statement": "configureren",
     "wikibase-schema/label-if-new": "Label (niet overschrijven)",
     "wikibase-schema/label-override": "Label (overschrijven indien reeds aanwezig)",
