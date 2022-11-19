@@ -1,7 +1,10 @@
 
 package org.openrefine.wikibase.schema;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
@@ -195,6 +198,20 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
         MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").build();
         evaluatesTo(result, filePathExpr);
+    }
+
+    @Test
+    public void testFileNameNormalization() {
+        WbMediaInfoEditExpr filePathExpr = new WbMediaInfoEditExpr(
+                new WbEntityVariable("column E"),
+                Collections.emptyList(), Collections.emptyList(), null, new WbStringConstant("Foo:bar.png"), null, false);
+
+        setRow("", "", "3.898,4.389", "my label", matchedCell);
+
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo-bar.png").build();
+        evaluatesTo(result, filePathExpr);
+        assertEquals(warningStore.getWarnings().stream().map(QAWarning::getType).collect(Collectors.toList()),
+                Collections.singletonList(WbMediaInfoEditExpr.REPLACED_CHARACTERS_IN_FILENAME));
     }
 
     @Test

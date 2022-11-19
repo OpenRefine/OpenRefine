@@ -20,6 +20,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.TokenErrorException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.ParsingUtilities;
 
@@ -271,7 +272,8 @@ public class MediaFileUtils {
          */
         public void checkForErrors() throws MediaWikiApiErrorException {
             if (!"Success".equals(result)) {
-                throw new MediaWikiApiErrorException(result, "The file upload action returned the '" + result + "' error code");
+                throw new MediaWikiApiErrorException(result,
+                        "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
             }
             if (filename == null) {
                 throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
