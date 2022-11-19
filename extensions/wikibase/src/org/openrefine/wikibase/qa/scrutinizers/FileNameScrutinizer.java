@@ -52,7 +52,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
      * 
      * @return
      */
-    protected String normalizeFileName(String filename) {
+    protected String normalizeFileNameSpaces(String filename) {
         String replaced = filename.replaceAll("_", " ");
         return replaced.substring(0, 1).toUpperCase() + replaced.substring(1);
     }
@@ -67,7 +67,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
 
         if (edit.isNew()) {
             // check whether multiple files in the batch to be uploaded have the same filename
-            String normalizedFileName = normalizeFileName(fileName);
+            String normalizedFileName = normalizeFileNameSpaces(fileName);
             if (seenFileNames.contains(normalizedFileName)) {
                 QAWarning issue = new QAWarning(duplicateFileNamesInBatchType, null, QAWarning.Severity.CRITICAL,
                         1);
