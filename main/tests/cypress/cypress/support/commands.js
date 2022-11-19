@@ -11,10 +11,6 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
-
-addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
-
 // /**
 //  * Reconcile a column
 //  * Internally using the "apply" behavior for not having to go through the whole user interface
