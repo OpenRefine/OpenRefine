@@ -14,7 +14,7 @@
         augment it with data from other sources, transform it into different
         formats for other tools to consume, and contribute it back to the
         original sources. OpenRefine is not a web service but a desktop app
-        that runs on your own computer,so you can process sensitive data with
+        that runs on your own computer, so you can process sensitive data with
         privacy.
     </p>
   </description>
@@ -23,11 +23,8 @@
 
   <screenshots>
     <screenshot type="default">
-      <caption>The options dialog</caption>
-      <image>http://www.example.com/en_US/main.png</image>
-    </screenshot>
-    <screenshot>
-      <image>http://www.example.com/en_US/preferences.png</image>
+      <caption>Transforming data in in an OpenRefine project</caption>
+      <image>https://upload.wikimedia.org/wikipedia/commons/8/83/OpenRefine_Commons_reconciled_with_Wikidata.png</image>
     </screenshot>
   </screenshots>
 
