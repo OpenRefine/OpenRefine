@@ -32,7 +32,7 @@ function codesignJarsInDir {
             if [ $(basename "${libfile}") == "libjffi-1.2.jnilib" ]; then
                 local our_libjffi="$(dirname ${BASH_SOURCE})/libjffi-1.2.jnilib" 
                 echo "Replacing $libfile by $our_libjffi"
-                cp $our_libjffi $libfile
+                cp "$our_libjffi" "$libfile"
             fi
         
             echo "Codesigning file $(basename "${libfile}")"
