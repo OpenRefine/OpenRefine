@@ -29,7 +29,7 @@ function codesignJarsInDir {
             # was compiled on a newer Xcode SDK.
             # This is a temporary measure until this is fixed upstream:
             # https://github.com/jnr/jffi/issues/123
-            if [ $(basename "${libfile}") -eq "libjffi-1.2.jnilib" ]; then
+            if [ $(basename "${libfile}") == "libjffi-1.2.jnilib" ]; then
                 local our_libjffi="$(dirname ${BASH_SOURCE})/libjffi-1.2.jnilib" 
                 echo "Replacing $libfile by $our_libjffi"
                 cp $our_libjffi $libfile
