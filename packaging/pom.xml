@@ -310,6 +310,12 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
                 </exec>
 
+                <!-- remove any existing DMG (hdiutil fails otherwise) -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg value="-f"/>
+                    <arg value="${mac.dmg.path}"/>
+		</exec>
+
                 <!-- Remove quarantine bit set recursively on JRE -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
                     <arg line="-rd"/>
@@ -383,6 +389,28 @@
                     <arg value="${mac.build.directory}"/>
                 </exec>
 
+                <!-- Send DMG file to Apple's notarization service -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="submit"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                    <arg value="--wait"/>
+                    <arg value="--timeout"/>
+                    <arg value="${apple.notarization.timeout}"/>
+                </exec>
+
+                <!-- Staple the notarization ticket to the DMG bundle -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="stapler"/>
+                    <arg value="staple"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
               </target>
             </configuration>
           </execution>
