@@ -155,6 +155,7 @@
     "core-index-parser/invalid-wikitext": "No table could be parsed. Are you sure this is a valid wiki table?",
     "core-index-parser/store-source": "Store file source",
     "core-index-parser/store-archive": "Store archive file",
+    "core-index-parser/force-text": "Import all cells as text",
     "core-index-parser/preserve-empty": "Preserve empty strings",
     "core-index-parser/trim": "Trim leading &amp; trailing whitespace from strings",
     "core-index-parser/json-parser": "Click on the first JSON { } node corresponding to the first record to load.",

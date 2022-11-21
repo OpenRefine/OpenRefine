@@ -44,8 +44,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -71,8 +73,12 @@ public class ExcelImporterTests extends ImporterTest {
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 5;
-    private static final int COLUMNS = 6;
+    private static final int COLUMNS = 7;
 
+    // Record our date/time as close as possible to the creation of the spreadsheets.
+    // There's still a tiny race window, but it's small and will only affect test runs within a fraction of a second on
+    // midnight.
+    private static final String TODAY = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
     // private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     private static final File xlsxFile = createSpreadsheet(true);
@@ -148,7 +154,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void readXlsx() throws FileNotFoundException, IOException {
+    public void readXlsx() throws IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
@@ -182,6 +188,53 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) project.rows.get(1).getCellValue(5));
+
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void readXlsxAsText() throws IOException {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        whenGetBooleanOption("forceText", options, true);
+
+        InputStream stream = new FileInputStream(xlsxFile);
+
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertEquals(project.rows.size(), ROWS);
+        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((String) project.rows.get(1).getCellValue(0)), "1.1");
+        Assert.assertEquals(((String) project.rows.get(2).getCellValue(0)), "2.2");
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(1), "FALSE");
+        Assert.assertEquals((String) project.rows.get(2).getCellValue(1), "TRUE");
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(2), TODAY); // Calendar
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(3), TODAY); // Date
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(5), "");
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(6), "1");
+        Assert.assertEquals((String) project.rows.get(2).getCellValue(6), "2");
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -378,6 +431,7 @@ public class ExcelImporterTests extends ImporterTest {
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
 
         CellStyle dateStyle = wb.createCellStyle();
+        // The format below must be locale independent so the tests run everywhere
         short dateFormat = wb.createDataFormat().getFormat("yyyy-MM-dd");
         dateStyle.setDataFormat(dateFormat);
 
@@ -427,6 +481,9 @@ public class ExcelImporterTests extends ImporterTest {
 
         c = r.createCell(col++);
         c.setCellValue(""); // string
+
+        c = r.createCell(col++);
+        c.setCellValue(row); // integer
 
 //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
 //    hl.setLabel(cellData.text);
