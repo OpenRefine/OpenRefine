@@ -2,19 +2,19 @@
 var CellRendererRegistry = {
   renderers: [
     {
-      priority: 100,
+      name: 'null',
       renderer: new NullCellRenderer()
     },
     {
-      priority: 75,
+      name: 'error',
       renderer: new ErrorCellRenderer()
     },
     {
-      priority: 50,
+      name: 'simple-value',
       renderer: new SimpleValueCellRenderer()
     },
     {
-      priority: 25,
+      name: 'recon',
       renderer: new ReconCellRenderer()
     }
   ]
@@ -25,19 +25,33 @@ var CellRendererRegistry = {
  * Method to be called by extensions to register a new cell
  * renderer.
  *
- * Cell renderers are executed in decreasing priority order.
+ * Cell renderers are executed in order and we stop at the first one which
+ * succeeds in rendering the cell. The following renderers are not executed at all.
  * See the array above to check when the native renderers are executed
- * and pick a priority accordingly.
+ * and pick a location accordingly.
+ *
+ * The third argument can be used to specify before which renderer the 
+ * new renderer should be executed. If it is not defined, the renderer will
+ * be added at the very end of the queue.
  */
-CellRendererRegistry.addRenderer = function(priority, renderer) {
+CellRendererRegistry.addRenderer = function(name, renderer, beforeRenderer) {
   let record = {
-    priority,
+    name,
     renderer
   };
-  this.renderers.push(record);
-  // sort in decreasing order of priority.
-  // (note: inserting an element in a sorted array can be done more efficiently,
-  //  but here we do not expect more than a few insertions over the course of
-  //  an execution, so it is not worth optimizing)
-  Array.sort((a,b) => b.priority - a.priority);
+  if (beforeRenderer === undefined) {
+    this.renderers.push(record);
+  } else {
+    let inserted = false;
+    for (const [index, entry] of this.renderers.entries()) {
+      if (entry.name === beforeRenderer) {
+        this.renderers.splice(index, 0, record);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) {
+      throw new Error('Cell renderer "'+beforeRenderer+'" could not be found');
+    }
+  }
 }
