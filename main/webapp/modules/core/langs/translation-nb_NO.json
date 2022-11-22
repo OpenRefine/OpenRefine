@@ -425,5 +425,6 @@
     "core-index/download-now": "Last ned $1 nå.",
     "core-index/refine-version": "Versjon $1",
     "core-about/thanks": "Spesiell takk til",
-    "core-about/contributors": "Bidragsytere (i kronologisk rekkefølge)"
+    "core-about/contributors": "Bidragsytere (i kronologisk rekkefølge)",
+    "core-index/rows-loading-failed": "Klarte ikke å laste inn radene."
 }

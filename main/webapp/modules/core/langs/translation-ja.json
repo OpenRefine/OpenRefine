@@ -845,5 +845,6 @@
     "core-views/recon-mark-new-warning": "このカラムは未照合です。この操作ではセルにマークして、サービス内にそれらのエンティティが存在するかどうかのチェック無しに、新しいエンティティを作成します。",
     "core-index-parser/row-separator-regex": "正規表現",
     "core-index-parser/row-separator": "行の区切り文字:",
-    "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）"
+    "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）",
+    "core-index-parser/force-text": "全セルをテキストとしてインポート"
 }
