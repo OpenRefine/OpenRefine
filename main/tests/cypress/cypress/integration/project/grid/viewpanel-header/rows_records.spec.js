@@ -133,7 +133,7 @@ describe(__filename, function () {
     cy.addProjectForDeletion();
   });
 
-  it.only('ensures rows and records display same in csv file', function () {
+  it('ensures rows and records display same in csv file', function () {
     cy.loadAndVisitProject('food.small');
 
     cy.get('span[bind="modeSelectors"]').contains('records').click();
