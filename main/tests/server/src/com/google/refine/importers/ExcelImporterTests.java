@@ -44,6 +44,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.OffsetDateTime;
@@ -85,6 +87,7 @@ public class ExcelImporterTests extends ImporterTest {
 
     private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
     private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
+    private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance();
 
     @Override
     @BeforeTest
@@ -221,8 +224,8 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertEquals(project.rows.size(), ROWS);
         Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((String) project.rows.get(1).getCellValue(0)), "1.1");
-        Assert.assertEquals(((String) project.rows.get(2).getCellValue(0)), "2.2");
+        Assert.assertEquals(((String) project.rows.get(1).getCellValue(0)), NUMBER_FORMAT.format(1.1));
+        Assert.assertEquals(((String) project.rows.get(2).getCellValue(0)), NUMBER_FORMAT.format(2.2));
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(1), "FALSE");
         Assert.assertEquals((String) project.rows.get(2).getCellValue(1), "TRUE");
