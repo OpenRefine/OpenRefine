@@ -29,7 +29,7 @@ You can contribute code in various ways:
 
 All developers including new distributions and plugin developers are invited to leverage the following OpenRefine project management areas to avoid splitting the community in different communication channels.
 - the [official documentation](https://docs.openrefine.org/technical-reference/technical-reference-index) for shared documentation between both user docs and [technical reference](https://docs.openrefine.org/technical-reference/technical-reference-index)
-- the [developer forum](https://forum.openrefine.org/c/dev/8) for technical questions, new feature development and anything code related. We invite you to share you idea first via the developer mailing list. Someone may be able to point out to existing development saving you hours of research and development. 
+- the [developer forum](https://forum.openrefine.org/c/dev/8) for technical questions, new feature development and anything code related. We invite you to share you idea there first. Someone may be able to point out to existing development saving you hours of research and development. 
 - [OpenRefine github issue tracker](https://github.com/OpenRefine/OpenRefine/issues) for requesting new features and bug reports.
 - [Gitter Chat](https://gitter.im/OpenRefine/OpenRefine)
 
