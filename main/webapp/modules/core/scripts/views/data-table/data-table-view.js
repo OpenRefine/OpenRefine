@@ -190,7 +190,16 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  $('<span>').addClass("viewpanel-pagingcount").html(" " + (minRowId + 1) + " - " + (maxRowId + 1) + " ").appendTo(pagingControls);
+  var minRowInputSize = 20 + (8* theProject.rowModel.total.toString().length);
+  var minRowInput = $('<input type="number">')
+    .attr("id", "viewpanel-paging-current-min-row")
+    .attr("min", 1)
+    .attr("max", theProject.rowModel.total)
+    .css("width", minRowInputSize)
+    .val(minRowId + 1)
+    .on('change', function(evt) { self._onChangeMinRow(this, evt); })
+    .appendTo(pagingControls);
+  $('<span>').addClass("viewpanel-pagingcount").html(" - " + (maxRowId + 1) + " ").appendTo(pagingControls);
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
@@ -442,6 +451,19 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
   this._showRows({end: theProject.rowModel.totalRows});
+};
+
+DataTableView.prototype._onChangeMinRow = function(elmt, evt) {
+  var input = $('#viewpanel-paging-current-min-row');
+  var newMinRow = input.val();
+  if (newMinRow <= 0) {
+    newMinRow = 1;
+    input.val(newMinRow);
+  } else if (newMinRow > theProject.rowModel.total) {
+    newMinRow = theProject.rowModel.total;
+    input.val(theProject.rowModel.total);
+  }
+  this._showRows({start: newMinRow - 1});
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {
