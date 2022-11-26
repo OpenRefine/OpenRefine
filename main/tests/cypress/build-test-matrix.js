@@ -4,47 +4,47 @@ const glob = require('glob');
 const groups = [
   {
     specs: [
-      'cypress/e2e/create-project/**/*.spec.js',
-      'cypress/e2e/extensions/**/*.spec.js',
-      'cypress/e2e/import-project/**/*.spec.js',
-      'cypress/e2e/language/**/*.spec.js',
-      'cypress/e2e/open-project/**/*.spec.js',
-      'cypress/e2e/preferences/**/*.spec.js',
-      'cypress/e2e/project_management/**/*.spec.js',
+      'cypress/e2e/create-project/**/*.cy.js',
+      'cypress/e2e/extensions/**/*.cy.js',
+      'cypress/e2e/import-project/**/*.cy.js',
+      'cypress/e2e/language/**/*.cy.js',
+      'cypress/e2e/open-project/**/*.cy.js',
+      'cypress/e2e/preferences/**/*.cy.js',
+      'cypress/e2e/project_management/**/*.cy.js',
     ],
   },
   {
     specs: [
-      'cypress/e2e/project/grid/all-column/**/*.spec.js',
-      'cypress/e2e/project/grid/column/*.spec.js',
-      'cypress/e2e/project/grid/column/edit-cells/**/*.spec.js',
+      'cypress/e2e/project/grid/all-column/**/*.cy.js',
+      'cypress/e2e/project/grid/column/*.cy.js',
+      'cypress/e2e/project/grid/column/edit-cells/**/*.cy.js',
     ],
   },
   {
     specs: [
-      'cypress/e2e/project/grid/column/edit-column/**/*.spec.js',
-      'cypress/e2e/project/grid/column/facet/**/*.spec.js',
+      'cypress/e2e/project/grid/column/edit-column/**/*.cy.js',
+      'cypress/e2e/project/grid/column/facet/**/*.cy.js',
     ],
   },
   {
     specs: [
-      'cypress/e2e/project/grid/column/reconcile/**/*.spec.js',
-      'cypress/e2e/project/grid/column/transpose/**/*.spec.js',
-      'cypress/e2e/project/grid/column/view/**/*.spec.js',
+      'cypress/e2e/project/grid/column/reconcile/**/*.cy.js',
+      'cypress/e2e/project/grid/column/transpose/**/*.cy.js',
+      'cypress/e2e/project/grid/column/view/**/*.cy.js',
     ],
   },
   {
     specs: [
-      'cypress/e2e/project/grid/misc/**/*.spec.js',
-      'cypress/e2e/project/grid/row/**/*.spec.js',
-      'cypress/e2e/project/grid/viewpanel-header/**/*.spec.js',
+      'cypress/e2e/project/grid/misc/**/*.cy.js',
+      'cypress/e2e/project/grid/row/**/*.cy.js',
+      'cypress/e2e/project/grid/viewpanel-header/**/*.cy.js',
     ],
   },
   {
     specs: [
-      'cypress/e2e/project/project-header/**/*.spec.js',
-      'cypress/e2e/project/undo_redo/**/*.spec.js',
-      'cypress/e2e/tutorial/*.spec.js',
+      'cypress/e2e/project/project-header/**/*.cy.js',
+      'cypress/e2e/project/undo_redo/**/*.cy.js',
+      'cypress/e2e/tutorial/*.cy.js',
     ],
   },
 ];
@@ -62,7 +62,7 @@ groups.forEach((group) => {
 
 // step2 , add a last group that contains missed files
 const allSpecFiles = glob.sync(
-  `./main/tests/cypress/cypress/e2e/**/*.spec.js`
+  `./main/tests/cypress/cypress/e2e/**/*.cy.js`
 );
 const missedFiles = [];
 
