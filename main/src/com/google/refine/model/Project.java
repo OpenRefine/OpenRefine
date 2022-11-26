@@ -65,7 +65,7 @@ public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
 
     final public long id;
-    final public List<Row> rows = new ArrayList<Row>();
+    final public List<Row> rows = new ArrayList<>();
     final public ColumnModel columnModel = new ColumnModel();
     final public RecordModel recordModel = new RecordModel();
     final public Map<String, OverlayModel> overlayModels = new HashMap<String, OverlayModel>();
@@ -80,11 +80,19 @@ public class Project {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
 
+    /**
+     * Create a new project with a generated unique ID
+     */
     public Project() {
-        id = generateID();
-        history = new History(this);
+        this(generateID());
     }
 
+    /**
+     * Create a new project with the given ID. For testing ONLY.
+     *
+     * @param id
+     *            long ID to be assigned the new project
+     */
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
