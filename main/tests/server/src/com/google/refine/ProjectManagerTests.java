@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.model.ProjectStub;
 import com.google.refine.process.ProcessManager;
@@ -161,10 +160,11 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.save(true);
 
+        // FIXME: Why do we care about the internals of the implementation instead of the result?
         verify(metadata, times(1)).getModified();
         verify(metadata, times(1)).getTags();
         verify(project, times(1)).getProcessManager();
-        verify(project, times(2)).getLastSave();
+        verify(project, times(2)).getLastSave(); // FIXME: ditto
         verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
         Assert.assertEquals(SUT.getProject(0), null);
@@ -228,7 +228,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenProjectGetLastSave(Project proj) {
-        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
+        Instant projectLastSaveDate = Instant.parse("1970-01-02T00:30:00Z");
         when(proj.getLastSave()).thenReturn(projectLastSaveDate);
     }
 
@@ -237,7 +237,8 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference) {
-        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970, 01, 02, 00, 30 + secondsDifference);
+        // FIXME: This has been ported in a bug-compatible fashion, but it's subtracting 30 *minutes*, not seconds
+        Instant metadataModifiedDate = Instant.parse(String.format("1970-01-02T00:%02d:00Z", 30 + secondsDifference));
         when(meta.getModified()).thenReturn(metadataModifiedDate);
     }
 
