@@ -47,8 +47,6 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -71,12 +69,13 @@ public class ExcelImporterTests extends ImporterTest {
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 4;
-    private static final int COLUMNS = 12;
+    private static final int COLUMNS = 13;
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    private static final String ZERO_FORMAT = "0000";
-    private static final String INTEGER_FORMAT = "###,###,###";
+    private static final String LEADING_ZERO_FORMAT = "0000";
+    private static final String INTEGER_FORMAT = "#,###";
+    private static final String CURRENCY_FORMAT = "$#,###.00";
     private static final String FLOAT_FORMAT = "###.00%";
     // NOTE: Apache POI is limited in its number formatting to what Java DecimalFormatter supports, plus a few
     // special implementations. The string below matches the special phone number formatter which they've implemented
@@ -167,9 +166,11 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals(project.rows.get(1).getCellValue(9), "0001");
         assertEquals(project.rows.get(2).getCellValue(9), "0002");
 
-        assertEquals(project.rows.get(2).getCellValue(10), "(617) 555-1212");
+        assertEquals(project.rows.get(2).getCellValue(10), "(617) 235-1322");
 
         assertEquals(project.rows.get(2).getCellValue(11), NOW.substring(0, 10));
+
+        assertEquals(project.rows.get(2).getCellValue(12), 1234.56);
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -212,7 +213,7 @@ public class ExcelImporterTests extends ImporterTest {
         assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
-        Assert.assertNull((String) project.rows.get(1).getCellValue(5));
+        Assert.assertNull(project.rows.get(1).getCellValue(5));
 
         assertEquals(project.rows.get(1).getCellValue(6), 1L);
         assertEquals(project.rows.get(2).getCellValue(6), 2L);
@@ -226,9 +227,11 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals(project.rows.get(1).getCellValue(9), "0001");
         assertEquals(project.rows.get(2).getCellValue(9), "0002");
 
-        assertEquals(project.rows.get(2).getCellValue(10), "(617) 555-1212");
+        assertEquals(project.rows.get(2).getCellValue(10), "(617) 235-1322");
 
         assertEquals(project.rows.get(2).getCellValue(11), NOW.substring(0, 10));
+
+        assertEquals(project.rows.get(2).getCellValue(12), 1234.56);
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -286,9 +289,11 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals(project.rows.get(1).getCellValue(9), "0001");
         assertEquals(project.rows.get(2).getCellValue(9), "0002");
 
-        assertEquals(project.rows.get(ROWS - 1).getCellValue(10), "(617) 555-1212");
+        assertEquals(project.rows.get(ROWS - 1).getCellValue(10), "(617) 235-1322");
 
         assertEquals(project.rows.get(ROWS - 1).getCellValue(11), NOW.substring(0, 10));
+
+        assertEquals(project.rows.get(ROWS - 1).getCellValue(12), "$1,234.56");
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -459,15 +464,18 @@ public class ExcelImporterTests extends ImporterTest {
         floatStyle.setDataFormat(dataFormat.getFormat(FLOAT_FORMAT));
 
         CellStyle zeroStyle = wb.createCellStyle();
-        zeroStyle.setDataFormat(dataFormat.getFormat(ZERO_FORMAT));
+        zeroStyle.setDataFormat(dataFormat.getFormat(LEADING_ZERO_FORMAT));
 
         CellStyle otherStyle = wb.createCellStyle();
         otherStyle.setDataFormat(dataFormat.getFormat(OTHER_FORMAT));
 
+        CellStyle currencyStyle = wb.createCellStyle();
+        currencyStyle.setDataFormat(dataFormat.getFormat(CURRENCY_FORMAT));
+
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, 0);
+                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, 0);
             }
         }
 
@@ -504,15 +512,18 @@ public class ExcelImporterTests extends ImporterTest {
         floatStyle.setDataFormat(dataFormat.getFormat(FLOAT_FORMAT));
 
         CellStyle zeroStyle = wb.createCellStyle();
-        zeroStyle.setDataFormat(dataFormat.getFormat(ZERO_FORMAT));
+        zeroStyle.setDataFormat(dataFormat.getFormat(LEADING_ZERO_FORMAT));
 
         CellStyle otherStyle = wb.createCellStyle();
         otherStyle.setDataFormat(dataFormat.getFormat(OTHER_FORMAT));
 
+        CellStyle currencyStyle = wb.createCellStyle();
+        currencyStyle.setDataFormat(dataFormat.getFormat(CURRENCY_FORMAT));
+
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, s);
+                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, s);
             }
         }
 
@@ -532,7 +543,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     private static void createDataRow(Sheet sheet, int row, CellStyle dateTimeStyle, CellStyle dateStyle, CellStyle intStyle,
-            CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, int extra_columns) {
+            CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, CellStyle currencyStyle, int extra_columns) {
         int col = 0;
         Row r = sheet.createRow(row);
         Cell c;
@@ -574,12 +585,16 @@ public class ExcelImporterTests extends ImporterTest {
         c.setCellStyle(zeroStyle); // should import as string due to leading zeros
 
         c = r.createCell(col++);
-        c.setCellValue(6175551212L);
+        c.setCellValue(6172351322L);
         c.setCellStyle(otherStyle); // phone number format should import as string
 
         c = r.createCell(col++);
         c.setCellValue(now); // date
         c.setCellStyle(dateStyle); // dates alone should import as strings
+
+        c = r.createCell(col++);
+        c.setCellValue(1234.56);
+        c.setCellStyle(currencyStyle); // currency should import as float
 
 //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
 //    hl.setLabel(cellData.text);
