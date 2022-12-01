@@ -115,7 +115,6 @@ describe(__filename, function () {
     cy.get('input[bind="new_column_nameInput"]').type('Test_Merged_Grid');
 
     cy.confirmDialogPanel();
-    cy.get('body[ajax_in_progress="true"]');
     cy.get('body[ajax_in_progress="false"]');
     cy.assertGridEquals([
       ['Test_Merged_Grid'],
