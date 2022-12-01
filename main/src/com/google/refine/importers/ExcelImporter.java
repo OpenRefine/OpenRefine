@@ -68,8 +68,8 @@ public class ExcelImporter extends TabularImportingParserBase {
 
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     static final DataFormatter dataFormatter = new DataFormatter();
-    // TODO: Add Scientific (e) notation. Should currency be included (as it is currently) or excluded?
-    // TODO: Positive/negative/zero formats & color codes e.g. $#,##0.00_);[Red]($#,##0.00)
+    // TODO: Positive;negative;zero;text formats & color codes e.g. $#,##0.00_);[Red]($#,##0.00)
+    // TODO: Conditional codes like currency [$K-647]
     static final Pattern NUMERIC_FORMAT = Pattern.compile("^\\?*\\$?[#,]+(0?\\.0[0#\\?]*)?%?$");
     ConditionalFormattingEvaluator cfEvaluator;
 
@@ -279,7 +279,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                     } else {
                         value = d;
                     }
-                } else if (NUMERIC_FORMAT.matcher(format).matches()) {
+                } else if (isNumberFormat(nf)) {
                     if (format.contains(".")) { // if it's formatted with a decimal separator, always import as float
                         value = d;
                     } else {
@@ -328,7 +328,7 @@ public class ExcelImporter extends TabularImportingParserBase {
      */
     private static boolean isInternalDatetimeFormat(int format) {
         switch (format) {
-            case 0xe: // "m/d/yy" TODO: do we want to allow date-only formats?
+            case 0xe: // "m/d/yy" TODO: do we want to allow date-only formats? We currently do, continuing our tradition
             case 0xf: // "d-mmm-yy"
             case 0x16: // "m/d/yy h:mm"
                 return true;
@@ -337,4 +337,53 @@ public class ExcelImporter extends TabularImportingParserBase {
         }
     }
 
+    private static boolean isNumberFormat(ExcelNumberFormat format) {
+        if (isInternalNumberFormat(format.getIdx())) {
+            return true;
+        }
+
+        String formatString = format.getFormat();
+        return NUMERIC_FORMAT.matcher(formatString).matches() || formatString.contains("0E+0");
+
+    }
+
+    private static boolean isInternalNumberFormat(int format) {
+        return isInternalIntegerFormat(format) || isInternalFloatFormat(format);
+    }
+
+    private static boolean isInternalIntegerFormat(int format) {
+        switch (format) {
+            case 0x01: // "0"
+            case 0x03: // "#,##0"
+            case 0x05: // "$#,##0_);($#,##0)"
+            case 0x06: // "$#,##0_);[Red]($#,##0)
+            case 0x25: // "#,##0_);(#,##0)"
+            case 0x26: // , "#,##0_);[Red](#,##0)"
+            case 0x29: // "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)"
+            case 0x2a: // "_($* #,##0_);_($* (#,##0);_($* \"-\"_);_(@_)"
+            case 0x30: // "##0.0E+0"
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isInternalFloatFormat(int format) {
+        switch (format) {
+            case 0x02: // "0.00"
+            case 0x04: // "#,##0.00"
+            case 0x07: // "$#,##0.00);($#,##0.00)"
+            case 0x08: // "$#,##0.00_);[Red]($#,##0.00)"
+            case 0x09: // "0%"<br>
+            case 0x0a: // "0.00%"<br>
+            case 0x0b: // "0.00E+00"<br>
+            case 0x27: // "#,##0.00_);(#,##0.00)"
+            case 0x28: // "#,##0.00_);[Red](#,##0.00)"
+            case 0x2b: // "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"
+            case 0x2c: // "_($* #,##0.00_);_($* (#,##0.00);_($* \"-\"??_);_(@_)"
+                return true;
+            default:
+                return false;
+        }
+    }
 }
