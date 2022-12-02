@@ -27,8 +27,6 @@ package org.openrefine.wikibase.schema;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
-import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;

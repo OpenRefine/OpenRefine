@@ -29,8 +29,6 @@ import java.math.BigDecimal;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
-import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.PathElement;
 import org.openrefine.wikibase.schema.validation.PathElement.Type;
 import org.openrefine.wikibase.schema.validation.ValidationState;
