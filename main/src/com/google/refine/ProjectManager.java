@@ -276,14 +276,11 @@ public abstract class ProjectManager {
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
-                    // These variables are just to avoid calling methods twice and triggering a test failure
-                    // from a test which is peeking at our internals
-                    Instant modified = metadata.getModified();
-                    Instant lastSave = project.getLastSave();
                     // We use after or equals to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
-                    boolean hasUnsavedChanges = modified.isAfter(lastSave) || modified.equals(lastSave);
+                    boolean hasUnsavedChanges = metadata.getModified().isAfter(project.getLastSave())
+                            || metadata.getModified().equals(project.getLastSave());
 
                     if (hasUnsavedChanges) {
                         long msecsOverdue = Duration.between(startTimeOfSave, project.getLastSave()).toMillis();

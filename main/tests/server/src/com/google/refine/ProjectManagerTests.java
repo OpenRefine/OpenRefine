@@ -33,15 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import java.time.Instant;
+
+import static org.mockito.Mockito.*;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -57,6 +51,7 @@ import com.google.refine.process.ProcessManager;
 
 public class ProjectManagerTests extends RefineTest {
 
+    private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -130,7 +125,7 @@ public class ProjectManagerTests extends RefineTest {
 
     @Test
     public void canSaveAllModified() {
-        whenGetSaveTimes(project, metadata); // 5 minute difference
+        whenGetSaveTimes(project, metadata); // 5-minute difference
         registerProject(project, metadata);
 
         // add a second project to the cache
@@ -140,7 +135,7 @@ public class ProjectManagerTests extends RefineTest {
         registerProject(project2, metadata2);
 
         // check that the two projects are not the same
-        Assert.assertFalse(project.id == project2.id);
+        Assert.assertNotEquals(project2.id, project.id);
 
         SUT.save(true);
 
@@ -160,14 +155,13 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.save(true);
 
-        // FIXME: Why do we care about the internals of the implementation instead of the result?
-        verify(metadata, times(1)).getModified();
-        verify(metadata, times(1)).getTags();
-        verify(project, times(1)).getProcessManager();
-        verify(project, times(2)).getLastSave(); // FIXME: ditto
+        verify(metadata, atLeastOnce()).getModified();
+        verify(metadata, atLeastOnce()).getTags();
+        verify(project, atLeastOnce()).getProcessManager();
+        verify(project, atLeastOnce()).getLastSave();
         verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
-        Assert.assertEquals(SUT.getProject(0), null);
+        Assert.assertNull(SUT.getProject(0));
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
 
@@ -228,18 +222,11 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenProjectGetLastSave(Project proj) {
-        Instant projectLastSaveDate = Instant.parse("1970-01-02T00:30:00Z");
-        when(proj.getLastSave()).thenReturn(projectLastSaveDate);
-    }
-
-    protected void whenMetadataGetModified(ProjectMetadata meta) {
-        whenMetadataGetModified(meta, 5 * 60);
+        when(proj.getLastSave()).thenReturn(BASE_DATE);
     }
 
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference) {
-        // FIXME: This has been ported in a bug-compatible fashion, but it's subtracting 30 *minutes*, not seconds
-        Instant metadataModifiedDate = Instant.parse(String.format("1970-01-02T00:%02d:00Z", 30 + secondsDifference));
-        when(meta.getModified()).thenReturn(metadataModifiedDate);
+        when(meta.getModified()).thenReturn(BASE_DATE.plusSeconds(secondsDifference));
     }
 
     protected void verifySaveTimeCompared(int times) {
