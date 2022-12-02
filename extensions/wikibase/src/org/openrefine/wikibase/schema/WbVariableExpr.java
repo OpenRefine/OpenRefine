@@ -46,6 +46,9 @@ import com.google.refine.model.Cell;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class WbVariableExpr<T> implements WbExpression<T> {
 
+    public static final String NO_VALUE_KEYWORD = "#NOVALUE#";
+    public static final String SOME_VALUE_KEYWORD = "#SOMEVALUE#";
+
     private String columnName;
 
     /**
@@ -100,9 +103,9 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
             throws SkipSchemaExpressionException, QAWarningException, SpecialValueNoValueException, SpecialValueSomeValueException {
         Cell cell = ctxt.getCellByName(columnName);
         if (cell != null) {
-            if ("#NOVALUE#".equals(cell.toString())) {
+            if (NO_VALUE_KEYWORD.equals(cell.toString())) {
                 throw new SpecialValueNoValueException();
-            } else if ("#SOMEVALUE#".equals(cell.toString())) {
+            } else if (SOME_VALUE_KEYWORD.equals(cell.toString())) {
                 throw new SpecialValueSomeValueException();
             }
 

@@ -65,7 +65,7 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
 
     @Override
     public MonolingualTextValue evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException, QAWarningException, SpecialValueNoValueException, SpecialValueSomeValueException {
+            throws SkipSchemaExpressionException, QAWarningException {
         String text = getValueExpr().evaluate(ctxt).getString();
         try {
             String lang = getLanguageExpr().evaluate(ctxt);

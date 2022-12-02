@@ -89,14 +89,18 @@ public class SnakOnlyStatementMerger implements StatementMerger {
         // Deliberately only comparing the pids and not the siteIRIs to avoid spurious mismatches due to federation
         if (!existingSnak.getPropertyId().getId().equals(addedSnak.getPropertyId().getId())) {
             return false;
-        } else if (existingSnak instanceof NoValueSnakImpl && addedSnak instanceof NoValueSnakImpl) {
-            return true;
-        } else if (existingSnak instanceof SomeValueSnakImpl && addedSnak instanceof SomeValueSnakImpl) {
-            return true;
-        } else {
+        } else if (existingSnak instanceof NoValueSnak) {
+            return addedSnak instanceof NoValueSnak;
+        } else if (existingSnak instanceof SomeValueSnak) {
+            return addedSnak instanceof SomeValueSnak;
+        } else if (addedSnak instanceof ValueSnak) {
+            // existingSnak is also a ValueSnak per the cases above
             Value existingValue = ((ValueSnak) existingSnak).getValue();
             Value addedValue = ((ValueSnak) addedSnak).getValue();
             return valueMatcher.match(existingValue, addedValue);
+        } else {
+            // mismatching value / somevalue / novalue between addedSnak and existingSnak
+            return false;
         }
     }
 

@@ -77,7 +77,7 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
 
     @Override
     public QuantityValue evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException, QAWarningException, SpecialValueNoValueException, SpecialValueSomeValueException {
+            throws SkipSchemaExpressionException, QAWarningException {
         StringValue amount = getAmountExpr().evaluate(ctxt);
         // we know the amount is nonnull, nonempty here
 

@@ -33,6 +33,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingNoValueSnak;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingSomeValueSnak;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingValueSnak;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
@@ -155,11 +158,11 @@ public class WbStatementExpr {
         if (mainSnakValueExpr != null) {
             try {
                 Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
-                mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+                mainSnak = new FullyPropertySerializingValueSnak(propertyId, mainSnakValue);
             } catch (SpecialValueNoValueException e) {
-                mainSnak = Datamodel.makeNoValueSnak(propertyId);
+                mainSnak = new FullyPropertySerializingNoValueSnak(propertyId);
             } catch (SpecialValueSomeValueException e) {
-                mainSnak = Datamodel.makeSomeValueSnak(propertyId);
+                mainSnak = new FullyPropertySerializingSomeValueSnak(propertyId);
             }
         } else {
             // hack to make sure we have a non-null snak

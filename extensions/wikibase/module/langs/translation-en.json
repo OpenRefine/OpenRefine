@@ -69,6 +69,8 @@
     "wikibase-schema/property-placeholder": "property",
     "wikibase-schema/nb-references": "&nbsp;references",
     "wikibase-schema/remove-column": "remove column",
+    "wikibase-schema/no-value": "no value",
+    "wikibase-schema/some-value": "some value",
     "wikibase-schema/label": "Label",
     "wikibase-schema/label-if-new": "Label (do not override)",
     "wikibase-schema/label-override": "Label (override if present)",
