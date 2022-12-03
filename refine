@@ -898,7 +898,7 @@ echo "--------------------------------------------------------------------------
 echo You have "$freeRam"M of free memory.
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://docs.openrefine.org/manual/installing\#increasing-memory-allocation
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
 echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then

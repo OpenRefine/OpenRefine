@@ -1,11 +1,11 @@
 /**
  * The following scenarios are inspired by the official OpenRefine documentation
- * https://docs.openrefine.org/manual/transposing/
+ * https://openrefine.org/docs/manual/transposing/
  */
 describe(__filename, function () {
   /**
-   * https://docs.openrefine.org/manual/transposing/#columnize-by-keyvalue-columns
-   * and https://docs.openrefine.org/manual/transposing/#notes-column
+   * https://openrefine.org/docs/manual/transposing/#columnize-by-keyvalue-columns
+   * and https://openrefine.org/docs/manual/transposing/#notes-column
    */
   it('Columnize by key/value columns', function () {
     const fixture = [
@@ -43,7 +43,7 @@ describe(__filename, function () {
   });
 
   /**
-   * https://docs.openrefine.org/manual/transposing/#extra-columns
+   * https://openrefine.org/docs/manual/transposing/#extra-columns
    * Extra column Wikidata ID must be preserved
    */
   it('Columnize by key/value columns + Extra columns', function () {
