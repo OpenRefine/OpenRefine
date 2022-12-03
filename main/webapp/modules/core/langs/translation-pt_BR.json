@@ -729,7 +729,7 @@
     "core-index/license": "Licença",
     "core-index/homepage": "Página inicial",
     "core-index/image": "Imagem",
-    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registro; O objeto possui mais campos, detalhes em <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registro; O objeto possui mais campos, detalhes em <a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-views/join-col": "Mesclar colunas…",
     "core-views/column-join": "Mesclar colunas",
     "core-views/column-join-before-column-picker": "Selecione e ordene as colunas para mesclar",

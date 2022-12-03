@@ -3,7 +3,7 @@ This document presents how you can contribute to the OpenRefine project. Please 
 ## Documentation, questions or problems
 
 Our issue list is only for reporting specific bugs and requesting specific features. If you just don't know how to do something using OpenRefine, or want to discuss some ideas, please
-- try the [user manual](https://docs.openrefine.org/)
+- try the [user manual](https://openrefine.org/docs/)
 - ask on the [OpenRefine mailing list](https://groups.google.com/d/forum/openrefine).
 
 If you really want to file a bug or request a feature, go to this [issue list](https://github.com/OpenRefine/OpenRefine/issues). Please use the search function first to make sure a similar issue doesn't already exist. 
@@ -18,17 +18,17 @@ You can help us [translate OpenRefine](https://github.com/OpenRefine/OpenRefine/
 
 ## Contributing documentation
 
-When browsing our documentation, feel free to use the edit button to suggest improvements. For large changes, you might want to [prepare your changes locally](https://docs.openrefine.org/technical-reference/contributing#contributing-to-the-documentation).
+When browsing our documentation, feel free to use the edit button to suggest improvements. For large changes, you might want to [prepare your changes locally](https://openrefine.org/docs/technical-reference/contributing#contributing-to-the-documentation).
 
 ##  Contributing code 
 
 You can contribute code in various ways:
-- Fix bugs or implement new features. Follow [our guide towards your first code contribution](https://docs.openrefine.org/technical-reference/contributing#your-first-code-pull-request).
+- Fix bugs or implement new features. Follow [our guide towards your first code contribution](https://openrefine.org/docs/technical-reference/contributing#your-first-code-pull-request).
 - Develop an OpenRefine extension
 - Develop a reconciliation service
 
 All developers including new distributions and plugin developers are invited to leverage the following OpenRefine project management areas to avoid splitting the community in different communication channels.
-- the [official documentation](https://docs.openrefine.org/technical-reference/technical-reference-index) for shared documentation between both user docs and [technical reference](https://docs.openrefine.org/technical-reference/technical-reference-index)
+- the [official documentation](https://openrefine.org/docs/technical-reference/technical-reference-index) for shared documentation between both user docs and [technical reference](https://openrefine.org/docs/technical-reference/technical-reference-index)
 - the [developer mailing list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) for technical questions, new feature development and anything code related. We invite you to share you idea first via the developer mailing list. Someone may be able to point out to existing development saving you hours of research and development. 
 - [OpenRefine github issue tracker](https://github.com/OpenRefine/OpenRefine/issues) for requesting new features and bug reports.
 - [Gitter Chat](https://gitter.im/OpenRefine/OpenRefine)

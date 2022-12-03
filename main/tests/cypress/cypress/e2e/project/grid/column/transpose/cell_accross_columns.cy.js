@@ -1,10 +1,10 @@
 /**
  * The following scenarios are inspired by the official OpenRefine documentation
- * https://docs.openrefine.org/manual/transposing/
+ * https://openrefine.org/docs/manual/transposing/
  */
 describe(__filename, function () {
   /**
-   * https://docs.openrefine.org/manual/transposing/#one-column
+   * https://openrefine.org/docs/manual/transposing/#one-column
    */
   it('Transpose cells across columns into rows (One column)', function () {
     const fixture = [
@@ -68,7 +68,7 @@ describe(__filename, function () {
   });
 
   /**
-   * https://docs.openrefine.org/manual/transposing/#two-columns
+   * https://openrefine.org/docs/manual/transposing/#two-columns
    */
   it('Transpose cells across columns into rows (Two columns)', function () {
     const fixture = [

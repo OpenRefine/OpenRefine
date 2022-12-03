@@ -1,10 +1,10 @@
 /**
  * The following scenarios are inspired by the official OpenRefine documentation
- * https://docs.openrefine.org/manual/transposing/
+ * https://openrefine.org/docs/manual/transposing/
  */
 describe(__filename, function () {
   /**
-   * https://docs.openrefine.org/manual/transposing/#transpose-cells-in-rows-into-columns
+   * https://openrefine.org/docs/manual/transposing/#transpose-cells-in-rows-into-columns
    */
   it('Transpose cells in rows into columns', function () {
     const fixture = [

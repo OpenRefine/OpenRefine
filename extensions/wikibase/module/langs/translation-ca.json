@@ -98,7 +98,7 @@
     "wikibase-preview/delete-all-existing-statements": "Esborrar totes les declaracions existents",
     "wikibase-account/dialog-header": "compte $1",
     "wikibase-account/explain-log-in": "Entrar a <a href=\"$1\" target=\"_blank\">$2</a> us permet carregar edicions directament des d'OpenRefine.",
-    "wikibase-account/explain-bot-passwords": "Us encoratgem a entrar amb una <a href=\"$1\" target=\"_blank\">contrasenya de bot</a>, vegeu aquesta <a href=\"https://docs.openrefine.org/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">pàgina viqui</a> per aprendre com aconseguir-ne una.",
+    "wikibase-account/explain-bot-passwords": "Us encoratgem a entrar amb una <a href=\"$1\" target=\"_blank\">contrasenya de bot</a>, vegeu aquesta <a href=\"https://openrefine.org/docs/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">pàgina viqui</a> per aprendre com aconseguir-ne una.",
     "wikibase-addition/explain-paste-manifest": "O enganxeu directament el text JSON del manifest (els manifestos d'algunes Wikibase públiques es poden trobar <a href=\"https://github.com/OpenRefine/wikibase-manifests\" target=\"_blank\">aquí</a>, també en podeu escriure un d'acord amb aquest <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutorial</a>):",
     "wikibase-management/explain-select-wikibase": "Feu clic en un element de sota per seleccionar-lo com a Wikibase contra la qual treballar. Això netejarà qualsevol esquema existent. Després de canviar la Wikibase, hauríeu de reconciliar les vostres dades amb ella abans d'editar l'esquema.",
     "wikibase-management/contact-service": "Contactant el servei de manifest",
