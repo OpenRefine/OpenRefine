@@ -11,7 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class SortedJoinPLLTests extends PLLTestsBase {
+public class OrderedJoinPLLTests extends PLLTestsBase {
 
     private List<Tuple2<Long, String>> first;
     private List<Tuple2<Long, String>> second;
@@ -90,6 +90,26 @@ public class SortedJoinPLLTests extends PLLTestsBase {
         PairPLL<Long, String> firstPLL = parallelize(2, first)
                 .mapToPair(t -> t);
         PairPLL<Long, String> secondPLL = parallelize(2, second)
+                .mapToPair(t -> t);
+
+        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.outerJoinOrdered(secondPLL, Comparator.naturalOrder());
+
+        Assert.assertEquals(joined.collect(),
+                Arrays.asList(
+                        Tuple2.of(1L, Tuple2.of(null, "one")),
+                        Tuple2.of(2L, Tuple2.of("foo", null)),
+                        Tuple2.of(4L, Tuple2.of("bar", "four")),
+                        Tuple2.of(5L, Tuple2.of("boom", null)),
+                        Tuple2.of(6L, Tuple2.of("hey", "six")),
+                        Tuple2.of(7L, Tuple2.of(null, "seven")),
+                        Tuple2.of(8L, Tuple2.of("you", null))));
+    }
+
+    @Test
+    public void testOuterJoinWithEmptyPartitions() {
+        PairPLL<Long, String> firstPLL = parallelize(10, first)
+                .mapToPair(t -> t);
+        PairPLL<Long, String> secondPLL = parallelize(10, second)
                 .mapToPair(t -> t);
 
         PairPLL<Long, Tuple2<String, String>> joined = firstPLL.outerJoinOrdered(secondPLL, Comparator.naturalOrder());

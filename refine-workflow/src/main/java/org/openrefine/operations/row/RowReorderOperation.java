@@ -92,9 +92,9 @@ public class RowReorderOperation implements Operation {
         @Override
         public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             if (Mode.RowBased.equals(_mode)) {
-                return projectState.reorderRows(_sorting);
+                return projectState.reorderRows(_sorting, true);
             } else {
-                return projectState.reorderRecords(_sorting);
+                return projectState.reorderRecords(_sorting, true);
             }
         }
 

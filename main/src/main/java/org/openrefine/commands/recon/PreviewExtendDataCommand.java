@@ -135,7 +135,11 @@ public class PreviewExtendDataCommand extends Command {
 
             GridState state = project.getCurrentGridState();
             Engine engine = new Engine(state, engineConfig);
-            List<IndexedRow> previewRows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+            GridState sorted = state;
+            if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                sorted = sorted.reorderRows(sortingConfig, false);
+            }
+            List<IndexedRow> previewRows = state.getRowsAfter(engine.combinedRowFilters(), 0, limit);
             for (IndexedRow indexedRow : previewRows) {
                 try {
                     Row row = indexedRow.getRow();

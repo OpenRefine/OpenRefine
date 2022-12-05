@@ -75,12 +75,12 @@ public class SparkGridStateTests extends SparkBasedTest {
 
     @Test
     public void testGetGrid() {
-        JavaPairRDD<Long, Row> grid = state.getGrid();
-        Row row1 = grid.lookup(0L).get(0);
+        JavaPairRDD<Long, IndexedRow> grid = state.getGrid();
+        Row row1 = grid.lookup(0L).get(0).getRow();
         Assert.assertEquals(row1.getCellValue(0), 1);
         Assert.assertEquals(row1.getCellValue(1), 2);
         Assert.assertEquals(row1.getCellValue(2), "3");
-        Row row2 = grid.lookup(1L).get(0);
+        Row row2 = grid.lookup(1L).get(0).getRow();
         Assert.assertEquals(row2.getCellValue(0), 4);
         Assert.assertEquals(row2.getCellValue(1), "5");
         Assert.assertEquals(row2.getCellValue(2), true);
@@ -94,7 +94,7 @@ public class SparkGridStateTests extends SparkBasedTest {
         SparkGridState loaded = SparkGridState.loadFromFile(context(), tempFile);
 
         Assert.assertEquals(loaded.getOverlayModels(), state.getOverlayModels());
-        List<Tuple2<Long, Row>> loadedGrid = loaded.getGrid().collect();
+        List<Tuple2<Long, IndexedRow>> loadedGrid = loaded.getGrid().collect();
         Assert.assertEquals(loadedGrid, state.getGrid().collect());
     }
 
@@ -109,7 +109,7 @@ public class SparkGridStateTests extends SparkBasedTest {
 
     @Test
     public void testGetRecords() {
-        Assert.assertEquals(state.getRecords(1L, 10),
+        Assert.assertEquals(state.getRecordsAfter(1L, 10),
                 Collections.singletonList(new Record(1L, Collections.singletonList(rows.get(1)._2))));
     }
 

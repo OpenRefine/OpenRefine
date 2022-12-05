@@ -42,7 +42,6 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.qa.QAWarningStore;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
@@ -199,7 +198,7 @@ public class WikibaseSchema implements OverlayModel {
             throw new IllegalStateException("The schema has not been validated before being evaluated");
         }
         List<EntityEdit> result = new ArrayList<>();
-        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
+        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters())) {
             ExpressionContext ctxt = new ExpressionContext(
                     siteIri,
                     entityTypeSiteIri,

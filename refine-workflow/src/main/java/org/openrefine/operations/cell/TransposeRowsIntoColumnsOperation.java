@@ -52,7 +52,6 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
-import org.openrefine.sorting.SortingConfig;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {
 
@@ -119,7 +118,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
             int nbNewColumns = newColumns.getColumns().size();
             RowBuilder firstNewRow = null;
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
                 long r = indexedRow.getIndex();
                 int r2 = (int) (r % (long) _rowCount);
 

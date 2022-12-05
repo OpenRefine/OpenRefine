@@ -233,12 +233,36 @@ public abstract class DatamodelRunnerTestBase {
             ;
         }
 
-        Assert.assertEquals(
-                state.getRows(1L, 2).stream().map(ir -> ir.getRow()).collect(Collectors.toList()),
-                expectedRows.subList(1, 3));
-        Assert.assertEquals(state.getRows(5L, 3), Collections.emptyList());
+    }
 
-        Assert.assertEquals(state.getRows(myRowFilter, SortingConfig.NO_SORTING, 0L, 2),
+    @Test
+    public void testGetRowsAfter() {
+        Assert.assertEquals(
+                simpleGrid.getRowsAfter(1L, 2).stream().map(ir -> ir.getRow()).collect(Collectors.toList()),
+                expectedRows.subList(1, 3));
+
+        Assert.assertEquals(simpleGrid.getRowsAfter(myRowFilter, 0L, 2),
+                Arrays.asList(new IndexedRow(0L, expectedRows.get(0)),
+                        new IndexedRow(2L, expectedRows.get(2))));
+        Assert.assertEquals(simpleGrid.getRowsAfter(myRowFilter, 2L, 2),
+                Arrays.asList(new IndexedRow(2L, expectedRows.get(2)),
+                        new IndexedRow(3L, expectedRows.get(3))));
+    }
+
+    /*
+     * { "a", "b" }, { "", 1 }, { "c", true }, { null, 123123123123L }
+     */
+    @Test
+    public void testGetRowsBefore() {
+        Assert.assertEquals(
+                simpleGrid.getRowsBefore(3L, 2).stream().map(ir -> ir.getRow()).collect(Collectors.toList()),
+                expectedRows.subList(1, 3));
+        Assert.assertEquals(simpleGrid.getRowsBefore(5L, 1),
+                Collections.singletonList(new IndexedRow(3L, expectedRows.get(3))));
+
+        Assert.assertEquals(simpleGrid.getRowsBefore(myRowFilter, 2L, 2),
+                Arrays.asList(new IndexedRow(0L, expectedRows.get(0))));
+        Assert.assertEquals(simpleGrid.getRowsBefore(myRowFilter, 3L, 2),
                 Arrays.asList(new IndexedRow(0L, expectedRows.get(0)),
                         new IndexedRow(2L, expectedRows.get(2))));
     }
@@ -257,28 +281,11 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testAccessSortedRows() {
-        GridState state = gridToSort;
+    public void testAccessRowsOutOfBounds() {
+        Assert.assertEquals(simpleGrid.getRowsAfter(5L, 3), Collections.emptyList());
 
         Assert.assertEquals(
-                state.getRows(RowFilter.ANY_ROW, sortingConfig, 0, 2),
-                Arrays.asList(
-                        new IndexedRow(2L, row(null, 0)),
-                        new IndexedRow(1L, row("a", 1))));
-
-        Assert.assertEquals(
-                state.getRows(RowFilter.ANY_ROW, sortingConfig, 2, 2),
-                Arrays.asList(
-                        new IndexedRow(0L, row("c", 1)),
-                        new IndexedRow(3L, row("a", 5))));
-    }
-
-    @Test
-    public void testAccessSortedRowsOutOfBounds() {
-        GridState state = gridToSort;
-
-        Assert.assertEquals(
-                state.getRows(RowFilter.ANY_ROW, sortingConfig, 30, 10),
+                gridToSort.getRowsAfter(RowFilter.ANY_ROW, 30, 10),
                 Collections.emptyList());
     }
 
@@ -288,27 +295,17 @@ public abstract class DatamodelRunnerTestBase {
 
         @Override
         public boolean filterRecord(Record record) {
-            return record.getStartRowId() == 2L;
+            return record.getLogicalStartRowId() == 2L;
         }
     };
 
     @Test
     public void testIterateRowsFilter() {
-        Iterator<IndexedRow> indexedRows = simpleGrid.iterateRows(myRowFilter, SortingConfig.NO_SORTING).iterator();
+        Iterator<IndexedRow> indexedRows = simpleGrid.iterateRows(myRowFilter).iterator();
         Assert.assertTrue(indexedRows.hasNext());
         Assert.assertEquals(indexedRows.next(), new IndexedRow(0L, expectedRows.get(0)));
         Assert.assertTrue(indexedRows.hasNext());
         Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, expectedRows.get(2)));
-        Assert.assertTrue(indexedRows.hasNext());
-    }
-
-    @Test
-    public void testIterateRowsSortingConfig() {
-        Iterator<IndexedRow> indexedRows = gridToSort.iterateRows(RowFilter.ANY_ROW, sortingConfig).iterator();
-        Assert.assertTrue(indexedRows.hasNext());
-        Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, row(null, 0)));
-        Assert.assertTrue(indexedRows.hasNext());
-        Assert.assertEquals(indexedRows.next(), new IndexedRow(1L, row("a", 1)));
         Assert.assertTrue(indexedRows.hasNext());
     }
 
@@ -356,10 +353,22 @@ public abstract class DatamodelRunnerTestBase {
         } catch (IllegalArgumentException e) {
             ;
         }
+    }
 
-        Assert.assertEquals(state.getRecords(1L, 2), expectedRecords.subList(1, 2));
+    @Test
+    public void testGetRecordsAfter() {
+        Assert.assertEquals(simpleGrid.getRecordsAfter(1L, 2), expectedRecords.subList(1, 2));
 
-        Assert.assertEquals(state.getRecords(myRecordFilter, SortingConfig.NO_SORTING, 0L, 3),
+        Assert.assertEquals(simpleGrid.getRecordsAfter(myRecordFilter, 0L, 3),
+                Collections.singletonList(expectedRecords.get(1)));
+    }
+
+    @Test
+    public void testGetRecordsBefore() {
+        Assert.assertEquals(simpleGrid.getRecordsBefore(3L, 2), expectedRecords.subList(0, 2));
+        Assert.assertEquals(simpleGrid.getRecordsBefore(0L, 2), Collections.emptyList());
+
+        Assert.assertEquals(simpleGrid.getRecordsBefore(myRecordFilter, 3L, 2),
                 Collections.singletonList(expectedRecords.get(1)));
     }
 
@@ -382,19 +391,6 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testAccessSortedRecords() {
-        GridState state = gridToSort;
-
-        Assert.assertEquals(
-                state.getRecords(RecordFilter.ANY_RECORD, sortingConfig, 0, 3),
-                Arrays.asList(
-                        new Record(1L, Arrays.asList(row("a", 1), row(null, 0))),
-                        new Record(0L, Arrays.asList(row("c", 1))),
-                        new Record(3L, Arrays.asList(row("a", 5)))));
-
-    }
-
-    @Test
     public void testRecordsRespectKeyColumnIndex() {
         GridState state = simpleGrid.withColumnModel(simpleGrid.getColumnModel().withKeyColumnIndex(1));
 
@@ -413,21 +409,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testIterateRecordsFilter() {
-        Iterator<Record> records = simpleGrid.iterateRecords(myRecordFilter, SortingConfig.NO_SORTING).iterator();
+        Iterator<Record> records = simpleGrid.iterateRecords(myRecordFilter).iterator();
         Assert.assertTrue(records.hasNext());
         Assert.assertEquals(records.next(), expectedRecords.get(1));
-        Assert.assertFalse(records.hasNext());
-    }
-
-    @Test
-    public void testIterateRecordsSortingConfig() {
-        Iterator<Record> records = gridToSort.iterateRecords(RecordFilter.ANY_RECORD, sortingConfig).iterator();
-        Assert.assertTrue(records.hasNext());
-        Assert.assertEquals(records.next(), new Record(1L, Arrays.asList(row("a", 1), row(null, 0))));
-        Assert.assertTrue(records.hasNext());
-        Assert.assertEquals(records.next(), new Record(0L, Arrays.asList(row("c", 1))));
-        Assert.assertTrue(records.hasNext());
-        Assert.assertEquals(records.next(), new Record(3L, Arrays.asList(row("a", 5))));
         Assert.assertFalse(records.hasNext());
     }
 
@@ -758,8 +742,8 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testReorderRows() {
-        GridState reordered = gridToSort.reorderRows(sortingConfig);
+    public void testReorderRowsPermanently() {
+        GridState reordered = gridToSort.reorderRows(sortingConfig, true);
 
         GridState expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -769,12 +753,43 @@ public abstract class DatamodelRunnerTestBase {
                         { "a", 5 }
                 });
 
-        Assert.assertEquals(reordered.collectRows(), expected.collectRows());
+        assertGridEquals(reordered, expected);
+    }
+
+    protected static RowFilter rowFilterGreaterThanTwo = new RowFilter() {
+
+        @Override
+        public boolean filterRow(long rowIndex, Row row) {
+            return rowIndex >= 2L;
+        }
+    };
+
+    @Test
+    public void testReorderRowsTemporarily() {
+        GridState reordered = gridToSort.reorderRows(sortingConfig, false);
+
+        List<IndexedRow> expectedRows = Arrays.asList(
+                new IndexedRow(0L, 2L, new Row(Arrays.asList(null, new Cell(0, null)))),
+                new IndexedRow(1L, 1L, new Row(Arrays.asList(new Cell("a", null), new Cell(1, null)))),
+                new IndexedRow(2L, 0L, new Row(Arrays.asList(new Cell("c", null), new Cell(1, null)))),
+                new IndexedRow(3L, 3L, new Row(Arrays.asList(new Cell("a", null), new Cell(5, null)))));
+
+        Assert.assertEquals(reordered.getRow(0L), expectedRows.get(0).getRow());
+        Assert.assertEquals(reordered.collectRows(), expectedRows);
+        Assert.assertEquals(IteratorUtils.toList(reordered.iterateRows(RowFilter.ANY_ROW).iterator()), expectedRows);
+
+        Assert.assertEquals(reordered.getRowsAfter(0L, 2), expectedRows.subList(0, 2));
+        // this assertion checks that the row id used for filtering is the original one, not the new one
+        Assert.assertEquals(reordered.getRowsAfter(rowFilterGreaterThanTwo, 2L, 2), Collections.singletonList(expectedRows.get(3)));
+
+        Assert.assertEquals(reordered.getRowsBefore(3L, 2), expectedRows.subList(1, 3));
+        // this assertion checks that the row id used for filtering is the original one, not the new one
+        Assert.assertEquals(reordered.getRowsBefore(rowFilterGreaterThanTwo, 2L, 1), Collections.singletonList(expectedRows.get(0)));
     }
 
     @Test
-    public void testReorderRecords() {
-        GridState reordered = gridToSort.reorderRecords(sortingConfig);
+    public void testReorderRecordsPermanently() {
+        GridState reordered = gridToSort.reorderRecords(sortingConfig, true);
 
         GridState expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -784,7 +799,31 @@ public abstract class DatamodelRunnerTestBase {
                         { "a", 5 }
                 });
 
-        Assert.assertEquals(reordered.collectRows(), expected.collectRows());
+        assertGridEquals(reordered, expected);
+    }
+
+    @Test
+    public void testReorderRecordsTemporarily() {
+        GridState reordered = gridToSort.reorderRecords(sortingConfig, false);
+
+        List<IndexedRow> expectedRows = Arrays.asList(
+                new IndexedRow(0L, 1L, new Row(Arrays.asList(new Cell("a", null), new Cell(1, null)))),
+                new IndexedRow(1L, 2L, new Row(Arrays.asList(null, new Cell(0, null)))),
+                new IndexedRow(2L, 0L, new Row(Arrays.asList(new Cell("c", null), new Cell(1, null)))),
+                new IndexedRow(3L, 3L, new Row(Arrays.asList(new Cell("a", null), new Cell(5, null)))));
+
+        List<Record> expectedRecords = Arrays.asList(
+                new Record(0L, 1L, Arrays.asList(expectedRows.get(0).getRow(), expectedRows.get(1).getRow())),
+                new Record(2L, 0L, Collections.singletonList(expectedRows.get(2).getRow())),
+                new Record(3L, 3L, Collections.singletonList(expectedRows.get(3).getRow())));
+
+        Assert.assertEquals(reordered.getRecord(2L), expectedRecords.get(1));
+        Assert.assertEquals(reordered.collectRows(), expectedRows);
+        Assert.assertEquals(reordered.collectRecords(), expectedRecords);
+        Assert.assertEquals(IteratorUtils.toList(reordered.iterateRecords(RecordFilter.ANY_RECORD).iterator()), expectedRecords);
+
+        Assert.assertEquals(reordered.getRecordsAfter(2L, 2), expectedRecords.subList(1, 3));
+        Assert.assertEquals(reordered.getRecordsBefore(2L, 2), expectedRecords.subList(0, 1));
     }
 
     @Test
@@ -796,8 +835,7 @@ public abstract class DatamodelRunnerTestBase {
                         { "", 1 }
                 });
 
-        Assert.assertEquals(removed.getColumnModel(), expected.getColumnModel());
-        Assert.assertEquals(removed.collectRows(), expected.collectRows());
+        assertGridEquals(removed, expected);
     }
 
     @Test
@@ -1135,8 +1173,7 @@ public abstract class DatamodelRunnerTestBase {
                         { null, "third" }
                 });
 
-        Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());
-        Assert.assertEquals(joined.collectRows(), expected.collectRows());
+        assertGridEquals(joined, expected);
     }
 
     @Test
@@ -1279,5 +1316,18 @@ public abstract class DatamodelRunnerTestBase {
         simpleGrid.cache(reporter);
         Assert.assertTrue(simpleGrid.isCached());
         Assert.assertEquals(reporter.getPercentage(), 100);
+    }
+
+    /**
+     * Because {@link GridState} implementations are not required to use the {@link Object#equals(Object)} method to
+     * compare the contents of grids, we use this helper to check that two grids have the same contents.
+     *
+     * @param actual
+     * @param expected
+     */
+    public static void assertGridEquals(GridState actual, GridState expected) {
+        Assert.assertEquals(actual.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(actual.collectRows(), expected.collectRows());
+        Assert.assertEquals(actual.getOverlayModels(), expected.getOverlayModels());
     }
 }

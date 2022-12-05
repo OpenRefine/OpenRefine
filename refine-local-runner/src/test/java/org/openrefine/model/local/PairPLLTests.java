@@ -77,42 +77,82 @@ public class PairPLLTests extends PLLTestsBase {
     }
 
     @Test
-    public void testGetRangeWithPartitioner() {
+    public void testGetRangeAfterWithPartitioner() {
         PairPLL<Long, Integer> zipped = parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17)).zipWithIndex();
 
-        Assert.assertEquals(zipped.getRange(-1L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(-1L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(0L, 10),
                         Tuple2.of(1L, 11)));
 
-        Assert.assertEquals(zipped.getRange(7L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(7L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(7L, 17)));
 
-        Assert.assertEquals(zipped.getRange(3L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(3L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(3L, 13),
                         Tuple2.of(4L, 14)));
     }
 
     @Test
-    public void testGetRangeWithoutPartitioner() {
+    public void testGetRangeAfterWithoutPartitioner() {
         PairPLL<Long, Integer> zipped = new PairPLL<Long, Integer>(
                 parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17)).zipWithIndex().toPLL(), Optional.empty());
 
-        Assert.assertEquals(zipped.getRange(-1L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(-1L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(0L, 10),
                         Tuple2.of(1L, 11)));
 
-        Assert.assertEquals(zipped.getRange(7L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(7L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(7L, 17)));
 
-        Assert.assertEquals(zipped.getRange(3L, 2, Comparator.naturalOrder()),
+        Assert.assertEquals(zipped.getRangeAfter(3L, 2, Comparator.naturalOrder()),
                 Arrays.asList(
                         Tuple2.of(3L, 13),
                         Tuple2.of(4L, 14)));
+    }
+
+    @Test
+    public void testGetRangeBeforeWithPartitioner() {
+        PairPLL<Long, Integer> zipped = parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17)).zipWithIndex();
+
+        Assert.assertEquals(zipped.getRangeBefore(3L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(1L, 11),
+                        Tuple2.of(2L, 12)));
+
+        Assert.assertEquals(zipped.getRangeBefore(1L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(0L, 10)));
+
+        Assert.assertEquals(zipped.getRangeBefore(9L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(6L, 16),
+                        Tuple2.of(7L, 17)));
+    }
+
+    @Test
+    public void testGetRangeBeforeWithoutPartitioner() {
+        PairPLL<Long, Integer> zipped = new PairPLL<>(
+                parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17)).zipWithIndex().toPLL(),
+                Optional.empty());
+
+        Assert.assertEquals(zipped.getRangeBefore(3L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(1L, 11),
+                        Tuple2.of(2L, 12)));
+
+        Assert.assertEquals(zipped.getRangeBefore(1L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(0L, 10)));
+
+        Assert.assertEquals(zipped.getRangeBefore(9L, 2, Comparator.naturalOrder()),
+                Arrays.asList(
+                        Tuple2.of(6L, 16),
+                        Tuple2.of(7L, 17)));
     }
 
     @Test
@@ -278,5 +318,24 @@ public class PairPLLTests extends PLLTestsBase {
         Assert.assertEquals(dropped.collect(), Arrays.asList(Tuple2.of(0L, 3), Tuple2.of(1L, 8), Tuple2.of(2L, 1), Tuple2.of(3L, -3)));
         Assert.assertTrue(dropped.partitioner.isPresent());
         PartitionerTestUtils.checkPartitionerAdequacy(dropped.partitioner.get(), dropped);
+    }
+
+    @Test
+    public void testGatherElementsBefore() {
+        List<Tuple2<Long, Integer>> list = Arrays.asList(
+                Tuple2.of(0L, 10),
+                Tuple2.of(2L, 12),
+                Tuple2.of(4L, 14),
+                Tuple2.of(6L, 16),
+                Tuple2.of(8L, 18));
+
+        Assert.assertEquals(PairPLL.gatherElementsBefore(5L, 2, list.stream(), Comparator.naturalOrder()),
+                list.subList(1, 3));
+        Assert.assertEquals(PairPLL.gatherElementsBefore(13L, 2, list.stream(), Comparator.naturalOrder()),
+                list.subList(3, 5));
+        Assert.assertEquals(PairPLL.gatherElementsBefore(1L, 2, list.stream(), Comparator.naturalOrder()),
+                list.subList(0, 1));
+        Assert.assertEquals(PairPLL.gatherElementsBefore(10L, 20, list.stream(), Comparator.naturalOrder()),
+                list);
     }
 }

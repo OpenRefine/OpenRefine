@@ -171,7 +171,7 @@ public class EngineTests {
     public void testGetMatchingRows() {
         @SuppressWarnings("unchecked")
         Iterable<IndexedRow> mockIterable = mock(Iterable.class);
-        when(initialState.iterateRows(Mockito.any(), Mockito.eq(SortingConfig.NO_SORTING))).thenReturn(mockIterable);
+        when(initialState.iterateRows(Mockito.any())).thenReturn(mockIterable);
 
         Assert.assertEquals(engine.getMatchingRows(SortingConfig.NO_SORTING), mockIterable);
     }

@@ -22,7 +22,7 @@ import org.openrefine.model.Row;
  */
 public class RecordPLL extends PLL<Tuple2<Long, Record>> {
 
-    private final PairPLL<Long, Row> parent;
+    private final PairPLL<Long, IndexedRow> parent;
     private List<RecordPartition> partitions;
     protected final int keyColumnIndex;
 
@@ -35,7 +35,7 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
      * @param keyColumnIndex
      *            the index of the column used as record key
      */
-    public static PairPLL<Long, Record> groupIntoRecords(PairPLL<Long, Row> grid, int keyColumnIndex) {
+    public static PairPLL<Long, Record> groupIntoRecords(PairPLL<Long, IndexedRow> grid, int keyColumnIndex) {
         return new PairPLL<Long, Record>(new RecordPLL(grid, keyColumnIndex), grid.getPartitioner());
     }
 
@@ -48,13 +48,15 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
      * @param keyColumnIndex
      *            the index of the column used as record key
      */
-    public RecordPLL(PairPLL<Long, Row> grid, int keyColumnIndex) {
+    public RecordPLL(PairPLL<Long, IndexedRow> grid, int keyColumnIndex) {
         super(grid.getContext());
         this.keyColumnIndex = keyColumnIndex;
         List<? extends Partition> parentPartitions = grid.getPartitions();
         Stream<? extends Partition> lastPartitions = parentPartitions.stream().skip(1L);
-        List<RecordEnd> recordEnds = grid
-                .runOnPartitionsWithoutInterruption(partition -> extractRecordEnd(grid.iterate(partition), keyColumnIndex), lastPartitions);
+        PLL<IndexedRow> indexedRows = grid.values();
+        List<RecordEnd> recordEnds = indexedRows
+                .runOnPartitionsWithoutInterruption(partition -> extractRecordEnd(indexedRows.iterate(partition), keyColumnIndex),
+                        lastPartitions);
         parent = grid;
         partitions = new ArrayList<>(parentPartitions.size());
         for (int i = 0; i != parentPartitions.size(); i++) {
@@ -76,28 +78,27 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
         }
     }
 
-    protected static RecordEnd extractRecordEnd(Stream<Tuple2<Long, Row>> rows, int keyColumnIndex) {
+    protected static RecordEnd extractRecordEnd(Stream<IndexedRow> rows, int keyColumnIndex) {
         // We cannot use Stream.takeWhile here because we need to know if we have reached the end of the stream
         List<Row> end = new ArrayList<>();
-        Iterator<Tuple2<Long, Row>> iterator = rows.iterator();
-        Tuple2<Long, Row> lastTuple = null;
+        Iterator<IndexedRow> iterator = rows.iterator();
+        IndexedRow lastTuple = null;
         while (iterator.hasNext()) {
             lastTuple = iterator.next();
-            if (!lastTuple.getValue().isCellBlank(keyColumnIndex)) {
+            if (!lastTuple.getRow().isCellBlank(keyColumnIndex)) {
                 break;
             }
-            end.add(lastTuple.getValue());
+            end.add(lastTuple.getRow());
         }
-        return new RecordEnd(end, lastTuple == null || lastTuple.getValue().isCellBlank(keyColumnIndex));
+        return new RecordEnd(end, lastTuple == null || lastTuple.getRow().isCellBlank(keyColumnIndex));
     }
 
     protected static Stream<Tuple2<Long, Record>> groupIntoRecords(
-            Stream<Tuple2<Long, Row>> stream,
+            Stream<IndexedRow> stream,
             int keyCellIndex,
             boolean ignoreFirstRows,
             List<Row> additionalRows) {
-        Iterator<Tuple2<Long, Row>> iterator = stream.iterator();
-        Iterator<IndexedRow> indexedRows = Iterators.transform(iterator, tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()));
+        Iterator<IndexedRow> indexedRows = stream.iterator();
         Iterator<Record> recordIterator = Record.groupIntoRecords(indexedRows, keyCellIndex, ignoreFirstRows, additionalRows);
         Iterator<Tuple2<Long, Record>> indexedRecords = Iterators.transform(recordIterator,
                 record -> Tuple2.of(record.getStartRowId(), record));
@@ -107,7 +108,8 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     @Override
     protected Stream<Tuple2<Long, Record>> compute(Partition partition) {
         RecordPartition recordPartition = (RecordPartition) partition;
-        Stream<Tuple2<Long, Row>> rows = parent.iterate(recordPartition.getParent());
+        Stream<IndexedRow> rows = parent.iterate(recordPartition.getParent())
+                .map(Tuple2::getValue);
         Stream<Tuple2<Long, Record>> records = groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0,
                 recordPartition.additionalRows);
         return records;

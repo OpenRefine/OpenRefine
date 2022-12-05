@@ -201,7 +201,12 @@ public class PreviewExpressionCommand extends Command {
                 Properties bindings = ExpressionUtils.createBindings();
 
                 if (Mode.RowBased.equals(engine.getMode())) {
-                    List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+                    GridState sorted = state;
+                    if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                        // TODO cache appropriately
+                        sorted = state.reorderRows(sortingConfig, false);
+                    }
+                    List<IndexedRow> rows = sorted.getRowsAfter(engine.combinedRowFilters(), 0, limit);
                     for (IndexedRow indexedRow : rows) {
                         Cell cell = indexedRow.getRow().getCell(cellIndex);
                         Record record = null;
@@ -210,7 +215,12 @@ public class PreviewExpressionCommand extends Command {
                                         repeat, repeatCount));
                     }
                 } else {
-                    List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
+                    GridState sorted = state;
+                    if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                        // TODO cache appropriately
+                        sorted = state.reorderRecords(sortingConfig, false);
+                    }
+                    List<Record> records = sorted.getRecordsAfter(engine.combinedRecordFilters(), 0, limit);
                     for (Record record : records) {
                         for (IndexedRow indexedRow : record.getIndexedRows()) {
                             Cell cell = indexedRow.getRow().getCell(cellIndex);

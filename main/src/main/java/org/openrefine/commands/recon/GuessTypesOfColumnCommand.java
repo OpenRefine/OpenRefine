@@ -149,7 +149,7 @@ public class GuessTypesOfColumnCommand extends Command {
         List<String> samples = new ArrayList<String>(sampleSize);
         Set<String> sampleSet = new HashSet<String>();
 
-        for (IndexedRow row : gridState.getRows(0, sampleSize)) {
+        for (IndexedRow row : gridState.getRowsAfter(0, sampleSize)) {
             Object value = row.getRow().getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
                 String s = CharMatcher.whitespace().trimFrom(value.toString());

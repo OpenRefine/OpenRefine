@@ -1,7 +1,6 @@
 
 package org.openrefine.util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,21 +18,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 
 public class RDDUtilsTests extends SparkBasedTest {
-
-    @Test
-    public void testFilterByRange() {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Serializable[][] {
-                { 1, 2 },
-                { 3, 4 },
-                { 5, 6 },
-                { 7, 8 }
-        });
-        JavaPairRDD<Long, Row> filtered = RDDUtils.filterByRange(rdd, 2L, 5L);
-        List<Tuple2<Long, Row>> rows = filtered.collect();
-        Assert.assertEquals(rows.size(), 2);
-        Assert.assertEquals(rows.get(0)._2.getCellValue(0), 5);
-        Assert.assertEquals(rows.get(1)._2.getCellValue(1), 8);
-    }
 
     @Test
     public void testLimitPartitionsPair() {
@@ -131,5 +115,17 @@ public class RDDUtilsTests extends SparkBasedTest {
         JavaPairRDD<Long, Long> limited = RDDUtils.limit(pairs, 6);
 
         Assert.assertEquals(limited.keys().collect(), LongStream.range(0L, 6L).boxed().collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testPaginateBefore() {
+        List<Long> list = LongStream.range(0L, 16L).boxed().collect(Collectors.toList());
+        JavaRDD<Long> rdd = context().parallelize(list, 4);
+        JavaPairRDD<Long, Long> pairs = RDDUtils.zipWithIndex(rdd);
+        List<Tuple2<Long, Long>> pairsList = pairs.collect();
+
+        Assert.assertEquals(RDDUtils.paginateBefore(pairs, 7L, 3), pairsList.subList(4, 7));
+        Assert.assertEquals(RDDUtils.paginateBefore(pairs, 3L, 8), pairsList.subList(0, 3));
+        Assert.assertEquals(RDDUtils.paginateBefore(pairs, 20L, 4), pairsList.subList(12, 16));
     }
 }

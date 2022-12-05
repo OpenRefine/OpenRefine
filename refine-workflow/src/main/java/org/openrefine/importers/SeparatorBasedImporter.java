@@ -69,7 +69,6 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
-import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 
 public class SeparatorBasedImporter extends LineBasedImporterBase {
@@ -186,7 +185,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
 
         final CSVParser parser = getCSVParser(options);
 
-        Iterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING).iterator();
+        Iterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW).iterator();
 
         TableDataReader dataReader = new TableDataReader() {
 

@@ -56,7 +56,8 @@ public interface GridState {
      * fetching them by batch, depending on the implementation.
      * 
      * @param id
-     *            the row index
+     *            the row index. This refers to the current position of the row in the grid, which corresponds to
+     *            {@link IndexedRow#getIndex()}.
      * @return the row at the given index
      * @throws IndexOutOfBoundsException
      *             if row id could not be found
@@ -72,13 +73,56 @@ public interface GridState {
      *            the maximum number of rows to fetch
      * @return the list of rows with their ids (if any)
      */
-    public List<IndexedRow> getRows(long start, int limit);
+    public List<IndexedRow> getRowsAfter(long start, int limit);
+
+    /**
+     * Among the subset of filtered rows, return a list of rows, starting from a given index and defined by a maximum
+     * size.
+     * 
+     * @param filter
+     *            the subset of rows to paginate through. This object and its dependencies are required to be
+     *            serializable.
+     * @param start
+     *            the first row id to fetch (inclusive)
+     * @param limit
+     *            the maximum number of rows to fetch
+     * @return the list of rows with their ids (if any)
+     * @see #getRowsBefore(long, int)
+     */
+    public List<IndexedRow> getRowsAfter(RowFilter filter, long start, int limit);
+
+    /**
+     * Returns a list of consecutive rows, just before the given row index (not included) and up to a maximum size.
+     *
+     * @param end
+     *            the last row id to fetch (exclusive)
+     * @param limit
+     *            the maximum number of rows to fetch
+     * @return the list of rows with their ids (if any)
+     * @see #getRowsAfter(long, int)
+     */
+    public List<IndexedRow> getRowsBefore(long end, int limit);
+
+    /**
+     * Among the subset of filtered rows, return a list of rows, just before the row with a given index (excluded) and
+     * defined by a maximum size.
+     *
+     * @param filter
+     *            the subset of rows to paginate through. This object and its dependencies are required to be
+     *            serializable.
+     * @param end
+     *            the last row id to fetch (exclusive)
+     * @param limit
+     *            the maximum number of rows to fetch
+     * @return the list of rows with their ids (if any)
+     */
+    public List<IndexedRow> getRowsBefore(RowFilter filter, long end, int limit);
 
     /**
      * Returns a list of rows corresponding to the row indices supplied. By default, this calls
      * {@link GridState#getRow(long)} on all values, but implementations can override this to more efficient strategies
      * if available.
-     * 
+     *
      * @param rowIndices
      *            the indices of the rows to lookup
      * @return the list contains null values for the row indices which could not be found.
@@ -96,23 +140,6 @@ public interface GridState {
     }
 
     /**
-     * Among the subset of filtered rows, return a list of rows, starting from a given index and defined by a maximum
-     * size.
-     * 
-     * @param filter
-     *            the subset of rows to paginate through. This object and its dependencies are required to be
-     *            serializable.
-     * @param sortingConfig
-     *            the order in which to return the rows
-     * @param start
-     *            the first row id to fetch (inclusive)
-     * @param limit
-     *            the maximum number of rows to fetch
-     * @return the list of rows with their ids (if any)
-     */
-    public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit);
-
-    /**
      * Iterate over rows matched by a filter, in the order determined by a sorting configuration. This might not require
      * loading all rows in memory at once, but might be less efficient than {@link #collectRows()} if all rows are to be
      * stored in memory downstream.
@@ -121,7 +148,7 @@ public interface GridState {
      * leaks with some implementations. This should be clarified by the interface. Consider exposing a closeable
      * iterable instead.
      */
-    public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig);
+    public Iterable<IndexedRow> iterateRows(RowFilter filter);
 
     /**
      * Count the number of rows which match a given filter.
@@ -154,7 +181,8 @@ public interface GridState {
      * inefficient depending on the implementation.
      * 
      * @param id
-     *            the row id of the first row in the record
+     *            the row id of the first row in the record. This refers to the current position of the record in the
+     *            grid, which corresponds to {@link Record#getStartRowId()}.
      * @return the corresponding record
      * @throws IllegalArgumentException
      *             if record id could not be found
@@ -169,8 +197,9 @@ public interface GridState {
      * @param limit
      *            the maximum number of records to fetch
      * @return the list of records (if any)
+     * @see #getRecordsBefore(long, int)
      */
-    public List<Record> getRecords(long start, int limit);
+    public List<Record> getRecordsAfter(long start, int limit);
 
     /**
      * Among the filtered subset of records, returns a list of records, starting from a given index and defined by a
@@ -179,22 +208,46 @@ public interface GridState {
      * @param filter
      *            the filter which defines the subset of records to paginate through This object and its dependencies
      *            are required to be serializable.
-     * @param sortingConfig
-     *            the order in which the rows should be returned
      * @param start
      *            the first record id to fetch (inclusive)
      * @param limit
      *            the maximum number of records to fetch
      * @return the list of records (if any)
      */
-    public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit);
+    public List<Record> getRecordsAfter(RecordFilter filter, long start, int limit);
 
     /**
-     * Iterate over records matched by a filter, ordered according to the sorting configuration. This might not require
-     * loading all records in memory at once, but might be less efficient than {@link #collectRecords()} if all records
-     * are to be stored in memory downstream.
+     * Returns a list of consecutive records, ending at a given index (exclusive) and defined by a maximum size.
+     *
+     * @param end
+     *            the last record id to fetch (exclusive)
+     * @param limit
+     *            the maximum number of records to fetch
+     * @return the list of records (if any)
+     * @see #getRecordsAfter(long, int)
      */
-    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig);
+    public List<Record> getRecordsBefore(long end, int limit);
+
+    /**
+     * Among the filtered subset of records, returns a list of records, ending at a given index (exclusive) and defined
+     * by a maximum size.
+     *
+     * @param filter
+     *            the filter which defines the subset of records to paginate through This object and its dependencies
+     *            are required to be serializable.
+     * @param end
+     *            the last record id to fetch (exclusive)
+     * @param limit
+     *            the maximum number of records to fetch
+     * @return the list of records (if any)
+     */
+    public List<Record> getRecordsBefore(RecordFilter filter, long end, int limit);
+
+    /**
+     * Iterate over records matched by a filter. This might not require loading all records in memory at once, but might
+     * be less efficient than {@link #collectRecords()} if all records are to be stored in memory downstream.
+     */
+    public Iterable<Record> iterateRecords(RecordFilter filter);
 
     /**
      * Return the number of records which are filtered by this filter.
@@ -347,18 +400,24 @@ public interface GridState {
      * 
      * @param sortingConfig
      *            the criteria to sort rows
+     * @param permanent
+     *            if true, forget the original row ids. If false, store them in the corresponding
+     *            {@link IndexedRow#getOriginalIndex()}.
      * @return the resulting grid state
      */
-    public GridState reorderRows(SortingConfig sortingConfig);
+    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent);
 
     /**
      * Returns a new grid state where records have been reordered according to the configuration supplied.
      * 
      * @param sortingConfig
      *            the criteria to sort records
+     * @param permanent
+     *            if true, forget the original record ids. If false, store them in the corresponding
+     *            {@link Record#getOriginalStartRowId()}.
      * @return the resulting grid state
      */
-    public GridState reorderRecords(SortingConfig sortingConfig);
+    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent);
 
     /**
      * Removes all rows selected by a filter

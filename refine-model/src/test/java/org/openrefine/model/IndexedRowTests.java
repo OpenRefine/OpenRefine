@@ -31,4 +31,23 @@ public class IndexedRowTests {
                 IndexedRow.class);
         Assert.assertEquals(tuple.getIndex(), 1234L);
     }
+
+    @Test
+    public void saveIndexedRowWithOriginalId() {
+        Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
+        IndexedRow tuple = new IndexedRow(1234L, 5678L, row);
+        TestUtils.isSerializedTo(
+                tuple,
+                "{\"i\":1234,\"o\":5678,\"r\":{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}}",
+                ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void readIndexedRowWithOriginalId() throws JsonParseException, JsonMappingException, IOException {
+        IndexedRow tuple = ParsingUtilities.mapper.readValue(
+                "{\"i\":1234,\"o\":5678,\"r\":{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}}",
+                IndexedRow.class);
+        Assert.assertEquals(tuple.getIndex(), 1234L);
+        Assert.assertEquals(tuple.getOriginalIndex(), 5678L);
+    }
 }

@@ -140,7 +140,7 @@ abstract public class CustomizableTabularExporterUtilities {
             serializer.addRow(cells, true);
         }
 
-        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), sortingConfig)) {
+        for (IndexedRow indexedRow : grid.reorderRows(sortingConfig, false).iterateRows(engine.combinedRowFilters())) {
             List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
             int nonNullCount = 0;
 

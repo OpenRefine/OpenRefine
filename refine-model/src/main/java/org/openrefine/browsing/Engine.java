@@ -165,10 +165,19 @@ public class Engine {
      */
     @JsonIgnore
     public Iterable<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
+        GridState sorted = _state;
+        if (!sortingConfig.getCriteria().isEmpty()) {
+            // TODO refactor this so that we are not re-sorting the grid at every request, but cache it instead?
+            if (Mode.RowBased.equals(getMode())) {
+                sorted = _state.reorderRows(sortingConfig, false);
+            } else {
+                sorted = _state.reorderRecords(sortingConfig, false);
+            }
+        }
         if (Mode.RowBased.equals(getMode())) {
-            return _state.iterateRows(combinedRowFilters(), sortingConfig);
+            return sorted.iterateRows(combinedRowFilters());
         } else {
-            Iterable<Record> records = _state.iterateRecords(combinedRecordFilters(), sortingConfig);
+            Iterable<Record> records = sorted.iterateRecords(combinedRecordFilters());
             return new Iterable<IndexedRow>() {
 
                 @Override
@@ -210,7 +219,8 @@ public class Engine {
         if (Mode.RowBased.equals(getMode())) {
             throw new IllegalStateException("Cannot iterate over records in rows mode");
         }
-        return _state.iterateRecords(combinedRecordFilters(), sortingConfig);
+        // TODO refactor this so that we are not resorting the grid at each request, but cache it instead?
+        return _state.reorderRecords(sortingConfig, false).iterateRecords(combinedRecordFilters());
     }
 
     /**

@@ -493,7 +493,7 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
     command, 
     params, 
     bodyParams,
-    { cellsChanged: true, columnStatsChanged: columnStatsChanged }
+    { cellsChanged: true, columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true }
   );
 };
 

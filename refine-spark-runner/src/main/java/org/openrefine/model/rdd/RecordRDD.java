@@ -88,7 +88,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         }
     }
 
-    private final ClassTag<Tuple2<Long, Row>> classTag;
+    private final ClassTag<Tuple2<Long, IndexedRow>> classTag;
     private final int keyCellIndex;
     private final UnfinishedRecord[] firstRows;
     private final Partitioner sortedPartitioner;
@@ -101,7 +101,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
      * @param keyCellIndex
      *            the column index used to determine record boundaries
      */
-    public RecordRDD(JavaPairRDD<Long, Row> prev, int keyCellIndex) {
+    public RecordRDD(JavaPairRDD<Long, IndexedRow> prev, int keyCellIndex) {
         super(prev.rdd(), TUPLE2_TAG);
         classTag = prev.classTag();
         this.keyCellIndex = keyCellIndex;
@@ -131,10 +131,10 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
     @Override
     public Iterator<Tuple2<Long, Record>> compute(Partition partition, TaskContext context) {
         RecordRDDPartition recordPartition = (RecordRDDPartition) partition;
-        Iterator<Tuple2<Long, Row>> parentIter = this.firstParent(classTag).iterator(recordPartition.prev, context);
+        Iterator<Tuple2<Long, IndexedRow>> parentIter = this.firstParent(classTag).iterator(recordPartition.prev, context);
         java.util.Iterator<IndexedRow> indexedRows = Iterators.transform(
                 JavaConverters.asJavaIterator(parentIter),
-                tuple -> new IndexedRow(tuple._1, tuple._2));
+                Tuple2::_2);
         java.util.Iterator<Record> records = Record.groupIntoRecords(
                 indexedRows,
                 keyCellIndex,
@@ -182,7 +182,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
      *
      */
     protected static class ExtractFirstRecord
-            implements Function2<TaskContext, Iterator<Tuple2<Long, Row>>, UnfinishedRecord>, Serializable {
+            implements Function2<TaskContext, Iterator<Tuple2<Long, IndexedRow>>, UnfinishedRecord>, Serializable {
 
         private static final long serialVersionUID = 8473670054764783718L;
         private final int keyCellIndex;
@@ -192,15 +192,15 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         }
 
         @Override
-        public UnfinishedRecord apply(TaskContext v1, Iterator<Tuple2<Long, Row>> iterator) {
+        public UnfinishedRecord apply(TaskContext v1, Iterator<Tuple2<Long, IndexedRow>> iterator) {
             List<Row> currentRows = new ArrayList<>();
             Long firstRecordStart = null;
             while (firstRecordStart == null && iterator.hasNext()) {
-                Tuple2<Long, Row> tuple = iterator.next();
-                if (Record.isRecordStart(tuple._2, keyCellIndex)) {
+                Tuple2<Long, IndexedRow> tuple = iterator.next();
+                if (Record.isRecordStart(tuple._2.getRow(), keyCellIndex)) {
                     firstRecordStart = tuple._1;
                 } else {
-                    currentRows.add(tuple._2);
+                    currentRows.add(tuple._2.getRow());
                 }
             }
             return new UnfinishedRecord(currentRows, firstRecordStart);

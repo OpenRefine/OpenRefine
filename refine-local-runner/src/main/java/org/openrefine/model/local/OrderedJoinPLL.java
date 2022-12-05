@@ -100,6 +100,13 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
         Optional<K> upperBound = Optional.empty();
         if (partition.getIndex() > 0) {
             lowerBound = firstKeys.get(partition.getIndex() - 1);
+            if (lowerBound.isEmpty()) {
+                // This partition is empty on the left side.
+                // We skip it: for an inner join, the result is clearly empty,
+                // and for an outer join the corresponding elements on the right-hand side
+                // are added to the joins of the neighbouring partitions.
+                return Stream.empty();
+            }
         }
         if (partition.getIndex() < numPartitions() - 1) {
             upperBound = upperBounds.get(numPartitions() - 2 - partition.getIndex());

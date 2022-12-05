@@ -166,7 +166,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
             }
             headerLines = 0;
         } else if (headerLines > 0) {
-            List<IndexedRow> firstLines = rawCells.getRows(ignoreLines, headerLines);
+            List<IndexedRow> firstLines = rawCells.getRowsAfter(ignoreLines, headerLines);
             for (int i = 0; i < firstLines.size(); i++) {
                 IndexedRow headerLine = firstLines.get(i);
                 Row mappedRow = rowMapper.call(headerLine.getIndex(), headerLine.getRow());

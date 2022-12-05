@@ -70,7 +70,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testJsonOutputRows() throws ServletException, IOException {
+    public void testJsonOutputRowsStart() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 2,\n" +
@@ -83,6 +83,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -90,17 +91,129 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 2,\n" +
                 "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 5\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("2");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsStartWithNoNextPage() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
+                "       \"processed\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("2");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsEnd() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 2,\n" +
+                "       \"previousPageId\": 1,\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
+                "       \"processed\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsEndWithNoPreviousPage() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"rows\" : [ {" +
+                "         \"cells\": [ {\n" +
+                "            \"v\" : \"a\"\n" +
+                "           }, {\n" +
+                "            \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 2,\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
+                "       \"processed\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("3");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
@@ -117,14 +230,18 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 1,\n" +
                 "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 5\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
@@ -151,14 +268,18 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 1,\n" +
                 "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
 
         command.doPost(request, response);
@@ -180,6 +301,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -187,14 +309,18 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 2,\n" +
                 "       \"total\" : 3,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 3\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualAsJson(recordJson, writer.toString());
@@ -215,6 +341,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -222,14 +349,18 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 2,\n" +
                 "       \"total\" : 3,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 3\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
@@ -257,6 +388,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0," +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
@@ -264,14 +396,18 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
+                "       \"nextPageId\": 2,\n" +
                 "       \"total\" : 3,\n" +
+                "       \"totalRows\" : 5,\n" +
                 "       \"processed\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), recordJson);

@@ -1,9 +1,7 @@
 
 package org.openrefine.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.google.common.collect.Iterators;
 import org.apache.spark.Partitioner;
@@ -13,12 +11,11 @@ import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.apache.spark.rdd.OrderedRDDFunctions;
 import scala.Tuple2;
-import scala.math.Ordering;
 import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassTag;
 
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.rdd.PartitionedRDD;
 import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
@@ -35,8 +32,11 @@ public class RDDUtils {
     @SuppressWarnings("unchecked")
     public static final ClassTag<Tuple2<Long, Row>> ROW_TUPLE2_TAG = ClassManifestFactory
             .fromClass((Class<Tuple2<Long, Row>>) (Class<?>) Tuple2.class);
+    public static final ClassTag<Tuple2<Long, IndexedRow>> INDEXEDROW_TUPLE2_TAG = ClassManifestFactory
+            .fromClass((Class<Tuple2<Long, IndexedRow>>) (Class<?>) Tuple2.class);
     public static final ClassTag<Long> LONG_TAG = ClassManifestFactory.fromClass(Long.class);
     public static final ClassTag<Row> ROW_TAG = ClassManifestFactory.fromClass(Row.class);
+    public static final ClassTag<IndexedRow> INDEXEDROW_TAG = ClassManifestFactory.fromClass(IndexedRow.class);
 
     /**
      * Returns the first few records after a given index from an indexed RDD. If the RDD has a RangePartitioner (any
@@ -50,12 +50,37 @@ public class RDDUtils {
      *            the maximum number of records to return
      * @return the list of records corresponding to the requested page
      */
-    public static <T> List<Tuple2<Long, T>> paginate(JavaPairRDD<Long, T> rdd, long start, int limit) {
+    public static <T> List<Tuple2<Long, T>> paginateAfter(JavaPairRDD<Long, T> rdd, long start, int limit) {
         if (start == 0) {
             return rdd.take(limit);
         } else {
-            return filterByRange(rdd, start, Long.MAX_VALUE).take(limit);
+            return rdd.filterByRange(start, Long.MAX_VALUE).take(limit);
         }
+    }
+
+    /**
+     * Returns the last few records up to a given upper bound from an indexed RDD. If the RDD has a RangePartitioner
+     * (any sorted RDD), this will be achieved by only scanning the relevant partitions.
+     *
+     * @param rdd
+     *            the RDD to extract the records from.
+     * @param end
+     *            the minimum index (inclusive) to return
+     * @param limit
+     *            the maximum number of records to return
+     * @return the list of records corresponding to the requested page
+     */
+    public static <T> List<Tuple2<Long, T>> paginateBefore(JavaPairRDD<Long, T> rdd, long end, int limit) {
+        // TODO this could be optimized (see the PLL implementation which is more efficient)
+        Iterator<Tuple2<Long, T>> iterator = rdd.filterByRange(Long.MIN_VALUE, end - 1).toLocalIterator();
+        Deque<Tuple2<Long, T>> buffer = new ArrayDeque<>(limit);
+        while (iterator.hasNext()) {
+            if (buffer.size() == limit) {
+                buffer.removeFirst();
+            }
+            buffer.addLast(iterator.next());
+        }
+        return new ArrayList<>(buffer);
     }
 
     /**
@@ -67,41 +92,6 @@ public class RDDUtils {
      */
     public static <T> JavaPairRDD<Long, T> zipWithIndex(JavaRDD<T> rdd) {
         return new ZippedWithIndexRDD<T>(rdd).asPairRDD();
-    }
-
-    /**
-     * Efficiently filters a RDD which has a RangePartitioner (any sorted RDD) by pruning partitions which cannot
-     * contain keys outside the range, or falls back on regular filter if no RangePartitioner is available.
-     * <p>
-     * Workaround for <a href="https://issues.apache.org/jira/browse/SPARK-31518">SPARK-31518</a>, which will be fixed
-     * in 3.1.0
-     * <p>
-     * TODO remove this once 3.1.0 is released
-     *
-     * @param <V>
-     *            type of values
-     * @param rdd
-     *            the RDD to filter
-     * @param lower
-     *            the lower bound (inclusive)
-     * @param upper
-     *            the upper bound (exclusive)
-     * @return a RDD containing only keys within the range
-     */
-    public static <V> JavaPairRDD<Long, V> filterByRange(JavaPairRDD<Long, V> rdd, long lower, long upper) {
-        Ordering<Long> ordering = new Ordering<Long>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public int compare(Long x, Long y) {
-                return Long.compare(x, y);
-            }
-        };
-        return JavaPairRDD.fromRDD(new OrderedRDDFunctions<Long, V, Tuple2<Long, V>>(
-                rdd.rdd(), ordering, ClassManifestFactory.fromClass(Long.class), rdd.vClassTag(), rdd.classTag())
-                .filterByRange(lower, upper),
-                rdd.kClassTag(), rdd.vClassTag());
     }
 
     /**

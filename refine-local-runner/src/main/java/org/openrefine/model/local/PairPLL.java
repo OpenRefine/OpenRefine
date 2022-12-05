@@ -1,15 +1,7 @@
 
 package org.openrefine.model.local;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -128,7 +120,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     /**
      * Returns the list of elements starting at the given key and for up to the given number of elements. This assumes
-     * that the PLL is sorted by keys.
+     * that the PLL is sorted by keys.
      * 
      * @param from
      *            the first key to return
@@ -138,10 +130,65 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the ordering on K that is assumed on the PLL
      * @return
      */
-    public List<Tuple2<K, V>> getRange(K from, int limit, Comparator<K> comparator) {
+    public List<Tuple2<K, V>> getRangeAfter(K from, int limit, Comparator<K> comparator) {
         Stream<Tuple2<K, V>> stream = streamFromKey(from, comparator);
         return stream
                 .limit(limit).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the list of elements ending at the given key (excluded) and for up to the given number of elements. This
+     * assumes that the PLL is sorted by keys.
+     *
+     * @param upperBound
+     *            the least key not to return
+     * @param limit
+     *            the maximum number of elements to return
+     * @param comparator
+     *            the ordering on K that is assumed on the PLL
+     * @return
+     *
+     *         TODO this could be optimized further, when the partitions are cached in memory, we can iterate from them
+     *         in reverse
+     */
+    public List<Tuple2<K, V>> getRangeBefore(K upperBound, int limit, Comparator<K> comparator) {
+        Stream<Tuple2<K, V>> stream;
+        if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
+            // we resort to simple scanning of all partitions
+            return gatherElementsBefore(upperBound, limit, stream(), comparator);
+        } else {
+            // we can use the partitioner to locate the partition to end at
+            int endPartition = partitioner.get().getPartition(upperBound);
+            List<Tuple2<K, V>> result = new ArrayList<>(limit);
+            for (int currentPartition = endPartition; currentPartition >= 0 && result.size() != limit; currentPartition--) {
+                List<Tuple2<K, V>> lastElements = gatherElementsBefore(upperBound, limit, iterate(getPartitions().get(currentPartition)),
+                        comparator);
+                for (int i = lastElements.size() - 1; i >= 0 && result.size() < limit; i--) {
+                    result.add(lastElements.get(i));
+                }
+            }
+            Collections.reverse(result);
+            return result;
+        }
+    }
+
+    /**
+     * Returns the last n elements whose key is strictly less than the supplied upper bound.
+     *
+     * @param stream
+     *            the stream to take the elements from, which is assumed to be in increasing order
+     */
+    protected static <K, V> List<Tuple2<K, V>> gatherElementsBefore(K upperBound, int limit, Stream<Tuple2<K, V>> stream,
+            Comparator<K> comparator) {
+        Deque<Tuple2<K, V>> lastElements = new ArrayDeque<>(limit);
+        stream.takeWhile(tuple -> comparator.compare(upperBound, tuple.getKey()) > 0)
+                .forEach(tuple -> {
+                    if (lastElements.size() == limit) {
+                        lastElements.removeFirst();
+                    }
+                    lastElements.addLast(tuple);
+                });
+        return new ArrayList<>(lastElements);
     }
 
     /**
@@ -155,7 +202,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
             return this.filter(t -> keys.contains(t.getKey())).collect();
         } else {
-            // if the PLL is sorted by keys then we can only scan the partitions
+            // if the PLL is sorted by keys then we can only scan the partitions
             // where the keys would go, and stop scanning those partitions as soon
             // as a greater element is found
             LongRangePartitioner sortedPartitioner = (LongRangePartitioner) partitioner.get();
@@ -198,7 +245,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the first key to start iterating from
      * @param comparator
      *            the order used to compare the keys
-     * @return
+     * @return a streams which starts on the first element whose key is greater or equal to the provided one
      */
     public Stream<Tuple2<K, V>> streamFromKey(K from, Comparator<K> comparator) {
         Stream<Tuple2<K, V>> stream;
@@ -437,47 +484,5 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, false);
         return new PairPLL<K, Tuple2<V, W>>(joined, joined.getPartitioner());
     }
-
-    /*
-     * public void saveAsHadoopFile(String path, Class<K> keyClass, Class<V> valueClass, OutputFormat<K, V>
-     * outputFormat, Class<? extends CompressionCodec> codec) throws IOException { Job job =
-     * Job.getInstance(context.getFileSystem().getConf()); job.setOutputKeyClass(keyClass);
-     * job.setOutputValueClass(valueClass); job.setOutputFormatClass(outputFormat.getClass()); Configuration jobConf =
-     * job.getConfiguration(); jobConf.set("mapreduce.output.fileoutputformat.outputdir", path); if (codec != null) {
-     * jobConf.set("mapreduce.output.fileoutputformat.compress", "true");
-     * jobConf.set("mapreduce.output.fileoutputformat.compress.codec", codec.getCanonicalName());
-     * jobConf.set("mapreduce.output.fileoutputformat.compress.type", CompressionType.BLOCK.toString()); }
-     * 
-     * // Create the committer OutputCommitter committer = outputFormat.getOutputCommitter(attemptContext); JobContext
-     * jobContext; Configuration jobContextConfig = jobContext.getConfiguration();
-     * jobContextConfig.set("mapreduce.job.id", jobId.toString()); jobContextConfig.set("mapreduce.task.id",
-     * attemptId.getTaskID().toString()); jobContextConfig.set("mapreduce.task.attempt.id", attemptId.toString());
-     * jobContextConfig.setBoolean("mapreduce.task.ismap", true); committer.setupJob(jobContext);
-     * 
-     * runOnPartitions(writePartition(jobConf, outputFormat.getClass())); }
-     * 
-     * protected Function<Partition, Long> writePartition(Configuration jobConf, Class<? extends OutputFormat> class1) {
-     * return (partition -> { // Derive the filename used to serialize this partition NumberFormat formatter =
-     * NumberFormat.getInstance(Locale.US); formatter.setMinimumIntegerDigits(5); formatter.setGroupingUsed(false);
-     * String outputName = "part-" + formatter.format(partition.getIndex());
-     * 
-     * // Create the task attempt context int jobId = 0; TaskAttemptID attemptId = new TaskAttemptID("", jobId,
-     * TaskType.REDUCE, partition.getIndex(), 0); Configuration attemptConf = new Configuration(jobConf);
-     * attemptConf.setInt("mapreduce.task.partition", partition.getIndex()); TaskAttemptContext attemptContext = new
-     * TaskAttemptContextImpl(attemptConf, attemptId);
-     * 
-     * try { // Instantiate the output format OutputFormat<K, V> outputFormat = class1.newInstance(); if (outputFormat
-     * instanceof Configurable) { ((Configurable) outputFormat).setConf(attemptConf); }
-     * 
-     * 
-     * 
-     * 
-     * // Initialize the writer RecordWriter<K,V> writer = outputFormat.getRecordWriter(attemptContext);
-     * iterate(partition).forEach(tuple -> { try { writer.write(tuple.getKey(), tuple.getValue()); } catch (IOException
-     * | InterruptedException e) { throw new UncheckedExecutionException(e); } finally { try {
-     * writer.close(attemptContext); } catch (IOException | InterruptedException e) { throw new
-     * UncheckedExecutionException(e); } } }); } catch (IOException | InterruptedException | InstantiationException |
-     * IllegalAccessException e) { throw new UncheckedExecutionException(e); } return 0L; }); }
-     */
 
 }
