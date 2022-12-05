@@ -7,9 +7,10 @@ OpenRefine is a Java-based power tool that allows you to load data, understand i
 clean it up, reconcile it, and augment it with data coming from
 the web. All from a web browser and the comfort and privacy of your own computer.
 
-Official website: https://openrefine.org
+Official website: **https://openrefine.org**
+Community forum: **https://forum.openrefine.org**
 
-[<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-320px.png" align="right">](http://openrefine.org)
+[<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-320px.png" align="right">](https://openrefine.org)
 
 ## Download
 
