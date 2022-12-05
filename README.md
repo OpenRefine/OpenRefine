@@ -32,7 +32,7 @@ This requires [JDK 11](https://adoptium.net/), [Apache Maven](https://maven.apac
 
 ## Documentation and Videos
 
-* [User Manual](https://docs.openrefine.org)
+* [User Manual](https://openrefine.org/docs)
 * [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
 * [Official Website and tutorial videos](http://openrefine.org)
 

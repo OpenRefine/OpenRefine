@@ -218,7 +218,7 @@
     "wikibase-management/explain-select-wikibase": "作業したいWikibaseを選択してください。現在使っているスキーマは更新されます。Wikibaseを切り替えた後、スキーマを編集する前に、Wikibaseに対して照合を行ってください。",
     "wikibase-management/dialog-header": "Wikibaseインスタンスを管理",
     "wikibase-extension/select-wikibase-instance": "Wikibaseインスタンスを管理…",
-    "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://docs.openrefine.org/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。",
+    "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://openrefine.org/docs/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。",
     "wikibase-account/logo-alt-text": "$1 ロゴ",
     "wikibase-schema/configure-statement": "設定",
     "wikibase-schema/entity-or-reconciled-column": "エンティティを入力するか照合済みカラムをドラッグ",

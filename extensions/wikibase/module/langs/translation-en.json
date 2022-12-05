@@ -112,7 +112,7 @@
     "wikibase-preview/delete-all-existing-statements": "Delete all existing statements",
     "wikibase-account/dialog-header": "$1 account",
     "wikibase-account/explain-log-in": "Logging in to <a href=\"$1\" target=\"_blank\">$2</a> lets you upload edits directly from OpenRefine.",
-    "wikibase-account/explain-bot-passwords": "You are encouraged to login with <a href=\"$1\" target=\"_blank\">bot passwords</a>, see this <a href=\"https://docs.openrefine.org/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">wiki page</a> to learn how to get one.",
+    "wikibase-account/explain-bot-passwords": "You are encouraged to login with <a href=\"$1\" target=\"_blank\">bot passwords</a>, see this <a href=\"https://openrefine.org/docs/manual/wikibase/overview#manage-wikidata-account\" target=\"_blank\">wiki page</a> to learn how to get one.",
     "wikibase-account/explain-owner-only-consumer-wiki": "You need to register an owner-only consumer <a href=\"$1\" target=\"_blank\">here</a> first if you don't have one. See this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> to learn how to get one.",
     "wikibase-account/explain-password-login": "You can also <a>login with your username/password.</a>",
     "wikibase-account/explain-owner-only-consumer-login": "You can also <a>login with your owner-only consumer.</a>",

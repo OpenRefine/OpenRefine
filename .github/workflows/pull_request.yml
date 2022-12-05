@@ -138,7 +138,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version: '12'
+          node-version: '14'
       - id: set-matrix
         run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
         env:
@@ -179,7 +179,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version: '12'
+          node-version: '14'
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v3
