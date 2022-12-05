@@ -46,6 +46,7 @@ import com.google.refine.browsing.util.ConjunctiveFilteredRecords;
 import com.google.refine.browsing.util.ConjunctiveFilteredRows;
 import com.google.refine.browsing.util.FilteredRecordsAsFilteredRows;
 import com.google.refine.model.Project;
+import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
 /**
@@ -105,7 +106,7 @@ public class Engine {
                     int c = project.rows.size();
                     for (int rowIndex = 0; rowIndex < c; rowIndex++) {
                         Row row = project.rows.get(rowIndex);
-                        if (visitor.visit(project, rowIndex, row)) {
+                        if (visitor.visit(project, rowIndex, rowIndex, row)) {
                             break;
                         }
                     }
@@ -150,7 +151,8 @@ public class Engine {
 
                     int c = project.recordModel.getRecordCount();
                     for (int r = 0; r < c; r++) {
-                        visitor.visit(project, project.recordModel.getRecord(r));
+                        Record record = project.recordModel.getRecord(r);
+                        visitor.visit(project, record.fromRowIndex, record);
                     }
                 } finally {
                     visitor.end(project);

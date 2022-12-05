@@ -92,7 +92,7 @@ ColumnReorderingDialog.prototype._commit = function() {
         "reorder-columns",
         null,
         { "columnNames" : JSON.stringify(columnNames) }, 
-        { modelsChanged: true },
+        { modelsChanged: true, rowIdsPreserved: true }, // TODO could add recordIdsPreserved: true if the record key column did not change
         { includeEngine: false }
     );
     

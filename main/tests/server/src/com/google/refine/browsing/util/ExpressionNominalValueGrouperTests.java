@@ -49,6 +49,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
 public class ExpressionNominalValueGrouperTests extends RefineTest {
@@ -105,7 +106,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             grouper.start(project);
             for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
                 Row row = project.rows.get(rowIndex);
-                grouper.visit(project, rowIndex, row);
+                grouper.visit(project, rowIndex, rowIndex, row);
             }
         } finally {
             grouper.end(project);
@@ -133,7 +134,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             grouper.start(project);
             for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
                 Row row = project.rows.get(rowIndex);
-                grouper.visit(project, rowIndex, row);
+                grouper.visit(project, rowIndex, rowIndex, row);
             }
         } finally {
             grouper.end(project);
@@ -161,7 +162,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             grouper.start(project);
             for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
                 Row row = project.rows.get(rowIndex);
-                grouper.visit(project, rowIndex, row);
+                grouper.visit(project, rowIndex, rowIndex, row);
             }
         } finally {
             grouper.end(project);
@@ -194,7 +195,8 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             grouper.start(project);
             int c = project.recordModel.getRecordCount();
             for (int r = 0; r < c; r++) {
-                grouper.visit(project, project.recordModel.getRecord(r));
+                Record record = project.recordModel.getRecord(r);
+                grouper.visit(project, record.fromRowIndex, record);
             }
         } finally {
             grouper.end(project);

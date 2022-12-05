@@ -51,17 +51,38 @@ public interface RowVisitor {
 
     /**
      * @param project
-     *            project
+     *            project the row is part of
      * @param rowIndex
-     *            zero-based row index
+     *            zero-based row index (unaffected by a temporary sort)
      * @param row
      *            row
      * @return true to abort visitation early - no further visit calls will be made
+     * @deprecated use {@link #visit(Project, int, int, Row)}
      */
+    @Deprecated
     public boolean visit(
             Project project,
             int rowIndex,
             Row row);
+
+    /**
+     * @param project
+     *            project the row is part of
+     * @param rowIndex
+     *            zero-based row index (unaffected by a temporary sort)
+     * @param sortedRowIndex
+     *            zero-based row index in the sorted view (or equal to rowIndex if no temporary sorting is in place)
+     * @param row
+     *            row
+     * @return true to abort visitation early - no further visit calls will be made
+     */
+    public default boolean visit(
+            Project project,
+            int rowIndex,
+            int sortedRowIndex,
+            Row row) {
+        return visit(project, rowIndex, row);
+    }
 
     /**
      * Called after all visit() calls.
