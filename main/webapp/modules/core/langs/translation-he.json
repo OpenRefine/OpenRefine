@@ -92,7 +92,7 @@
     "core-index-lang/page-reload": "העמוד ייטען מחדש כדי להחיל את השינוי.",
     "core-index-parser/ignore-first": "להתעלם מ־",
     "core-index-parser/lines-beg": "השורות הראשונות בתחילת הקובץ",
-    "core-index-parser/parse-next": "לפענח את",
+    "core-index-parser/parse-first": "לפענח את",
     "core-index-parser/lines-header": "השורות הבאות ככותרות לעמודות",
     "core-index-parser/discard-initial": "התעלמות מ־",
     "core-index-parser/rows-data": "שורות הנתונים הראשונות",

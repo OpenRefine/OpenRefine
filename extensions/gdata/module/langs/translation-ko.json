@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "업데이트&nbsp;미리보기",
     "gdata-parsing/ignore-first": "처음을 무시",
     "gdata-parsing/ignore": "파일의 첫번째 줄(들)",
-    "gdata-parsing/parse-next": "다음 파싱",
+    "gdata-parsing/parse-first": "다음 파싱",
     "gdata-parsing/parse": "컬럼 헤더로 라인(들)을",
     "gdata-parsing/discard-next": "초기값을 무시",
     "gdata-parsing/discard": "데이터 줄수",

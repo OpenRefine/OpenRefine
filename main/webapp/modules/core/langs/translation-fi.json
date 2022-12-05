@@ -143,7 +143,7 @@
     "core-index-parser/disable-auto-preview": "Poista automaattinen esikatselu käytöstä",
     "core-index-parser/ignore-first": "Ohita ensin",
     "core-index-parser/lines-beg": "rivi(t) tiedoston alussa",
-    "core-index-parser/parse-next": "Jäsennä seuraava",
+    "core-index-parser/parse-first": "Jäsennä seuraava",
     "core-index-parser/discard-initial": "Hylkää alkuperäinen",
     "core-index-parser/rows-data": "tietorivi(t).",
     "core-index-parser/load-at-most": "Lataa enintään",

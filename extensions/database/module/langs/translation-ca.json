@@ -46,7 +46,7 @@
     "database-parsing/disable-auto-preview": "Desactivar previsualització automàtica",
     "database-parsing/ignore-first": "Ignorar primera",
     "database-parsing/ignore": "línia/es al començament de l'arxiu",
-    "database-parsing/parse-next": "Analitza la següent",
+    "database-parsing/parse-first": "Analitza la següent",
     "database-parsing/parse": "línia/es com a capçaleres de columna",
     "database-parsing/limit-next": "Carrega com a màxim",
     "database-parsing/limit": "fila/es de dades",

@@ -18,7 +18,7 @@
     "gdata-parsing/disable-auto-preview": "禁止自动预览",
     "gdata-parsing/ignore-first": "忽略第一个",
     "gdata-parsing/ignore": "文件开头的行",
-    "gdata-parsing/parse-next": "解析下一个",
+    "gdata-parsing/parse-first": "解析下一个",
     "gdata-parsing/parse": "行作为列标题",
     "gdata-parsing/discard-next": "丢弃首字母",
     "gdata-parsing/discard": "数据行",

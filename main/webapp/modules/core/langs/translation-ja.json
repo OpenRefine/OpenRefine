@@ -115,7 +115,7 @@
     "core-index-lang/label": "言語を選択する",
     "core-index-parser/parse-cell": "セルを解析<br/>文字から数字",
     "core-index-parser/trim": "前後の空白文字を削除する",
-    "core-index-parser/parse-next": "カラム名として解釈",
+    "core-index-parser/parse-first": "カラム名として解釈",
     "core-index-parser/commas": "カンマ区切り（CSV）",
     "core-index-parser/tabs": "タブ（TSV）",
     "core-index-parser/escape": "特殊文字はバックスラッシュでエスケープしてください",

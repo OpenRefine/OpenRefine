@@ -13,7 +13,7 @@
     "database-parsing/discard": "řádek/řádky/řádků dat",
     "database-parsing/discard-next": "Vynechat počáteční(ch)",
     "database-parsing/parse": "řádek/řádky jako hlavičky sloupců",
-    "database-parsing/parse-next": "Analyzuj další(ch)",
+    "database-parsing/parse-first": "Analyzuj další(ch)",
     "database-parsing/preview-button": "Aktualizuj&nbsp;náhled",
     "database-parsing/option": "Možnosti",
     "database-parsing/worksheet": "Pracovní listy",

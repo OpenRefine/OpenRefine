@@ -115,7 +115,7 @@
     "core-index-lang/page-reload": "Sidan laddas om för att ta ändringen i bruk.",
     "core-index-parser/ignore-first": "Ignorera första",
     "core-index-parser/lines-beg": "rad(erna) i början av filen",
-    "core-index-parser/parse-next": "Analysera nästa",
+    "core-index-parser/parse-waitForImportUpdate()": "Analysera nästa",
     "core-index-parser/lines-header": "rad(er) som kolumnrubriker",
     "core-index-parser/discard-initial": "Släng första",
     "core-index-parser/rows-data": "rad(er) av data",

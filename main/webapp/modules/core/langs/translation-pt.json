@@ -495,7 +495,7 @@
     "core-dialogs/long-format": "Formato local longo",
     "core-views/what-separator": "Qual separador é usado atualmente para separar os valores?",
     "core-buttons/close": "Fechar",
-    "core-index-parser/parse-next": "Analisar próximo",
+    "core-index-parser/parse-first": "Analisar próximo",
     "core-views/custom-numeric": "Faceta numérica personalizada…",
     "name": "Português",
     "core-views/match-other": "Corresponder outras células que tenham o mesmo conteúdo",

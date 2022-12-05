@@ -49,7 +49,7 @@
     "database-parsing/create-proj": "Criar Projeto &raquo;",
     "database-source/alert-password": "Deve definir uma palavra-passe de banco de dados",
     "database-parsing/ignore-first": "Ignorar primeira(s)",
-    "database-parsing/parse-next": "Analisar próximo",
+    "database-parsing/parse-first": "Analisar próximo",
     "database-source/connectionNameLabel": "Nome",
     "database-parsing/option": "Opções",
     "database-parsing/worksheet": "Planilhas",

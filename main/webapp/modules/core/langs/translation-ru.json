@@ -154,7 +154,7 @@
     "core-index-lang/label": "Выберите предпочтительный язык",
     "core-index-parser/parse-cell": "Парсить значение ячейки как<br/>числа, даты, …",
     "core-index-parser/trim": "Обрезать начальные &amp; конечные пробелы в строках",
-    "core-index-parser/parse-next": "Парсить следующие",
+    "core-index-parser/parse-first": "Парсить следующие",
     "core-index-parser/commas": "запятыми (CSV)",
     "core-index-parser/tabs": "табами (TSV)",
     "core-index-parser/store-source": "Сохранять источники файла",

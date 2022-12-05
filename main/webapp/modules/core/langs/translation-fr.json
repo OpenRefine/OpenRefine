@@ -119,7 +119,7 @@
     "core-index-lang/label": "Choisir sa langue préférée",
     "core-index-parser/parse-cell": "Analyser le texte des cellules comme nombres",
     "core-index-parser/trim": "Supprimer les espaces de début et de fin",
-    "core-index-parser/parse-next": "Analyser la ou les",
+    "core-index-parser/parse-first": "Analyser la ou les",
     "core-index-parser/commas": "une virgule (CSV)",
     "core-index-parser/tabs": "une tabulation (TSV)",
     "core-index-parser/store-source": "Indiquer la source du fichier",

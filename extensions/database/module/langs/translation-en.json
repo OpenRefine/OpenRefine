@@ -50,7 +50,7 @@
     "database-parsing/disable-auto-preview": "Disable auto preview",
     "database-parsing/ignore-first": "Ignore first",
     "database-parsing/ignore": "line(s) at beginning of file",
-    "database-parsing/parse-next": "Parse next",
+    "database-parsing/parse-first": "Parse first",
     "database-parsing/parse": "line(s) as column headers",
     "database-parsing/discard-next": "Discard initial",
     "database-parsing/discard": "row(s) of data",

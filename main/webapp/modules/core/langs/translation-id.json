@@ -106,7 +106,7 @@
     "core-index-parser/rows-data": "baris data",
     "core-index-parser/discard-initial": "Buang inisial",
     "core-index-parser/lines-header": "baris sebagai header kolom",
-    "core-index-parser/parse-next": "Uraikan berikutnya",
+    "core-index-parser/parse-first": "Uraikan berikutnya",
     "core-index-parser/lines-beg": "baris di awal file",
     "core-index-parser/ignore-first": "Abaikan dulu",
     "core-index-lang/page-reload": "Halaman akan di-refresh untuk menerapkan perubahan.",

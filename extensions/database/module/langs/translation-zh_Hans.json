@@ -40,7 +40,7 @@
     "database-parsing/preview-button": "更新&nbsp;预览",
     "database-parsing/disable-auto-preview": "关闭自动预览",
     "database-parsing/ignore-first": "忽略第一个",
-    "database-parsing/parse-next": "解析下一个",
+    "database-parsing/parse-first": "解析下一个",
     "database-parsing/parse": "作为列标题的行",
     "database-parsing/store-cell": "将空白单元格存储为空值",
     "database-source/alert-conn-name-invalid-character": "连接名称输入错误：输入中有非法字符。 仅 [a-zA-Z0-9._-] 允许",

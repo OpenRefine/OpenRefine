@@ -15,7 +15,7 @@
     "database-parsing/store-row": "Przechowuj puste wiersze",
     "database-parsing/limit": "wiersz(e) danych",
     "database-parsing/discard": "wiersz(e) danych",
-    "database-parsing/parse-next": "Analizuj następne",
+    "database-parsing/parse-first": "Analizuj następne",
     "database-parsing/ignore": "linia(e) na początku pliku",
     "database-parsing/preview-button": "Aktualizuj&nbsp;podgląd",
     "database-parsing/create-proj": "Utwórz projekt &raquo;",

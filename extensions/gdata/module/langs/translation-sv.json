@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "Uppdatera förhandsgranskning",
     "gdata-parsing/ignore-first": "Ignorera första",
     "gdata-parsing/ignore": "raden(-erna) i början på filen",
-    "gdata-parsing/parse-next": "Parsa nästa",
+    "gdata-parsing/parse-first": "Parsa nästa",
     "gdata-parsing/parse": "rad(er) som kolumnrubriker",
     "gdata-parsing/discard-next": "Släng första",
     "gdata-parsing/discard": "rad(er) av data",

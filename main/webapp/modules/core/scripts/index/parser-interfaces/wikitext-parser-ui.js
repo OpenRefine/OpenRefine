@@ -120,7 +120,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
   $('#or-import-wiki-base-url').text($.i18n('core-index-parser/wiki-base-url'));
-  $('#or-import-parse').text($.i18n('core-index-parser/parse-next'));
+  $('#or-import-parse').text($.i18n('core-index-parser/parse-first'));
   $('#or-import-header').text($.i18n('core-index-parser/lines-header'));
   $('#or-import-load').text($.i18n('core-index-parser/load-at-most'));
   $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));

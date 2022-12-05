@@ -49,7 +49,7 @@
     "database-parsing/preview-button": "Mise&nbsp;à&nbsp;jour&nbsp;de&nbsp;l'aperçu",
     "database-parsing/ignore-first": "Ignorer la/les",
     "database-parsing/ignore": "première(s) ligne(s) au début du fichier",
-    "database-parsing/parse-next": "Analyser (parse) la/les",
+    "database-parsing/parse-first": "Analyser (parse) la/les",
     "database-parsing/parse": "ligne(s) suivante(s) comme des entêtes de colonnes",
     "database-parsing/discard-next": "Omettre la/les",
     "database-parsing/discard": "première(s) ligne(s) de données",

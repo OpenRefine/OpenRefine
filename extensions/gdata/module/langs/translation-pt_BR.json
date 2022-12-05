@@ -25,7 +25,7 @@
     "gdata-parsing/discard": "linhas(s) de dados",
     "gdata-parsing/discard-next": "Descartar primeira(s)",
     "gdata-parsing/parse": "linha(s) como nomes das colunas",
-    "gdata-parsing/parse-next": "Analisar próximo",
+    "gdata-parsing/parse-first": "Analisar próximo",
     "gdata-parsing/ignore": "linhas(s) no começo do arquivo",
     "gdata-parsing/ignore-first": "Ignorar primeira(s)",
     "gdata-parsing/preview-button": "Atualizar&nbsp;Pré-visualização",

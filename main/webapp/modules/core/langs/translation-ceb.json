@@ -115,7 +115,7 @@
     "core-index-lang/label": "Pili ug gusto nga pinulungan",
     "core-index-parser/parse-cell": "Gianalisar ang teksto sa <br/> mga numero, petsa, …",
     "core-index-parser/trim": "Trim leading &amp; 1 trailing whitespace from strings",
-    "core-index-parser/parse-next": "Sunod nga parse",
+    "core-index-parser/parse-first": "Sunod nga parse",
     "core-index-parser/commas": "Mga koma (CSV)",
     "core-index-parser/tabs": "mga tab  (TSV)",
     "core-index-parser/escape": "Tangtanga ang espesyal nga karakter uban ni \\",

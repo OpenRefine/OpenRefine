@@ -16,7 +16,7 @@
     "gdata-parsing/conf-pars": "Konfiguracja opcji parsowania",
     "gdata-parsing/option": "Opcje",
     "gdata-parsing/store-row": "Przechowuj puste wiersze",
-    "gdata-parsing/parse-next": "Parsuj następny",
+    "gdata-parsing/parse-first": "Parsuj następny",
     "gdata-source/title": "Tytuł",
     "gdata-exporter/upload-error": "Błąd przesyłania: ",
     "gdata-exporter/uploading": "Przesyłanie…",

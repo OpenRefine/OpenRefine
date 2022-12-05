@@ -115,7 +115,7 @@
     "core-index-lang/label": "Pumili ng gustong lengguwahe",
     "core-index-parser/parse-cell": "I-parse ang texto ng cell sa<br/>mga numero, mga petsa, ...",
     "core-index-parser/trim": "Ang trim leading &amp; pag-trail ng whitespace mula sa mga strings",
-    "core-index-parser/parse-next": "I-parse sa susunod",
+    "core-index-parser/parse-first": "I-parse sa susunod",
     "core-index-parser/commas": "Mga koma (CSV)",
     "core-index-parser/tabs": "mga tab (TSV)",
     "core-index-parser/escape": "Iwasan ang espesyal na mga karakter na may \\",

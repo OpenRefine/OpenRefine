@@ -10,7 +10,7 @@
     "database-parsing/discard": "baris data",
     "database-parsing/discard-next": "Buang awalan",
     "database-parsing/parse": "baris sebagai header kolom",
-    "database-parsing/parse-next": "Uraikan berikutnya",
+    "database-parsing/parse-first": "Uraikan berikutnya",
     "database-parsing/ignore": "baris di awal berkas",
     "database-parsing/ignore-first": "Abaikan dahulu",
     "database-parsing/preview-button": "Pratinjau Pembaruan",

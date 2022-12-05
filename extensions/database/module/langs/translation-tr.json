@@ -16,7 +16,7 @@
     "database-parsing/parse": "satırı, sütun başlığı olarak",
     "database-parsing/ignore": "satırı, dosyanın başındaki",
     "database-parsing/discard-next": "At, ilk",
-    "database-parsing/parse-next": "Ayrıştır, sonraki",
+    "database-parsing/parse-first": "Ayrıştır, sonraki",
     "database-parsing/ignore-first": "Yok say, ilk",
     "database-parsing/preview-button": "Ön&nbsp;izlemeyi&nbsp;güncelle",
     "database-parsing/option": "Seçenekler",

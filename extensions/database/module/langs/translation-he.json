@@ -4,7 +4,7 @@
     "database-parsing/discard": "שורות הנתונים הראשונות",
     "database-parsing/discard-next": "התעלמות מ־",
     "database-parsing/parse": "השורות הבאות ככותרות העמודות",
-    "database-parsing/parse-next": "לעבד את",
+    "database-parsing/parse-first": "לעבד את",
     "database-parsing/ignore": "השורות הראשונות בתחילת הקובץ",
     "database-parsing/ignore-first": "התעלמות מ־",
     "database-source/alert-db-port-invalid-character": "שגיאת פתחת מסד נתונים: תו שגוי בקלט. מותר רק ספרות.",

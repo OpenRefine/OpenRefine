@@ -22,7 +22,7 @@
     "gdata-parsing/discard": "řádek/řádky/řádků dat",
     "gdata-parsing/discard-next": "Vynechat počáteční(ch)",
     "gdata-parsing/parse": "řádek/řádky jako hlavičky sloupců",
-    "gdata-parsing/parse-next": "Analyzuj další(ch)",
+    "gdata-parsing/parse-first": "Analyzuj další(ch)",
     "gdata-parsing/ignore": "řádek/řádky/řádků na začátku souboru",
     "gdata-parsing/ignore-first": "Vynechat počáteční(ch)",
     "gdata-parsing/preview-button": "Aktualizovat&nbsp;náhled",

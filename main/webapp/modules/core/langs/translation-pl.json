@@ -174,7 +174,7 @@
     "core-index-import/load-json-rows-error": "Parsowanie danych JSON nie powiodło się",
     "core-index-import/load-xml-rows-error": "Parsowanie danych XML nie powiodło się",
     "core-dialogs/starred": "Oznaczone gwiazdką",
-    "core-index-parser/parse-next": "Parsuj następny",
+    "core-index-parser/parse-first": "Parsuj następny",
     "core-dialogs/template-prefix": "Prefiks",
     "core-dialogs/content": "Treść",
     "core-dialogs/upload": "Prześlij",

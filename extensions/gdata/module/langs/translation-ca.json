@@ -17,7 +17,7 @@
     "gdata-parsing/preview-button": "Actualitzar previsualització",
     "gdata-parsing/ignore-first": "Ignorar les primeres",
     "gdata-parsing/ignore": "línia/es al començament de l'arxiu",
-    "gdata-parsing/parse-next": "Analitzar les següents",
+    "gdata-parsing/parse-first": "Analitzar les següents",
     "gdata-parsing/parse": "línia/es com a capçaleres de columna",
     "gdata-parsing/discard-next": "Descartar les primeres",
     "gdata-parsing/discard": "fila/es de dades",

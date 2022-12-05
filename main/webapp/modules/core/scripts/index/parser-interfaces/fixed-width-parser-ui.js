@@ -135,7 +135,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   
   $('#or-import-ignore').text($.i18n('core-index-parser/ignore-first'));
   $('#or-import-lines').text($.i18n('core-index-parser/lines-beg'));
-  $('#or-import-parse').text($.i18n('core-index-parser/parse-next'));
+  $('#or-import-parse').text($.i18n('core-index-parser/parse-first'));
   $('#or-import-header').text($.i18n('core-index-parser/lines-header'));
   $('#or-import-discard').text($.i18n('core-index-parser/discard-initial'));
   $('#or-import-rows').text($.i18n('core-index-parser/rows-data'));

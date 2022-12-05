@@ -229,7 +229,7 @@
     "core-index-parser/rows-data": "řádek/řádky/řádků dat",
     "core-index-parser/discard-initial": "Zahodit počáteční",
     "core-index-parser/lines-header": "řádek/řádky/řádků jako popisky sloupců",
-    "core-index-parser/parse-next": "Zpracovat další",
+    "core-index-parser/parse-first": "Zpracovat další",
     "core-index-parser/lines-beg": "řádek/řádky/řádků na začátku souboru",
     "core-index-lang/page-reload": "Stránka se načte znovu, aby se projevily změny.",
     "core-index-open/edit-tags-desc": "Upravit štítky projektu (oddělujte mezerou nebo čárkou):",

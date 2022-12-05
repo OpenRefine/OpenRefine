@@ -115,7 +115,7 @@
     "core-index-lang/label": "Bevorzugte Sprache auswählen",
     "core-index-parser/parse-cell": "Analysiere Zelltext in <br/>Zahlen, Datumsangaben, …",
     "core-index-parser/trim": "Führende &amp; nachgestellte Leerzeichen aus Zeichenfolgen entfernen",
-    "core-index-parser/parse-next": "Nächste analysieren",
+    "core-index-parser/parse-first": "Nächste analysieren",
     "core-index-parser/commas": "Kommas (CSV)",
     "core-index-parser/tabs": "Tabs (TSV)",
     "core-index-parser/escape": "Markiere Sonderzeichen mit \\",

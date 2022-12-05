@@ -140,7 +140,7 @@
     "core-index-parser/disable-auto-preview": "Disable auto preview",
     "core-index-parser/ignore-first": "Ignore first",
     "core-index-parser/lines-beg": "line(s) at beginning of file",
-    "core-index-parser/parse-next": "Parse next",
+    "core-index-parser/parse-first": "Parse first",
     "core-index-parser/lines-header": "line(s) as column headers",
     "core-index-parser/discard-initial": "Discard initial",
     "core-index-parser/rows-data": "row(s) of data",

@@ -22,7 +22,7 @@
     "gdata-parsing/preview-button": "Oppdater forhåndsvisning",
     "gdata-parsing/ignore-first": "Ignorer første",
     "gdata-parsing/ignore": "linje(ne) i begynnelsen av filen",
-    "gdata-parsing/parse-next": "Fortolk neste",
+    "gdata-parsing/parse-first": "Fortolk neste",
     "gdata-parsing/parse": "line(r) som kolonnerubrikker",
     "gdata-parsing/discard-next": "Forkast innledende",
     "gdata-parsing/discard": "rad(er) med data",
