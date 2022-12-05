@@ -252,18 +252,18 @@ jobs:
       uses: shogo82148/actions-upload-release-asset@v1.6.3
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-win-${{ env.OR_VERSION }}.zip
-        asset_name: openrefine-win-${{ env.OR_VERSION }}.zip
+        asset_path: ./packaging/target/openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
+        asset_name: openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
         asset_content_type: application/zip
 
     - name: Upload release asset for Windows (with Java)
-      id: upload-release-asset-win
+      id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
       uses: shogo82148/actions-upload-release-asset@v1.6.3
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-win-${{ env.OR_VERSION }}.zip
-        asset_name: openrefine-win-with-java-${{ env.OR_VERSION }}.zip
+        asset_path: ./packaging/target/openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
+        asset_name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
         asset_content_type: application/zip
 
     - name: Upload Release Asset Linux
@@ -272,8 +272,8 @@ jobs:
       uses: shogo82148/actions-upload-release-asset@v1.6.3
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-linux-${{ env.OR_VERSION }}.tar.gz
-        asset_name: openrefine-linux-${{ env.OR_VERSION }}.tar.gz
+        asset_path: ./packaging/target/openrefine-linux-${{ steps.get_release_upload_url.outputs.tag_name }}.tar.gz
+        asset_name: openrefine-linux-${{ steps.get_release_upload_url.outputs.tag_name }}.tar.gz
         asset_content_type: application/tar+gzip
 
     - name: Upload Release Asset Mac
@@ -282,7 +282,7 @@ jobs:
       uses: shogo82148/actions-upload-release-asset@v1.6.3
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
-        asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
+        asset_path: ./packaging/target/openrefine-mac-${{ steps.get_release_upload_url.outputs.tag_name }}.dmg
+        asset_name: openrefine-mac-${{ steps.get_release_upload_url.outputs.tag_name }}.dmg
         asset_content_type: application/x-apple-diskimage
 
