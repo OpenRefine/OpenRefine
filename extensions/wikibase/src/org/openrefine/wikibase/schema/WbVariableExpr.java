@@ -26,6 +26,8 @@ package org.openrefine.wikibase.schema;
 
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -43,6 +45,9 @@ import com.google.refine.model.Cell;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class WbVariableExpr<T> implements WbExpression<T> {
+
+    public static final String NO_VALUE_KEYWORD = "#NOVALUE#";
+    public static final String SOME_VALUE_KEYWORD = "#SOMEVALUE#";
 
     private String columnName;
 
@@ -90,12 +95,20 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
      * Evaluates the expression in a given context, returning
      * 
      * @throws QAWarningException
+     * @throws SpecialValueNoValueException
+     * @throws SpecialValueSomeValueException
      */
     @Override
     public T evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException, QAWarningException {
+            throws SkipSchemaExpressionException, QAWarningException, SpecialValueNoValueException, SpecialValueSomeValueException {
         Cell cell = ctxt.getCellByName(columnName);
         if (cell != null) {
+            if (NO_VALUE_KEYWORD.equals(cell.toString())) {
+                throw new SpecialValueNoValueException();
+            } else if (SOME_VALUE_KEYWORD.equals(cell.toString())) {
+                throw new SpecialValueSomeValueException();
+            }
+
             return fromCell(cell, ctxt);
         }
         throw new SkipSchemaExpressionException();
