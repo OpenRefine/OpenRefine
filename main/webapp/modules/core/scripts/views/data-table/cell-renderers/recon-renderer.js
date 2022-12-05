@@ -431,7 +431,7 @@ class ReconCellRenderer {
       command,
       params,
       bodyParams,
-      { cellsChanged: true, columnStatsChanged: columnStatsChanged }
+      { cellsChanged: true, columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   }
 

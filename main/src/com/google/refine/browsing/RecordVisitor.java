@@ -44,9 +44,29 @@ public interface RecordVisitor {
 
     public void start(Project project); // called before any visit() call
 
+    /**
+     * @deprecated use {@link #visit(Project, int, Record)}
+     */
+    @Deprecated
     public boolean visit(
             Project project,
             Record record);
+
+    /**
+     * @param project
+     *            project the record is part of
+     * @param sortedStartRowIndex
+     *            zero-based sorted index of the first row in the record
+     * @param record
+     *            the record to visit
+     * @return true to abort visitation early - no further visit calls will be made
+     */
+    public default boolean visit(
+            Project project,
+            int sortedStartRowIndex,
+            Record record) {
+        return visit(project, record);
+    }
 
     public void end(Project project); // called after all visit() calls
 }

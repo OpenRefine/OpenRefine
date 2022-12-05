@@ -659,7 +659,6 @@
     "core-views/move-to-left": "Move column left",
     "core-views/move-to-right": "Move column right",
     "core-views/show-as": "Show as",
-    "core-views/goto-page": "$1 of $2 {{plural:$2|page|pages}}",
     "core-views/first": "first",
     "core-views/previous": "previous",
     "core-views/next": "next",
