@@ -120,7 +120,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
             int nbNewColumns = newColumns.getColumns().size();
             RowBuilder firstNewRow = null;
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
                 long r = indexedRow.getIndex();
                 int r2 = (int) (r % (long) _rowCount);
 

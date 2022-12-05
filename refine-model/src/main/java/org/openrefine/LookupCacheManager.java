@@ -97,7 +97,7 @@ public class LookupCacheManager {
             }
 
             // We can't use for-each here, because we'll need the row index when creating WrappedRow
-            for (IndexedRow indexedRow : grid.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow indexedRow : grid.iterateRows(RowFilter.ANY_ROW)) {
                 Row targetRow = indexedRow.getRow();
                 Object value = targetRow.getCellValue(targetColumnIndex);
                 if (ExpressionUtils.isNonBlankData(value)) {

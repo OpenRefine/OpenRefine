@@ -12,7 +12,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.Cell;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
+import org.openrefine.util.RDDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
@@ -76,6 +78,11 @@ public class SparkBasedTest {
             }
         }
         return rowRDD(cells, numPartitions);
+    }
+
+    protected JavaPairRDD<Long, IndexedRow> indexedRowRDD(Serializable[][] cellValues, int numPartitions) {
+        return RDDUtils.mapKeyValuesToValues(rowRDD(cellValues, numPartitions),
+                (key, value) -> new IndexedRow(key, value));
     }
 
     protected JavaPairRDD<Long, Row> rowRDD(Serializable[][] cells) {

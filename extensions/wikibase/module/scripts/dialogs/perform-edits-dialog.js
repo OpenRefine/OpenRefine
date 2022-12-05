@@ -60,7 +60,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
         tag: WikibaseManager.getSelectedWikibaseTagTemplate(),
         maxEditsPerMinute: WikibaseManager.getSelectedWikibaseMaxEditsPerMinute()
       },
-      { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+      { includeEngine: true, cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
       { onDone: function() { dismiss(); } }
     );
   };

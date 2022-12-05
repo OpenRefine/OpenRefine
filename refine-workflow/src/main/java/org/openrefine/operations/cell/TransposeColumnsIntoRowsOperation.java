@@ -273,7 +273,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
             }
 
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
                 Row oldRow = indexedRow.getRow();
                 RowBuilder firstNewRow = RowBuilder.create(newColumns.size());
                 int firstNewRowIndex = newRows.size();

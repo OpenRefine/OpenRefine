@@ -34,9 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,6 +43,11 @@ import org.openrefine.expr.ExpressionUtils;
 /**
  * A list of consecutive rows where only the first row has a non-blank value in the record key column (normally, the
  * first column).
+ * <p>
+ * This can also store the original row id of the first row in the record, if records have been temporarily reordered.
+ * Note that this assumes that the grid has been temporarily reordered as records, not as rows, so that only the first
+ * original row id needs to be recorded (so that the original ids of the other rows in the records can be deduced from
+ * it).
  * 
  * @author Antonin Delpeuch
  */
@@ -53,23 +56,60 @@ public class Record implements Serializable {
     private static final long serialVersionUID = 1547689057610085206L;
 
     final private long startRowIndex;
+    final private Long startRowOriginalIndex;
     final private List<Row> rows;
 
     public Record(
             long startRowIndex,
             List<Row> rows) {
         this.startRowIndex = startRowIndex;
+        this.startRowOriginalIndex = null;
         this.rows = rows;
     }
 
+    public Record(
+            long startRowIndex,
+            Long startRowOriginalIndex,
+            List<Row> rows) {
+        this.startRowIndex = startRowIndex;
+        this.startRowOriginalIndex = startRowOriginalIndex;
+        this.rows = rows;
+    }
+
+    /**
+     * The id of the first row in this record.
+     */
     public long getStartRowId() {
         return startRowIndex;
     }
 
+    /**
+     * The id of the last row in this record.
+     */
     public long getEndRowId() {
         return startRowIndex + rows.size();
     }
 
+    /**
+     * The original id (before applying a temporary sorting operation) of the first row in this record.
+     * <p>
+     * If no sorting has been applied, this returns null.
+     */
+    public Long getOriginalStartRowId() {
+        return startRowOriginalIndex;
+    }
+
+    /**
+     * The record index to be used in user-exposed features (expression language, filtering, UI…). If
+     * {@link #getOriginalStartRowId()} is defined then it is returned, otherwise this is {@link #getStartRowId()}.
+     */
+    public long getLogicalStartRowId() {
+        return startRowOriginalIndex != null ? startRowOriginalIndex : startRowIndex;
+    }
+
+    /**
+     * The rows contained in this record.
+     */
     public List<Row> getRows() {
         return rows;
     }
@@ -79,9 +119,15 @@ public class Record implements Serializable {
 
             @Override
             public Iterator<IndexedRow> iterator() {
-                return IntStream.range(0, rows.size())
-                        .mapToObj(i -> new IndexedRow(startRowIndex + i, rows.get(i)))
-                        .iterator();
+                if (startRowOriginalIndex == null) {
+                    return IntStream.range(0, rows.size())
+                            .mapToObj(i -> new IndexedRow(startRowIndex + i, rows.get(i)))
+                            .iterator();
+                } else {
+                    return IntStream.range(0, rows.size())
+                            .mapToObj(i -> new IndexedRow(startRowIndex + i, startRowOriginalIndex + i, rows.get(i)))
+                            .iterator();
+                }
             }
 
         };
@@ -98,7 +144,9 @@ public class Record implements Serializable {
             return false;
         }
         Record otherRecord = (Record) other;
-        return startRowIndex == otherRecord.getStartRowId() && rows.equals(otherRecord.getRows());
+        return (startRowIndex == otherRecord.getStartRowId() &&
+                Objects.equals(startRowOriginalIndex, otherRecord.getOriginalStartRowId()) &&
+                rows.equals(otherRecord.getRows()));
     }
 
     @Override
@@ -108,9 +156,16 @@ public class Record implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("[Record, id %d, rows:\n%s\n]",
-                startRowIndex,
-                String.join("\n", rows.stream().map(r -> r.toString()).collect(Collectors.toList())));
+        if (startRowOriginalIndex == null) {
+            return String.format("[Record, id %d, rows:\n%s\n]",
+                    startRowIndex,
+                    rows.stream().map(Row::toString).collect(Collectors.joining("\n")));
+        } else {
+            return String.format("[Record (%d -> %d), rows:\n%s\n]",
+                    startRowOriginalIndex,
+                    startRowIndex,
+                    rows.stream().map(Row::toString).collect(Collectors.joining("\n")));
+        }
     }
 
     /**
@@ -125,7 +180,8 @@ public class Record implements Serializable {
      * Groups a stream of indexed rows into a stream of records.
      * 
      * @param parentIter
-     *            the iterator of rows
+     *            the iterator of rows. They are supposed to be in their original order, meaning that all their
+     *            {@link IndexedRow#getOriginalIndex()} is null.
      * @param keyCellIndex
      *            the index of the column used to group rows into records
      * @param ignoreFirstRows
@@ -171,9 +227,11 @@ public class Record implements Serializable {
             private void buildNextRecord() {
                 List<Row> rows = new ArrayList<>();
                 long startRowId = 0;
+                Long originalStartRowId = null;
                 if (fetchedRowTuple != null) {
                     rows.add(fetchedRowTuple.getRow());
                     startRowId = fetchedRowTuple.getIndex();
+                    originalStartRowId = fetchedRowTuple.getOriginalIndex();
                     fetchedRowTuple = null;
                 }
                 while (parentIter.hasNext()) {
@@ -189,10 +247,9 @@ public class Record implements Serializable {
                     rows.addAll(additionalRows);
                     additionalRowsConsumed = true;
                 }
-                nextRecord = rows.isEmpty() ? null : new Record(startRowId, rows);
+                nextRecord = rows.isEmpty() ? null : new Record(startRowId, originalStartRowId, rows);
             }
 
         };
     }
-
 }

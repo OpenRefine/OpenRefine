@@ -18,6 +18,7 @@ public class RecordTests {
 
     List<Row> rows;
     Record SUT;
+    Record sortedRecord;
 
     @BeforeMethod
     public void setUp() {
@@ -26,6 +27,7 @@ public class RecordTests {
                 row(null, "c"),
                 row("", "d"));
         SUT = new Record(34L, rows);
+        sortedRecord = new Record(34L, 56L, rows);
     }
 
     @Test
@@ -34,6 +36,11 @@ public class RecordTests {
         Assert.assertEquals(SUT.getStartRowId(), 34L);
         Assert.assertEquals(SUT.getEndRowId(), 37L);
         Assert.assertEquals(SUT.size(), 3);
+        Assert.assertEquals(SUT.getOriginalStartRowId(), null);
+        Assert.assertEquals(SUT.getLogicalStartRowId(), 34L);
+
+        Assert.assertEquals(sortedRecord.getOriginalStartRowId(), 56L);
+        Assert.assertEquals(sortedRecord.getLogicalStartRowId(), 56L);
     }
 
     @Test
@@ -86,6 +93,7 @@ public class RecordTests {
         Assert.assertNotEquals(SUT, 23);
         Assert.assertNotEquals(SUT, new Record(34L, Collections.emptyList()));
         Assert.assertEquals(SUT, new Record(34L, rows));
+        Assert.assertNotEquals(SUT, sortedRecord);
     }
 
     @Test
@@ -96,6 +104,7 @@ public class RecordTests {
     @Test
     public void testToString() {
         Assert.assertTrue(SUT.toString().contains("Record"));
+        Assert.assertTrue(sortedRecord.toString().contains("56"));
     }
 
 }

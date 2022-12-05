@@ -536,7 +536,6 @@
     "core-views/to-text": "En texte…",
     "core-views/to-text/header": "En texte",
     "core-views/to-text/single": "En texte",
-    "core-views/goto-page": "$1 de $2 {{plural:$2|page|pages}}",
     "core-views/first": "première",
     "core-views/word-facet": "Facette par mot",
     "core-views/check-format": "Merci de vérifier le format du fichier.",

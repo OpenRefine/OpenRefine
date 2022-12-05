@@ -201,7 +201,7 @@ public class WikibaseSchema implements OverlayModel {
             throw new IllegalStateException("The schema has not been validated before being evaluated");
         }
         List<EntityEdit> result = new ArrayList<>();
-        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
+        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters())) {
             ExpressionContext ctxt = new ExpressionContext(
                     siteIri,
                     entityTypeSiteIri,

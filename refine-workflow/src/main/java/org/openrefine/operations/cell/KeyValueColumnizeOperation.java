@@ -147,7 +147,7 @@ public class KeyValueColumnizeOperation implements Operation {
                 currentNotes.add(notes);
             }
 
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
                 Row oldRow = indexedRow.getRow();
 
                 Object key = oldRow.getCellValue(keyColumnIndex);
