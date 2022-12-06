@@ -141,10 +141,7 @@ public class DataExtensionChange extends EngineDependentChange {
             List<Row> newRows = new ArrayList<>();
             List<Row> oldRows = record.getRows();
             // the changeData object can be null, for instance on rows excluded by facets
-            if (changeData == null) {
-                return oldRows;
-            }
-            Map<Long, DataExtension> extensions = changeData.getExtensions();
+            Map<Long, DataExtension> extensions = changeData != null ? changeData.getExtensions() : Collections.emptyMap();
 
             for (int i = 0; i != oldRows.size(); i++) {
                 Row row = oldRows.get(i);

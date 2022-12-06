@@ -125,6 +125,29 @@ public class DataExtensionChangeTest extends RefineTest {
     }
 
     @Test
+    public void testJoinerOnExcludedRow() {
+        GridState state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, null);
+
+        GridState expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", null },
+                        { null, "3", null }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
     public void testSerializeChangeData() {
         DataExtensionSerializer serializer = new DataExtensionSerializer();
 
