@@ -46,10 +46,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -81,14 +81,11 @@ public class ExcelImporterTests extends ImporterTest {
     // special implementations. The string below matches the special phone number formatter which they've implemented
     private static final String OTHER_FORMAT = "###\\-####;\\(###\\)\\ ###\\-####";
 
-    // Record our date/time as close as possible to the creation of the spreadsheets.
-    // There's still a race window, but it's small and will only affect test runs within
-    // a fraction of a second of a minute boundary.
-    // (we could truncate the least significant minute digit to mitigate this further)
-    private static final String NOW = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
-    // private static final File xlsxFile = createSpreadsheet(true);
-    private static final File xlsFile = createSpreadsheet(false);
-    private static final File xlsxFile = createSpreadsheet(true);
+    private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final String NOW_STRING = NOW.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+
+    private static final File xlsFile = createSpreadsheet(false, NOW);
+    private static final File xlsxFile = createSpreadsheet(true, NOW);
 
     private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
     private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
@@ -148,8 +145,8 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
 
-        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2)), "Cell value is not a date"); // Calendar
-        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3)), "Cell value is not a date"); // Date
+        // Skip col 2 where old Calendar test was
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3)), "Cell value is not a date");
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) project.rows.get(1).getCellValue(5));
@@ -168,7 +165,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         assertEquals(project.rows.get(2).getCellValue(10), "(617) 235-1322");
 
-        assertEquals(project.rows.get(2).getCellValue(11), NOW.substring(0, 10));
+        assertEquals(project.rows.get(2).getCellValue(11), NOW_STRING.substring(0, 10));
 
         assertEquals(project.rows.get(2).getCellValue(12), 1234.56);
 
@@ -209,8 +206,9 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
 
-        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        // Skip col 2 where old Calendar test was
         assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) project.rows.get(1).getCellValue(3)).toMillis() < 1);
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull(project.rows.get(1).getCellValue(5));
@@ -229,7 +227,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         assertEquals(project.rows.get(2).getCellValue(10), "(617) 235-1322");
 
-        assertEquals(project.rows.get(2).getCellValue(11), NOW.substring(0, 10));
+        assertEquals(project.rows.get(2).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
 
         assertEquals(project.rows.get(2).getCellValue(12), 1234.56);
 
@@ -271,8 +269,8 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals((String) project.rows.get(1).getCellValue(1), "FALSE");
         assertEquals((String) project.rows.get(2).getCellValue(1), "TRUE");
 
-        assertEquals((String) project.rows.get(1).getCellValue(2), NOW); // Calendar
-        assertEquals((String) project.rows.get(1).getCellValue(3), NOW); // Date
+        // Skip col 2 where old Calendar test was
+        assertEquals((String) project.rows.get(1).getCellValue(3), NOW_STRING); // Date
 
         assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         assertEquals((String) project.rows.get(1).getCellValue(5), "");
@@ -291,7 +289,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         assertEquals(project.rows.get(ROWS - 1).getCellValue(10), "(617) 235-1322");
 
-        assertEquals(project.rows.get(ROWS - 1).getCellValue(11), NOW.substring(0, 10));
+        assertEquals(project.rows.get(ROWS - 1).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
 
         assertEquals(project.rows.get(ROWS - 1).getCellValue(12), "$1,234.56");
 
@@ -379,8 +377,9 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
 
-        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2)), "Cell value is not a date"); // Calendar
+        // Skip col 2 where old Calendar test was
         assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3)), "Cell value is not a date"); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) project.rows.get(1).getCellValue(3)).toMillis() < 1);
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) project.rows.get(1).getCellValue(5));
@@ -432,8 +431,9 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
 
-        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2)), "Cell value is not a date"); // Calendar
+        // Skip col 2 where old Calendar test was
         assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3)), "Cell value is not a date"); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) project.rows.get(1).getCellValue(3)).toMillis() < 1);
 
         Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) project.rows.get(1).getCellValue(5));
@@ -446,7 +446,7 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
 
-    private static File createSpreadsheet(boolean xml) {
+    private static File createSpreadsheet(boolean xml, LocalDateTime date) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
         DataFormat dataFormat = wb.createDataFormat();
@@ -475,7 +475,7 @@ public class ExcelImporterTests extends ImporterTest {
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, 0);
+                createDataRow(sheet, row, date, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, 0);
             }
         }
 
@@ -523,7 +523,7 @@ public class ExcelImporterTests extends ImporterTest {
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, s);
+                createDataRow(sheet, row, NOW, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, s);
             }
         }
 
@@ -542,7 +542,8 @@ public class ExcelImporterTests extends ImporterTest {
         return file;
     }
 
-    private static void createDataRow(Sheet sheet, int row, CellStyle dateTimeStyle, CellStyle dateStyle, CellStyle intStyle,
+    private static void createDataRow(Sheet sheet, int row, LocalDateTime date, CellStyle dateTimeStyle, CellStyle dateStyle,
+            CellStyle intStyle,
             CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, CellStyle currencyStyle, int extra_columns) {
         int col = 0;
         Row r = sheet.createRow(row);
@@ -554,14 +555,11 @@ public class ExcelImporterTests extends ImporterTest {
         c = r.createCell(col++);
         c.setCellValue(row % 2 == 0); // boolean
 
-        c = r.createCell(col++);
-        c.setCellValue(Calendar.getInstance()); // calendar
-        c.setCellStyle(dateTimeStyle);
+        col++; // Placeholder for old Calendar test, so we don't have to redo column numbers. Available for reuse
 
         c = r.createCell(col++);
-        Date now = new Date();
-        c.setCellValue(now); // date
-        c.setCellStyle(dateTimeStyle); // datetime
+        c.setCellValue(date); // LocalDateTime
+        c.setCellStyle(dateTimeStyle);
 
         c = r.createCell(col++);
         c.setCellValue(" Row " + row + " Col " + col); // string
@@ -589,7 +587,7 @@ public class ExcelImporterTests extends ImporterTest {
         c.setCellStyle(otherStyle); // phone number format should import as string
 
         c = r.createCell(col++);
-        c.setCellValue(now); // date
+        c.setCellValue(date); // date
         c.setCellStyle(dateStyle); // dates alone should import as strings
 
         c = r.createCell(col++);
