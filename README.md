@@ -8,6 +8,7 @@ clean it up, reconcile it, and augment it with data coming from
 the web. All from a web browser and the comfort and privacy of your own computer.
 
 Official website: **https://openrefine.org**
+
 Community forum: **https://forum.openrefine.org**
 
 [<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-320px.png" align="right">](https://openrefine.org)
@@ -33,7 +34,7 @@ If you have cloned this repository to your computer, you can run OpenRefine with
 
 This requires [JDK 11](https://adoptium.net/), [Apache Maven](https://maven.apache.org/) and [NPM](https://www.npmjs.com/).
 
-## Documentation and Videos
+## Documentation
 
 * [User Manual](https://openrefine.org/docs)
 * [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
@@ -47,7 +48,7 @@ This requires [JDK 11](https://adoptium.net/), [Apache Maven](https://maven.apac
 ## Contact us
 
 * [Community forum](https://forum.openrefine.org)
-* [Twitter](http://www.twitter.com/openrefine)
+* [Twitter](https://www.twitter.com/openrefine)
 * [Gitter](https://gitter.im/OpenRefine/OpenRefine)
 * [Matrix (bridged from Gitter)](https://matrix.to/#/#OpenRefine_OpenRefine:gitter.im)
 
