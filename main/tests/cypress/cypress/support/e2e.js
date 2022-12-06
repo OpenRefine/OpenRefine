@@ -21,7 +21,7 @@ import './ext_wikibase';
 let token;
 
 beforeEach(() => {
-  cy.server({
+  cy.intercept({
     ignore: (xhr) => {
       // Hide XHR Requests from log, OpenRefine is making too many XHR requests, it's polluting the test runner
       return true;
