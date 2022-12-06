@@ -195,7 +195,7 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
     cy.get(
-      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`
+      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content div > span`
     ).should(($cellSpan) => {
       if (value == null) {
         // weird, "null" is returned as a string in this case, bug in Chai ?
