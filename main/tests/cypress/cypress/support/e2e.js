@@ -21,13 +21,6 @@ import './ext_wikibase';
 let token;
 
 beforeEach(() => {
-  cy.intercept({
-    ignore: (xhr) => {
-      // Hide XHR Requests from log, OpenRefine is making too many XHR requests, it's polluting the test runner
-      return true;
-    },
-  });
-
   cy.wrap(token, { log: false }).as('token');
   cy.wrap(token, { log: false }).as('deletetoken');
   cy.wrap([], { log: false }).as('loadedProjectIds');
