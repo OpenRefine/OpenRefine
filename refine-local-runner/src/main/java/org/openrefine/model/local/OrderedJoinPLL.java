@@ -1,11 +1,7 @@
 
 package org.openrefine.model.local;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +9,7 @@ import org.openrefine.model.local.partitioning.Partitioner;
 import org.openrefine.model.local.partitioning.RangePartitioner;
 
 import com.google.common.collect.Streams;
+import org.openrefine.model.local.util.QueryTree;
 
 /**
  * A PLL which represents the join of two others, assuming both are sorted by keys. Both inner and outer joins are
@@ -54,7 +51,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             PairPLL<K, W> second,
             Comparator<K> comparator,
             boolean innerJoin) {
-        super(first.getContext());
+        super(first.getContext(), "Ordered join");
         this.first = first;
         this.second = second;
         this.comparator = comparator;
@@ -273,6 +270,11 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Arrays.asList(first, second);
     }
 
     protected static class JoinPartition implements Partition {

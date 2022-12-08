@@ -49,7 +49,7 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
      *            the index of the column used as record key
      */
     public RecordPLL(PairPLL<Long, IndexedRow> grid, int keyColumnIndex) {
-        super(grid.getContext());
+        super(grid.getContext(), "Group into records");
         this.keyColumnIndex = keyColumnIndex;
         List<? extends Partition> parentPartitions = grid.getPartitions();
         Stream<? extends Partition> lastPartitions = parentPartitions.stream().skip(1L);
@@ -118,6 +118,11 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Collections.singletonList(parent);
     }
 
     protected static class RecordPartition implements Partition {

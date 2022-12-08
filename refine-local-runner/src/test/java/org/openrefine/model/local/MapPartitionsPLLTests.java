@@ -13,6 +13,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertNotEquals;
+
 public class MapPartitionsPLLTests extends PLLTestsBase {
 
     List<Integer> list = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7);
@@ -25,7 +27,7 @@ public class MapPartitionsPLLTests extends PLLTestsBase {
 
     @Test
     public void testDouble() {
-        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1));
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1), "description");
 
         Assert.assertEquals(SUT.collect(), Arrays.asList(0, 4, 5));
     }
@@ -36,8 +38,14 @@ public class MapPartitionsPLLTests extends PLLTestsBase {
             throw new UncheckedIOException("error", new IOException("e"));
         });
 
-        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, faultyMap);
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, faultyMap, "description");
 
         SUT.collect();
+    }
+
+    @Test
+    public void testId() {
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1), "description");
+        assertNotEquals(SUT.getId(), parent.getId());
     }
 }

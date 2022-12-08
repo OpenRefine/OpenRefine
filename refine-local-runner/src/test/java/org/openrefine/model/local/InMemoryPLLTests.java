@@ -53,8 +53,8 @@ public class InMemoryPLLTests extends PLLTestsBase {
     @Test
     public void testIsEmptyNoCachedCount() {
         // force discarding the cached counts with a spurious mapPartitions call
-        Assert.assertFalse(SUT.mapPartitions((i, s) -> s, false).isEmpty());
-        Assert.assertTrue(emptySUT.mapPartitions((i, s) -> s, false).isEmpty());
+        Assert.assertFalse(SUT.mapPartitions((i, s) -> s, "discard cached counts", false).isEmpty());
+        Assert.assertTrue(emptySUT.mapPartitions((i, s) -> s, "discard cached counts", false).isEmpty());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class InMemoryPLLTests extends PLLTestsBase {
 
     @Test
     public void testMap() {
-        Assert.assertEquals(SUT.map(x -> 2 * x).collect(), Arrays.asList(0, 2, 4, 6, 8, 10, 12, 14, 16, 18));
+        Assert.assertEquals(SUT.map(x -> 2 * x, "double").collect(), Arrays.asList(0, 2, 4, 6, 8, 10, 12, 14, 16, 18));
     }
 
     @Test
