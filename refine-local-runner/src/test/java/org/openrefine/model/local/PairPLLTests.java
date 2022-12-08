@@ -52,9 +52,7 @@ public class PairPLLTests extends PLLTestsBase {
 
     @Test
     public void testToString() {
-        // we do not check the exact string representation: it is an internal representation of the query plan of the
-        // PLL
-        Assert.assertTrue(SUT.toString().contains("Key by index"));
+        Assert.assertTrue(SUT.toString().contains("PairPLL"));
     }
 
     @Test

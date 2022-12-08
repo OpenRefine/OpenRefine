@@ -27,7 +27,7 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     protected final int keyColumnIndex;
 
     /**
-     * Constructs an indexed PLL of records by grouping rows together. Any partitioner on the parent PLL will be used on
+     * Constructs an indexed PLL of records by grouping rows together. Any partitioner on the parent PLL will be used on
      * the resulting pair PLL.
      * 
      * @param grid

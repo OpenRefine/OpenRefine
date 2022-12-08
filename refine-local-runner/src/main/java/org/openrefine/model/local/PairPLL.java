@@ -11,6 +11,7 @@ import org.openrefine.model.local.partitioning.CroppedPartitioner;
 import org.openrefine.model.local.partitioning.LongRangePartitioner;
 import org.openrefine.model.local.partitioning.Partitioner;
 import org.openrefine.model.local.util.QueryTree;
+import org.openrefine.process.ProgressReporter;
 
 /**
  * Adds additional methods for PLLs of keyed collections. The supplied Partitioner determines in which partition an
@@ -485,6 +486,32 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     @Override
     public QueryTree getQueryTree() {
         return pll.getQueryTree();
+    }
+
+    @Override
+    public String toString() {
+        return "[PairPLL:\n" + pll.toString() + "]";
+    }
+
+    /**
+     * Prevent double caching from this PairPLL wrapper and the underlying PLL by defering the caching to the child.
+     */
+    @Override
+    public boolean isCached() {
+        return pll.isCached();
+    }
+
+    /**
+     * Prevent double caching from this PairPLL wrapper and the underlying PLL by defering the caching to the child.
+     */
+    @Override
+    public void cache(Optional<ProgressReporter> progressReporter) {
+        pll.cache(progressReporter);
+    }
+
+    @Override
+    public void uncache() {
+        pll.uncache();
     }
 
     /**
