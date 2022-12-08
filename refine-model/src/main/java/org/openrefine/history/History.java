@@ -151,7 +151,7 @@ public class History {
         if (gridState == null) {
             throw new IllegalStateException("The current grid state has not been computed yet");
         }
-        if (!gridState.isCached()) {
+        if (false && !gridState.isCached()) {
             logger.info("Caching grid state");
             gridState.cache();
             String grid = gridState.toString();
