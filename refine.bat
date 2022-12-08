@@ -40,19 +40,28 @@ echo  "/H <host>" the expected value for the Host header (set to * to disable ch
 echo     default: ^<interface^>
 echo.
 echo  "/w <path>" path to the webapp
-echo     default src\main\webapp
+echo     default: src\main\webapp
 echo.
-echo  "/d" enable JVM debugging (on port 8000)
+echo  "/d <path>" path to the data directory
+echo     default: OS dependent
 echo.
 echo  "/m <memory>" max memory heap size to use
 echo     default: 1400M
 echo.
-echo  "/x" enable JMX monitoring (for jconsole and friends)
+echo  "/x <name=value>" additional configuration parameters to pass to OpenRefine
+echo     default: [none]
 echo.
 echo  "/c <path>" path to the refine.ini file
-echo     default .\refine.ini
+echo     default: .\refine.ini
 echo.
-echo "and <action> is one of
+echo  "/v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
+echo     default: info
+echo.
+echo   --debug enable JVM debugging (on port 8000)
+echo.  
+echo   --jmx enable JMX monitoring (for jconsole and jvisualvm)
+echo.
+echo  "and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine (using only "refine" or "./refine" will also start OpenRefine)
