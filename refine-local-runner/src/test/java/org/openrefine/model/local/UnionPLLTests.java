@@ -20,5 +20,7 @@ public class UnionPLLTests extends PLLTestsBase {
         Assert.assertEquals(union.cachedPartitionSizes, Arrays.asList(2L, 2L, 2L, 2L));
         Assert.assertEquals(union.numPartitions(), 4);
         Assert.assertEquals(union.collect(), Arrays.asList(0, 1, 2, 3, 10, 11, 12, 13));
+        String repr = union.toString();
+        Assert.assertTrue(repr.contains("Union"));
     }
 }

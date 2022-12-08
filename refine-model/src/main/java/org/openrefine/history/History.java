@@ -147,10 +147,18 @@ public class History {
     @JsonIgnore
     public GridState getCurrentGridState() {
         // the current state is always assumed to be computed already
-        if (_states.get(_position) == null) {
+        GridState gridState = _states.get(_position);
+        if (gridState == null) {
             throw new IllegalStateException("The current grid state has not been computed yet");
         }
-        return _states.get(_position);
+        if (!gridState.isCached()) {
+            logger.info("Caching grid state");
+            gridState.cache();
+            String grid = gridState.toString();
+            logger.info(grid);
+            logger.info("Done caching grid state");
+        }
+        return gridState;
     }
 
     /**

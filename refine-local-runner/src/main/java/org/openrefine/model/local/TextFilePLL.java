@@ -10,12 +10,7 @@ import java.io.UncheckedIOException;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
@@ -45,7 +40,7 @@ public class TextFilePLL extends PLL<String> {
     private ReadingProgressReporter progress;
 
     public TextFilePLL(PLLContext context, String path, Charset encoding) throws IOException {
-        super(context);
+        super(context, "Text file from " + path);
         this.path = path;
         this.encoding = encoding;
         this.progress = null;
@@ -211,6 +206,11 @@ public class TextFilePLL extends PLL<String> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Collections.emptyList();
     }
 
     protected static class TextFilePartition implements Partition {

@@ -2,6 +2,7 @@
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,7 +41,9 @@ public class CroppedPLL<T> extends PLL<T> {
             int partitionsToDrop,
             long dropItems,
             boolean atEnd) {
-        super(parent.getContext());
+        super(parent.getContext(),
+                String.format("Drop %d partitions and %d elements ", partitionsToDrop, dropItems)
+                        + (atEnd ? "at the end" : "at the beginning"));
         pll = parent;
         Validate.notNull(newPartitionSizes, "Partition sizes must be provided");
         cachedPartitionSizes = newPartitionSizes;
@@ -69,6 +72,11 @@ public class CroppedPLL<T> extends PLL<T> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Collections.singletonList(pll);
     }
 
     /**

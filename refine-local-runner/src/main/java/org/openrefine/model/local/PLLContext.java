@@ -19,6 +19,7 @@ public class PLLContext {
     private final int defaultParallelism;
     private final long minSplitSize;
     private final long maxSplitSize;
+    private long nextPLLId;
 
     public PLLContext(
             ListeningExecutorService executorService,
@@ -29,6 +30,7 @@ public class PLLContext {
         this.defaultParallelism = defaultParallelism;
         this.minSplitSize = minSplitSize;
         this.maxSplitSize = maxSplitSize;
+        this.nextPLLId = 0;
     }
 
     /**
@@ -92,5 +94,9 @@ public class PLLContext {
      */
     protected long getMaxSplitSize() {
         return maxSplitSize;
+    }
+
+    public long allocateId() {
+        return ++nextPLLId;
     }
 }

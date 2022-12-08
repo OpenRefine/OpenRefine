@@ -60,7 +60,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     public Iterator<IndexedData<T>> iterator() {
         return grid
                 .filter(tuple -> tuple.getValue() != null)
-                .map(tuple -> new IndexedData<T>(tuple.getKey(), tuple.getValue()))
+                .map(tuple -> new IndexedData<T>(tuple.getKey(), tuple.getValue()), "wrap as IndexedData")
                 .stream()
                 .iterator();
     }
@@ -97,6 +97,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
             ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), parentSize);
             gridWithReporting = grid.mapPartitions(
                     (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter),
+                    "wrap stream with progress reporting",
                     true);
         }
         PLL<String> serialized = gridWithReporting.map(r -> {
@@ -105,7 +106,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        });
+        }, "serialize");
 
         if (useNativeProgressReporting) {
             // this relies on the cached partition sizes in the change data grid

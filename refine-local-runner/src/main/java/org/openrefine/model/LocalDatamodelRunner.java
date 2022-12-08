@@ -71,7 +71,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext
                 .textFile(gridFile.getAbsolutePath(), GRID_ENCODING)
-                .mapToPair(s -> parseIndexedRow(s));
+                .mapToPair(s -> parseIndexedRow(s), "parse row from JSON");
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
         return new LocalGridState(this, rows, metadata.columnModel, metadata.overlayModels);
     }
@@ -105,8 +105,8 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
-                })
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
+                }, "deserialize")
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
         return new LocalChangeData<T>(this, pll, null);
     }
@@ -121,7 +121,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         TextFilePLL textPLL = pllContext.textFile(path, encoding);
         textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
-                .map(s -> new Row(Arrays.asList(new Cell(s, null))));
+                .map(s -> new Row(Arrays.asList(new Cell(s, null))), "wrap as row with single cell");
         if (limit >= 0) {
             // this generally leaves more rows than necessary, but is the best thing
             // we can do so far without reading the dataset to add row indices
@@ -153,7 +153,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
 
         PairPLL<Long, T> pll = pllContext
                 .parallelize(defaultParallelism, withoutNulls)
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
         return new LocalChangeData<T>(this, pll, null); // no need for parent partition sizes, since pll has cached ones
     }

@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.GridState;
+import org.openrefine.model.local.util.QueryTree;
 import org.openrefine.process.ProgressReporter;
 
 /**
@@ -49,16 +50,23 @@ public abstract class PLL<T> {
 
     protected final PLLContext context;
 
+    // id of the PLL allocated by the context
+    protected final long id;
+    // short description of the operation this PLL implements, for debugging purposes
+    protected final String name;
+
     // cached list of counts of elements in each partition, initialized lazily
     protected List<Long> cachedPartitionSizes;
     // cached contents of each partition, initialized on demand
     protected List<List<T>> cachedPartitions;
 
-    public PLL(PLLContext context) {
+    public PLL(PLLContext context, String name) {
         Validate.notNull(context);
         this.context = context;
         this.cachedPartitionSizes = null;
         this.cachedPartitions = null;
+        this.id = context.allocateId();
+        this.name = name;
     }
 
     /**
@@ -258,11 +266,14 @@ public abstract class PLL<T> {
      * 
      * @param <U>
      * @param mapFunction
+     *            the function to apply on each element
+     * @param mapDescription
+     *            a short descriptiono of the function, for debugging purposes
      * @return
      */
-    public <U> PLL<U> map(Function<T, U> mapFunction) {
+    public <U> PLL<U> map(Function<T, U> mapFunction, String mapDescription) {
         BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, parentIterator) -> parentIterator.map(mapFunction));
-        return mapPartitions(partitionMap, true);
+        return mapPartitions(partitionMap, "Map: " + mapDescription, true);
     }
 
     /**
@@ -274,9 +285,9 @@ public abstract class PLL<T> {
      * @param mapFunction
      * @return
      */
-    public <U> PLL<U> flatMap(Function<T, Stream<U>> mapFunction) {
+    public <U> PLL<U> flatMap(Function<T, Stream<U>> mapFunction, String mapDescription) {
         BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, parentStream) -> parentStream.flatMap(mapFunction));
-        return mapPartitions(partitionMap, false);
+        return mapPartitions(partitionMap, "FlatMap: " + mapDescription, false);
     }
 
     /**
@@ -288,7 +299,9 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<List<T>> batchPartitions(int batchSize) {
-        return mapPartitions((i, parentStream) -> batchStream(parentStream, batchSize), false);
+        return mapPartitions((i, parentStream) -> batchStream(parentStream, batchSize),
+                String.format("Group into batches of %d elements", batchSize),
+                batchSize == 1);
     }
 
     protected static <T> Stream<List<T>> batchStream(Stream<T> stream, int batchSize) {
@@ -299,19 +312,25 @@ public abstract class PLL<T> {
     }
 
     /**
-     * Maps each partition by applying an arbirtary function to it.
+     * Maps each partition by applying an arbitrary function to it.
      * 
      * @param <U>
      * @param map
+     *            the function to apply on the stream of elements of the partition
+     * @param mapDescription
+     *            a short description of the map function, for debugging purposes
      * @param preservesSizes
      *            whether the size of each partition will be preserved by the map
      * @return
      */
-    public <U> PLL<U> mapPartitions(BiFunction<Integer, Stream<T>, Stream<U>> map, boolean preservesSizes) {
+    public <U> PLL<U> mapPartitions(
+            BiFunction<Integer, Stream<T>, Stream<U>> map,
+            String mapDescription,
+            boolean preservesSizes) {
         if (preservesSizes) {
-            return new MapPartitionsPLL<T, U>(this, map, cachedPartitionSizes);
+            return new MapPartitionsPLL<T, U>(this, map, mapDescription, cachedPartitionSizes);
         } else {
-            return new MapPartitionsPLL<T, U>(this, map);
+            return new MapPartitionsPLL<T, U>(this, map, mapDescription);
         }
     }
 
@@ -351,7 +370,7 @@ public abstract class PLL<T> {
 
         BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, stream) -> scanMapStream(stream, initialStates.get(i), feed, combine,
                 map));
-        return mapPartitions(partitionMap, true);
+        return mapPartitions(partitionMap, "scan map", true);
     }
 
     protected static <T, S, U> Stream<U> scanMapStream(
@@ -391,7 +410,7 @@ public abstract class PLL<T> {
      */
     public PLL<T> filter(Predicate<? super T> filterPredicate) {
         BiFunction<Integer, Stream<T>, Stream<T>> partitionMap = ((i, parentIterator) -> parentIterator.filter(filterPredicate));
-        return mapPartitions(partitionMap, false);
+        return mapPartitions(partitionMap, "filter", false);
     }
 
     /**
@@ -404,7 +423,23 @@ public abstract class PLL<T> {
      * @return
      */
     public <K, V> PairPLL<K, V> mapToPair(Function<T, Tuple2<K, V>> mapFunction) {
-        return new PairPLL<K, V>(this.map(mapFunction), Optional.empty());
+        return new PairPLL<K, V>(this.map(mapFunction, "unknown map function"), Optional.empty());
+    }
+
+    /**
+     * Maps this collection to an indexed PLL. This does not come with any partitioner, so it is only indexed in the
+     * sense that it offers specific methods for collections of pairs.
+     *
+     * @param <K>
+     * @param <V>
+     * @param mapFunction
+     *            the function to apply on each element
+     * @param mapDescription
+     *            a short description of the map function being applied, for debugging purposes
+     * @return
+     */
+    public <K, V> PairPLL<K, V> mapToPair(Function<T, Tuple2<K, V>> mapFunction, String mapDescription) {
+        return new PairPLL<K, V>(this.map(mapFunction, mapDescription), Optional.empty());
     }
 
     /**
@@ -454,7 +489,7 @@ public abstract class PLL<T> {
                     .collect(Collectors.toList());
         }
         BiFunction<Integer, Stream<T>, Stream<T>> map = ((i, stream) -> stream.limit(limit));
-        return new MapPartitionsPLL<T, T>(this, map, newCachedPartitionSizes);
+        return new MapPartitionsPLL<T, T>(this, map, String.format("Limit each partition to %d", limit), newCachedPartitionSizes);
     }
 
     /**
@@ -704,6 +739,34 @@ public abstract class PLL<T> {
 
     protected PLLContext getContext() {
         return context;
+    }
+
+    /**
+     * @return a numerical id for the PLL allocated by its context
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * Returns the PLLs that this PLL depends on, to compute its contents. This is used for debugging purposes, to
+     * display the tree of dependencies of a given PLL.
+     * 
+     * @see #getQueryTree()
+     */
+    public abstract List<PLL<?>> getParents();
+
+    /**
+     * @return a tree-based representation of the dependencies of this PLL.
+     */
+    public QueryTree getQueryTree() {
+        QueryTree[] children = getParents().stream().map(PLL::getQueryTree).toArray(QueryTree[]::new);
+        return new QueryTree(id, name + (isCached() ? " [cached]" : ""), children);
+    }
+
+    @Override
+    public String toString() {
+        return getQueryTree().toString();
     }
 
     public static class PLLExecutionError extends RuntimeException {

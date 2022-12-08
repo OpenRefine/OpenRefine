@@ -1,6 +1,8 @@
 
 package org.openrefine.model.local;
 
+import static org.testng.Assert.assertNotEquals;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
@@ -26,7 +28,7 @@ public class MapPartitionsPLLTests extends PLLTestsBase {
 
     @Test
     public void testDouble() {
-        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1));
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1), "description");
 
         Assert.assertEquals(SUT.collect(), Arrays.asList(0, 4, 5));
     }
@@ -37,8 +39,14 @@ public class MapPartitionsPLLTests extends PLLTestsBase {
             throw new UncheckedIOException("error", new IOException("e"));
         });
 
-        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, faultyMap);
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, faultyMap, "description");
 
         SUT.collect();
+    }
+
+    @Test
+    public void testId() {
+        MapPartitionsPLL<Integer, Integer> SUT = new MapPartitionsPLL<Integer, Integer>(parent, (i, t) -> t.limit(i + 1), "description");
+        assertNotEquals(SUT.getId(), parent.getId());
     }
 }

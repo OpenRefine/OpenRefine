@@ -91,7 +91,8 @@ public class LocalGridState implements GridState {
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels) {
         this.runner = runner;
-        this.grid = grid.mapToPair(tuple -> new Tuple2<>(tuple.getKey(), new IndexedRow(tuple.getKey(), tuple.getValue())));
+        this.grid = grid.mapToPair(tuple -> new Tuple2<>(tuple.getKey(), new IndexedRow(tuple.getKey(), tuple.getValue())),
+                "IndexedRow to pair");
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = null;
@@ -360,7 +361,7 @@ public class LocalGridState implements GridState {
 
         grid
                 .values()
-                .map(LocalGridState::serializeIndexedRow)
+                .map(LocalGridState::serializeIndexedRow, "serialize indexed row")
                 .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
 
         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
@@ -442,14 +443,14 @@ public class LocalGridState implements GridState {
 
     @Override
     public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
-        PairPLL<Long, Row> newGrid = grid.mapValues((i, r) -> mapper.call(r.getLogicalIndex(), r.getRow()));
+        PairPLL<Long, Row> newGrid = grid.mapValues((i, r) -> mapper.call(r.getLogicalIndex(), r.getRow()), "apply RowMapper");
         return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
     }
 
     @Override
     public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.values()
-                .flatMap(tuple -> mapper.call(tuple.getLogicalIndex(), tuple.getRow()).stream())
+                .flatMap(tuple -> mapper.call(tuple.getLogicalIndex(), tuple.getRow()).stream(), "apply FlatRowMapper")
                 .zipWithIndex();
         return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
     }
@@ -470,7 +471,7 @@ public class LocalGridState implements GridState {
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> grid = records()
                 .values()
-                .flatMap(record -> mapper.call(record).stream())
+                .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper")
                 .zipWithIndex();
         return new LocalGridState(runner, grid, newColumnModel, overlayModels);
     }
@@ -481,14 +482,15 @@ public class LocalGridState implements GridState {
         if (permanent) {
             PairPLL<Long, Row> newRows = indexedRows()
                     .sort(rowSorter)
-                    .map(IndexedRow::getRow)
+                    .map(IndexedRow::getRow, "apply IndexRow::getRow")
                     .zipWithIndex();
             return new LocalGridState(runner, newRows, columnModel, overlayModels);
         } else {
             PairPLL<Long, IndexedRow> newRows = indexedRows()
                     .sort(rowSorter)
                     .zipWithIndex()
-                    .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()));
+                    .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
+                            "update row index after temporary sort");
             return new LocalGridState(runner, columnModel, newRows, overlayModels);
         }
     }
@@ -501,15 +503,17 @@ public class LocalGridState implements GridState {
                 .sort(recordSorter);
         if (permanent) {
             PairPLL<Long, Row> newRows = sorted
-                    .flatMap(record -> record.getRows().stream())
+                    .flatMap(record -> record.getRows().stream(), "record to rows")
                     .zipWithIndex();
             return new LocalGridState(runner, newRows, columnModel, overlayModels);
         } else {
             PLL<IndexedRow> pll = sorted
-                    .flatMap(record -> IteratorUtils.toList(record.getIndexedRows().iterator()).stream());
+                    .flatMap(record -> IteratorUtils.toList(record.getIndexedRows().iterator()).stream(),
+                            "record to indexed rows");
             PairPLL<Long, IndexedRow> newRows = pll
                     .zipWithIndex()
-                    .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()));
+                    .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
+                            "update row index after temporary sort");
             return new LocalGridState(runner, columnModel, newRows, overlayModels);
         }
     }
@@ -520,7 +524,7 @@ public class LocalGridState implements GridState {
                 .values()
                 .filter(tuple -> !filter.filterRow(tuple.getLogicalIndex(), tuple.getRow()))
                 .zipWithIndex()
-                .mapValues((index, indexedRow) -> indexedRow.getRow());
+                .mapValues((index, indexedRow) -> indexedRow.getRow(), "drop old row indices before row removal");
         return new LocalGridState(runner, newGrid, columnModel, overlayModels);
     }
 
@@ -529,7 +533,7 @@ public class LocalGridState implements GridState {
         PairPLL<Long, Row> newGrid = records()
                 .values()
                 .filter(record -> !filter.filterRecord(record))
-                .flatMap(record -> record.getRows().stream())
+                .flatMap(record -> record.getRows().stream(), "record to rows")
                 .zipWithIndex();
         return new LocalGridState(runner, newGrid, columnModel, overlayModels);
     }
@@ -541,13 +545,13 @@ public class LocalGridState implements GridState {
         PairPLL<Long, T> data;
         if (rowMapper.getBatchSize() == 1) {
             data = filteredGrid.mapValues(
-                    (id, row) -> rowMapper.call(row.getLogicalIndex(), row.getRow()));
+                    (id, row) -> rowMapper.call(row.getLogicalIndex(), row.getRow()), "apply row change data producer");
         } else {
             data = filteredGrid
                     .values()
                     .batchPartitions(rowMapper.getBatchSize())
-                    .flatMap(rowBatch -> applyRowChangeDataMapper(rowMapper, rowBatch))
-                    .mapToPair(indexedData -> indexedData)
+                    .flatMap(rowBatch -> applyRowChangeDataMapper(rowMapper, rowBatch), "apply row change data producer")
+                    .mapToPair(indexedData -> indexedData, "bureaucratic map to pair")
                     .withPartitioner(grid.getPartitioner());
         }
         return new LocalChangeData<T>(
@@ -574,12 +578,12 @@ public class LocalGridState implements GridState {
         PairPLL<Long, T> data;
         if (recordMapper.getBatchSize() == 1) {
             data = filteredRecords
-                    .mapValues((id, record) -> recordMapper.call(record));
+                    .mapValues((id, record) -> recordMapper.call(record), "apply record change data producer");
         } else {
             data = filteredRecords
                     .batchPartitions(recordMapper.getBatchSize())
-                    .flatMap(batch -> applyRecordChangeDataMapper(recordMapper, batch))
-                    .mapToPair(tuple -> tuple)
+                    .flatMap(batch -> applyRecordChangeDataMapper(recordMapper, batch), "apply record change data mapper")
+                    .mapToPair(tuple -> tuple, "bureaucratic map to pair")
                     .withPartitioner(filteredRecords.getPartitioner());
         }
         return new LocalChangeData<T>(
@@ -620,7 +624,8 @@ public class LocalGridState implements GridState {
         }
         PairPLL<Long, IndexedRow> shifted = dropped
                 .mapToPair(tuple -> Tuple2.of(tuple.getKey() - rowsToDrop,
-                        new IndexedRow(tuple.getKey() - rowsToDrop, tuple.getValue().getRow())))
+                        new IndexedRow(tuple.getKey() - rowsToDrop, tuple.getValue().getRow())),
+                        "adjust row ids after dropping rows")
                 .withPartitioner(partitioner);
         return new LocalGridState(runner, columnModel, shifted, overlayModels);
     }
@@ -648,7 +653,7 @@ public class LocalGridState implements GridState {
         }
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
-                .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()));
+                .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()), "apply row change data joiner");
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
     }
 
@@ -660,7 +665,8 @@ public class LocalGridState implements GridState {
         }
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
-                .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream())
+                .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream(),
+                        "apply row change data joiner")
                 .zipWithIndex();
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
     }
@@ -673,7 +679,8 @@ public class LocalGridState implements GridState {
         }
         PairPLL<Long, Row> joined = records()
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
-                .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream())
+                .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
+                        "apply record change data joiner")
                 .zipWithIndex();
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
     }
@@ -690,8 +697,9 @@ public class LocalGridState implements GridState {
         return new LocalGridState(
                 runner,
                 grid.values()
-                        .map(IndexedRow::getRow)
-                        .concatenate(otherLocal.grid.values().map(IndexedRow::getRow)).zipWithIndex(),
+                        .map(IndexedRow::getRow, "drop old row indices")
+                        .concatenate(otherLocal.grid.values().map(IndexedRow::getRow, "drop old row indices"))
+                        .zipWithIndex(),
                 merged,
                 mergedOverlayModels);
     }
@@ -719,6 +727,11 @@ public class LocalGridState implements GridState {
     protected boolean cache(Optional<ProgressReporter> progressReporter) {
         grid.cache(progressReporter);
         return grid.isCached();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[LocalGridState:\n%s\n]", grid.toString());
     }
 
 }

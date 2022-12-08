@@ -51,6 +51,13 @@ public class PairPLLTests extends PLLTestsBase {
     }
 
     @Test
+    public void testToString() {
+        // we do not check the exact string representation: it is an internal representation of the query plan of the
+        // PLL
+        Assert.assertTrue(SUT.toString().contains("Key by index"));
+    }
+
+    @Test
     public void testKeys() {
         Assert.assertEquals(SUT.keys().collect(), Arrays.asList(1, 3, 2, 4));
     }
@@ -62,7 +69,7 @@ public class PairPLLTests extends PLLTestsBase {
 
     @Test
     public void testMapValues() {
-        Assert.assertEquals(SUT.mapValues((i, s) -> s.charAt(0)).collect(),
+        Assert.assertEquals(SUT.mapValues((i, s) -> s.charAt(0), "map description").collect(),
                 Arrays.asList(Tuple2.of(1, 'f'), Tuple2.of(3, 'b'), Tuple2.of(2, 'b'), Tuple2.of(4, 'h')));
     }
 

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.openrefine.model.local.partitioning.CroppedPartitioner;
 import org.openrefine.model.local.partitioning.LongRangePartitioner;
 import org.openrefine.model.local.partitioning.Partitioner;
+import org.openrefine.model.local.util.QueryTree;
 
 /**
  * Adds additional methods for PLLs of keyed collections. The supplied Partitioner determines in which partition an
@@ -28,7 +29,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     protected final PLL<Tuple2<K, V>> pll;
 
     public PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner) {
-        super(pll.getContext());
+        super(pll.getContext(), pll.name);
         if (partitioner.isPresent() && partitioner.get().numPartitions() != pll.numPartitions()) {
             throw new IllegalArgumentException(
                     "The partitioner and PLL are incompatible as they do not have the same number of partitions");
@@ -39,7 +40,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     }
 
     protected PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner, List<Long> partitionSizes) {
-        super(pll.getContext());
+        super(pll.getContext(), pll.name);
         if (partitioner.isPresent() && partitioner.get().numPartitions() != pll.numPartitions()) {
             throw new IllegalArgumentException(
                     "The partitioner and PLL are incompatible as they do not have the same number of partitions");
@@ -73,7 +74,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @return
      */
     public PLL<K> keys() {
-        return this.map(Tuple2::getKey);
+        return this.map(Tuple2::getKey, "getKey");
     }
 
     /**
@@ -82,7 +83,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @return
      */
     public PLL<V> values() {
-        return this.map(Tuple2::getValue);
+        return this.map(Tuple2::getValue, "getValue");
     }
 
     /**
@@ -91,11 +92,15 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * 
      * @param <W>
      * @param mapFunction
+     *            the function to apply on each element
+     * @param mapDescription
+     *            a short description of the function, for debugging purposes
      * @return
      */
-    public <W> PairPLL<K, W> mapValues(BiFunction<K, V, W> mapFunction) {
+    public <W> PairPLL<K, W> mapValues(BiFunction<K, V, W> mapFunction, String mapDescription) {
         PLL<Tuple2<K, W>> mapped = pll.map(
-                tuple -> new Tuple2<>(tuple.getKey(), mapFunction.apply(tuple.getKey(), tuple.getValue())));
+                tuple -> new Tuple2<>(tuple.getKey(), mapFunction.apply(tuple.getKey(), tuple.getValue())),
+                mapDescription);
         return new PairPLL<K, W>(mapped, partitioner);
     }
 
@@ -465,6 +470,21 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      */
     public PairPLL<K, V> withCachedPartitionSizes(List<Long> newCachedPartitionSizes) {
         return new PairPLL<K, V>(pll, partitioner, newCachedPartitionSizes);
+    }
+
+    /**
+     * Returns directly the parents of the underlying PLL of this PairPLL, so that the PairPLL wrapper is transparent in
+     * query trees. This is because the PairPLL class is a bare wrapper on top of PLL for type-checking purposes, such
+     * as to hold a partitioner, without adding any computation on top of the underlying PLL.
+     */
+    @Override
+    public List<PLL<?>> getParents() {
+        return pll.getParents();
+    }
+
+    @Override
+    public QueryTree getQueryTree() {
+        return pll.getQueryTree();
     }
 
     /**

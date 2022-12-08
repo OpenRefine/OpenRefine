@@ -67,6 +67,13 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
+    public void testToString() throws IOException {
+        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
+        // the string representation of the PLL is a sort of query plan - not its contents
+        Assert.assertTrue(pll.toString().contains("Text file"));
+    }
+
+    @Test
     public void testMorePartitions() throws IOException {
         PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath(), utf8);
         Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());

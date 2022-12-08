@@ -2,6 +2,7 @@
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,7 +29,7 @@ public class UnionPLL<T> extends PLL<T> {
      *            the PLL whose elements should come last
      */
     public UnionPLL(PLL<T> first, PLL<T> second) {
-        super(first.getContext());
+        super(first.getContext(), "Union");
         this.first = first;
         this.second = second;
         List<? extends Partition> firstPartitions = first.getPartitions(), secondPartitions = second.getPartitions();
@@ -61,6 +62,11 @@ public class UnionPLL<T> extends PLL<T> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Arrays.asList(first, second);
     }
 
     protected static class UnionPartition implements Partition {

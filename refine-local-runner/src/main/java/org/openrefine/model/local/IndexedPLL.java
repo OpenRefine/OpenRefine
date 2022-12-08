@@ -2,6 +2,7 @@
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
     private final PLL<T> parent;
 
     protected IndexedPLL(PLL<T> parent, List<Long> numElements) {
-        super(parent.getContext());
+        super(parent.getContext(), "Add indices");
         this.parent = parent;
         if (parent.numPartitions() > 0 && parent.numPartitions() > numElements.size() + 1) {
             throw new IllegalArgumentException("Incompatible PLL partition and offset list sizes");
@@ -83,6 +84,11 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Collections.singletonList(parent);
     }
 
     protected static class IndexedPartition implements Partition {

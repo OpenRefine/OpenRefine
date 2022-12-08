@@ -260,6 +260,7 @@ public class GetRowsCommand extends Command {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRows(sortingConfig, false);
                 }
+                logger.info(sortedGrid.toString());
                 List<IndexedRow> rows;
                 if (start != -1L) {
                     rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);

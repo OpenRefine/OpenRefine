@@ -25,7 +25,7 @@ public class InMemoryPLL<T> extends PLL<T> {
     protected final List<InMemoryPartition> partitions;
 
     public InMemoryPLL(PLLContext context, Collection<T> elements, int nbPartitions) {
-        super(context);
+        super(context, String.format("Load %d elements into %d partitions", elements.size(), nbPartitions));
         list = elements instanceof ArrayList ? (ArrayList<T>) elements : new ArrayList<T>(elements);
         partitions = createPartitions(list.size(), nbPartitions);
         cachedPartitionSizes = partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
@@ -52,6 +52,11 @@ public class InMemoryPLL<T> extends PLL<T> {
         if (progressReporter.isPresent()) {
             progressReporter.get().reportProgress(100);
         }
+    }
+
+    @Override
+    public List<PLL<?>> getParents() {
+        return Collections.emptyList();
     }
 
     protected static class InMemoryPartition implements Partition {

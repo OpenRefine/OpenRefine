@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -191,18 +192,23 @@ public class RefineServlet extends Butterfly {
                         Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
                     }
                     if (request.getMethod().equals("GET")) {
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("GET {}", request.getPathInfo());
-                        }
+
                         logger.trace("> GET {}", commandKey);
+                        Instant start = Instant.now();
                         command.doGet(request, response);
+                        Instant end = Instant.now();
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("GET {} [{}ms]", request.getPathInfo(), end.toEpochMilli() - start.toEpochMilli());
+                        }
                         logger.trace("< GET {}", commandKey);
                     } else if (request.getMethod().equals("POST")) {
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("POST {}", request.getPathInfo());
-                        }
                         logger.trace("> POST {}", commandKey);
+                        Instant start = Instant.now();
                         command.doPost(request, response);
+                        Instant end = Instant.now();
+                        if (!logger.isTraceEnabled() && command.logRequests()) {
+                            logger.info("POST {} [{}ms]", request.getPathInfo(), end.toEpochMilli() - start.toEpochMilli());
+                        }
                         logger.trace("< POST {}", commandKey);
                     } else if (request.getMethod().equals("PUT")) {
                         if (!logger.isTraceEnabled() && command.logRequests()) {
