@@ -93,7 +93,7 @@ describe(__filename, function () {
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
     cy.getFacetContainer('Water').find('a.facet-title-remove').click();
-    cy.getFacetContainer('Water').should('not.exist');
+    cy.get('#refine-tabs-facets > div.browsing-panel-help').should('be.visible');
   });
 
   it('Test editing a facet ("change")', function () {
