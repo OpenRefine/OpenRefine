@@ -31,7 +31,7 @@ describe(__filename, function () {
     });
   });
 
-  it.only('Test facet created from the scatterplot matrix', function () {
+  it('Test facet created from the scatterplot matrix', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
     cy.castColumnTo('Water', 'number');
     cy.castColumnTo('Energ_Kcal', 'number');
