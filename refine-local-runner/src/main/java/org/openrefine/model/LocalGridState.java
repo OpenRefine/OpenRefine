@@ -83,6 +83,9 @@ public class LocalGridState implements GridState {
         this.overlayModels = overlayModels;
         this.records = null;
         this.constructedFromRows = true;
+        if (grid.getPartitioner().isEmpty()) {
+            throw new IllegalArgumentException("No partitioner supplied for the rows PLL");
+        }
     }
 
     /**
@@ -99,9 +102,12 @@ public class LocalGridState implements GridState {
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels) {
         this.runner = runner;
-        // TODO preserve partitioner please!!
+        if (grid.getPartitioner().isEmpty()) {
+            throw new IllegalArgumentException("No partitioner supplied for the rows PLL");
+        }
         this.grid = grid.mapToPair(tuple -> new Tuple2<>(tuple.getKey(), new IndexedRow(tuple.getKey(), tuple.getValue())),
-                "IndexedRow to pair");
+                "IndexedRow to pair")
+                .withPartitioner(grid.getPartitioner());
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = null;
@@ -121,15 +127,18 @@ public class LocalGridState implements GridState {
             PairPLL<Long, Record> records,
             LocalDatamodelRunner runner,
             ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels) {
+            Map<String, OverlayModel> overlayModels,
+            long rowCount) {
         this.runner = runner;
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = records;
-        this.grid = records.values()
+        if (records.getPartitioner().isEmpty()) {
+            throw new IllegalArgumentException("Missing partitioner for records PLL");
+        }
+        this.grid = PairPLL.assumeIndexed(records.values()
                 .flatMap(record -> StreamSupport.stream(record.getIndexedRows().spliterator(), false), "flatten records to rows")
-                .zipWithIndex(); // TODO we actually already have the indices above, so we should be able to avoid
-                                 // reindexing
+                .mapToPair(indexedRow -> Tuple2.of(indexedRow.getIndex(), indexedRow)), rowCount);
         this.constructedFromRows = false;
     }
 
@@ -505,12 +514,11 @@ public class LocalGridState implements GridState {
     @Override
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         if (mapper.preservesRecordStructure()) {
-            PairPLL<Long, Record> newRecords = records().values().map(
-                    record -> new Record(record.getStartRowId(), record.getOriginalStartRowId(), mapper.call(record)),
-                    "apply RecordMapper, preserving records")
-                    .mapToPair(record -> Tuple2.of(record.getStartRowId(), record), "key by record id");
-            // TODO preserve partitioning
-            return new LocalGridState(newRecords, runner, newColumnModel, overlayModels);
+            PairPLL<Long, Record> newRecords = records()
+                    .mapValues(
+                            (index, record) -> new Record(record.getStartRowId(), record.getOriginalStartRowId(), mapper.call(record)),
+                            "apply RecordMapper, preserving records");
+            return new LocalGridState(newRecords, runner, newColumnModel, overlayModels, grid.count());
         } else {
             PairPLL<Long, Row> grid = records()
                     .values()
