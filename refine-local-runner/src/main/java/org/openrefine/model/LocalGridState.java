@@ -138,7 +138,7 @@ public class LocalGridState implements GridState {
         }
         this.grid = PairPLL.assumeIndexed(records.values()
                 .flatMap(record -> StreamSupport.stream(record.getIndexedRows().spliterator(), false), "flatten records to rows")
-                .mapToPair(indexedRow -> Tuple2.of(indexedRow.getIndex(), indexedRow)), rowCount);
+                .mapToPair(indexedRow -> Tuple2.of(indexedRow.getIndex(), indexedRow), "to pair"), rowCount);
         this.constructedFromRows = false;
     }
 
@@ -165,7 +165,11 @@ public class LocalGridState implements GridState {
 
     @Override
     public GridState withColumnModel(ColumnModel newColumnModel) {
-        return new LocalGridState(runner, newColumnModel, grid, overlayModels);
+        if (constructedFromRows) {
+            return new LocalGridState(runner, newColumnModel, grid, overlayModels);
+        } else {
+            return new LocalGridState(records, runner, newColumnModel, overlayModels, grid.count());
+        }
     }
 
     @Override
@@ -482,7 +486,11 @@ public class LocalGridState implements GridState {
 
     @Override
     public GridState withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
-        return new LocalGridState(runner, columnModel, grid, newOverlayModels);
+        if (constructedFromRows) {
+            return new LocalGridState(runner, columnModel, grid, newOverlayModels);
+        } else {
+            return new LocalGridState(records, runner, columnModel, newOverlayModels, grid.count());
+        }
     }
 
     @Override

@@ -1,11 +1,13 @@
 
 package org.openrefine.model;
 
+import net.bytebuddy.asm.Advice;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +72,13 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
         // because records were preserved.
         String recordsQueryTree = second.getRecordsQueryTree().toString();
         Assert.assertFalse(recordsQueryTree.contains("flatten records to rows"));
+
+        // changing the overlay models does not convert to rows
+        LocalGridState third = (LocalGridState) second.withOverlayModels(Collections.emptyMap());
+        Assert.assertFalse(third.constructedFromRows);
+        // changing the column model does not either
+        LocalGridState fourth = (LocalGridState) third.withColumnModel(initial.getColumnModel());
+        Assert.assertFalse(fourth.constructedFromRows);
     }
 
 }

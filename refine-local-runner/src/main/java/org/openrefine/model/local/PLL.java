@@ -421,7 +421,9 @@ public abstract class PLL<T> {
      * @param <V>
      * @param mapFunction
      * @return
+     * @deprecated use {@link #mapToPair(Function, String)} to also provide a description of the map function applied
      */
+    @Deprecated
     public <K, V> PairPLL<K, V> mapToPair(Function<T, Tuple2<K, V>> mapFunction) {
         return new PairPLL<K, V>(this.map(mapFunction, "unknown map function"), Optional.empty());
     }
