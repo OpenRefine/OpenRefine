@@ -31,7 +31,7 @@ describe(__filename, function () {
     });
   });
 
-  it('Test facet created from the scatterplot matrix', function () {
+  it.only('Test facet created from the scatterplot matrix', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
     cy.castColumnTo('Water', 'number');
     cy.castColumnTo('Energ_Kcal', 'number');
@@ -44,7 +44,6 @@ describe(__filename, function () {
     // test the facet
     cy.getFacetContainer('Water (x) vs. Protein (y)').should('to.exist');
     // verify that all the buttons to change the scatterplot look&feel are there + export button
-    cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
       cy.get('label').contains('lin').should('to.exist');
       cy.get('label').contains('log').should('to.exist');
       cy.get('label[title="Rotated 45° counter-clockwise"]').should('to.exist');
@@ -53,7 +52,6 @@ describe(__filename, function () {
       cy.get('label[title="Small dot size"]').should('to.exist');
       cy.get('label[title="Regular dot size"]').should('to.exist');
       cy.get('label[title="Big dot size"]').should('to.exist');
-      cy.get('a').contains('Export plot').should('to.exist');
-    });
+      cy.get('.scatterplot-export-plot > a').contains('Export plot').should('to.exist');
   });
 });

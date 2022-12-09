@@ -338,8 +338,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
-    cy.getFacetContainer('Water').within(() => {
-      cy.get('div.facet-body-inner > div:nth-child(8)')
+    cy.get('div.facet-body-inner > div:nth-child(8)')
         .contains('15.87')
         .parent()
         .trigger('mouseover')
@@ -347,7 +346,6 @@ describe(__filename, function () {
         .contains('edit')
         .should('be.visible')
         .click();
-    });
 
     // mass edit all cells that have Water = 15.87
     cy.get('.data-table-cell-editor textarea').type(50);
