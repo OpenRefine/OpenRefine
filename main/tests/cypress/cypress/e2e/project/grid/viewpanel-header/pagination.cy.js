@@ -7,7 +7,7 @@ describe(__filename, function () {
   it('Change pagination for and check the rows', function () {
     cy.loadAndVisitProject('food.small');
 
-    cy.get('.viewpanel-pagesize').find('a').contains('50').click();
+    cy.get('.viewpanel-pagesize').find('a').contains('50').first().click();
     cy.get('.viewpanel-header').should('be.visible');
     cy.get('.data-table-container').should('be.visible');
 
