@@ -22,10 +22,7 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.AllFacetsState;
@@ -82,13 +79,13 @@ public abstract class DatamodelRunnerTestBase {
 
     public abstract DatamodelRunner getDatamodelRunner() throws IOException;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws IOException {
         SUT = getDatamodelRunner();
         tempDir = TestUtils.createTempDirectory("datamodelrunnertest");
     }
 
-    @AfterTest
+    @AfterClass
     public void tearDown() {
         SUT = null;
         try {
