@@ -33,6 +33,12 @@ public abstract class RowInRecordMapper implements RowMapper, RecordMapper {
      */
     public abstract Row call(Record record, long rowId, Row row);
 
+    /**
+     * Is this mapper guaranteed to preserve the records structure, both as a record mapper and a row mapper?
+     */
+    @Override
+    public abstract boolean preservesRecordStructure();
+
     @Override
     public List<Row> call(Record record) {
         List<Row> rows = record.getRows();
@@ -41,6 +47,11 @@ public abstract class RowInRecordMapper implements RowMapper, RecordMapper {
             results.add(call(record, record.getStartRowId() + i, rows.get(i)));
         }
         return results;
+    }
+
+    @Override
+    public boolean preservesRowCount() {
+        return true;
     }
 
     @Override
@@ -56,6 +67,11 @@ public abstract class RowInRecordMapper implements RowMapper, RecordMapper {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 return rowMapper.call(rowId, row);
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return rowMapper.preservesRecordStructure();
             }
 
         };

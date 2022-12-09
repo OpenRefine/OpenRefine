@@ -26,8 +26,16 @@ public interface RecordMapper extends Serializable {
      * true. This helps the underlying implementation avoid recomputing row ids.
      */
     public default boolean preservesRowCount() {
-        return false;
+        return preservesRecordStructure();
     }
+
+    /**
+     * If the record structure is preserved by the mapper, set this boolean to true. This will help the runner avoid
+     * re-computing the record boundaries after applying this mapper.
+     */
+    public boolean preservesRecordStructure();/*
+                                               * { return false; }
+                                               */
 
     /**
      * Returns unchanged records.
@@ -39,6 +47,11 @@ public interface RecordMapper extends Serializable {
         @Override
         public List<Row> call(Record record) {
             return record.getRows();
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return true;
         }
 
     };
@@ -64,6 +77,11 @@ public interface RecordMapper extends Serializable {
             @Override
             public boolean preservesRowCount() {
                 return true;
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return mapper.preservesRecordStructure();
             }
 
         };
@@ -93,6 +111,16 @@ public interface RecordMapper extends Serializable {
                 } else {
                     return negative.call(record);
                 }
+            }
+
+            @Override
+            public boolean preservesRowCount() {
+                return positive.preservesRowCount() && negative.preservesRowCount();
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return positive.preservesRecordStructure() && negative.preservesRecordStructure();
             }
 
         };

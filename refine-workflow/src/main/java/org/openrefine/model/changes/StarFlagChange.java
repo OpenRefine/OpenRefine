@@ -50,6 +50,11 @@ public class StarFlagChange implements Change {
                 }
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+
         };
     }
 

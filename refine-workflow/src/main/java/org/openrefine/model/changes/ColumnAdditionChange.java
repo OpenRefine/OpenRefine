@@ -75,10 +75,10 @@ public abstract class ColumnAdditionChange extends RowMapChange {
 
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) {
-        return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex);
+        return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex, state.getColumnModel().getKeyColumnIndex());
     }
 
-    public static RowInRecordMapper wrapMapper(RowCellMapper mapper, int columnIndex) {
+    public static RowInRecordMapper wrapMapper(RowCellMapper mapper, int columnIndex, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 1L;
@@ -87,6 +87,11 @@ public abstract class ColumnAdditionChange extends RowMapChange {
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = mapper.apply(rowId, row);
                 return row.insertCell(columnIndex, cell);
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return columnIndex > keyColumnIndex;
             }
 
         };

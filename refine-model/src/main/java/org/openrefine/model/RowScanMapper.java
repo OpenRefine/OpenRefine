@@ -44,6 +44,13 @@ public interface RowScanMapper<S> extends Serializable {
     public Row map(S state, long rowId, Row row);
 
     /**
+     * Whether this mapper is guaranteed to preserve record structure after application.
+     */
+    default boolean preservesRecordStructure() {
+        return false;
+    }
+
+    /**
      * Restricts a {@link RowScanMapper} to only aggregate its state on filtered rows, and only apply the map function
      * to those filtered rows. A stateless mapper is applied to the other rows.
      * 
@@ -88,6 +95,11 @@ public interface RowScanMapper<S> extends Serializable {
                 } else {
                     return negativeMapper.call(rowId, row);
                 }
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return rowScanMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
             }
 
         };

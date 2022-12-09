@@ -116,6 +116,11 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
                 return row;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // cells remain blank or non-blank after this
+            }
+
         };
     }
 

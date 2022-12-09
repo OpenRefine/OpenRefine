@@ -180,6 +180,11 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
                 return result;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // blank cells are preserved
+            }
+
         };
     }
 
