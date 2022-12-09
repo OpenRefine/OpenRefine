@@ -51,10 +51,7 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import com.google.common.collect.ImmutableList;
 
@@ -82,13 +79,13 @@ public abstract class DatamodelRunnerTestBase {
 
     public abstract DatamodelRunner getDatamodelRunner() throws IOException;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws IOException {
         SUT = getDatamodelRunner();
         tempDir = TestUtils.createTempDirectory("datamodelrunnertest");
     }
 
-    @AfterTest
+    @AfterClass
     public void tearDown() {
         SUT = null;
         try {
