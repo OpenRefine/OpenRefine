@@ -108,6 +108,11 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
                 return row;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // blank cells remain blank, non-blank ones remain non-blank
+            }
+
         };
     }
 }

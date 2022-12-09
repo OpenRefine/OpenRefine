@@ -103,11 +103,14 @@ public class FillDownOperation extends EngineDependentOperation {
             if (Mode.RecordBased.equals(_engineConfig.getMode())) {
                 // simple map of records, since a filled down value cannot spread beyond a record boundary
                 return state.mapRecords(
-                        RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
+                        RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index, model.getKeyColumnIndex()),
+                                RecordMapper.IDENTITY),
                         model);
             } else {
                 // scan map, because we need to remember the last non-null cell
-                return state.mapRows(RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index), RowMapper.IDENTITY),
+                return state.mapRows(
+                        RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
+                                RowMapper.IDENTITY),
                         model);
             }
         }
@@ -119,7 +122,7 @@ public class FillDownOperation extends EngineDependentOperation {
 
     }
 
-    protected static RecordMapper recordMapper(int columnIndex) {
+    protected static RecordMapper recordMapper(int columnIndex, int keyColumnIndex) {
         return new RecordMapper() {
 
             private static final long serialVersionUID = -5754924505312738966L;
@@ -139,10 +142,20 @@ public class FillDownOperation extends EngineDependentOperation {
                 return result;
             }
 
+            @Override
+            public boolean preservesRowCount() {
+                return true;
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return columnIndex != keyColumnIndex;
+            }
+
         };
     }
 
-    protected static RowScanMapper<Cell> rowScanMapper(int columnIndex) {
+    protected static RowScanMapper<Cell> rowScanMapper(int columnIndex, int keyColumnIndex) {
         return new RowScanMapper<Cell>() {
 
             private static final long serialVersionUID = 2808768242505893380L;
@@ -173,6 +186,11 @@ public class FillDownOperation extends EngineDependentOperation {
                 } else {
                     return row;
                 }
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return keyColumnIndex != columnIndex;
             }
 
         };

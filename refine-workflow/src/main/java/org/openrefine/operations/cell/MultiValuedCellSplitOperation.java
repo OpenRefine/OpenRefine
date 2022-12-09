@@ -259,6 +259,11 @@ public class MultiValuedCellSplitOperation implements Operation {
                 return newRows;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return false;
+            }
+
         };
     }
 }

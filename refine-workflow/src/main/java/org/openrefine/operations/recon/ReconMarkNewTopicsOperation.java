@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -161,7 +162,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     Recon recon = reconConfig.createNewRecon(historyEntryId)
                             .withJudgment(Judgment.New)
                             .withJudgmentAction("mass");
@@ -175,6 +176,11 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
                     return row.withCell(columnIndex, newCell);
                 }
                 return row;
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // cells remain blank or non-blank after this
             }
 
         };
@@ -193,7 +199,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     Recon recon = cell.recon == null ? reconConfig.createNewRecon(historyEntryId) : cell.recon.dup(historyEntryId);
                     recon = recon
                             .withMatch(null)
@@ -206,6 +212,11 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
                     return row.withCell(columnIndex, newCell);
                 }
                 return row;
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // cells remain blank or non-blank after this operation
             }
 
         };

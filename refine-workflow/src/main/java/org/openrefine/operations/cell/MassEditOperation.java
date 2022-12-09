@@ -231,6 +231,13 @@ public class MassEditOperation extends EngineDependentOperation {
                 return row.withCell(columnIdx, newCell);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO we could be more precise: if blanks are preserved and cells are never blanked,
+                // then the record structure is also preserved.
+                return columnIdx != columnModel.getKeyColumnIndex();
+            }
+
         };
     }
 

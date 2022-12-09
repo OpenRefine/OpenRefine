@@ -81,6 +81,11 @@ public class RowFlagOperation extends ImmediateRowMapOperation {
                 return row.withFlagged(flagged);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+
         };
     }
 }

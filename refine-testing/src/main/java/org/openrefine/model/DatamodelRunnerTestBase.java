@@ -653,6 +653,11 @@ public abstract class DatamodelRunnerTestBase {
             return row.withCell(1, new Cell(row.getCellValue(1).toString() + "_concat", null));
         }
 
+        @Override
+        public boolean preservesRecordStructure() {
+            return true;
+        }
+
     };
 
     @Test

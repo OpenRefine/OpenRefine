@@ -15,6 +15,14 @@ public interface RowMapper extends Serializable {
     public Row call(long rowId, Row row);
 
     /**
+     * If this mapper is guaranteed to preserve record boundaries (for instance because it does not touch the key
+     * column).
+     */
+    default boolean preservesRecordStructure() {
+        return false;
+    }
+
+    /**
      * A row mapper which returns unchanged rows.
      */
     public static RowMapper IDENTITY = new RowMapper() {
@@ -24,6 +32,11 @@ public interface RowMapper extends Serializable {
         @Override
         public Row call(long rowId, Row row) {
             return row;
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return true;
         }
 
     };
@@ -54,6 +67,12 @@ public interface RowMapper extends Serializable {
                 }
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return positive.preservesRecordStructure() && negative.preservesRecordStructure();
+            }
+
         };
     }
+
 }

@@ -78,10 +78,10 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = columnIndex(state.getColumnModel(), _columnName);
-        return mapper(columnIndex);
+        return mapper(columnIndex, state.getColumnModel().getKeyColumnIndex());
     }
 
-    protected static RowInRecordMapper mapper(int columnIndex) {
+    protected static RowInRecordMapper mapper(int columnIndex, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -120614551816915787L;
@@ -89,6 +89,12 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 return row.removeCell(columnIndex);
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO adapt for arbitrary key column index
+                return columnIndex > keyColumnIndex;
             }
 
         };

@@ -135,6 +135,11 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
                 return row;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // cells remain blank or non-blank after this operation
+            }
+
         };
     }
 

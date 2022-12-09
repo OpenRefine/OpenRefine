@@ -194,6 +194,11 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                 return row.withCell(columnIndex, newCell);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return columnIndex != columnModel.getKeyColumnIndex();
+            }
+
         };
     }
 

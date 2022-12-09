@@ -152,6 +152,11 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
                 return row;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true; // cells remain blonk or non-blank after this
+            }
+
         };
     }
 }

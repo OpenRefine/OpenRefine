@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +34,7 @@ import org.openrefine.model.local.RecordPLL;
 import org.openrefine.model.local.Tuple2;
 import org.openrefine.model.local.partitioning.LongRangePartitioner;
 import org.openrefine.model.local.partitioning.Partitioner;
+import org.openrefine.model.local.util.QueryTree;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
@@ -53,6 +55,11 @@ public class LocalGridState implements GridState {
     protected final PairPLL<Long, IndexedRow> grid;
     protected final ColumnModel columnModel;
     protected final Map<String, OverlayModel> overlayModels;
+
+    // flag to indicate whether the grid was constructed from a PLL of rows or records.
+    // This helps determine which one should be cached, to make sure both rows and record
+    // access is fast while only caching a single PLL.
+    protected final boolean constructedFromRows;
 
     // initialized lazily
     protected PairPLL<Long, Record> records;
@@ -75,6 +82,7 @@ public class LocalGridState implements GridState {
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = null;
+        this.constructedFromRows = true;
     }
 
     /**
@@ -91,11 +99,38 @@ public class LocalGridState implements GridState {
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels) {
         this.runner = runner;
+        // TODO preserve partitioner please!!
         this.grid = grid.mapToPair(tuple -> new Tuple2<>(tuple.getKey(), new IndexedRow(tuple.getKey(), tuple.getValue())),
                 "IndexedRow to pair");
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = null;
+        this.constructedFromRows = true;
+    }
+
+    /**
+     * Constructs a grid state from a grid of records.
+     *
+     * @param records
+     *            the PLL of records for the current grid, which is assumed to have consistent indexing
+     * @param runner
+     * @param columnModel
+     * @param overlayModels
+     */
+    public LocalGridState(
+            PairPLL<Long, Record> records,
+            LocalDatamodelRunner runner,
+            ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels) {
+        this.runner = runner;
+        this.columnModel = columnModel;
+        this.overlayModels = overlayModels;
+        this.records = records;
+        this.grid = records.values()
+                .flatMap(record -> StreamSupport.stream(record.getIndexedRows().spliterator(), false), "flatten records to rows")
+                .zipWithIndex(); // TODO we actually already have the indices above, so we should be able to avoid
+                                 // reindexing
+        this.constructedFromRows = false;
     }
 
     protected PairPLL<Long, Record> records() {
@@ -469,11 +504,20 @@ public class LocalGridState implements GridState {
 
     @Override
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
-        PairPLL<Long, Row> grid = records()
-                .values()
-                .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper")
-                .zipWithIndex();
-        return new LocalGridState(runner, grid, newColumnModel, overlayModels);
+        if (mapper.preservesRecordStructure()) {
+            PairPLL<Long, Record> newRecords = records().values().map(
+                    record -> new Record(record.getStartRowId(), record.getOriginalStartRowId(), mapper.call(record)),
+                    "apply RecordMapper, preserving records")
+                    .mapToPair(record -> Tuple2.of(record.getStartRowId(), record), "key by record id");
+            // TODO preserve partitioning
+            return new LocalGridState(newRecords, runner, newColumnModel, overlayModels);
+        } else {
+            PairPLL<Long, Row> grid = records()
+                    .values()
+                    .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper, not preserving records")
+                    .zipWithIndex();
+            return new LocalGridState(runner, grid, newColumnModel, overlayModels);
+        }
     }
 
     @Override
@@ -674,6 +718,7 @@ public class LocalGridState implements GridState {
     @Override
     public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
+        // TODO return records if the recordJoiner preserves their structure
         if (!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
         }
@@ -706,12 +751,16 @@ public class LocalGridState implements GridState {
 
     @Override
     public boolean isCached() {
-        return grid.isCached();
+        return constructedFromRows ? grid.isCached() : records.isCached();
     }
 
     @Override
     public void uncache() {
-        grid.uncache();
+        if (constructedFromRows) {
+            grid.uncache();
+        } else {
+            records.uncache();
+        }
     }
 
     @Override
@@ -725,13 +774,29 @@ public class LocalGridState implements GridState {
     }
 
     protected boolean cache(Optional<ProgressReporter> progressReporter) {
-        grid.cache(progressReporter);
-        return grid.isCached();
+        if (constructedFromRows) {
+            // if the grid was constructed from rows and the records were derived from that,
+            // then cache the rows: the records will be directly derived from something cached, so they will be fast too
+            grid.cache(progressReporter);
+            return grid.isCached();
+        } else {
+            // otherwise, do the converse
+            records.cache(progressReporter);
+            return records.isCached();
+        }
     }
 
     @Override
     public String toString() {
         return String.format("[LocalGridState:\n%s\n]", grid.toString());
+    }
+
+    public QueryTree getRowsQueryTree() {
+        return grid.getQueryTree();
+    }
+
+    public QueryTree getRecordsQueryTree() {
+        return records().getQueryTree();
     }
 
 }

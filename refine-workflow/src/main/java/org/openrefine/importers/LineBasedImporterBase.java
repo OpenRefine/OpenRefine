@@ -281,6 +281,11 @@ public abstract class LineBasedImporterBase extends URIImporter {
                 return new Row(cells);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+
         };
     }
 

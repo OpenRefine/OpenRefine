@@ -78,6 +78,11 @@ public class RowStarOperation extends ImmediateRowMapOperation {
                 return row.withStarred(starred);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+
         };
 
     }

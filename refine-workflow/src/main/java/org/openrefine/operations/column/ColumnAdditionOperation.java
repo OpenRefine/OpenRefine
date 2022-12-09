@@ -138,7 +138,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     @Override
     protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval)
             throws DoesNotApplyException {
-        return negativeMapper(_columnInsertIndex);
+        return negativeMapper(_columnInsertIndex, state.getColumnModel().getKeyColumnIndex());
     }
 
     protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
@@ -155,10 +155,17 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
                 return row.insertCell(columnInsertIndex, changeDataProducer.call(record, rowId, row));
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO: if the key column index is not 0, it probably
+                // needs shifting in the new grid state if we are inserting the new column before it
+                return columnInsertIndex > columnModel.getKeyColumnIndex();
+            }
+
         };
     }
 
-    protected static RowInRecordMapper negativeMapper(int columnInsertIndex) {
+    protected static RowInRecordMapper negativeMapper(int columnInsertIndex, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -4885450470285627722L;
@@ -168,6 +175,12 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
                 return row.insertCell(columnInsertIndex, null);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO: if the key column index is not 0, it probably
+                // needs shifting in the new grid state if we are inserting the new column before it
+                return columnInsertIndex > keyColumnIndex;
+            }
         };
     }
 

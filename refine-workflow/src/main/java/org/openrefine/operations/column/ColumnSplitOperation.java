@@ -255,8 +255,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
             return new GridMap(
                     newColumnModel,
-                    mapper(_splitter, origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType),
-                    negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn),
+                    mapper(_splitter, origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType, origColumnModel.getKeyColumnIndex()),
+                    negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn, origColumnModel.getKeyColumnIndex()),
                     state.getOverlayModels());
         }
 
@@ -268,7 +268,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
     }
 
-    protected static RowInRecordMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn) {
+    protected static RowInRecordMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn, int keyColumnIdx) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 467330557649346821L;
@@ -282,11 +282,17 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                 return newRow;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO adapt for cases where the key column idx is not 0 and is adjusted after the operation
+                return columnIdx > keyColumnIdx || (columnIdx == keyColumnIdx && !removeOrigColumn);
+            }
+
         };
     }
 
     protected static RowInRecordMapper mapper(CellValueSplitter splitter, int columnIdx, int nbColumns, boolean removeOrigColumn,
-            boolean guessCellType) {
+            boolean guessCellType, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -5552242219011530334L;
@@ -317,6 +323,11 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                     newRow = newRow.removeCell(columnIdx);
                 }
                 return newRow;
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return keyColumnIndex < columnIdx || (keyColumnIndex == columnIdx && !removeOrigColumn);
             }
 
         };

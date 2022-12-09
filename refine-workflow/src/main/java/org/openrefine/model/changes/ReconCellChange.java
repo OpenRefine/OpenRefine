@@ -68,6 +68,11 @@ public class ReconCellChange implements Change {
                     return row;
                 }
             }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
         };
     }
 

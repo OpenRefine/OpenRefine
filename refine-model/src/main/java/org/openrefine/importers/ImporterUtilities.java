@@ -350,6 +350,11 @@ public class ImporterUtilities {
                 return row.insertCells(oldColumns, nullCells);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return false;
+            }
+
         };
     }
 

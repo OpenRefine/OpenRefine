@@ -102,6 +102,11 @@ public class FixedWidthImporter extends LineBasedImporterBase {
                 return new Row(cellValues);
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return false;
+            }
+
         };
     }
 

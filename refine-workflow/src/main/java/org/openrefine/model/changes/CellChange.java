@@ -38,10 +38,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.*;
 
 /**
  * Changes a single cell at a designated row and column indices.
@@ -76,10 +73,11 @@ public class CellChange implements Change {
                     String.format("Column '%s' does not exist", columnName));
         }
         // set judgment id on recon if changed
-        return projectState.mapRows(mapFunction(index, row, newCellValue), projectState.getColumnModel());
+        ColumnModel columnModel = projectState.getColumnModel();
+        return projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
     }
 
-    static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue) {
+    static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue, int keyColumnIndex) {
         return new RowMapper() {
 
             private static final long serialVersionUID = -5983834950609157341L;
@@ -93,6 +91,11 @@ public class CellChange implements Change {
                 } else {
                     return row;
                 }
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return keyColumnIndex != cellIndex;
             }
         };
     }

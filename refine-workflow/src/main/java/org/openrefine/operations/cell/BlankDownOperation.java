@@ -111,7 +111,9 @@ public class BlankDownOperation extends EngineDependentOperation {
 
             } else {
                 // We need to remember the cell from the previous row, so we use a scan map
-                return state.mapRows(RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index), RowMapper.IDENTITY),
+                return state.mapRows(
+                        RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
+                                RowMapper.IDENTITY),
                         model);
             }
         }
@@ -145,10 +147,15 @@ public class BlankDownOperation extends EngineDependentOperation {
                 return result;
             }
 
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+
         };
     }
 
-    protected static RowScanMapper<Cell> rowScanMapper(int columnIndex) {
+    protected static RowScanMapper<Cell> rowScanMapper(int columnIndex, int keyColumnIndex) {
         return new RowScanMapper<Cell>() {
 
             private static final long serialVersionUID = 2808768242505893380L;
@@ -184,6 +191,11 @@ public class BlankDownOperation extends EngineDependentOperation {
                 } else {
                     return row;
                 }
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return keyColumnIndex != columnIndex;
             }
 
         };

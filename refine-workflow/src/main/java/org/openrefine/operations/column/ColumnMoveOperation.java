@@ -92,10 +92,10 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int fromIndex = columnIndex(state.getColumnModel(), _columnName);
-        return mapper(fromIndex, _index);
+        return mapper(fromIndex, _index, state.getColumnModel().getKeyColumnIndex());
     }
 
-    protected static RowInRecordMapper mapper(int fromIndex, int toIndex) {
+    protected static RowInRecordMapper mapper(int fromIndex, int toIndex, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 1L;
@@ -116,6 +116,18 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
                     newCells.addAll(cells.subList(fromIndex + 1, cells.size()));
                 }
                 return new Row(newCells);
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                // TODO: we should adjust the key column index in the resulting grid state
+                // if it was affected by the move. To be added if we add support for moving
+                // the key column index.
+                if (fromIndex <= toIndex) {
+                    return keyColumnIndex < fromIndex || keyColumnIndex > toIndex;
+                } else {
+                    return keyColumnIndex < toIndex || keyColumnIndex > fromIndex;
+                }
             }
 
         };

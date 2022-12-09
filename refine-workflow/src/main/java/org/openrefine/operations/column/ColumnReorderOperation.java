@@ -102,10 +102,11 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
             origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
         }
 
-        return mapper(origIndex);
+        int keyColumnIndex = state.getColumnModel().getKeyColumnIndex();
+        return mapper(origIndex, origIndex.isEmpty() || origIndex.get(keyColumnIndex) == keyColumnIndex);
     }
 
-    protected static RowInRecordMapper mapper(List<Integer> origIndex) {
+    protected static RowInRecordMapper mapper(List<Integer> origIndex, boolean keyColumnPreserved) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 7653347685611673401L;
@@ -116,6 +117,11 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
                         .map(i -> row.getCell(i))
                         .collect(Collectors.toList());
                 return new Row(newCells);
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return keyColumnPreserved;
             }
 
         };
