@@ -144,7 +144,7 @@ describe(__filename, function () {
     cy.get('span[bind="modeSelectors"]').contains('rows').click();
     cy.get('.data-table tbody').find('tr').should('have.length', 10);
   });
-  it('ensures rows and records are different for 3-level json file', function () {
+  it.only('ensures rows and records are different for 3-level json file', function () {
     const projectName = Date.now();
     cy.loadAndVisitSampleJSONProject(projectName, jsonValue);
     cy.get('span[bind="modeSelectors"]').contains('records').click();
