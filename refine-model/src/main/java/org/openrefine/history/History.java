@@ -40,6 +40,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +55,8 @@ import org.openrefine.model.changes.ChangeDataStore;
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
  * tracked directly but through a history entry. The history entry stores only the metadata, while the change object
- * stores the actual data. Thus the history entries are much smaller and can be kept in memory, while the change objects
- * are only loaded into memory on demand.
+ * stores the actual data. Thus, the history entries are much smaller and can be kept in memory, while the change
+ * objects are only loaded into memory on demand.
  */
 public class History {
 
@@ -65,6 +66,12 @@ public class History {
     protected List<HistoryEntry> _entries;
     @JsonProperty("position")
     protected int _position;
+    /*
+     * The position of the last expensive operation before the current position, which is cached in memory (space
+     * permitting) or on disk
+     */
+    @JsonProperty("cachedPosition")
+    protected int _cachedPosition;
 
     @JsonIgnore
     protected List<GridState> _states;
@@ -92,8 +99,8 @@ public class History {
         _cachedOnDisk = new ArrayList<>();
         _states.add(initialGrid);
         _cachedOnDisk.add(true);
-        // initialGrid.cache();
         _position = 0;
+        _cachedPosition = 0;
         _dataStore = dataStore;
         _gridStore = gridStore;
     }
@@ -137,6 +144,7 @@ public class History {
         // ensure the grid state of the current position is computed (invariant)
         getGridState(position);
         _position = position;
+        updateCachedPosition();
     }
 
     /**
@@ -150,13 +158,6 @@ public class History {
         GridState gridState = _states.get(_position);
         if (gridState == null) {
             throw new IllegalStateException("The current grid state has not been computed yet");
-        }
-        if (false && !gridState.isCached()) {
-            logger.info("Caching grid state");
-            gridState.cache();
-            String grid = gridState.toString();
-            logger.info(grid);
-            logger.info("Done caching grid state");
         }
         return gridState;
     }
@@ -194,9 +195,14 @@ public class History {
             GridState previous = getGridState(position - 1);
             HistoryEntry entry = _entries.get(position - 1);
             ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
-            GridState newState = entry.getChange().apply(previous, context);
+            Change change = entry.getChange();
+            GridState newState = change.apply(previous, context);
             _states.set(position, newState);
             _cachedOnDisk.set(position, false);
+            /*
+             * // maybe a good optimization idea? but how do we keep track of which grid we have cached? if
+             * (!change.isImmediate() && smallEnoughToCacheInMemory(newState)) { newState.cache(); }
+             */
             return newState;
         }
     }
@@ -204,6 +210,11 @@ public class History {
     @JsonProperty("position")
     public int getPosition() {
         return _position;
+    }
+
+    @JsonProperty("cachedPosition")
+    public int getCachedPosition() {
+        return _cachedPosition;
     }
 
     @JsonProperty("entries")
@@ -255,39 +266,51 @@ public class History {
         _cachedOnDisk.add(false);
         _entries.add(entry);
         _position++;
+        updateCachedPosition();
     }
 
-    /**
-     * Makes sure the current grid state is cached on disk, to make project loading faster
-     *
-     * @throws IOException
-     */
-    public void cacheCurrentGridState() throws IOException {
-        if (_position > 0 && !_cachedOnDisk.get(_position)) {
-            try {
-                cacheIntermediateGrid(_entries.get(_position - 1).getId());
-            } catch (DoesNotApplyException e) {
-                // cannot happen, since we assume that the current grid state is always computed
-                throw new IllegalStateException("Current grid state is not computed");
-            }
-        }
-    }
-
-    protected void cacheIntermediateGrid(long historyEntryID) throws DoesNotApplyException, IOException {
-        int historyEntryIndex = entryIndex(historyEntryID);
+    protected void cacheIntermediateGridOnDisk(int position) throws DoesNotApplyException, IOException {
+        Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
-        GridState grid = getGridState(historyEntryIndex + 1);
-        long historyEntryId = _entries.get(historyEntryIndex).getId();
+        GridState grid = getGridState(position);
+        long historyEntryId = _entries.get(position - 1).getId();
         GridState cached = _gridStore.cacheGrid(historyEntryId, grid);
         synchronized (this) {
-            _states.set(historyEntryIndex + 1, cached);
-            _cachedOnDisk.set(historyEntryIndex + 1, true);
+            _states.set(position, cached);
+            _cachedOnDisk.set(position, true);
             // invalidate the following states until the next cached grid
-            for (int i = historyEntryIndex + 2; i < _states.size() && !_cachedOnDisk.get(i); i++) {
+            for (int i = position + 1; i < _states.size() && !_cachedOnDisk.get(i); i++) {
                 _states.set(i, null);
             }
             // make sure the current position is computed
             getGridState(_position);
+        }
+    }
+
+    protected void updateCachedPosition() {
+        int previousCachedPosition = _cachedPosition;
+        // Find the last expensive operation before the current one.
+        int newCachedPosition = _position;
+        while (newCachedPosition > 0 &&
+                _entries.get(newCachedPosition - 1).getChange().isImmediate() && // we found an expensive change
+                _states.get(newCachedPosition - 1) != null // or we found a grid that is not computed yet, meaning it
+                                                           // (or anything before it) is not currently needed
+        ) {
+            newCachedPosition--;
+        }
+        // Cache the new position
+        _cachedPosition = newCachedPosition;
+        GridState newCachedState = _states.get(newCachedPosition);
+        boolean cachedSuccessfully = newCachedState.cache();
+        if (!cachedSuccessfully) {
+            // TODO cache on disk
+        }
+
+        if (newCachedPosition != previousCachedPosition) {
+            _states.get(previousCachedPosition).uncache();
+            if (previousCachedPosition > 0 && _cachedOnDisk.get(previousCachedPosition)) {
+                // TODO uncache off disk
+            }
         }
     }
 
@@ -307,6 +330,7 @@ public class History {
             _position = entryIndex(lastDoneEntryID) + 1;
             getGridState(_position);
         }
+        updateCachedPosition();
     }
 
     synchronized public long getPrecedingEntryID(long entryID) {

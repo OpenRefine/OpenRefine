@@ -29,6 +29,9 @@ public class InMemoryPLL<T> extends PLL<T> {
         list = elements instanceof ArrayList ? (ArrayList<T>) elements : new ArrayList<T>(elements);
         partitions = createPartitions(list.size(), nbPartitions);
         cachedPartitionSizes = partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
+        cachedPartitions = partitions.stream()
+                .map(p -> list.subList(p.offset, p.offset + p.length))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -46,12 +49,19 @@ public class InMemoryPLL<T> extends PLL<T> {
 
     @Override
     public void cache(Optional<ProgressReporter> progressReporter) {
-        cachedPartitions = partitions.stream()
-                .map(p -> list.subList(p.offset, p.offset + p.length))
-                .collect(Collectors.toList());
         if (progressReporter.isPresent()) {
             progressReporter.get().reportProgress(100);
         }
+    }
+
+    @Override
+    public boolean isCached() {
+        return true;
+    }
+
+    @Override
+    public void uncache() {
+        ; // does not do anything
     }
 
     @Override

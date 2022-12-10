@@ -45,10 +45,19 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     protected long minSplitSize;
     protected long maxSplitSize;
 
+    // Caching cost estimation parameters
+
+    // Those costs were approximated experimentally, on some sample datasets:
+    // https://github.com/wetneb/refine-memory-benchmark
+    protected int reconciledCellCost = 146;
+    protected int unreconciledCellCost = 78;
+
     public LocalDatamodelRunner(RunnerConfiguration configuration) {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
+        reconciledCellCost = configuration.getIntParameter("reconciledCellCost", 146);
+        unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", 78);
 
         pllContext = new PLLContext(MoreExecutors.listeningDecorator(
                 Executors.newCachedThreadPool()),
@@ -161,6 +170,19 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     @Override
     public boolean supportsProgressReporting() {
         return true;
+    }
+
+    /**
+     * Returns the predicted memory cost of a reconciled cell, when caching grids
+     * 
+     * @return
+     */
+    public int getReconciledCellCost() {
+        return reconciledCellCost;
+    }
+
+    public int getUnreconciledCellCost() {
+        return unreconciledCellCost;
     }
 
 }

@@ -49,6 +49,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
@@ -64,6 +66,8 @@ public class HistoryTests {
     GridState intermediateState;
     GridState finalState;
     GridState newState;
+
+    ColumnModel columnModel;
 
     long firstChangeId = 1234L;
     long secondChangeId = 5678L;
@@ -87,6 +91,7 @@ public class HistoryTests {
         intermediateState = mock(GridState.class);
         newState = mock(GridState.class);
         finalState = mock(GridState.class);
+        columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
         firstChange = mock(Change.class);
         secondChange = mock(Change.class);
         newChange = mock(Change.class);
@@ -95,8 +100,20 @@ public class HistoryTests {
         newEntry = mock(HistoryEntry.class);
 
         when(firstChange.apply(eq(initialState), any())).thenReturn(intermediateState);
+        when(firstChange.isImmediate()).thenReturn(false);
         when(secondChange.apply(eq(intermediateState), any())).thenReturn(finalState);
+        when(secondChange.isImmediate()).thenReturn(true);
         when(newChange.apply(eq(intermediateState), any())).thenReturn(newState);
+        when(newChange.isImmediate()).thenReturn(true);
+
+        when(initialState.getColumnModel()).thenReturn(columnModel);
+        when(intermediateState.getColumnModel()).thenReturn(columnModel);
+        when(newState.getColumnModel()).thenReturn(columnModel);
+        when(finalState.getColumnModel()).thenReturn(columnModel);
+        when(initialState.rowCount()).thenReturn(8L);
+        when(intermediateState.rowCount()).thenReturn(10L);
+        when(finalState.rowCount()).thenReturn(12L);
+        when(newState.rowCount()).thenReturn(10000000L);
 
         when(firstEntry.getId()).thenReturn(firstChangeId);
         when(secondEntry.getId()).thenReturn(secondChangeId);
@@ -117,18 +134,23 @@ public class HistoryTests {
         History history = new History(initialState, dataStore, gridStore, entries, 1);
 
         Assert.assertEquals(history.getPosition(), 1);
+        Assert.assertEquals(history.getCachedPosition(), 1); // the first operation is expensive, so this state is
+                                                             // cached
         Assert.assertEquals(history.getCurrentGridState(), intermediateState);
+        verify(history.getCurrentGridState(), times(1)).cache();
         Assert.assertEquals(history.getEntries(), entries);
 
         history.undoRedo(secondChangeId);
 
         Assert.assertEquals(history.getPosition(), 2);
+        Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
         Assert.assertEquals(history.getCurrentGridState(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
 
         history.undoRedo(0);
 
         Assert.assertEquals(history.getPosition(), 0);
+        Assert.assertEquals(history.getCachedPosition(), 0);
         Assert.assertEquals(history.getCurrentGridState(), initialState);
         Assert.assertEquals(history.getEntries(), entries);
 
@@ -186,7 +208,7 @@ public class HistoryTests {
         // make sure all changes have been derived
         Assert.assertEquals(history._states.get(3), fourthState);
 
-        history.cacheIntermediateGrid(firstChangeId);
+        history.cacheIntermediateGridOnDisk(1);
 
         // the state was cached
         Assert.assertEquals(history._states.get(1), cachedSecondState);

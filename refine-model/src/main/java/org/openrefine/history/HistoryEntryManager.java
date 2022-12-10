@@ -78,10 +78,6 @@ public class HistoryEntryManager {
         metadata.position = history.getPosition();
         // Save the metadata
         ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
-        // Cache the current grid state to make loading faster
-        if (history.getPosition() > 0) {
-            history.cacheCurrentGridState();
-        }
     }
 
     public History load(DatamodelRunner runner, File dir) throws IOException, DoesNotApplyException {

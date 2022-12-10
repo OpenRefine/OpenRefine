@@ -1,6 +1,9 @@
 
 package org.openrefine.model;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
@@ -11,6 +14,8 @@ import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import org.openrefine.model.changes.Change;
 
 /**
  * Tests for this datamodel implementation are taken from the standard test suite, in {@link DatamodelRunnerTestBase}.
@@ -78,6 +83,14 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
         // changing the column model does not either
         LocalGridState fourth = (LocalGridState) third.withColumnModel(initial.getColumnModel());
         Assert.assertFalse(fourth.constructedFromRows);
+    }
+
+    @Test
+    public void testMemoryCostPrediction() throws Change.DoesNotApplyException {
+        LocalGridState smallGrid = (LocalGridState) createGrid(new String[] { "foo" }, new Serializable[][] {});
+
+        // caching a small grid should always be possible
+        assertTrue(smallGrid.smallEnoughToCacheInMemory());
     }
 
 }
