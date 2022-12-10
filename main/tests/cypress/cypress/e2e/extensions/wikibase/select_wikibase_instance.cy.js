@@ -9,7 +9,7 @@ describe(__filename, function () {
 
     let savedValue;
 
-    beforeEach(() => {
+    before(() => {
         getPreference('wikibase.manifests');
     });
 
