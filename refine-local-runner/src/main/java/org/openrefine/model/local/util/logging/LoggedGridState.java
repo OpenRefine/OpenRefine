@@ -277,27 +277,30 @@ public class LoggedGridState implements GridState {
 
     @Override
     public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
-        return wrap(exec("mapRows", () -> grid.mapRows(filter, rowMapper)));
+        return wrap(exec("mapRows (to ChangeData)", () -> grid.mapRows(filter, rowMapper)));
     }
 
     @Override
     public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
-        return wrap(exec("mapRecords", () -> grid.mapRecords(filter, recordMapper)));
+        return wrap(exec("mapRecords (to ChangeData)", () -> grid.mapRecords(filter, recordMapper)));
     }
 
     @Override
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel) {
-        return wrap(exec("join", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
+        return wrap(
+                exec("join (with row joiner)", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
     }
 
     @Override
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel) {
-        return wrap(exec("join", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
+        return wrap(exec("join (with row flat joiner)",
+                () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
     }
 
     @Override
     public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel) {
-        return wrap(exec("join", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, recordJoiner, newColumnModel)));
+        return wrap(exec("join with record joiner",
+                () -> grid.join(((LoggedChangeData<T>) changeData).changeData, recordJoiner, newColumnModel)));
     }
 
     @Override
