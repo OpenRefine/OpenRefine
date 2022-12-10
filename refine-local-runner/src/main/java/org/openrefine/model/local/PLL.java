@@ -23,6 +23,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.GridState;
 import org.openrefine.model.local.util.QueryTree;
 import org.openrefine.process.ProgressReporter;

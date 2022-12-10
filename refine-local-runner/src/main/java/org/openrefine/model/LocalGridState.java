@@ -790,6 +790,9 @@ public class LocalGridState implements GridState {
     }
 
     protected boolean cache(Optional<ProgressReporter> progressReporter) {
+        if (!smallEnoughToCacheInMemory()) {
+            return false;
+        }
         if (constructedFromRows) {
             // if the grid was constructed from rows and the records were derived from that,
             // then cache the rows: the records will be directly derived from something cached, so they will be fast too
@@ -800,6 +803,23 @@ public class LocalGridState implements GridState {
             records.cache(progressReporter);
             return records.isCached();
         }
+    }
+
+    /**
+     * Heuristic which predicts how much RAM a grid will occupy in memory after caching.
+     *
+     * @return whether there is enough free memory to cache this one.
+     */
+    protected boolean smallEnoughToCacheInMemory() {
+        long rows = rowCount();
+        List<ColumnMetadata> columns = columnModel.getColumns();
+        long unreconciledColumns = columns.stream().filter(c -> c.getReconConfig() == null).count();
+        long reconciledColumns = columns.size() - unreconciledColumns;
+        long predictedMemorySize = (runner.getUnreconciledCellCost() * unreconciledColumns +
+                runner.getReconciledCellCost() * reconciledColumns) * rows;
+        Runtime runtime = Runtime.getRuntime();
+        long freeMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
+        return freeMemory > predictedMemorySize;
     }
 
     @Override
