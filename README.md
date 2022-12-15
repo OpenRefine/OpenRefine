@@ -20,10 +20,10 @@ Community forum: **https://forum.openrefine.org**
 ## Snapshot releases
 
 Latest development version, packaged for:
-* [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.7-SNAPSHOT&c=linux&p=tar.gz)
-* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.7-SNAPSHOT&c=mac&p=dmg)
-* [Windows without embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.7-SNAPSHOT&c=win&p=zip)
-* [Windows with embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.7-SNAPSHOT&c=win-with-java&p=zip)
+* [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=linux&p=tar.gz)
+* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=mac&p=dmg)
+* [Windows without embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=win&p=zip)
+* [Windows with embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=win-with-java&p=zip)
 
 ## Run from source
 

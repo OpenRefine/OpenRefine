@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -360,13 +360,14 @@
                 </exec>
 
                 <!-- Create DMG (Mac OS X) -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
-                    <arg value="create"/>
-                    <arg value="-noanyowners"/>
-                    <arg value="-imagekey"/>
-                    <arg value="zlib-level=9"/>
-                    <arg value="-srcfolder"/>
-                    <arg value="${mac.build.directory}"/>
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3">
+                    <arg value="-m"/>
+                    <arg value="dmgbuild"/>
+                    <arg value="-s"/>
+                    <arg value="../dmg_settings.py"/>
+                    <arg value="-D"/>
+                    <arg value="app=${mac.build.directory}/OpenRefine.app"/>
+                    <arg value="OpenRefine"/>
                     <arg value="${mac.dmg.path}"/>
                 </exec>
 

@@ -24,6 +24,6 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-cypress": "^2.12.1",
         "jsdoc": "^4.0.0",
-        "prettier": "2.8.0"
+        "prettier": "2.8.1"
     }
 }

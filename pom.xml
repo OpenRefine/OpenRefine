@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>openrefine</artifactId>
   <packaging>pom</packaging>
-  <version>3.7-SNAPSHOT</version>
+  <version>3.8-SNAPSHOT</version>
 
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -75,7 +75,7 @@
     <jackson.version>2.13.4</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
-    <slf4j.version>2.0.5</slf4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
     <log4j.version>2.19.0</log4j.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
@@ -96,7 +96,7 @@
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
-    <httpclient5.version>5.2</httpclient5.version>
+    <httpclient5.version>5.2.1</httpclient5.version>
     <httpcore.version>4.4.16</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
