@@ -30,10 +30,6 @@ package org.openrefine.model;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -43,8 +39,8 @@ public class ColumnModelTests {
 
     ColumnModel SUT = new ColumnModel(
             Arrays.asList(
-                    new ColumnMetadata("a", "b", null, ReconStats.create(1L, 2L, 3L)),
-                    new ColumnMetadata("c", "d", null, null)));
+                    new ColumnMetadata("a", "b", null),
+                    new ColumnMetadata("c", "d", null)));
 
     @Test
     public void serializeColumnModel() throws ModelException {
@@ -77,12 +73,12 @@ public class ColumnModelTests {
     public void testMerge() {
         ColumnModel columnModelB = new ColumnModel(
                 Arrays.asList(
-                        new ColumnMetadata("e", "f", null, ReconStats.create(4L, 5L, 6L)),
-                        new ColumnMetadata("g", "h", null, null)));
+                        new ColumnMetadata("e", "f", null),
+                        new ColumnMetadata("g", "h", null)));
         ColumnModel expected = new ColumnModel(
                 Arrays.asList(
-                        new ColumnMetadata("a", "b", null, ReconStats.create(5L, 7L, 9L)),
-                        new ColumnMetadata("c", "d", null, null)));
+                        new ColumnMetadata("a", "b", null),
+                        new ColumnMetadata("c", "d", null)));
 
         Assert.assertEquals(SUT.merge(columnModelB), expected);
     }
@@ -90,7 +86,7 @@ public class ColumnModelTests {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMergeIncompatibleNumberOfColumns() {
         ColumnModel columnModel = new ColumnModel(
-                Arrays.asList(new ColumnMetadata("a", "b", null, ReconStats.create(1L, 2L, 3L))));
+                Arrays.asList(new ColumnMetadata("a", "b", null)));
         SUT.merge(columnModel);
     }
 }

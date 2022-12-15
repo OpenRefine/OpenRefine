@@ -14,9 +14,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,7 +37,6 @@ public class ColumnChangeByChangeData implements Change {
     private final String _columnName;
     private final Engine.Mode _engineMode;
     private final ReconConfig _reconConfig;
-    private ReconStats _reconStats;
 
     @JsonCreator
     public ColumnChangeByChangeData(
@@ -47,14 +44,12 @@ public class ColumnChangeByChangeData implements Change {
             @JsonProperty("columnIndex") int columnIndex,
             @JsonProperty("columnName") String columnName,
             @JsonProperty("mode") Engine.Mode mode,
-            @JsonProperty("reconConfig") ReconConfig reconConfig,
-            @JsonProperty("reconStats") ReconStats reconStats) {
+            @JsonProperty("reconConfig") ReconConfig reconConfig) {
         _changeDataId = changeDataId;
         _columnIndex = columnIndex;
         _columnName = columnName;
         _engineMode = mode;
         _reconConfig = reconConfig;
-        _reconStats = reconStats;
     }
 
     @JsonProperty("changeDataId")
@@ -82,18 +77,12 @@ public class ColumnChangeByChangeData implements Change {
         return _reconConfig;
     }
 
-    @JsonProperty("reconStats")
-    public ReconStats getReconStats() {
-        return _reconStats;
-    }
-
     @Override
     public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         ColumnModel columnModel = projectState.getColumnModel();
         if (_columnName != null) {
             ColumnMetadata column = new ColumnMetadata(_columnName)
-                    .withReconConfig(_reconConfig)
-                    .withReconStats(_reconStats);
+                    .withReconConfig(_reconConfig);
             try {
                 columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
             } catch (ModelException e) {
@@ -103,8 +92,7 @@ public class ColumnChangeByChangeData implements Change {
             }
         } else if (_reconConfig != null) {
             columnModel = columnModel
-                    .withReconConfig(_columnIndex, _reconConfig)
-                    .withReconStats(_columnIndex, _reconStats);
+                    .withReconConfig(_columnIndex, _reconConfig);
         }
 
         Joiner joiner = new Joiner(_columnIndex, _columnName != null);
@@ -126,11 +114,6 @@ public class ColumnChangeByChangeData implements Change {
                 throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
             }
             joined = projectState.join(changeData, joiner, columnModel);
-        }
-
-        if (_reconConfig != null && _reconStats == null) {
-            joined = LazyReconStats.updateReconStats(joined, _columnIndex);
-            _reconStats = joined.getColumnModel().getColumns().get(_columnIndex).getReconStats();
         }
         return joined;
     }

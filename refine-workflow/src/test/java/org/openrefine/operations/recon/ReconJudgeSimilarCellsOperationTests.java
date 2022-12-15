@@ -48,7 +48,6 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
@@ -139,12 +138,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                                 .withJudgment(Judgment.New)) },
                         { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 2, 0);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+        ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
+        expected = expected.withColumnModel(columnModel);
 
         assertGridEquals(applied, expected);
     }
@@ -176,12 +171,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                                 .withJudgmentHistoryEntry(2891L)) },
                         { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 0, 2);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+        ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
+        expected = expected.withColumnModel(columnModel);
 
         assertGridEquals(applied, expected);
     }

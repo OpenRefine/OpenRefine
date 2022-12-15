@@ -19,11 +19,9 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
-import org.openrefine.operations.utils.ReconStatsAggregator;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -81,23 +79,18 @@ public class DataExtensionChange extends EngineDependentChange {
         }
         ColumnModel newColumnModel = projectState.getColumnModel();
         for (int i = 0; i != _columnNames.size(); i++) {
-            newColumnModel = newColumnModel.insertUnduplicatedColumn(_columnInsertIndex + i, new ColumnMetadata(_columnNames.get(i)));
+            newColumnModel = newColumnModel.insertUnduplicatedColumn(
+                    _columnInsertIndex + i,
+                    new ColumnMetadata(_columnNames.get(i), _columnNames.get(i), new DataExtensionReconConfig(
+                            _endpoint,
+                            _identifierSpace,
+                            _schemaSpace,
+                            _columnTypes.get(i))));
         }
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, _columnNames.size());
         GridState state = projectState.join(changeData, joiner, newColumnModel);
 
-        // Compute recon stats
-        List<Integer> columnIndices = IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size())
-                .boxed().collect(Collectors.toList());
-        List<ReconConfig> reconConfigs = IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size())
-                .mapToObj(i -> new DataExtensionReconConfig(
-                        _endpoint,
-                        _identifierSpace,
-                        _schemaSpace,
-                        _columnTypes.get(i - _columnInsertIndex)))
-                .collect(Collectors.toList());
-
-        return ReconStatsAggregator.updateReconStats(state, columnIndices, reconConfigs);
+        return state;
     }
 
     @Override

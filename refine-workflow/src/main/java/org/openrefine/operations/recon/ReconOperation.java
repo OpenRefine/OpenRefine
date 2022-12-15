@@ -213,8 +213,7 @@ public class ReconOperation extends EngineDependentOperation {
                             columnIndex,
                             null,
                             Mode.RowBased,
-                            _reconConfig,
-                            null);
+                            _reconConfig);
 
                     HistoryEntry historyEntry = new HistoryEntry(
                             _historyEntryID,

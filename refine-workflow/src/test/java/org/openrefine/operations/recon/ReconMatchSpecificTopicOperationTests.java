@@ -43,7 +43,6 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
@@ -132,12 +131,6 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                                 .withJudgmentAction("mass")
                                 .withJudgment(Recon.Judgment.Matched)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 0, 3);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
 
         assertGridEquals(applied, expected);
     }

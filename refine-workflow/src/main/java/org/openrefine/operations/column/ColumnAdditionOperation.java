@@ -194,7 +194,6 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
                 columnIndex + 1,
                 _newColumnName,
                 engineMode,
-                null,
                 null);
     }
 }

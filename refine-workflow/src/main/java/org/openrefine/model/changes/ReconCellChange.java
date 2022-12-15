@@ -8,7 +8,6 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.ReconStats;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,20 +21,15 @@ public class ReconCellChange implements Change {
     final protected String columnName;
     @JsonProperty("newRecon")
     final protected Recon newRecon;
-    @JsonProperty("newReconStats")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    final protected ReconStats newReconStats;
 
     @JsonCreator
     public ReconCellChange(
             @JsonProperty("rowId") long rowId,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("newRecon") Recon newRecon,
-            @JsonProperty("newReconStats") ReconStats newReconStats) {
+            @JsonProperty("newRecon") Recon newRecon) {
         this.row = rowId;
         this.columnName = columnName;
         this.newRecon = newRecon;
-        this.newReconStats = newReconStats;
     }
 
     @Override
@@ -48,9 +42,6 @@ public class ReconCellChange implements Change {
         ColumnModel newColumnModel = columnModel;
         // set judgment id on recon if changed
         Recon finalRecon = newRecon == null ? null : newRecon.withJudgmentHistoryEntry(context.getHistoryEntryId());
-        if (newReconStats != null) {
-            newColumnModel = columnModel.withReconStats(columnIndex, newReconStats);
-        }
         return state.mapRows(mapFunction(columnIndex, row, finalRecon), newColumnModel);
     }
 

@@ -47,7 +47,7 @@ public class ReorderSliceTests {
         ColumnModel input = columns("col0", "col1", "col2", "col3", "col4", "col5");
         ColumnModel expected = columns(
                 new ColumnMetadata("col3"),
-                new ColumnMetadata("col2", "renamed", null, null),
+                new ColumnMetadata("col2", "renamed", null),
                 new ColumnMetadata("col5"),
                 new ColumnMetadata("col0"));
         Assert.assertEquals(SUT.applyToColumns(input), expected);

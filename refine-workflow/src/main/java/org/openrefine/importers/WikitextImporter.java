@@ -41,18 +41,21 @@ import java.util.stream.IntStream;
 
 import com.google.common.base.CharMatcher;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.columns.ColumnStats;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.EncodingGuesser;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.model.recon.StandardReconConfig.ColumnDetail;
-import org.openrefine.operations.utils.ReconStatsAggregator;
 import org.openrefine.util.JSONUtilities;
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.WikitextEncodingValidator;
@@ -747,14 +750,16 @@ public class WikitextImporter extends ReaderImporter {
 
         GridState grid = tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
 
-        int nbColumns = grid.getColumnModel().getColumnNames().size();
-        List<Integer> allColumnIndices = IntStream.range(0, nbColumns)
-                .boxed().collect(Collectors.toList());
-
-        // Add reconciliation statistics
-        grid = ReconStatsAggregator.updateReconStats(grid, allColumnIndices, Collections.nCopies(nbColumns, cfg));
-
-        return grid;
+        // Add reconciliation configs for columns with at least one reconciled cell
+        ColumnModel columnModel = grid.getColumnModel();
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        List<ColumnStats> columnStats = engine.getColumnStats();
+        for (int i = 0; i != columnModel.getColumns().size(); i++) {
+            if (columnStats.get(i).getReconciled() > 0) {
+                columnModel = columnModel.withReconConfig(i, cfg);
+            }
+        }
+        return grid.withColumnModel(columnModel);
     }
 
     private StandardReconConfig getReconConfig(String url) {

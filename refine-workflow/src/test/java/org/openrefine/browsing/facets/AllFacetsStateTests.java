@@ -4,6 +4,7 @@ package org.openrefine.browsing.facets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openrefine.browsing.columns.ColumnStats;
 import org.openrefine.browsing.util.StringValuesFacetState;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -22,7 +23,7 @@ public class AllFacetsStateTests {
         counts.put("foo", 1L);
         counts.put("bar", 2L);
         facets = ImmutableList.of(new StringValuesFacetState(counts, 1, 0));
-        SUT = new AllFacetsState(facets, 4L, 3L);
+        SUT = new AllFacetsState(facets, ImmutableList.of(ColumnStats.ZERO), 4L, 3L);
     }
 
     @Test
@@ -42,6 +43,6 @@ public class AllFacetsStateTests {
     @Test
     public void testEquals() {
         Assert.assertNotEquals(SUT, 43L);
-        Assert.assertEquals(SUT, new AllFacetsState(facets, 4L, 3L));
+        Assert.assertEquals(SUT, new AllFacetsState(facets, ImmutableList.of(ColumnStats.ZERO), 4L, 3L));
     }
 }

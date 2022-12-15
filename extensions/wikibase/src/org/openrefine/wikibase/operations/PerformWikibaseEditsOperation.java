@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
-import org.openrefine.RefineModel;
 import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
@@ -60,7 +59,6 @@ import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.model.recon.ReconStatsImpl;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
@@ -167,8 +165,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             NewReconRowJoiner joiner = new NewReconRowJoiner();
             GridState joined = projectState.join(changeData, joiner, projectState.getColumnModel());
-            GridState updated = ReconStatsImpl.updateReconStats(joined);
-            return updated;
+            return joined;
         }
 
         @Override
