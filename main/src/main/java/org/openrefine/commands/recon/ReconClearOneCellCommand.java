@@ -50,8 +50,6 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconCellChange;
-import org.openrefine.model.recon.LazyReconStats;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconClearOneCellCommand extends Command {
@@ -98,13 +96,11 @@ public class ReconClearOneCellCommand extends Command {
 
             Cell newCell = new Cell(cell.value, null);
 
-            ReconStats stats = new LazyReconStats(state, column.getName());
-
             String description = "Clear recon data for single cell on row " + (rowIndex + 1) +
                     ", column " + column.getName() +
                     ", containing \"" + cell.value + "\"";
 
-            Change change = new ReconCellChange(rowIndex, column.getName(), null, stats);
+            Change change = new ReconCellChange(rowIndex, column.getName(), null);
 
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                     project.getHistory(),

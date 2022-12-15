@@ -45,7 +45,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -115,11 +114,6 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
         }
         long historyEntryId = context.getHistoryEntryId();
         return rowMapper(columnIndex, match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
-    }
-
-    @Override
-    protected GridState postTransform(GridState newState, ChangeContext context) {
-        return LazyReconStats.updateReconStats(newState, columnName);
     }
 
     protected static RowInRecordMapper rowMapper(int columnIndex, ReconCandidate match, long historyEntryId, String identifierSpace,

@@ -48,7 +48,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 
 public class ColumnModel implements Serializable {
 
@@ -127,21 +126,6 @@ public class ColumnModel implements Serializable {
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index + 1, getColumns().size()));
         return new ColumnModel(newColumns);
-    }
-
-    /**
-     * Replaces the recon statistics at the given column index
-     * 
-     * @param index
-     * @param stats
-     * @return
-     */
-    public ColumnModel withReconStats(int index, ReconStats stats) {
-        try {
-            return replaceColumn(index, _columns.get(index).withReconStats(stats));
-        } catch (ModelException e) {
-            return null; // unreachable
-        }
     }
 
     /**
@@ -267,7 +251,7 @@ public class ColumnModel implements Serializable {
 
         List<ColumnMetadata> newColumns = new ArrayList<>(_columns.size());
         for (int i = 0; i != _columns.size(); i++) {
-            newColumns.add(_columns.get(i).merge(otherColumns.get(i)));
+            newColumns.add(_columns.get(i));
         }
         return new ColumnModel(newColumns);
     }

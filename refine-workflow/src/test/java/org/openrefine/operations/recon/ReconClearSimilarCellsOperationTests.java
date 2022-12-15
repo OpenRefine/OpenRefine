@@ -38,15 +38,12 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -93,12 +90,6 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
                         { "a", new Cell("b", null) },
                         { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(2, 0, 0);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
 
         assertGridEquals(applied, expected);
     }

@@ -24,6 +24,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import org.openrefine.browsing.columns.ColumnStats;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
@@ -509,7 +510,8 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
 
-        AllFacetsState states = simpleGrid.aggregateRows(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates), 0L, 0L));
+        AllFacetsState states = simpleGrid.aggregateRows(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates),
+                ImmutableList.of(ColumnStats.ZERO, ColumnStats.ZERO), 0L, 0L));
 
         List<FacetResult> facetResults = new ArrayList<>();
         for (int i = 0; i != states.size(); i++) {
@@ -547,7 +549,8 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
 
-        AllFacetsState states = simpleGrid.aggregateRecords(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates), 0L, 0L));
+        AllFacetsState states = simpleGrid.aggregateRecords(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates),
+                ImmutableList.of(ColumnStats.ZERO, ColumnStats.ZERO), 0L, 0L));
 
         List<FacetResult> facetResults = new ArrayList<>();
         for (int i = 0; i != states.size(); i++) {

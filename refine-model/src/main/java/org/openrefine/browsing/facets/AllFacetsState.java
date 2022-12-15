@@ -3,8 +3,11 @@ package org.openrefine.browsing.facets;
 
 import com.google.common.collect.ImmutableList;
 
+import org.openrefine.browsing.columns.ColumnStats;
+
 /**
  * State of aggregation of all facets, used to compute the states of all facets in a single aggregation over the grid.
+ * It also computes column-level datatype statistics ({@link ColumnStats}) for each column.
  * 
  * @author Antonin Delpeuch
  *
@@ -13,6 +16,7 @@ public class AllFacetsState implements FacetState {
 
     private static final long serialVersionUID = -3089405630666554348L;
     private final ImmutableList<FacetState> _states;
+    private final ImmutableList<ColumnStats> _columnStats;
     private final long _aggregatedCount;
     private final long _filteredCount;
 
@@ -25,11 +29,13 @@ public class AllFacetsState implements FacetState {
      */
     public AllFacetsState(
             ImmutableList<FacetState> states,
+            ImmutableList<ColumnStats> columnStats,
             long aggregatedCount,
             long filteredCount) {
         _states = states;
         _aggregatedCount = aggregatedCount;
         _filteredCount = filteredCount;
+        _columnStats = columnStats;
     }
 
     /**
@@ -55,6 +61,13 @@ public class AllFacetsState implements FacetState {
      */
     public ImmutableList<FacetState> getStates() {
         return _states;
+    }
+
+    /**
+     * List of column statistics for all columns.
+     */
+    public ImmutableList<ColumnStats> getColumnStats() {
+        return _columnStats;
     }
 
     /**

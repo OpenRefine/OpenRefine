@@ -326,7 +326,7 @@ public class ImporterUtilities {
                 position = mergedColumns.size();
                 mergedColumns.add(columns2.get(i));
             } else {
-                mergedColumns.set(position, mergedColumns.get(position).merge(columns2.get(i)));
+                mergedColumns.set(position, mergedColumns.get(position));
             }
             positions.put(i, position);
         }

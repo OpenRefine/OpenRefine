@@ -48,11 +48,9 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconCellChange;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconJudgeOneCellCommand extends Command {
@@ -160,9 +158,7 @@ public class ReconJudgeOneCellCommand extends Command {
                     cell.value,
                     newRecon);
 
-            ReconStats stats = new LazyReconStats(state, column.getName());
-
-            Change change = new ReconCellChange(rowIndex, column.getName(), newRecon, stats);
+            Change change = new ReconCellChange(rowIndex, column.getName(), newRecon);
 
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                     project.getHistory(),

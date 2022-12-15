@@ -21,7 +21,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -45,11 +44,6 @@ public class ReconCellChangeTest extends RefineTest {
             "    \"schemaSpace\" : \"http://my.service.com/schema\",\n" +
             "    \"service\" : \"http://my.service.com/api\"\n" +
             "  },\n" +
-            "  \"newReconStats\" : {\n" +
-            "    \"matchedTopics\" : 1,\n" +
-            "    \"newTopics\" : 2,\n" +
-            "    \"nonBlanks\" : 3\n" +
-            "  },\n" +
             "  \"rowId\" : 0,\n" +
             "  \"type\" : \"org.openrefine.model.changes.ReconCellChange\"\n" +
             "}";
@@ -67,8 +61,7 @@ public class ReconCellChangeTest extends RefineTest {
     @Test
     public void testReconCellChange() throws DoesNotApplyException {
         Recon newRecon = testRecon("e", "f", Judgment.Matched);
-        ReconStats newStats = ReconStats.create(3L, 2L, 1L);
-        Change change = new ReconCellChange(0L, "bar", newRecon, newStats);
+        Change change = new ReconCellChange(0L, "bar", newRecon);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(5432L);
@@ -83,8 +76,7 @@ public class ReconCellChangeTest extends RefineTest {
     @Test
     public void testSerialize() {
         Recon newRecon = testRecon("e", "f", Judgment.Matched);
-        ReconStats newStats = ReconStats.create(3L, 2L, 1L);
-        Change change = new ReconCellChange(0L, "foo", newRecon, newStats);
+        Change change = new ReconCellChange(0L, "foo", newRecon);
         TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
     }
 

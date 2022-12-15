@@ -32,13 +32,9 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -79,7 +75,7 @@ public class ColumnMetadataTests {
     }
 
     ReconConfig reconConfig = new MyReconConfig();
-    ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L));
+    ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig);
 
     @Test
     public void serializeColumn() throws Exception {
@@ -90,29 +86,23 @@ public class ColumnMetadataTests {
                 + "\"reconConfig\":{"
                 + "   \"mode\":\"my-recon\","
                 + "    \"batchSize\":40"
-                + "    },"
-                + "\"reconStats\":{"
-                + "    \"nonBlanks\":299,"
-                + "    \"newTopics\":0,"
-                + "    \"matchedTopics\":222"
-                + "}}";
+                + "    }}";
         TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testMerge() {
-        ColumnMetadata column2 = new ColumnMetadata("name2", "organization_name2", reconConfig, ReconStats.create(3L, 4L, 5L));
-        ColumnMetadata expected = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(4L, 6L, 8L));
+        ColumnMetadata column2 = new ColumnMetadata("name2", "organization_name2", reconConfig);
+        ColumnMetadata expected = new ColumnMetadata("name", "organization_name", reconConfig);
 
-        Assert.assertEquals(SUT.merge(column2), expected);
+        Assert.assertEquals(SUT, expected);
     }
 
     @Test
     public void testEquals() {
         Assert.assertNotEquals(SUT, 4L);
-        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", null, ReconStats.create(1L, 2L, 3L)));
-        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig, null));
-        Assert.assertNotEquals(SUT, new ColumnMetadata("name2", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L)));
-        Assert.assertEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L)));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", null));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name2", "organization_name", reconConfig));
+        Assert.assertEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig));
     }
 }

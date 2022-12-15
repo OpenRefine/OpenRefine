@@ -44,7 +44,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -91,11 +90,6 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
             throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
         }
         return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
-    }
-
-    @Override
-    protected GridState postTransform(GridState newState, ChangeContext context) {
-        return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
     protected static RowInRecordMapper rowMapper(int columnIndex, boolean clearData, long historyEntryId) {

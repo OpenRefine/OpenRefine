@@ -399,11 +399,6 @@ public class ExtendDataOperationTests extends RefineTest {
             Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
             Assert.assertNull(rows.get(2).getRow().getCell(1), "Expected a null country code.");
             Assert.assertTrue("US".equals(rows.get(3).getRow().getCellValue(1)), "Bad country code for United States.");
-
-            // Make sure we did not create any recon stats for that column (no reconciled value)
-            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-            Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
-            Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconConfig() == null);
         }
     }
 
@@ -457,10 +452,11 @@ public class ExtendDataOperationTests extends RefineTest {
             Assert.assertTrue(Math.round((double) rows.get(3).getRow().getCellValue(1)) == 1,
                     "Incorrect number of currencies returned for United States.");
 
-            // Make sure we did not create any recon stats for that column (no reconciled value)
+            // We create a reconciliation config for that column even if it actually only contains numbers,
+            // because we do not want to make the column metadata depend on the entire results stored in the column.
+            // This also helps us keep track of the provenance of the data.
             ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-            Assert.assertNull(columnModel.getColumnByName("currency").getReconStats());
-            Assert.assertNull(columnModel.getColumnByName("currency").getReconConfig());
+            Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }
 
@@ -512,7 +508,6 @@ public class ExtendDataOperationTests extends RefineTest {
 
             // Make sure all the values are reconciled
             ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-            Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 4L);
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }
@@ -567,7 +562,6 @@ public class ExtendDataOperationTests extends RefineTest {
 
             // Make sure all the values are reconciled
             ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-            Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 5L);
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }

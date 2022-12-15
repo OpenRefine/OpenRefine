@@ -7,15 +7,12 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
+import org.openrefine.browsing.columns.ColumnStats;
+import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.RecordFilter;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowInRecordFilter;
 
 /**
- * Internal aggregator to compute the state of all facets in one pass over the grid.
- * 
+ * Internal aggregator to compute the state of all facets in one pass over the grid. <br>
  * We use {@link com.google.common.collect.ImmutableList} to ensure immutability and serializability of the states.
  * 
  * @author Antonin Delpeuch
@@ -60,7 +57,11 @@ public class AllFacetsAggregator extends RowInRecordAggregator<AllFacetsState> {
             newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row, record,
                     allMatching || (numberOfMismatches == 1 && !matching[i])));
         }
-        return new AllFacetsState(newStates.build(), states.getAggregatedCount() + 1,
+
+        // Compute the new list of datatype statistics
+        ImmutableList<ColumnStats> newColumnStats = updateColumnStats(states.getColumnStats(), row);
+
+        return new AllFacetsState(newStates.build(), newColumnStats, states.getAggregatedCount() + 1,
                 states.getFilteredCount() + (numberOfMismatches == 0 ? 1 : 0));
     }
 
@@ -102,7 +103,14 @@ public class AllFacetsAggregator extends RowInRecordAggregator<AllFacetsState> {
                 newStates.add(states.get(i));
             }
         }
-        return new AllFacetsState(newStates.build(), states.getAggregatedCount() + 1,
+
+        // Compute the new column statistics
+        ImmutableList<ColumnStats> newColumnStats = states.getColumnStats();
+        for (Row row : record.getRows()) {
+            newColumnStats = updateColumnStats(newColumnStats, row);
+        }
+
+        return new AllFacetsState(newStates.build(), newColumnStats, states.getAggregatedCount() + 1,
                 states.getFilteredCount() + (numberOfMismatches == 0 ? 1 : 0));
     }
 
@@ -117,8 +125,32 @@ public class AllFacetsAggregator extends RowInRecordAggregator<AllFacetsState> {
         }
         return new AllFacetsState(
                 newStates.build(),
+                sumColumnStats(first.getColumnStats(), second.getColumnStats()),
                 first.getAggregatedCount() + second.getAggregatedCount(),
                 first.getFilteredCount() + second.getFilteredCount());
+    }
+
+    protected ImmutableList<ColumnStats> updateColumnStats(List<ColumnStats> statistics, Row row) {
+        List<ColumnStats> newColumnStats = new ArrayList<>(statistics.size());
+        if (row.getCells().size() != statistics.size()) {
+            throw new IllegalStateException("Incompatible list of column statistics and row size");
+        }
+        List<Cell> cells = row.getCells();
+        for (int i = 0; i != cells.size(); i++) {
+            newColumnStats.add(statistics.get(i).withCell(cells.get(i)));
+        }
+        return ImmutableList.copyOf(newColumnStats);
+    }
+
+    protected ImmutableList<ColumnStats> sumColumnStats(List<ColumnStats> first, List<ColumnStats> second) {
+        if (first.size() != second.size()) {
+            throw new IllegalStateException("Incompatible list of column statistics to sum together");
+        }
+        List<ColumnStats> columnStats = new ArrayList<>(first.size());
+        for (int i = 0; i != first.size(); i++) {
+            columnStats.add(first.get(i).sum(second.get(i)));
+        }
+        return ImmutableList.copyOf(columnStats);
     }
 
     @SuppressWarnings("unchecked")

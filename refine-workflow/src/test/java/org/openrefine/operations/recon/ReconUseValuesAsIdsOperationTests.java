@@ -91,7 +91,6 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         assertEquals("http://test.org/entities/", rows.get(0).cells.get(0).recon.identifierSpace);
         assertNull(rows.get(1).getCell(0));
         assertEquals("Q31", rows.get(2).cells.get(0).recon.match.id);
-        assertEquals(2, columnModel.getColumns().get(0).getReconStats().getMatchedTopics());
         assertEquals("http://test.org/schema/", ((StandardReconConfig) columnModel.getColumns().get(0).getReconConfig()).schemaSpace);
     }
 }

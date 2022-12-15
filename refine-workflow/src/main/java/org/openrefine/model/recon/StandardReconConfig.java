@@ -36,14 +36,7 @@ package org.openrefine.model.recon;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -660,6 +653,6 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     public int hashCode() {
-        return service.hashCode() + 11 * columnDetails.hashCode() + 27 * typeID.hashCode();
+        return Objects.hash(service, columnDetails, typeID);
     }
 }

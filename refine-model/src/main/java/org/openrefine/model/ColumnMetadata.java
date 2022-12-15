@@ -43,7 +43,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -58,22 +57,19 @@ public class ColumnMetadata implements Serializable {
     final private String _originalName;
     final private String _name;
     final private ReconConfig _reconConfig;
-    final private ReconStats _reconStats;
 
     @JsonCreator
     public ColumnMetadata(
             @JsonProperty("originalName") String originalName,
             @JsonProperty("name") String name,
-            @JsonProperty("reconConfig") ReconConfig reconConfig,
-            @JsonProperty("reconStats") ReconStats reconStats) {
+            @JsonProperty("reconConfig") ReconConfig reconConfig) {
         _originalName = originalName;
         _name = name == null ? originalName : name;
         _reconConfig = reconConfig;
-        _reconStats = reconStats;
     }
 
     public ColumnMetadata(String name) {
-        this(name, name, null, null);
+        this(name, name, null);
     }
 
     @JsonProperty("originalName")
@@ -82,7 +78,7 @@ public class ColumnMetadata implements Serializable {
     }
 
     public ColumnMetadata withName(String name) {
-        return new ColumnMetadata(_originalName, name, _reconConfig, _reconStats);
+        return new ColumnMetadata(_originalName, name, _reconConfig);
     }
 
     @JsonProperty("name")
@@ -91,23 +87,13 @@ public class ColumnMetadata implements Serializable {
     }
 
     public ColumnMetadata withReconConfig(ReconConfig config) {
-        return new ColumnMetadata(_originalName, _name, config, _reconStats);
+        return new ColumnMetadata(_originalName, _name, config);
     }
 
     @JsonProperty("reconConfig")
     @JsonInclude(Include.NON_NULL)
     public ReconConfig getReconConfig() {
         return _reconConfig;
-    }
-
-    public ColumnMetadata withReconStats(ReconStats stats) {
-        return new ColumnMetadata(_originalName, _name, _reconConfig, stats);
-    }
-
-    @JsonProperty("reconStats")
-    @JsonInclude(Include.NON_NULL)
-    public ReconStats getReconStats() {
-        return _reconStats;
     }
 
     public void save(Writer writer) {
@@ -122,27 +108,9 @@ public class ColumnMetadata implements Serializable {
         return ParsingUtilities.mapper.readValue(s, ColumnMetadata.class);
     }
 
-    /**
-     * Merges the recon statistics of this column with those of another column. The column names of this column are
-     * preserved.
-     * 
-     * @param otherMetadata
-     *            the other column metadata to extract recon statistics from
-     * @return a new column metadata with the sum of the recon statistics
-     */
-    public ColumnMetadata merge(ColumnMetadata otherMetadata) {
-        ReconStats newReconStats = _reconStats;
-        if (_reconStats != null && otherMetadata.getReconStats() != null) {
-            newReconStats = _reconStats.sum(otherMetadata.getReconStats());
-        } else if (_reconStats == null) {
-            newReconStats = otherMetadata.getReconStats();
-        }
-        return new ColumnMetadata(_originalName, _name, _reconConfig, newReconStats);
-    }
-
     @Override
     public String toString() {
-        return String.format("[ColumnMetadata: %s, %s, %s, %s]", _name, _originalName, _reconConfig, _reconStats);
+        return String.format("[ColumnMetadata: %s, %s, %s]", _name, _originalName, _reconConfig);
     }
 
     @Override
@@ -154,9 +122,6 @@ public class ColumnMetadata implements Serializable {
         return (_name.equals(metadata.getName()) &&
                 _originalName.equals(metadata.getOriginalHeaderLabel()) &&
                 ((_reconConfig == null && metadata.getReconConfig() == null)
-                        || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig())))
-                &&
-                ((_reconStats == null && metadata.getReconStats() == null)
-                        || (_reconStats != null && _reconStats.equals(metadata.getReconStats()))));
+                        || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig()))));
     }
 }

@@ -60,7 +60,6 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
@@ -227,11 +226,9 @@ public class ReconOperationTests extends RefineTest {
         }
         Assert.assertFalse(process.isRunning());
 
-        ReconStats reconStats = ReconStats.create(4L, 0L, 3L);
         ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
                 new ColumnMetadata("column")
-                        .withReconConfig(reconConfig)
-                        .withReconStats(reconStats)));
+                        .withReconConfig(reconConfig)));
 
         GridState expectedGrid = createGrid(
                 new String[] { "column" },
@@ -297,8 +294,6 @@ public class ReconOperationTests extends RefineTest {
          */
 
         ColumnMetadata column = project.getColumnModel().getColumnByIndex(0);
-        Assert.assertNotNull(column.getReconStats());
-        Assert.assertEquals(column.getReconStats().getMatchedTopics(), 0);
 
         GridState grid = project.getCurrentGridState();
         Assert.assertNull(grid.getRow(0).getCell(0).recon);

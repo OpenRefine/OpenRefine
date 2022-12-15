@@ -44,7 +44,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -71,11 +70,6 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
     @Override
     public String getDescription() {
         return OperationDescription.recon_match_best_candidates_brief(_columnName);
-    }
-
-    @Override
-    protected GridState postTransform(GridState newState, ChangeContext context) {
-        return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
     @Override

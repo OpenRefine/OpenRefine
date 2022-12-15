@@ -48,7 +48,6 @@ import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -145,11 +144,6 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
         } else {
             return rowMapper(columnIndex, _similarValue, _judgment, _match, historyEntryId);
         }
-    }
-
-    @Override
-    protected GridState postTransform(GridState newState, ChangeContext context) {
-        return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
     protected static RowInRecordMapper rowMapperShareNewTopics(int columnIndex, String similarValue, Recon sharedRecon) {

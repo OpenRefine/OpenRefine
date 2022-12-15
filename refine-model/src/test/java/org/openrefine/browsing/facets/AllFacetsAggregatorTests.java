@@ -9,6 +9,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.columns.ColumnStats;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
@@ -65,6 +66,9 @@ public class AllFacetsAggregatorTests {
                         new FacetStateStub(0, 0),
                         new FacetStateStub(0, 0),
                         new FacetStateStub(0, 0)),
+                ImmutableList.of(
+                        ColumnStats.ZERO,
+                        ColumnStats.ZERO),
                 0L, 0L);
     }
 
@@ -75,18 +79,21 @@ public class AllFacetsAggregatorTests {
                         new FacetStateStub(1, 2),
                         new FacetStateStub(3, 4),
                         new FacetStateStub(5, 6)),
+                ImmutableList.of(),
                 78, 34);
         AllFacetsState statesB = new AllFacetsState(
                 ImmutableList.of(
                         new FacetStateStub(7, 8),
                         new FacetStateStub(9, 10),
                         new FacetStateStub(11, 12)),
+                ImmutableList.of(),
                 23, 1);
         AllFacetsState expected = new AllFacetsState(
                 ImmutableList.of(
                         new FacetStateStub(8, 10),
                         new FacetStateStub(12, 14),
                         new FacetStateStub(16, 18)),
+                ImmutableList.of(),
                 101, 35);
         Assert.assertEquals(SUT.sum(statesA, statesB), expected);
     }
@@ -96,11 +103,16 @@ public class AllFacetsAggregatorTests {
         Row row = new Row(Arrays.asList(
                 new Cell("foo", null), new Cell("bar", null)));
 
-        List<FacetState> result = SUT.withRow(initial, 1, row).getStates();
+        AllFacetsState allFacetsState = SUT.withRow(initial, 1, row);
+        List<FacetState> result = allFacetsState.getStates();
         Assert.assertEquals(result, Arrays.asList(
                 new FacetStateStub(1, 0),
                 new FacetStateStub(1, 0),
                 new FacetStateStub(1, 0)));
+        List<ColumnStats> expectedColumnStats = ImmutableList.of(
+                new ColumnStats(0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L),
+                new ColumnStats(0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L));
+        Assert.assertEquals(allFacetsState.getColumnStats(), expectedColumnStats);
     }
 
     @Test
@@ -121,7 +133,7 @@ public class AllFacetsAggregatorTests {
                 new Cell("wrong", null), new Cell("fail", null)));
 
         AllFacetsState result = SUT.withRow(initial, 1, row);
-        Assert.assertEquals(result, new AllFacetsState(initial.getStates(), 1, 0));
+        Assert.assertEquals(result, new AllFacetsState(initial.getStates(), ImmutableList.of(), 1, 0));
     }
 
     @Test
@@ -130,7 +142,7 @@ public class AllFacetsAggregatorTests {
                 new Cell("wrong", null), new Cell("fail", null)));
 
         AllFacetsState result = SUT.withRow(initial, 43, row);
-        Assert.assertEquals(result, new AllFacetsState(initial.getStates(), 1, 0));
+        Assert.assertEquals(result, new AllFacetsState(initial.getStates(), ImmutableList.of(), 1, 0));
     }
 
     @SuppressWarnings("unlikely-arg-type")

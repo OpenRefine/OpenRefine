@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
@@ -50,7 +49,6 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
@@ -135,12 +133,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgmentAction("mass")
                                 .withJudgment(Judgment.New)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 3, 0);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+        ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
+        expected = expected.withColumnModel(columnModel);
 
         assertGridEquals(applied, expected);
     }
@@ -175,12 +169,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withId(thirdReconId)
                                 .withJudgmentAction("mass")) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 3, 0);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+        ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
+        expected = expected.withColumnModel(columnModel);
 
         assertGridEquals(applied, expected);
     }
@@ -221,12 +211,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgmentAction("mass")
                                 .withJudgment(Judgment.New)) }
                 });
-
-        // Make sure recon stats are updated too
-        ReconStats reconStats = ReconStats.create(3, 3, 0);
-        ColumnModel columnModel = expected.getColumnModel();
-        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
-        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+        ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
+        expected = expected.withColumnModel(columnModel);
 
         assertGridEquals(applied, expected);
     }

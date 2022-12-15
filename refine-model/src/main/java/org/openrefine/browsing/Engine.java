@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.browsing;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
+import org.openrefine.browsing.columns.ColumnStats;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
@@ -61,7 +63,8 @@ import org.openrefine.sorting.SortingConfig;
 
 /**
  * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
- * obtain a filtered view of the grid according to the facets.
+ * obtain a filtered view of the grid according to the facets. <br>
+ * It also computes datatype statistics for each column, serialized in the "columnStats" JSON field.
  */
 public class Engine {
 
@@ -139,6 +142,11 @@ public class Engine {
             facetResults.add(_facets.get(i).getFacetResult(states.get(i)));
         }
         return facetResults.build();
+    }
+
+    @JsonProperty("columnStats")
+    public List<ColumnStats> getColumnStats() {
+        return getFacetsState().getState().getColumnStats();
     }
 
     @JsonProperty("aggregatedCount")
@@ -287,7 +295,9 @@ public class Engine {
                 _facets
                         .stream().map(facet -> facet.getInitialFacetState())
                         .collect(Collectors.toList()));
-        return new AllFacetsState(facets, 0L, 0L);
+        ImmutableList<ColumnStats> columnStats = ImmutableList
+                .copyOf(Collections.nCopies(_state.getColumnModel().getColumns().size(), ColumnStats.ZERO));
+        return new AllFacetsState(facets, columnStats, 0L, 0L);
     }
 
     @JsonIgnore

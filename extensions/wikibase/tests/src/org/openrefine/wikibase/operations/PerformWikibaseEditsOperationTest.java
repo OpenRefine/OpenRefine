@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.mockito.Mockito;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -107,8 +106,6 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
         assertEquals(row.getCell(0).recon.match.id, "Q789");
-
-        Assert.assertEquals(applied.getColumnModel().getColumnByIndex(0).getReconStats().getMatchedTopics(), 1L);
     }
 
 }

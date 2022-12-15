@@ -136,7 +136,6 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                 columnIndex,
                 null,
                 engineMode,
-                null,
                 null);
     }
 

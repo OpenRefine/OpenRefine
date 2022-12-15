@@ -454,7 +454,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                     _columnInsertIndex,
                                     _newColumnName,
                                     Mode.RowBased,
-                                    null,
                                     null));
 
                     _history.addEntry(historyEntry);

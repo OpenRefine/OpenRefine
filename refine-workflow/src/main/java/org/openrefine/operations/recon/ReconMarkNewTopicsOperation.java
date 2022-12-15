@@ -50,7 +50,6 @@ import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
-import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
@@ -184,11 +183,6 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
             }
 
         };
-    }
-
-    @Override
-    protected GridState postTransform(GridState newState, ChangeContext context) {
-        return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
     protected static RowInRecordMapper rowMapperNoSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId) {

@@ -77,9 +77,12 @@ public class EngineTests {
         }
     };
     protected static RowInRecordFilter noFilter = RowInRecordFilter.ANY_ROW_IN_RECORD;
-    private AllFacetsState allRowsState = new AllFacetsState(ImmutableList.of(new FacetStateStub(65, 35), new FacetStateStub(100, 0)), 100,
-            65);
-    private AllFacetsState partialState = new AllFacetsState(ImmutableList.of(new FacetStateStub(8, 2), new FacetStateStub(10, 0)), 10, 8);
+    private AllFacetsState allRowsState = new AllFacetsState(
+            ImmutableList.of(new FacetStateStub(65, 35), new FacetStateStub(100, 0)),
+            ImmutableList.of(), 100, 65);
+    private AllFacetsState partialState = new AllFacetsState(
+            ImmutableList.of(new FacetStateStub(8, 2), new FacetStateStub(10, 0)),
+            ImmutableList.of(), 10, 8);
     private PartialAggregation<Serializable> partialStateWrapped = new PartialAggregation<Serializable>(partialState, 10, true);
 
     @SuppressWarnings("unchecked")
