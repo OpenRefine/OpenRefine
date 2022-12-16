@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,15 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import java.time.Instant;
 
-import java.time.LocalDateTime;
+import static org.mockito.Mockito.*;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -51,13 +45,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.model.ProjectStub;
 import com.google.refine.process.ProcessManager;
 
 public class ProjectManagerTests extends RefineTest {
 
+    private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -131,7 +125,7 @@ public class ProjectManagerTests extends RefineTest {
 
     @Test
     public void canSaveAllModified() {
-        whenGetSaveTimes(project, metadata); // 5 minute difference
+        whenGetSaveTimes(project, metadata); // 5-minute difference
         registerProject(project, metadata);
 
         // add a second project to the cache
@@ -141,7 +135,7 @@ public class ProjectManagerTests extends RefineTest {
         registerProject(project2, metadata2);
 
         // check that the two projects are not the same
-        Assert.assertFalse(project.id == project2.id);
+        Assert.assertNotEquals(project2.id, project.id);
 
         SUT.save(true);
 
@@ -161,13 +155,13 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.save(true);
 
-        verify(metadata, times(1)).getModified();
-        verify(metadata, times(1)).getTags();
-        verify(project, times(1)).getProcessManager();
-        verify(project, times(2)).getLastSave();
+        verify(metadata, atLeastOnce()).getModified();
+        verify(metadata, atLeastOnce()).getTags();
+        verify(project, atLeastOnce()).getProcessManager();
+        verify(project, atLeastOnce()).getLastSave();
         verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
-        Assert.assertEquals(SUT.getProject(0), null);
+        Assert.assertNull(SUT.getProject(0));
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
 
@@ -228,17 +222,11 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenProjectGetLastSave(Project proj) {
-        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
-        when(proj.getLastSave()).thenReturn(projectLastSaveDate);
-    }
-
-    protected void whenMetadataGetModified(ProjectMetadata meta) {
-        whenMetadataGetModified(meta, 5 * 60);
+        when(proj.getLastSave()).thenReturn(BASE_DATE);
     }
 
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference) {
-        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970, 01, 02, 00, 30 + secondsDifference);
-        when(meta.getModified()).thenReturn(metadataModifiedDate);
+        when(meta.getModified()).thenReturn(BASE_DATE.plusSeconds(secondsDifference));
     }
 
     protected void verifySaveTimeCompared(int times) {
