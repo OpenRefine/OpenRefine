@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>openrefine</artifactId>
   <packaging>pom</packaging>
-  <version>3.7-SNAPSHOT</version>
+  <version>3.8-SNAPSHOT</version>
 
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -75,7 +75,7 @@
     <jackson.version>2.13.4</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
-    <slf4j.version>2.0.5</slf4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
     <log4j.version>2.19.0</log4j.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
@@ -108,7 +108,7 @@
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>4.9.0</mockito.version>
+    <mockito.version>4.10.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>

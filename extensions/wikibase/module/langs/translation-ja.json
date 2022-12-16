@@ -345,5 +345,7 @@
     "warnings-messages/file-name-too-long/body": "ファイル名は、上限{max_length}字を超えることができません。例えば、<span class=\"wb-issue-preformat\">{example_filename}</span>は長すぎます.",
     "warnings-messages/missing-file-name-extension/body": "アップロードするファイルには拡張子が必要です。例えば、<span class=\"wb-issue-preformat\">{example_filename}には拡張子がありません.",
     "warnings-messages/replaced-characters-in-filename/title": "ファイル名にある特殊文字は置換されることがあります",
-    "warnings-messages/replaced-characters-in-filename/body": "これらの文字 <span class=\"wb-issue-preformat\">:/\\</span> を <span class=\"wb-issue-preformat\">-</span>で置き換えます。例えば、ファイル名 <span class=\"wb-issue-preformat\">{original}</span> は <span class=\"wb-issue-preformat\">{normalized}</span>となります。"
+    "warnings-messages/replaced-characters-in-filename/body": "これらの文字 <span class=\"wb-issue-preformat\">:/\\</span> を <span class=\"wb-issue-preformat\">-</span>で置き換えます。例えば、ファイル名 <span class=\"wb-issue-preformat\">{original}</span> は <span class=\"wb-issue-preformat\">{normalized}</span>となります。",
+    "wikibase-schema/no-value": "値なし",
+    "wikibase-schema/some-value": "値あり"
 }

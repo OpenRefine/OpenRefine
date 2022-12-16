@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,9 +72,9 @@ public class Project {
     final public History history;
 
     transient public ProcessManager processManager = new ProcessManager();
-    transient private LocalDateTime _lastSave = LocalDateTime.now();
+    transient private Instant _lastSave = Instant.now();
 
-    final static Logger logger = LoggerFactory.getLogger("project");
+    final static Logger logger = LoggerFactory.getLogger(Project.class);
 
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -109,7 +109,7 @@ public class Project {
         // The rest of the project should get garbage collected when we return.
     }
 
-    public LocalDateTime getLastSave() {
+    public Instant getLastSave() {
         return this._lastSave;
     }
 
@@ -117,7 +117,7 @@ public class Project {
      * Sets the lastSave time to now
      */
     public void setLastSave() {
-        this._lastSave = LocalDateTime.now();
+        this._lastSave = Instant.now();
     }
 
     public ProjectMetadata getMetadata() {
