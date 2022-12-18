@@ -35,8 +35,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the class and ids of colum-join.html
 */
 
-@import-less url("../theme.less");
-
 .dialog-header,.dialog_body,.dialog-footer,.global_selection {
   clear:both;
 }
@@ -48,9 +46,9 @@ Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the c
 }
 
 .column-join-inner-left-pane,.column-join-inner-right-pane {
-  border: 1px solid @chrome_primary;
+  border: 1px solid var(--chrome-primary);
   height: 24em;
-  padding: @padding_loose;
+  padding: var(--padding-loose);
   }
   
 .column-join-inner-left-pane-list {
@@ -64,15 +62,15 @@ Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the c
 }
 
 .column-join-column {
-  border: 1px solid @chrome_primary;
-  background: @fill_secondary;
-  padding: @padding_tighter;
-  margin: @padding_tight;
+  border: 1px solid var(--chrome-primary);
+  background: var(--fill-secondary);
+  padding: var(--padding-tighter);
+  margin: var(--padding-tight);
   cursor: move;
-  .rounded_corners();
+  border-radius: var(--rounded-corners-radius);
   }
 .column-join-column.selected {
-  background: @chrome_primary;
+  background: var(--chrome-primary);
   font-weight: bold;
   }
 

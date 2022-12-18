@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 .default-importing-parsing-data-panel {
   font-size: 1.12em;
   position: absolute;
@@ -52,8 +50,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 1.3em;
   position: absolute;
   overflow: auto;
-  border-top: 5px solid @chrome_primary;
-  background: @chrome_secondary;
+  border-top: 5px solid var(--chrome-primary);
+  background: var(--chrome-secondary);
   }
 .default-importing-parsing-control-panel > table {
   width: 100%;
@@ -61,21 +59,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 td.default-importing-parsing-control-panel-formats {
-  padding: @padding_looser 0;
+  padding: var(--padding-looser) 0;
   width: 250px;
   }
 
 .default-importing-parsing-control-panel-formats-message {
-  margin-left: @padding_looser;
-  margin-bottom: @padding_looser;
-  padding: 0 @padding_normal;
+  margin-left: var(--padding-looser);
+  margin-bottom: var(--padding-looser);
+  padding: 0 var(--padding-normal);
   font-size: 1.3em;
   }
 .default-importing-parsing-control-panel-format {
-  margin-left: @padding_looser;
-  padding: @padding_tight @padding_normal;
-  .rounded_corners_left();
-  color: @link_primary;
+  margin-left: var(--padding-looser);
+  padding: var(--padding-tight) var(--padding-normal);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: var(--link-primary);
   cursor: pointer;
   }
 
@@ -87,6 +86,7 @@ td.default-importing-parsing-control-panel-formats {
 
 td.default-importing-parsing-control-panel-options-panel {
   background: white;
-  padding: @padding_looser;
-  .rounded_corners_left();
+  padding: var(--padding-looser);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   }

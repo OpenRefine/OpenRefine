@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("theme.less");
-
 html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
 article, aside, figure, footer, header, hgroup, nav, section { display: block; }
 ul { list-style-position: inside; }
@@ -60,7 +58,7 @@ label {
   }
 
 input[type=text] {
-  padding: @padding_tighter;
+  padding: var(--padding-tighter);
   font-size: 1em;  
   font-family: inherit; 
   border: #ccc 1px solid;
@@ -69,7 +67,7 @@ input[type=text] {
   }
 
 a {
-  color: @link_primary;
+  color: var(--link-primary);
   text-decoration: none;
   }
 
@@ -78,7 +76,7 @@ a:hover {
   }
   
 a.secondary {
-  color: @link_secondary;
+  color: var(--link-secondary);
   }
 
 a.action, a.selected, a.inaction {
@@ -92,7 +90,7 @@ a.selected {
   }
 
 a.inaction {
-  color: @light_grey;
+  color: var(--light-grey);
   }
 
 a.selected:hover, a.inaction:hover {
@@ -117,7 +115,7 @@ a img {
   background: #eee;
   white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif; 
-  .rounded_corners(3px);
+  border-radius: 3px;
   }
 
 .button:hover, a.button:hover { 
@@ -135,12 +133,14 @@ a img {
 
 .button-pill-left, a.button-pill-left {
   border-right: 1px solid #bbb;
-  .sharp_corners_left();
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   }
 
 .button-pill-right, a.button-pill-right {
   border-left: 1px solid #fff;
-  .sharp_corners_right();  
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   }
 
 .button-disabled, a.button-disabled, .button.button-disabled, a.button.button-disabled {
@@ -183,13 +183,13 @@ a img {
   }
   
 .list-table th, .list-table td {
-  padding-top: @padding_tight;
+  padding-top: var(--padding-tight);
   text-align: left;
   vertical-align: baseline;
-  padding: @padding_tighter @padding_tight;
+  padding: var(--padding-tighter) var(--padding-tight);
   font-size: 1.1em;
   color: #222;
-  border-bottom: dotted 1px @faint_grey;
+  border-bottom: dotted 1px var(--faint-grey);
   }
 
 .list-table th {
@@ -205,7 +205,7 @@ a img {
 #loading-message {
   text-align: center;
   font-size: 300%;
-  color: @light_grey;
+  color: var(--light-grey);
   padding: 3em .5em;
   }
 
@@ -229,8 +229,8 @@ a img {
   font-size: 1.3em;
   text-align: left;
   font-weight: bold;
-  background: @notification_primary;
-  .rounded_corners(2px);
+  background: var(--notification-primary);
+  border-radius: 2px;
   }
   
 .notification-action {
@@ -275,7 +275,7 @@ a img {
 #body-info h1 {
   font-size: 3.0em;
   font-weight: normal;
-  color: @metadata_grey;
+  color: var(--text-tertiary);
   }
 
 #body-info h2 {
@@ -288,7 +288,7 @@ a img {
   white-space: pre;
   border: 1px solid #ddd;
   background: #eee;
-  padding: @padding_looser;
+  padding: var(--padding-looser);
   width: 60em;
   overflow: auto;
   }
@@ -315,8 +315,7 @@ input[type='text'].inline {
 input.lightweight {
   vertical-align: baseline;
   border: none;
-  border-bottom: 1px solid @faint_grey;
-  background-color: @fainter_grey;
+  border-bottom: 1px solid var(--faint-grey);
   padding: 0px 2px 1px 2px;
   }
 

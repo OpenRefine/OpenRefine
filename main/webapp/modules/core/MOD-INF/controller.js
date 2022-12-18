@@ -407,6 +407,8 @@ function init() {
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "3rdparty/select2/select2.css",
       "3rdparty/tablesorter/theme.blue.css",
+
+      "styles/theme.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -510,6 +512,7 @@ function init() {
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
+      "styles/theme.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -558,6 +561,8 @@ function init() {
     [
       "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+
+      "styles/theme.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

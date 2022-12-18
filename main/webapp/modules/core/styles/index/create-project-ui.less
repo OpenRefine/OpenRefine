@@ -31,26 +31,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 #create-project-ui-source-selection {
   font-size: 1.3em;
   background: white;
   }
 
 #create-project-ui-source-selection-message {
-  padding: @padding_loose;
-  border-bottom: 1px solid @chrome_primary;
+  padding: var(--padding-loose);
+  border-bottom: 1px solid var(--chrome-primary);
   background: white;
   }
 #create-project-ui-source-selection-message > h3 {
-  margin-bottom: @padding_normal;
+  margin-bottom: var(--padding-normal);
   }
 
 #create-project-ui-source-selection-layout {
   width: 100%;
   border-collapse: collapse;
-  border-bottom: 1px solid @chrome_primary;
+  border-bottom: 1px solid var(--chrome-primary);
   }
 #create-project-ui-source-selection-layout > tbody > tr > td {
   vertical-align: top;
@@ -58,34 +56,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #create-project-ui-source-selection-tab-bodies {
   background: white;
-  .rounded_corners_left();
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   }
 
 #create-project-ui-source-selection-tabs {
   width: 15em;
-  background: @fill_primary;
-  padding-left: @padding_looser;
-  padding-bottom: @padding_looser;
+  background: var(--fill-primary);
+  padding-left: var(--padding-looser);
+  padding-bottom: var(--padding-looser);
   }
 #create-project-ui-source-selection-tabs > div {
-  padding: @padding_normal;
+  padding: var(--padding-normal);
   }
 
 .create-project-ui-source-selection-tab-body {
-  padding: @padding_loose;
+  padding: var(--padding-loose);
   overflow: auto;
   }
 
 .create-project-ui-source-selection-tab {
   cursor: pointer;
-  color: @link_primary;
+  color: var(--link-primary);
   }
 .create-project-ui-source-selection-tab.selected {
   cursor: default;
   color: black;
   background: white;
   font-weight: bold;
-  .rounded_corners_left();
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   }
 
 .create-project-ui-panel {
@@ -100,17 +100,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #create-project-progress-panel {
   font-size: 1.3em;
-  padding: @padding_loose;
+  padding: var(--padding-loose);
   }
 
 #create-project-progress-bar-frame {
-  border: 1px solid @chrome_primary;
-  padding: @padding_tighter;
+  border: 1px solid var(--link-primary);
+  padding: var(--padding-tighter);
   width: 300px;
   }
 
 #create-project-progress-bar-body {
-  background: @chrome_primary;
+  background: var(--chrome-primary);
   height: 1em;
   position: relative;
   width: 30%;
@@ -128,12 +128,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #create-project-error-panel {
   font-size: 1.3em;
-  padding: @padding_loose;
+  padding: var(--padding-loose);
   }
 
 #create-project-error-stack {
   font-family: monospace;
   white-space: pre;
-  padding: @padding_normal;
-  border: 1px solid @chrome_primary;
+  padding: var(--padding-normal);
+  border: 1px solid var(--chrome-primary);
   }

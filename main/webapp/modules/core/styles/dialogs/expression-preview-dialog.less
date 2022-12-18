@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 #expression-preview-tabs .ui-tabs-nav li a {
   padding: 0.15em 1em;
   }
@@ -44,7 +42,7 @@ textarea.expression-preview-code {
   }
 
 .expression-preview-parsing-status {
-  color: @light_grey;
+  color: var(--light-grey);
   }
 .expression-preview-parsing-status.error {
   color: red;
@@ -54,7 +52,7 @@ textarea.expression-preview-code {
 #expression-preview-tabs-help,
 #expression-preview-tabs-history,
 #expression-preview-tabs-starred {
-  padding: @padding_tight;
+  padding: var(--padding-tight);
   overflow: hidden;
   }
 
@@ -70,11 +68,11 @@ textarea.expression-preview-code {
 #expression-preview-tabs-help td, #expression-preview-tabs-help th,
 #expression-preview-tabs-history td, #expression-preview-tabs-history th,
 #expression-preview-tabs-starred td, #expression-preview-tabs-starred th {
-  padding: @padding_tight;
+  padding: var(--padding-tight);
   }
 
 .expression-preview-table-wrapper {
-  padding: @padding_normal;
+  padding: var(--padding-normal);
   width: 100%;
   }
 
@@ -100,9 +98,9 @@ td.expression-preview-value {
   }
 
 .expression-preview-help-container h3 {
-  margin-top: @padding_looser;
-  margin-bottom: @padding_normal;
-  border-bottom: 1px solid @light_grey;
+  margin-top: var(--padding-looser);
+  margin-bottom: var(--padding-normal);
+  border-bottom: 1px solid var(--light-grey);
   }
 
 .expression-preview-doc-item-title {

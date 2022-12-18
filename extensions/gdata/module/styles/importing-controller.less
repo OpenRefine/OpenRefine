@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("theme.less");
-
 .gdata-panel {
   margin-bottom: 2em;
 }
@@ -48,11 +46,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .gdata-document-container > table {
-  color: @metadata_grey;
+  color: var(--text-tertiary);
 }
 
 a.gdata-doc-title {
-  color: @link_primary;
+  color: var(--link-primary);
   text-decoration: none;
   }
 a.gdata-doc-title:hover {
@@ -66,7 +64,7 @@ a.gdata-doc-preview {
   font-size: 80%;
   text-decoration: none;
   vertical-align: super;
-  color: @link_secondary;
+  color: var(--link-secondary);
   margin-left: 0.5em;
   }
 a.gdata-doc-preview:hover {
@@ -81,8 +79,8 @@ a.gdata-doc-preview:hover {
 
 .gdata-importing-wizard-header {
   font-size: 1.3em;
-  background: @chrome_primary;
-  padding: @padding_tight;
+  background: var(--chrome-primary);
+  padding: var(--padding-tight);
   }
 
 .gdata-importing-parsing-data-panel {
@@ -104,7 +102,7 @@ a.gdata-doc-preview:hover {
   font-size: 1.3em;
   position: absolute;
   overflow: auto;
-  border-top: 5px solid @chrome_primary;
+  border-top: 5px solid var(--chrome-primary);
   background: white;
-  padding: @padding_looser;
+  padding: var(--padding-looser);
   }

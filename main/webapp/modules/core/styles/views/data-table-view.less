@@ -31,18 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 .viewpanel-header {
   position: relative;
-  background: @fill_secondary;
+  background: var(--fill-secondary);
   font-size: 1.3em;
-  padding: @padding_normal;
+  padding: var(--padding-normal);
   overflow: hidden;
   }
 
 .viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
-  top: @padding_normal;
+  top: var(--padding-normal);
   padding: 0 10px 0 0;
   float: left;
   }
@@ -56,17 +54,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .viewpanel-rowrecord a {
-  background-color: @fill_primary;
+  background-color: var(--fill-primary);
   margin: 0px 1px 0px 1px;
   padding: 2px 5px 2px 5px;
-  .rounded_corners(4px);
+  border-radius: 4px;
   }
 
 .viewpanel-pagesize a {
-  background-color: @fill_primary;
+  background-color: var(--fill-primary);
   margin: 0px 2px 0px 2px;
   padding: 2px 3px 2px 3px;
-  .rounded_corners(4px);
+  border-radius: 4px;
   }
 
 div.viewpanel-pagesize span:first-of-type {
@@ -74,10 +72,10 @@ div.viewpanel-pagesize span:first-of-type {
 }
 
 .viewpanel-paging a {
-  background-color: @fill_primary;
+  background-color: var(--fill-primary);
   margin: 0px 4px 0px 4px;
   padding: 2px 10px 2px 10px;
-  .rounded_corners(4px);
+  border-radius: 4px;
   }
 
 .viewpanel-paging span#viewpanel-paging-current {
@@ -97,12 +95,12 @@ div.viewpanel-pagesize span:first-of-type {
 .data-table-header {
   width: 1px;
   position: relative;
-  background: @fill_primary;
+  background: var(--fill-primary);
   }
   
 .data-table-container {
   overflow: auto;
-  border-top: 1px solid @chrome_primary;
+  border-top: 1px solid var(--chrome-primary);
   }
 
 .data-table-header, .data-table {
@@ -122,8 +120,8 @@ div.viewpanel-pagesize span:first-of-type {
   }
 
 .data-table-header td, .data-table-header th {
-  border-bottom: 0.02rem dotted @chrome_primary;
-  border-right: 0.02rem solid @chrome_primary;
+  border-bottom: 0.02rem dotted var(--chrome-primary);
+  border-right: 0.02rem solid var(--chrome-primary);
   }
 
 table {
@@ -150,7 +148,7 @@ table > thead > tr > th {
   }
 
 table.data-table > tbody > tr.odd > td {
-  background: @fill_secondary;
+  background: var(--fill-secondary);
   }
 
 table.data-table > tbody > tr.contextual > td > div {
@@ -169,8 +167,8 @@ table.data-table td.column-header, table.data-table th.column-header {
 
 /* For the preview in the importing stage */
 table.data-table td.column-header, table.data-table th.column-header {
-  background: @fill_primary;
-  border-bottom: 0.12rem solid @chrome_primary;
+  background: var(--fill-primary);
+  border-bottom: 0.12rem solid var(--chrome-primary);
   }
 
 .column-header-name {
@@ -206,13 +204,13 @@ a.column-header-menu:hover {
 .column-header-recon-stats-matched {
   position: absolute;
   height: 100%;
-  background: @green_primary;
+  background: var(--green-primary);
   }
   
 .column-header-recon-stats-blanks {
   position: absolute;
   height: 100%;
-  background: @green_secondary;
+  background: var(--green-secondary);
   }
 
 div.data-table-cell-content {
@@ -264,7 +262,7 @@ div.data-table-cell-content-numeric > a.data-table-cell-edit {
 div.data-table-recon-candidates {
   padding: 1px 0;
   min-width: 15em;
-  color: @metadata_grey;
+  color: var(--text-tertiary);
   }
   
 div.data-table-recon-candidate {
@@ -273,7 +271,7 @@ div.data-table-recon-candidate {
   }
 
 a.data-table-recon-topic {
-  color: @link_secondary;
+  color: var(--link-secondary);
   }
 
 .data-table-recon-score, .data-table-recon-new {
@@ -283,7 +281,7 @@ a.data-table-recon-topic {
 
 a.data-table-recon-action, .data-table-recon-extra > a {
   text-decoration: none;
-  color: @link_secondary;
+  color: var(--link-secondary);
   }
   
 a.data-table-recon-action, .data-table-recon-extra {
@@ -344,10 +342,10 @@ a.data-table-flag-off {
   }
 
 .data-table-cell-editor, .data-table-topic-popup {
-  border: 1px solid @chrome_primary;
-  background: @chrome_secondary;
-  padding: @padding_tight;
-  .rounded_corners();
+  border: 1px solid var(--chrome-primary);
+  background: var(--chrome-secondary);
+  padding: var(--padding-tight);
+  border-radius: var(--rounded-corners-radius);
   }
 
 .data-table-topic-popup {
@@ -382,7 +380,7 @@ a.data-table-flag-off {
 
 .data-table-cell-editor-key {
   font-size: 0.8em;
-  color: @light_grey;
+  color: var(--light-grey);
   }
 
 .set-httpheaders-container {
@@ -405,7 +403,7 @@ ul.sorting-dialog-blank-error-positions {
   padding: 5px;
   height: 10em;
   border: 1px solid #ccc;
-  .rounded_corners(3px);
+  border-radius: 3px;
   }
   
 ul.sorting-dialog-blank-error-positions > li {
@@ -415,5 +413,5 @@ ul.sorting-dialog-blank-error-positions > li {
   padding: 5px;
   margin: 2px;
   cursor: move;
-  .rounded_corners(3px);
+  border-radius: 3px;
   }

@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 ul.facets-container {
   margin: 0;
   overflow: auto;
@@ -42,19 +40,19 @@ li.facet-container {
   display: block;
   clear: both;
   margin: 0 5px 7px;
-  background: @chrome_secondary;  
-  border: 1px solid @chrome_primary;
-  .rounded_corners(7px);
+  background: var(--chrome-secondary);  
+  border: 1px solid var(--chrome-primary);
+  border-radius: 7px;
   }
 
 .facet-title {
   padding: 3px 5px;
-  background: @chrome_primary;
+  background: var(--chrome-primary);
   font-weight: bold;
   cursor: move;
-  border-bottom: 1px solid @chrome_primary;
-  .rounded_corners_top(6px);
-  
+  border-bottom: 1px solid var(--chrome-primary);
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
   }
 
 .facet-title-inverted {
@@ -110,11 +108,11 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   font-family: monospace;
   background: #fff;
   cursor: text;
-  border-bottom: 1px solid @chrome_primary;
+  border-bottom: 1px solid var(--chrome-primary);
   }
 
 .facet-expression:hover {
-  background: @fill_editable;
+  background: var(--fill-editable);
   }
 
 .facet-status {
@@ -126,8 +124,8 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   position: relative;
   font-size: 0.9em;
   padding: 7px 3px;
-  background: @chrome_secondary;
-  border-bottom: 1px solid @chrome_primary;
+  background: var(--chrome-secondary);
+  border-bottom: 1px solid var(--chrome-primary);
   }
 
 .facet-controls-button {
@@ -138,7 +136,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   
 .facet-body-message {
   margin: 1em;
-  color: @metadata_grey;
+  color: var(--text-tertiary);
   text-align: center;
   }
 
@@ -153,7 +151,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   }
   
 .facet-body-scrollable .facet-body-inner {
-  border-bottom: 1px solid @chrome_primary;
+  border-bottom: 1px solid var(--chrome-primary);
   }
 
 .facet-body.facet-body-scrollable .ui-resizable-s {
@@ -178,7 +176,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   }
 
 .facet-choice:hover {
-  background: @fill_secondary;
+  background: var(--fill-secondary);
   }
 
 .facet-choice-selected .facet-choice-label {
@@ -197,14 +195,14 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 .facet-choice-count, .facet-range-choice-count {
   padding-left: 5px;
   font-size: 0.85em;
-  color: @light_grey;
+  color: var(--light-grey);
   }
 
 a.facet-choice-link {
   float: right;
   padding-left: 5px;
   font-size: 0.85em;
-  color: @link_secondary;
+  color: var(--link-secondary);
   font-weight: normal;
   }
 
@@ -220,7 +218,7 @@ img.facet-choice-link {
   }
 
 .facet-range-message {
-  color: @metadata_grey;
+  color: var(--text-tertiary);
   }
 
 .facet-range-histogram {

@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("theme.less");
-
 .main-layout-panel {
   position: fixed;
   margin: 0;
@@ -45,11 +43,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 0 1em;
   font-style: italic;
   font-size: 110%;
-  color: @near_black;
+  color: var(--text-tertiary);
   }
 
 #left-panel-body {
-  margin-left: @padding_tight;
+  margin-left: var(--padding-tight);
   overflow: hidden;
   position: relative;
   }
@@ -57,19 +55,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #action-area-tabs {
   margin: 0;
   padding: 0;
-  padding-top: @padding_looser;
+  padding-top: var(--padding-looser);
   font-size: 1.3em;
   }
 #action-area-tabs > li {
   display: block;
-  padding-top: @padding_tight;
-  padding-bottom: @padding_tight;
-  padding-left: @padding_normal;
+  padding-top: var(--padding-tight);
+  padding-bottom: var(--padding-tight);
+  padding-left: var(--padding-normal);
   cursor: pointer;
   }
 #action-area-tabs > li.selected {
-  background: @chrome_primary;
-  .rounded_corners_left();
+  background: var(--chrome-primary);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   }
 
 #project-links {
@@ -96,13 +95,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 #openrefine-version {
-  margin: @padding_normal 0 0 0;
-  color: @metadata_grey;
+  margin: var(--padding-normal) 0 0 0;
+  color: var(--text-tertiary);
   font-size: 80%;
   }
 
 #right-panel {
-  background: @chrome_primary;
+  background: var(--chrome-primary);
   }
 
 #right-panel-body {

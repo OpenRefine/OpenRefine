@@ -26,7 +26,6 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-@import-less url("theme.less");
 
 .database-container {
 //   margin-left: 200px;
@@ -53,8 +52,8 @@
 
 .database-importing-wizard-header {
   font-size: 1.3em;
-  background: @chrome_primary;
-  padding: @padding_tight;
+  background: var(--chrome-primary);
+  padding: var(--padding-tight);
   }
 
 .database-importing-parsing-data-panel {
@@ -76,9 +75,9 @@
   font-size: 1.3em;
   position: absolute;
   overflow: auto;
-  border-top: 5px solid @chrome_primary;
+  border-top: 5px solid var(--chrome-primary);
   background: white;
-  padding: @padding_looser;
+  padding: var(--padding-looser);
   }
 
 .context-menu-text {

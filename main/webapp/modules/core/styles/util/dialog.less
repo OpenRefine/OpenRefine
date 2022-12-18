@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -54,7 +52,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 0 auto;
   text-align: left;
   background: white;
-  border: 1px solid @dialog_frame;
+  border: 1px solid var(--dialog-frame);
   display: inline-block;
   }
 
@@ -62,8 +60,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .dialog-header {
-  background: @dialog_header;
-  padding: @padding_loose;
+  background: var(--dialog-header);
+  padding: var(--padding-loose);
   font-weight: bold;
   font-size: 1.6em;
   color: #000;
@@ -72,11 +70,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .dialog-body {
   font-size: 1.3em;
-  padding: @padding_looser;
+  padding: var(--padding-looser);
   }
 
 .dialog-instruction {
-  padding: 0 0 @padding_normal;
+  padding: 0 0 var(--padding-normal);
   }
 
 .dialog-footer {
@@ -84,8 +82,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   display: flex;
   column-gap: 5px;
   justify-content: right;
-  background: @dialog_footer;
-  padding: @padding_loose;
+  background: var(--dialog-footer);
+  padding: var(--padding-loose);
   }
 
 .dialog-footer .dialog-footer-bg {
@@ -105,5 +103,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .dialog-busy {
   width: 400px;
   border: none;
-  .rounded_corners(20px);
+  border-radius: 20px;
   }

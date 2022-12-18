@@ -91,7 +91,7 @@ function init() {
       "project/styles",
       module,
       [
-        "styles/theme.less",
+        "styles/theme.css",
         "styles/schema-alignment.less",
         "styles/dialogs/manage-account-dialog.less",
         "styles/dialogs/import-schema-dialog.less",

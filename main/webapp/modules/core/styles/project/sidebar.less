@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-@import-less url("../theme.less");
-
 .browsing-panel-header {
   position: relative;
   display: none;
@@ -71,24 +69,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .browsing-panel-controls {
   position: relative;
-  padding: @padding_normal;
+  padding: var(--padding-normal);
   visibility: hidden;
   text-align: right;
   }
 
 .browsing-panel-controls-refresh {
   position: absolute;
-  top: @padding_normal;
-  left: @padding_normal;
+  top: var(--padding-normal);
+  left: var(--padding-normal);
   }
 
 .browsing-panel-help, .history-panel-help {
   margin: 1em;
   padding: 0 0 13px 0;
-  background: @fill_primary;
-  border: 1px solid @chrome_primary;
-  color: @near_black;
-  .rounded_corners();
+  background: var(--fill-primary);
+  border: 1px solid var(--chrome-primary);
+  color: var(--text-tertiary);
+  border-radius: var(--rounded-corners-radius);
   }
   
 .browsing-panel-help h1, .history-panel-help h1 {
@@ -145,15 +143,11 @@ div#body div#left-panel a#hide-left-panel-button:hover {
   background-position: -17px 0px;
 }
 
-@history_done_background: #fff;
-@history_undone_background: @chrome_secondary;
-@history_entry_index_width: 30px;
-
 a.history-entry {
   display: block;
   position: relative;
-  padding: @padding_normal;
-  padding-left:  @padding_normal + @history_entry_index_width;
+  padding: var(--padding-normal);
+  padding-left:  var(--padding-normal) + 3px;
   text-decoration: none;
   color: #000;
   border-bottom: 1px dotted #ddd;
@@ -163,7 +157,7 @@ a.history-entry {
   position: absolute;
   top: 8px;
   left: 0;
-  width: @history_entry_index_width;
+  width: 30px;
   text-align: right;
   font-size: 80%;
   padding: 2px 0px;
@@ -180,14 +174,14 @@ a.history-entry.filtered-out > * {
   }
 
 .history-panel-controls {
-  padding: @padding_normal;
+  padding: var(--padding-normal);
   text-align: right;
   }
 
 .history-panel-filter {
-  padding: @padding_tighter @padding_normal;
-  background: @chrome_secondary;
-  border: 1px solid @chrome_primary;
+  padding: var(--padding-tighter) var(--padding-normal);
+  background: var(--chrome-secondary);
+  border: 1px solid var(--chrome-primary);
   border-left: 0;  
   border-right: 0;
   }
@@ -197,22 +191,22 @@ a.history-entry.filtered-out > * {
 }
 
 .history-panel-body {
-  background: @history_undone_background;
+  background: var(--chrome-secondary);
   overflow: auto;
   }
 
 .history-past {
   position: relative;
-  background: @history_done_background;
+  background: #fff;
   }
 
 .history-now {
-  background: @selected_primary;
+  background: var(--selected-primary);
   }
 
 .history-future {
   position: relative;
-  padding-bottom: @padding_loose;
+  padding-bottom: var(--padding-loose);
   }
 
 .history-highlight {
@@ -223,17 +217,17 @@ a.history-entry.filtered-out > * {
   }
   
 .history-past .history-highlight {
-  background: @history_undone_background;
+  background: var(--chrome-secondary);
   bottom: 0;
   }
 
 .history-future .history-highlight {
-  background: @history_done_background;
+  background: #fff;
   top: 0;
   }
 
 .history-future a.history-entry, .history-future a.history-entry-index {
-  color: @light_grey;
+  color: var(--light-grey);
   }
 
 .history-now a.history-entry, .history-now a.history-entry-index {
@@ -241,18 +235,18 @@ a.history-entry.filtered-out > * {
   }
   
 .history-past a.history-entry:hover, .history-future a.history-entry:hover {
-  border-bottom: 1px solid @selected_primary;
+  border-bottom: 1px solid var(--selected-primary);
   }
 
 .history-extract-dialog-panel {
-  border: 1px solid @chrome_primary;
+  border: 1px solid var(--chrome-primary);
   height: 400px;
   overflow: auto;
   }
   
 table.history-extract-dialog-entries {
   border-collapse: separate;
-  border-spacing: @padding_tight;
+  border-spacing: var(--padding-tight);
   word-break: break-all;
   }
   
