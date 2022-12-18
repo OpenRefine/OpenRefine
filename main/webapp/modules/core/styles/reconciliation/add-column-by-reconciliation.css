@@ -36,38 +36,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 5px;
   overflow: auto;
   height: 375px;
-  }
+}
 
 .add-column-by-reconciliation-dialog .suggested-property {
   padding: 5px;
-  }
+}
 
 .add-column-by-reconciliation-dialog input.property-suggest {
   display: block;
   padding: 2%;
   width: 96%;
-  }
+}
 
 .add-column-by-reconciliation-dialog .preview-container {
   border: 1px solid #aaa;
   overflow: auto;
   max-width: 600px;
-  }
+}
 
 .add-column-by-reconciliation-dialog .preview-container table {
   border-collapse: collapse;
-  }
+}
 
 .add-column-by-reconciliation-dialog .preview-container td, .add-column-by-reconciliation-dialog .preview-container th {
   padding: 3px 5px;
   border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
-  }
+}
 
 .add-column-by-reconciliation-dialog .preview-container th img {
   vertical-align: top;
   margin-left: 5px;
-  }
+}
 
 .add-column-by-reconciliation-progress {
   text-align: center;

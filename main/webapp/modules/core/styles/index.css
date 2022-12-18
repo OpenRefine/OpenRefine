@@ -37,39 +37,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0;
   overflow: hidden;
   visibility: hidden;
-  }
+}
 
 #slogan {
   margin: 0 1em;
   font-style: italic;
   font-size: 110%;
   color: var(--text-tertiary);
-  }
+}
 
 #left-panel-body {
   margin-left: var(--padding-tight);
   overflow: hidden;
   position: relative;
-  }
+}
 
 #action-area-tabs {
   margin: 0;
   padding: 0;
   padding-top: var(--padding-looser);
   font-size: 1.3em;
-  }
-#action-area-tabs > li {
+}
+
+#action-area-tabs>li {
   display: block;
   padding-top: var(--padding-tight);
   padding-bottom: var(--padding-tight);
   padding-left: var(--padding-normal);
   cursor: pointer;
-  }
-#action-area-tabs > li.selected {
+}
+
+#action-area-tabs>li.selected {
   background: var(--chrome-primary);
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  }
+}
 
 #project-links {
   font-size: 1.3em;
@@ -78,36 +80,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   left: -5px;
   width: 100%;
   text-align: center;
-  }
+}
 
 #logo-container {
   margin: 2em 0;
-  }
+}
 
-#project-links > ul {
+#project-links>ul {
   padding: 0;
   margin: 1em 0;
   line-height: 1.5em;
-  }
+}
 
-#project-links > ul > li {
+#project-links>ul>li {
   display: block;
-  }
+}
 
 #openrefine-version {
   margin: var(--padding-normal) 0 0 0;
   color: var(--text-tertiary);
   font-size: 80%;
-  }
+}
 
 #right-panel {
   background: var(--chrome-primary);
-  }
+}
 
 #right-panel-body {
   overflow: auto;
   position: relative;
-  }
+}
 
 .action-area-tab-body {
   visibility: hidden;
@@ -118,4 +120,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   width: 100%;
   height: 100%;
   overflow: hidden;
-  }
+}

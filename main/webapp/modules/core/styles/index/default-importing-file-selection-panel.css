@@ -37,38 +37,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: var(--chrome-secondary);
   padding: var(--padding-looser);
   border-right: 1px solid var(--chrome-primary);
-  }
+}
+
 .default-importing-file-selection-file-panel {
   font-size: 1.3em;
   position: absolute;
   background: white;
   overflow: auto;
-  }
-.default-importing-file-selection-file-panel > table {
+}
+
+.default-importing-file-selection-file-panel>table {
   border-collapse: collapse;
   width: 100%;
-  }
-.default-importing-file-selection-file-panel > table > tbody > tr > th {
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>th {
   text-align: left;
   padding: var(--padding-tight) var(--padding-normal);
   background: var(--chrome-secondary);
-  }
-.default-importing-file-selection-file-panel > table > tbody > tr > td {
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>td {
   padding: 0;
   border-bottom: 1px solid var(--chrome-secondary);
-  }
-.default-importing-file-selection-file-panel > table > tbody > tr > td > label {
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>td>label {
   display: block;
   padding: var(--padding-tight) var(--padding-normal);
-  }
+}
 
 .default-importing-file-selection-control-panel h2 {
   font-size: 110%;
   margin-top: 3em;
   margin-bottom: 0.75em;
-  }
+}
 
-.default-importing-file-selection-file-panel > table > tbody > tr >
-    td.default-importing-file-selection-filename.highlighted {
+.default-importing-file-selection-file-panel>table>tbody>tr>td.default-importing-file-selection-filename.highlighted {
   background: var(--fill-editable);
-  }
+}

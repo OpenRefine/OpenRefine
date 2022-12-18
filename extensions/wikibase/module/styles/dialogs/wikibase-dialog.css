@@ -3,7 +3,8 @@
 }
 
 .wikibase-list-wrapper {
-  max-height: 500px; overflow-y: auto
+  max-height: 500px;
+  overflow-y: auto
 }
 
 .wikibase-list {
@@ -67,9 +68,9 @@
 }
 
 .wikibase-list li.selected a, .wikibase-list li.active a {
-  display:none;
+  display: none;
 }
 
 .wikibase-list li.active span {
-  display:block !important;
+  display: block !important;
 }

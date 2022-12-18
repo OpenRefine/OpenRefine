@@ -31,23 +31,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
-article, aside, figure, footer, header, hgroup, nav, section { display: block; }
-ul { list-style-position: inside; }
-a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
-table { border-collapse: collapse; border-spacing: 0; }
-input, select { vertical-align: middle; }
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
 
-body { 
-  font-size: 62.5%; 
-  font-family: Arial, sans-serif; 
+article, aside, figure, footer, header, hgroup, nav, section {
+  display: block;
+}
+
+ul {
+  list-style-position: inside;
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+body {
+  font-size: 62.5%;
+  font-family: Arial, sans-serif;
   background: #fff;
-  }
+}
 
-h1 { 
-  font-size: 1.8em; 
-  }
-  
+h1 {
+  font-size: 1.8em;
+}
+
 h2 {
   font-size: 1.3em;
   font-weight: bold;
@@ -55,54 +83,54 @@ h2 {
 
 label {
   cursor: pointer;
-  }
+}
 
 input[type=text] {
   padding: var(--padding-tighter);
-  font-size: 1em;  
-  font-family: inherit; 
+  font-size: 1em;
+  font-family: inherit;
   border: #ccc 1px solid;
   border-top: #888 1px solid;
   vertical-align: baseline;
-  }
+}
 
 a {
   color: var(--link-primary);
   text-decoration: none;
-  }
+}
 
 a:hover {
   text-decoration: underline;
-  }
-  
+}
+
 a.secondary {
   color: var(--link-secondary);
-  }
+}
 
 a.action, a.selected, a.inaction {
   margin: 0 3px;
-  }
+}
 
 a.selected {
   color: #000;
   font-weight: bold;
   cursor: default;
-  }
+}
 
 a.inaction {
   color: var(--light-grey);
-  }
+}
 
 a.selected:hover, a.inaction:hover {
   cursor: default;
   text-decoration: none;
-  }
+}
 
 a img {
   border: 0;
-  }
+}
 
-.button, a.button { 
+.button, a.button {
   display: inline-block;
   overflow: visible;
   font-size: 1em;
@@ -114,74 +142,74 @@ a img {
   cursor: pointer;
   background: #eee;
   white-space: nowrap;
-  font-family: Arial, Helvetica, sans-serif; 
+  font-family: Arial, Helvetica, sans-serif;
   border-radius: 3px;
-  }
+}
 
-.button:hover, a.button:hover { 
+.button:hover, a.button:hover {
   border: 1px solid #666;
-  }
+}
 
-.button:active, a.button:active { 
+.button:active, a.button:active {
   border: 1px solid #000;
-  }
+}
 
-.button-primary, a.button-primary { 
+.button-primary, a.button-primary {
   font-weight: bold;
   padding: 1px 15px;
-  }
+}
 
 .button-pill-left, a.button-pill-left {
   border-right: 1px solid #bbb;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  }
+}
 
 .button-pill-right, a.button-pill-right {
   border-left: 1px solid #fff;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  }
+}
 
 .button-disabled, a.button-disabled, .button.button-disabled, a.button.button-disabled {
   color: #666;
   border: 1px solid #ddd;
   background: #f3f3f3;
   cursor: default;
-  }
+}
 
 .button-disabled:hover, a.button-disabled:hover {
   color: #666;
   border: 1px solid #ddd;
   background: #f3f3f3;
   cursor: default;
-  }
+}
 
 .button img, a.button img {
   padding-left: 3px;
-  }
-  
+}
+
 .button-menu, a.button-menu {
   background: url(../images/down-arrow.png) no-repeat right 6px;
   padding-right: 12px;
-  }
+}
 
 .form-table th, .form-table td {
   vertical-align: top;
   font-size: 1.3em;
   padding: 2px;
-  }
+}
 
 .form-table th {
   text-align: left;
   padding-top: 8px;
   font-weight: bold;
-  }
+}
 
 .list-table {
   width: 100%;
-  }
-  
+}
+
 .list-table th, .list-table td {
   padding-top: var(--padding-tight);
   text-align: left;
@@ -190,37 +218,37 @@ a img {
   font-size: 1.1em;
   color: #222;
   border-bottom: dotted 1px var(--faint-grey);
-  }
+}
 
 .list-table th {
   font-weight: bold;
   color: #444;
   background: #f2f2f2;
-  }
+}
 
 .list-table-itemname {
   font-size: 1.2em;
-  }
+}
 
 #loading-message {
   text-align: center;
   font-size: 300%;
   color: var(--light-grey);
   padding: 3em .5em;
-  }
+}
 
 #loading-message img {
   position: relative;
   top: -4px;
-  }
-  
+}
+
 #notification-container {
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 100;
   text-align: center;
-  }
+}
 
 #notification {
   display: inline-block;
@@ -231,21 +259,20 @@ a img {
   font-weight: bold;
   background: var(--notification-primary);
   border-radius: 2px;
-  }
-  
+}
+
 .notification-action {
   padding-left: 10px;
-  }
+}
 
 .notification-loader {
   padding: 0 3px 0 0;
   opacity: 0.3;
-  }
+}
 
 .toggle-text {
   font-size: x-small;
   border-bottom: 1px blue dotted;
-  left-margin: 1em
 }
 
 #header {
@@ -259,28 +286,28 @@ a img {
   position: absolute;
   top: 0;
   left: 0;
-  }
+}
 
 #body-info {
   margin: 0 40px;
-  }
+}
 
 #body-info p {
   font-size: 1.3em;
   margin: 1.3em;
   width: 50em;
   line-height: 1.3;
-  }
+}
 
 #body-info h1 {
   font-size: 3.0em;
   font-weight: normal;
   color: var(--text-tertiary);
-  }
+}
 
 #body-info h2 {
   margin: 1.6em 0 .5em 0;
-  }
+}
 
 #body-info .license, #body-info .errorstack {
   font-family: monospace;
@@ -291,103 +318,116 @@ a img {
   padding: var(--padding-looser);
   width: 60em;
   overflow: auto;
-  }
-  
+}
+
 #body-info ul {
   font-size: 1.3em;
   margin: .5em 0 2em;
-  }
+}
 
 #body-info li {
   margin: 0.4em;
-  }
+}
 
 input[type="checkbox"], input[type="radio"], select {
   vertical-align: baseline;
-  }
+}
 
 input.inline {
   vertical-align: middle;
-  }
+}
+
 input[type='text'].inline {
   vertical-align: baseline;
-  }
+}
+
 input.lightweight {
   vertical-align: baseline;
   border: none;
   border-bottom: 1px solid var(--faint-grey);
   padding: 0px 2px 1px 2px;
-  }
+}
 
 
-div.grid-layout > table {
+div.grid-layout>table {
   border-collapse: separate;
-  }
-div.grid-layout.layout-full > table {
+}
+
+div.grid-layout.layout-full>table {
   width: 100%;
   max-width: 100% !important;
-  }
-div.grid-layout > table > tbody > tr > th,
-div.grid-layout > table > tbody > tr > td {
+}
+
+div.grid-layout>table>tbody>tr>th,
+div.grid-layout>table>tbody>tr>td {
   padding: 0px;
   text-align: left;
   vertical-align: baseline;
-  }
-div.grid-layout.grid-layout-for-text > table > tbody > tr > th,
-div.grid-layout.grid-layout-for-text > table > tbody > tr > td {
+}
+
+div.grid-layout.grid-layout-for-text>table>tbody>tr>th,
+div.grid-layout.grid-layout-for-text>table>tbody>tr>td {
   vertical-align: middle;
-  }
-div.grid-layout.grid-layout-for-ui > table > tbody > tr > th,
-div.grid-layout.grid-layout-for-ui > table > tbody > tr > td {
+}
+
+div.grid-layout.grid-layout-for-ui>table>tbody>tr>th,
+div.grid-layout.grid-layout-for-ui>table>tbody>tr>td {
   vertical-align: top;
-  }
+}
+
 div.grid-layout.layout-normal {
   margin: -10px;
-  }
-div.grid-layout.layout-normal > table {
+}
+
+div.grid-layout.layout-normal>table {
   border-spacing: 10px;
-  }
+}
 
 div.grid-layout.layout-tight {
   margin: -7px;
-  }
-div.grid-layout.layout-tight > table {
+}
+
+div.grid-layout.layout-tight>table {
   border-spacing: 7px;
-  }
+}
 
 div.grid-layout.layout-tighter {
   margin: -5px;
-  }
-div.grid-layout.layout-tighter > table {
+}
+
+div.grid-layout.layout-tighter>table {
   border-spacing: 5px;
-  }
+}
 
 div.grid-layout.layout-tightest {
   margin: -3px;
-  }
-div.grid-layout.layout-tightest > table {
+}
+
+div.grid-layout.layout-tightest>table {
   border-spacing: 3px;
-  }
+}
 
 div.grid-layout.layout-loose {
   margin: -15px;
-  }
-div.grid-layout.layout-loose > table {
+}
+
+div.grid-layout.layout-loose>table {
   border-spacing: 15px;
-  }
+}
 
 div.grid-layout.layout-looser {
   margin: -20px;
-  }
-div.grid-layout.layout-looser > table {
+}
+
+div.grid-layout.layout-looser>table {
   border-spacing: 20px;
-  }
+}
 
 div.input-container {
   padding: 3px;
-  }
+}
 
-div.input-container > input, div.input-container > textarea {
+div.input-container>input, div.input-container>textarea {
   display: inline-block;
   width: 100%;
   padding: 2px;
@@ -395,43 +435,44 @@ div.input-container > input, div.input-container > textarea {
   margin-left: -3px;
   margin-top: -3px;
   vertical-align: top;
-  }
+}
 
 input.code, textarea.code {
   font-family: monospace;
-  }
+}
 
 img {
   vertical-align: middle;
-  }
+}
 
 .hidden {
   display: none;
-  }
+}
 
 .fbs-pane, .fbs-flyout-pane {
   z-index: 2000;
-  }
+}
 
 .ui-widget {
   font-family: inherit;
   font-size: inherit;
-  }
+}
+
 .ui-widget input,
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
   font-family: inherit;
   font-size: inherit;
-  }
+}
 
 p.body-text {
   margin-bottom: 1em;
-  }
+}
 
 .relative-frame {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  }
+}

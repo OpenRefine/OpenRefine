@@ -35,30 +35,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the class and ids of colum-join.html
 */
 
-.dialog-header,.dialog_body,.dialog-footer,.global_selection {
-  clear:both;
+.dialog-header, .dialog_body, .dialog-footer, .global_selection {
+  clear: both;
 }
 
 .column-join-left-pane {
-  float:left;
-  width : 40%;
+  float: left;
+  width: 40%;
   margin-right: 10px;
 }
 
-.column-join-inner-left-pane,.column-join-inner-right-pane {
+.column-join-inner-left-pane, .column-join-inner-right-pane {
   border: 1px solid var(--chrome-primary);
   height: 24em;
   padding: var(--padding-loose);
-  }
-  
+}
+
 .column-join-inner-left-pane-list {
   overflow: auto;
-  height:22em;
-  }
-  
+  height: 22em;
+}
+
 
 .column-join-global-selection {
-  margin-top:0.5em;
+  margin-top: 0.5em;
 }
 
 .column-join-column {
@@ -68,16 +68,17 @@ Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the c
   margin: var(--padding-tight);
   cursor: move;
   border-radius: var(--rounded-corners-radius);
-  }
+}
+
 .column-join-column.selected {
   background: var(--chrome-primary);
   font-weight: bold;
-  }
-
-.column-join-inner-right-pane .option {
-  margin-top:1em;
 }
 
-.column-join-inner-right-pane .tip,.column-join-inner-left-pane .tip{
-  font-size:0.9em;
+.column-join-inner-right-pane .option {
+  margin-top: 1em;
+}
+
+.column-join-inner-right-pane .tip, .column-join-inner-left-pane .tip {
+  font-size: 0.9em;
 }

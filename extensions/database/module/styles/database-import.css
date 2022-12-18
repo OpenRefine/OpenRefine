@@ -27,40 +27,40 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.database-container {
-//   margin-left: 200px;
- //    width: 50%;
-//   min-height: 50%;
-}
+/*.database-container {
+  margin-left: 200px;
+  width: 50%;
+  min-height: 50%;
+}*/
 
 .cleared {
   clear: both;
 }
 
 .custom-restricted-width {
-    /* To limit the menu width to the content of the menu: */
-    display: inline-block;
-    /* Or set the width explicitly: */
-    /* width: 10em; */
+  /* To limit the menu width to the content of the menu: */
+  display: inline-block;
+  /* Or set the width explicitly: */
+  /* width: 10em; */
 }
 
 
 .scrollable {
-	height: 400px;
-	overflow: auto;
+  height: 400px;
+  overflow: auto;
 }
 
 .database-importing-wizard-header {
   font-size: 1.3em;
   background: var(--chrome-primary);
   padding: var(--padding-tight);
-  }
+}
 
 .database-importing-parsing-data-panel {
   font-size: 1.1em;
   position: absolute;
   overflow: auto;
-  }
+}
 
 .database-importing-progress-data-panel {
   position: absolute;
@@ -69,7 +69,7 @@
   padding: 3em;
   background: rgba(255, 255, 255, 0.7);
   text-align: center;
-  }
+}
 
 .database-importing-parsing-control-panel {
   font-size: 1.3em;
@@ -78,40 +78,44 @@
   border-top: 5px solid var(--chrome-primary);
   background: white;
   padding: var(--padding-looser);
-  }
+}
 
 .context-menu-text {
-	padding: 4px 4px 2px 2px;
+  padding: 4px 4px 2px 2px;
 }
 
 
 .custom-restricted {
-    height: 300px;
-    width: 100%;
-    border: 1px solid #bcf;
-    border-radius: 4px;
+  height: 300px;
+  width: 100%;
+  border: 1px solid #bcf;
+  border-radius: 4px;
 }
 
-// FIXME: This is a duplicate
+/* FIXME: This is a duplicate */
 .custom-restricted-width {
-    /* To limit the menu width to the content of the menu: */
-    display: inline-block;
-    /* Or set the width explicitly: */
-    /* width: 10em; */
-    margin-right:10px;
-	  padding-right:10px;
-	  margin-bottom:10px;
+  /* To limit the menu width to the content of the menu: */
+  display: inline-block;
+  /* Or set the width explicitly: */
+  /* width: 10em; */
+  margin-right: 10px;
+  padding-right: 10px;
+  margin-bottom: 10px;
 }
+
 .no-resize {
-	resize: none;
+  resize: none;
 }
+
 .layout-div {
-  width : 100%;
+  width: 100%;
 
 }
+
 .layout-div .connection-div-layout {
-	min-width: 400px;
+  min-width: 400px;
 }
+
 .new-connection-legend {
   padding-left: 2px;
   margin-left: 2px;
@@ -119,24 +123,25 @@
 }
 
 .sql-editor-div {
-	margin-left:40px;
-	padding-left:20px;
+  margin-left: 40px;
+  padding-left: 20px;
 }
+
 .new-connection-div {
-	margin-left:40px;
-	padding-left:20px;
+  margin-left: 40px;
+  padding-left: 20px;
 }
+
 .new-connection-fieldset {
-   border:  1px solid gray;
+  border: 1px solid gray;
 }
 
 .sc-context-more-vert:after {
   content: "";
   display: inline-block;
   background: url("../images/more-option-horiz-16.png") no-repeat top right;
- // line-height: 1;
+  /* line-height: 1; */
   width: 16px;
   height: 16px;
   -webkit-font-smoothing: antialiased;
-
 }

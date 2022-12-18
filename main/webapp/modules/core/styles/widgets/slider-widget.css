@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   position: relative;
   overflow: visible;
   margin: 5px;
-  }
+}
 
 .slider-widget-tint {
   position: absolute;
@@ -44,15 +44,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: #666;
   opacity: 0.5;
   display: none;
-  }
+}
 
 .slider-widget-tint.left {
   left: 0;
-  }
+}
 
 .slider-widget-tint.right {
   right: 0;
-  }
+}
+
 .slider-widget-highlight {
   position: absolute;
   padding: 0;
@@ -60,23 +61,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   top: -2px;
   height: 100%;
   cursor: move;
-  }
+}
+
 .slider-widget-bracket {
   position: absolute;
   top: 0;
   width: 12px;
   height: 100%;
-  }
+}
+
 .slider-widget-bracket.left {
   background: url(../../images/slider-handle.png) no-repeat center right;
   margin-left: -8px;
   cursor: e-resize;
-  }
+}
+
 .slider-widget-bracket.right {
   background: url(../../images/slider-handle.png) no-repeat center left;
   margin-left: -4px;
   cursor: w-resize;
-  }
+}
+
 .slider-widget-overlay {
   position: fixed;
   top: 0px;
@@ -85,4 +90,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   height: 100%;
   background: white;
   opacity: 0.01;
-  }
+}

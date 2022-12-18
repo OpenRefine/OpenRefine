@@ -39,14 +39,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   height: 100%;
   background: #666;
   opacity: 0.5;
-  }
+}
 
 .dialog-container {
   position: fixed;
   left: 0;
   width: 100%;
   text-align: center;
-  }
+}
 
 .dialog-frame {
   margin: 0 auto;
@@ -54,10 +54,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: white;
   border: 1px solid var(--dialog-frame);
   display: inline-block;
-  }
+}
 
-.dialog-border {
-  }
+.dialog-border {}
 
 .dialog-header {
   background: var(--dialog-header);
@@ -66,16 +65,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 1.6em;
   color: #000;
   cursor: move;
-  }
+}
 
 .dialog-body {
   font-size: 1.3em;
   padding: var(--padding-looser);
-  }
+}
 
 .dialog-instruction {
   padding: 0 0 var(--padding-normal);
-  }
+}
 
 .dialog-footer {
   font-size: 1.3em;
@@ -84,7 +83,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   justify-content: right;
   background: var(--dialog-footer);
   padding: var(--padding-loose);
-  }
+}
 
 .dialog-footer .dialog-footer-bg {
   display: flex;
@@ -96,7 +95,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cursor: default;
 }
 
-.dialog-footer button:hover:disabled  {
+.dialog-footer button:hover:disabled {
   border: 1px solid #bbb !important;
 }
 
@@ -104,4 +103,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   width: 400px;
   border: none;
   border-radius: 20px;
-  }
+}

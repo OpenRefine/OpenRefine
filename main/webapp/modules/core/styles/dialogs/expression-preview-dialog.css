@@ -33,20 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #expression-preview-tabs .ui-tabs-nav li a {
   padding: 0.15em 1em;
-  }
+}
 
 textarea.expression-preview-code {
   font-family: monospace;
   height: 5em;
   vertical-align: top;
-  }
+}
 
 .expression-preview-parsing-status {
   color: var(--light-grey);
-  }
+}
+
 .expression-preview-parsing-status.error {
   color: red;
-  }
+}
 
 #expression-preview-tabs-preview,
 #expression-preview-tabs-help,
@@ -54,70 +55,67 @@ textarea.expression-preview-code {
 #expression-preview-tabs-starred {
   padding: var(--padding-tight);
   overflow: hidden;
-  }
+}
 
-#expression-preview-tabs-preview > div,
-#expression-preview-tabs-help > div,
-#expression-preview-tabs-history > div,
+#expression-preview-tabs-preview>div,
+#expression-preview-tabs-help>div,
+#expression-preview-tabs-history>div,
 #expression-preview-tabs-starred {
   height: 200px;
   overflow: auto;
-  }
+}
 
 #expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
 #expression-preview-tabs-help td, #expression-preview-tabs-help th,
 #expression-preview-tabs-history td, #expression-preview-tabs-history th,
 #expression-preview-tabs-starred td, #expression-preview-tabs-starred th {
   padding: var(--padding-tight);
-  }
+}
 
 .expression-preview-table-wrapper {
   padding: var(--padding-normal);
   width: 100%;
-  }
+}
 
 .expression-preview-container td {
   padding: 2px 5px;
   border-top: 1px solid #ccc;
-  }
+}
 
 td.expression-preview-heading {
   border-top: none;
   background: #ddd;
   font-weight: bold;
-  }
+}
 
 td.expression-preview-value {
   max-width: 250px !important;
   white-space: pre-wrap;
   overflow-x: hidden;
-  }
+}
 
 .expression-preview-special-value {
   color: #aaa;
-  }
+}
 
 .expression-preview-help-container h3 {
   margin-top: var(--padding-looser);
   margin-bottom: var(--padding-normal);
   border-bottom: 1px solid var(--light-grey);
-  }
+}
 
 .expression-preview-doc-item-title {
   font-weight: bold;
   text-align: right;
-  }
+}
 
-.expression-preview-doc-item-params {
-  }
+.expression-preview-doc-item-params {}
 
-.expression-preview-doc-item-returns {
-  }
+.expression-preview-doc-item-returns {}
 
 .expression-preview-doc-item-desc {
   max-width: 250px;
   white-space: pre-wrap;
   overflow-x: hidden;
   color: #666;
-
 }

@@ -33,42 +33,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #body {
   display: none;
-  }
-  
+}
+
 #project-title, #project-controls {
   position: absolute;
   top: 0;
   display: none;
-  }
+}
 
 #project-title {
   left: 140px;
   height: 40px;
   padding: 4px 0 0 0;
   font-size: 1.6em;
-  }
+}
 
 #project-controls {
   right: 0;
   height: 40px;
   font-size: 1.3em;
-  }
+}
 
 #project-name-button {
   padding: 3px;
   border: 1px solid transparent;
-  }
+}
 
 #project-name-button:hover {
   background: var(--fill-editable);
   border: 1px solid #ccc;
   border-top: 1px solid #aaa;
-  }
+}
 
 #project-permalink-button {
   padding: 0 4px;
   font-size: 0.7em;
-  }
+}
 
 #left-panel {
   position: fixed;
@@ -76,16 +76,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0px;
   padding-top: 0px;
   font-size: 1.3em;
-  background: var(--chrome-secondary);  
+  background: var(--chrome-secondary);
   border-top-right-radius: 7px;
-  }
-  
-#left-panel  .ui-tabs .ui-tabs-panel {
+}
+
+#left-panel .ui-tabs .ui-tabs-panel {
   border-left: none;
   border-right: none;
   border-bottom: none;
   padding: 0;
-  }
+}
 
 #right-panel {
   position: fixed;
@@ -94,24 +94,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding-left: var(--padding-tight);
   background: var(--chrome-primary);
   border-top-left-radius: 7px;
-  }
+}
 
 #tool-panel {
   position: relative;
   height: 32px;
-  }
+}
 
 #summary-bar {
   display: inline-block;
   margin: 7px 0px 0px 4px;
   font-size: 1.8em;
   font-weight: bold;
-  }
-  
+}
+
 #summary-total {
   font-size: 0.8em;
   font-weight: normal;
-  }
+}
 
 #extension-bar {
   position: absolute;
@@ -120,17 +120,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   white-space: nowrap;
   font-size: 1.3em;
   padding: var(--padding-tight) 0;
-  }
+}
 
 #extension-bar .secondary {
   font-size: 0.85em;
-  }
+}
 
 #view-panel {
   background: white;
   overflow: hidden;
-  }
+}
 
 #facet-panel, #history-panel {
   overflow: auto;
-  }
+}
