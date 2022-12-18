@@ -38,7 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Error - OpenRefine</title>
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.less" />
+    <link rel="stylesheet" href="/styles/common.css" />
   </head>
   <body>
     <div id="header">
