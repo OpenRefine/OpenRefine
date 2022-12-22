@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -55,6 +55,8 @@ import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Cell implements HasFields {
 
@@ -62,6 +64,8 @@ public class Cell implements HasFields {
     final public Serializable value;
     @JsonIgnore
     final public Recon recon;
+
+    private static final Logger logger = LoggerFactory.getLogger(Cell.class);
 
     public Cell(Serializable value, Recon recon) {
         this.value = value;
@@ -115,14 +119,14 @@ public class Cell implements HasFields {
             }
 
             if (instant != null) {
-                return ParsingUtilities.instantToString(instant);
+                return instant.toString();
             } else if (value instanceof Double
                     && (((Double) value).isNaN() || ((Double) value).isInfinite())) {
                 // write as a string
-                return ((Double) value).toString();
+                return value.toString();
             } else if (value instanceof Float
                     && (((Float) value).isNaN() || ((Float) value).isInfinite())) {
-                return ((Float) value).toString();
+                return value.toString();
             } else if (value instanceof Boolean || value instanceof Number) {
                 return value;
             } else {
@@ -155,7 +159,7 @@ public class Cell implements HasFields {
             }
             ParsingUtilities.saveWriter.writeValue(writer, this);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error writing cell to writer", e);
         }
     }
 
@@ -177,7 +181,7 @@ public class Cell implements HasFields {
         if (reconId != null) {
             recon = pool.getRecon(reconId);
         }
-        if (type != null && "date".equals(type)) {
+        if ("date".equals(type)) {
             value = ParsingUtilities.stringToDate((String) value);
         }
         if (error != null) {
