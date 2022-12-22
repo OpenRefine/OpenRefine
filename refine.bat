@@ -57,9 +57,9 @@ echo.
 echo  "/v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
 echo     default: info
 echo.
-echo   --debug enable JVM debugging (on port 8000)
+echo   "/debug" debug enable JVM debugging (on port 8000)
 echo.  
-echo   --jmx enable JMX monitoring (for jconsole and jvisualvm)
+echo   "/jmx" enable JMX monitoring (for jconsole and jvisualvm)
 echo.
 echo  "and <action> is one of
 echo.
