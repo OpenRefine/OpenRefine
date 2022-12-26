@@ -111,7 +111,7 @@ public class JythonEvaluable implements Evaluable {
             sb.append(line);
         }
 
-        _engine.exec(sb.toString());
+        _engine.exec((Py.newUnicode(sb.toString())).encode("UTF-8"));
     }
 
     @Override
