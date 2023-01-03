@@ -51,6 +51,31 @@ public class JythonEvaluableTest {
         Assert.assertEquals(po.__getattr__("bar").toString(), "1");
     }
 
+    // Reproduces the situation when cell has unicode string
+    @Test
+    public void unicodePyCompareTest() {
+        Properties props = new Properties();
+        Project project = new Project();
+
+        Row row = new Row(2);
+        row.setCell(0, new Cell("юникод", null));
+        row.setCell(0, new Cell("1", null));
+
+        props.put("columnName", "unicode_string");
+        props.put("true", "true");
+        props.put("false", "false");
+        props.put("rowIndex", "0");
+        props.put("value", "юникод");
+        props.put("project", project);
+        props.put("call", "string");
+        props.put("PI", "3.141592654");
+        props.put("cells", new CellTuple(project, row));
+        String funcExpression = "return value == 'юникод'";
+        JythonEvaluable eval1 = new JythonEvaluable(funcExpression);
+        Long result = (Bool) eval1.evaluate(props);
+        Assert.assertEquals(result, True);
+    }
+
     @Test
     public void testJythonConcurrent() {
         Properties props = new Properties();
