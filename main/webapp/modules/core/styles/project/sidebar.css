@@ -147,7 +147,7 @@ a.history-entry {
   display: block;
   position: relative;
   padding: var(--padding-normal);
-  padding-left: var(--padding-normal) + 3px;
+  padding-left: calc(var(--padding-normal) + 30px);
   text-decoration: none;
   color: #000;
   border-bottom: 1px dotted #ddd;
