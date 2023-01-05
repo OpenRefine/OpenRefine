@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,76 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+.ui-tabs {
+  padding: 0;
+}
+
+.ui-widget-content, .ui-tabs .ui-widget-header {
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0 var(--padding-normal);
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: 0.5em 0.8em;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+  padding: 4px 10px;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: 0;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default a,
+.ui-tabs .ui-tabs-nav .ui-state-default a:link,
+.ui-tabs .ui-tabs-nav .ui-state-default a:visited {
+  color: var(--link-primary);
+  font-weight: normal;
+}
+
+.ui-tabs .ui-tabs-nav li a span.count {
+  color: #666;
+  font-weight: normal;
+  font-size: 80%;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
+  border: 1px solid var(--chrome-primary);
+  border-bottom: none;
+  background: white;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active a,
+.ui-tabs .ui-tabs-nav .ui-state-active a:link,
+.ui-tabs .ui-tabs-nav .ui-state-active a:visited {
+  color: black;
+  font-weight: bold;
+}
+
+.ui-tabs .ui-corner-top, .ui-tabs .ui-corner-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+  margin: 0;
+  padding: var(--padding-normal);
+  border: 1px solid var(--chrome-primary);
+  background: white;
+}
+
+.ui-widget-content a {
+  color: var(--link-primary);
+}

@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,79 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+#sql-exporter-tabs .ui-tabs-panel {
+  padding: var(--padding-looser);
+}
+
+.sql-exporter-tabs-content-main {}
+
+.sql-exporter-columns, .sql-exporter-column-options {
+  /*border: 1px solid var(--link-primary);*/
+  height: 8em;
+  padding: var(--padding-loose);
+}
+
+.sql-exporter-columns {
+  min-height: 200px;
+  overflow: auto;
+}
+
+.sql-exporter-selected-column {
+  font-weight: bold;
+  border: 1px solid var(--chrome-primary);
+  background: var(--chrome-primary);
+  padding: var(--padding-tighter);
+  border-radius: var(--rounded-corners-radius);
+}
+
+.sql-exporter-dialog-column {
+  /* border: 1px solid var(--link-primary);*/
+  background: var(--fill-secondary);
+  padding: var(--padding-tighter);
+  margin: var(--padding-tight);
+  cursor: move;
+  border-radius: var(--rounded-corners-radius);
+}
+
+.sql-exporter-dialog-column.selected {
+  background: var(--chrome-primary);
+  font-weight: bold;
+}
+
+textarea.sql-exporter-code {
+  width: 100%;
+  border: 1px solid var(--chrome-primary);
+  height: 25em;
+}
+
+.sql-exporter-dialog-row {
+  margin-top: 2px;
+  padding-top: 2px;
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+
+tr.sql-exporter-dialog-row td {
+  border: 1px dashed lightblue;
+  margin: 2px;
+}
+
+.sql-exporter-dialog-input {
+  margin: 2px;
+  border: solid 2px lightblue;
+}
+
+.defaultValueTextBoxStyle {
+  margin: 2px;
+}
+
+.allowNullCellStyle {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.typeSelectClass {
+  margin-left: 2px;
+}

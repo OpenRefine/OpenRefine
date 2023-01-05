@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,36 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+:root {
+  --text-primary: black;
+  --text-secondary: #222;
+  --text-tertiary: #777;
+  --link-primary: #11c;
+  --link-secondary: #4272db;
+  --chrome-primary: #bcf;
+  --chrome-secondary: #e3e9ff;
+  --background-primary: #fff;
+  --fill-primary: #ebeef8;
+  --fill-secondary: #f2f2f2;
+  --fill-editable: #ffffd6;
+  --selected-primary: #68e;
+  --green-primary: #282;
+  --green-secondary: #3d3;
+  --notification-primary: #fe8;
+  --faint-grey: #ddd;
+  --light-grey: #999;
+  --dialog-frame: #3a5774;
+  --dialog-border: #c1d9ff;
+  --dialog-header: #e0edfe;
+  --dialog-footer: #eee;
+
+  --padding-tighter: 3px;
+  --padding-tight: 5px;
+  --padding-normal: 7px;
+  --padding-loose: 10px;
+  --padding-looser: 15px;
+
+  --rounded-corners-radius: 5px;
+}

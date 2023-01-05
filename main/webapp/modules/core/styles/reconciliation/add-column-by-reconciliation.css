@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,55 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+.add-column-by-reconciliation-dialog .suggested-property-container {
+  border: 1px solid #aaa;
+  padding: 5px;
+  overflow: auto;
+  height: 375px;
+}
+
+.add-column-by-reconciliation-dialog .suggested-property {
+  padding: 5px;
+}
+
+.add-column-by-reconciliation-dialog input.property-suggest {
+  display: block;
+  padding: 2%;
+  width: 96%;
+}
+
+.add-column-by-reconciliation-dialog .preview-container {
+  border: 1px solid #aaa;
+  overflow: auto;
+  max-width: 600px;
+}
+
+.add-column-by-reconciliation-dialog .preview-container table {
+  border-collapse: collapse;
+}
+
+.add-column-by-reconciliation-dialog .preview-container td, .add-column-by-reconciliation-dialog .preview-container th {
+  padding: 3px 5px;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+.add-column-by-reconciliation-dialog .preview-container th img {
+  vertical-align: top;
+  margin-left: 5px;
+}
+
+.add-column-by-reconciliation-progress {
+  text-align: center;
+}
+
+.add-column-by-reconciliation-progress img {
+  padding: 45%;
+  display: inline-block;
+}
+
+.data-extension-property-config td {
+  padding: 5px;
+}

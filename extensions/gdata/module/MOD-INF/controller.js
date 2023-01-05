@@ -75,7 +75,7 @@ function init() {
     "index/styles",
     module,
     [
-      "styles/importing-controller.less"
+      "styles/importing-controller.css"
     ]
   );
   

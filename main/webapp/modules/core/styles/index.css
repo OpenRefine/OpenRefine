@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,95 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+.main-layout-panel {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+#slogan {
+  margin: 0 1em;
+  font-style: italic;
+  font-size: 110%;
+  color: var(--text-tertiary);
+}
+
+#left-panel-body {
+  margin-left: var(--padding-tight);
+  overflow: hidden;
+  position: relative;
+}
+
+#action-area-tabs {
+  margin: 0;
+  padding: 0;
+  padding-top: var(--padding-looser);
+  font-size: 1.3em;
+}
+
+#action-area-tabs>li {
+  display: block;
+  padding-top: var(--padding-tight);
+  padding-bottom: var(--padding-tight);
+  padding-left: var(--padding-normal);
+  cursor: pointer;
+}
+
+#action-area-tabs>li.selected {
+  background: var(--chrome-primary);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+#project-links {
+  font-size: 1.3em;
+  position: absolute;
+  bottom: 0;
+  left: -5px;
+  width: 100%;
+  text-align: center;
+}
+
+#logo-container {
+  margin: 2em 0;
+}
+
+#project-links>ul {
+  padding: 0;
+  margin: 1em 0;
+  line-height: 1.5em;
+}
+
+#project-links>ul>li {
+  display: block;
+}
+
+#openrefine-version {
+  margin: var(--padding-normal) 0 0 0;
+  color: var(--text-tertiary);
+  font-size: 80%;
+}
+
+#right-panel {
+  background: var(--chrome-primary);
+}
+
+#right-panel-body {
+  overflow: auto;
+  position: relative;
+}
+
+.action-area-tab-body {
+  visibility: hidden;
+  position: absolute;
+  background: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

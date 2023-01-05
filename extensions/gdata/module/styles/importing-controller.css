@@ -1,7 +1,6 @@
-<!doctype html>
-<!--
+/*
 
-Copyright 2010, Google Inc.
+Copyright 2011, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,24 +29,82 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+.gdata-panel {
+  margin-bottom: 2em;
+}
+
+.gdata-panel>h1 {
+  font-size: 130%;
+  margin-bottom: 0.5em;
+}
+
+.gdata-extension-signin-iframe {
+  border: 1px solid #aaa;
+  width: 100%;
+  height: 500px;
+}
+
+.gdata-document-container>table {
+  color: var(--text-tertiary);
+}
+
+a.gdata-doc-title {
+  color: var(--link-primary);
+  text-decoration: none;
+}
+
+a.gdata-doc-title:hover {
+  text-decoration: underline;
+}
+
+a.gdata-doc-title.gdata-doc-unread {
+  font-weight: bold;
+}
+
+a.gdata-doc-preview {
+  font-size: 80%;
+  text-decoration: none;
+  vertical-align: super;
+  color: var(--link-secondary);
+  margin-left: 0.5em;
+}
+
+a.gdata-doc-preview:hover {
+  text-decoration: underline;
+}
+
+.gdata-doc-authors {}
+
+.gdata-doc-date {}
+
+.gdata-importing-wizard-header {
+  font-size: 1.3em;
+  background: var(--chrome-primary);
+  padding: var(--padding-tight);
+}
+
+.gdata-importing-parsing-data-panel {
+  font-size: 1.1em;
+  position: absolute;
+  overflow: auto;
+}
+
+.gdata-importing-progress-data-panel {
+  position: absolute;
+  overflow: auto;
+  font-size: 200%;
+  padding: 3em;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.gdata-importing-parsing-control-panel {
+  font-size: 1.3em;
+  position: absolute;
+  overflow: auto;
+  border-top: 5px solid var(--chrome-primary);
+  background: white;
+  padding: var(--padding-looser);
+}

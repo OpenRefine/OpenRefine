@@ -1,5 +1,4 @@
-<!doctype html>
-<!--
+/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -30,24 +29,58 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--->
+*/
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Error - OpenRefine</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link rel="stylesheet" href="/styles/common.css" />
-  </head>
-  <body>
-    <div id="header">
-      <a id="app-home-button" href="/"><img alt="OpenRefine" src="/images/logo-openrefine-550.png" height="29" /></a>
-    </div>
-    <div id="body-info">
-      <h1>Something went wrong!</h1>
-      <h2>$message:</h2>  
-  <pre class="errorstack">$stack</pre>
-    </div>
-  </body>
-</html>
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.menu-container {
+  position: absolute;
+  width: 250px;
+  background: white;
+  padding: 1px;
+  border: 1px solid #ccc;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+  font-size: 1.2em;
+}
+
+.menu-container hr {
+  margin: 2px 0;
+  padding: 0;
+  height: 1px;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+a.menu-item {
+  display: block;
+  padding: 5px 7px;
+  text-decoration: none;
+  color: #000;
+}
+
+a.menu-item:hover, a.menu-item.menu-expanded {
+  background: #dbe8f8;
+}
+
+a.menu-item img {
+  border: none;
+}
+
+table.menu-item-layout td {
+  vertical-align: middle;
+}
+
+.menu-section {
+  padding: 2px 7px;
+  background: #aaa;
+  color: white;
+  font-weight: bold;
+}
