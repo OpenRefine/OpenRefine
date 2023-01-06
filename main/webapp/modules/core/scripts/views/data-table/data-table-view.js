@@ -155,11 +155,11 @@ DataTableView.prototype.render = function() {
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
-DataTableView.prototype.updateTableHeader = function() {
+DataTableView.prototype.updateColumnStats = function() {
   var self = this;
-  var tableHeader = self._div.find(".data-table-header")
-  tableHeader.empty();
-  self._renderTableHeader(tableHeader);
+  for (let columnHeaderUI of self._columnHeaderUIs) {
+    columnHeaderUI.updateColumnStats();
+  }
 }
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {
@@ -439,7 +439,6 @@ DataTableView.prototype._renderTableHeader = function(tableHeader) {
     createColumnHeader(columns[i], i);
   }
 }
-
 
 DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;

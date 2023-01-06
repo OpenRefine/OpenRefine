@@ -145,6 +145,8 @@ BrowsingEngine.prototype._initializeUI = function() {
     self._elmts.aggregationLimitInput.attr('disabled', !self._aggregationLimitEnabled);
     self.update();
   });
+
+  self.update();
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
@@ -292,7 +294,9 @@ BrowsingEngine.prototype.update = function(onDone) {
 
       if (theProject.columnStats !== data.columnStats) {
         theProject.columnStats = data.columnStats;
-        ui.dataTableView.updateTableHeader();
+        if (ui.dataTableView) {
+          ui.dataTableView.updateColumnStats();
+        }
       }
 
       self._elmts.indicator.css("display", "none");

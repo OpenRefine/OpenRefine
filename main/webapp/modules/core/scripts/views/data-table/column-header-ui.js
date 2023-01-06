@@ -70,6 +70,13 @@ DataTableColumnHeaderUI.prototype._render = function() {
     self._createMenuForColumnHeader(this);
   });
 
+  self.updateColumnStats();
+};
+
+DataTableColumnHeaderUI.prototype.updateColumnStats = function() {
+  var self = this;
+  var container = $(this._td).find('.recon-stats-container');
+  container.empty();
   if (theProject.columnStats && theProject.columnStats.length > self._columnIndex) {
     var stats = theProject.columnStats[self._columnIndex];
     if (stats.reconciled > 0) {
@@ -81,7 +88,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
       var whole = $('<div>')
       .addClass("column-header-recon-stats-bar")
       .attr("title", title)
-      .appendTo(elmts.reconStatsContainer.show());
+      .appendTo(container);
 
       $('<div>')
       .addClass("column-header-recon-stats-blanks")
@@ -94,7 +101,8 @@ DataTableColumnHeaderUI.prototype._render = function() {
       .appendTo(whole);
     }
   }
-};
+
+}
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
   var self = this;
