@@ -260,11 +260,14 @@ BrowsingEngine.prototype.update = function(onDone) {
   var self = this;
 
   this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
-  this._elmts.help.hide();
 
-  this._elmts.header.show();
-  this._elmts.controls.css("visibility", "hidden");
-  this._elmts.indicator.css("display", "block");
+  if (self._facets.length > 0) {
+    // set up waiting UI
+    this._elmts.help.hide();
+    this._elmts.header.show();
+    this._elmts.controls.css("visibility", "hidden");
+    this._elmts.indicator.css("display", "block");
+  }
 
   $.post(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
@@ -285,6 +288,11 @@ BrowsingEngine.prototype.update = function(onDone) {
 
       for (var i = 0; i < facetData.length; i++) {
         self._facets[i].facet.updateState(facetData[i]);
+      }
+
+      if (theProject.columnStats !== data.columnStats) {
+        theProject.columnStats = data.columnStats;
+        ui.dataTableView.updateTableHeader();
       }
 
       self._elmts.indicator.css("display", "none");

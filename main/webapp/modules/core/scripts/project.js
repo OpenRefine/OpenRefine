@@ -165,9 +165,8 @@ function initializeUI(uiState) {
 
   $(window).on("resize", resizeAll);
 
-  if (uiState.facets) {
-    Refine.update({ engineChanged: true });
-  }
+  // this is needed even if there are no facets, to fetch the column stats
+  Refine.update({ engineChanged: true });
 }
 
 Refine._showHideLeftPanel = function() {
