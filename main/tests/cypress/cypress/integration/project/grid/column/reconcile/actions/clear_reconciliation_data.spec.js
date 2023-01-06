@@ -19,9 +19,9 @@ describe('Clear reconciliation data', () => {
         cy.get('table.data-table').should('not.to.contain', 'Choose new match');
         cy.get('table.data-table').should('not.to.contain', 'Create new item');
 
-        // the green bar for matched item should be invisible
+        // the green bar for matched item should not be there anymore
         cy.get(
             'table.data-table thead div.column-header-recon-stats-matched'
-        ).should('not.be.visible');
+        ).should('not.exist');
     });
 });
