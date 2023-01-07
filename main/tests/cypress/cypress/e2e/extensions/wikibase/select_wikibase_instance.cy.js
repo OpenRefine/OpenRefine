@@ -158,9 +158,10 @@ describe(__filename, function () {
             .then( () => resetWikibases(savedValue));
     });
     function getPreference(name) {
+        const openRefineUrl = Cypress.env('OPENREFINE_URL');
         return cy.request({
             method: 'GET',
-            url: `http://127.0.0.1:3333/command/core/get-preference?name=${name}`,
+            url: `${openRefineUrl}/command/core/get-preference?name=${name}`,
         })
             .then((response) => {
                 savedValue = JSON.parse(response.body.value);
@@ -170,31 +171,8 @@ describe(__filename, function () {
                 });
             });
     }
-    function setPreference(name, value) {
-        cy.request(
-            {
-                method: 'GET',
-                url: 'http://127.0.0.1:3333/command/core/get-csrf-token'
-            }
-        ).then( (response) => {
-            cy.expect(response).to.not.be.null;
-            let token = response.body['token'];
-            cy.expect(token).to.not.be.null;
-            cy.request({
-                method: 'POST',
-                url: `http://127.0.0.1:3333/command/core/set-preference?name=${name}`,
-                form: true,
-                body: {
-                    value: JSON.stringify(savedValue),
-                    csrf_token: token
-                },
-            }).then((response) => {
-                expect(response.body).to.deep.equal({ code: 'ok' });
-            });
-        });
-    }
 
     function resetWikibases(savedValue) {
-        setPreference('wikibase.manifests', savedValue);
+        cy.setPreference('wikibase.manifests', savedValue);
     }
 });
