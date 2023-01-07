@@ -9,12 +9,9 @@ describe(__filename, function () {
 
     let savedValue;
 
-    before(() => {
-        getPreference('wikibase.manifests');
-    });
-
     it('Add a wikibase instance, general navigation', function () {
         cy.loadAndVisitProject('food.mini');
+        getPreference('wikibase.manifests');
         cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
 
@@ -39,6 +36,7 @@ describe(__filename, function () {
 
     it('Add a wikibase instance (URL)', function () {
         cy.loadAndVisitProject('food.mini');
+        getPreference('wikibase.manifests');
 
         cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
@@ -65,6 +63,7 @@ describe(__filename, function () {
 
     it('Add a wikibase instance (JSON Manifest copy-pasted in the textarea)', function () {
         cy.loadAndVisitProject('food.mini');
+        getPreference('wikibase.manifests');
 
         cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
@@ -115,6 +114,7 @@ describe(__filename, function () {
 
     it('Add a wikibase instance (Invalid manifest provided)', function () {
         cy.loadAndVisitProject('food.mini');
+        getPreference('wikibase.manifests');
 
         cy.get('#extension-bar-menu-container').contains('Wikibase').click();
         cy.get('.menu-container a').contains('Manage Wikibase instances').click();
@@ -135,6 +135,7 @@ describe(__filename, function () {
 
     it('Delete wikibase', function () {
         cy.loadAndVisitProject('food.mini');
+        getPreference('wikibase.manifests');
         cy.addWikibaseInstance(
             'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
         );
