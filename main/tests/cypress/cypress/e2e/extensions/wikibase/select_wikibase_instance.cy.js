@@ -165,6 +165,7 @@ describe(__filename, function () {
             url: `${openRefineUrl}/command/core/get-preference?name=${name}`,
         })
             .then((response) => {
+                cy.log(JSON.stringify(response));
                 savedValue = JSON.parse(response.body.value);
                 savedValue = savedValue.filter(object => {
                     return object.mediawiki.name !== WIKIBASE_TEST_NAME
