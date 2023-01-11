@@ -155,6 +155,13 @@ DataTableView.prototype.render = function() {
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
+DataTableView.prototype.updateColumnStats = function() {
+  var self = this;
+  for (let columnHeaderUI of self._columnHeaderUIs) {
+    columnHeaderUI.updateColumnStats();
+  }
+}
+
 DataTableView.prototype._renderSortingControls = function(sortingControls) {
   var self = this;
 
@@ -298,37 +305,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
    *------------------------------------------------------------
    */
 
-  var trHead = tableHeader.insertRow(tableHeader.rows.length);
-  DOM.bind(
-      $(trHead.appendChild(document.createElement("th")))
-      .attr("colspan", "3")
-      .addClass("column-header")
-      .html(
-        '<div class="column-header-title">' +
-          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
-        '</div>'
-      )
-  ).dropdownMenu.on('click',function() {
-    self._createMenuForAllColumns(this);
-  });
-  this._columnHeaderUIs = [];
-  var createColumnHeader = function(column, index) {
-    var th = trHead.appendChild(document.createElement("th"));
-    $(th).addClass("column-header").attr('title', column.name);
-    if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(th).html("&nbsp;").on('click',function(evt) {
-        delete self._collapsedColumnNames[column.name];
-        self.render();
-      });
-    } else {
-      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
-      self._columnHeaderUIs.push(columnHeaderUI);
-    }
-  };
-
-  for (var i = 0; i < columns.length; i++) {
-    createColumnHeader(columns[i], i);
-  }
+  self._renderTableHeader(tableHeader);
 
   /*------------------------------------------------------------
    *  Data Cells
@@ -425,6 +402,43 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     renderRow(tr, r, row, even);
   }
 };
+
+DataTableView.prototype._renderTableHeader = function(tableHeader) {
+  var self = this;
+  var columns = theProject.columnModel.columns;
+  var trHead = document.createElement('tr');
+  tableHeader.append(trHead);
+  DOM.bind(
+      $(trHead.appendChild(document.createElement("th")))
+      .attr("colspan", "3")
+      .addClass("column-header")
+      .html(
+        '<div class="column-header-title">' +
+          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
+        '</div>'
+      )
+  ).dropdownMenu.on('click',function() {
+    self._createMenuForAllColumns(this);
+  });
+  this._columnHeaderUIs = [];
+  var createColumnHeader = function(column, index) {
+    var th = trHead.appendChild(document.createElement("th"));
+    $(th).addClass("column-header").attr('title', column.name);
+    if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
+      $(th).html("&nbsp;").on('click',function(evt) {
+        delete self._collapsedColumnNames[column.name];
+        self.render();
+      });
+    } else {
+      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
+      self._columnHeaderUIs.push(columnHeaderUI);
+    }
+  };
+
+  for (var i = 0; i < columns.length; i++) {
+    createColumnHeader(columns[i], i);
+  }
+}
 
 DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;

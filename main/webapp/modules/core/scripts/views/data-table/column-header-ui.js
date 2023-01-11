@@ -70,31 +70,39 @@ DataTableColumnHeaderUI.prototype._render = function() {
     self._createMenuForColumnHeader(this);
   });
 
-  if ("reconStats" in this._column) {
-    var stats = this._column.reconStats;
-    if (stats.nonBlanks > 0) {
-      var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
-      var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
-      var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
+  self.updateColumnStats();
+};
+
+DataTableColumnHeaderUI.prototype.updateColumnStats = function() {
+  var self = this;
+  var container = $(this._td).find('.recon-stats-container');
+  container.empty();
+  if (theProject.columnStats && theProject.columnStats.length > self._columnIndex) {
+    var stats = theProject.columnStats[self._columnIndex];
+    if (stats.reconciled > 0) {
+      var newPercent = Math.ceil(100 * stats['new'] / stats.nonBlanks);
+      var matchPercent = Math.ceil(100 * stats.matched / stats.nonBlanks);
+      var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matched - stats['new']) / stats.nonBlanks);
       var title = $.i18n('core-views/recon-stats', matchPercent, newPercent, unreconciledPercent);
 
       var whole = $('<div>')
       .addClass("column-header-recon-stats-bar")
       .attr("title", title)
-      .appendTo(elmts.reconStatsContainer.show());
+      .appendTo(container);
 
       $('<div>')
       .addClass("column-header-recon-stats-blanks")
-      .width(Math.round((stats.newTopics + stats.matchedTopics) * 100 / stats.nonBlanks) + "%")
+      .width(Math.round((stats['new'] + stats.matched) * 100 / stats.nonBlanks) + "%")
       .appendTo(whole);
 
       $('<div>')
       .addClass("column-header-recon-stats-matched")
-      .width(Math.round(stats.matchedTopics * 100 / stats.nonBlanks) + "%")
+      .width(Math.round(stats.matched * 100 / stats.nonBlanks) + "%")
       .appendTo(whole);
     }
   }
-};
+
+}
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
   var self = this;
