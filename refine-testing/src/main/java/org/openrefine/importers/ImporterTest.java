@@ -82,8 +82,12 @@ public class ImporterTest extends RefineTest {
     @AfterSuite
     public void tearDownTestDirector() throws IOException {
         if (importerTestDir != null) {
-            FileUtils.deleteDirectory(importerTestDir);
-            importerTestDir = null;
+            try {
+                FileUtils.deleteDirectory(importerTestDir);
+                importerTestDir = null;
+            } catch (IOException e) {
+                // this can happen if the directory is used by another process, when running tests concurrently
+            }
         }
     }
 
