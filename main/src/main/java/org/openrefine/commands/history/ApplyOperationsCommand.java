@@ -102,29 +102,32 @@ public class ApplyOperationsCommand extends Command {
         try {
             operation = ParsingUtilities.mapper.convertValue(operationJson, Operation.class);
         } catch (IllegalArgumentException e) {
-            return new OperationApplicationResult(e.getMessage());
+            return new OperationApplicationResult("Could not parse operation: " + e.getMessage());
+        }
+        if (operation == null) {
+            return new OperationApplicationResult("Cannot apply null operation");
+        } else if (operation instanceof UnknownOperation) {
+            UnknownOperation unknownOperation = (UnknownOperation) operation;
+            return new OperationApplicationResult("Unknown operation " + operation.getOperationId());
         }
 
-        if (operation != null && !(operation instanceof UnknownOperation)) {
-            try {
-                Process process = operation.createProcess(project);
-                OperationApplicationResult applicationResult = null;
-                if (process.isImmediate() && !project.getProcessManager().hasPending()) {
-                    HistoryEntry historyEntry = process.performImmediate();
-                    applicationResult = new OperationApplicationResult(historyEntry);
-                } else {
-                    project.getProcessManager().queueProcess(process);
-                    applicationResult = new OperationApplicationResult();
-                }
-                return applicationResult;
-            } catch (Exception e) {
-                // TODO make catch block narrower, only catching certain expected exceptions
-                // such as DoesNotApplyException. This requires tightening the exceptions in the Process
-                // interface too.
-                return new OperationApplicationResult(e.getMessage());
+        try {
+            Process process = operation.createProcess(project);
+            OperationApplicationResult applicationResult = null;
+            if (process.isImmediate() && !project.getProcessManager().hasPending()) {
+                HistoryEntry historyEntry = process.performImmediate();
+                applicationResult = new OperationApplicationResult(historyEntry);
+            } else {
+                project.getProcessManager().queueProcess(process);
+                applicationResult = new OperationApplicationResult();
             }
-        } else {
-            return new OperationApplicationResult("Operation could not be parsed");
+            return applicationResult;
+        } catch (Exception e) {
+            // TODO make catch block narrower, only catching certain expected exceptions
+            // such as DoesNotApplyException. This requires tightening the exceptions in the Process
+            // interface too.
+            e.printStackTrace();
+            return new OperationApplicationResult("Applying the operation failed: " + e.getMessage());
         }
     }
 
