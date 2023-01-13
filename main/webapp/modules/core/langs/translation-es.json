@@ -802,5 +802,8 @@
     "core-about/thanks": "Agradecimientos especiales",
     "core-about/history": "<a href='$1'>$2</a> desarrolló originalmente OpenRefine bajo el nombre «Freebase Gridworks». Metaweb fue adquirida por <a href='$3'>$4</a> en julio de 2010 y el nombre del producto cambió a Google Refine. En octubre de 2012, el producto comenzó a conocerse como OpenRefine cuando pasó a ser un proyecto respaldado por la comunidad.",
     "core-about/contributors": "Colaboradores (en orden cronológico)",
-    "core-views/edit-all-columns": "Editar todas las columnas"
+    "core-views/edit-all-columns": "Editar todas las columnas",
+    "core-index-import/invalid-url": "URL inválido",
+    "core-index-import/blank-url": "URL en blanco",
+    "core-index-import/remove-row": "Remover esta fila"
 }
