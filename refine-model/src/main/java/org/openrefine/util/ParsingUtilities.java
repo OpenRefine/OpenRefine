@@ -282,15 +282,12 @@ public class ParsingUtilities {
         return null;
     }
 
-    public static ArrayNode evaluateJsonStringToArrayNode(String parameter) {
-        try {
-            JsonNode tree = mapper.readTree(parameter);
-            if (tree instanceof ArrayNode) {
-                return (ArrayNode) tree;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static ArrayNode evaluateJsonStringToArrayNode(String parameter) throws IOException {
+        JsonNode tree = mapper.readTree(parameter);
+        if (tree instanceof ArrayNode) {
+            return (ArrayNode) tree;
+        } else {
+            throw new IllegalArgumentException("Expected a JSON array");
         }
-        return null;
     }
 }

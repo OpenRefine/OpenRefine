@@ -325,6 +325,25 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
               // Something might have already been done and so it's good to update
               Refine.update({ everythingChanged: true });
             }
+            // show pill notification for the last operation to have been successfully applied
+            var latestHistoryEntry = null;
+            for (let operationResult of o.results) {
+              if (operationResult.historyEntry) {
+                latestHistoryEntry = operationResult.historyEntry;
+              }
+            }
+            if (latestHistoryEntry) {
+              ui.processPanel.showUndo(latestHistoryEntry);
+            }
+          },
+          onError: function(o) {
+            var operationsApplied = o.results.length - 1;
+            var errorMessage = o.results[o.results.length - 1].errorMessage;
+            if (operationsApplied) {
+                errorMessage = $.i18n('core-project/some-operations-applied-but-error', operationsApplied, errorMessage);
+                Refine.update({ everythingChanged: true });
+            }
+            alert(errorMessage);
           }
         }
     );

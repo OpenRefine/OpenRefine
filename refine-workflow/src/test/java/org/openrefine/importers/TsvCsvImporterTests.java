@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
+import java.io.IOException;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -627,7 +629,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     protected void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes,
-            String quoteCharacter, String columnNames, boolean multiLine) {
+            String quoteCharacter, String columnNames, boolean multiLine) throws IOException {
 
         options.put("separator", sep);
         options.put("quoteCharacter", quoteCharacter);

@@ -34,15 +34,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.history;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.commands.Command;
+import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.UnknownOperation;
@@ -61,37 +67,101 @@ public class ApplyOperationsCommand extends Command {
 
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
+        List<OperationApplicationResult> results = new ArrayList<>();
         try {
+
             ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
             int count = a.size();
             for (int i = 0; i < count; i++) {
                 if (a.get(i) instanceof ObjectNode) {
                     ObjectNode obj = (ObjectNode) a.get(i);
 
-                    reconstructOperation(project, obj);
+                    OperationApplicationResult applicationResult = applyOperation(project, obj);
+                    results.add(applicationResult);
+                    if ("failed".equals(applicationResult.status)) {
+                        respondJSON(response, new JsonResponse("error", results));
+                    }
                 }
             }
 
+            String code = "ok";
             if (project.getProcessManager().hasPending()) {
-                respond(response, "{ \"code\" : \"pending\" }");
-            } else {
-                respond(response, "{ \"code\" : \"ok\" }");
+                code = "pending";
             }
+            respondJSON(response, new JsonResponse(code, results));
         } catch (IOException e) {
             respondException(response, e);
         }
     }
 
-    protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
-        Operation operation = ParsingUtilities.mapper.convertValue(obj, Operation.class);
+    protected OperationApplicationResult applyOperation(Project project, JsonNode operationJson) {
+        Operation operation = null;
+        try {
+            operation = ParsingUtilities.mapper.convertValue(operationJson, Operation.class);
+        } catch (IllegalArgumentException e) {
+            return new OperationApplicationResult(e.getMessage());
+        }
+
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
                 Process process = operation.createProcess(project);
-
-                project.getProcessManager().queueProcess(process);
+                OperationApplicationResult applicationResult = null;
+                if (process.isImmediate() && !project.getProcessManager().hasPending()) {
+                    HistoryEntry historyEntry = process.performImmediate();
+                    applicationResult = new OperationApplicationResult(historyEntry);
+                } else {
+                    project.getProcessManager().queueProcess(process);
+                    applicationResult = new OperationApplicationResult();
+                }
+                return applicationResult;
             } catch (Exception e) {
-                e.printStackTrace();
+                // TODO make catch block narrower, only catching certain expected exceptions
+                // such as DoesNotApplyException. This requires tightening the exceptions in the Process
+                // interface too.
+                return new OperationApplicationResult(e.getMessage());
             }
+        } else {
+            return new OperationApplicationResult("Operation could not be parsed");
+        }
+    }
+
+    protected static class OperationApplicationResult {
+
+        @JsonProperty("status")
+        final String status; // whether the operation is "applied", "pending" or "failed"
+        @JsonProperty("historyEntry")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        HistoryEntry historyEntry = null; // if the operation is "applied", the corresponding history entry
+        @JsonProperty("errorMessage")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        String errorMessage = null; // any error message if applying the operation failed
+        // TODO let operations expose structured information when they fail
+
+        public OperationApplicationResult(HistoryEntry historyEntry) {
+            this.status = "applied";
+            this.historyEntry = historyEntry;
+        }
+
+        public OperationApplicationResult() {
+            this.status = "pending";
+        }
+
+        public OperationApplicationResult(String errorMessage) {
+            this.status = "failed";
+            this.errorMessage = errorMessage;
+        }
+    }
+
+    protected static class JsonResponse {
+
+        @JsonProperty("code")
+        String code; // whether all operation applications were successful
+        @JsonProperty("results")
+        List<OperationApplicationResult> results; // list of individual results for each operation
+
+        public JsonResponse(String code, List<OperationApplicationResult> results) {
+            this.code = code;
+            this.results = results;
         }
     }
 }
