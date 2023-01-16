@@ -46,6 +46,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+
 public class TsvCsvImporterTests extends ImporterTest {
 
     @BeforeTest
@@ -628,7 +630,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     protected void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes,
-            String quoteCharacter, String columnNames, boolean multiLine) {
+            String quoteCharacter, String columnNames, boolean multiLine) throws IOException {
 
         options.put("separator", sep);
         options.put("quoteCharacter", quoteCharacter);

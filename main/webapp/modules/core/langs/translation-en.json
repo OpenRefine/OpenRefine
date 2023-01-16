@@ -403,6 +403,7 @@
     "core-project/extract-save": "Extract and save parts of your operation history as JSON that you can apply to this or other projects in the future.",
     "core-project/apply-operation": "Apply Operation History",
     "core-project/paste-json": "Paste an extracted JSON history of operations to perform:",
+    "core-project/some-operations-applied-but-error": "$1 {{plural:$1|operation|operations}} ran successfully but an error was encountered in the next one: $2. The following operations were not executed.",
     "core-project/percent-complete": "$1% complete",
     "core-project/other-processes": "($1 other pending {{plural:$1|process|processes}})",
     "core-project/cancel-all": "{{plural:$1|Cancel|Cancel All}}",
