@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #create-project-ui-source-selection {
   font-size: 1.3em;
-  background: white;
+  background: var(--background-primary);
 }
 
 #create-project-ui-source-selection-message {
   padding: var(--padding-loose);
   border-bottom: 1px solid var(--chrome-primary);
-  background: white;
+  background: var(--background-primary);
 }
 
 #create-project-ui-source-selection-message>h3 {
@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #create-project-ui-source-selection-tab-bodies {
-  background: white;
+  background: var(--background-primary);
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
@@ -85,15 +85,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .create-project-ui-source-selection-tab.selected {
   cursor: default;
-  color: black;
-  background: white;
+  color: var(--text-primary);
+  background: var(--background-primary);
   font-weight: bold;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
 
 .create-project-ui-panel {
-  background: white;
+  background: var(--background-primary);
   position: absolute;
   left: 0;
   top: 0;

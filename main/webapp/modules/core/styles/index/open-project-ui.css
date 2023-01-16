@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #projects-container {
-  background: #fff;
+  background: var(--background-primary);
   overflow: auto;
   position: absolute;
   top: 0px;
@@ -153,7 +153,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #metadata-body table>tbody>tr>th {
   position: sticky;
   top: 0;
-  color: black;
+  color: var(--text-primary);
   background: #b7b7b7;
 }
 

@@ -77,13 +77,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
   border: 1px solid var(--chrome-primary);
   border-bottom: none;
-  background: white;
+  background: var(--background-primary);
 }
 
 .ui-tabs .ui-tabs-nav .ui-state-active a,
 .ui-tabs .ui-tabs-nav .ui-state-active a:link,
 .ui-tabs .ui-tabs-nav .ui-state-active a:visited {
-  color: black;
+  color: var(--text-primary);
   font-weight: bold;
 }
 
@@ -96,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 0;
   padding: var(--padding-normal);
   border: 1px solid var(--chrome-primary);
-  background: white;
+  background: var(--background-primary);
 }
 
 .ui-widget-content a {

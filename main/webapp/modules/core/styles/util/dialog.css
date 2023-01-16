@@ -51,7 +51,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .dialog-frame {
   margin: 0 auto;
   text-align: left;
-  background: white;
+  background: var(--background-primary);
   border: 1px solid var(--dialog-frame);
   display: inline-block;
 }
@@ -63,7 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: var(--padding-loose);
   font-weight: bold;
   font-size: 1.6em;
-  color: #000;
+  color: var(--text-primary);
   cursor: move;
 }
 

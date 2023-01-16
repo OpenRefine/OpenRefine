@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   top: 0em;
   left: 20%;
   text-align: center;
-  background-color: #fff;
+  background-color: var(--background-primary);
   padding: 4px 4px;
   border-radius: 4px;
   border: 1px solid #ccc;
@@ -149,7 +149,7 @@ a.history-entry {
   padding: var(--padding-normal);
   padding-left: calc(var(--padding-normal) + 30px);
   text-decoration: none;
-  color: #000;
+  color: var(--text-primary);
   border-bottom: 1px dotted #ddd;
 }
 
@@ -197,7 +197,7 @@ a.history-entry.filtered-out>* {
 
 .history-past {
   position: relative;
-  background: #fff;
+  background: var(--background-primary);
 }
 
 .history-now {
@@ -222,7 +222,7 @@ a.history-entry.filtered-out>* {
 }
 
 .history-future .history-highlight {
-  background: #fff;
+  background: var(--background-primary);
   top: 0;
 }
 

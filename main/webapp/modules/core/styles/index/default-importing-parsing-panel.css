@@ -81,13 +81,13 @@ td.default-importing-parsing-control-panel-formats {
 }
 
 .default-importing-parsing-control-panel-format.selected {
-  background: white;
+  background: var(--background-primary);
   font-weight: bold;
-  color: black;
+  color: var(--text-primary);
 }
 
 td.default-importing-parsing-control-panel-options-panel {
-  background: white;
+  background: var(--background-primary);
   padding: var(--padding-looser);
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;

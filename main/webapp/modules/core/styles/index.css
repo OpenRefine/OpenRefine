@@ -114,7 +114,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .action-area-tab-body {
   visibility: hidden;
   position: absolute;
-  background: white;
+  background: var(--background-primary);
   top: 0;
   left: 0;
   width: 100%;

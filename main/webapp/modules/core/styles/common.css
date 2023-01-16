@@ -69,7 +69,8 @@ input, select {
 body {
   font-size: 62.5%;
   font-family: Arial, sans-serif;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--background-primary);
 }
 
 h1 {
@@ -112,7 +113,7 @@ a.action, a.selected, a.inaction {
 }
 
 a.selected {
-  color: #000;
+  color: var(--text-primary);
   font-weight: bold;
   cursor: default;
 }
@@ -135,7 +136,7 @@ a img {
   overflow: visible;
   font-size: 1em;
   line-height: 1.4;
-  color: #000;
+  color: var(--text-primary);
   text-decoration: none;
   padding: 1px 6px;
   border: 1px solid #bbb;

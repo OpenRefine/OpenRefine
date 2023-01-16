@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .menu-container {
   position: absolute;
   width: 250px;
-  background: white;
+  background: var(--background-primary);
   padding: 1px;
   border: 1px solid #ccc;
   border-right: 1px solid #666;
@@ -63,7 +63,7 @@ a.menu-item {
   display: block;
   padding: 5px 7px;
   text-decoration: none;
-  color: #000;
+  color: var(--text-primary);
 }
 
 a.menu-item:hover, a.menu-item.menu-expanded {
