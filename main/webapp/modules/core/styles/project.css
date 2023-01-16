@@ -127,7 +127,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #view-panel {
-  background: white;
+  background: var(--background-primary);
   overflow: hidden;
 }
 

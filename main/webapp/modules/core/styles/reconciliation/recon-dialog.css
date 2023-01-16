@@ -90,7 +90,7 @@ a.recon-dialog-service-selector {
   display: block;
   padding: 10px;
   text-decoration: none;
-  color: black;
+  color: var(--text-primary);
 }
 
 a.recon-dialog-service-selector:hover {

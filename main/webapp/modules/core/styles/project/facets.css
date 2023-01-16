@@ -106,7 +106,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 .facet-expression {
   padding: 3px 5px;
   font-family: monospace;
-  background: #fff;
+  background: var(--background-primary);
   cursor: text;
   border-bottom: 1px solid var(--chrome-primary);
 }
@@ -147,7 +147,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 }
 
 .facet-body-inner {
-  background: #fff;
+  background: var(--background-primary);
 }
 
 .facet-body-scrollable .facet-body-inner {
@@ -186,12 +186,12 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 
 .facet-mode-inverted .facet-choice-selected .facet-choice-label {
   text-decoration: line-through;
-  color: black;
+  color: var(--text-primary);
 }
 
 .facet-choice-link.facet-mode-inverted {
   text-decoration: line-through;
-  color: black;
+  color: var(--text-primary);
 }
 
 .facet-choice-count, .facet-range-choice-count {
@@ -229,7 +229,7 @@ img.facet-choice-link {
 
 .facet-range-status {
   margin: 0 0 3px 0;
-  color: #000;
+  color: var(--text-primary);
   text-align: center;
 }
 

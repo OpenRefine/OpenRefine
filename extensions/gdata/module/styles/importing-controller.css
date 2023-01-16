@@ -105,6 +105,6 @@ a.gdata-doc-preview:hover {
   position: absolute;
   overflow: auto;
   border-top: 5px solid var(--chrome-primary);
-  background: white;
+  background: var(--background-primary);
   padding: var(--padding-looser);
 }

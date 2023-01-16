@@ -75,7 +75,7 @@ table.clustering-dialog-entry-table>tbody>tr.odd>td {
 }
 
 table.clustering-dialog-entry-table>tbody>tr.even>td {
-  background: white;
+  background: var(--background-primary);
 }
 
 table.clustering-dialog-entry-table input {
