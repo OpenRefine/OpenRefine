@@ -87,7 +87,7 @@ td.default-importing-parsing-control-panel-formats {
 }
 
 td.default-importing-parsing-control-panel-options-panel {
-  background: var(--background-primary)white;
+  background: var(--background-primary);
   padding: var(--padding-looser);
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
