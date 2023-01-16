@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #slogan {
-  margin: 0 1em;
+  margin-left: 1em;
   font-style: italic;
   font-size: 110%;
   color: var(--text-tertiary);
