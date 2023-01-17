@@ -45,6 +45,7 @@
     "core-index/customMetadata": "Custom metadata (JSON)",
     "core-index/id": "Project ID",
     "core-index/importOptionMetadata": "Import option metadata (JSON)",
+    "core-index/navigate-home": "Navigate to the home screen",
     "core-index-create/create-proj": "Create project",
     "core-index-create/starting": "Starting",
     "core-index-create/done": "Done.",

@@ -278,15 +278,30 @@ a img {
 
 #header {
   height: 40px;
-  margin: 10px;
-  position: relative;
-  overflow: hidden;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+#header h1 {
+  margin: 0 .2em;
+  color: var(--text-primary);
+  font-family: serif;
+  font-size: 1.8em; /* to avoid being styled by pure.css from the database extension */
+}
+
+#header img {
+  height: 30px;
 }
 
 #app-home-button {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: flex;
+  align-items: center;
+}
+
+#app-home-button:hover {
+  text-decoration: none;
 }
 
 #body-info {

@@ -35,22 +35,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   display: none;
 }
 
-#project-title, #project-controls {
-  position: absolute;
-  top: 0;
-  display: none;
-}
-
 #project-title {
-  left: 140px;
-  height: 40px;
-  padding: 4px 0 0 0;
   font-size: 1.6em;
 }
 
 #project-controls {
-  right: 0;
-  height: 40px;
+  margin-left: auto;
   font-size: 1.3em;
 }
 
