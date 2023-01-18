@@ -57,8 +57,12 @@ import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApplyOperationsCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplyOperationsCommand.class);
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -126,7 +130,7 @@ public class ApplyOperationsCommand extends Command {
             // TODO make catch block narrower, only catching certain expected exceptions
             // such as DoesNotApplyException. This requires tightening the exceptions in the Process
             // interface too.
-            e.printStackTrace();
+            logger.error("Could not apply operation", e);
             return new OperationApplicationResult("Applying the operation failed: " + e.getMessage());
         }
     }
