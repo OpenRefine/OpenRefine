@@ -1,12 +1,12 @@
 const defaultInducedHistoryJson = [
   {
     op: 'core/column-removal',
-    columnName: 'NDB_No',
+    columnNames: ['NDB_No'],
     description: 'Remove column NDB_No',
   },
   {
     op: 'core/column-removal',
-    columnName: 'Shrt_Desc',
+    columnNames: ['Shrt_Desc'],
     description: 'Remove column Shrt_Desc',
   },
 ]
@@ -69,7 +69,7 @@ describe(__filename, function () {
       [
         {
           op: 'core/column-removal',
-          columnName: 'Shrt_Desc',
+          columnNames: ['Shrt_Desc'],
           description: 'Remove column Shrt_Desc',
         },
       ]
@@ -93,7 +93,7 @@ describe(__filename, function () {
       [
         {
           op: 'core/column-removal',
-          columnName: 'Shrt_Desc',
+          columnNames: ['Shrt_Desc'],
           description: 'Remove column Shrt_Desc',
         },
       ]
