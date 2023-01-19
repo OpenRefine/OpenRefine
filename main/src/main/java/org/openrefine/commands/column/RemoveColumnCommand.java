@@ -65,7 +65,7 @@ public class RemoveColumnCommand extends Command {
             String columnNames = request.getParameter("columnNames");
 
             Operation op = new ColumnRemovalOperation(request.getParameter("columnName"),
-                    ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {
+                    columnNames == null ? null : ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {
                     }));
             Process process = op.createProcess(project);
 
