@@ -1,4 +1,5 @@
 {
     "database-import/importer-name": "پایگاه داده",
-    "database-import/title": "سرویس دهندگان پایگاه داده"
+    "database-import/title": "سرویس دهندگان پایگاه داده",
+    "database-import/preparing": "در حال تهیه خروجی…"
 }
