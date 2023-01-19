@@ -942,8 +942,8 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
       "click" : function() {
         Refine.postOperation(
           {
-            op: "core/reorder-rows",
-            "sorting" : JSON.stringify(self._sorting),
+            op: "core/row-reorder",
+            "sorting" : self._sorting,
             "mode" : ui.browsingEngine.getMode()
           },
           { rowMetadataChanged: true },
