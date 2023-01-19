@@ -31,6 +31,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.testng.Assert;
@@ -80,15 +81,27 @@ public class ColumnRemovalOperationTests extends RefineTest {
     @Test
     public void serializeColumnRemovalOperation() throws Exception {
         String json = "{\"op\":\"core/column-removal\","
-                + "\"description\":\"Remove column my column\","
-                + "\"columnName\":\"my column\"}";
+                + "\"description\":\"Remove columns my column 1, my column 2\","
+                + "\"columnNames\":[\"my column 1\", \"my column 2\"]}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
 
     @Test
+    public void serializeColumnRemovalOperationOldFormat() throws Exception {
+        String json = "{\"op\":\"core/column-removal\","
+                + "\"description\":\"Remove column my column\","
+                + "\"columnName\":\"my column\"}";
+        String normalized = "{\"op\":\"core/column-removal\","
+                + "\"description\":\"Remove column my column\","
+                + "\"columnNames\":[\"my column\"]}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), normalized,
+                ParsingUtilities.defaultWriter);
+    }
+
+    @Test
     public void testRemoval() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnRemovalOperation("foo").createChange();
+        Change SUT = new ColumnRemovalOperation(Collections.singletonList("foo")).createChange();
         GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
@@ -97,9 +110,20 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 Arrays.asList(new Cell("a", null), new Cell("d", null)));
     }
 
+    @Test
+    public void testMultipleColumns() throws DoesNotApplyException {
+        Change SUT = new ColumnRemovalOperation(Arrays.asList("foo", "bar")).createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("d", null)));
+    }
+
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testColumnNotFound() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnRemovalOperation("not_found").createChange();
+        Change SUT = new ColumnRemovalOperation(Collections.singletonList("not_found")).createChange();
         SUT.apply(initialState, mock(ChangeContext.class));
     }
 }

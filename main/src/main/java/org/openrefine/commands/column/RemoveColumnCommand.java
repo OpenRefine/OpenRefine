@@ -34,16 +34,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.column;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnRemovalOperation;
 import org.openrefine.process.Process;
+import org.openrefine.util.ParsingUtilities;
 
 public class RemoveColumnCommand extends Command {
 
@@ -58,9 +62,11 @@ public class RemoveColumnCommand extends Command {
         try {
             Project project = getProject(request);
 
-            String columnName = request.getParameter("columnName");
+            String columnNames = request.getParameter("columnNames");
 
-            Operation op = new ColumnRemovalOperation(columnName);
+            Operation op = new ColumnRemovalOperation(request.getParameter("columnName"),
+                    columnNames == null ? null : ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {
+                    }));
             Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);

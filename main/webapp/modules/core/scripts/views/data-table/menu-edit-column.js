@@ -413,19 +413,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // function called in a callback
       var deleteColumns = function() {
         if (deleteJoinedColumns) {
-          console.log (theProject);
-          var columnsToKeep = theProject.columnModel.columns
-          .map (function (col) {return col.name;})
-          .filter (function(colName) {
-            // keep the selected column if it contains the result
-            return (
-                (columnsToJoin.indexOf (colName) == -1) ||
-                ((writeOrCopy !="copy-to-new-column") && (colName == column.name)));
-            }); 
+          var columnsToDelete = columnsToJoin;
+          if (writeOrCopy != "copy-to-new-column") {
+            columnsToDelete = columnsToDelete.filter(colName => colName != column.name);
+          }
           Refine.postCoreProcess(
-              "reorder-columns",
+              "remove-column",
               null,
-              { "columnNames" : JSON.stringify(columnsToKeep) }, 
+              { "columnNames" : JSON.stringify(columnsToJoin) }, 
               { modelsChanged: true, rowIdsPreserved: true },
               { includeEngine: false }
           );

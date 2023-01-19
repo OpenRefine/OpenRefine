@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
@@ -49,52 +52,85 @@ import org.openrefine.operations.ImmediateRowMapOperation;
 
 public class ColumnRemovalOperation extends ImmediateRowMapOperation {
 
-    final protected String _columnName;
+    final protected List<String> _columnNames;
 
-    @JsonCreator
-    public ColumnRemovalOperation(
-            @JsonProperty("columnName") String columnName) {
-        super(EngineConfig.ALL_ROWS);
-        _columnName = columnName;
+    /**
+     * Constructor.
+     *
+     * @param columnNames
+     *            list of column names to remove
+     */
+    public ColumnRemovalOperation(List<String> columnNames) {
+        this(null, columnNames);
     }
 
-    @JsonProperty("columnName")
-    public String getColumnName() {
-        return _columnName;
+    /**
+     * Constructor for JSON deserialization, which accepts "columnName" as a single column to remove, for compatibility
+     * with previous syntaxes.
+     */
+    @JsonCreator
+    public ColumnRemovalOperation(
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("columnNames") List<String> columnNames) {
+        super(EngineConfig.ALL_ROWS);
+        _columnNames = new ArrayList<>(columnNames == null ? Collections.emptyList() : columnNames);
+        if (columnName != null && !_columnNames.contains(columnName)) {
+            _columnNames.add(columnName);
+        }
+        Validate.isFalse(_columnNames.isEmpty(), "Empty list of columns to remove in column removal operation");
+    }
+
+    @JsonProperty("columnNames")
+    public List<String> getColumnName() {
+        return _columnNames;
     }
 
     @Override
     public String getDescription() {
-        return "Remove column " + _columnName;
+        return _columnNames.size() == 1 ? "Remove column " + _columnNames.get(0) : "Remove columns " + String.join(", ", _columnNames);
     }
 
     @Override
     public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
-        int columnIndex = columnIndex(model, _columnName);
-        return model.removeColumn(columnIndex);
+        for (String columnName : _columnNames) {
+            int columnIndex = columnIndex(model, columnName);
+            model = model.removeColumn(columnIndex);
+        }
+        return model;
     }
 
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        int columnIndex = columnIndex(state.getColumnModel(), _columnName);
-        return mapper(columnIndex, state.getColumnModel().getKeyColumnIndex());
+        List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
+        for (String columnName : _columnNames) {
+            int columnIndex = columnIndex(state.getColumnModel(), columnName);
+            columnIndices.add(columnIndex);
+        }
+        columnIndices.sort(Comparator.<Integer> naturalOrder().reversed());
+        return mapper(columnIndices, state.getColumnModel().getKeyColumnIndex());
     }
 
-    protected static RowInRecordMapper mapper(int columnIndex, int keyColumnIndex) {
+    protected static RowInRecordMapper mapper(List<Integer> columnIndices, int keyColumnIndex) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -120614551816915787L;
 
             @Override
             public Row call(Record record, long rowId, Row row) {
-                return row.removeCell(columnIndex);
+                Row newRow = row;
+                // we know that the column indices are sorted in decreasing order,
+                // so it is fine to remove the cells in this way
+                for (int columnIndex : columnIndices) {
+                    newRow = newRow.removeCell(columnIndex);
+                }
+                return newRow;
             }
 
             @Override
             public boolean preservesRecordStructure() {
                 // TODO adapt for arbitrary key column index
-                return columnIndex > keyColumnIndex;
+                return columnIndices.get(columnIndices.size() - 1) > keyColumnIndex;
             }
 
         };
