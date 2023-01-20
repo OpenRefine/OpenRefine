@@ -790,14 +790,24 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postOperation(
+                {
+                  op: "core/row-star",
+                  "starred" : "true"
+                },
+                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unstar-rows'),
           id: "core/unstar-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postOperation(
+                {
+                  op: "core/row-star",
+                  "starred" : "false"
+                },
+                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
@@ -805,14 +815,24 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/flag-rows'),
           id: "core/flag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postOperation(
+                {
+                  op: "core/row-flag",
+                  "flagged" : "true"
+                },
+                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postOperation(
+                {
+                  op: "core/row-flag",
+                  "flagged" : "false"
+                },
+                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
@@ -820,7 +840,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/remove-matching'),
           id: "core/remove-rows",
           click: function() {
-            Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
+            Refine.postOperation({op: "core/row-removal" }, { rowMetadataChanged: true });
           }
         }
       ]
@@ -920,11 +940,10 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
     {
       "label" : $.i18n('core-views/reorder-perma'),
       "click" : function() {
-        Refine.postCoreProcess(
-          "reorder-rows",
-          null,
+        Refine.postOperation(
           {
-            "sorting" : JSON.stringify(self._sorting),
+            op: "core/row-reorder",
+            "sorting" : self._sorting,
             "mode" : ui.browsingEngine.getMode()
           },
           { rowMetadataChanged: true },
@@ -965,49 +984,32 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
 };
 
 var doAllFillDown = function() {
-  doFillDown(theProject.columnModel.columns.length - 1);
-};
-
-var doFillDown = function(colIndex) {
-  if (colIndex >= 0) {
-    Refine.postCoreProcess(
-        "fill-down",
-        {
-          columnName: theProject.columnModel.columns[colIndex].name
-        },
-        null,
-        {modelsChanged: true},
-        {
-          onDone: function() {
-            doFillDown(--colIndex);
-          }
-        }
-    );
+  var operations = [];
+  for(var i = theProject.columnModel.columns.length - 1; i >= 0; i--) {
+    operations.push({
+      op: "core/fill-down",
+      columnName: theProject.columnModel.columns[i].name
+    });
   }
+  Refine.postOperations(
+      operations,
+      {modelsChanged: true},
+  );
 };
 
 var doAllBlankDown = function() {
-  doBlankDown(0);
-};
-
-var doBlankDown = function(colIndex) {
-  if (colIndex < theProject.columnModel.columns.length) {
-    Refine.postCoreProcess(
-        "blank-down",
-        {
-          columnName: theProject.columnModel.columns[colIndex].name
-        },
-        null,
-        { modelsChanged: true },
-        {
-          onDone: function() {
-            doBlankDown(++colIndex);
-          }
-        }
-    );
+  var operations = [];
+  for(var i = 0; i < theProject.columnModel.columns.length; i++) {
+    operations.push({
+      op: "core/blank-down",
+      columnName: theProject.columnModel.columns[i].name
+    });
   }
+  Refine.postOperations(
+      operations,
+      {modelsChanged: true},
+  );
 };
-
 
 DataTableView.prototype._updateCell = function(rowIndex, cellIndex, cell) {
   var rows = theProject.rowModel.rows;

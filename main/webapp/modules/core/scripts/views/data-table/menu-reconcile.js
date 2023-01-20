@@ -38,28 +38,33 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doReconDiscardJudgments = function() {
-    Refine.postCoreProcess(
-      "recon-discard-judgments",
-      { columnName: column.name, clearData: false },
-      null,
+    Refine.postOperation(
+      {
+        op: "core/recon-discard-judgments",
+        columnName: column.name,
+        clearData: false
+      },
       { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
 
   var doClearReconData = function() {
-    Refine.postCoreProcess(
-      "recon-discard-judgments",
-      { columnName: column.name, clearData: true },
-      null,
+    Refine.postOperation(
+      {
+        op: "core/recon-discard-judgments",
+        columnName: column.name,
+        clearData: true
+      },
       { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
 
   var doReconMatchBestCandidates = function() {
-    Refine.postCoreProcess(
-      "recon-match-best-candidates",
-      { columnName: column.name },
-      null,
+    Refine.postOperation(
+      {
+        op: "core/recon-match-best-candidates",
+        columnName: column.name
+      },
       { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
@@ -68,16 +73,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var headerText = $.i18n(shareNewTopics ? 'core-views/one-topic/header' : 'core-views/new-topic/header');
     var explanationText = $.i18n('core-views/recon-mark-new-warning');
     var onSelect = function(service, identifierSpace, schemaSpace) {
-    Refine.postCoreProcess(
-      "recon-mark-new-topics",
+    Refine.postOperation(
         {
+          op: "core/recon-mark-new-topics",
           columnName: column.name,
           shareNewTopics: shareNewTopics,
           service: service,
           identifierSpace: identifierSpace,
           schemaSpace: schemaSpace
         },
-      null,
       { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
@@ -132,17 +136,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     input.suggest(suggestOptions).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
 
-        Refine.postCoreProcess(
-        "recon-match-specific-topic-to-cells",
+        Refine.postOperation(
         {
+            op: "core/recon-match-specific-topic-to-cells",
             columnName: column.name,
-            topicID: data.id,
-            topicName: data.name,
-            types: types.join(","),
+            match: {
+              id: data.id,
+              name: data.name,
+              types: types
+            },
             identifierSpace: service.identifierSpace,
             schemaSpace: service.schemaSpace
         },
-        null,
         { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
         );
 
@@ -222,15 +227,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var headerText = $.i18n('core-views/use-values-as-identifiers/header');
     var explanationText = $.i18n('core-views/use-values-as-identifiers-note');
     var onSelect = function(service, identifierSpace, schemaSpace) {
-          Refine.postCoreProcess(
-            "recon-use-values-as-identifiers",
+          Refine.postOperation(
             {
+              op: "core/recon-use-values-as-identifiers",
               columnName: column.name,
               service: service,
               identifierSpace: identifierSpace,
               schemaSpace: schemaSpace
             },
-            null,
             { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
          );
     };
@@ -261,15 +265,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return;
       }
 
-      Refine.postCoreProcess(
-        "add-column", 
+      Refine.postOperation(
         {
+          op: "core/column-addition", 
           baseColumnName: column.name,  
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
+          expression: "cell.recon.match.id",
           onError: "set-to-blank"
         },
-        { expression: "cell.recon.match.id" },
         { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
         {
           onDone: function(o) {
@@ -309,32 +313,31 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.on('click',dismiss);
     elmts.okButton.on('click',function() {
       var config = {
+        op: "core/recon-copy-across-columns", 
         fromColumnName: column.name,
-        toColumnName: [],
-        judgment: [],
+        toColumnNames: [],
+        judgments: [],
         applyToJudgedCells: elmts.applyToJudgedCellsCheckbox[0].checked
       };
 
       if (elmts.newCheckbox[0].checked) {
-        config.judgment.push("new");
+        config.judgments.push("new");
       }
       if (elmts.matchCheckbox[0].checked) {
-        config.judgment.push("matched");
+        config.judgments.push("matched");
       }
       elmts.toColumnSelect.find("option").each(function() {
         if (this.selected) {
-          config.toColumnName.push(this.value);
+          config.toColumnNames.push(this.value);
         }
       });
 
-      if (config.toColumnName.length === 0) {
+      if (config.toColumnNames.length === 0) {
         alert($.i18n('core-views/warning-other-col'));
-      } else if (config.judgment.length === 0) {
+      } else if (config.judgments.length === 0) {
         alert($.i18n('core-views/warning-sel-judg'));
       } else {
-        Refine.postCoreProcess(
-          "recon-copy-across-columns", 
-          null,
+        Refine.postOperation(
           config,
           { rowsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
         );

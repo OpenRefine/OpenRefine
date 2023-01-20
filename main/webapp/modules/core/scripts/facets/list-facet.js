@@ -561,13 +561,12 @@ class ListFacet extends Facet {
         edit.from = [ originalContent ];
       }
 
-      Refine.postCoreProcess(
-        "mass-edit",
-        {},
+      Refine.postOperation(
         {
+          op: 'core/mass-edit',
           columnName: self._config.columnName,
           expression: "value",
-          edits: JSON.stringify([ edit ])
+          edits: [ edit ]
         },
         {
           // limit edits to rows constrained only by the other facets

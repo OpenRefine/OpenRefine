@@ -379,6 +379,67 @@ Refine.update = function(options, onFinallyDone) {
   }, 500);
 };
 
+Refine.postOperation = function(operation, updateOptions, callbacks) {
+  Refine.postOperations([ operation ], updateOptions, callbacks);
+};
+
+Refine.postOperations = function(operations, updateOptions, callbacks) {
+  callbacks = callbacks || {};
+  updateOptions = updateOptions || {};
+
+  // add engine options to each operation
+  if (!("includeEngine" in updateOptions) || updateOptions.includeEngine) {
+    var engineConfig = ("engineConfig" in updateOptions ?
+            updateOptions.engineConfig :
+            ui.browsingEngine.getJSON());
+
+    for (let operation of operations) {
+      operation.engineConfig = engineConfig;
+    }
+  }
+
+  Refine.postCoreProcess(
+    "apply-operations",
+    {},
+    { operations: JSON.stringify(operations) },
+    { everythingChanged: true },
+    {
+      onDone: function(o) {
+        if (o.code == "pending") {
+          // Something might have already been done and so it's good to update
+          Refine.update({ everythingChanged: true });
+        }
+        // show pill notification for the last operation to have been successfully applied
+        var latestHistoryEntry = null;
+        for (let operationResult of o.results) {
+          if (operationResult.historyEntry) {
+            latestHistoryEntry = operationResult.historyEntry;
+          }
+        }
+        if (latestHistoryEntry) {
+          ui.processPanel.showUndo(latestHistoryEntry);
+        }
+        if (callbacks.onDone) {
+          callbacks.onDone(latestHistoryEntry);
+        }
+      },
+      onError: function(o) {
+        var operationsApplied = o.results.length - 1;
+        var errorMessage = o.results[o.results.length - 1].errorMessage;
+        if (operationsApplied) {
+            errorMessage = $.i18n('core-project/some-operations-applied-but-error', operationsApplied, errorMessage);
+            Refine.update({ everythingChanged: true });
+        }
+        if (callbacks.onError) {
+          callbacks.onError(errorMessage);
+        } else {
+          alert(errorMessage);
+        }
+      }
+    }
+  );
+};
+
 Refine.postCoreProcess = function(command, params, body, updateOptions, callbacks) {
   Refine.postProcess("core", command, params, body, updateOptions, callbacks);
 };
