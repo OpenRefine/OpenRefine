@@ -160,6 +160,6 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         assertEquals(((ArrayNode) jsonResponse.get("results")).size(), 1);
         assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("status").asText(), "failed");
         assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("errorMessage").asText(),
-                "Column 'non_existent_column' does not exist");
+                "Applying the operation failed: Column 'non_existent_column' does not exist");
     }
 }

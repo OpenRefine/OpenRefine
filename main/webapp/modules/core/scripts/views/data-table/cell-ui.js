@@ -296,14 +296,13 @@ DataTableCellUI.prototype._doClearOneCell = function() {
 };
 
 DataTableCellUI.prototype._doMatchNewTopicToSimilarCells = function() {
-  this._doJudgmentForSimilarCells("new", {}, { shareNewTopics: true }, true);
+  this._doJudgmentForSimilarCells("new", { shareNewTopics: true }, true);
 };
 
 DataTableCellUI.prototype._doClearSimilarCells = function() {
   this._postProcessSeveralCells(
-    "recon-clear-similar-cells",
-    {},
     {
+      op: "core/recon-clear-similar-cells",
       columnName: Refine.cellIndexToColumn(this._cellIndex).name,
       similarValue: this._cell.v
     },
@@ -321,11 +320,13 @@ DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
 };
 
 DataTableCellUI.prototype._doMatchTopicToSimilarCells = function(candidate) {
-  this._doJudgmentForSimilarCells("matched", {}, {
-    id : candidate.id,
-    name: candidate.name,
-    score: candidate.score,
-    types: candidate.types.join(",")
+  this._doJudgmentForSimilarCells("matched", {
+    match: {
+      id : candidate.id,
+      name: candidate.name,
+      score: candidate.score,
+      types: candidate.types.join(",")
+    }
   }, true);
 };
 
@@ -344,16 +345,13 @@ DataTableCellUI.prototype._doJudgment = function(judgment, params, bodyParams) {
   );
 };
 
-DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params, bodyParams) {
+DataTableCellUI.prototype._doJudgmentForSimilarCells = function(judgment, params) {
   this._postProcessSeveralCells(
-    "recon-judge-similar-cells",
-    params || {},
-    $.extend(bodyParams || {}, {
+    $.extend(params || {}, {
+      op: "core/recon-judge-similar-cells",
       columnName: Refine.cellIndexToColumn(this._cellIndex).name,
       similarValue: this._cell.v,
       judgment: judgment,
-      identifierSpace: (this._cell.r) ? this._cell.r.identifierSpace : null,
-          schemaSpace: (this._cell.r) ? this._cell.r.schemaSpace : null
     }),
     true
   );
@@ -399,16 +397,18 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
       }
       var params = {
         judgment: "matched",
-        id: match.id,
-        name: match.name,
-        types: notable_types
+        match: {
+          id: match.id,
+          name: match.name,
+          types: notable_types
+        }
       };
 
       if (elmts.radioSimilar[0].checked) {
         params.similarValue = self._cell.v;
         params.columnName = Refine.cellIndexToColumn(self._cellIndex).name;
 
-        self._postProcessSeveralCells("recon-judge-similar-cells", {}, params, true);
+        self._postProcessSeveralCells($.extend({op:"core/recon-judge-similar-cells"}, params), true);
       } else {
         params.row = self._rowIndex;
         params.cell = self._cellIndex;
@@ -488,11 +488,9 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
   );
 };
 
-DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, bodyParams, columnStatsChanged) {
-  Refine.postCoreProcess(
-    command, 
-    params, 
-    bodyParams,
+DataTableCellUI.prototype._postProcessSeveralCells = function(config, columnStatsChanged) {
+  Refine.postOperation(
+    config,
     { cellsChanged: true, columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true }
   );
 };
@@ -651,17 +649,16 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     MenuSystem.dismissAll();
 
     if (applyOthers) {
-      Refine.postCoreProcess(
-        "mass-edit",
-        {},
+      Refine.postOperation(
         {
+          op: "core/mass-edit",
           columnName: Refine.cellIndexToColumn(self._cellIndex).name,
           expression: "value",
-          edits: JSON.stringify([{
+          edits: [{
             from: [ originalContent ],
             to: value,
             type: type
-          }])
+          }]
         },
         { cellsChanged: true }
       );

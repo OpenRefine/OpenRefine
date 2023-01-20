@@ -88,12 +88,12 @@ ColumnReorderingDialog.prototype._dismiss = function() {
 ColumnReorderingDialog.prototype._commit = function() {
     var columnNames = this._elmts.columnContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
     
-    Refine.postCoreProcess(
-        "reorder-columns",
-        null,
-        { "columnNames" : JSON.stringify(columnNames) }, 
-        { modelsChanged: true, rowIdsPreserved: true }, // TODO could add recordIdsPreserved: true if the record key column did not change
-        { includeEngine: false }
+    Refine.postOperation(
+        {
+          op: "core/column-reorder",
+          "columnNames" : columnNames
+        }, 
+        { modelsChanged: true, rowIdsPreserved: true, includeEngine: false } // TODO could add recordIdsPreserved: true if the record key column did not change
     );
     
     this._dismiss();

@@ -33,19 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
-  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, callbacks) {
-      callbacks = callbacks || {};
-	    Refine.postCoreProcess(
-	      "text-transform",
-	      {
+  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, furtherOperations) {
+	    Refine.postOperations(
+	      [{
+	        op: "core/text-transform",
 	        columnName: columnName,
 	        onError: onError,
 	        repeat: repeat,
-	        repeatCount: repeatCount
-	      },
-	      { expression: expression },
-	      { cellsChanged: true, rowIdsPreserved: true },
-	      callbacks
+	        repeatCount: repeatCount,
+                expression
+	      }].concat(furtherOperations),
+	      { cellsChanged: true, rowIdsPreserved: true }
 	    );
 	  };
 	  
@@ -87,15 +85,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return;
       }
 
-      Refine.postCoreProcess(
-        "add-column", 
+      Refine.postOperation(
         {
+          op: "core/column-addition", 
           baseColumnName: column.name,  
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
-          onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
+          onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value,
+          expression: previewWidget.getExpression(true)
         },
-        { expression: previewWidget.getExpression(true) },
         { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
         {
           onDone: function(o) {
@@ -165,9 +163,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-throttle-delay-input'));
         return;
       }
-      Refine.postCoreProcess(
-        "add-column-by-fetching-urls", 
+      Refine.postOperation(
         {
+          op: "core/column-addition-by-fetching-urls", 
           baseColumnName: column.name, 
           urlExpression: previewWidget.getExpression(true), 
           newColumnName: columnName, 
@@ -175,9 +173,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           delay: delay,
           onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
-          httpHeaders: JSON.stringify(elmts.setHttpHeadersContainer.find("input").serializeArray())
+          httpHeaders: elmts.setHttpHeadersContainer.find("input").serializeArray()
         },
-        null,
         { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
       );
       dismiss();
@@ -194,18 +191,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       o.sortingConfig,
       o.limit,
       function(extension, endpoint, identifierSpace, schemaSpace) {
-        Refine.postProcess(
-            "core",
-            "extend-data", 
+        Refine.postOperation(
             {
+              op: "core/extend-data", 
               baseColumnName: column.name,
 	      endpoint: endpoint,
               identifierSpace: identifierSpace,
               schemaSpace: schemaSpace,
-              columnInsertIndex: columnIndex + 1
-            },
-            {
-              extension: JSON.stringify(extension)
+              columnInsertIndex: columnIndex + 1,
+              extension
             },
             { rowsChanged: true, modelsChanged: true }
         );
@@ -214,12 +208,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doRemoveColumn = function() {
-    Refine.postCoreProcess(
-      "remove-column", 
+    Refine.postOperation(
       {
+        op: "core/column-removal", 
         columnName: column.name
       },
-      null,
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
@@ -247,13 +240,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return;
       }
       if (newColumnName.length > 0) {
-      Refine.postCoreProcess(
-        "rename-column", 
+      Refine.postOperation(
         {
+          op: "core/column-rename", 
           oldColumnName: column.name,
           newColumnName: newColumnName
         },
-        null,
             {modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true},
             {
               onDone: function () {
@@ -268,13 +260,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
 
   var doMoveColumnTo = function(index) {
-    Refine.postCoreProcess(
-      "move-column", 
+    Refine.postOperation(
       {
+        op: "core/column-move",
         columnName: column.name,
         index: index
       },
-      null,
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
@@ -282,13 +273,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doMoveColumnBy = function(change) {
     var newidx = Refine.columnNameToColumnIndex(column.name) + change;
     if (newidx >= 0) {
-      Refine.postCoreProcess(
-          "move-column", 
+      Refine.postOperation(
           {
+            op: "core/column-move", 
             columnName: column.name,
             index: newidx
           },
-          null,
           { modelsChanged: true, rowIdsPreserved: true }
       );
     }
@@ -322,6 +312,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.okButton.on('click',function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
+        op: "core/column-split", 
         columnName: column.name,
         mode: mode,
         guessCellType: elmts.guessCellTypeInput[0].checked,
@@ -335,6 +326,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
+        config.maxColumns = 0;
 
         var s = elmts.maxColumnsInput[0].value;
         if (s) {
@@ -360,7 +352,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             return;
           }
 
-          config.fieldLengths = JSON.stringify(lengths);
+          config.fieldLengths = lengths;
           
         } catch (e) {
           alert($.i18n('core-views/warning-format'));
@@ -368,10 +360,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       }
 
-      Refine.postCoreProcess(
-        "split-column", 
+      Refine.postOperation(
         config,
-        null,
         { modelsChanged: true }
       );
       dismiss();
@@ -417,13 +407,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           if (writeOrCopy != "copy-to-new-column") {
             columnsToDelete = columnsToDelete.filter(colName => colName != column.name);
           }
-          Refine.postCoreProcess(
-              "remove-column",
-              null,
-              { "columnNames" : JSON.stringify(columnsToJoin) }, 
-              { modelsChanged: true, rowIdsPreserved: true },
-              { includeEngine: false }
-          );
+          return [{
+              op: "core/column-removal",
+              columnNames : columnsToDelete
+          }];
+        } else {
+          return [];
         }
       };
       // get options
@@ -465,17 +454,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       expression = 'join ([' + expression + '],\'' + escapeString(fieldSeparator,dontEscape) + "')";
       // apply expression to selected column or new column
       if (writeOrCopy =="copy-to-new-column") {
-        Refine.postCoreProcess(
-          "add-column", 
+        Refine.postOperations([
           {
-          baseColumnName: column.name,  
-          newColumnName: newColumnName, 
-          columnInsertIndex: columnIndex + 1,
-          onError: onError
-          },
-          { expression: expression },
-          { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
-          { onFinallyDone: deleteColumns}
+            op: "core/column-addition", 
+            baseColumnName: column.name,  
+            newColumnName: newColumnName, 
+            columnInsertIndex: columnIndex + 1,
+            onError: onError,
+            expression
+          }].concat(deleteColumns()),
+          { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
         );
       } 
       else {
@@ -485,7 +473,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError,
             repeat,
             repeatCount,
-            { onFinallyDone: deleteColumns});
+            deleteColumns());
       }
     };
     // core of doJoinColumn

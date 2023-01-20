@@ -93,47 +93,18 @@ function registerCommands() {
   RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.org.openrefine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
 
   RS.registerCommand(module, "edit-one-cell", new Packages.org.openrefine.commands.cell.EditOneCellCommand());
-  RS.registerCommand(module, "text-transform", new Packages.org.openrefine.commands.cell.TextTransformCommand());
-  RS.registerCommand(module, "mass-edit", new Packages.org.openrefine.commands.cell.MassEditCommand());
-  RS.registerCommand(module, "join-multi-value-cells", new Packages.org.openrefine.commands.cell.JoinMultiValueCellsCommand());
-  RS.registerCommand(module, "split-multi-value-cells", new Packages.org.openrefine.commands.cell.SplitMultiValueCellsCommand());
-  RS.registerCommand(module, "fill-down", new Packages.org.openrefine.commands.cell.FillDownCommand());
-  RS.registerCommand(module, "blank-down", new Packages.org.openrefine.commands.cell.BlankDownCommand());
-  RS.registerCommand(module, "transpose-columns-into-rows", new Packages.org.openrefine.commands.cell.TransposeColumnsIntoRowsCommand());
-  RS.registerCommand(module, "transpose-rows-into-columns", new Packages.org.openrefine.commands.cell.TransposeRowsIntoColumnsCommand());
-  RS.registerCommand(module, "key-value-columnize", new Packages.org.openrefine.commands.cell.KeyValueColumnizeCommand());
 
   RS.registerCommand(module, "get-languages", Packages.org.openrefine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.org.openrefine.commands.lang.LoadLanguageCommand());
   
-  RS.registerCommand(module, "add-column", new Packages.org.openrefine.commands.column.AddColumnCommand());
-  RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.org.openrefine.commands.column.AddColumnByFetchingURLsCommand());
-  RS.registerCommand(module, "remove-column", new Packages.org.openrefine.commands.column.RemoveColumnCommand());
-  RS.registerCommand(module, "rename-column", new Packages.org.openrefine.commands.column.RenameColumnCommand());
-  RS.registerCommand(module, "move-column", new Packages.org.openrefine.commands.column.MoveColumnCommand());
-  RS.registerCommand(module, "split-column", new Packages.org.openrefine.commands.column.SplitColumnCommand());
-  RS.registerCommand(module, "reorder-columns", new Packages.org.openrefine.commands.column.ReorderColumnsCommand());
-
-  RS.registerCommand(module, "reconcile", new Packages.org.openrefine.commands.recon.ReconcileCommand());
-  RS.registerCommand(module, "recon-match-best-candidates", new Packages.org.openrefine.commands.recon.ReconMatchBestCandidatesCommand());
-  RS.registerCommand(module, "recon-mark-new-topics", new Packages.org.openrefine.commands.recon.ReconMarkNewTopicsCommand());
-  RS.registerCommand(module, "recon-discard-judgments", new Packages.org.openrefine.commands.recon.ReconDiscardJudgmentsCommand());
-  RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.org.openrefine.commands.recon.ReconMatchSpecificTopicCommand());
   RS.registerCommand(module, "recon-judge-one-cell", new Packages.org.openrefine.commands.recon.ReconJudgeOneCellCommand());
-  RS.registerCommand(module, "recon-judge-similar-cells", new Packages.org.openrefine.commands.recon.ReconJudgeSimilarCellsCommand());
   RS.registerCommand(module, "recon-clear-one-cell", new Packages.org.openrefine.commands.recon.ReconClearOneCellCommand());
-  RS.registerCommand(module, "recon-clear-similar-cells", new Packages.org.openrefine.commands.recon.ReconClearSimilarCellsCommand());
-  RS.registerCommand(module, "recon-copy-across-columns", new Packages.org.openrefine.commands.recon.ReconCopyAcrossColumnsCommand());
-  RS.registerCommand(module, "recon-use-values-as-identifiers", new Packages.org.openrefine.commands.recon.ReconUseValuesAsIdentifiersCommand());
+
   RS.registerCommand(module, "preview-extend-data", new Packages.org.openrefine.commands.recon.PreviewExtendDataCommand());
-  RS.registerCommand(module, "extend-data", new Packages.org.openrefine.commands.recon.ExtendDataCommand());
 
   RS.registerCommand(module, "guess-types-of-column", new Packages.org.openrefine.commands.recon.GuessTypesOfColumnCommand());
 
   RS.registerCommand(module, "annotate-one-row", new Packages.org.openrefine.commands.row.AnnotateOneRowCommand());
-  RS.registerCommand(module, "annotate-rows", new Packages.org.openrefine.commands.row.AnnotateRowsCommand());
-  RS.registerCommand(module, "remove-rows", new Packages.org.openrefine.commands.row.RemoveRowsCommand());
-  RS.registerCommand(module, "reorder-rows", new Packages.org.openrefine.commands.row.ReorderRowsCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.org.openrefine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.org.openrefine.commands.expr.GetExpressionHistoryCommand());
@@ -146,8 +117,6 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.org.openrefine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.org.openrefine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.org.openrefine.commands.OpenWorkspaceDirCommand());
-  
-
 }
 
 function registerOperations() {

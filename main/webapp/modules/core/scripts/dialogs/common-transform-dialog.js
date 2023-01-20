@@ -107,16 +107,15 @@ commonTransformDialog.prototype._dismiss = function() {
 
 commonTransformDialog.prototype._commit = function(expression) {
       var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
-      Refine.postCoreProcess(
-        "text-transform",
+      Refine.postOperation(
         {
+          op: "core/text-transform",
           columnName: columnName, 
           expression: expression, 
           onError: onError,
           repeat: repeat,
           repeatCount: repeatCount
         },
-        null,
         { cellsChanged: true, rowIdsPreserved: true }
       );
   };

@@ -416,22 +416,18 @@ ClusteringDialog.prototype._apply = function(onDone) {
     }
 
     if (edits.length > 0) {
-        Refine.postCoreProcess(
-            "mass-edit",
-            {},
+        Refine.postOperation(
             {
+                op: "core/mass-edit",
                 columnName: this._columnName,
                 expression: this._expression,
-                edits: JSON.stringify(edits)
+                edits: edits
             },
             { cellsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
             {
-                onError: function(o) {
-                    alert("Error: " + o.message);
-                },
                 onDone: onDone
             }
-        );
+       );
     } else {
         alert($.i18n('core-dialogs/warning-check-boxes'));
     }
