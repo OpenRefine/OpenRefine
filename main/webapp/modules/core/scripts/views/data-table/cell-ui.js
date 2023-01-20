@@ -654,11 +654,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
           op: "core/mass-edit",
           columnName: Refine.cellIndexToColumn(self._cellIndex).name,
           expression: "value",
-          edits: JSON.stringify([{
+          edits: [{
             from: [ originalContent ],
             to: value,
             type: type
-          }])
+          }]
         },
         { cellsChanged: true }
       );
