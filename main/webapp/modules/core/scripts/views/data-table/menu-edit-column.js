@@ -409,7 +409,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           }
           return [{
               op: "core/column-removal",
-              columnNames : columnsToKeep
+              columnNames : columnsToDelete
           }];
         } else {
           return [];
