@@ -83,12 +83,4 @@ describe(__filename, function () {
     // There are no future changes anymore, since they have been deleted
     cy.get('.history-panel-body .history-future a').should('not.exist');
   });
-
-  // Very long test to run
-  // it('Ensure the Undo button dissapear after timeout after deleting a column', function () {
-  // 	const ORNotificationTimeout = 15000;
-  // cy.loadAndVisitProject('food.mini');
-  // 	cy.columnActionClick('NDB_No', ['Edit column', 'Remove this column']);
-  // 	cy.get('#notification-container', { timeout: ORNotificationTimeout }).should('not.be.visible');
-  // });
 });
