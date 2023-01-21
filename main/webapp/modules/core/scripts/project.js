@@ -537,7 +537,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
   }
 
   var undoneChanges = ui.historyPanel.undoneChanges();
-  if (undoneChanges.length > 0 && (!("warnAgainstHistoryErasure" in updateOptions) || updateOptions.warnAgainstHistoryErasure)) {
+  if (Refine.getPreference("ui.history.warnAgainstDeletion", 'true') === 'true' && undoneChanges.length > 0 && (!("warnAgainstHistoryErasure" in updateOptions) || updateOptions.warnAgainstHistoryErasure)) {
     Refine._confirmHistoryErasure(undoneChanges, runChange);
   } else {
     runChange();
@@ -573,12 +573,21 @@ Refine._confirmHistoryErasure = function(entries, onDone) {
     var entryElmts = DOM.bind(entryDom);
     entryElmts.entryDescription.text(entry.description);
   }
+
+  var updateWarnPreferences = function () {
+    var doNotWarnCheckBox = elmts.doNotWarnCheckbox.is(':checked');
+    if (doNotWarnCheckBox) {
+      Refine.setPreference('ui.history.warnAgainstDeletion', 'false');
+    }
+  };
   
   elmts.form.on('submit', function() {
     DialogSystem.dismissUntil(level - 1);
+    updateWarnPreferences();
     onDone();
   });
   elmts.cancelButton.on('click',function() {
+    updateWarnPreferences();
     DialogSystem.dismissUntil(level - 1);
   });
 };
