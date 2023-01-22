@@ -532,7 +532,7 @@ ui_tests() {
     # Cypress needs a unique group id
     # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
