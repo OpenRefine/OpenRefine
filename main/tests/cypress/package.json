@@ -19,11 +19,11 @@
         "uniqid": "^5.4.0"
     },
     "devDependencies": {
-        "eslint": "^8.29.0",
+        "eslint": "^8.32.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-prettier": "^8.6.0",
         "eslint-plugin-cypress": "^2.12.1",
         "jsdoc": "^4.0.0",
-        "prettier": "2.8.1"
+        "prettier": "2.8.3"
     }
 }

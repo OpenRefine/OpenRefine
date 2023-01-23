@@ -74,7 +74,7 @@
     <!-- dependency versions -->
     <jackson.version>2.13.4</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.2.3</butterfly.version>
+    <butterfly.version>1.2.4</butterfly.version>
     <slf4j.version>2.0.6</slf4j.version>
     <log4j.version>2.19.0</log4j.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
@@ -108,14 +108,14 @@
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>4.10.0</mockito.version>
+    <mockito.version>5.0.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-    <maven-dependency-plugin.version>3.4.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.5.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>2.22.2</surefire.version>
