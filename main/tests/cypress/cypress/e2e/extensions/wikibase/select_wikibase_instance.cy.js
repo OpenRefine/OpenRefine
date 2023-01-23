@@ -167,10 +167,12 @@ describe(__filename, function () {
             .then((response) => {
                 cy.log(JSON.stringify(response));
                 savedValue = JSON.parse(response.body.value);
-                savedValue = savedValue.filter(object => {
-                    return object.mediawiki.name !== WIKIBASE_TEST_NAME
-                        && object.mediawiki.name !== WIKIBASE_TEST_NAME2;
-                });
+                if (savedValue && Array.isArray(savedValue)) {
+                    savedValue = savedValue.filter(object => {
+                        return object.mediawiki.name !== WIKIBASE_TEST_NAME
+                            && object.mediawiki.name !== WIKIBASE_TEST_NAME2;
+                    });
+                }
             });
     }
 
