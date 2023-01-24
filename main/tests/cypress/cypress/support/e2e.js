@@ -19,15 +19,18 @@ import './openrefine_api';
 import './ext_wikibase';
 
 let token;
+// Hide fetch/XHR requests
+const app = window.top;
+if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
+  const style = app.document.createElement('style');
+  style.innerHTML =
+      '.command-name-request, .command-name-xhr { display: none }';
+  style.setAttribute('data-hide-command-log-request', '');
+
+  app.document.head.appendChild(style);
+}
 
 beforeEach(() => {
-  cy.server({
-    ignore: (xhr) => {
-      // Hide XHR Requests from log, OpenRefine is making too many XHR requests, it's polluting the test runner
-      return true;
-    },
-  });
-
   cy.wrap(token, { log: false }).as('token');
   cy.wrap(token, { log: false }).as('deletetoken');
   cy.wrap([], { log: false }).as('loadedProjectIds');

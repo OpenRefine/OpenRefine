@@ -446,6 +446,6 @@ Cypress.Commands.add(
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
+    cy.waitForProjectTable();
   }
 );
