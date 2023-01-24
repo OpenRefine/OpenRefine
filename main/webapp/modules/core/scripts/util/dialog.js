@@ -53,15 +53,14 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   .css("z-index", 102 + DialogSystem._layers.length * 2)
   .appendTo(document.body);
 
-  elmt.css("visibility", "hidden").appendTo(container);
-// Dialogs should be in the upper half of the window
-// Offset by 10% of window height to separate from browser bar
-// Unless dialog is as big or bigger than the window, then set top to 0 + 5px;
-  var top1 = overlay.height()/10;
-  var top2 = Math.round((overlay.height() - elmt.height()) / 2);
-  var top = (top1 < top2) ? top1 : top2;
-  container.css("top", Math.round((top < 0 ) ? 5 : top) + "px");
-  elmt.css("visibility", "visible");
+  elmt.appendTo(container);
+  // by default (css) the dialog is offset
+  // by 10vh form the top of the viewport
+  // if the dialog's hight is greater than
+  // 90vh, then we set the offset to 5px
+  if (window.innerHeight * 0.9 < elmt.height()) {
+    container.css("top", "5px");
+  }
 
   container.draggable({ handle: '.dialog-header', cursor: 'move' });
 

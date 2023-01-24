@@ -46,6 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   left: 0;
   width: 100%;
   text-align: center;
+  top: 10vh;
 }
 
 .dialog-frame {
