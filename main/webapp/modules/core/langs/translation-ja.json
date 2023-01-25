@@ -846,5 +846,6 @@
     "core-index-parser/row-separator-regex": "正規表現",
     "core-index-parser/row-separator": "行の区切り文字:",
     "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）",
-    "core-index-parser/force-text": "全セルをテキストとしてインポート"
+    "core-index-parser/force-text": "全セルをテキストとしてインポート",
+    "core-index/navigate-home": "ホーム画面へ案内"
 }
