@@ -99,6 +99,8 @@ if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
 if ""%1"" == ""/c"" goto arg-c
+if ""%1"" == ""/debug"" goto arg-debug
+if ""%1"" == ""/jmx"" goto arg-jmx
 goto readIniFile
 
 :arg-p
@@ -123,15 +125,23 @@ set REFINE_MIN_MEMORY=%2
 goto shift2loop
 
 :arg-d
-set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+
 goto shift2loop
 
 :arg-x
-set OPTS=%OPTS% -Dcom.sun.management.jmxremote
+
 goto shift2loop
 
 :arg-c
 set REFINE_INI_PATH=%~2
+goto shift2loop
+
+:arg-debug
+set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+goto shift2loop
+
+:arg-jmx
+set OPTS=%OPTS% -Dcom.sun.management.jmxremote
 goto shift2loop
 
 :shift2loop
