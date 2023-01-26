@@ -401,6 +401,16 @@ class ListFacet extends Facet {
     this._renderBodyControls();
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
 
+    let innerList = this._elmts.bodyInnerDiv[0];
+    let innerHeight = innerList.clientHeight;
+    let defaultMaxHeight = 17*13;
+
+    if (innerHeight > defaultMaxHeight) {
+      this._elmts.bodyDiv.height(defaultMaxHeight+'px');
+    } else {
+      this._elmts.bodyDiv.height((innerHeight+1)+'px');
+    }
+
     var getChoice = function(elmt) {
       var index = parseInt(elmt.attr("choiceIndex"),10);
       if (index === -1) {
