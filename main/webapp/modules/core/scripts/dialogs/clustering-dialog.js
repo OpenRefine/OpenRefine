@@ -217,7 +217,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var choices = cluster.choices;
             var onClick = function() {
               var parent = $(this).closest("tr");
-              var value = $(this).text();
+              var value = $(this).attr('data-value');
               cluster.value = value;
 
               parent.find("input[type='text']").val(value);
@@ -230,6 +230,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 var li = document.createElement('li');
                 var entry = entryTemplate.cloneNode();
                 entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
+                entry.setAttribute('data-value', choice.v.toString());
                 entry.addEventListener('click', onClick);
                 li.append(entry);
                 if (choice.c > 1) {
