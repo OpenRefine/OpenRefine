@@ -212,20 +212,20 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build, test and package
-      run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
+      run: mvn test
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
-        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
     - name: Upload snapshot releases to OSSRH
       run: |
-        mvn deploy -DskipTests=true -DrepositoryId=ossrh
+        mvn deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
+        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
     - name: Get release upload URL
       id: get_release_upload_url
