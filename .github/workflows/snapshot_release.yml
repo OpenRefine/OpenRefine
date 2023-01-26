@@ -231,12 +231,12 @@ jobs:
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
       
-    - name: Build, test and package
+    - name: Build and test
       run: mvn test
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-    - name: Upload snapshot releases to OSSRH
+    - name: Package and upload to OSSRH
       run: |
         mvn deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
