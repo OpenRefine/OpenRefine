@@ -516,11 +516,11 @@ class RefineClient extends JFrame implements ActionListener {
         Runtime rt = Runtime.getRuntime();
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+            rt.exec(new String[] { "rundll32 ", "url.dll,FileProtocolHandler ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_MAC_OSX) {
-            rt.exec("open " + uri);
+            rt.exec(new String[] { "open ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_LINUX) {
-            rt.exec("xdg-open " + uri);
+            rt.exec(new String[] { "xdg-open", String.valueOf(uri) });
         } else {
             logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser", uri.toString());
         }
