@@ -516,7 +516,7 @@ class RefineClient extends JFrame implements ActionListener {
         Runtime rt = Runtime.getRuntime();
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            rt.exec(new String[] { "rundll32 url.dll,FileProtocolHandler ", String.valueOf(uri) });
+            rt.exec(new String[] { "rundll32 ", "url.dll,FileProtocolHandler ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_MAC_OSX) {
             rt.exec(new String[] { "open ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_LINUX) {
