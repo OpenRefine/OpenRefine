@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A slice where columns can be reordered (including removing columns) and renamed in one go.
  * 
- * @author Antonin Delpeuch
  */
 public class ReorderSlice implements DagSlice {
 

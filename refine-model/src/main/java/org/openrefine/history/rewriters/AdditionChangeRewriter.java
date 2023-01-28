@@ -10,7 +10,6 @@ import org.openrefine.model.changes.Change;
 /**
  * Change rewriter for changes which add new columns, possibly based on other columns.
  * 
- * @author Antonin Delpeuch
  */
 public interface AdditionChangeRewriter extends ChangeRewriter {
 

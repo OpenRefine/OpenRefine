@@ -66,8 +66,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * ProjectManager is responsible for loading and saving the workspace and projects.
- *
- *
  */
 public abstract class ProjectManager {
 
@@ -134,9 +132,6 @@ public abstract class ProjectManager {
 
     /**
      * Registers the project in the memory of the current session
-     * 
-     * @param project
-     * @param projectMetadata
      */
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
         synchronized (this) {
@@ -159,59 +154,36 @@ public abstract class ProjectManager {
 
     /**
      * Return the change data store for a given project
-     *
-     * @param projectID
      */
     public abstract ChangeDataStore getChangeDataStore(long projectID);
 
     /**
      * Return the cached grid store for a given project
-     *
-     * @param projectId
-     * @return
      */
     public abstract CachedGridStore getCachedGridStore(long projectId);
 
     /**
      * Load project metadata from data storage
-     * 
-     * @param projectID
-     * @return
      */
     public abstract boolean loadProjectMetadata(long projectID);
 
     /**
      * Loads a project from the data store into memory
-     *
-     * @param id
-     * @return
-     * @throws IOException
      */
     protected abstract Project loadProject(long id) throws IOException;
 
     /**
      * Import project from a Refine archive
-     * 
-     * @param projectID
-     * @param inputStream
-     * @param gziped
-     * @throws IOException
      */
     public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
 
     /**
      * Export project to a Refine archive
-     * 
-     * @param projectId
-     * @param tos
-     * @throws IOException
      */
     public abstract void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException;
 
     /**
      * Saves a project and its metadata to the data store
-     * 
-     * @param id
      */
     public void ensureProjectSaved(long id) {
         synchronized (this) {
@@ -242,31 +214,21 @@ public abstract class ProjectManager {
      *
      * @param id
      *            the project id to load
-     * @throws IOException
      */
     public abstract void reloadProjectFromWorkspace(long id) throws IOException;
 
     /**
      * Save project metadata to the data store
-     * 
-     * @param metadata
-     * @param projectId
-     * @throws Exception
      */
     public abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
 
     /**
      * Save project to the data store
-     * 
-     * @param project
-     * @throws IOException
      */
     protected abstract void saveProject(Project project) throws IOException;
 
     /**
      * Save workspace and all projects to data store
-     * 
-     * @param allModified
      */
     public void save(boolean allModified) {
         if (allModified || _busy == 0) {
@@ -297,8 +259,6 @@ public abstract class ProjectManager {
 
     /**
      * Saves all projects to the data store
-     * 
-     * @param allModified
      */
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
@@ -400,9 +360,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets the project metadata from memory Requires that the metadata has already been loaded from the data store
-     * 
-     * @param id
-     * @return
      */
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
@@ -410,9 +367,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets the project metadata from memory Requires that the metadata has already been loaded from the data store
-     * 
-     * @param name
-     * @return
      */
     public ProjectMetadata getProjectMetadata(String name) {
         for (ProjectMetadata pm : _projectsMetadata.values()) {
@@ -426,11 +380,11 @@ public abstract class ProjectManager {
     /**
      * Tries to find the project id when given a project name Requires that all project metadata exists has been loaded
      * to memory from the data store
-     * 
+     *
      * @param name
      *            The name of the project
      * @return The id of the project
-     * @throws GetProjectIDException
+     * @throws org.openrefine.util.GetProjectIDException
      *             If no unique project is found with the given name
      */
     public long getProjectID(String name) throws GetProjectIDException {
@@ -452,10 +406,7 @@ public abstract class ProjectManager {
     }
 
     /**
-     * A valid user meta data definition should have name and display property
-     * 
-     * @param placeHolderJsonObj
-     * @return
+     * A valid user metadata definition should have name and display property
      */
     private boolean isValidUserMetadataDefinition(ObjectNode placeHolderJsonObj) {
         return (placeHolderJsonObj != null &&
@@ -512,9 +463,7 @@ public abstract class ProjectManager {
     }
 
     /**
-     * honor the meta data preference
-     * 
-     * @param jsonObjArray
+     * honor the metadata preference
      */
     private void initDisplay(ArrayNode jsonObjArray) {
         for (int index = 0; index < jsonObjArray.size(); index++) {
@@ -527,8 +476,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets all the project Metadata currently held in memory.
-     * 
-     * @return
      */
     @JsonIgnore
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
@@ -541,8 +488,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets all the project tags currently held in memory
-     * 
-     * @return
      */
     @JsonIgnore
     public Map<String, Integer> getAllProjectTags() {
@@ -578,7 +523,7 @@ public abstract class ProjectManager {
 
     /**
      * Gets the required project, assuming it has already been leaded.
-     * 
+     *
      * @param id
      *            the id of the project
      * @return null if the project is not loaded yet.
@@ -589,8 +534,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets the preference store
-     * 
-     * @return
      */
     @JsonProperty("preferences")
     public PreferenceStore getPreferenceStore() {
@@ -599,8 +542,6 @@ public abstract class ProjectManager {
 
     /**
      * Gets all expressions from the preference store
-     * 
-     * @return
      */
     @JsonIgnore
     public List<String> getExpressions() {
@@ -609,7 +550,7 @@ public abstract class ProjectManager {
 
     /**
      * The history entry manager deals with changes
-     * 
+     *
      * @return manager for handling history
      */
     @JsonIgnore
@@ -617,8 +558,6 @@ public abstract class ProjectManager {
 
     /**
      * Remove the project from the data store
-     * 
-     * @param project
      */
     public void deleteProject(Project project) {
         deleteProject(project.getId());
@@ -626,15 +565,11 @@ public abstract class ProjectManager {
 
     /**
      * Remove project from data store
-     * 
-     * @param projectID
      */
     public abstract void deleteProject(long projectID);
 
     /**
      * Removes project from memory
-     * 
-     * @param projectID
      */
     protected void removeProject(long projectID) {
         if (_projects.containsKey(projectID)) {
@@ -647,8 +582,7 @@ public abstract class ProjectManager {
 
     /**
      * Sets the flag for long running operations. This will prevent workspace saves from happening while it's set.
-     * 
-     * @param busy
+     *
      */
     public void setBusy(boolean busy) {
         synchronized (this) {
@@ -662,8 +596,7 @@ public abstract class ProjectManager {
 
     /**
      * Add the latest expression to the preference store
-     * 
-     * @param s
+     *
      */
     public void addLatestExpression(String s) {
         synchronized (this) {
@@ -671,10 +604,6 @@ public abstract class ProjectManager {
         }
     }
 
-    /**
-     *
-     * @param ps
-     */
     static protected void preparePreferenceStore(PreferenceStore ps) {
         ps.put("scripting.expressions", new TopList(EXPRESSION_HISTORY_MAX));
         ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));

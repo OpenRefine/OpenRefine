@@ -9,7 +9,6 @@ import org.openrefine.model.changes.Change;
 /**
  * Change rewriter for changes which transform a single column, possibly based on other columns.
  * 
- * @author Antonin Delpeuch
  */
 public interface TransformationChangeRewriter extends ChangeRewriter {
 

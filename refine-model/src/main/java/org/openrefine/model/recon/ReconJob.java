@@ -38,7 +38,6 @@ package org.openrefine.model.recon;
  * 
  * It is required to be hashable.
  * 
- * @author Antonin Delpeuch
  *
  */
 public interface ReconJob {

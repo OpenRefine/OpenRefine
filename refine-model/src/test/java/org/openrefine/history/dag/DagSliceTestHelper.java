@@ -12,9 +12,6 @@ public class DagSliceTestHelper {
 
     /**
      * Helper to create a list of column metadata in tests.
-     * 
-     * @param names
-     * @return
      */
     public static ColumnModel columns(String... names) {
         List<String> columnNames = Arrays.asList(names);

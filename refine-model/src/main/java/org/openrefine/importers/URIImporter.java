@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * A base class for importers which read files specified by a URI
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class URIImporter extends ImportingParserBase {

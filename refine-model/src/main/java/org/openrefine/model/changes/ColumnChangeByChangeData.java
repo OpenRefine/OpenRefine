@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * New recon config and stats can be supplied for the column changed or created. If a recon config and no recon stats
  * are provided, the change computes the new recon stats on the fly.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class ColumnChangeByChangeData implements Change {

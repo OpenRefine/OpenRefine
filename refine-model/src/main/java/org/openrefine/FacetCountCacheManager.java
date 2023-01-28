@@ -22,7 +22,6 @@ import org.openrefine.util.FacetCountException;
 /**
  * Holds a cache of facet counts, to be used by the facetCount GREL function.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class FacetCountCacheManager {

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * An opaque transformation step, which does not commute with any other step. It may use the records mode, or not be
  * row-wise at all.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class OpaqueSlice implements DagSlice {

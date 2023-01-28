@@ -8,9 +8,6 @@ import org.openrefine.model.GridState;
 
 /**
  * An interface for accessing some intermediate grid states in a project, which are stored on disk.
- * 
- * @author Antonin Delpeuch
- *
  */
 public interface CachedGridStore {
 
@@ -20,29 +17,36 @@ public interface CachedGridStore {
     public Set<Long> listCachedGridIds();
 
     /**
-     * Retrieves a disk-cached grid by providing the id of the history entry which produced it.
+     * Retrieves a disk-cached grid.
      * 
      * @param id
-     * @return
+     *            the id of the history entry which produced it
+     * @return the cached grid
      * @throws IOException
+     *             if the grid could not be loaded from disk
      */
     public GridState getCachedGrid(long id) throws IOException;
 
     /**
-     * Discards the on-disk cache of a grid by providing the id of the history entry which produced it.
+     * Discards the on-disk cache of a grid
      * 
      * @param id
+     *            the id of the history entry which produced it.
      * @throws IOException
+     *             if removing the grid from the cache did not succeed
      */
     public void uncacheGrid(long id) throws IOException;
 
     /**
-     * Caches a grid state on disk, indexed by the id of the history entry which produced it.
+     * Caches a grid state on disk.
      * 
      * @param id
+     *            the id of the history entry which produced it
      * @param grid
+     *            the grid to cache
      * @return the same grid state read from disk instead.
      * @throws IOException
+     *             if caching the grid failed
      */
     public GridState cacheGrid(long id, GridState grid) throws IOException;
 }

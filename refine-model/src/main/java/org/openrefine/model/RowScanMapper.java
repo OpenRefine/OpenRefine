@@ -6,7 +6,6 @@ import java.io.Serializable;
 /**
  * A row mapper which is able to update a state as it reads rows. Only use this if {@link RowMapper} cannot be used.
  * 
- * @author Antonin Delpeuch
  *
  * @param <S>
  */
@@ -19,16 +18,11 @@ public interface RowScanMapper<S> extends Serializable {
      *            the index of the row
      * @param row
      *            the row to map to the corresponding state
-     * @return
      */
     public S feed(long rowId, Row row);
 
     /**
      * Combines two states produced by rows. This needs to be associative and unital (for the unit provided below).
-     * 
-     * @param left
-     * @param right
-     * @return
      */
     public S combine(S left, S right);
 
@@ -62,7 +56,6 @@ public interface RowScanMapper<S> extends Serializable {
      *            the mapper for rows selected by the filter
      * @param negativeMapper
      *            the mapper for rows not selected by the filter
-     * @return
      */
     public static <S> RowScanMapper<S> conditionalMapper(RowFilter filter, RowScanMapper<S> rowScanMapper, RowMapper negativeMapper) {
         return new RowScanMapper<S>() {

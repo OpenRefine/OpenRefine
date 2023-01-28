@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * A slice in the directed acyclic graph of column dependencies, corresponding to the application of a single operation.
- * 
- * @author Antonin Delpeuch
- *
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({

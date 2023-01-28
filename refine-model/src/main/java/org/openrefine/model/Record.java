@@ -49,7 +49,6 @@ import org.openrefine.expr.ExpressionUtils;
  * original row id needs to be recorded (so that the original ids of the other rows in the records can be deduced from
  * it).
  * 
- * @author Antonin Delpeuch
  */
 public class Record implements Serializable {
 

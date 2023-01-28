@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Represents a file to import in an importing job. Multiple files can be imported to form the same project.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class ImportingFileRecord {

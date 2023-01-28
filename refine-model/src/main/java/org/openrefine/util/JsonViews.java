@@ -30,7 +30,6 @@ package org.openrefine.util;
 /**
  * Set of classes which define JSON visibility of certain fields.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class JsonViews {

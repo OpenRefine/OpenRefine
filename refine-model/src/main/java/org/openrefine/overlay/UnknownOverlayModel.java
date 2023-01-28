@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * This class holds the JSON serialization of the overlay model, in the interest of being able to serialize it later,
  * hence avoiding to discard it and lose metadata.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class UnknownOverlayModel implements OverlayModel {

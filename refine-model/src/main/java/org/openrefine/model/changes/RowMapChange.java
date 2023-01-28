@@ -22,7 +22,6 @@ import org.openrefine.overlay.OverlayModel;
  * This class can also be subclassed by changes which ignore the engine, by initializing the engine config with
  * {@link EngineConfig#ALL_ROWS}.
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class RowMapChange extends EngineDependentChange {
@@ -35,7 +34,6 @@ public abstract class RowMapChange extends EngineDependentChange {
      * Computing both the {@link ColumnModel} and the {@link RowMapper}s can be useful in certain situations where
      * computing both separately would be wasteful.
      * 
-     * @author Antonin Delpeuch
      *
      */
     public static class GridMap {
@@ -105,8 +103,6 @@ public abstract class RowMapChange extends EngineDependentChange {
      * 
      * @param state
      *            the initial state of the grid
-     * @return
-     * @throws DoesNotApplyException
      */
     protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
@@ -117,8 +113,6 @@ public abstract class RowMapChange extends EngineDependentChange {
      * 
      * @param state
      *            the initial state of the grid
-     * @return
-     * @throws DoesNotApplyException
      */
     protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
@@ -126,9 +120,6 @@ public abstract class RowMapChange extends EngineDependentChange {
 
     /**
      * Returns the new overlay models after this change is applied.
-     * 
-     * @param state
-     * @return
      */
     protected Map<String, OverlayModel> getNewOverlayModels(GridState state, ChangeContext context) throws DoesNotApplyException {
         return state.getOverlayModels();
@@ -169,11 +160,6 @@ public abstract class RowMapChange extends EngineDependentChange {
 
     /**
      * Utility method to retrieve a column index and throw an exception if that column does not exist.
-     * 
-     * @param model
-     * @param columnName
-     * @return
-     * @throws DoesNotApplyException
      */
     public static int columnIndex(ColumnModel model, String columnName) throws DoesNotApplyException {
         int index = model.getColumnIndexByName(columnName);

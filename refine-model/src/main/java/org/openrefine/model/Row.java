@@ -214,7 +214,6 @@ public class Row implements HasFields, Serializable {
      *            the index of the first inserted cell
      * @param cells
      *            the cells to insert
-     * @return
      */
     public Row insertCells(int index, List<Cell> cells) {
         List<Cell> newCells = new ArrayList<>(this.cells.size() + cells.size());
@@ -240,9 +239,6 @@ public class Row implements HasFields, Serializable {
 
     /**
      * Changes the flag on the row.
-     * 
-     * @param newFlagged
-     * @return
      */
     public Row withFlagged(boolean newFlagged) {
         return new Row(cells, newFlagged, starred);
@@ -250,9 +246,6 @@ public class Row implements HasFields, Serializable {
 
     /**
      * Changes the star on the row.
-     * 
-     * @param newStarred
-     * @return
      */
     public Row withStarred(boolean newStarred) {
         return new Row(cells, flagged, newStarred);
@@ -263,7 +256,6 @@ public class Row implements HasFields, Serializable {
      * 
      * @param finalSize
      *            the size of the returned row
-     * @return
      */
     public Row padWithNull(int finalSize) {
         if (cells.size() == finalSize) {

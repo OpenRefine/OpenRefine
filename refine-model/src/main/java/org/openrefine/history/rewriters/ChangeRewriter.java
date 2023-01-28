@@ -8,7 +8,6 @@ import org.openrefine.model.changes.Change;
  * An object associated with a change, which can be used to translate the change to a new context, such as one where the
  * column dependencies have been renamed or reordered.
  * 
- * @author Antonin Delpeuch
  *
  */
 public interface ChangeRewriter {

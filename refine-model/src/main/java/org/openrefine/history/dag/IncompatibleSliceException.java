@@ -10,7 +10,6 @@ import org.openrefine.model.ColumnModel;
  * Exception indicating that a DAG slice cannot be applied to a given state (given by the list of column metadata at
  * that stage).
  * 
- * @author Antonin Delpeuch
  *
  */
 public class IncompatibleSliceException extends Exception {

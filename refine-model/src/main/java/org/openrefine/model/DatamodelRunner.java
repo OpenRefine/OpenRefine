@@ -18,9 +18,6 @@ import org.openrefine.overlay.OverlayModel;
  * 
  * Implementations should have a constructor with a single parameter, a {@link RunnerConfiguration} object, which is
  * used to initialize the datamodel runner.
- * 
- * @author Antonin Delpeuch
- *
  */
 public interface DatamodelRunner {
 

@@ -10,7 +10,6 @@ import org.openrefine.model.Row;
  * be persisted to disk - other changes should just use {@link org.openrefine.model.RowMapper}. If the mapper can return
  * no or multiple rows for each original row, use {@link RowChangeDataFlatJoiner}.
  * 
- * @author Antonin Delpeuch
  *
  * @param <T>
  */
@@ -18,11 +17,6 @@ public interface RowChangeDataJoiner<T> extends Serializable {
 
     /**
      * Given a row, its id and the pre-computed change data for this row, return the new row after the change.
-     * 
-     * @param rowId
-     * @param row
-     * @param changeData
-     * @return
      */
     public Row call(long rowId, Row row, T changeData);
 }

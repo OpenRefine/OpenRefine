@@ -166,7 +166,6 @@ public interface GridState {
      *            counts the number of records on which it returns true
      * @param limit
      *            maximum number of records to process
-     * @return
      */
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit);
 
@@ -266,7 +265,6 @@ public interface GridState {
      *            counts the number of records on which it returns true
      * @param limit
      *            maximum number of records to process
-     * @return
      */
     public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit);
 

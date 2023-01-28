@@ -8,16 +8,13 @@ import java.util.List;
 /**
  * A function applied to a record, returning a list of rows to replace it. They do not need to form a single record.
  * 
- * @author Antonin Delpeuch
  *
  */
 public interface RecordMapper extends Serializable {
 
     /**
-     * Maps a record to a list of rows.
-     * 
-     * @param record
-     * @return
+     * Maps a record to a list of rows. The rows may not form a single record, unless
+     * {@link #preservesRecordStructure()} is {@code true}.
      */
     public List<Row> call(Record record);
 
@@ -33,9 +30,7 @@ public interface RecordMapper extends Serializable {
      * If the record structure is preserved by the mapper, set this boolean to true. This will help the runner avoid
      * re-computing the record boundaries after applying this mapper.
      */
-    public boolean preservesRecordStructure();/*
-                                               * { return false; }
-                                               */
+    public boolean preservesRecordStructure();
 
     /**
      * Returns unchanged records.

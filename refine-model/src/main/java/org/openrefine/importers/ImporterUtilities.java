@@ -217,10 +217,6 @@ public class ImporterUtilities {
 
     /**
      * Adds columns to a column model if it misses one column to store a cell at a given index.
-     * 
-     * @param columnModel
-     * @param c
-     * @return
      */
     public static ColumnModel expandColumnModelIfNeeded(ColumnModel columnModel, int c) {
         List<ColumnMetadata> columns = columnModel.getColumns();
@@ -309,10 +305,6 @@ public class ImporterUtilities {
     /**
      * Given two grid states with potentially different columns, unify the two into a single grid state by adding
      * columns of the second grid which are not present in the first at the end.
-     * 
-     * @param state1
-     * @param state2
-     * @return
      */
     protected static GridState mergeGridStates(GridState state1, GridState state2) {
         Map<Integer, Integer> positions = new HashMap<>();

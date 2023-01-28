@@ -4,7 +4,6 @@ package org.openrefine.util;
 /**
  * Exception thrown while accessing the facet counts from an expression.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class FacetCountException extends Exception {

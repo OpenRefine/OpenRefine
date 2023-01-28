@@ -48,8 +48,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Series of classes which configure JSON serialization at application level.
- * 
- * @author Antonin Delpeuch
  */
 public class SerializationFilters {
 

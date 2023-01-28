@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Change which respects any facets applied to the project.
  * 
- * @author Antonin Delpeuch
  */
 public abstract class EngineDependentChange implements Change {
 

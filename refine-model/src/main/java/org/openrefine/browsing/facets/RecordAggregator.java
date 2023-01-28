@@ -7,7 +7,6 @@ import org.openrefine.model.Record;
  * Computes a value of type T by aggregation over records in a grid. Most importantly this is used to compute facet
  * statistics.
  * 
- * @author Antonin Delpeuch
  */
 public interface RecordAggregator<T> extends Combiner<T> {
 

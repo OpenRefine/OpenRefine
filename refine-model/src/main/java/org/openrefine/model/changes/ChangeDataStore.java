@@ -13,7 +13,6 @@ import org.openrefine.process.ProgressReporter;
  * <p>
  * A serializer is provided for both methods if they want to store the change data physically somewhere.
  * 
- * @author Antonin Delpeuch
  *
  */
 public interface ChangeDataStore {
@@ -21,8 +20,7 @@ public interface ChangeDataStore {
     /**
      * Stores a {@link ChangeData}, which might imply explicitly computing all its values (if the store persists its
      * changes).
-     * 
-     * @param <T>
+     *
      * @param data
      *            the data to store
      * @param historyEntryId
@@ -46,11 +44,13 @@ public interface ChangeDataStore {
 
     /**
      * Loads back a {@link ChangeData} that has been persisted before.
-     * 
-     * @param <T>
+     *
      * @param historyEntryId
+     *            the id of the change which generated this data
      * @param dataId
+     *            the id of the dataset within the change
      * @param serializer
+     *            the deserializer to read it back from a file
      */
     public <T> ChangeData<T> retrieve(
             long historyEntryId,
@@ -60,8 +60,6 @@ public interface ChangeDataStore {
 
     /**
      * Discards all change data objects which belong to a given history entry id.
-     * 
-     * @param historyEntryId
      */
     public void discardAll(long historyEntryId);
 

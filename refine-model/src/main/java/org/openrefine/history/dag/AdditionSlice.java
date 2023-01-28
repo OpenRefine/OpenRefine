@@ -15,9 +15,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * History slice which represents the addition of multiple consecutive columns, which all depend on the same set of
  * input columns.
- * 
- * @author Antonin Delpeuch
- *
  */
 public class AdditionSlice implements DagSlice {
 

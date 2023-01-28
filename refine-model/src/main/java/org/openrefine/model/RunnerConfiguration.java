@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Object supplying configuration parameters to a datamodel instance.
  * 
- * @author Antonin Delpeuch
  */
 public abstract class RunnerConfiguration {
 
@@ -22,7 +21,6 @@ public abstract class RunnerConfiguration {
      *            the key of the configuration parameter
      * @param defaultValue
      *            the default value to return if the configuration parameter was not supplied
-     * @return
      */
     public abstract String getParameter(String key, String defaultValue);
 
@@ -33,7 +31,6 @@ public abstract class RunnerConfiguration {
      *            the key of the configuration parameter
      * @param defaultValue
      *            the default value to return if the configuration parameter was not supplied
-     * @return
      */
     public int getIntParameter(String key, int defaultValue) {
         String stringValue = getParameter(key, Integer.toString(defaultValue));
@@ -54,7 +51,6 @@ public abstract class RunnerConfiguration {
      *            the key of the configuration parameter
      * @param defaultValue
      *            the default value to return if the configuration parameter was not supplied
-     * @return
      */
     public long getLongParameter(String key, long defaultValue) {
         String stringValue = getParameter(key, Long.toString(defaultValue));

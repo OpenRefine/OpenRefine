@@ -84,9 +84,6 @@ public class FileProjectManager extends ProjectManager {
     /**
      * Initializes the project manager to store its workspace in a specific directory, and provide a default datamodel
      * runner.
-     * 
-     * @param runner
-     * @param dir
      */
     static public synchronized void initialize(DatamodelRunner runner, File dir) {
         if (singleton != null) {
@@ -102,8 +99,6 @@ public class FileProjectManager extends ProjectManager {
     /**
      * Initializes the project manager to store its workspace in a specific directory, without a default datamodel
      * runner.
-     * 
-     * @param dir
      */
     static public synchronized void initialize(File dir) {
         if (singleton != null) {
@@ -149,8 +144,6 @@ public class FileProjectManager extends ProjectManager {
     /**
      * Import an external project that has been received as a .tar file, expanded, and copied into our workspace
      * directory.
-     *
-     * @param projectID
      */
     @Override
     public boolean loadProjectMetadata(long projectID) {

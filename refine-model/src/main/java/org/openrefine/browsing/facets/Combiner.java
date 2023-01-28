@@ -6,8 +6,6 @@ import java.io.Serializable;
 /**
  * Represents a commutative and associative function to combine aggregation states. This is mostly used to aggregate
  * facet statistics across partitions.
- * 
- * @author Antonin Delpeuch
  *
  * @param <T>
  */

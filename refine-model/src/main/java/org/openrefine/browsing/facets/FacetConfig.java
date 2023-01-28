@@ -40,9 +40,6 @@ import org.openrefine.overlay.OverlayModel;
 /**
  * Represents the configuration of a facet, as stored in the engine configuration and in the JSON serialization of
  * operations. It does not contain the actual values displayed by the facet.
- * 
- * @author Antonin Delpeuch
- *
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeIdResolver(FacetConfigResolver.class)
@@ -51,7 +48,7 @@ public interface FacetConfig {
     /**
      * Instantiates the given facet on a particular column model. This allows to check the validity of the configuration
      * against a particular table schema (checking that the dependent columns exist, for instance).
-     * 
+     *
      * @param columnModel
      *            the header of the table the facet is applied to.
      * @param overlayModels
@@ -64,7 +61,7 @@ public interface FacetConfig {
     /**
      * Computes the set of columns the facet depends on. If the facet relies on an unknown set of columns, or if it is
      * not row-wise, this returns null.
-     * 
+     *
      * @return the set of column names the facet depends on.
      */
     @JsonIgnore
@@ -72,7 +69,7 @@ public interface FacetConfig {
 
     /**
      * Updates the facet config after a renaming of columns.
-     * 
+     *
      * @return null if the update could not be performed, or the new facet config if the update could be performed.
      */
     public FacetConfig renameColumnDependencies(Map<String, String> substitutions);

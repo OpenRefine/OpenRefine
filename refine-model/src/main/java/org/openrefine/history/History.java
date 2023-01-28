@@ -118,6 +118,7 @@ public class History {
      * @param position
      *            the current position in the history
      * @throws DoesNotApplyException
+     *             if one step in the list of history entries failed to apply to the supplied grid
      */
     public History(
             GridState initialGrid,
@@ -150,8 +151,6 @@ public class History {
 
     /**
      * Returns the state of the grid at the current position in the history.
-     * 
-     * @return
      */
     @JsonIgnore
     public GridState getCurrentGridState() {
@@ -165,8 +164,6 @@ public class History {
 
     /**
      * Returns the state of the grid at before any operation was applied on it
-     * 
-     * @return
      */
     @JsonIgnore
     public GridState getInitialGridState() {
@@ -182,7 +179,6 @@ public class History {
      * 
      * @param position
      *            a 0-based index in the list of successive grid states
-     * @return
      */
     protected GridState getGridState(int position) throws DoesNotApplyException {
         GridState grid = _states.get(position);
@@ -234,10 +230,8 @@ public class History {
     }
 
     /**
-     * Adds a HistoryEntry to the list of past histories Adding a new entry clears all currently held future histories
-     * 
-     * @param entry
-     * @throws DoesNotApplyException
+     * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
+     * histories
      */
     public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
         // Any new change will clear all future entries.
