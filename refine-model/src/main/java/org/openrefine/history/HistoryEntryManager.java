@@ -64,7 +64,6 @@ public class HistoryEntryManager {
      * 
      * @param dir
      *            the directory where the history should be saved.
-     * @throws IOException
      */
     public void save(History history, File dir) throws IOException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
@@ -100,17 +99,13 @@ public class HistoryEntryManager {
      * 
      * @param projectDir
      *            the root project directory
-     * @return
      */
     public ChangeDataStore getChangeDataStore(DatamodelRunner runner, File projectDir) {
         return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
     }
 
     /**
-     * The place where to store cached intermediate grid states
-     * 
-     * @param projectDir
-     * @return
+     * The place where to store cached intermediate grid states.
      */
     public CachedGridStore getCachedGridStore(DatamodelRunner runner, File projectDir) {
         return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));

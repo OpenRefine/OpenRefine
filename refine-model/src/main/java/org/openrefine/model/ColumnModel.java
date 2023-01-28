@@ -49,6 +49,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.model.recon.ReconConfig;
 
+/**
+ * The list of columns in a project. For each column, this holds the associated {@link ColumnMetadata}.
+ * <p>
+ * This class has only immutable members are is meant to be modified by creating copies of it, for instance using the
+ * "with" methods provided.
+ */
 public class ColumnModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,7 +94,7 @@ public class ColumnModel implements Serializable {
     /**
      * @return the index of the column used as key to group rows into records
      */
-    @JsonIgnore // see getKeyCellIndex below
+    @JsonIgnore
     public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
@@ -98,20 +104,18 @@ public class ColumnModel implements Serializable {
      * 
      * @param keyColumnIndex
      *            the index of the column to use as a key
-     * @return
      */
     public ColumnModel withKeyColumnIndex(int keyColumnIndex) {
         return new ColumnModel(_columns, keyColumnIndex);
     }
 
     /**
-     * Replace a column metadata at the given index
+     * Replace a column metadata at the given index. This instance is left as is and a modified copy is returned.
      * 
      * @param index
      *            the index of the column
      * @param column
      *            the new metadata
-     * @return
      * @throws ModelException
      *             if the new column name conflicts with another column
      */
@@ -129,11 +133,7 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Replaces the recon config at the given column index
-     * 
-     * @param index
-     * @param config
-     * @return
+     * Replaces the recon config at the given column index. It returns a modified copy of this column model.
      */
     public ColumnModel withReconConfig(int index, ReconConfig config) {
         try {
@@ -144,13 +144,12 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Inserts a column at the given index
+     * Inserts a column at the given index. It returns a modified copy of this column model.
      * 
      * @param index
      *            the index where to insert the column
      * @param column
      *            the column metadata
-     * @return
      * @throws ModelException
      *             if the name conflicts with another column
      */
@@ -169,13 +168,12 @@ public class ColumnModel implements Serializable {
 
     /**
      * Inserts a column at the given index, possibly changing the name to ensure that it does not conflict with any
-     * other column
+     * other column. It returns a modified copy of this column model.
      * 
      * @param index
      *            the place where to insert the column
      * @param column
      *            the column metadata
-     * @return
      */
     public ColumnModel insertUnduplicatedColumn(int index, ColumnMetadata column) {
         String name = column.getName();
@@ -192,23 +190,19 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Shortcut for the above, for inserting at the last position.
-     * 
-     * @param columnMetadata
-     * @return
+     * Shortcut for {@link #insertUnduplicatedColumn(int, ColumnMetadata)}, for inserting at the last position.
      */
     public ColumnModel appendUnduplicatedColumn(ColumnMetadata columnMetadata) {
         return insertUnduplicatedColumn(getColumns().size(), columnMetadata);
     }
 
     /**
-     * Change the name of a column
+     * Change the name of a column.
      * 
      * @param index
      *            the index of the column
      * @param newName
      *            the new name to give to the column
-     * @return
      * @throws ModelException
      *             if the new name conflicts with any other column
      */
@@ -218,11 +212,10 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Removes a column at the given index
+     * Removes a column at the given index. It returns a modified copy of this column model.
      * 
      * @param index
      *            the index of the column to remove
-     * @return
      */
     public ColumnModel removeColumn(int index) {
         List<ColumnMetadata> newColumns = new ArrayList<>();
@@ -233,11 +226,9 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Given another column model with the same number of columns, merge the recon configuration and statistics in each
-     * n-th column.
-     * 
-     * @param other
-     * @return
+     * Given another column model with the same number of columns, merge the recon configuration and other metadata in
+     * each n-th column.
+     *
      * @throws IllegalArgumentException
      *             if the number of columns is different or columns have incompatible reconciliation configurations.
      */

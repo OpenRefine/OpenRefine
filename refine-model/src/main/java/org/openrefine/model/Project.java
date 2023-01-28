@@ -89,9 +89,6 @@ public class Project {
 
     /**
      * Restores a project from a saved state.
-     * 
-     * @param id
-     * @param history
      */
     public Project(
             long id,
@@ -137,8 +134,6 @@ public class Project {
 
     /**
      * Convenience function to return the current column model from the history.
-     * 
-     * @return
      */
     public ColumnModel getColumnModel() {
         return history.getCurrentGridState().getColumnModel();
@@ -153,8 +148,6 @@ public class Project {
 
     /**
      * Convenience function to return the current overlay models
-     * 
-     * @return
      */
     public Map<String, OverlayModel> getOverlayModels() {
         return history.getCurrentGridState().getOverlayModels();
@@ -162,8 +155,6 @@ public class Project {
 
     /**
      * @deprecated use {@link org.openrefine.overlay.OverlayModelResolver}
-     * @param name
-     * @param klass
      */
     @Deprecated
     public static void registerOverlayModel(String name, Class<? extends OverlayModel> klass) {

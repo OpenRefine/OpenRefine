@@ -17,7 +17,6 @@ import org.openrefine.process.ProgressReporter;
  * contexts where project data must not be persisted and workflows are meant to be run as pipelines from the import to
  * the export stage.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class LazyChangeDataStore implements ChangeDataStore {

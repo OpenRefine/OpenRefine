@@ -9,7 +9,6 @@ import java.util.List;
  * 
  * When used as a {@link RowFilter} this just passes `null` as a record.
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class RowInRecordFilter implements RowFilter, RecordFilter {

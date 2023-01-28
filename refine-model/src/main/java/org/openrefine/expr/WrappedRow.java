@@ -49,10 +49,6 @@ public class WrappedRow implements HasFields {
 
     /**
      * Constructor to be used when the wrapped row is used in rows mode, where no record is available.
-     * 
-     * @param columnModel
-     * @param rowIndex
-     * @param row
      */
     public WrappedRow(ColumnModel columnModel, long rowIndex, Row row) {
         this.columnModel = columnModel;
@@ -63,11 +59,9 @@ public class WrappedRow implements HasFields {
 
     /**
      * Constructor to be used when the wrapped row is used in records mode, when the enclosing record is available.
-     * 
-     * @param columnModel
-     * @param rowIndex
-     * @param row
+     *
      * @param record
+     *            the record the row is part of
      */
     public WrappedRow(ColumnModel columnModel, long rowIndex, Row row, Record record) {
         this.columnModel = columnModel;

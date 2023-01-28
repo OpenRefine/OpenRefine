@@ -14,7 +14,6 @@ import org.openrefine.model.changes.RowMapChange;
  * Simplifies the architecture for immediate operations which simply act by mapping rows. This allows the mapper to be
  * defined in a method of the operation, hiding the construction of the {@link Change} away.
  * 
- * @author Antonin Delpeuch
  *
  */
 abstract public class ImmediateRowMapOperation extends EngineDependentOperation {
@@ -25,10 +24,6 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
 
     /**
      * Returns the mapper to apply to all matching rows.
-     * 
-     * @param state
-     * @return
-     * @throws DoesNotApplyException
      */
     protected abstract RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException;
 

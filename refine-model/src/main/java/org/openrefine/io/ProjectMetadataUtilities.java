@@ -129,28 +129,12 @@ public class ProjectMetadataUtilities {
      *            the project directory
      * @param id
      *            the project id
-     * @return
      */
     static public ProjectMetadata recover(File projectDir, long id) {
-        /**
+        /*
          * @todo TODO adapt to new architecture
          */
         throw new NotImplementedException("Project metadata recovery has not been migrated to the new architecture yet");
-        /*
-         * ProjectMetadata pm = null; Project p = ProjectUtilities.load(projectDir, id); if (p != null) { List<String>
-         * columnNames = p.columnModel.getColumnNames(); String tempName = "<recovered project> - " + columnNames.size()
-         * + " cols X " + p.rows.size() + " rows - " + StringUtils.join(columnNames,'|'); p.dispose(); long ctime =
-         * System.currentTimeMillis(); long mtime = 0;
-         * 
-         * File dataFile = new File(projectDir, "data.zip"); ctime = mtime = dataFile.lastModified();
-         * 
-         * File historyDir = new File(projectDir,"history"); File[] files = historyDir.listFiles(); if (files != null) {
-         * for (File f : files) { long time = f.lastModified(); ctime = Math.min(ctime, time); mtime = Math.max(mtime,
-         * time); } } pm = new ProjectMetadata(LocalDateTime.ofInstant(Instant.ofEpochMilli(ctime),
-         * ZoneId.systemDefault()), LocalDateTime.ofInstant(Instant.ofEpochMilli(mtime), ZoneId.systemDefault()),
-         * tempName); logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " +
-         * tempName); } return pm;
-         */
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {

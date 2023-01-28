@@ -294,7 +294,8 @@ class ParserState {
      * @param cal
      *            calendar to fill
      * @param ignoreChanges
-     *            if <tt>true</tt>, throw an exception when a date like <tt>Sept 31</tt> is changed to <tt>Oct 1</tt>
+     *            if <code>true</code>, throw an exception when a date like <code>Sept 31</code> is changed to
+     *            <code>Oct 1</code>
      * 
      * @throws CalendarParserException
      *             if the date cannot be set for some reason
@@ -646,10 +647,9 @@ public class CalendarParser {
 
     /**
      * Return a string representation of the order value.
-     * 
+     *
      * @param order
      *            order
-     * 
      * @return order string
      */
     public static final String getOrderString(int order) {
@@ -675,13 +675,13 @@ public class CalendarParser {
 
     /**
      * Translate a string representation of an ordinal number to the appropriate numeric value.<br>
-     * For example, {@code "1st"} would return {@code 1}, {@code "23rd"} would return <tt>23</tt>, etc.
+     * For example, {@code "1st"} would return {@code 1}, {@code "23rd"} would return <code>23</code>, etc.
      * 
      * @param str
      *            ordinal string
      * 
-     * @return the numeric value of the ordinal number, or <tt>CalendarParser.UNSET</tt> if the supplied string is not a
-     *         valid ordinal number.
+     * @return the numeric value of the ordinal number, or <code>CalendarParser.UNSET</code> if the supplied string is
+     *         not a valid ordinal number.
      */
     private static final int getOrdinalNumber(String str) {
         final int len = (str == null ? 0 : str.length());
@@ -708,7 +708,7 @@ public class CalendarParser {
      * @param place
      *            place ID
      * 
-     * @return place name ({@code "hour"}, <code>"minute"</code>, etc.
+     * @return place name ({@code "hour"}, {@code "minute"}, etc.
      */
     private static final String getTimePlaceString(int place) {
         switch (place) {
@@ -826,11 +826,11 @@ public class CalendarParser {
      * Convert the supplied month name to its numeric representation. <br>
      * For example, {@code "January"} (or any substring) would return {@code 1} and {@code "December"} would return
      * {@code 12}.
-     * 
+     *
      * @param str
      *            month name
-     * 
-     * @return the numeric month, or {@link CalendarParser#UNSET} if the supplied string is not a valid month name.
+     * @return the numeric month, or {@link org.openrefine.expr.util.CalendarParser#UNSET} if the supplied string is not
+     *         a valid month name.
      */
     public static int monthNameToNumber(String str) {
         if (str != null && str.length() >= 3) {
@@ -848,13 +848,11 @@ public class CalendarParser {
 
     /**
      * Extract a date from a string, defaulting to YY-MM-DD order for all-numeric strings.
-     * 
+     *
      * @param dateStr
      *            date string
-     * 
      * @return parsed date
-     * 
-     * @throws CalendarParserException
+     * @throws org.openrefine.expr.util.CalendarParserException
      *             if there was a problem parsing the string.
      */
     public static final Calendar parse(String dateStr)
@@ -868,16 +866,14 @@ public class CalendarParser {
 
     /**
      * Extract a date from a string.
-     * 
+     *
      * @param dateStr
      *            date string
      * @param order
      *            order in which pieces of numeric strings are assigned (should be one of {@code YY_MM_DD},
      *            {@code MM_DD_YY}, etc.)
-     * 
      * @return parsed date
-     * 
-     * @throws CalendarParserException
+     * @throws org.openrefine.expr.util.CalendarParserException
      *             if there was a problem parsing the string.
      */
     public static final Calendar parse(String dateStr, int order)
@@ -892,7 +888,7 @@ public class CalendarParser {
 
     /**
      * Extract a date from a string.
-     * 
+     *
      * @param dateStr
      *            date string
      * @param order
@@ -900,10 +896,8 @@ public class CalendarParser {
      *            {@code MM_DD_YY}, etc.)
      * @param ignoreChanges
      *            if {@code true}, ignore date changes such as {@code Feb 31} being changed to {@code Mar 3}.
-     * 
      * @return parsed date
-     * 
-     * @throws CalendarParserException
+     * @throws org.openrefine.expr.util.CalendarParserException
      *             if there was a problem parsing the string.
      */
     public static final Calendar parse(String dateStr, int order,
@@ -1532,7 +1526,8 @@ public class CalendarParser {
      * @param order
      *            year/month/day order (YY_MM_DD, MM_DD_YY, etc.)
      * @param ignoreChanges
-     *            if <tt>true</tt>, ignore date changes such as <tt>Feb 31</tt> being changed to <tt>Mar 3</tt>.
+     *            if <code>true</code>, ignore date changes such as <code>Feb 31</code> being changed to
+     *            <code>Mar 3</code>.
      * 
      * @return parsed date
      * 
@@ -1849,10 +1844,9 @@ public class CalendarParser {
 
     /**
      * Return a printable representation of the date.
-     * 
+     *
      * @param cal
      *            calendar to convert to a string
-     * 
      * @return a printable string.
      */
     public static final String prettyString(Calendar cal) {
@@ -1898,10 +1892,9 @@ public class CalendarParser {
 
     /**
      * Return a basic representation of the string.
-     * 
+     *
      * @param cal
      *            calendar to convert to a string
-     * 
      * @return the basic string.
      */
     public static final String toString(Calendar cal) {
@@ -1944,10 +1937,9 @@ public class CalendarParser {
 
     /**
      * Return a string representation of the date suitable for use in an SQL statement.
-     * 
+     *
      * @param cal
      *            calendar to convert to a string
-     * 
      * @return the SQL-friendly string.
      */
     public static final String toSQLString(Calendar cal) {

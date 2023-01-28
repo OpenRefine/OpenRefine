@@ -13,7 +13,6 @@ import org.openrefine.model.GridState;
 /**
  * A base class for importers which read files in text mode (with a {@link java.io.Reader}).
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class ReaderImporter extends ImportingParserBase {
@@ -39,7 +38,6 @@ public abstract class ReaderImporter extends ImportingParserBase {
      *            any options passed to the importer as a JSON payload
      * 
      * @return a parsed GridState
-     * @throws Exception
      */
     public abstract GridState parseOneFile(
             DatamodelRunner runner,

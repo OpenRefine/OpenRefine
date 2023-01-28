@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * original position of the row before sorting the grid. This is used when the user adds sorting settings in the UI
  * without permanently re-ordering the rows yet.
  * 
- * @author Antonin Delpeuch
  */
 public class IndexedRow implements Serializable {
 

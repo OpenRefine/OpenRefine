@@ -8,7 +8,6 @@ import java.util.List;
  * A function applied to a row, returning a list of new rows to replace it. Implementations should be stateless. If a
  * state is required, use {@link RowScanMapper}. If multiple rows or no rows can be returned, use {@link RowFlatMapper}.
  * 
- * @author Antonin Delpeuch
  *
  */
 public interface RowFlatMapper extends Serializable {

@@ -12,9 +12,6 @@ import org.openrefine.model.GridState;
 
 /**
  * A base class for importers which read their files in binary mode (as an {@link java.io.InputStream}).
- * 
- * @author Antonin Delpeuch
- *
  */
 public abstract class InputStreamImporter extends ImportingParserBase {
 
@@ -39,7 +36,6 @@ public abstract class InputStreamImporter extends ImportingParserBase {
      *            any options passed to the importer as a JSON payload
      * 
      * @return a parsed GridState
-     * @throws Exception
      */
     public abstract GridState parseOneFile(
             DatamodelRunner runner,

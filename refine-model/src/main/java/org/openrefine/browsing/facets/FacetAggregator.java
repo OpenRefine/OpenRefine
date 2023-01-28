@@ -8,7 +8,6 @@ import org.openrefine.model.RowInRecordFilter;
 /**
  * Small serializable object which embeds everything that is required to compute facet statistics.
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class FacetAggregator<T extends FacetState> extends RowInRecordAggregator<T> {

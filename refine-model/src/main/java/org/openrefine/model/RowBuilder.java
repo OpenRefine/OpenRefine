@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * Utility class to build {@link Row} instances, as they are immutable.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class RowBuilder {
@@ -62,7 +61,6 @@ public class RowBuilder {
      * 
      * @param starred
      *            whether the row is starred or not
-     * @return
      */
     public RowBuilder withStarred(boolean starred) {
         checkNotBuilt();
@@ -75,7 +73,6 @@ public class RowBuilder {
      * 
      * @param flagged
      *            whether the row is flagged or not
-     * @return
      */
     public RowBuilder withFlagged(boolean flagged) {
         checkNotBuilt();
@@ -90,7 +87,6 @@ public class RowBuilder {
      *            the index of the column where to add the cell
      * @param cell
      *            the cell value (can be null)
-     * @return
      */
     public RowBuilder withCell(int index, Cell cell) {
         checkNotBuilt();
@@ -106,7 +102,6 @@ public class RowBuilder {
      * 
      * @param size
      *            the number of cells in the row
-     * @return
      */
     public Row build(int size) {
         if (_cells.size() > size) {
@@ -120,8 +115,7 @@ public class RowBuilder {
 
     /**
      * Accesses the existing cells while building the row.
-     * 
-     * @param cellIndex
+     *
      * @return null if out of bounds
      */
     public Cell getCell(int cellIndex) {
@@ -133,8 +127,6 @@ public class RowBuilder {
 
     /**
      * Builds the row.
-     * 
-     * @return
      */
     public Row build() {
         checkNotBuilt();

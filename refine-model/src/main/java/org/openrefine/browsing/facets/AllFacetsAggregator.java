@@ -15,7 +15,6 @@ import org.openrefine.model.Record;
  * Internal aggregator to compute the state of all facets in one pass over the grid. <br>
  * We use {@link com.google.common.collect.ImmutableList} to ensure immutability and serializability of the states.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class AllFacetsAggregator extends RowInRecordAggregator<AllFacetsState> {

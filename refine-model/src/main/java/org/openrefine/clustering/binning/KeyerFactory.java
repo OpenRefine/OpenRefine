@@ -35,8 +35,6 @@ import java.util.Map;
 
 /**
  * Registry of keyers for clustering.
- * 
- * @author Antonin Delpeuch
  *
  */
 public class KeyerFactory {
@@ -57,6 +55,7 @@ public class KeyerFactory {
 
     /**
      * Returns the keyer registered under a given name, or null if it does not exist.
+     *
      */
     public static Keyer get(String name) {
         return _keyers.get(name);
@@ -64,6 +63,7 @@ public class KeyerFactory {
 
     /**
      * Registers a keyer under a code name.
+     *
      */
     public static void put(String name, Keyer keyer) {
         _keyers.put(name, keyer);
@@ -72,6 +72,7 @@ public class KeyerFactory {
 
     /**
      * Set of available keyer, by names. The first keyer is considered the default one.
+     *
      */
     public static List<String> getKeyerNames() {
         return Collections.unmodifiableList(_keyerNames);

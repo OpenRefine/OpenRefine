@@ -14,7 +14,6 @@ import org.openrefine.process.ProgressReporter;
  * This data is indexed by row ids from the original grid it was computed from, making it easy to join both to obtain
  * the final state of the grid after this expensive computation.
  * 
- * @author Antonin Delpeuch
  *
  * @param <T>
  *            the type of data to store for each row. It should be serializable with Jackson.
@@ -25,6 +24,7 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      * Returns the change data at a given row.
      * 
      * @param rowId
+     *            the 0-based row index
      * @return null if there is no such change data for the given row id
      */
     public T get(long rowId);
@@ -41,8 +41,6 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      *            the directory where to save the grid state
      * @param serializer
      *            the serializer used to convert the items to strings
-     * @throws IOException
-     * @throws InterruptedException
      */
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException;
 
@@ -55,8 +53,6 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      *            the serializer used to convert the items to strings
      * @param progressReporter
      *            callback to report the progress of the writing process
-     * @throws IOException
-     * @throws InterruptedException
      */
     public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
             throws IOException, InterruptedException;

@@ -251,9 +251,6 @@ public class ParsingUtilities {
     /**
      * Converts an old-style Java Date to an OffsetDateTime, assuming the date is represented in the current default
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
-     * 
-     * @param date
-     * @return
      */
     public static OffsetDateTime toDate(Date date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();
@@ -262,9 +259,6 @@ public class ParsingUtilities {
     /**
      * Converts an old-style Java Calendar to an OffsetDateTime, assuming the date is represented in the current default
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
-     * 
-     * @param date
-     * @return
      */
     public static OffsetDateTime toDate(Calendar date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();

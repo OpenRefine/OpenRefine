@@ -11,7 +11,6 @@ import org.openrefine.model.Record;
  * A function which computes change data to be persisted to disk, to be later joined back to the project to produce the
  * new grid. This data might be serialized because it is volatile or expensive to compute.
  * 
- * @author Antonin Delpeuch
  *
  * @param <T>
  */

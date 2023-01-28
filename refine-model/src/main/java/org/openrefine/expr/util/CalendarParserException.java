@@ -37,7 +37,7 @@ package org.openrefine.expr.util;
 // Copyright Dave Glowacki. Released under the BSD license.
 
 /**
- * Thrown when an invalid date is encountered in {@link CalendarParser}.
+ * Thrown when an invalid date is encountered in {@link org.openrefine.expr.util.CalendarParser}.
  */
 public class CalendarParserException extends Exception {
 

@@ -138,11 +138,7 @@ abstract public class MetaParser {
     /**
      * languagePrefix will be stored in the meta model as an identifier. so be careful when change it as it will break
      * the backward compatibility for the old project
-     * 
-     * @param languagePrefix
-     * @param name
-     * @param parser
-     * @param defaultExpression
+     *
      */
     static public void registerLanguageParser(String languagePrefix, String name, LanguageSpecificParser parser, String defaultExpression) {
         s_languages.put(languagePrefix, new LanguageInfo(name, parser, defaultExpression));
@@ -159,10 +155,6 @@ abstract public class MetaParser {
     /**
      * Parse an expression that might have a language prefix into an Evaluable. Expressions without valid prefixes or
      * without any prefix are assumed to be GREL expressions.
-     * 
-     * @param s
-     * @return
-     * @throws ParsingException
      */
     static public Evaluable parse(String s) throws ParsingException {
         String language = "grel";

@@ -41,18 +41,15 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 
+/**
+ * Interface for classes responsible for implementing support for an input format in OpenRefine. This parses one or more
+ * files into a {@link GridState}.
+ */
 public interface ImportingParser {
 
     /**
      * Create data sufficient for the parser UI on the client side to do its work. For example, an XML parser UI would
      * need to know some sample elements so it can let the user pick which the path to the record elements.
-     * 
-     * @param runner
-     * @param job
-     * @param fileRecords
-     * @param format
-     * 
-     * @return ObjectNode options
      */
     public ObjectNode createParserUIInitializationData(
             DatamodelRunner runner,

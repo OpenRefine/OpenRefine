@@ -4,7 +4,6 @@ package org.openrefine.model;
 /**
  * A function from rows to cells.
  * 
- * @author Antonin Delpeuch
  *
  */
 

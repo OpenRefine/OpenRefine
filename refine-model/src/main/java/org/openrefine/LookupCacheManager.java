@@ -35,7 +35,6 @@ public class LookupCacheManager {
      *            the project to look up
      * @param targetColumn
      *            the column of the target project to look up
-     * @return a {@link ProjectLookup} instance of the lookup result
      */
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
         String key = targetProject + ";" + targetColumn;

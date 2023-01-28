@@ -207,7 +207,7 @@ public class TabularParserHelper {
      *            the constant value in this column
      * @param grid
      *            the original grid to start from
-     * @return
+     * @return a modified copy of the grid
      */
     public static GridState prependColumn(String columnName, String cellValue, GridState grid) {
         ColumnModel newColumnModel = grid.getColumnModel().insertUnduplicatedColumn(0, new ColumnMetadata(columnName));

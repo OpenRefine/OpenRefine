@@ -53,8 +53,6 @@ public class ColumnStats implements Serializable {
 
     /**
      * The number of blank cells in the column
-     * 
-     * @return
      */
     @JsonProperty("blanks")
     public long getBlanks() {

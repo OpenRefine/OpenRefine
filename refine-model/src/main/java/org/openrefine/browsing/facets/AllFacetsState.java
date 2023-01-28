@@ -7,10 +7,8 @@ import org.openrefine.browsing.columns.ColumnStats;
 
 /**
  * State of aggregation of all facets, used to compute the states of all facets in a single aggregation over the grid.
- * It also computes column-level datatype statistics ({@link ColumnStats}) for each column.
- * 
- * @author Antonin Delpeuch
- *
+ * It also computes column-level datatype statistics ({@link org.openrefine.browsing.columns.ColumnStats}) for each
+ * column.
  */
 public class AllFacetsState implements FacetState {
 
@@ -22,10 +20,6 @@ public class AllFacetsState implements FacetState {
 
     /**
      * Constructs a state for aggregation of all facets.
-     * 
-     * @param states
-     * @param aggregatedCount
-     * @param filteredCount
      */
     public AllFacetsState(
             ImmutableList<FacetState> states,
@@ -40,10 +34,9 @@ public class AllFacetsState implements FacetState {
 
     /**
      * Helper for facet access.
-     * 
+     *
      * @param index
      *            position of the facet state to retrieve
-     * @return
      */
     public FacetState get(int index) {
         return _states.get(index);

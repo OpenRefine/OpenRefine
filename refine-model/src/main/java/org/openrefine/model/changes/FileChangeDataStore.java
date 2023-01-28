@@ -22,10 +22,6 @@ public class FileChangeDataStore implements ChangeDataStore {
 
     /**
      * Associates to a pair of ids the location where we should store them.
-     * 
-     * @param historyEntryId
-     * @param dataId
-     * @return
      */
     private File idsToFile(long historyEntryId, String dataId) {
         return new File(historyEntryIdToFile(historyEntryId), dataId);

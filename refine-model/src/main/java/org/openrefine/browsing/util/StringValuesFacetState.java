@@ -12,7 +12,6 @@ import org.openrefine.browsing.facets.FacetState;
  * TODO this is not optimized so far ({@code Map<String, Long>} could probably be made more memory efficient, the
  * serialization of the object could be controlled).
  * 
- * @author Antonin Delpeuch
  *
  */
 public class StringValuesFacetState implements FacetState {

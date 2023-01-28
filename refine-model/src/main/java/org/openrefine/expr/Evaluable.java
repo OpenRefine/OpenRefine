@@ -45,9 +45,6 @@ public interface Evaluable extends Serializable {
 
     /**
      * Evaluate this expression in the given environment (bindings).
-     * 
-     * @param bindings
-     * @return
      */
     public Object evaluate(Properties bindings);
 
@@ -73,7 +70,7 @@ public interface Evaluable extends Serializable {
 
     /**
      * Returns the names of the columns this expression depends on.
-     * 
+     *
      * @param baseColumn
      *            the name of the column this expression is based on (null if none)
      * @return null if the columns could not be isolated: in this case, the expression might depend on all columns in
@@ -88,7 +85,7 @@ public interface Evaluable extends Serializable {
      * <p>
      * This is only possible if the extraction of column dependencies with {@link #getColumnDependencies(String)}
      * succeeds (return a non-null value).
-     * 
+     *
      * @param substitutions
      *            a map specifying new names for some columns. If a column name is not present in the map, it is assumed
      *            that the column is not renamed.

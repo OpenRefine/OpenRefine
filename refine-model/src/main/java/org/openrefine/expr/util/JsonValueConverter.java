@@ -31,8 +31,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Converts the a JSON value
- * 
- * @author antonin
  *
  */
 public class JsonValueConverter {

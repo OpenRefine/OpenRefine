@@ -46,9 +46,6 @@ import org.openrefine.util.ParsingUtilities;
 /**
  * Stores the configuration of facets and whether we are using row or record mode. In addition it also stores an
  * optional limit on the number of rows (or records) to aggregate when computing facets.
- * 
- * @author Antonin Delpeuch
- *
  */
 public class EngineConfig {
 
@@ -61,9 +58,6 @@ public class EngineConfig {
 
     /**
      * Creates a new EngineConfig from a list of facet configurations and an engine mode. No limit on facet aggregation.
-     * 
-     * @param facets
-     * @param mode
      */
     public EngineConfig(List<FacetConfig> facets, Mode mode) {
         this(facets, mode, null);
@@ -71,13 +65,9 @@ public class EngineConfig {
 
     /**
      * Creates a new EngineConfig from a list of facet configurations, an engine mode and an aggregation limit.
-     * 
+     *
      * A null aggregationLimit of means no limit (which happens when the field is not specified in the JSON
      * serialization). A zero aggregationLimit means no aggregation at all.
-     * 
-     * @param facets
-     * @param mode
-     * @param aggregationLimit
      */
     @JsonCreator
     public EngineConfig(
@@ -111,7 +101,7 @@ public class EngineConfig {
     /**
      * Computes the set of columns the facets depend on. If the extraction of dependencies fails for some facet, or if
      * the engine uses the records mode, this returns null.
-     * 
+     *
      * @return the set of column dependencies, or null
      */
     @JsonIgnore
@@ -136,8 +126,6 @@ public class EngineConfig {
     /**
      * Returns true when this engine configuration does not filter out any row, which is when all the applied facets are
      * in the "reset" position.
-     * 
-     * @return
      */
     @JsonIgnore
     public boolean isNeutral() {

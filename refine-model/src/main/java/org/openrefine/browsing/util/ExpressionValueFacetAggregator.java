@@ -14,7 +14,6 @@ import org.openrefine.model.Row;
  * Base class for facet aggregators which update their state by evaluating an expression and aggregating its result. If
  * the result is a collection, each of the individual values are aggregated independently.
  * 
- * @author Antonin Delpeuch
  *
  * @param <T>
  */

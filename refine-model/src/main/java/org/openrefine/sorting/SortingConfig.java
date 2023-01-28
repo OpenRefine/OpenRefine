@@ -39,7 +39,6 @@ import org.openrefine.util.ParsingUtilities;
 /**
  * Stores the configuration of a row/record sorting setup.
  * 
- * @author Antonin Delpeuch
  *
  */
 public final class SortingConfig {

@@ -62,8 +62,8 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
- * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
- * obtain a filtered view of the grid according to the facets. <br>
+ * Faceted browsing engine. Given a {@link GridState} and facet configurations, it can be used to compute facet
+ * statistics and obtain a filtered view of the grid according to the facets. <br>
  * It also computes datatype statistics for each column, serialized in the "columnStats" JSON field.
  */
 public class Engine {
@@ -249,11 +249,11 @@ public class Engine {
 
     /**
      * Runs an aggregator only on the rows that are selected by facets.
-     * 
-     * @param <T>
+     *
      * @param aggregator
+     *            the aggregator to run on the selected rows
      * @param initialState
-     * @return
+     *            the initial state of the aggregator (which should act as neutral element)
      */
     public <T extends Serializable> T aggregateFilteredRows(RowAggregator<T> aggregator, T initialState) {
         return _state.aggregateRows(restrictAggregator(aggregator, combinedRowFilters()), initialState);
@@ -261,11 +261,11 @@ public class Engine {
 
     /**
      * Runs an aggregator only on the records that are selected by facets.
-     * 
-     * @param <T>
+     *
      * @param aggregator
+     *            the aggregator to run on the selected records
      * @param initialState
-     * @return
+     *            the initial state of the aggregator (which should act as neutral element)
      */
     public <T extends Serializable> T aggregateFilteredRecords(RecordAggregator<T> aggregator, T initialState) {
         return _state.aggregateRecords(restrictAggregator(aggregator, combinedRecordFilters()), initialState);

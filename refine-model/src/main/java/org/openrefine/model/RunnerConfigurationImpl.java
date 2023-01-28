@@ -6,9 +6,6 @@ import java.util.Map;
 
 /**
  * Supplies configuration parameters to a datamodel runner from a simple hash map.
- * 
- * @author Antonin Delpeuch
- *
  */
 public class RunnerConfigurationImpl extends RunnerConfiguration {
 

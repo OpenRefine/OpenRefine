@@ -19,7 +19,6 @@ import org.openrefine.process.Process;
  * This class holds the JSON serialization of the operation, in the interest of being able to serialize it later, hence
  * avoiding to discard it and lose metadata.
  * 
- * @author Antonin Delpeuch
  *
  */
 public class UnknownOperation implements Operation {

@@ -104,8 +104,8 @@ public class ReconTests {
     }
 
     /**
-     * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785. Generating many recon objects within a short
-     * amount of time leads to collisions in id generation.
+     * Test for issue <a href="https://github.com/OpenRefine/OpenRefine/issues/3785">issue #3785</a>. Generating many
+     * recon objects within a short amount of time leads to collisions in id generation.
      */
     @Test
     public void randomIdGeneration() {

@@ -11,7 +11,6 @@ import org.openrefine.model.GridState;
 /**
  * A base class for importers which read files specified by a URI
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class URIImporter extends ImportingParserBase {

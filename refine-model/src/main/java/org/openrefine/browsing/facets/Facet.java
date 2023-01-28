@@ -51,7 +51,7 @@ public interface Facet {
 
     /**
      * An aggregator used to populate the facet state for this facet. It should accept the initial state returned by
-     * {@link Facet#getInitialFacetState()}.
+     * {@link org.openrefine.browsing.facets.Facet#getInitialFacetState()}.
      */
     public FacetAggregator<?> getAggregator();
 

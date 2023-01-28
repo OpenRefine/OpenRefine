@@ -48,8 +48,6 @@ import org.openrefine.model.recon.Recon.Judgment;
 
 /**
  * Series of classes which configure JSON serialization at application level.
- * 
- * @author Antonin Delpeuch
  */
 public class SerializationFilters {
 

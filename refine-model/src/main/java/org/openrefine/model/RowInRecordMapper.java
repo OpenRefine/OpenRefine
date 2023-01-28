@@ -13,7 +13,6 @@ import java.util.List;
  * This class is useful when performing a row-wise operation in records mode, as the enclosing record must be available
  * in the expression language.
  * 
- * @author Antonin Delpeuch
  *
  */
 public abstract class RowInRecordMapper implements RowMapper, RecordMapper {
@@ -29,7 +28,6 @@ public abstract class RowInRecordMapper implements RowMapper, RecordMapper {
      *            the global index of the row in the entire grid
      * @param row
      *            the row itself
-     * @return
      */
     public abstract Row call(Record record, long rowId, Row row);
 

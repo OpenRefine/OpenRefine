@@ -90,9 +90,6 @@ public class Recon implements HasFields, Serializable {
 
     /**
      * Deprecated: use JSON deserialization to create a Judgment object directly.
-     * 
-     * @param s
-     * @return
      */
     @Deprecated
     static public Judgment stringToJudgment(String s) {
@@ -440,9 +437,6 @@ public class Recon implements HasFields, Serializable {
 
     /**
      * Adds a reconciliation candidate at the end of the list of candidates
-     * 
-     * @param newCandidate
-     * @return
      */
     public Recon withCandidate(ReconCandidate newCandidate) {
         ImmutableList<ReconCandidate> newCandidates = ImmutableList
