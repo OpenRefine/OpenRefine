@@ -26,7 +26,7 @@ import org.openrefine.process.ProgressReporter;
 public class SparkChangeData<T> implements ChangeData<T> {
 
     private final JavaPairRDD<Long, T> data;
-    private final SparkDatamodelRunner runner;
+    private final SparkRunner runner;
 
     /**
      * Constructs a change data.
@@ -36,7 +36,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
      * @param data
      * @param runner
      */
-    public SparkChangeData(JavaPairRDD<Long, T> data, SparkDatamodelRunner runner) {
+    public SparkChangeData(JavaPairRDD<Long, T> data, SparkRunner runner) {
         this.data = data;
         this.runner = runner;
     }
@@ -63,7 +63,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 

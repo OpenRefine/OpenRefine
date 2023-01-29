@@ -42,8 +42,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.Runner;
+import org.openrefine.model.TestingRunner;
 
 /**
  * Exposes protected methods of org.openrefine.RefineServlet as public for unit testing
@@ -52,7 +52,7 @@ import org.openrefine.model.TestingDatamodelRunner;
 public class RefineDbServletStub extends RefineServlet {
 
     private static File tempDir = null;
-    private static DatamodelRunner runner = new TestingDatamodelRunner();
+    private static Runner runner = new TestingRunner();
 
     // requirement of extending HttpServlet, not required for testing
     private static final long serialVersionUID = 1L;

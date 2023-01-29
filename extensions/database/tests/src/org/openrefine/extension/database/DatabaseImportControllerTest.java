@@ -31,8 +31,8 @@ import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.Runner;
+import org.openrefine.model.TestingRunner;
 import org.openrefine.util.ParsingUtilities;
 
 @Test(groups = { "requiresMySQL" })
@@ -62,7 +62,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         MockitoAnnotations.initMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
-        DatamodelRunner runner = new TestingDatamodelRunner();
+        Runner runner = new TestingRunner();
         RefineModel.setRunner(runner);
         FileProjectManager.initialize(runner, dir);
 

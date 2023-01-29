@@ -59,8 +59,8 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntryManager;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -74,7 +74,7 @@ public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File _workspaceDir;
-    protected DatamodelRunner _runner;
+    protected Runner _runner;
     protected HistoryEntryManager _historyEntryManager;
 
     protected static boolean projectRemoved = false;
@@ -85,7 +85,7 @@ public class FileProjectManager extends ProjectManager {
      * Initializes the project manager to store its workspace in a specific directory, and provide a default datamodel
      * runner.
      */
-    static public synchronized void initialize(DatamodelRunner runner, File dir) {
+    static public synchronized void initialize(Runner runner, File dir) {
         if (singleton != null) {
             logger.warn("Overwriting singleton already set: " + singleton);
         }
@@ -111,7 +111,7 @@ public class FileProjectManager extends ProjectManager {
         ((FileProjectManager) singleton).recover();
     }
 
-    protected FileProjectManager(File dir, DatamodelRunner runner) {
+    protected FileProjectManager(File dir, Runner runner) {
         _runner = runner;
         _workspaceDir = dir;
         _historyEntryManager = new HistoryEntryManager();

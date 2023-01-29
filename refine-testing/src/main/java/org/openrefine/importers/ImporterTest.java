@@ -58,9 +58,9 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
-import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.Runner;
+import org.openrefine.model.TestingRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -72,7 +72,7 @@ public class ImporterTest extends RefineTest {
 
     protected ObjectNode options;
     protected static File importerTestDir;
-    protected DatamodelRunner runner = new TestingDatamodelRunner();
+    protected Runner runner = new TestingRunner();
 
     @BeforeSuite
     public void setUpImporterTestDirectory() throws IOException {

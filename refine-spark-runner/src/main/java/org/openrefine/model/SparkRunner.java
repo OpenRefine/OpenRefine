@@ -44,15 +44,15 @@ import org.openrefine.util.RDDUtils;
  * @author Antonin Delpeuch
  *
  */
-public class SparkDatamodelRunner implements DatamodelRunner {
+public class SparkRunner implements Runner {
 
-    static final Logger logger = LoggerFactory.getLogger(SparkDatamodelRunner.class);
+    static final Logger logger = LoggerFactory.getLogger(SparkRunner.class);
 
     private JavaSparkContext context;
     private final int defaultParallelism;
     private final String sparkMasterURI;
 
-    public SparkDatamodelRunner(RunnerConfiguration configuration) {
+    public SparkRunner(RunnerConfiguration configuration) {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         this.sparkMasterURI = configuration.getParameter("sparkMasterURI", String.format("local[%d]", defaultParallelism));
 
@@ -80,7 +80,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         ShutdownHookManager.addShutdownHook(priority, sparkShutdownHook());
     }
 
-    public SparkDatamodelRunner(JavaSparkContext context) {
+    public SparkRunner(JavaSparkContext context) {
         this.context = context;
         this.defaultParallelism = context.defaultParallelism();
         this.sparkMasterURI = null;

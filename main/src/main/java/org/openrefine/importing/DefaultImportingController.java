@@ -55,7 +55,7 @@ import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -179,7 +179,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
         ImportingUtilities.previewParse(job, format, optionObj, runner, exceptions);
 
         Writer w = response.getWriter();
@@ -217,7 +217,7 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
 
         String format = request.getParameter("format");
         ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
@@ -258,7 +258,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
         ImportingUtilities.createProject(job, format, optionObj, runner, exceptions, false);
 
         HttpUtilities.respond(response, "ok", "done");

@@ -38,8 +38,8 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 
 /**
  * Interface for classes responsible for implementing support for an input format in OpenRefine. This parses one or more
@@ -52,7 +52,7 @@ public interface ImportingParser {
      * need to know some sample elements so it can let the user pick which the path to the record elements.
      */
     public ObjectNode createParserUIInitializationData(
-            DatamodelRunner runner,
+            Runner runner,
             ImportingJob job,
             List<ImportingFileRecord> fileRecords,
             String format);
@@ -61,7 +61,7 @@ public interface ImportingParser {
      * Main method of the parser: parse a grid out of input files
      *
      * @param runner
-     *            the datamodel runner to use to create the grid
+     *            the runner to use to create the grid
      * @param metadata
      *            the project metadata, to which the importer can contribute
      * @param job
@@ -76,7 +76,7 @@ public interface ImportingParser {
      *            custom options put together by the UI corresponding to this parser, which the parser should understand
      */
     public Grid parse(
-            DatamodelRunner runner,
+            Runner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             List<ImportingFileRecord> fileRecords,

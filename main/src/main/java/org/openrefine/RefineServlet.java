@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.model.RunnerConfiguration;
 
 public class RefineServlet extends Butterfly {
@@ -186,7 +186,7 @@ public class RefineServlet extends Butterfly {
                 try {
                     // Set the classloader to the ButterflyClassLoader so that commands can
                     // access classes from other butterfly modules. This was introduced to make
-                    // the datamodel runner pluggable, so that runners can be provided
+                    // the runner pluggable, so that runners can be provided
                     // by extensions.
                     if (s_singleton != null) {
                         Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
@@ -362,21 +362,21 @@ public class RefineServlet extends Butterfly {
 
     static public void initDatamodelRunner() {
         if (RefineModel.getRunner() == null) {
-            // load the datamodel runner
+            // load the runner
             String runnerClassName = System.getProperty("refine.runner.class");
             if (runnerClassName == null || runnerClassName.isEmpty()) {
                 runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
             }
             try {
-                logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
+                logger.info(String.format("Starting runner '%s'", runnerClassName));
                 Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
                 RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
                 RefineModel.setRunner(
-                        (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
+                        (Runner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration));
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
                 e1.printStackTrace();
-                throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
+                throw new IllegalArgumentException("Unable to initialize the runner.", e1);
             }
         }
     }

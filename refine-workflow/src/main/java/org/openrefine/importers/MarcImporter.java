@@ -49,12 +49,12 @@ import org.marc4j.marc.Record;
 
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 
 public class MarcImporter extends XmlImporter {
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);

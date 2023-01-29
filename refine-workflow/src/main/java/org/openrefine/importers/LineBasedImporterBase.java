@@ -17,11 +17,11 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 
 /**
@@ -94,7 +94,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         EncodingGuesser.guessInitialEncoding(fileRecords, options);
@@ -109,7 +109,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);

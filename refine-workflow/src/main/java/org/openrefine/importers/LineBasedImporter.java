@@ -12,12 +12,12 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 
 /**
@@ -76,7 +76,7 @@ public class LineBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         JSONUtilities.safePut(options, "linesPerRow", 1); // number of lines per row

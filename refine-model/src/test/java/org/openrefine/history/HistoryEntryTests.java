@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -71,7 +71,7 @@ public class HistoryEntryTests {
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation("core", "my-operation", OperationStub.class);
-        ProjectManager.singleton = new ProjectManagerStub(mock(DatamodelRunner.class));
+        ProjectManager.singleton = new ProjectManagerStub(mock(Runner.class));
     }
 
     @Test

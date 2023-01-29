@@ -50,14 +50,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.ProjectStub;
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
 
 public class ProjectManagerTests {
 
-    DatamodelRunner runner;
+    Runner runner;
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -66,7 +66,7 @@ public class ProjectManagerTests {
 
     @BeforeMethod
     public void SetUp() {
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         pm = new ProjectManagerStub(runner);
         SUT = spy(pm);
         project = mock(Project.class);

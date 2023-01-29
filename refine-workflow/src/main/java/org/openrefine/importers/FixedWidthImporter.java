@@ -46,9 +46,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -56,7 +56,7 @@ public class FixedWidthImporter extends LineBasedImporterBase {
 
     @Override
     public ObjectNode createParserUIInitializationData(
-            DatamodelRunner runner, ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+            Runner runner, ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {

@@ -6,14 +6,14 @@ import java.io.Serializable;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestingDatamodelRunnerTests extends DatamodelRunnerTestBase {
+public class TestingRunnerTests extends RunnerTestBase {
 
     /**
      * Run generic datamodel tests
      */
     @Override
-    public DatamodelRunner getDatamodelRunner() {
-        return new TestingDatamodelRunner();
+    public Runner getDatamodelRunner() {
+        return new TestingRunner();
     }
 
     // Tests for the internal serialization methods
@@ -30,24 +30,24 @@ public class TestingDatamodelRunnerTests extends DatamodelRunnerTestBase {
 
     @Test(expectedExceptions = AssertionError.class)
     public void testEnsureSerializableFails() {
-        TestingDatamodelRunner.ensureSerializable(new NotSerializable());
+        TestingRunner.ensureSerializable(new NotSerializable());
     }
 
     @Test
     public void testEnsureSerializableSucceeds() {
-        TestingDatamodelRunner.ensureSerializable(new WithTransientField());
+        TestingRunner.ensureSerializable(new WithTransientField());
     }
 
     @Test(expectedExceptions = AssertionError.class)
     public void testSerializeAndDeserializeFails() {
-        TestingDatamodelRunner.serializeAndDeserialize(new NotSerializable());
+        TestingRunner.serializeAndDeserialize(new NotSerializable());
     }
 
     @Test
     public void testSerializeAndDeserializeSucceeds() {
         WithTransientField instance = new WithTransientField();
         instance.val = 34;
-        WithTransientField copy = TestingDatamodelRunner.serializeAndDeserialize(instance);
+        WithTransientField copy = TestingRunner.serializeAndDeserialize(instance);
         Assert.assertEquals(copy.val, 0);
     }
 

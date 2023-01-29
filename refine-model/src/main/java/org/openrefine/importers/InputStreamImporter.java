@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 
 /**
  * A base class for importers which read their files in binary mode (as an {@link java.io.InputStream}).
@@ -38,7 +38,7 @@ public abstract class InputStreamImporter extends ImportingParserBase {
      * @return a parsed Grid
      */
     public abstract Grid parseOneFile(
-            DatamodelRunner runner,
+            Runner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,

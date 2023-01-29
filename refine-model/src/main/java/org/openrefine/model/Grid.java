@@ -36,7 +36,7 @@ public interface Grid {
     /**
      * @return the runner which created this grid
      */
-    public DatamodelRunner getDatamodelRunner();
+    public Runner getDatamodelRunner();
 
     /**
      * @return the column metadata at this stage of the workflow

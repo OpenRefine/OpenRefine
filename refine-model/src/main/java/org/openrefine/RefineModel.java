@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 
 /**
  * Utility class to retrieve the version number of OpenRefine efficiently, and provide class aliasing independently of
@@ -29,13 +29,13 @@ public class RefineModel {
         }
     }
 
-    private static DatamodelRunner runner = null;
+    private static Runner runner = null;
 
-    public static DatamodelRunner getRunner() {
+    public static Runner getRunner() {
         return runner;
     }
 
-    public static void setRunner(DatamodelRunner newRunner) {
+    public static void setRunner(Runner newRunner) {
         runner = newRunner;
     }
 

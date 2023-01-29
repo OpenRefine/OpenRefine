@@ -10,15 +10,15 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 
 public class FileCachedGridStore implements CachedGridStore {
 
-    private final DatamodelRunner runner;
+    private final Runner runner;
     private final File baseDir;
 
-    public FileCachedGridStore(DatamodelRunner runner, File baseDir) {
+    public FileCachedGridStore(Runner runner, File baseDir) {
         this.runner = runner;
         this.baseDir = baseDir;
         if (!baseDir.exists()) {

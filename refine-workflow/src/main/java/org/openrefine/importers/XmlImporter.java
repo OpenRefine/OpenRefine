@@ -60,8 +60,8 @@ import org.openrefine.importers.tree.TreeReader;
 import org.openrefine.importers.tree.TreeReaderException;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Row;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -77,7 +77,7 @@ public class XmlImporter extends TreeImportingParserBase {
     final static private int PREVIEW_PARSING_LIMIT = 1000;
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         try {

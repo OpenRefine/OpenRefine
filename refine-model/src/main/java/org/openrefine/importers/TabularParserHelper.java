@@ -49,10 +49,10 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 
 public class TabularParserHelper {
@@ -75,7 +75,7 @@ public class TabularParserHelper {
         return options;
     }
 
-    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, TableDataReader dataReader,
             long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);

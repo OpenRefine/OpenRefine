@@ -31,9 +31,9 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
 @JsonIgnoreType
-public class LocalDatamodelRunner implements DatamodelRunner {
+public class LocalRunner implements Runner {
 
-    final static private Logger logger = LoggerFactory.getLogger(LocalDatamodelRunner.class);
+    final static private Logger logger = LoggerFactory.getLogger(LocalRunner.class);
 
     final static protected String METADATA_PATH = "metadata.json";
     final static protected String GRID_PATH = "grid";
@@ -52,7 +52,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     protected int reconciledCellCost = 146;
     protected int unreconciledCellCost = 78;
 
-    public LocalDatamodelRunner(RunnerConfiguration configuration) {
+    public LocalRunner(RunnerConfiguration configuration) {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
@@ -64,7 +64,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                 defaultParallelism, minSplitSize, maxSplitSize);
     }
 
-    public LocalDatamodelRunner() {
+    public LocalRunner() {
         this(RunnerConfiguration.empty);
     }
 

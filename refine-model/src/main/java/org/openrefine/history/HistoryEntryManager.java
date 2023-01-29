@@ -39,8 +39,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -79,7 +79,7 @@ public class HistoryEntryManager {
         ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
     }
 
-    public History load(DatamodelRunner runner, File dir) throws IOException, DoesNotApplyException {
+    public History load(Runner runner, File dir) throws IOException, DoesNotApplyException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Load the metadata
@@ -100,14 +100,14 @@ public class HistoryEntryManager {
      * @param projectDir
      *            the root project directory
      */
-    public ChangeDataStore getChangeDataStore(DatamodelRunner runner, File projectDir) {
+    public ChangeDataStore getChangeDataStore(Runner runner, File projectDir) {
         return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
     }
 
     /**
      * The place where to store cached intermediate grids.
      */
-    public CachedGridStore getCachedGridStore(DatamodelRunner runner, File projectDir) {
+    public CachedGridStore getCachedGridStore(Runner runner, File projectDir) {
         return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
 

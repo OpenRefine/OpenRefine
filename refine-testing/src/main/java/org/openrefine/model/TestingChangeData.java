@@ -35,8 +35,8 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     @Override
     @JsonIgnore
-    public DatamodelRunner getDatamodelRunner() {
-        return new TestingDatamodelRunner();
+    public Runner getDatamodelRunner() {
+        return new TestingRunner();
     }
 
     protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)

@@ -57,11 +57,11 @@ import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.Runner;
+import org.openrefine.model.TestingRunner;
 import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.model.recon.Recon;
@@ -82,19 +82,19 @@ public class RefineTest {
     boolean testFailed;
     protected File workspaceDir;
 
-    private DatamodelRunner runner;
+    private Runner runner;
 
     /**
-     * Method that subclasses can override to change the datamodel runner used in the test.
+     * Method that subclasses can override to change the runner used in the test.
      */
-    protected DatamodelRunner createDatamodelRunner() {
-        return new TestingDatamodelRunner();
+    protected Runner createDatamodelRunner() {
+        return new TestingRunner();
     }
 
     /**
      * Method to access the runner easily from tests.
      */
-    protected DatamodelRunner runner() {
+    protected Runner runner() {
         if (runner == null) {
             runner = createDatamodelRunner();
         }

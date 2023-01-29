@@ -23,9 +23,9 @@ import org.openrefine.sorting.SortingConfig;
 public class LoggedGrid implements Grid {
 
     protected final Grid grid;
-    protected final LoggedDatamodelRunner runner;
+    protected final LoggedRunner runner;
 
-    public LoggedGrid(LoggedDatamodelRunner runner, Grid grid) {
+    public LoggedGrid(LoggedRunner runner, Grid grid) {
         this.grid = grid;
         this.runner = runner;
     }
@@ -51,7 +51,7 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 

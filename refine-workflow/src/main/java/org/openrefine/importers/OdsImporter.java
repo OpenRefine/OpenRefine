@@ -58,8 +58,8 @@ import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -77,7 +77,7 @@ public class OdsImporter extends InputStreamImporter {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
 
@@ -124,7 +124,7 @@ public class OdsImporter extends InputStreamImporter {
 
     @Override
     public Grid parseOneFile(
-            DatamodelRunner runner,
+            Runner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,

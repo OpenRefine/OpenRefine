@@ -51,7 +51,7 @@ public class SparkGridTests extends SparkBasedTest {
                         new ColumnMetadata("c")));
 
         OverlayModelResolver.registerOverlayModel("mymodel", MyOverlayModel.class);
-        state = new SparkGrid(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()), new SparkDatamodelRunner(context));
+        state = new SparkGrid(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()), new SparkRunner(context));
 
         rows = new ArrayList<>();
         rows.add(new Tuple2<Long, Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
@@ -60,7 +60,7 @@ public class SparkGridTests extends SparkBasedTest {
 
     @Test
     public void testDatamodelRunner() {
-        Assert.assertTrue(state.getDatamodelRunner() instanceof SparkDatamodelRunner);
+        Assert.assertTrue(state.getDatamodelRunner() instanceof SparkRunner);
     }
 
     @Test

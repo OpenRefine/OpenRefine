@@ -51,7 +51,7 @@ import org.openrefine.util.ParsingUtilities;
 @JsonIgnoreType
 public class LocalGrid implements Grid {
 
-    protected final LocalDatamodelRunner runner;
+    protected final LocalRunner runner;
     protected final PairPLL<Long, IndexedRow> grid;
     protected final ColumnModel columnModel;
     protected final Map<String, OverlayModel> overlayModels;
@@ -73,7 +73,7 @@ public class LocalGrid implements Grid {
      * @param overlayModels
      */
     public LocalGrid(
-            LocalDatamodelRunner runner,
+            LocalRunner runner,
             ColumnModel columnModel,
             PairPLL<Long, IndexedRow> grid,
             Map<String, OverlayModel> overlayModels) {
@@ -97,7 +97,7 @@ public class LocalGrid implements Grid {
      * @param overlayModels
      */
     public LocalGrid(
-            LocalDatamodelRunner runner,
+            LocalRunner runner,
             PairPLL<Long, Row> grid,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels) {
@@ -125,7 +125,7 @@ public class LocalGrid implements Grid {
      */
     public LocalGrid(
             PairPLL<Long, Record> records,
-            LocalDatamodelRunner runner,
+            LocalRunner runner,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
             long rowCount) {
@@ -154,7 +154,7 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 

@@ -47,8 +47,8 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -60,7 +60,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
@@ -68,7 +68,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     @Override
-    public Grid parse(DatamodelRunner runner,
+    public Grid parse(Runner runner,
             ProjectMetadata metadata, final ImportingJob job, List<ImportingFileRecord> fileRecords,
             String format, long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
@@ -114,7 +114,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     public Grid parseOneFile(
-            DatamodelRunner runner,
+            Runner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             ImportingFileRecord fileRecord,

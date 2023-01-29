@@ -23,7 +23,7 @@ import org.openrefine.process.ProgressReporter;
 
 public class LocalChangeData<T> implements ChangeData<T> {
 
-    private final LocalDatamodelRunner runner;
+    private final LocalRunner runner;
     private final PairPLL<Long, T> grid;
     private final List<Long> parentPartitionFirstIndices;
     private final Long parentSize;
@@ -39,7 +39,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
      *            available). This is used to compute progress as a percentage of the original grid swept through. This
      *            is more efficient than counting the number of elements in each partition of the change data.
      */
-    public LocalChangeData(LocalDatamodelRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes) {
+    public LocalChangeData(LocalRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes) {
         this.runner = runner;
         this.grid = grid;
         if (parentPartitionSizes == null) {
@@ -78,7 +78,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 

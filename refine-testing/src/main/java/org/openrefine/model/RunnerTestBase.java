@@ -57,16 +57,16 @@ import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.TestUtils;
 
 /**
- * A collection of generic tests that any implementation of {@link DatamodelRunner} should satisfy.
+ * A collection of generic tests that any implementation of {@link Runner} should satisfy.
  * 
  * These tests are provided in this module so that other implementations can reuse this test class.
  * 
  * @author Antonin Delpeuch
  *
  */
-public abstract class DatamodelRunnerTestBase {
+public abstract class RunnerTestBase {
 
-    protected DatamodelRunner SUT;
+    protected Runner SUT;
 
     protected Grid simpleGrid, longerGrid, gridToSort;
     protected ChangeData<String> simpleChangeData;
@@ -78,7 +78,7 @@ public abstract class DatamodelRunnerTestBase {
 
     protected File tempDir;
 
-    public abstract DatamodelRunner getDatamodelRunner() throws IOException;
+    public abstract Runner getDatamodelRunner() throws IOException;
 
     @BeforeClass
     public void setUp() throws IOException {

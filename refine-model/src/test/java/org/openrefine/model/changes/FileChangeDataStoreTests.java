@@ -19,12 +19,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.TestUtils;
 
 public class FileChangeDataStoreTests {
 
-    DatamodelRunner runner;
+    Runner runner;
     MyChangeData changeData;
     MySerializer serializer;
     File dir;
@@ -42,7 +42,7 @@ public class FileChangeDataStoreTests {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         changeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
         when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);

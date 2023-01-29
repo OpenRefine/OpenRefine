@@ -17,9 +17,9 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -33,7 +33,7 @@ public class HistoryEntryManagerTests {
 
     HistoryEntryManager sut;
     History history;
-    DatamodelRunner runner;
+    Runner runner;
     CachedGridStore gridStore;
 
     static RowMapper mapper = mock(RowMapper.class);
@@ -58,7 +58,7 @@ public class HistoryEntryManagerTests {
 
     @BeforeMethod
     public void setUp() throws NotImmediateOperationException, IOException, DoesNotApplyException {
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("a"),
                 new ColumnMetadata("b"),

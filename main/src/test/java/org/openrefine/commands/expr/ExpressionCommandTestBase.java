@@ -45,7 +45,7 @@ import org.testng.annotations.BeforeMethod;
 
 import org.openrefine.commands.Command;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.TestUtils;
 
 public class ExpressionCommandTestBase {
@@ -83,7 +83,7 @@ public class ExpressionCommandTestBase {
             File workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
             FileUtils.writeStringToFile(jsonPath, jsonData);
-            FileProjectManager.initialize(mock(DatamodelRunner.class), workspaceDir);
+            FileProjectManager.initialize(mock(Runner.class), workspaceDir);
         } catch (IOException e) {
             e.printStackTrace();
         }

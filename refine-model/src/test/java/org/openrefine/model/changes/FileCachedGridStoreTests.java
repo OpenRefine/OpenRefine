@@ -20,15 +20,15 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.util.TestUtils;
 
 public class FileCachedGridStoreTests {
 
     File baseDir;
     File subDir;
-    DatamodelRunner runner;
+    Runner runner;
     FileCachedGridStore SUT; // System Under Test
 
     @BeforeMethod
@@ -36,7 +36,7 @@ public class FileCachedGridStoreTests {
         baseDir = TestUtils.createTempDirectory("filecachedgridstore");
         subDir = new File(baseDir, "1234");
         subDir.mkdir();
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         SUT = new FileCachedGridStore(runner, baseDir);
     }
 

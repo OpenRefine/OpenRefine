@@ -46,8 +46,8 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 
 public class GDataImporter {
@@ -55,7 +55,7 @@ public class GDataImporter {
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");
 
     static public Grid parse(
-            DatamodelRunner runner,
+            Runner runner,
             String token,
             ProjectMetadata metadata,
             final ImportingJob job,
@@ -78,7 +78,7 @@ public class GDataImporter {
     }
 
     static public Grid parse(
-            DatamodelRunner runner,
+            Runner runner,
             Sheets service,
             ProjectMetadata metadata,
             final ImportingJob job,
@@ -107,7 +107,7 @@ public class GDataImporter {
     }
 
     static public Grid parseOneWorkSheet(
-            DatamodelRunner runner,
+            Runner runner,
             Sheets service,
             ProjectMetadata metadata,
             final ImportingJob job,

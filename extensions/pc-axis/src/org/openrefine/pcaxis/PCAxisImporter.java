@@ -48,8 +48,8 @@ import org.openrefine.importers.TabularParserHelper;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -59,7 +59,7 @@ public class PCAxisImporter extends ReaderImporter {
 
     @Override
     public ObjectNode createParserUIInitializationData(
-            DatamodelRunner runner,
+            Runner runner,
             ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
@@ -71,7 +71,7 @@ public class PCAxisImporter extends ReaderImporter {
 
     @Override
     public Grid parseOneFile(
-            DatamodelRunner runner,
+            Runner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,

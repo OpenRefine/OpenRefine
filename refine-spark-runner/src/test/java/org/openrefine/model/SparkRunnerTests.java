@@ -9,17 +9,16 @@ import org.testng.annotations.Test;
 import org.openrefine.SparkBasedTest;
 
 /**
- * This runs the common test suite of all datamodel runners. Tests are added by inheritance, from
- * {@link DatamodelRunnerTestBase}
+ * This runs the common test suite of all runners. Tests are added by inheritance, from {@link RunnerTestBase}
  * 
  * @author Antonin Delpeuch
  *
  */
-public class SparkDatamodelRunnerTests extends DatamodelRunnerTestBase {
+public class SparkRunnerTests extends RunnerTestBase {
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
-        return new SparkDatamodelRunner(SparkBasedTest.context);
+    public Runner getDatamodelRunner() {
+        return new SparkRunner(SparkBasedTest.context);
     }
 
     // Additional tests specific to the Spark implementation

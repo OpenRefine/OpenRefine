@@ -70,8 +70,8 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
+import org.openrefine.model.Runner;
 import org.openrefine.util.ParsingUtilities;
 
 public class ImportProjectCommand extends Command {
@@ -247,7 +247,7 @@ public class ImportProjectCommand extends Command {
             job.setFileSelection(Collections.singletonList(0));
             List<Exception> exceptions = new ArrayList<>();
             ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-            DatamodelRunner runner = RefineModel.getRunner();
+            Runner runner = RefineModel.getRunner();
             projectID = ImportingUtilities.createProject(job, "openrefine-legacy", options, runner, exceptions, true);
         } else {
             throw new IOException("The supplied file could not be recognized as an OpenRefine project");

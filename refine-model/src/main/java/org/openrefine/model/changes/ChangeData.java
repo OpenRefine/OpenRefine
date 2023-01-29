@@ -4,7 +4,7 @@ package org.openrefine.model.changes;
 import java.io.File;
 import java.io.IOException;
 
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressReporter;
 
 /**
@@ -30,9 +30,9 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
     public T get(long rowId);
 
     /**
-     * The datamodel runner which was used to create this change data.
+     * The runner which was used to create this change data.
      */
-    public DatamodelRunner getDatamodelRunner();
+    public Runner getDatamodelRunner();
 
     /**
      * Saves the change data to a specified directory, following OpenRefine's format for change data.

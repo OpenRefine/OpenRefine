@@ -73,9 +73,9 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.LazyCachedGridStore;
@@ -794,7 +794,7 @@ public class ImportingUtilities {
         return NumberFormat.getIntegerInstance().format(bytes);
     }
 
-    static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, DatamodelRunner runner,
+    static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, Runner runner,
             List<Exception> exceptions) {
         ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
         if (record == null || record.parser == null) {
@@ -823,7 +823,7 @@ public class ImportingUtilities {
             final ImportingJob job,
             final String format,
             final ObjectNode optionObj,
-            final DatamodelRunner runner,
+            final Runner runner,
             final List<Exception> exceptions, boolean synchronous) {
         final ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
         if (record == null || record.parser == null) {
@@ -857,7 +857,7 @@ public class ImportingUtilities {
             final List<Exception> exceptions,
             final ImportingFormat record,
             final long projectId,
-            final DatamodelRunner runner) {
+            final Runner runner) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
         Project newProject = null;
         try {
