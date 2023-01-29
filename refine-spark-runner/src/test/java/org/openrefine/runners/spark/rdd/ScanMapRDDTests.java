@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ import scala.Tuple2;
 import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassTag;
 
-import org.openrefine.SparkBasedTest;
+import org.openrefine.runners.spark.SparkBasedTest;
 
 public class ScanMapRDDTests extends SparkBasedTest {
 

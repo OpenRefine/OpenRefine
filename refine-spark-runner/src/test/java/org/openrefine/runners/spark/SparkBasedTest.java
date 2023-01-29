@@ -1,5 +1,5 @@
 
-package org.openrefine;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
 import scala.Tuple2;
 
-import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.Cell;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.util.RDDUtils;
+import org.openrefine.runners.spark.io.OrderedLocalFileSystem;
+import org.openrefine.runners.spark.util.RDDUtils;
 
 public class SparkBasedTest {
 

@@ -1,5 +1,5 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +30,14 @@ import scala.runtime.BoxedUnit;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.importers.MultiFileReadingProgress;
-import org.openrefine.io.OrderedLocalFileSystem;
+import org.openrefine.model.*;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.runners.spark.io.OrderedLocalFileSystem;
+import org.openrefine.runners.spark.util.RDDUtils;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.RDDUtils;
 
 /**
  * Spark implementation of the data model.

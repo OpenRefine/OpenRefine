@@ -1,5 +1,5 @@
 
-package org.openrefine.util;
+package org.openrefine.runners.spark.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +13,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import scala.Tuple2;
 
-import org.openrefine.SparkBasedTest;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
+import org.openrefine.runners.spark.SparkBasedTest;
 
 public class RDDUtilsTests extends SparkBasedTest {
 

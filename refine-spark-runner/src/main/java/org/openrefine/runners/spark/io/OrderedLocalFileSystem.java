@@ -1,5 +1,5 @@
 
-package org.openrefine.io;
+package org.openrefine.runners.spark.io;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.io.Serializable;
 import java.util.ArrayList;

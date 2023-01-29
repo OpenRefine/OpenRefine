@@ -1,5 +1,5 @@
 
-package org.openrefine.util;
+package org.openrefine.runners.spark.util;
 
 import java.util.*;
 
@@ -17,9 +17,9 @@ import scala.reflect.ClassTag;
 
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.rdd.PartitionedRDD;
-import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
-import org.openrefine.model.rdd.ZippedWithIndexRDD;
+import org.openrefine.runners.spark.rdd.PartitionedRDD;
+import org.openrefine.runners.spark.rdd.SortedRDD.SortedPartitioner;
+import org.openrefine.runners.spark.rdd.ZippedWithIndexRDD;
 
 /**
  * Collection of utilities around Spark RDDs.

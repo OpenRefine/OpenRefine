@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,9 +10,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import org.openrefine.SparkBasedTest;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
+import org.openrefine.runners.spark.SparkBasedTest;
 
 public class RecordRDDTests extends SparkBasedTest {
 

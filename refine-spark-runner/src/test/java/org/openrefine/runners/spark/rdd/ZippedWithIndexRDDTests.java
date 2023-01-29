@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import scala.Tuple2;
 
-import org.openrefine.SparkBasedTest;
-import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
+import org.openrefine.runners.spark.SparkBasedTest;
+import org.openrefine.runners.spark.rdd.SortedRDD.SortedPartitioner;
 
 public class ZippedWithIndexRDDTests extends SparkBasedTest {
 

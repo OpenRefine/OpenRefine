@@ -1,5 +1,5 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,12 @@ import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import scala.Tuple2;
 
-import org.openrefine.io.IOUtils;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.runners.spark.io.IOUtils;
 
 /**
  * Stores change data in a rowid-indexed RDD.

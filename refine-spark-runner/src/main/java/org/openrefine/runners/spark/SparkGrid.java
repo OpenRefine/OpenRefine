@@ -1,5 +1,5 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,24 +37,26 @@ import scala.reflect.ClassManifestFactory;
 import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.io.IOUtils;
+import org.openrefine.model.*;
+import org.openrefine.model.Record;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.RecordChangeDataJoiner;
 import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
-import org.openrefine.model.rdd.PartitionedRDD;
-import org.openrefine.model.rdd.RecordRDD;
-import org.openrefine.model.rdd.ScanMapRDD;
-import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.runners.spark.io.IOUtils;
+import org.openrefine.runners.spark.rdd.PartitionedRDD;
+import org.openrefine.runners.spark.rdd.RecordRDD;
+import org.openrefine.runners.spark.rdd.ScanMapRDD;
+import org.openrefine.runners.spark.rdd.SortedRDD;
+import org.openrefine.runners.spark.util.RDDUtils;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.RDDUtils;
 
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow. This might only

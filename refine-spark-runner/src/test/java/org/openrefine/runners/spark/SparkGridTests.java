@@ -1,5 +1,5 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import scala.Tuple2;
 
-import org.openrefine.SparkBasedTest;
+import org.openrefine.model.*;
+import org.openrefine.model.Record;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.util.TestUtils;
@@ -100,7 +101,7 @@ public class SparkGridTests extends SparkBasedTest {
 
     @Test
     public void testGetAllRecords() {
-        JavaPairRDD<Long, Record> records = state.getRecords();
+        JavaPairRDD<Long, org.openrefine.model.Record> records = state.getRecords();
 
         Assert.assertEquals(records.count(), 2L);
         // extracting records again returns the exact same RDD, as it is cached
@@ -110,7 +111,7 @@ public class SparkGridTests extends SparkBasedTest {
     @Test
     public void testGetRecords() {
         Assert.assertEquals(state.getRecordsAfter(1L, 10),
-                Collections.singletonList(new Record(1L, Collections.singletonList(rows.get(1)._2))));
+                Collections.singletonList(new org.openrefine.model.Record(1L, Collections.singletonList(rows.get(1)._2))));
     }
 
     @Test
