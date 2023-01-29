@@ -41,7 +41,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -70,7 +70,7 @@ public class RowFlagOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
-    GridState initial;
+    Grid initial;
     ListFacetConfig facet;
 
     @BeforeTest
@@ -97,7 +97,7 @@ public class RowFlagOperationTests extends RefineTest {
                 new DecoratedValue("d", "d"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new RowFlagOperation(engineConfig, true).createChange();
-        GridState applied = change.apply(initial, mock(ChangeContext.class));
+        Grid applied = change.apply(initial, mock(ChangeContext.class));
 
         List<Boolean> flagged = applied.collectRows().stream().map(ir -> ir.getRow().flagged).collect(Collectors.toList());
         Assert.assertEquals(flagged, Arrays.asList(false, true, false, true, false));

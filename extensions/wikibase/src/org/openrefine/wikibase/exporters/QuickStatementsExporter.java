@@ -34,7 +34,7 @@ import java.util.Set;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.validation.ValidationState;
@@ -75,7 +75,7 @@ public class QuickStatementsExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
+    public void export(Grid grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
             Writer writer) throws IOException {
         WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
@@ -98,7 +98,7 @@ public class QuickStatementsExporter implements WriterExporter {
      *            the writer to which the QS should be written
      * @throws IOException
      */
-    public void translateSchema(GridState grid, Engine engine, WikibaseSchema schema, Writer writer)
+    public void translateSchema(Grid grid, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
         // Validate the schema
         ValidationState validation = new ValidationState(grid.getColumnModel());

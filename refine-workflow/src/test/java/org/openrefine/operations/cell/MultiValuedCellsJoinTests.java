@@ -40,7 +40,7 @@ import java.util.List;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -78,7 +78,7 @@ public class MultiValuedCellsJoinTests extends RefineTest {
                 ParsingUtilities.defaultWriter);
     }
 
-    GridState initialState;
+    Grid initialState;
 
     @BeforeTest
     public void setUpGrid() {
@@ -102,9 +102,9 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test
     public void testJoin() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
-        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid state = SUT.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(new String[] { "key", "foo", "bar" },
+        Grid expected = createGrid(new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
                         { "record1", "a,c", "b" },
                         { null, null, "d" },
@@ -121,9 +121,9 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test
     public void testCustomKey() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
-        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid state = SUT.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
                         { "record1", "a", "b" },

@@ -35,9 +35,7 @@ import java.io.Serializable;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -53,7 +51,7 @@ import org.testng.annotations.Test;
 
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
 
-    private GridState initialState;
+    private Grid initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -106,11 +104,11 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
         long reconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)

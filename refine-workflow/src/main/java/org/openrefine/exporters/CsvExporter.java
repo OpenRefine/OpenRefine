@@ -40,7 +40,7 @@ import java.util.Properties;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -75,7 +75,7 @@ public class CsvExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
 
         String optionsString = (params == null) ? null : params.getProperty("options");

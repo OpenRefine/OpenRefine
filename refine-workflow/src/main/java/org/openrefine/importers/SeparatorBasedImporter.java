@@ -61,12 +61,11 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
-import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -100,7 +99,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
             String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
@@ -118,7 +117,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             if (encoding != null) {
                 charset = Charset.forName(encoding);
             }
-            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, charset, limit)
+            Grid lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, charset, limit)
                     : runner.loadTextFile(sparkURI, progress, charset);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
             return tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
@@ -161,7 +160,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     public TableDataReader createTableDataReader(
             ProjectMetadata metadata,
             ImportingJob job,
-            GridState grid,
+            Grid grid,
             ObjectNode options) {
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {

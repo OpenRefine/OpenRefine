@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -54,7 +54,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
      */
     @Test
     public void testTransposeBackToRecords() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
-        GridState initialRecords = createGrid(
+        Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
                         { "1", "2", "5", "3" },
@@ -65,7 +65,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                 "b 1", 2, true, false, "b", false, null);
         Change change = op.createChange();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "a", "b", "c" },
                 new Serializable[][] {
                         { "1", "2", "3" },
@@ -79,7 +79,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
     @Test
     public void testTransposeBackToRecordsNoLimit() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
-        GridState initialRecords = createGrid(
+        Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
                         { "1", "2", "5", "3" },
@@ -90,7 +90,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                 "b 1", 0, true, false, "b", false, null);
         Change change = op.createChange();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "a", "b" },
                 new Serializable[][] {
                         { "1", "2" },
@@ -106,7 +106,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
     @Test
     public void testTransposeBackToRecordsKeyValue() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
-        GridState initialRecords = createGrid(
+        Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
                         { "1", "2", "5", "3" },
@@ -117,7 +117,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                 "b 1", 2, true, false, "key", "value");
         Change change = op.createChange();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "a", "key", "value", "c" },
                 new Serializable[][] {
                         { "1", "b 1", "2", "3" },

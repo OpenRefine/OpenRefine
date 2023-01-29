@@ -15,7 +15,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.util.FacetCountException;
 
@@ -47,7 +47,7 @@ public class FacetCountCacheManager {
         FacetCount facetCount = _cache.get(key);
 
         if (facetCount == null || facetCount.getChangeId() != changeId) {
-            facetCount = computeFacetCount(project.getCurrentGridState(), columnName, expression, changeId);
+            facetCount = computeFacetCount(project.getCurrentGrid(), columnName, expression, changeId);
 
             synchronized (_cache) {
                 _cache.put(key, facetCount);
@@ -57,7 +57,7 @@ public class FacetCountCacheManager {
         return facetCount.getFacetState();
     }
 
-    protected FacetCount computeFacetCount(GridState grid, String columnName, String expression, long changeId) throws FacetCountException {
+    protected FacetCount computeFacetCount(Grid grid, String columnName, String expression, long changeId) throws FacetCountException {
         ColumnModel columnModel = grid.getColumnModel();
         int cellIndex = columnModel.getColumnIndexByName(columnName);
         if (cellIndex == -1) {

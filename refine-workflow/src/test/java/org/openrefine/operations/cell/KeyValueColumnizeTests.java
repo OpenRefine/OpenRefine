@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -87,7 +87,7 @@ public class KeyValueColumnizeTests extends RefineTest {
      */
     @Test
     public void testKeyValueColumnizeWithID() throws Exception {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "ID", "Cat", "Val" },
                 new Serializable[][] {
                         { "1", "a", "1" },
@@ -100,7 +100,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
         Change change = new KeyValueColumnizeOperation(
                 "Cat", "Val", null).createChange();
-        GridState applied = change.apply(grid, mock(ChangeContext.class));
+        Grid applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 5);
@@ -136,7 +136,7 @@ public class KeyValueColumnizeTests extends RefineTest {
      */
     @Test
     public void testKeyValueColumnize() throws Exception {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "Key", "Value" },
                 new Serializable[][] {
                         { "merchant", "Katie" },
@@ -152,7 +152,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        GridState applied = change.apply(grid, mock(ChangeContext.class));
+        Grid applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");
@@ -174,7 +174,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @Test
     public void testKeyValueColumnizeNotes() throws Exception {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "Key", "Value", "Notes" },
                 new Serializable[][] {
                         { "merchant", "Katie", "ref" },
@@ -189,7 +189,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 "Notes").createChange();
-        GridState applied = change.apply(grid, mock(ChangeContext.class));
+        Grid applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumnNames(),
@@ -213,7 +213,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @Test
     public void testKeyValueColumnizeIdenticalValues() throws Exception {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "Key", "Value", "wd" },
                 new Serializable[][] {
                         { "merchant", "Katie", "34" },
@@ -228,9 +228,9 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        GridState applied = change.apply(grid, mock(ChangeContext.class));
+        Grid applied = change.apply(grid, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "wd", "merchant", "fruit", "price" },
                 new Serializable[][] {
                         { "34", "Katie", "apple", "1.2" },
@@ -243,7 +243,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     @Test
     public void testCopyRowsWithNoKeys() throws DoesNotApplyException {
         // when a key cell is empty, if there are other columns around, we simply copy those
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "Key", "Value" },
                 new Serializable[][] {
                         { "merchant", "Katie" },
@@ -258,7 +258,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        GridState applied = change.apply(grid, mock(ChangeContext.class));
+        Grid applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");

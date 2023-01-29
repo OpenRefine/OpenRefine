@@ -40,7 +40,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
 
 public class ColumnMoveOperationTests extends RefineTest {
 
-    protected GridState initialState;
+    protected Grid initialState;
 
     @BeforeMethod
     public void setUpInitialState() {
@@ -88,7 +88,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testForward() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnMoveOperation("foo", 1).createChange();
-        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
@@ -99,7 +99,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testSamePosition() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnMoveOperation("bar", 1).createChange();
-        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
@@ -110,7 +110,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testBackward() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnMoveOperation("hello", 1).createChange();
-        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("hello"), new ColumnMetadata("bar")));

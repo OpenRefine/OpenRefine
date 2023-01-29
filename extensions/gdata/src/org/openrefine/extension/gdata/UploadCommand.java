@@ -213,7 +213,7 @@ public class UploadCommand extends Command {
                     exceptions);
 
             CustomizableTabularExporterUtilities.exportRows(
-                    project.getCurrentGridState(), engine, params, serializer, SortingConfig.NO_SORTING);
+                    project.getCurrentGrid(), engine, params, serializer, SortingConfig.NO_SORTING);
 
             return serializer.getUrl();
         } catch (IOException e) {

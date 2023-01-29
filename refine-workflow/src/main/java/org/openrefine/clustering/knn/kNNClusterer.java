@@ -42,12 +42,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import clojure.main;
 import org.openrefine.browsing.Engine;
 import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.sorting.SortingConfig;
@@ -99,7 +98,7 @@ public class kNNClusterer extends Clusterer {
         }
 
         @Override
-        public kNNClusterer apply(GridState state) {
+        public kNNClusterer apply(Grid state) {
             kNNClusterer clusterer = new kNNClusterer();
             clusterer.initializeFromConfig(state, this);
             return clusterer;
@@ -145,7 +144,7 @@ public class kNNClusterer extends Clusterer {
         }
     }
 
-    public void initializeFromConfig(GridState state, kNNClustererConfig config) {
+    public void initializeFromConfig(Grid state, kNNClustererConfig config) {
         super.initializeFromConfig(state, config);
         _distance = config.getDistance();
         if (_distance == null) {

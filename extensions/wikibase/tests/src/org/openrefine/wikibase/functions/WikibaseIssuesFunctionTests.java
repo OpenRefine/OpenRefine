@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.manifests.ManifestException;
 import org.openrefine.wikibase.manifests.ManifestParser;
@@ -23,7 +23,6 @@ import org.openrefine.RefineTest;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 
@@ -47,7 +46,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
 
     WikibaseSchema schema;
     Manifest manifest;
-    GridState grid;
+    Grid grid;
     Row row;
     int rowId;
     Properties bindings;

@@ -42,7 +42,7 @@ import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
@@ -50,7 +50,6 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
-import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -91,7 +90,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
     public class TransposeRowsIntoColumnsChange implements Change {
 
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             ColumnModel newColumns = new ColumnModel(Collections.emptyList());
             List<ColumnMetadata> oldColumns = columnModel.getColumns();

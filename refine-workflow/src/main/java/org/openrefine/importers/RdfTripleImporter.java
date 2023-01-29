@@ -52,7 +52,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -74,7 +74,7 @@ public class RdfTripleImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
             String archiveFileName, Reader input, long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();

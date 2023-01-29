@@ -44,12 +44,8 @@ import java.util.Properties;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Row;
+import org.openrefine.model.Grid;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -75,7 +71,7 @@ public class TemplatingExporterTests extends RefineTest {
 
     // dependencies
     StringWriter writer;
-    GridState grid;
+    Grid grid;
     ProjectMetadata projectMetadata;
     Engine engine;
     Properties options;

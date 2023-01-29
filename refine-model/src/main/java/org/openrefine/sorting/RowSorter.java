@@ -35,13 +35,13 @@ package org.openrefine.sorting;
 
 import java.io.Serializable;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
 public class RowSorter extends BaseSorter<IndexedRow> {
 
-    public RowSorter(GridState state, SortingConfig config) {
+    public RowSorter(Grid state, SortingConfig config) {
         super(state, config);
     }
 

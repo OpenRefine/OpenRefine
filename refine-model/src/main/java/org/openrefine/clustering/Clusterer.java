@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.clustering;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 /**
  * Abstract interface for a clusterer.
@@ -47,12 +47,12 @@ import org.openrefine.model.GridState;
  */
 public abstract class Clusterer {
 
-    protected GridState _grid;
+    protected Grid _grid;
     protected int _colindex;
 
     public abstract void computeClusters(Engine engine);
 
-    protected void initializeFromConfig(GridState grid, ClustererConfig c) {
+    protected void initializeFromConfig(Grid grid, ClustererConfig c) {
         _grid = grid;
 
         String colname = c.getColumnName();

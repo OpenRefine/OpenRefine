@@ -37,13 +37,13 @@ import java.util.List;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Interface for classes responsible for implementing support for an input format in OpenRefine. This parses one or more
- * files into a {@link GridState}.
+ * files into a {@link Grid}.
  */
 public interface ImportingParser {
 
@@ -75,7 +75,7 @@ public interface ImportingParser {
      * @param options
      *            custom options put together by the UI corresponding to this parser, which the parser should understand
      */
-    public GridState parse(
+    public Grid parse(
             DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,

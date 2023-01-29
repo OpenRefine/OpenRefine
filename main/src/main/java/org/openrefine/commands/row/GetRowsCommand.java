@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.row;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -49,8 +48,8 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
-import org.openrefine.model.GridState;
-import org.openrefine.model.GridState.ApproxCount;
+import org.openrefine.model.Grid;
+import org.openrefine.model.Grid.ApproxCount;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -58,7 +57,6 @@ import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.sorting.SortingConfig;
-import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -223,7 +221,7 @@ public class GetRowsCommand extends Command {
             }
 
             Engine engine = getEngine(request, project);
-            GridState entireGrid = project.getCurrentGridState();
+            Grid entireGrid = project.getCurrentGrid();
 
             long start = getLongParameter(request, "start", -1L);
             long end = getLongParameter(request, "end", -1L);
@@ -257,7 +255,7 @@ public class GetRowsCommand extends Command {
             if (engine.getMode() == Mode.RowBased) {
                 totalCount = entireGrid.rowCount();
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
-                GridState sortedGrid = entireGrid;
+                Grid sortedGrid = entireGrid;
                 if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRows(sortingConfig, false);
@@ -291,7 +289,7 @@ public class GetRowsCommand extends Command {
             } else {
                 totalCount = entireGrid.recordCount();
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-                GridState sortedGrid = entireGrid;
+                Grid sortedGrid = entireGrid;
                 if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRecords(sortingConfig, false);

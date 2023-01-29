@@ -10,7 +10,7 @@ import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -77,7 +77,7 @@ public class ColumnChangeByChangeData implements Change {
     }
 
     @Override
-    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         ColumnModel columnModel = projectState.getColumnModel();
         if (_columnName != null) {
             ColumnMetadata column = new ColumnMetadata(_columnName)
@@ -96,7 +96,7 @@ public class ColumnChangeByChangeData implements Change {
 
         Joiner joiner = new Joiner(_columnIndex, _columnName != null);
 
-        GridState joined;
+        Grid joined;
         if (Engine.Mode.RowBased.equals(_engineMode)) {
             ChangeData<Cell> changeData = null;
             try {

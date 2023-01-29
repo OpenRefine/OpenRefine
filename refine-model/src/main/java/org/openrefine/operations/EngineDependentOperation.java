@@ -35,7 +35,7 @@ package org.openrefine.operations;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -47,7 +47,7 @@ abstract public class EngineDependentOperation implements Operation {
         _engineConfig = engineConfig;
     }
 
-    protected Engine createEngine(GridState state) {
+    protected Engine createEngine(Grid state) {
         return new Engine(state, _engineConfig);
     }
 

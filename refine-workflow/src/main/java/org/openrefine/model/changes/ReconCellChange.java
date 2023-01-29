@@ -4,13 +4,12 @@ package org.openrefine.model.changes;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.recon.Recon;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconCellChange implements Change {
@@ -33,7 +32,7 @@ public class ReconCellChange implements Change {
     }
 
     @Override
-    public GridState apply(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public Grid apply(Grid state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(columnName);

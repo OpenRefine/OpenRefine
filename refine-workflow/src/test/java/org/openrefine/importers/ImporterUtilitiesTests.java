@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -109,18 +109,18 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void testMergeGridStates() {
-        GridState grid1 = createGrid(new String[] { "foo", "bar" },
+    public void testMergeGrids() {
+        Grid grid1 = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { 1, 2 },
                         { 3, 4 }
                 });
-        GridState grid2 = createGrid(new String[] { "foo", "oof" },
+        Grid grid2 = createGrid(new String[] { "foo", "oof" },
                 new Serializable[][] {
                         { 5, 6 },
                         { 7, 8 }
                 });
-        GridState expected = createGrid(new String[] { "foo", "bar", "oof" },
+        Grid expected = createGrid(new String[] { "foo", "bar", "oof" },
                 new Serializable[][] {
                         { 1, 2, null },
                         { 3, 4, null },
@@ -128,7 +128,7 @@ public class ImporterUtilitiesTests extends RefineTest {
                         { 7, null, 8 }
                 });
 
-        GridState merged = ImporterUtilities.mergeGridStates(grid1, grid2);
+        Grid merged = ImporterUtilities.mergeGrids(grid1, grid2);
         Assert.assertEquals(merged.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(merged.collectRows(), expected.collectRows());
     }

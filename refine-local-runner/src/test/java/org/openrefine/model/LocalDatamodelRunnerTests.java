@@ -1,8 +1,6 @@
 
 package org.openrefine.model;
 
-import net.bytebuddy.asm.Advice;
-import org.openrefine.history.History;
 import org.openrefine.model.changes.Change;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -40,7 +38,7 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
 
     @Test
     public void testRecordPreservation() {
-        GridState initial = createGrid(new String[] { "key", "values" },
+        Grid initial = createGrid(new String[] { "key", "values" },
                 new Serializable[][] {
                         { "a", 1 },
                         { null, 2 },
@@ -65,8 +63,8 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
             }
         };
 
-        LocalGridState first = (LocalGridState) initial.mapRecords(mapper, initial.getColumnModel());
-        LocalGridState second = (LocalGridState) first.mapRecords(mapper, initial.getColumnModel());
+        LocalGrid first = (LocalGrid) initial.mapRecords(mapper, initial.getColumnModel());
+        LocalGrid second = (LocalGrid) first.mapRecords(mapper, initial.getColumnModel());
         Assert.assertFalse(first.constructedFromRows);
         Assert.assertFalse(second.constructedFromRows);
         // the query plan for the rows contains a flattening of the records, because those rows were derived from
@@ -79,16 +77,16 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
         Assert.assertFalse(recordsQueryTree.contains("flatten records to rows"));
 
         // changing the overlay models does not convert to rows
-        LocalGridState third = (LocalGridState) second.withOverlayModels(Collections.emptyMap());
+        LocalGrid third = (LocalGrid) second.withOverlayModels(Collections.emptyMap());
         Assert.assertFalse(third.constructedFromRows);
         // changing the column model does not either
-        LocalGridState fourth = (LocalGridState) third.withColumnModel(initial.getColumnModel());
+        LocalGrid fourth = (LocalGrid) third.withColumnModel(initial.getColumnModel());
         Assert.assertFalse(fourth.constructedFromRows);
     }
 
     @Test
     public void testMemoryCostPrediction() throws Change.DoesNotApplyException {
-        LocalGridState smallGrid = (LocalGridState) createGrid(new String[] { "foo" }, new Serializable[][] {});
+        LocalGrid smallGrid = (LocalGrid) createGrid(new String[] { "foo" }, new Serializable[][] {});
 
         // caching a small grid should always be possible
         assertTrue(smallGrid.smallEnoughToCacheInMemory());

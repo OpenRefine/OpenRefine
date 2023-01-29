@@ -8,10 +8,10 @@ sidebar_label: Runner interface
 
 The interface between runners and the application logic principally consists of the following interfaces:
 * `DatamodelRunner`, which is the main entry point of the implementation and lets instantiate other classes;
-* `GridState`, which represents the state of the project at some point in a workflow;
-* `ChangeData`, which represents some data fetched or generated during an operation, which is serialized separately. It can be joined with a `GridState` to generate a new state incorporating this change data.
+* `Grid`, which represents the state of the project at some point in a workflow;
+* `ChangeData`, which represents some data fetched or generated during an operation, which is serialized separately. It can be joined with a `Grid` to generate a new state incorporating this change data.
 
-Both `GridState` and `ChangeData` are immutable: the grid or change data they represent cannot be modified through
+Both `Grid` and `ChangeData` are immutable: the grid or change data they represent cannot be modified through
 these interfaces. Instead, to transform them, one derives new instances of those interfaces.
 
 ## Stability
@@ -27,7 +27,7 @@ We give an overview of the main methods offered by the interfaces. Many operatio
 Grids can be created in three ways:
 - with `DatamodelRunner.create` by taking an existing list of rows, together with a column model and overlay models. This implies that all the rows in the grid have been loaded in memory beforehand, so this can represent a performance bottleneck.
 - with `DatamodelRunner.textFile` by reading a text file. This creates a one-column grid where each line of the file becomes a row of the grid. This can be used as a basis for importers which work on text-based formats.
-- with `DatamodelRunner.loadGridState` by reading a serialized grid, in our own format. This is useful to load an existing project, for instance.
+- with `DatamodelRunner.loadGrid` by reading a serialized grid, in our own format. This is useful to load an existing project, for instance.
 
 Similar methods exist to load `ChangeData` objects.
 
@@ -74,7 +74,7 @@ The local runner and the Spark runner both implement these methods by looking at
 
 ### Transforming grids
 
-Many data transformation operations are available in the `GridState` interface. Again, they are often available in two versions, one for rows and one for records. We focus on the row-based versions for simplicity - see the javadocs for full details.
+Many data transformation operations are available in the `Grid` interface. Again, they are often available in two versions, one for rows and one for records. We focus on the row-based versions for simplicity - see the javadocs for full details.
 - `mapRows`: applies a function on each row, returning the new row
 - `flatMapRows`: similar, but the function can return multiple rows to replace the original one
 - `scanMapRows`: similar to mapRows, except that the mapping function can access and update a state as it scans the rows. The state updates are required to be associative, similarly to aggregations;

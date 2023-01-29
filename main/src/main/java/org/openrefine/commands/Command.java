@@ -53,7 +53,6 @@ import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
@@ -149,7 +148,7 @@ public abstract class Command {
         if (c == null) {
             c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
         }
-        Engine engine = new Engine(project.getHistory().getCurrentGridState(), c);
+        Engine engine = new Engine(project.getHistory().getCurrentGrid(), c);
         return engine;
     }
 

@@ -33,15 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.exporters;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.*;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.slf4j.LoggerFactory;
@@ -52,12 +48,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.*;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class OdsExporterTests extends RefineTest {
 
@@ -72,7 +66,7 @@ public class OdsExporterTests extends RefineTest {
     // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
-    GridState grid;
+    Grid grid;
     Engine engine;
     Properties options;
 

@@ -52,7 +52,7 @@ import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -60,7 +60,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.ByteStreams;
@@ -110,11 +109,11 @@ public class ImporterTest extends RefineTest {
         options = null;
     }
 
-    protected GridState parseOneFile(ReaderImporter parser, Reader reader) throws Exception {
+    protected Grid parseOneFile(ReaderImporter parser, Reader reader) throws Exception {
         return parseOneFile(parser, reader, options);
     }
 
-    protected GridState parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
+    protected Grid parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -124,7 +123,7 @@ public class ImporterTest extends RefineTest {
                 reader, -1, options);
     }
 
-    protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
+    protected Grid parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -134,7 +133,7 @@ public class ImporterTest extends RefineTest {
                 inputStream, -1, options);
     }
 
-    protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
+    protected Grid parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -144,7 +143,7 @@ public class ImporterTest extends RefineTest {
                 inputStream, -1, options);
     }
 
-    protected GridState parseOneFile(URIImporter parser, String sparkURI) throws Exception {
+    protected Grid parseOneFile(URIImporter parser, String sparkURI) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -156,7 +155,7 @@ public class ImporterTest extends RefineTest {
                 options, mock(MultiFileReadingProgress.class));
     }
 
-    protected GridState parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {
+    protected Grid parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {
         ImportingFileRecord importingRecord = mock(ImportingFileRecord.class);
         when(importingRecord.getDerivedSparkURI(Mockito.any())).thenReturn(file.getAbsolutePath());
         when(importingRecord.getFile(Mockito.any())).thenReturn(file);
@@ -165,11 +164,11 @@ public class ImporterTest extends RefineTest {
         return parseFiles(parser, Collections.singletonList(importingRecord), options);
     }
 
-    protected GridState parseFiles(ImportingParser parser, List<ImportingFileRecord> files, ObjectNode options) throws Exception {
+    protected Grid parseFiles(ImportingParser parser, List<ImportingFileRecord> files, ObjectNode options) throws Exception {
         return parser.parse(runner, metadata, job, files, "format", -1, options);
     }
 
-    protected GridState parseOneString(ImportingParser parser, String contents, ObjectNode options) throws Exception {
+    protected Grid parseOneString(ImportingParser parser, String contents, ObjectNode options) throws Exception {
         if (parser instanceof ReaderImporter) {
             StringReader reader = new StringReader(contents);
             return parseOneFile((ReaderImporter) parser, reader, options);
@@ -188,7 +187,7 @@ public class ImporterTest extends RefineTest {
         }
     }
 
-    protected GridState parseOneString(ImportingParser parser, String string) throws Exception {
+    protected Grid parseOneString(ImportingParser parser, String string) throws Exception {
         return parseOneString(parser, string, options);
     }
 

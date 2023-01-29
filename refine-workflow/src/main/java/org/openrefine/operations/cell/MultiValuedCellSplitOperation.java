@@ -43,7 +43,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
@@ -175,7 +175,7 @@ public class MultiValuedCellSplitOperation implements Operation {
         }
 
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int columnIdx = columnModel.getColumnIndexByName(_columnName);
             if (columnIdx == -1) {

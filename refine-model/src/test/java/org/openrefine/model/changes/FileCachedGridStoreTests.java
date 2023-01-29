@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -71,7 +71,7 @@ public class FileCachedGridStoreTests {
 
     @Test
     public void testCache() throws IOException {
-        GridState grid = mock(GridState.class);
+        Grid grid = mock(Grid.class);
 
         SUT.cacheGrid(5678, grid);
 
@@ -80,10 +80,10 @@ public class FileCachedGridStoreTests {
 
     @Test
     public void testGetCachedGrid() throws IOException {
-        GridState grid = mock(GridState.class);
-        when(runner.loadGridState(eq(new File(baseDir, "1234")))).thenReturn(grid);
+        Grid grid = mock(Grid.class);
+        when(runner.loadGrid(eq(new File(baseDir, "1234")))).thenReturn(grid);
 
-        GridState returned = SUT.getCachedGrid(1234L);
+        Grid returned = SUT.getCachedGrid(1234L);
 
         Assert.assertEquals(returned, grid);
     }

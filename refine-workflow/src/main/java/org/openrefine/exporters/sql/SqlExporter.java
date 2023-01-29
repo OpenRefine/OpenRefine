@@ -35,13 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.CustomizableTabularExporterUtilities;
 import org.openrefine.exporters.TabularSerializer;
 import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 import org.slf4j.Logger;
@@ -69,7 +68,7 @@ public class SqlExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
+    public void export(final Grid grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("export sql with params: {}", params);

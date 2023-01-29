@@ -27,8 +27,7 @@
 
 package org.openrefine.clustering;
 
-import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
+import org.openrefine.model.Grid;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -63,7 +62,7 @@ public abstract class ClustererConfig {
      *            the state of the grid in the project
      * @return
      */
-    public abstract Clusterer apply(GridState state);
+    public abstract Clusterer apply(Grid state);
 
     /**
      * Type string used in Json serialization

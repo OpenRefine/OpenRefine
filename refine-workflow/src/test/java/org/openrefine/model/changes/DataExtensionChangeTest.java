@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -103,7 +103,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
     @Test
     public void testJoiner() {
-        GridState state = createGrid(new String[] { "foo", "bar" },
+        Grid state = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "1", "2" },
                         { null, "3" }
@@ -114,7 +114,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
         List<Row> rows = joiner.call(record, recordDataExtension);
 
-        GridState expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
                 new Serializable[][] {
                         { "1", "2", "a" },
                         { null, null, "b" },
@@ -127,7 +127,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
     @Test
     public void testJoinerOnExcludedRow() {
-        GridState state = createGrid(new String[] { "foo", "bar" },
+        Grid state = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "1", "2" },
                         { null, "3" }
@@ -138,7 +138,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
         List<Row> rows = joiner.call(record, null);
 
-        GridState expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
                 new Serializable[][] {
                         { "1", "2", null },
                         { null, "3", null }

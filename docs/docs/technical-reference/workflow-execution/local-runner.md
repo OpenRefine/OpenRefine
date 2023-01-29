@@ -38,4 +38,4 @@ The concurrency in PLLs is implemented with Java threads. When instantiated, the
 ## Runner architecture
 
 With this runner, grids are represented by PLLs of rows, which can be grouped into records.
-Data transformations are forwarded to the PLL API, which basically mirrors the GridState interface.
+Data transformations are forwarded to the PLL API, which basically mirrors the Grid interface.

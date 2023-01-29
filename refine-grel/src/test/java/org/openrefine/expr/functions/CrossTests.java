@@ -118,7 +118,7 @@ public class CrossTests extends FunctionTestBase {
 
     @Test
     public void crossFunctionSameColumnTest() throws Exception {
-        Cell c = projectGift.getCurrentGridState().getRow(0).cells.get(1);
+        Cell c = projectGift.getCurrentGrid().getRow(0).cells.get(1);
         WrappedCell lookup = new WrappedCell("recipient", c);
         Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();
@@ -131,7 +131,7 @@ public class CrossTests extends FunctionTestBase {
     @Test
     public void crossFunctionDifferentColumnTest() throws Exception {
         bindings.put("columnName", "gift"); // change the based column
-        Cell c = projectGift.getCurrentGridState().getRow(0).cells.get(1);
+        Cell c = projectGift.getCurrentGrid().getRow(0).cells.get(1);
         WrappedCell lookup = new WrappedCell("recipient", c);
         Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();
@@ -205,7 +205,7 @@ public class CrossTests extends FunctionTestBase {
 
     @Test
     public void crossFunctionDateTimeTest() throws Exception {
-        Cell c = projectGift.getCurrentGridState().getRow(2).cells.get(1);
+        Cell c = projectGift.getCurrentGrid().getRow(2).cells.get(1);
         WrappedCell lookup = new WrappedCell("recipient", c);
         Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();
@@ -214,7 +214,7 @@ public class CrossTests extends FunctionTestBase {
 
     @Test
     public void crossFunctionIntegerTest() throws Exception {
-        Cell c = projectGift.getCurrentGridState().getRow(3).cells.get(1);
+        Cell c = projectGift.getCurrentGrid().getRow(3).cells.get(1);
         WrappedCell lookup = new WrappedCell("recipient", c);
         Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();
@@ -223,7 +223,7 @@ public class CrossTests extends FunctionTestBase {
 
     @Test
     public void crossFunctionBooleanTest() throws Exception {
-        Cell c = projectGift.getCurrentGridState().getRow(5).cells.get(1);
+        Cell c = projectGift.getCurrentGrid().getRow(5).cells.get(1);
         WrappedCell lookup = new WrappedCell("recipient", c);
         Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();

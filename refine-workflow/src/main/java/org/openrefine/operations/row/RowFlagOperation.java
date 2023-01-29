@@ -34,11 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.row;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
@@ -68,7 +67,7 @@ public class RowFlagOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
+    public RowInRecordMapper getPositiveRowMapper(Grid grid, ChangeContext context) {
         return rowMapper(_flagged);
     }
 

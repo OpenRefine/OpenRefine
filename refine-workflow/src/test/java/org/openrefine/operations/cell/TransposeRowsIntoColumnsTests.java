@@ -38,7 +38,7 @@ import static org.mockito.Mockito.mock;
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
 
 public class TransposeRowsIntoColumnsTests extends RefineTest {
 
-    GridState initial;
+    Grid initial;
 
     @Override
     @BeforeTest
@@ -92,7 +92,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
     public void testTransposeRowsIntoColumns() throws DoesNotApplyException {
         Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
                         { "1", "2", "5", "3" },
@@ -106,7 +106,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
 
     @Test
     public void testTransposeRecordsIntoRows() throws DoesNotApplyException {
-        GridState initialRecords = createGrid(
+        Grid initialRecords = createGrid(
                 new String[] { "a", "b", "c" },
                 new Serializable[][] {
                         { "1", "2", "3" },
@@ -117,7 +117,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
 
         Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
                         { "1", "2", "5", "3" },

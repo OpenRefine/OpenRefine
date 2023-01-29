@@ -132,7 +132,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);

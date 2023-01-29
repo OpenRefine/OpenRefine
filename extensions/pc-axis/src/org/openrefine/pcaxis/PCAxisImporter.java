@@ -45,7 +45,7 @@ import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class PCAxisImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(
+    public Grid parseOneFile(
             DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,
@@ -89,7 +89,7 @@ public class PCAxisImporter extends ReaderImporter {
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
 
         TabularParserHelper tabularParsingHelper = new TabularParserHelper();
-        GridState grid = tabularParsingHelper.parseOneFile(
+        Grid grid = tabularParsingHelper.parseOneFile(
                 runner, metadata, job, fileSource, "",
                 dataReader, limit, options);
         if (!exceptions.isEmpty()) {

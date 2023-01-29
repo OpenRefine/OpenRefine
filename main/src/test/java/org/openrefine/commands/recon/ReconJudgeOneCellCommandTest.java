@@ -38,7 +38,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.LazyCachedGridStore;
@@ -56,7 +56,7 @@ public class ReconJudgeOneCellCommandTest extends CommandTestBase {
 
     @BeforeMethod
     public void setUp() {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "reconciled column", "unreconciled column" },
                 new Serializable[][] {
                         { "a", "b" },
@@ -95,7 +95,7 @@ public class ReconJudgeOneCellCommandTest extends CommandTestBase {
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
 
-        Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
+        Cell cell = project.getCurrentGrid().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
     }
@@ -110,7 +110,7 @@ public class ReconJudgeOneCellCommandTest extends CommandTestBase {
         when(request.getParameter("schemaSpace")).thenReturn("http://my.custom.space/schema");
         command.doPost(request, response);
 
-        Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
+        Cell cell = project.getCurrentGrid().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.custom.space/id", cell.recon.identifierSpace);
         Assert.assertEquals("http://my.custom.space/schema", cell.recon.schemaSpace);

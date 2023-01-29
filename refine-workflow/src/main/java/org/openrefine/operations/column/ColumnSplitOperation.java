@@ -47,11 +47,10 @@ import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;
@@ -229,7 +228,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridMap getGridMap(GridState state, ChangeContext context) throws DoesNotApplyException {
+        public GridMap getGridMap(Grid state, ChangeContext context) throws DoesNotApplyException {
             ColumnModel origColumnModel = state.getColumnModel();
             int origColumnIdx = columnIndex(origColumnModel, _columnName);
 
@@ -270,7 +269,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
         // for visibility in tests
         @Override
-        protected Engine getEngine(GridState grid) {
+        protected Engine getEngine(Grid grid) {
             return super.getEngine(grid);
         }
 

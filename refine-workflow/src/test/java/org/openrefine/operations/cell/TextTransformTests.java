@@ -10,7 +10,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -32,7 +32,7 @@ public class TextTransformTests extends RefineTest {
         OperationRegistry.registerOperation("core", "text-transform", TextTransformOperation.class);
     }
 
-    protected GridState initialState;
+    protected Grid initialState;
     protected Project project;
 
     @BeforeMethod
@@ -47,7 +47,7 @@ public class TextTransformTests extends RefineTest {
                         { new EvalError("error"), "a", "i" },
                         { "v1", "b", "j" }
                 });
-        initialState = project.getCurrentGridState();
+        initialState = project.getCurrentGrid();
     }
 
     @Test
@@ -75,9 +75,9 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "v1_a", "d" },
@@ -99,7 +99,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
         assertGridEquals(applied, initialState);
     }
@@ -113,9 +113,9 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "v1_1", "d" },
@@ -139,9 +139,9 @@ public class TextTransformTests extends RefineTest {
 
         org.openrefine.process.Process process = operation.createProcess(project);
         ((Runnable) process).run();
-        GridState applied = project.getCurrentGridState();
+        Grid applied = project.getCurrentGrid();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "a_4", "d" },

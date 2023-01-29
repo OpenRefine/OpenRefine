@@ -51,7 +51,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -77,7 +77,7 @@ public class SqlExporterTests extends RefineTest {
     // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
-    GridState grid;
+    Grid grid;
     Engine engine;
     Properties options;
     SqlCreateBuilder sqlCreateBuilder;

@@ -31,18 +31,15 @@
 package org.openrefine.extension.gdata;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
+import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +54,7 @@ public class GDataImporter {
 
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");
 
-    static public GridState parse(
+    static public Grid parse(
             DatamodelRunner runner,
             String token,
             ProjectMetadata metadata,
@@ -80,7 +77,7 @@ public class GDataImporter {
         }
     }
 
-    static public GridState parse(
+    static public Grid parse(
             DatamodelRunner runner,
             Sheets service,
             ProjectMetadata metadata,
@@ -109,7 +106,7 @@ public class GDataImporter {
         }
     }
 
-    static public GridState parseOneWorkSheet(
+    static public Grid parseOneWorkSheet(
             DatamodelRunner runner,
             Sheets service,
             ProjectMetadata metadata,
@@ -133,7 +130,7 @@ public class GDataImporter {
 
         setProgress(job, fileSource, 0);
         TabularParserHelper tabularParsingHelper = new TabularParserHelper();
-        GridState grid = tabularParsingHelper.parseOneFile(
+        Grid grid = tabularParsingHelper.parseOneFile(
                 runner,
                 metadata,
                 job,

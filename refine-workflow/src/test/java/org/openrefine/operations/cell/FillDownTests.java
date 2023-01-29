@@ -39,7 +39,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -66,7 +66,7 @@ public class FillDownTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
-    GridState toFillDown;
+    Grid toFillDown;
     ListFacetConfig facet;
 
     @BeforeTest
@@ -89,9 +89,9 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRowsNoFacets() throws DoesNotApplyException {
         Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
 
-        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", "b", "d" },
@@ -108,9 +108,9 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
         Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
 
-        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", "b", "d" },
@@ -129,9 +129,9 @@ public class FillDownTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
 
-        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", null, "d" },
@@ -149,9 +149,9 @@ public class FillDownTests extends RefineTest {
                 new DecoratedValue("c", "c"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
 
-        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", "b", "d" },

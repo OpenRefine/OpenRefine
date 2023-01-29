@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
@@ -50,7 +50,7 @@ import org.testng.annotations.Test;
 
 public class RowReorderOperationTests extends RefineTest {
 
-    GridState initial;
+    Grid initial;
 
     @BeforeSuite
     public void registerOperation() {
@@ -74,7 +74,7 @@ public class RowReorderOperationTests extends RefineTest {
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
 
         Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
-        GridState applied = change.apply(initial, mock(ChangeContext.class));
+        Grid applied = change.apply(initial, mock(ChangeContext.class));
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
 
         Assert.assertEquals("h", rows.get(0).cells.get(1).value);

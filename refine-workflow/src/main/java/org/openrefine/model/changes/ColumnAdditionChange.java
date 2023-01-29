@@ -37,7 +37,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -63,7 +63,7 @@ public abstract class ColumnAdditionChange extends RowMapChange {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws DoesNotApplyException {
         ColumnMetadata column = new ColumnMetadata(_columnName);
         try {
             return grid.getColumnModel().insertColumn(_columnIndex, column);
@@ -74,7 +74,7 @@ public abstract class ColumnAdditionChange extends RowMapChange {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) {
         return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex, state.getColumnModel().getKeyColumnIndex());
     }
 

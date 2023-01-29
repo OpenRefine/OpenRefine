@@ -30,14 +30,11 @@ package org.openrefine.importers;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.google.common.base.CharMatcher;
 import org.openrefine.ProjectMetadata;
@@ -51,7 +48,7 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
@@ -696,7 +693,7 @@ public class WikitextImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
             String archiveFileName, Reader reader, long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
@@ -748,7 +745,7 @@ public class WikitextImporter extends ReaderImporter {
             // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
         }
 
-        GridState grid = tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
+        Grid grid = tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
 
         // Add reconciliation configs for columns with at least one reconciled cell
         ColumnModel columnModel = grid.getColumnModel();

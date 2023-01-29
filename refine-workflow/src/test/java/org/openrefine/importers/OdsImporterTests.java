@@ -1,18 +1,14 @@
 
 package org.openrefine.importers;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -52,7 +48,7 @@ public class OdsImporterTests extends ImporterTest {
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.ods");
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), 6);
@@ -77,7 +73,7 @@ public class OdsImporterTests extends ImporterTest {
         options.put("storeBlankCellsAsNulls", true);
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/films.ods");
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         assertEquals(rows.size(), 5);

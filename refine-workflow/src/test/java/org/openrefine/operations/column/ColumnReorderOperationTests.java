@@ -40,7 +40,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
 
 public class ColumnReorderOperationTests extends RefineTest {
 
-    protected GridState initialState;
+    protected Grid initialState;
 
     @BeforeMethod
     public void setUpInitialState() {
@@ -88,7 +88,7 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testReorder() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
-        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),

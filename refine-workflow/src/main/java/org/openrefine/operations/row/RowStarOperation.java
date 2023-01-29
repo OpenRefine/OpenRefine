@@ -33,14 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
-import clojure.main;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -91,7 +88,7 @@ public class RowStarOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws Change.DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Change.DoesNotApplyException {
         return rowMapper(_starred);
     }
 }

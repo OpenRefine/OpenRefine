@@ -7,14 +7,14 @@ import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.OpaqueSlice;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 
 public class ChangeStub implements Change {
 
     @Override
-    public GridState apply(GridState projectState, ChangeContext context) {
+    public Grid apply(Grid projectState, ChangeContext context) {
         return projectState;
     }
 

@@ -36,7 +36,7 @@ import org.mockito.Mockito;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
@@ -47,7 +47,6 @@ import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.Operation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.testing.TestingData;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -83,7 +82,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         ColumnModel columnModel = new ColumnModel(
                 Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
                         new ColumnMetadata("bar")));
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
@@ -101,7 +100,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any()))
                         .thenReturn(changeData);
 
-        GridState applied = change.apply(grid, context);
+        Grid applied = change.apply(grid, context);
 
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);

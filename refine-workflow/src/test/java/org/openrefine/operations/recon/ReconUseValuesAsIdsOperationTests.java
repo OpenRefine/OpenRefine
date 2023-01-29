@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.StandardReconConfig;
@@ -72,7 +72,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
     @Test
     public void testUseValuesAsIds() throws Exception {
-        GridState initialState = createGrid(
+        Grid initialState = createGrid(
                 new String[] { "ids", "v" },
                 new Serializable[][] {
                         { "Q343", "hello" },
@@ -81,7 +81,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
 
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        GridState applied = op.createChange().apply(initialState, context);
+        Grid applied = op.createChange().apply(initialState, context);
 
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         ColumnModel columnModel = applied.getColumnModel();

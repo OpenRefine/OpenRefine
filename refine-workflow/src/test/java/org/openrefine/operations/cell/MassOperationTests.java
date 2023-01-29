@@ -45,7 +45,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
@@ -169,7 +169,7 @@ public class MassOperationTests extends RefineTest {
 
     // Not yet testing for mass edit from OR Error
 
-    private GridState initialState;
+    private Grid initialState;
     private static EngineConfig engineConfig;
     private ListFacetConfig facet;
     private List<Edit> edits;
@@ -187,7 +187,7 @@ public class MassOperationTests extends RefineTest {
                         { new EvalError("error"), "a" },
                         { "v1", "b" }
                 });
-        initialState = project.getCurrentGridState();
+        initialState = project.getCurrentGrid();
         facet = new ListFacetConfig();
         facet.columnName = "bar";
         facet.setExpression("grel:value");
@@ -200,7 +200,7 @@ public class MassOperationTests extends RefineTest {
     @Test
     public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");
@@ -222,7 +222,7 @@ public class MassOperationTests extends RefineTest {
     public void testRecordsMode() throws DoesNotApplyException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");

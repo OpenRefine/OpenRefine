@@ -80,7 +80,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
         saveToFile(file, serializer);
         // TODO more granular progress reporting? this requires knowing the expected size of the RDD,
         // which should probably be passed when constructing the object (so that it can be inferred from
-        // the parent GridState)
+        // the parent Grid)
         progressReporter.reportProgress(100);
     }
 

@@ -53,7 +53,7 @@ import org.openrefine.browsing.facets.ScatterplotFacetResult;
 import org.openrefine.browsing.facets.ScatterplotPainter;
 import org.openrefine.browsing.util.ScatterplotFacetState;
 import org.openrefine.commands.Command;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public class GetScatterplotCommand extends Command {
     }
 
     public void draw(OutputStream output, Project project, Engine engine, ScatterplotFacetConfig o) throws IOException {
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
 
         // Compute a modified Engine which includes the facet in last position
         EngineConfig origEngineConfig = engine.getConfig();

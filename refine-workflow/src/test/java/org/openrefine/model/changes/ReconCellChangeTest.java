@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.recon.Recon;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ReconCellChangeTest extends RefineTest {
 
-    private GridState initialGrid;
+    private Grid initialGrid;
 
     private String serializedChange = ""
             + "{\n" +
@@ -66,7 +66,7 @@ public class ReconCellChangeTest extends RefineTest {
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(5432L);
-        GridState newGrid = change.apply(initialGrid, context);
+        Grid newGrid = change.apply(initialGrid, context);
 
         Assert.assertEquals(newGrid.getRow(0L),
                 new Row(Arrays.asList(new Cell("a", null), new Cell("b", newRecon.withJudgmentHistoryEntry(5432L)))));

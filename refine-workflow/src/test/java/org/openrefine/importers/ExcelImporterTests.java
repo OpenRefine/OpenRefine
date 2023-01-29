@@ -55,10 +55,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -123,7 +121,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFile);
 
-        GridState grid = null;
+        Grid grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
@@ -162,7 +160,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        GridState grid = null;
+        Grid grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
@@ -207,7 +205,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("dates.xls");
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         // The original value reads 2021-04-18 in the Excel file.
         // We make sure it is not shifted by a day because of timezone handling
@@ -246,7 +244,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);
@@ -289,7 +287,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);

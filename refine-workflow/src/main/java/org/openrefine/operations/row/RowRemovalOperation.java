@@ -33,13 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
-import org.apache.jena.sparql.function.library.context;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.HistoryEntry;
 import org.openrefine.history.dag.DagSlice;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.EngineDependentChange;
@@ -47,7 +45,6 @@ import org.openrefine.operations.EngineDependentOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openrefine.operations.column.ColumnMoveOperation;
 
 public class RowRemovalOperation extends EngineDependentOperation {
 
@@ -74,7 +71,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             Engine engine = getEngine(projectState);
             if (Mode.RowBased.equals(engine.getMode())) {
                 return projectState.removeRows(engine.combinedRowFilters());
