@@ -2,8 +2,8 @@
 package org.openrefine.runners.local.logging;
 
 import org.openrefine.model.Runner;
-import org.openrefine.model.RunnerTestBase;
-import org.openrefine.model.TestingRunner;
+import org.openrefine.runners.testing.RunnerTestBase;
+import org.openrefine.runners.testing.TestingRunner;
 
 import java.io.IOException;
 

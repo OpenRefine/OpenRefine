@@ -1,24 +1,20 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.testing;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressReporter;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
 public class TestingChangeData<T> implements ChangeData<T> {
 

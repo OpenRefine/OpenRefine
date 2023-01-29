@@ -4,8 +4,7 @@ package org.openrefine.runners.local;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change;
-import org.openrefine.runners.local.LocalGrid;
-import org.openrefine.runners.local.LocalRunner;
+import org.openrefine.runners.testing.RunnerTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

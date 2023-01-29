@@ -1,8 +1,11 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.testing;
 
 import java.io.Serializable;
 
+import org.openrefine.model.Runner;
+import org.openrefine.runners.testing.RunnerTestBase;
+import org.openrefine.runners.testing.TestingRunner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

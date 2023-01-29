@@ -1,28 +1,9 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.testing;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
+import com.google.common.io.CountingInputStream;
 import org.openrefine.importers.MultiFileReadingProgress;
+import org.openrefine.model.*;
 import org.openrefine.model.Grid.Metadata;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
@@ -31,7 +12,11 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 
-import com.google.common.io.CountingInputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 /**
  * A massively inefficient but very simple implementation of the datamodel, for testing purposes.
