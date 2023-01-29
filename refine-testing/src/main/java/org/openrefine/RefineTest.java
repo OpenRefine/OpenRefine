@@ -61,13 +61,13 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.Runner;
-import org.openrefine.model.TestingRunner;
 import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
+import org.openrefine.runners.testing.TestingRunner;
 import org.openrefine.util.TestUtils;
 
 /**

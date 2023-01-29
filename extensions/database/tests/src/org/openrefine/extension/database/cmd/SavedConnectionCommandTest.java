@@ -40,7 +40,7 @@ import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Runner;
-import org.openrefine.model.TestingRunner;
+import org.openrefine.runners.testing.TestingRunner;
 import org.openrefine.util.ParsingUtilities;
 
 public class SavedConnectionCommandTest extends DBExtensionTests {

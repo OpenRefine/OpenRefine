@@ -60,7 +60,7 @@ import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
-import org.openrefine.model.TestingRunner;
+import org.openrefine.runners.testing.TestingRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

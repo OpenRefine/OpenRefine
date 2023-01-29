@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Runner;
-import org.openrefine.model.TestingRunner;
+import org.openrefine.runners.testing.TestingRunner;
 
 /**
  * Exposes protected methods of org.openrefine.RefineServlet as public for unit testing

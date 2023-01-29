@@ -1,5 +1,5 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.testing;
 
 import static org.mockito.Mockito.mock;
 
@@ -8,13 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -22,30 +16,20 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.browsing.columns.ColumnStats;
-import org.openrefine.browsing.facets.AllFacetsAggregator;
-import org.openrefine.browsing.facets.AllFacetsState;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetResult;
-import org.openrefine.browsing.facets.FacetState;
-import org.openrefine.browsing.facets.RecordAggregator;
-import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.browsing.facets.StringFacet;
-import org.openrefine.browsing.facets.StringFacetState;
+import org.openrefine.browsing.facets.*;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.importers.MultiFileReadingProgressStub;
+import org.openrefine.model.*;
 import org.openrefine.model.Grid.ApproxCount;
 import org.openrefine.model.Grid.PartialAggregation;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RecordChangeDataJoiner;
-import org.openrefine.model.changes.RecordChangeDataProducer;
-import org.openrefine.model.changes.RowChangeDataFlatJoiner;
-import org.openrefine.model.changes.RowChangeDataJoiner;
-import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.model.Record;
+import org.openrefine.model.changes.*;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;

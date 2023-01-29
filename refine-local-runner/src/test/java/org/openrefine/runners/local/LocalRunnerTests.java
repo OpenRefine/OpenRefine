@@ -18,8 +18,7 @@ import org.testng.annotations.Test;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change;
-import org.openrefine.runners.local.LocalGrid;
-import org.openrefine.runners.local.LocalRunner;
+import org.openrefine.runners.testing.RunnerTestBase;
 
 /**
  * Tests for this datamodel implementation are taken from the standard test suite, in {@link RunnerTestBase}.

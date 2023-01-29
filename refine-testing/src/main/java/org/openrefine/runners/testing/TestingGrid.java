@@ -1,17 +1,11 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.testing;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -24,12 +18,9 @@ import org.testng.Assert;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.RecordChangeDataJoiner;
-import org.openrefine.model.changes.RecordChangeDataProducer;
-import org.openrefine.model.changes.RowChangeDataFlatJoiner;
-import org.openrefine.model.changes.RowChangeDataJoiner;
-import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.model.*;
+import org.openrefine.model.Record;
+import org.openrefine.model.changes.*;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;

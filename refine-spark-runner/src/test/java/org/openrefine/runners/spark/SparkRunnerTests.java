@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Runner;
-import org.openrefine.model.RunnerTestBase;
+import org.openrefine.runners.testing.RunnerTestBase;
 
 /**
  * This runs the common test suite of all runners. Tests are added by inheritance, from {@link RunnerTestBase}
