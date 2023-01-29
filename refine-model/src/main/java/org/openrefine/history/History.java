@@ -41,7 +41,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.openrefine.RefineModel;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -81,7 +81,7 @@ public class History {
     @JsonIgnore
     protected ChangeDataStore _dataStore;
     @JsonIgnore
-    protected CachedGridStore _gridStore;
+    protected GridCache _gridStore;
 
     /**
      * Creates an empty on an initial grid.
@@ -93,7 +93,7 @@ public class History {
      * @param gridStore
      *            where to store intermediate cached grids
      */
-    public History(Grid initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public History(Grid initialGrid, ChangeDataStore dataStore, GridCache gridStore) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _cachedOnDisk = new ArrayList<>();
@@ -122,7 +122,7 @@ public class History {
     public History(
             Grid initialGrid,
             ChangeDataStore dataStore,
-            CachedGridStore gridStore,
+            GridCache gridStore,
             List<HistoryEntry> entries,
             int position) throws DoesNotApplyException {
         this(initialGrid, dataStore, gridStore);
@@ -224,7 +224,7 @@ public class History {
     }
 
     @JsonIgnore
-    public CachedGridStore getCachedGridStore() {
+    public GridCache getCachedGridStore() {
         return _gridStore;
     }
 

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.openrefine.model.Grid;
 
-public class LazyCachedGridStore implements CachedGridStore {
+public class LazyGridCache implements GridCache {
 
     protected final Map<Long, Grid> _cache = new HashMap<>();
 

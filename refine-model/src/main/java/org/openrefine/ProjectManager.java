@@ -48,7 +48,7 @@ import java.util.Map.Entry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
@@ -159,7 +159,7 @@ public abstract class ProjectManager {
     /**
      * Return the cached grid store for a given project
      */
-    public abstract CachedGridStore getCachedGridStore(long projectId);
+    public abstract GridCache getCachedGridStore(long projectId);
 
     /**
      * Load project metadata from data storage

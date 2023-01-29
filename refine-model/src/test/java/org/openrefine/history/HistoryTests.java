@@ -50,7 +50,7 @@ import java.util.List;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -61,7 +61,7 @@ import org.testng.annotations.Test;
 public class HistoryTests {
 
     ChangeDataStore dataStore;
-    CachedGridStore gridStore;
+    GridCache gridStore;
 
     Grid initialState;
     Grid intermediateState;
@@ -87,7 +87,7 @@ public class HistoryTests {
     @BeforeMethod
     public void setUp() throws DoesNotApplyException {
         dataStore = mock(ChangeDataStore.class);
-        gridStore = mock(CachedGridStore.class);
+        gridStore = mock(GridCache.class);
         initialState = mock(Grid.class);
         intermediateState = mock(Grid.class);
         newState = mock(Grid.class);

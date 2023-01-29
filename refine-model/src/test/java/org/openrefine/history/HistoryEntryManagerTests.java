@@ -17,7 +17,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -34,7 +34,7 @@ public class HistoryEntryManagerTests {
     HistoryEntryManager sut;
     History history;
     Runner runner;
-    CachedGridStore gridStore;
+    GridCache gridStore;
 
     static RowMapper mapper = mock(RowMapper.class);
 
@@ -76,7 +76,7 @@ public class HistoryEntryManagerTests {
         Change change = new MyChange();
         HistoryEntry entry = new HistoryEntry(1234L, "some description",
                 new UnknownOperation("my-op", "some desc"), change);
-        gridStore = mock(CachedGridStore.class);
+        gridStore = mock(GridCache.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         history = new History(grid, mock(ChangeDataStore.class), gridStore);
         history.addEntry(entry);

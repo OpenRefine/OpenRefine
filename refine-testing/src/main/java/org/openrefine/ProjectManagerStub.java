@@ -40,9 +40,9 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.ChangeDataStore;
-import org.openrefine.model.changes.LazyCachedGridStore;
+import org.openrefine.model.changes.LazyGridCache;
 import org.openrefine.model.changes.LazyChangeDataStore;
 
 /**
@@ -123,8 +123,8 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public CachedGridStore getCachedGridStore(long projectId) {
-        return new LazyCachedGridStore();
+    public GridCache getCachedGridStore(long projectId) {
+        return new LazyGridCache();
     }
 
 }

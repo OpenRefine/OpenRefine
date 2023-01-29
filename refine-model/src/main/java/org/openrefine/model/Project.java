@@ -39,7 +39,7 @@ import java.util.Map;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
-import org.openrefine.model.changes.CachedGridStore;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
@@ -70,7 +70,7 @@ public class Project {
      * @param initialState
      *            the initial state of the project.
      */
-    public Project(Grid initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public Project(Grid initialState, ChangeDataStore dataStore, GridCache gridStore) {
         this(generateID(), new History(initialState, dataStore, gridStore));
     }
 
@@ -82,7 +82,7 @@ public class Project {
      * @param initialState
      *            the initial state of the project
      */
-    public Project(long projectId, Grid initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public Project(long projectId, Grid initialState, ChangeDataStore dataStore, GridCache gridStore) {
         this(projectId, new History(initialState, dataStore, gridStore));
     }
 
