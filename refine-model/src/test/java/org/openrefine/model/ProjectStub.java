@@ -36,13 +36,13 @@ package org.openrefine.model;
 import static org.mockito.Mockito.mock;
 
 import org.openrefine.history.History;
-import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
+import org.openrefine.model.changes.LazyGridCache;
 
 public class ProjectStub extends Project {
 
     public ProjectStub(Grid state) {
-        super(state, new LazyChangeDataStore(), new LazyCachedGridStore());
+        super(state, new LazyChangeDataStore(), new LazyGridCache());
     }
 
     public ProjectStub(long id) {

@@ -24,12 +24,12 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 import org.openrefine.util.TestUtils;
 
-public class FileCachedGridStoreTests {
+public class FileGridCacheTests {
 
     File baseDir;
     File subDir;
     Runner runner;
-    FileCachedGridStore SUT; // System Under Test
+    FileGridCache SUT; // System Under Test
 
     @BeforeMethod
     public void createTestDir() throws IOException {
@@ -37,7 +37,7 @@ public class FileCachedGridStoreTests {
         subDir = new File(baseDir, "1234");
         subDir.mkdir();
         runner = mock(Runner.class);
-        SUT = new FileCachedGridStore(runner, baseDir);
+        SUT = new FileGridCache(runner, baseDir);
     }
 
     @AfterMethod
@@ -58,7 +58,7 @@ public class FileCachedGridStoreTests {
 
     @Test
     public void testListDirDoesNotExist() {
-        SUT = new FileCachedGridStore(runner, new File(baseDir, "does-not-exist"));
+        SUT = new FileGridCache(runner, new File(baseDir, "does-not-exist"));
 
         Assert.assertEquals(SUT.listCachedGridIds(), Collections.emptySet());
     }

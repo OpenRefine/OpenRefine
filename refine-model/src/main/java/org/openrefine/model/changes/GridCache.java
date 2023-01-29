@@ -9,7 +9,7 @@ import org.openrefine.model.Grid;
 /**
  * An interface for accessing some intermediate grids in a project, which are stored on disk.
  */
-public interface CachedGridStore {
+public interface GridCache {
 
     /**
      * Lists the set of history entry ids for which the resulting grid is cached.

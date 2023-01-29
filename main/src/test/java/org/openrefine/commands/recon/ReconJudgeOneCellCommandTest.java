@@ -46,7 +46,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ChangeDataStore;
-import org.openrefine.model.changes.LazyCachedGridStore;
+import org.openrefine.model.changes.LazyGridCache;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
@@ -72,7 +72,7 @@ public class ReconJudgeOneCellCommandTest extends CommandTestBase {
                 Collections.emptyList(),
                 5);
         grid = grid.withColumnModel(grid.getColumnModel().withReconConfig(0, config));
-        project = new Project(grid, mock(ChangeDataStore.class), new LazyCachedGridStore());
+        project = new Project(grid, mock(ChangeDataStore.class), new LazyGridCache());
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName("test project");
         ProjectManager.singleton.registerProject(project, meta);

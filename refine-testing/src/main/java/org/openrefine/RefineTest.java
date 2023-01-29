@@ -61,8 +61,8 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.Runner;
-import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
+import org.openrefine.model.changes.LazyGridCache;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.process.Process;
@@ -168,7 +168,7 @@ public class RefineTest {
     protected Project createProject(String projectName, Grid grid) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
-        Project project = new Project(grid, new LazyChangeDataStore(), new LazyCachedGridStore());
+        Project project = new Project(grid, new LazyChangeDataStore(), new LazyGridCache());
         ProjectManager.singleton.registerProject(project, meta);
         return project;
     }

@@ -41,11 +41,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
-import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
-import org.openrefine.model.changes.FileCachedGridStore;
 import org.openrefine.model.changes.FileChangeDataStore;
+import org.openrefine.model.changes.FileGridCache;
+import org.openrefine.model.changes.GridCache;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -107,8 +107,8 @@ public class HistoryEntryManager {
     /**
      * The place where to store cached intermediate grids.
      */
-    public CachedGridStore getCachedGridStore(Runner runner, File projectDir) {
-        return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));
+    public GridCache getCachedGridStore(Runner runner, File projectDir) {
+        return new FileGridCache(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
 
     /**

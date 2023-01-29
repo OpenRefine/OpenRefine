@@ -13,12 +13,12 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 
-public class FileCachedGridStore implements CachedGridStore {
+public class FileGridCache implements GridCache {
 
     private final Runner runner;
     private final File baseDir;
 
-    public FileCachedGridStore(Runner runner, File baseDir) {
+    public FileGridCache(Runner runner, File baseDir) {
         this.runner = runner;
         this.baseDir = baseDir;
         if (!baseDir.exists()) {
