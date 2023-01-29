@@ -37,7 +37,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -88,7 +88,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
@@ -120,7 +120,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
@@ -152,7 +152,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 1);

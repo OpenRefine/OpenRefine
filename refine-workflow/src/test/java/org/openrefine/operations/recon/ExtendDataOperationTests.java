@@ -65,7 +65,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
@@ -202,7 +202,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
         options = mock(Properties.class);
         engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
-        engine = new Engine(project.getCurrentGridState(), engine_config);
+        engine = new Engine(project.getCurrentGrid(), engine_config);
 
         dispatcher = new Dispatcher() {
 
@@ -299,7 +299,7 @@ public class ExtendDataOperationTests extends RefineTest {
                             RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE),
                     0, RowFilter.ANY_ROW);
 
-            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGridState().collectRecords());
+            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGrid().collectRecords());
             RecordDataExtension dataExtension1 = new RecordDataExtension(
                     Collections.singletonMap(0L, new DataExtension(
                             Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
@@ -323,7 +323,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
         mockHttpCall(queryP297, responseP297);
 
-        GridState state = createGrid(new String[] { "key", "country" },
+        Grid state = createGrid(new String[] { "key", "country" },
                 new Serializable[][] {
                         { "key0", reconciledCell("Iran", "Q794") },
                         { null, reconciledCell("France", "Q142") },
@@ -394,7 +394,7 @@ public class ExtendDataOperationTests extends RefineTest {
             process.run();
 
             // Inspect rows
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertTrue("IR".equals(rows.get(0).getRow().getCellValue(1)), "Bad country code for Iran.");
             Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
             Assert.assertNull(rows.get(2).getRow().getCell(1), "Expected a null country code.");
@@ -446,7 +446,7 @@ public class ExtendDataOperationTests extends RefineTest {
             process.run();
 
             // Test to be updated as countries change currencies!
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertTrue(Math.round((double) rows.get(2).getRow().getCellValue(1)) == 2,
                     "Incorrect number of currencies returned for Tajikistan.");
             Assert.assertTrue(Math.round((double) rows.get(3).getRow().getCellValue(1)) == 1,
@@ -455,7 +455,7 @@ public class ExtendDataOperationTests extends RefineTest {
             // We create a reconciliation config for that column even if it actually only contains numbers,
             // because we do not want to make the column metadata depend on the entire results stored in the column.
             // This also helps us keep track of the provenance of the data.
-            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            ColumnModel columnModel = project.getCurrentGrid().getColumnModel();
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }
@@ -502,12 +502,12 @@ public class ExtendDataOperationTests extends RefineTest {
              * our setting in the extension configuration, we only fetch the current one, so the one just after it is
              * the one for the US (USD).
              */
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "Tajikistani somoni");
             Assert.assertEquals(rows.get(3).getRow().getCellValue(1), "United States dollar");
 
             // Make sure all the values are reconciled
-            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            ColumnModel columnModel = project.getCurrentGrid().getColumnModel();
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }
@@ -555,13 +555,13 @@ public class ExtendDataOperationTests extends RefineTest {
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second
              * currency is fetched as well, which creates a record (the cell to the left of it is left blank).
              */
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertTrue("Tajikistani somoni".equals(rows.get(2).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
             Assert.assertTrue("Tajikistani ruble".equals(rows.get(3).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
             Assert.assertNull(rows.get(3).getRow().getCellValue(0));
 
             // Make sure all the values are reconciled
-            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            ColumnModel columnModel = project.getCurrentGrid().getColumnModel();
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
         }
     }

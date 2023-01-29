@@ -80,14 +80,14 @@ public class PreviewWikibaseSchemaCommand extends Command {
                     return;
                 }
             } else {
-                schema = (WikibaseSchema) project.getCurrentGridState().getOverlayModels().get("wikibaseSchema");
+                schema = (WikibaseSchema) project.getCurrentGrid().getOverlayModels().get("wikibaseSchema");
             }
             if (schema == null) {
                 respondError(response, "No Wikibase schema provided.");
                 return;
             }
 
-            ValidationState validation = new ValidationState(project.getCurrentGridState().getColumnModel());
+            ValidationState validation = new ValidationState(project.getCurrentGrid().getColumnModel());
             schema.validate(validation);
             List<ValidationError> errors = validation.getValidationErrors();
             if (!errors.isEmpty()) {
@@ -118,7 +118,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
             // Evaluate project
             Engine engine = getEngine(request, project);
-            List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGridState(), engine, warningStore);
+            List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGrid(), engine, warningStore);
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
             inspector.inspect(editBatch, schema);

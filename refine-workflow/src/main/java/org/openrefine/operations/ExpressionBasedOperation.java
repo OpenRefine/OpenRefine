@@ -19,7 +19,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
@@ -73,14 +73,14 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
      * @return
      * @throws DoesNotApplyException
      */
-    protected abstract RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval)
+    protected abstract RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval)
             throws DoesNotApplyException;
 
-    protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
     }
 
-    protected ColumnModel getNewColumnModel(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         return state.getColumnModel();
     }
 
@@ -88,7 +88,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
         return RowMapChange.columnIndex(model, columnName);
     }
 
-    protected GridState postTransform(GridState state, ChangeContext context, Evaluable eval) {
+    protected Grid postTransform(Grid state, ChangeContext context, Evaluable eval) {
         return state;
     }
 
@@ -115,22 +115,22 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
         return new RowMapChange(getEngineConfig()) {
 
             @Override
-            public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+            public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getPositiveRowMapper(state, context, eval);
             }
 
             @Override
-            public RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+            public RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getNegativeRowMapper(state, context, eval);
             }
 
             @Override
-            public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+            public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws DoesNotApplyException {
                 return ExpressionBasedOperation.this.getNewColumnModel(state, context, eval);
             }
 
             @Override
-            public GridState postTransform(GridState state, ChangeContext context) {
+            public Grid postTransform(Grid state, ChangeContext context) {
                 return ExpressionBasedOperation.this.postTransform(state, context, eval);
             }
 
@@ -160,7 +160,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
             return new ExpressionEvaluationProcess(
                     project.getHistory(),
                     project.getProcessManager(),
-                    createEngine(project.getCurrentGridState()),
+                    createEngine(project.getCurrentGrid()),
                     eval,
                     getDescription(),
                     project.getId());
@@ -202,7 +202,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
 
         @Override
         public void run() {
-            GridState state = _history.getCurrentGridState();
+            Grid state = _history.getCurrentGrid();
             ColumnModel columnModel = state.getColumnModel();
 
             int columnIndex = columnModel.getColumnIndexByName(_baseColumnName);

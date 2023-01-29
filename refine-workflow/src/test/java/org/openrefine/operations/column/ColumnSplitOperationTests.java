@@ -48,7 +48,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
@@ -62,8 +62,8 @@ import org.openrefine.util.TestUtils;
 
 public class ColumnSplitOperationTests extends RefineTest {
 
-    protected GridState toSplit;
-    protected GridState initialState;
+    protected Grid toSplit;
+    protected Grid initialState;
 
     @BeforeTest
     public void createSplitProject() {
@@ -142,7 +142,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testSeparator() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", false, false, ",", false, 0).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo", "foo 1", "foo 2", "foo 3", "foo 4", "foo 5", "bar", "hello"));
@@ -173,7 +173,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testSeparatorMaxColumns() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", false, false, ",", false, 2).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo", "foo 1", "foo 2", "bar", "hello"));
@@ -195,7 +195,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testSeparatorDetectType() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", true, false, ",", false, 2).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo", "foo 1", "foo 2", "bar", "hello"));
@@ -209,7 +209,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testSeparatorRemoveColumn() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", true, true, ",", false, 2).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo 1", "foo 2", "bar", "hello"));
@@ -222,7 +222,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testRegex() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "bar", false, false, "[A-Z]", true, 0).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo", "bar", "bar 1", "bar 2", "bar 3", "hello"));
@@ -244,7 +244,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     @Test
     public void testLengths() throws DoesNotApplyException, NotImmediateOperationException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "hello", false, false, new int[] { 1, 2 }).createChange();
-        GridState result = SUT.apply(toSplit, mock(ChangeContext.class));
+        Grid result = SUT.apply(toSplit, mock(ChangeContext.class));
 
         List<String> columnNames = result.getColumnModel().getColumns().stream().map(c -> c.getName()).collect(Collectors.toList());
         Assert.assertEquals(columnNames, Arrays.asList("foo", "bar", "hello", "hello 1", "hello 2"));
@@ -273,7 +273,7 @@ public class ColumnSplitOperationTests extends RefineTest {
         ColumnSplitChange spied = spy(SUT);
         when(spied.getEngine(any())).thenReturn(engine);
 
-        GridState result = spied.apply(toSplit, mock(ChangeContext.class));
+        Grid result = spied.apply(toSplit, mock(ChangeContext.class));
         List<Row> rows = result.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         Assert.assertEquals(rows.get(0).getCellValue(0), "a,b,c");
         Assert.assertEquals(rows.get(0).getCellValue(1), null);

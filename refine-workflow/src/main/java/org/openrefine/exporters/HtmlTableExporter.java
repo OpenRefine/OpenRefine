@@ -43,7 +43,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.SortingConfig;
 
 public class HtmlTableExporter implements WriterExporter {
@@ -54,7 +54,7 @@ public class HtmlTableExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
+    public void export(final Grid grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
 
         TabularSerializer serializer = new TabularSerializer() {

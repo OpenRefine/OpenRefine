@@ -20,7 +20,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
@@ -48,7 +48,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
             HttpUrl url = server.url("/api");
 
             String endpoint = url.toString();
-            GridState grid = createGrid(new String[] { "a", "b" },
+            Grid grid = createGrid(new String[] { "a", "b" },
                     new Serializable[][] {
                             { recon("foo", "Q123", endpoint), "d" },
                             { "e", "f" },

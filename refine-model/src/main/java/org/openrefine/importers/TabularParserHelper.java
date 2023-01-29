@@ -50,7 +50,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
@@ -75,7 +75,7 @@ public class TabularParserHelper {
         return options;
     }
 
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, TableDataReader dataReader,
             long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
@@ -187,7 +187,7 @@ public class TabularParserHelper {
         int nbColumns = columnModel.getColumns().size();
         rows = rows.stream().map(r -> r.padWithNull(nbColumns)).collect(Collectors.toList());
 
-        GridState grid = runner.create(columnModel, rows, Collections.emptyMap());
+        Grid grid = runner.create(columnModel, rows, Collections.emptyMap());
         if (includeFileSources) {
             grid = prependColumn("File", fileSource, grid);
         }
@@ -209,7 +209,7 @@ public class TabularParserHelper {
      *            the original grid to start from
      * @return a modified copy of the grid
      */
-    public static GridState prependColumn(String columnName, String cellValue, GridState grid) {
+    public static Grid prependColumn(String columnName, String cellValue, Grid grid) {
         ColumnModel newColumnModel = grid.getColumnModel().insertUnduplicatedColumn(0, new ColumnMetadata(columnName));
         Cell constantCell = new Cell(cellValue, null);
         return grid.mapRows(new RowMapper() {

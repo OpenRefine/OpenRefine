@@ -49,8 +49,8 @@ public class LoggedDatamodelRunner implements DatamodelRunner {
         this.runner = runner;
     }
 
-    protected GridState wrap(GridState grid) {
-        return new LoggedGridState(this, grid);
+    protected Grid wrap(Grid grid) {
+        return new LoggedGrid(this, grid);
     }
 
     protected <T> ChangeData<T> wrap(ChangeData<T> changeData) {
@@ -73,11 +73,11 @@ public class LoggedDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadGridState(File path) throws IOException {
+    public Grid loadGrid(File path) throws IOException {
         try {
-            return wrap(exec("loadGridState", () -> {
+            return wrap(exec("loadGrid", () -> {
                 try {
-                    return runner.loadGridState(path);
+                    return runner.loadGrid(path);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -103,12 +103,12 @@ public class LoggedDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         return wrap(exec("create", () -> runner.create(columnModel, rows, overlayModels)));
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
         try {
             return wrap(exec("loadTextFile", () -> {
                 try {
@@ -127,7 +127,7 @@ public class LoggedDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
         return wrap(exec("loadTextFile", () -> {
             try {
                 return runner.loadTextFile(path, progress, encoding, limit);

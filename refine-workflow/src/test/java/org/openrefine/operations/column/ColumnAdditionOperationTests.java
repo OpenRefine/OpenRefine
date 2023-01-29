@@ -41,7 +41,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -61,7 +61,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     protected Project project;
-    protected GridState initialState;
+    protected Grid initialState;
 
     @BeforeMethod
     public void setUpInitialState() {
@@ -75,7 +75,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { new EvalError("error"), "a", "i" },
                         { "v1", "b", "j" }
                 });
-        initialState = project.getCurrentGridState();
+        initialState = project.getCurrentGrid();
     }
 
     @Test
@@ -100,9 +100,9 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },
                 new Serializable[][] {
                         { "v1", "a", "v1_a", "d" },
@@ -125,9 +125,9 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },
                 new Serializable[][] {
                         { "v1", "a", 1, "d" },
@@ -153,7 +153,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
         org.openrefine.process.Process process = operation.createProcess(project);
         ((Runnable) process).run();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },
                 new Serializable[][] {
                         { "v1", "a", 4L, "d" },
@@ -163,7 +163,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { new EvalError("error"), "a", 4L, "i" },
                         { "v1", "b", 2L, "j" }
                 });
-        assertGridEquals(project.getCurrentGridState(), expected);
+        assertGridEquals(project.getCurrentGrid(), expected);
     }
 
     @Test
@@ -179,7 +179,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
         org.openrefine.process.Process process = operation.createProcess(project);
         ((Runnable) process).run();
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },
                 new Serializable[][] {
                         { "v1", "a", 4L, "d" },
@@ -189,6 +189,6 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { new EvalError("error"), "a", 4L, "i" },
                         { "v1", "b", 2L, "j" }
                 });
-        assertGridEquals(project.getCurrentGridState(), expected);
+        assertGridEquals(project.getCurrentGrid(), expected);
     }
 }

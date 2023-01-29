@@ -38,7 +38,7 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      * Saves the change data to a specified directory, following OpenRefine's format for change data.
      * 
      * @param file
-     *            the directory where to save the grid state
+     *            the directory where to save the grid
      * @param serializer
      *            the serializer used to convert the items to strings
      */
@@ -48,7 +48,7 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      * Saves the change data to a specified directory, following OpenRefine's format for change data.
      * 
      * @param file
-     *            the directory where to save the grid state
+     *            the directory where to save the grid
      * @param serializer
      *            the serializer used to convert the items to strings
      * @param progressReporter

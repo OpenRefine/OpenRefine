@@ -44,7 +44,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -82,15 +82,15 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState gridState, ChangeContext context) throws DoesNotApplyException {
-        ColumnModel columnModel = gridState.getColumnModel();
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel columnModel = grid.getColumnModel();
         int fromIndex = columnIndex(columnModel, _columnName);
         ColumnMetadata column = columnModel.getColumns().get(fromIndex);
         return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
         int fromIndex = columnIndex(state.getColumnModel(), _columnName);
         return mapper(fromIndex, _index, state.getColumnModel().getKeyColumnIndex());
     }
@@ -120,7 +120,7 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
 
             @Override
             public boolean preservesRecordStructure() {
-                // TODO: we should adjust the key column index in the resulting grid state
+                // TODO: we should adjust the key column index in the resulting grid
                 // if it was affected by the move. To be added if we add support for moving
                 // the key column index.
                 if (fromIndex <= toIndex) {

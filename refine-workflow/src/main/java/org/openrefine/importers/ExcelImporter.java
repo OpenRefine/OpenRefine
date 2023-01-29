@@ -64,7 +64,7 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -131,7 +131,7 @@ public class ExcelImporter extends InputStreamImporter {
     }
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
@@ -167,7 +167,7 @@ public class ExcelImporter extends InputStreamImporter {
         }
 
         ArrayNode sheets = (ArrayNode) options.get("sheets");
-        List<GridState> gridStates = new ArrayList<>(sheets.size());
+        List<Grid> grids = new ArrayList<>(sheets.size());
 
         for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
@@ -211,7 +211,7 @@ public class ExcelImporter extends InputStreamImporter {
 
             // TODO: Do we need to preserve the original filename? Take first piece before #?
 //           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
-            gridStates.add(tabularParserHelper.parseOneFile(
+            grids.add(tabularParserHelper.parseOneFile(
                     runner,
                     metadata,
                     job,
@@ -220,7 +220,7 @@ public class ExcelImporter extends InputStreamImporter {
                     dataReader, limit, options));
         }
 
-        return mergeGridStates(gridStates);
+        return mergeGrids(grids);
     }
 
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {

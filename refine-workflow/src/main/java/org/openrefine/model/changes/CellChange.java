@@ -66,7 +66,7 @@ public class CellChange implements Change {
     }
 
     @Override
-    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         int index = projectState.getColumnModel().getColumnIndexByName(columnName);
         if (index == -1) {
             throw new DoesNotApplyException(

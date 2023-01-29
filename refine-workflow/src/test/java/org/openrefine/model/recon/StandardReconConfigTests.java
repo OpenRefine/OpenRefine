@@ -202,8 +202,8 @@ public class StandardReconConfigTests extends RefineTest {
                 "           }\n" +
                 "        ]}";
         StandardReconConfig r = StandardReconConfig.reconstruct(config);
-        Row row = project.getCurrentGridState().getRow(0);
-        ReconJob job = r.createJob(project.getCurrentGridState().getColumnModel(), 0, row, "title", row.getCell(0));
+        Row row = project.getCurrentGrid().getRow(0);
+        ReconJob job = r.createJob(project.getCurrentGrid().getColumnModel(), 0, row, "title", row.getCell(0));
         TestUtils.assertEqualAsJson(job.toString(), "{"
                 + "\"query\":\"mulholland drive\","
                 + "\"type\":\"Q1234\","
@@ -272,7 +272,7 @@ public class StandardReconConfigTests extends RefineTest {
             assertNotNull(request1);
 
             // We won't have gotten a result, but we want to make sure things didn't die
-            Row row = project.getCurrentGridState().getRow(0L);
+            Row row = project.getCurrentGrid().getRow(0L);
             Cell cell = row.cells.get(1);
             assertNotNull(cell.value);
             assertNull(cell.recon);
@@ -386,7 +386,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "UTF-8");
             assertEquals(query, expected);
 
-            Row row = project.getCurrentGridState().getRow(0L);
+            Row row = project.getCurrentGrid().getRow(0L);
             Cell cell = row.cells.get(1);
             assertNotNull(cell.recon);
             assertEquals(cell.recon.service, url.toString());

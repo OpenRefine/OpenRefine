@@ -209,7 +209,7 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Ensures a project is saved in the workspace and its grid states are read from there.
+     * Ensures a project is saved in the workspace and its grids are read from there.
      *
      * @param id
      *            the project id to load

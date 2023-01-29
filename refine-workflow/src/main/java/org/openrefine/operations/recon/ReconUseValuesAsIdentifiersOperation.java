@@ -38,7 +38,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -94,7 +94,7 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws ColumnNotFoundException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(columnName);
@@ -143,7 +143,7 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(GridState newState, ChangeContext context) throws ColumnNotFoundException {
+    protected ColumnModel getNewColumnModel(Grid newState, ChangeContext context) throws ColumnNotFoundException {
         int columnIndex = newState.getColumnModel().getColumnIndexByName(columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(columnName);

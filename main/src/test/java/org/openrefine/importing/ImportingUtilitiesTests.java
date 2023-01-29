@@ -81,7 +81,7 @@ import org.openrefine.importers.SeparatorBasedImporter;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingUtilities.Progress;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
@@ -339,7 +339,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         ImportingParserBase parser = new SeparatorBasedImporter();
         List<Exception> exceptions = new ArrayList<Exception>();
-        GridState grid = parser.parse(
+        Grid grid = parser.parse(
                 runner,
                 metadata,
                 job,

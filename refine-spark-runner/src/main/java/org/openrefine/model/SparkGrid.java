@@ -61,7 +61,7 @@ import org.openrefine.util.RDDUtils;
  * contain a subset of the rows if a filter has been applied.
  */
 @JsonIgnoreType
-public class SparkGridState implements GridState {
+public class SparkGrid implements Grid {
 
     final static protected String METADATA_PATH = "metadata.json";
     final static protected String GRID_PATH = "grid";
@@ -79,14 +79,14 @@ public class SparkGridState implements GridState {
     private transient long cachedRecordCount;
 
     /**
-     * Creates a grid state from a grid and a column model
+     * Creates a grid from a grid and a column model
      * 
      * @param columnModel
      *            the header of the table
      * @param grid
      *            the state of the table
      */
-    public SparkGridState(
+    public SparkGrid(
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
@@ -95,14 +95,14 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * Creates a grid state from a grid and a column model
+     * Creates a grid from a grid and a column model
      *
      * @param grid
      *            the state of the table
      * @param columnModel
      *            the header of the table
      */
-    public SparkGridState(
+    public SparkGrid(
             JavaPairRDD<Long, IndexedRow> grid,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
@@ -111,7 +111,7 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * Creates a grid state from a grid and a column model
+     * Creates a grid from a RDD and a column model
      * 
      * @param columnModel
      *            the header of the table
@@ -120,7 +120,7 @@ public class SparkGridState implements GridState {
      * @param cachedRowCount
      *            the number of rows in the table, cached
      */
-    protected SparkGridState(
+    protected SparkGrid(
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
@@ -142,7 +142,7 @@ public class SparkGridState implements GridState {
     }
 
     /**
-     * Creates a grid state from a grid and a column model
+     * Creates a grid from a RDD and a column model
      *
      * @param grid
      *            the state of the table
@@ -151,7 +151,7 @@ public class SparkGridState implements GridState {
      * @param cachedRowCount
      *            the number of rows in the table, cached
      */
-    protected SparkGridState(
+    protected SparkGrid(
             JavaPairRDD<Long, IndexedRow> grid,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
@@ -253,7 +253,7 @@ public class SparkGridState implements GridState {
      */
     @Override
     public List<IndexedRow> getRows(List<Long> rowIndices) {
-        return GridState.super.getRows(rowIndices);
+        return Grid.super.getRows(rowIndices);
     }
 
     @Override
@@ -513,7 +513,7 @@ public class SparkGridState implements GridState {
 
     @Override
     public String toString() {
-        return String.format("[GridState, %d columns, %d rows]", columnModel.getColumns().size(), rowCount());
+        return String.format("[Grid, %d columns, %d rows]", columnModel.getColumns().size(), rowCount());
     }
 
     @Override
@@ -552,7 +552,7 @@ public class SparkGridState implements GridState {
         return ParsingUtilities.saveWriter.writeValueAsString(indexedRow._2);
     }
 
-    public static SparkGridState loadFromFile(JavaSparkContext context, File file) throws IOException {
+    public static SparkGrid loadFromFile(JavaSparkContext context, File file) throws IOException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
 
@@ -568,7 +568,7 @@ public class SparkGridState implements GridState {
                 .mapValues(p -> p._2);
         // .persist(StorageLevel.MEMORY_ONLY());
 
-        return new SparkGridState(metadata.columnModel,
+        return new SparkGrid(metadata.columnModel,
                 grid,
                 metadata.overlayModels,
                 new SparkDatamodelRunner(context),
@@ -701,9 +701,9 @@ public class SparkGridState implements GridState {
     // Transformation
 
     @Override
-    public SparkGridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+    public SparkGrid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, IndexedRow> rows = RDDUtils.mapKeyValuesToValues(grid, rowMap(mapper));
-        return new SparkGridState(rows, newColumnModel, overlayModels, runner, cachedRowCount, -1);
+        return new SparkGrid(rows, newColumnModel, overlayModels, runner, cachedRowCount, -1);
     }
 
     private static Function2<Long, IndexedRow, IndexedRow> rowMap(RowMapper mapper) {
@@ -719,9 +719,9 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+    public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, Row> rows = RDDUtils.zipWithIndex(grid.flatMap(rowFlatMap(mapper)));
-        return new SparkGridState(newColumnModel, rows, overlayModels, runner);
+        return new SparkGrid(newColumnModel, rows, overlayModels, runner);
     }
 
     private static FlatMapFunction<Tuple2<Long, IndexedRow>, Row> rowFlatMap(RowFlatMapper mapper) {
@@ -738,7 +738,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+    public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         RDD<Tuple2<Long, IndexedRow>> rows = new ScanMapRDD<Serializable, Tuple2<Long, IndexedRow>, Tuple2<Long, IndexedRow>>(
                 grid.rdd(),
                 rowScanMapperToFeed(mapper),
@@ -749,7 +749,7 @@ public class SparkGridState implements GridState {
                 RDDUtils.INDEXEDROW_TUPLE2_TAG,
                 ClassManifestFactory.fromClass(Serializable.class));
 
-        return new SparkGridState(
+        return new SparkGrid(
                 new JavaPairRDD<Long, IndexedRow>(rows, RDDUtils.LONG_TAG, RDDUtils.INDEXEDROW_TAG),
                 newColumnModel,
                 overlayModels,
@@ -801,7 +801,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public SparkGridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+    public SparkGrid mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, Row> rows;
         if (mapper.preservesRowCount()) {
             // Row ids do not change, we can reuse the same partitioner
@@ -814,7 +814,7 @@ public class SparkGridState implements GridState {
             JavaRDD<Row> newRows = getRecords().values().flatMap(recordMap(mapper));
             rows = RDDUtils.zipWithIndex(newRows);
         }
-        return new SparkGridState(
+        return new SparkGrid(
                 newColumnModel,
                 rows,
                 overlayModels,
@@ -864,8 +864,8 @@ public class SparkGridState implements GridState {
     };
 
     @Override
-    public SparkGridState withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
-        return new SparkGridState(
+    public SparkGrid withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
+        return new SparkGrid(
                 grid,
                 columnModel,
                 newOverlayModels,
@@ -875,8 +875,8 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState withColumnModel(ColumnModel newColumnModel) {
-        return new SparkGridState(
+    public Grid withColumnModel(ColumnModel newColumnModel) {
+        return new SparkGrid(
                 grid,
                 newColumnModel,
                 overlayModels,
@@ -886,7 +886,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRows(SortingConfig sortingConfig, boolean permanent) {
         RowSorter sorter = new RowSorter(this, sortingConfig);
         // TODO: we should map by the keys generated by the sortingConfig,
         // and provide a comparator for those: that could be more efficient
@@ -898,7 +898,7 @@ public class SparkGridState implements GridState {
             JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
                     sortedIndexedRows
                             .map(ir -> ir.getRow()));
-            return new SparkGridState(
+            return new SparkGrid(
                     columnModel,
                     sortedGrid,
                     overlayModels,
@@ -908,7 +908,7 @@ public class SparkGridState implements GridState {
         } else {
             JavaPairRDD<Long, IndexedRow> zipped = RDDUtils.mapKeyValuesToValues(RDDUtils.zipWithIndex(sortedIndexedRows),
                     (id, indexedRow) -> new IndexedRow(id, indexedRow.getLogicalIndex(), indexedRow.getRow()));
-            return new SparkGridState(
+            return new SparkGrid(
                     zipped,
                     columnModel,
                     overlayModels,
@@ -920,7 +920,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRecords(SortingConfig sortingConfig, boolean permanent) {
         RecordSorter sorter = new RecordSorter(this, sortingConfig);
         // TODO: we should map by the keys generated by the sortingConfig,
         // and provide a comparator for those: that could be more efficient
@@ -932,7 +932,7 @@ public class SparkGridState implements GridState {
         if (permanent) {
             JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
                     records.flatMap(recordMap(RecordMapper.IDENTITY)));
-            return new SparkGridState(
+            return new SparkGrid(
                     columnModel,
                     sortedGrid,
                     overlayModels,
@@ -943,7 +943,7 @@ public class SparkGridState implements GridState {
             JavaPairRDD<Long, IndexedRow> sortedGrid = RDDUtils.mapKeyValuesToValues(RDDUtils.zipWithIndex(
                     records.flatMap(recordToIndexedRows)),
                     (key, indexedRow) -> new IndexedRow(key, indexedRow.getLogicalIndex(), indexedRow.getRow()));
-            return new SparkGridState(
+            return new SparkGrid(
                     sortedGrid,
                     columnModel,
                     overlayModels,
@@ -954,13 +954,13 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState removeRows(RowFilter filter) {
+    public Grid removeRows(RowFilter filter) {
         JavaPairRDD<Long, Row> newRows = RDDUtils.zipWithIndex(grid
                 .filter(wrapRowFilter(RowFilter.negate(filter)))
                 .values()
                 .map(IndexedRow::getRow));
 
-        return new SparkGridState(
+        return new SparkGrid(
                 columnModel,
                 newRows,
                 overlayModels,
@@ -969,13 +969,13 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState removeRecords(RecordFilter filter) {
+    public Grid removeRecords(RecordFilter filter) {
         JavaPairRDD<Long, Row> newRows = RDDUtils.zipWithIndex(getRecords()
                 .filter(wrapRecordFilter(RecordFilter.negate(filter)))
                 .values()
                 .flatMap(recordMap(RecordMapper.IDENTITY)));
 
-        return new SparkGridState(
+        return new SparkGrid(
                 columnModel,
                 newRows,
                 overlayModels,
@@ -984,10 +984,10 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState limitRows(long rowLimit) {
+    public Grid limitRows(long rowLimit) {
         JavaPairRDD<Long, IndexedRow> limited = RDDUtils.limit(grid, rowLimit);
         long newCachedRowCount = cachedRowCount == -1 ? -1 : Math.max(cachedRowCount, rowLimit);
-        return new SparkGridState(
+        return new SparkGrid(
                 limited,
                 columnModel,
                 overlayModels,
@@ -997,7 +997,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState dropRows(long rowLimit) {
+    public Grid dropRows(long rowLimit) {
         JavaPairRDD<Long, Row> newRows = grid
                 .filter(wrapRowFilter(RowFilter.limitFilter(rowLimit)))
                 .mapValues(IndexedRow::getRow)
@@ -1024,7 +1024,7 @@ public class SparkGridState implements GridState {
         // Compute the new row count
         long newRowCount = cachedRowCount == -1 ? -1 : Math.max(0, cachedRowCount - rowLimit);
 
-        return new SparkGridState(
+        return new SparkGrid(
                 columnModel,
                 newRows,
                 overlayModels,
@@ -1141,10 +1141,10 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
-            throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
+            throw new IllegalArgumentException("A Spark grid can only be joined with Spark change data");
         }
         SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
@@ -1153,7 +1153,7 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Tuple2<IndexedRow, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, IndexedRow> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapJoiner(rowJoiner));
 
-        return new SparkGridState(newGrid, newColumnModel, overlayModels, runner);
+        return new SparkGrid(newGrid, newColumnModel, overlayModels, runner);
     }
 
     private static <T> Function2<Long, Tuple2<IndexedRow, Optional<T>>, IndexedRow> wrapJoiner(RowChangeDataJoiner<T> joiner) {
@@ -1171,10 +1171,10 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
-            throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
+            throw new IllegalArgumentException("A Spark grid can only be joined with Spark change data");
         }
         SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
@@ -1183,7 +1183,7 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Tuple2<IndexedRow, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, List<Row>> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapFlatJoiner(rowJoiner));
         JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.values().flatMap(l -> l.iterator()));
-        return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
+        return new SparkGrid(newColumnModel, flattened, overlayModels, runner);
     }
 
     private static <T> Function2<Long, Tuple2<IndexedRow, Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
@@ -1200,10 +1200,10 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
-            throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
+            throw new IllegalArgumentException("A Spark grid can only be joined with Spark change data");
         }
         SparkChangeData<T> sparkChangeData = (SparkChangeData<T>) changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
@@ -1212,7 +1212,7 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Tuple2<Record, Optional<T>>> join = getRecords().leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaRDD<List<Row>> newGrid = join.map(wrapRecordJoiner(recordJoiner));
         JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.flatMap(l -> l.iterator()));
-        return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
+        return new SparkGrid(newColumnModel, flattened, overlayModels, runner);
     }
 
     private static <T> Function<Tuple2<Long, Tuple2<Record, Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
@@ -1230,13 +1230,13 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public GridState concatenate(GridState other) {
-        if (!(other instanceof SparkGridState)) {
-            throw new IllegalArgumentException("Union of a Spark GridState is only possible with another Spark GridState");
+    public Grid concatenate(Grid other) {
+        if (!(other instanceof SparkGrid)) {
+            throw new IllegalArgumentException("Union of a Spark Grid is only possible with another Spark Grid");
         }
 
         ColumnModel merged = columnModel.merge(other.getColumnModel());
-        SparkGridState sparkGrid = (SparkGridState) other;
+        SparkGrid sparkGrid = (SparkGrid) other;
 
         JavaRDD<Row> rows = grid.values().union(sparkGrid.getGrid().values()).map(IndexedRow::getRow);
         JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
@@ -1247,7 +1247,7 @@ public class SparkGridState implements GridState {
         if (cachedRowCount != -1 && sparkGrid.cachedRowCount != -1) {
             newRowCount = cachedRowCount + sparkGrid.cachedRowCount;
         }
-        return new SparkGridState(merged, indexedRows, mergedOverlayModels,
+        return new SparkGrid(merged, indexedRows, mergedOverlayModels,
                 runner, newRowCount, -1);
     }
 

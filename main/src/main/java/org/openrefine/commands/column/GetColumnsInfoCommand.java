@@ -48,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.commands.Command;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -64,7 +64,7 @@ public class GetColumnsInfoCommand extends Command {
 
             Project project = getProject(request);
 
-            GridState grid = project.getCurrentGridState();
+            Grid grid = project.getCurrentGrid();
             AggregationState initial = new AggregationState();
             initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0))
                     .collect(Collectors.toList());

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -67,7 +67,7 @@ public class RowFlagOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
+    public RowInRecordMapper getPositiveRowMapper(Grid grid, ChangeContext context) {
         return rowMapper(_flagged);
     }
 

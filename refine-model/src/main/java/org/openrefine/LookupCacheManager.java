@@ -10,7 +10,7 @@ import org.openrefine.expr.WrappedRow;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -55,7 +55,7 @@ public class LookupCacheManager {
         ProjectLookup lookup = _lookups.get(key);
 
         if (lookup == null || lookup.getChangeId() != changeId) {
-            lookup = new ProjectLookup(project.getCurrentGridState(), targetColumn, changeId, project.getMetadata().getName());
+            lookup = new ProjectLookup(project.getCurrentGrid(), targetColumn, changeId, project.getMetadata().getName());
 
             synchronized (_lookups) {
                 _lookups.put(key, lookup);
@@ -68,13 +68,13 @@ public class LookupCacheManager {
     static public class ProjectLookup implements Serializable {
 
         private static final long serialVersionUID = -7316491331964997894L;
-        private final GridState grid;
+        private final Grid grid;
         private final long changeId;
         final public String targetColumnName;
 
         final public Map<Object, List<Long>> valueToRowIndices = new HashMap<>();
 
-        ProjectLookup(GridState grid, String columnName, long changeId, String projectName) throws LookupException {
+        ProjectLookup(Grid grid, String columnName, long changeId, String projectName) throws LookupException {
             this.grid = grid;
             this.targetColumnName = columnName;
             this.changeId = changeId;

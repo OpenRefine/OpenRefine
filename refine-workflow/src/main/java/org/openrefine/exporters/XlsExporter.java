@@ -54,7 +54,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
@@ -72,7 +72,7 @@ public class XlsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params,
+    public void export(final Grid grid, ProjectMetadata projectMetadata, Properties params,
             Engine engine, OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();

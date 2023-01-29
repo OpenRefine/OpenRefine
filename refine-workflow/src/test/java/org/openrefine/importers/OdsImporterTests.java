@@ -13,7 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
@@ -48,7 +48,7 @@ public class OdsImporterTests extends ImporterTest {
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.ods");
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), 6);
@@ -73,7 +73,7 @@ public class OdsImporterTests extends ImporterTest {
         options.put("storeBlankCellsAsNulls", true);
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/films.ods");
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         assertEquals(rows.size(), 5);

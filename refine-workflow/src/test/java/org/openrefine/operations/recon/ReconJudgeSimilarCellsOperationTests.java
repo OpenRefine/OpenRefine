@@ -42,7 +42,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -58,7 +58,7 @@ import org.openrefine.util.TestUtils;
 
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
 
-    private GridState initialState;
+    private Grid initialState;
     private ReconConfig reconConfig;
 
     @BeforeSuite
@@ -121,11 +121,11 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
         long commonReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", reconConfig.createNewRecon(2891L)
@@ -153,9 +153,9 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)

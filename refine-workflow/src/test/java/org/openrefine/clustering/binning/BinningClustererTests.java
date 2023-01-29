@@ -40,7 +40,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.clustering.binning.BinningClusterer.BinningClustererConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -77,7 +77,7 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testSerializeBinningClusterer() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(new String[] { "values" },
+        Grid grid = createGrid(new String[] { "values" },
                 new Serializable[][] {
                         { "a" },
                         { "à" },
@@ -91,7 +91,7 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(new String[] { "values" },
+        Grid grid = createGrid(new String[] { "values" },
                 new Serializable[][] {
                         { "c" },
                         { "ĉ" },

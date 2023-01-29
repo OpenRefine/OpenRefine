@@ -52,7 +52,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -166,7 +166,7 @@ public class ReconOperationTests extends RefineTest {
         when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
         when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
 
-        GridState state = project.getCurrentGridState();
+        Grid state = project.getCurrentGrid();
         ColumnModel columnModel = state.getColumnModel();
 
         row1 = state.getRow(0L);
@@ -230,7 +230,7 @@ public class ReconOperationTests extends RefineTest {
                 new ColumnMetadata("column")
                         .withReconConfig(reconConfig)));
 
-        GridState expectedGrid = createGrid(
+        Grid expectedGrid = createGrid(
                 new String[] { "column" },
                 new Serializable[][] {
                         { new Cell("value1", recon1) },
@@ -240,7 +240,7 @@ public class ReconOperationTests extends RefineTest {
                 })
                 .withColumnModel(reconciledColumnModel);
 
-        assertGridEquals(project.getCurrentGridState(), expectedGrid);
+        assertGridEquals(project.getCurrentGrid(), expectedGrid);
     }
 
     private static class ReconConfigStub extends ReconConfig {
@@ -295,7 +295,7 @@ public class ReconOperationTests extends RefineTest {
 
         ColumnMetadata column = project.getColumnModel().getColumnByIndex(0);
 
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
         Assert.assertNull(grid.getRow(0).getCell(0).recon);
         Assert.assertNull(grid.getRow(1).getCell(0).recon);
         Assert.assertNull(grid.getRow(2).getCell(0).recon);

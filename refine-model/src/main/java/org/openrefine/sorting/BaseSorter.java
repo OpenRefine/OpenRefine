@@ -39,11 +39,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
 /**
- * Instantiates a sorting configuration on a particular grid state, to allow comparison of rows or records
+ * Instantiates a sorting configuration on a particular grid, to allow comparison of rows or records
  *
  * @param <T>
  *            the type of objects to compare
@@ -55,7 +55,7 @@ abstract public class BaseSorter<T> implements Comparator<T>, Serializable {
     protected KeyMaker[] _keyMakers;
     protected List<ComparatorWrapper> _comparatorWrappers;
 
-    public BaseSorter(GridState state, SortingConfig config) {
+    public BaseSorter(Grid state, SortingConfig config) {
         _criteria = config.getCriteria();
         int count = _criteria.size();
         _keyMakers = new KeyMaker[count];

@@ -8,7 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -34,9 +34,9 @@ public class LineBasedImporterTests extends ImporterTest {
                 + "baz";
 
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        GridState parsed = parseOneString(SUT, contents, options);
+        Grid parsed = parseOneString(SUT, contents, options);
 
-        GridState expected = createGrid(new String[] { "Column 1" },
+        Grid expected = createGrid(new String[] { "Column 1" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" },
@@ -59,9 +59,9 @@ public class LineBasedImporterTests extends ImporterTest {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "linesPerRow", 2);
 
-        GridState parsed = parseOneString(SUT, contents, options);
+        Grid parsed = parseOneString(SUT, contents, options);
 
-        GridState expected = createGrid(new String[] { "Column 1", "Column 2" },
+        Grid expected = createGrid(new String[] { "Column 1", "Column 2" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "c", "d" },

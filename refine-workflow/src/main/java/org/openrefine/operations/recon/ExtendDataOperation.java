@@ -52,7 +52,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -156,7 +156,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
         @Override
         public void run() {
-            GridState state = _history.getCurrentGridState();
+            Grid state = _history.getCurrentGrid();
             Engine engine = new Engine(state, _engineConfig);
 
             ColumnModel columnModel = state.getColumnModel();

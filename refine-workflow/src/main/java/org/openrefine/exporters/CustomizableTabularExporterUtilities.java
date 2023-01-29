@@ -62,7 +62,7 @@ import org.openrefine.exporters.TabularSerializer.CellData;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.preference.PreferenceStore;
@@ -75,7 +75,7 @@ abstract public class CustomizableTabularExporterUtilities {
     final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     static public void exportRows(
-            final GridState grid,
+            final Grid grid,
             final Engine engine,
             Properties params,
             final TabularSerializer serializer,
@@ -171,7 +171,7 @@ abstract public class CustomizableTabularExporterUtilities {
     }
 
     static public int[] countColumnsRows(
-            final GridState grid,
+            final Grid grid,
             final Engine engine,
             Properties params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();

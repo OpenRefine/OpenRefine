@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.RefineModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -74,8 +74,8 @@ public class History {
     protected int _cachedPosition;
 
     @JsonIgnore
-    protected List<GridState> _states;
-    // stores whether the grid state at the same index is read directly from disk or not
+    protected List<Grid> _states;
+    // stores whether the grid at the same index is read directly from disk or not
     @JsonIgnore
     protected List<Boolean> _cachedOnDisk;
     @JsonIgnore
@@ -84,7 +84,7 @@ public class History {
     protected CachedGridStore _gridStore;
 
     /**
-     * Creates an empty on an initial grid state.
+     * Creates an empty on an initial grid.
      * 
      * @param initialGrid
      *            the initial state of the project
@@ -93,7 +93,7 @@ public class History {
      * @param gridStore
      *            where to store intermediate cached grids
      */
-    public History(GridState initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public History(Grid initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _cachedOnDisk = new ArrayList<>();
@@ -120,7 +120,7 @@ public class History {
      *             if one step in the list of history entries failed to apply to the supplied grid
      */
     public History(
-            GridState initialGrid,
+            Grid initialGrid,
             ChangeDataStore dataStore,
             CachedGridStore gridStore,
             List<HistoryEntry> entries,
@@ -128,7 +128,7 @@ public class History {
         this(initialGrid, dataStore, gridStore);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
         for (HistoryEntry entry : entries) {
-            GridState grid = null;
+            Grid grid = null;
             if (availableCachedStates.contains(entry.getId())) {
                 try {
                     grid = gridStore.getCachedGrid(entry.getId());
@@ -142,8 +142,8 @@ public class History {
             _entries.add(entry);
         }
 
-        // ensure the grid state of the current position is computed (invariant)
-        getGridState(position);
+        // ensure the grid of the current position is computed (invariant)
+        getGrid(position);
         _position = position;
         updateCachedPosition();
     }
@@ -152,23 +152,23 @@ public class History {
      * Returns the state of the grid at the current position in the history.
      */
     @JsonIgnore
-    public GridState getCurrentGridState() {
+    public Grid getCurrentGrid() {
         // the current state is always assumed to be computed already
-        GridState gridState = _states.get(_position);
-        if (gridState == null) {
-            throw new IllegalStateException("The current grid state has not been computed yet");
+        Grid grid = _states.get(_position);
+        if (grid == null) {
+            throw new IllegalStateException("The current grid has not been computed yet");
         }
-        return gridState;
+        return grid;
     }
 
     /**
      * Returns the state of the grid at before any operation was applied on it
      */
     @JsonIgnore
-    public GridState getInitialGridState() {
+    public Grid getInitialGrid() {
         // the initial state is always assumed to be computed already
         if (_states.get(0) == null) {
-            throw new IllegalStateException("The initial grid state has not been computed yet");
+            throw new IllegalStateException("The initial grid has not been computed yet");
         }
         return _states.get(0);
     }
@@ -177,10 +177,10 @@ public class History {
      * Returns the state of the grid at a given index in the history
      * 
      * @param position
-     *            a 0-based index in the list of successive grid states
+     *            a 0-based index in the list of successive grids
      */
-    protected GridState getGridState(int position) throws DoesNotApplyException {
-        GridState grid = _states.get(position);
+    protected Grid getGrid(int position) throws DoesNotApplyException {
+        Grid grid = _states.get(position);
         if (grid != null) {
             return grid;
         } else {
@@ -188,11 +188,11 @@ public class History {
             // so we compute it recursively from the previous one.
             // we know for sure that position > 0 because the initial grid
             // is always present
-            GridState previous = getGridState(position - 1);
+            Grid previous = getGrid(position - 1);
             HistoryEntry entry = _entries.get(position - 1);
             ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
             Change change = entry.getChange();
-            GridState newState = change.apply(previous, context);
+            Grid newState = change.apply(previous, context);
             _states.set(position, newState);
             _cachedOnDisk.set(position, false);
             /*
@@ -236,7 +236,7 @@ public class History {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
 
-            // uncache all the grid states that we are removing
+            // uncache all the grids that we are removing
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
                 _dataStore.discardAll(oldEntry.getId());
@@ -244,7 +244,7 @@ public class History {
                     try {
                         _gridStore.uncacheGrid(oldEntry.getId());
                     } catch (IOException e) {
-                        logger.warn("Ignoring deletion of unreachable cached grid state because it failed:");
+                        logger.warn("Ignoring deletion of unreachable cached grid because it failed:");
                         e.printStackTrace();
                     }
                 }
@@ -255,7 +255,7 @@ public class History {
         }
 
         ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
-        GridState newState = entry.getChange().apply(getCurrentGridState(), context);
+        Grid newState = entry.getChange().apply(getCurrentGrid(), context);
         _states.add(newState);
         _cachedOnDisk.add(false);
         _entries.add(entry);
@@ -266,9 +266,9 @@ public class History {
     protected void cacheIntermediateGridOnDisk(int position) throws DoesNotApplyException, IOException {
         Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
-        GridState grid = getGridState(position);
+        Grid grid = getGrid(position);
         long historyEntryId = _entries.get(position - 1).getId();
-        GridState cached = _gridStore.cacheGrid(historyEntryId, grid);
+        Grid cached = _gridStore.cacheGrid(historyEntryId, grid);
         synchronized (this) {
             _states.set(position, cached);
             _cachedOnDisk.set(position, true);
@@ -277,7 +277,7 @@ public class History {
                 _states.set(i, null);
             }
             // make sure the current position is computed
-            getGridState(_position);
+            getGrid(_position);
         }
     }
 
@@ -294,7 +294,7 @@ public class History {
         }
         // Cache the new position
         _cachedPosition = newCachedPosition;
-        GridState newCachedState = _states.get(newCachedPosition);
+        Grid newCachedState = _states.get(newCachedPosition);
         boolean cachedSuccessfully = newCachedState.cache();
         if (!cachedSuccessfully) {
             // TODO cache on disk
@@ -322,7 +322,7 @@ public class History {
             _position = 0;
         } else {
             _position = entryIndex(lastDoneEntryID) + 1;
-            getGridState(_position);
+            getGrid(_position);
         }
         updateCachedPosition();
     }

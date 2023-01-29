@@ -35,13 +35,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 
 public class ExpressionContextTest extends RefineTest {
 
-    GridState grid = null;
+    Grid grid = null;
     List<Row> rows = null;
 
     @BeforeMethod

@@ -12,7 +12,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.TestUtils;
 
 public class SchemaExporterTest extends RefineTest {
@@ -23,7 +23,7 @@ public class SchemaExporterTest extends RefineTest {
     public void testNoSchema()
             throws IOException {
         // TODO instead of returning an empty (and invalid) schema, we should just return an error
-        GridState grid = this.createGrid(
+        Grid grid = this.createGrid(
                 new String[] { "a", "b" },
                 new Serializable[][] { { "c", "d" } });
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);

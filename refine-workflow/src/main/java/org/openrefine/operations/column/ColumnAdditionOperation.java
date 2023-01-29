@@ -44,7 +44,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -118,7 +118,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         ColumnModel columnModel = state.getColumnModel();
         try {
             return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
@@ -128,7 +128,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval)
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval)
             throws DoesNotApplyException {
         ColumnModel columnModel = state.getColumnModel();
         int columnIndex = RowMapChange.columnIndex(columnModel, _baseColumnName);
@@ -136,7 +136,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context, Evaluable eval)
+    protected RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context, Evaluable eval)
             throws DoesNotApplyException {
         return negativeMapper(_columnInsertIndex, state.getColumnModel().getKeyColumnIndex());
     }
@@ -158,7 +158,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
             @Override
             public boolean preservesRecordStructure() {
                 // TODO: if the key column index is not 0, it probably
-                // needs shifting in the new grid state if we are inserting the new column before it
+                // needs shifting in the new grid if we are inserting the new column before it
                 return columnInsertIndex > columnModel.getKeyColumnIndex();
             }
 
@@ -178,7 +178,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
             @Override
             public boolean preservesRecordStructure() {
                 // TODO: if the key column index is not 0, it probably
-                // needs shifting in the new grid state if we are inserting the new column before it
+                // needs shifting in the new grid if we are inserting the new column before it
                 return columnInsertIndex > keyColumnIndex;
             }
         };

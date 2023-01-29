@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
-import org.openrefine.model.GridState.Metadata;
+import org.openrefine.model.Grid.Metadata;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -73,7 +73,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadGridState(File path) throws IOException {
+    public Grid loadGrid(File path) throws IOException {
         File metadataFile = new File(path, METADATA_PATH);
         File gridFile = new File(path, GRID_PATH);
 
@@ -82,7 +82,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                 .textFile(gridFile.getAbsolutePath(), GRID_ENCODING)
                 .mapToPair(s -> parseIndexedRow(s), "parse row from JSON");
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
-        return new LocalGridState(this, rows, metadata.columnModel, metadata.overlayModels);
+        return new LocalGrid(this, rows, metadata.columnModel, metadata.overlayModels);
     }
 
     protected static Tuple2<Long, Row> parseIndexedRow(String source) {
@@ -96,11 +96,11 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         // the call to zipWithIndex is efficient as the first PLL is in memory already
         PairPLL<Long, Row> pll = pllContext.parallelize(defaultParallelism, rows)
                 .zipWithIndex();
-        return new LocalGridState(this, pll, columnModel, overlayModels);
+        return new LocalGrid(this, pll, columnModel, overlayModels);
     }
 
     @Override
@@ -121,12 +121,12 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
         return loadTextFile(path, progress, encoding, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
         TextFilePLL textPLL = pllContext.textFile(path, encoding);
         textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
@@ -144,7 +144,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             // that exceed the desired row count
             pll = pll.dropLastElements(rowCount - limit);
         }
-        return new LocalGridState(
+        return new LocalGrid(
                 this,
                 pll,
                 new ColumnModel(Collections.singletonList(new ColumnMetadata("Column"))),

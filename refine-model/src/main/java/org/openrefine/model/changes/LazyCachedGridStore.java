@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 public class LazyCachedGridStore implements CachedGridStore {
 
-    protected final Map<Long, GridState> _cache = new HashMap<>();
+    protected final Map<Long, Grid> _cache = new HashMap<>();
 
     @Override
     public Set<Long> listCachedGridIds() {
@@ -18,7 +18,7 @@ public class LazyCachedGridStore implements CachedGridStore {
     }
 
     @Override
-    public GridState getCachedGrid(long id) throws IOException {
+    public Grid getCachedGrid(long id) throws IOException {
         return _cache.get(id);
     }
 
@@ -28,7 +28,7 @@ public class LazyCachedGridStore implements CachedGridStore {
     }
 
     @Override
-    public GridState cacheGrid(long id, GridState grid) throws IOException {
+    public Grid cacheGrid(long id, Grid grid) throws IOException {
         _cache.put(id, grid);
         return grid;
     }

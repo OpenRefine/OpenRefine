@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
@@ -42,7 +42,7 @@ public class HistoryEntryManagerTests {
 
         // Deletes the first column of the table
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) {
+        public Grid apply(Grid projectState, ChangeContext context) {
             List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 
@@ -63,18 +63,18 @@ public class HistoryEntryManagerTests {
                 new ColumnMetadata("a"),
                 new ColumnMetadata("b"),
                 new ColumnMetadata("c")));
-        GridState gridState = mock(GridState.class);
-        when(gridState.getColumnModel()).thenReturn(columnModel);
-        when(runner.loadGridState(Mockito.any())).thenReturn(gridState);
-        GridState secondState = mock(GridState.class);
+        Grid grid = mock(Grid.class);
+        when(grid.getColumnModel()).thenReturn(columnModel);
+        when(runner.loadGrid(Mockito.any())).thenReturn(grid);
+        Grid secondState = mock(Grid.class);
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
-        when(gridState.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
+        when(grid.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
         Change change = new MyChange();
         HistoryEntry entry = new HistoryEntry(1234L, "some description",
                 new UnknownOperation("my-op", "some desc"), change);
         gridStore = mock(CachedGridStore.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-        history = new History(gridState, mock(ChangeDataStore.class), gridStore);
+        history = new History(grid, mock(ChangeDataStore.class), gridStore);
         history.addEntry(entry);
         sut = new HistoryEntryManager();
     }
@@ -86,7 +86,7 @@ public class HistoryEntryManagerTests {
 
         History recovered = sut.load(runner, tempFile);
         Assert.assertEquals(recovered.getPosition(), 1);
-        GridState state = recovered.getCurrentGridState();
+        Grid state = recovered.getCurrentGrid();
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);
     }
 

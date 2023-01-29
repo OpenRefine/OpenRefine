@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -75,7 +75,7 @@ public class XmlImporterTests extends ImporterTest {
     XmlImporter SUT = null;
 
     // Common expected state for many tests
-    GridState expectedGrid;
+    Grid expectedGrid;
 
     @Override
     @BeforeMethod
@@ -111,7 +111,7 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void canParseSample() throws Exception {
-        GridState grid = RunTest(getSample());
+        Grid grid = RunTest(getSample());
 
         assertGridEquals(grid, expectedGrid);
     }
@@ -148,28 +148,28 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void canParseDeeplyNestedSample() throws Exception {
-        GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
+        Grid grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
         assertGridEquals(grid, expectedGrid);
     }
 
     @Test
     public void canParseSampleWithMixedElement() throws Exception {
-        GridState grid = RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
+        Grid grid = RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
 
         assertGridEquals(grid, expectedGrid);
     }
 
     @Test
     public void ignoresDtds() throws Exception {
-        GridState grid = RunTest(getSampleWithDtd());
+        Grid grid = RunTest(getSampleWithDtd());
 
         assertGridEquals(grid, expectedGrid);
     }
 
     @Test
     public void canParseSampleWithDuplicateNestedElements() throws Exception {
-        GridState grid = RunTest(getSampleWithDuplicateNestedElements());
+        Grid grid = RunTest(getSampleWithDuplicateNestedElements());
 
         assertProjectCreated(grid, 4, 12);
 
@@ -183,9 +183,9 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void testCanParseLineBreak() throws Exception {
-        GridState grid = RunTest(getSampleWithLineBreak());
+        Grid grid = RunTest(getSampleWithLineBreak());
 
-        GridState expectedGrid = createGrid(new String[] {
+        Grid expectedGrid = createGrid(new String[] {
                 "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
                 { "1", "Author 1, The", "Book title 1", "2010-05-26" },
@@ -200,9 +200,9 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void testElementsWithVaryingStructure() throws Exception {
-        GridState grid = RunTest(getSampleWithVaryingStructure());
+        Grid grid = RunTest(getSampleWithVaryingStructure());
 
-        GridState expected = createGrid(new String[] {
+        Grid expected = createGrid(new String[] {
                 "book - id", "book - author", "book - title", "book - publish_date", "book - genre"
         }, new Serializable[][] {
                 { "1", "Author 1, The", "Book title 1", "2010-05-26", null },
@@ -218,7 +218,7 @@ public class XmlImporterTests extends ImporterTest {
 
     @Test
     public void testElementWithNestedTree() throws Exception {
-        GridState grid = RunTest(getSampleWithTreeStructure());
+        Grid grid = RunTest(getSampleWithTreeStructure());
 
         assertProjectCreated(grid, 5, 6);
     }
@@ -232,7 +232,7 @@ public class XmlImporterTests extends ImporterTest {
         ObjectNode options = getOptions(job, SUT);
         JSONUtilities.safePut(options, "includeFileSources", true);
 
-        GridState grid = RunTest(fileContents, options);
+        Grid grid = RunTest(fileContents, options);
 
         Assert.assertNotNull(grid.getColumnModel().getColumnByName("File"));
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
@@ -393,15 +393,15 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private GridState RunTest(String testString) throws Exception {
+    private Grid RunTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT));
     }
 
-    private GridState RunTest(String testString, ObjectNode objectNode) throws Exception {
+    private Grid RunTest(String testString, ObjectNode objectNode) throws Exception {
         return parseOneString(SUT, testString, objectNode);
     }
 
-    private void assertProjectCreated(GridState grid, int nbColumns, int nbRows) {
+    private void assertProjectCreated(Grid grid, int nbColumns, int nbRows) {
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), nbColumns);
         Assert.assertEquals(grid.rowCount(), nbRows);
     }

@@ -18,7 +18,7 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
@@ -63,13 +63,13 @@ public abstract class LineBasedImporterBase extends URIImporter {
      *            the parsing options
      * @return
      */
-    protected int getColumnCount(GridState rawCells, RowMapper rowMapper, ObjectNode options) {
+    protected int getColumnCount(Grid rawCells, RowMapper rowMapper, ObjectNode options) {
         return countMaxColumnNb(rawCells, rowMapper);
     }
 
     /**
      * Returns the number of passes done on the dataset when computing the column count. Override this if you override
-     * {@link #getColumnCount(GridState, RowMapper, ObjectNode)} so that progress reporting is appropriately adapted.
+     * {@link #getColumnCount(Grid, RowMapper, ObjectNode)} so that progress reporting is appropriately adapted.
      *
      * @param options
      * @return
@@ -87,9 +87,9 @@ public abstract class LineBasedImporterBase extends URIImporter {
      *            the parsed grid
      * @param options
      *            the parsing options
-     * @return the final grid state
+     * @return the final grid
      */
-    protected GridState postTransform(GridState parsed, ObjectNode options) {
+    protected Grid postTransform(Grid parsed, ObjectNode options) {
         return parsed;
     }
 
@@ -109,7 +109,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);
@@ -147,7 +147,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
         }
 
         RowMapper rowMapper = getRowMapper(options);
-        GridState rawCells;
+        Grid rawCells;
         if (limit2 > 0) {
             rawCells = runner.loadTextFile(sparkURI, scaledProgress, charset, limit2 + ignoreLines + headerLines + skipDataLines);
         } else {
@@ -184,7 +184,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
         if (ignoreLines + headerLines + skipDataLines > 0) {
             rawCells = rawCells.dropRows(ignoreLines + headerLines + skipDataLines);
         }
-        GridState grid = rawCells.mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
+        Grid grid = rawCells.mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
 
         if (trimStrings || guessCellValueTypes || storeBlankCellsAsNulls) {
             grid = grid.mapRows(cellValueCleaningMapper(guessCellValueTypes, trimStrings, storeBlankCellsAsNulls), columnModel);
@@ -230,7 +230,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
      * @param rowMapper
      * @return
      */
-    protected static int countMaxColumnNb(GridState grid, RowMapper rowMapper) {
+    protected static int countMaxColumnNb(Grid grid, RowMapper rowMapper) {
         RowAggregator<Integer> aggregator = new RowAggregator<Integer>() {
 
             private static final long serialVersionUID = 1L;

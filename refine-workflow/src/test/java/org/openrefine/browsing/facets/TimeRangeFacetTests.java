@@ -44,7 +44,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -132,7 +132,7 @@ public class TimeRangeFacetTests extends RefineTest {
 
     @Test
     public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] { "my column" },
+        Grid project = createGrid(new String[] { "my column" },
                 new Serializable[][] {
                         { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
                         { "nontime" },
@@ -147,7 +147,7 @@ public class TimeRangeFacetTests extends RefineTest {
 
     @Test
     public void serializeTimeRangeFacetMismatchingColumn() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] { "my mismatching column" },
+        Grid project = createGrid(new String[] { "my mismatching column" },
                 new Serializable[][] {
                         { OffsetDateTime.parse("2018-01-03T08:09:10Z") },
                         { "nontime" },
@@ -162,7 +162,7 @@ public class TimeRangeFacetTests extends RefineTest {
 
     @Test
     public void serializeTimeRangeFacetNoTimeValue() throws JsonParseException, JsonMappingException, IOException {
-        GridState project = createGrid(new String[] { "my column" },
+        Grid project = createGrid(new String[] { "my column" },
                 new Serializable[][] {
                         { null },
                         { "nontime" },

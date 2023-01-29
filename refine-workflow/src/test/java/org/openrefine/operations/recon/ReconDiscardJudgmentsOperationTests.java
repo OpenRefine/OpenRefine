@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -51,7 +51,7 @@ import org.openrefine.util.TestUtils;
 
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
 
-    GridState initialState;
+    Grid initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -91,9 +91,9 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b",
@@ -112,9 +112,9 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },

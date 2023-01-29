@@ -28,7 +28,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.local.util.QueryTree;
 import org.openrefine.process.ProgressReporter;
 
@@ -38,7 +38,7 @@ import org.openrefine.process.ProgressReporter;
  * It is split into contiguous partitions, enabling efficient parallel processing. It is analogous to Spark's Resilient
  * Distributed Datasets (RDD) in spirit, but it is not designed for distributed contexts: a PLL is local to a given JVM.
  * This removes the need for any serialization of jobs or of shuffled data. The API offered by PLL is also more modest,
- * since its only purpose is to fulfill the requirements of the {@link GridState} interface.
+ * since its only purpose is to fulfill the requirements of the {@link Grid} interface.
  * <p>
  * Running Spark in standalone mode is only designed for local testing and does not remove the overhead of serialization
  * and scheduling.

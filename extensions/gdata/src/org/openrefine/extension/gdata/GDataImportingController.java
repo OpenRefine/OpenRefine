@@ -68,7 +68,7 @@ import org.openrefine.importing.ImportingController;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -253,7 +253,7 @@ public class GDataImportingController implements ImportingController {
         List<Exception> exceptions = new LinkedList<Exception>();
 
         DatamodelRunner runner = RefineModel.getRunner();
-        GridState grid = null;
+        Grid grid = null;
         try {
             grid = GDataImporter.parse(
                     runner,
@@ -325,7 +325,7 @@ public class GDataImportingController implements ImportingController {
                 pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
 
                 DatamodelRunner runner = RefineModel.getRunner();
-                GridState grid = null;
+                Grid grid = null;
                 try {
                     grid = GDataImporter.parse(
                             runner,

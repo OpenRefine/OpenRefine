@@ -59,7 +59,7 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -123,7 +123,7 @@ public class OdsImporter extends InputStreamImporter {
     }
 
     @Override
-    public GridState parseOneFile(
+    public Grid parseOneFile(
             DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,
@@ -138,7 +138,7 @@ public class OdsImporter extends InputStreamImporter {
         }
 
         List<OdfTable> tables = odfDoc.getTableList();
-        List<GridState> grids = new ArrayList<>();
+        List<Grid> grids = new ArrayList<>();
 
         int sheetCount = tables.size();
         if (sheetCount == 0) {
@@ -205,7 +205,7 @@ public class OdsImporter extends InputStreamImporter {
                     dataReader, limit, options));
         }
 
-        return mergeGridStates(grids);
+        return mergeGrids(grids);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {

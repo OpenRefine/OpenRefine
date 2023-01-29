@@ -44,7 +44,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconCellChange;
@@ -87,7 +87,7 @@ public class ReconJudgeOneCellCommand extends Command {
                         scoreString != null ? Double.parseDouble(scoreString) : 100);
             }
 
-            GridState state = project.getCurrentGridState();
+            Grid state = project.getCurrentGrid();
             Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");

@@ -63,7 +63,7 @@ import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.TreeReader.Token;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -106,9 +106,9 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void canParseSample() throws Exception {
-        GridState grid = RunTest(getSample());
+        Grid grid = RunTest(getSample());
 
-        GridState expected = createGrid(new String[] {
+        Grid expected = createGrid(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
@@ -171,7 +171,7 @@ public class JsonImporterTests extends ImporterTest {
                 "        \"intl-student-score\": \"95\"\n" +
                 "    }\n" +
                 "]\n";
-        GridState grid = RunTest(ScraperwikiOutput, getOptions(job, SUT, JsonImporter.ANONYMOUS, true));
+        Grid grid = RunTest(ScraperwikiOutput, getOptions(job, SUT, JsonImporter.ANONYMOUS, true));
         Row row = grid.getRow(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
@@ -189,7 +189,7 @@ public class JsonImporterTests extends ImporterTest {
                 "        \"intl-student-score\": \"95\"\n" +
                 "    }\n" +
                 "]\n";
-        GridState grid = RunTest(ScraperwikiOutput);
+        Grid grid = RunTest(ScraperwikiOutput);
         Row row = grid.getRow(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
@@ -199,9 +199,9 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void canParseSampleWithDuplicateNestedElements() throws Exception {
-        GridState grid = RunTest(getSampleWithDuplicateNestedElements());
+        Grid grid = RunTest(getSampleWithDuplicateNestedElements());
 
-        GridState expected = createGrid(new String[] {
+        Grid expected = createGrid(new String[] {
                 "_ - id", "_ - title", "_ - publish_date", "_ - authors - _ - name"
         }, new Serializable[][] {
                 { 1L, "Book title 1", "2010-05-26", "Author 1, The" },
@@ -222,9 +222,9 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testCanParseLineBreak() throws Exception {
-        GridState grid = RunTest(getSampleWithLineBreak());
+        Grid grid = RunTest(getSampleWithLineBreak());
 
-        GridState expected = createGrid(new String[] {
+        Grid expected = createGrid(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
@@ -239,9 +239,9 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testElementsWithVaryingStructure() throws Exception {
-        GridState grid = RunTest(getSampleWithVaryingStructure());
+        Grid grid = RunTest(getSampleWithVaryingStructure());
 
-        GridState expected = createGrid(new String[] {
+        Grid expected = createGrid(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26", null },
@@ -256,7 +256,7 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testElementWithNestedTree() throws Exception {
-        GridState grid = RunTest(getSampleWithTreeStructure());
+        Grid grid = RunTest(getSampleWithTreeStructure());
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 5);
         Assert.assertEquals(grid.rowCount(), 6);
@@ -274,7 +274,7 @@ public class JsonImporterTests extends ImporterTest {
         path.add(JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
 
-        GridState grid = RunTest(mqlOutput, options);
+        Grid grid = RunTest(mqlOutput, options);
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(grid.rowCount(), 16);
@@ -308,7 +308,7 @@ public class JsonImporterTests extends ImporterTest {
                 "        \"citations-score\": \"100\"\n" +
                 "    }\n" +
                 "]\n";
-        GridState grid = RunTest(ScraperwikiOutput);
+        Grid grid = RunTest(ScraperwikiOutput);
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 9);
         Assert.assertEquals(grid.rowCount(), 2);
@@ -418,7 +418,7 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testJsonDatatypes() throws Exception {
-        GridState grid = RunTest(getSampleWithDataTypes());
+        Grid grid = RunTest(getSampleWithDataTypes());
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 2);
         Assert.assertEquals(grid.rowCount(), 21);
@@ -489,7 +489,7 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void testComplexJsonStructure() throws Exception {
         String fileName = "grid_small.json";
-        GridState grid = RunComplexJSONTest(getComplexJSON(fileName));
+        Grid grid = RunComplexJSONTest(getComplexJSON(fileName));
 
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), 63);
         Assert.assertEquals(grid.rowCount(), 63);
@@ -512,7 +512,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "includeFileSources", true);
 
-        GridState grid = RunTest(fileContents, options);
+        Grid grid = RunTest(fileContents, options);
 
         Assert.assertNotNull(grid.getColumnModel().getColumnByName("File"));
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
@@ -654,15 +654,15 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private GridState RunTest(String testString) throws Exception {
+    private Grid RunTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
 
-    private GridState RunComplexJSONTest(String testString) throws Exception {
+    private Grid RunComplexJSONTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT, "institutes", false));
     }
 
-    private GridState RunTest(String testString, ObjectNode options) throws Exception {
+    private Grid RunTest(String testString, ObjectNode options) throws Exception {
         return parseOneString(SUT, testString, options);
     }
 

@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -51,7 +51,7 @@ import org.openrefine.util.TestUtils;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
 
-    GridState initialState;
+    Grid initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -91,9 +91,9 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
                 true).createChange();
 
-        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+        Grid applied = change.apply(initialState, mock(ChangeContext.class));
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },

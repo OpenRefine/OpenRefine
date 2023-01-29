@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -77,7 +77,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
         int index = columnIndex(model, _oldColumnName);
         try {
@@ -89,7 +89,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
     }
 

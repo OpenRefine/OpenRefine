@@ -48,7 +48,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.strategies.StatementMerger;
@@ -75,7 +75,7 @@ public class QuickStatementsExporterTest extends RefineTest {
     @Test
     public void testSimpleProject()
             throws IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "subject", "inception", "reference" },
                 new Serializable[][] {
                         { TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
@@ -218,7 +218,7 @@ public class QuickStatementsExporterTest extends RefineTest {
     @Test
     public void testNoSchema()
             throws IOException {
-        GridState grid = this.createGrid(
+        Grid grid = this.createGrid(
                 new String[] { "a", "b" },
                 new Serializable[][] { { "c", "d" } });
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);

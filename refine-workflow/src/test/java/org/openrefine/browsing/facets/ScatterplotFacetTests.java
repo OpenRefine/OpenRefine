@@ -48,7 +48,7 @@ import org.openrefine.browsing.facets.ScatterplotFacet.Dimension;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -125,7 +125,7 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"dim_y\":\"lin\""
             + "}";
 
-    GridState grid;
+    Grid grid;
 
     @BeforeTest
     public void registerFacetConfig() {
@@ -169,7 +169,7 @@ public class ScatterplotFacetTests extends RefineTest {
 
     @Test
     public void serializeFacetWithError() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(new String[] { "foo" },
+        Grid grid = createGrid(new String[] { "foo" },
                 new Serializable[][] {
                         { "bar" }
                 });

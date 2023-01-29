@@ -47,7 +47,7 @@ import org.apache.commons.lang3.Validate;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
@@ -197,7 +197,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
     public class TransposeColumnsIntoRowsChange implements Change {
 
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             if (_combinedColumnName != null) {
                 if (columnModel.getColumnByName(_combinedColumnName) != null) {

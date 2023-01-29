@@ -39,7 +39,6 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.jena.sparql.function.library.eval;
 
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
@@ -48,7 +47,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -122,7 +121,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
         return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError,
                 _repeat ? _repeatCount : 0);

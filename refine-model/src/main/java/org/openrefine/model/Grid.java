@@ -28,13 +28,13 @@ import org.openrefine.sorting.SortingConfig;
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow.
  */
-public interface GridState {
+public interface Grid {
 
     final static public String METADATA_PATH = "metadata.json";
     final static public String GRID_PATH = "grid";
 
     /**
-     * @return the runner which created this grid state
+     * @return the runner which created this grid
      */
     public DatamodelRunner getDatamodelRunner();
 
@@ -47,9 +47,9 @@ public interface GridState {
     /**
      * @param newColumnModel
      *            the column model to apply to the grid
-     * @return a copy of this grid state with a modified column model.
+     * @return a copy of this grid with a modified column model.
      */
-    public GridState withColumnModel(ColumnModel newColumnModel);
+    public Grid withColumnModel(ColumnModel newColumnModel);
 
     /**
      * Returns a row by index. Repeatedly calling this method to obtain multiple rows might be inefficient compared to
@@ -120,8 +120,8 @@ public interface GridState {
 
     /**
      * Returns a list of rows corresponding to the row indices supplied. By default, this calls
-     * {@link GridState#getRow(long)} on all values, but implementations can override this to more efficient strategies
-     * if available.
+     * {@link Grid#getRow(long)} on all values, but implementations can override this to more efficient strategies if
+     * available.
      *
      * @param rowIndices
      *            the indices of the rows to lookup
@@ -293,18 +293,18 @@ public interface GridState {
     public Map<String, OverlayModel> getOverlayModels();
 
     /**
-     * Saves the grid state to a specified directory, following OpenRefine's format for grid storage.
+     * Saves the grid to a specified directory, following OpenRefine's format for grid storage.
      * 
      * @param file
-     *            the directory where to save the grid state
+     *            the directory where to save the grid
      */
     public void saveToFile(File file) throws IOException;
 
     /**
-     * Saves the grid state to a specified directory, following OpenRefine's format for grid storage.
+     * Saves the grid to a specified directory, following OpenRefine's format for grid storage.
      * 
      * @param file
-     *            the directory where to save the grid state
+     *            the directory where to save the grid
      * @param progressReporter
      *            reports the progress of the writing process
      */
@@ -338,38 +338,38 @@ public interface GridState {
     // Transformations
 
     /**
-     * Returns a new grid state where the overlay models have changed.
+     * Returns a new grid where the overlay models have changed.
      * 
      * @param overlayModel
-     *            the new overlay models to apply to the grid state
-     * @return the changed grid state
+     *            the new overlay models to apply to the grid
+     * @return the changed grid
      */
-    public GridState withOverlayModels(Map<String, OverlayModel> overlayModel);
+    public Grid withOverlayModels(Map<String, OverlayModel> overlayModel);
 
     /**
-     * Returns a new grid state, where the rows have been mapped by the mapper.
+     * Returns a new grid, where the rows have been mapped by the mapper.
      * 
      * @param mapper
      *            the function used to transform rows This object and its dependencies are required to be serializable.
      * @param newColumnModel
-     *            the column model of the resulting grid state
-     * @return the resulting grid state
+     *            the column model of the resulting grid
+     * @return the resulting grid
      */
-    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel);
+    public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel);
 
     /**
-     * Returns a new grid state, where the rows have been mapped by the flat mapper.
+     * Returns a new grid, where the rows have been mapped by the flat mapper.
      * 
      * @param mapper
      *            the function used to transform rows This object and its dependencies are required to be serializable.
      * @param newColumnModel
-     *            the column model of the resulting grid state
-     * @return the resulting grid state
+     *            the column model of the resulting grid
+     * @return the resulting grid
      */
-    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel);
+    public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel);
 
     /**
-     * Returns a new grid state where the rows have been mapped by the stateful mapper. This can be significantly less
+     * Returns a new grid where the rows have been mapped by the stateful mapper. This can be significantly less
      * efficient than a stateless mapper, so only use this if you really need to rely on state.
      * 
      * @param <S>
@@ -379,43 +379,43 @@ public interface GridState {
      * @param newColumnModel
      *            the column model to apply to the new grid
      */
-    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel);
+    public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel);
 
     /**
-     * Returns a new grid state, where the records have been mapped by the mapper
+     * Returns a new grid, where the records have been mapped by the mapper
      *
      * @param mapper
      *            the function used to transform records This object and its dependencies are required to be
      *            serializable.
      * @param newColumnModel
-     *            the column model of the resulting grid state
-     * @return the resulting grid state
+     *            the column model of the resulting grid
+     * @return the resulting grid
      */
-    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
+    public Grid mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
 
     /**
-     * Returns a new grid state where rows have been reordered according to the configuration supplied.
+     * Returns a new grid where rows have been reordered according to the configuration supplied.
      * 
      * @param sortingConfig
      *            the criteria to sort rows
      * @param permanent
      *            if true, forget the original row ids. If false, store them in the corresponding
      *            {@link IndexedRow#getOriginalIndex()}.
-     * @return the resulting grid state
+     * @return the resulting grid
      */
-    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent);
+    public Grid reorderRows(SortingConfig sortingConfig, boolean permanent);
 
     /**
-     * Returns a new grid state where records have been reordered according to the configuration supplied.
+     * Returns a new grid where records have been reordered according to the configuration supplied.
      * 
      * @param sortingConfig
      *            the criteria to sort records
      * @param permanent
      *            if true, forget the original record ids. If false, store them in the corresponding
      *            {@link Record#getOriginalStartRowId()}.
-     * @return the resulting grid state
+     * @return the resulting grid
      */
-    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent);
+    public Grid reorderRecords(SortingConfig sortingConfig, boolean permanent);
 
     /**
      * Removes all rows selected by a filter
@@ -424,7 +424,7 @@ public interface GridState {
      *            which returns true when we should delete the row
      * @return the grid where the matching rows have been removed
      */
-    public GridState removeRows(RowFilter filter);
+    public Grid removeRows(RowFilter filter);
 
     /**
      * Removes all records selected by a filter
@@ -433,7 +433,7 @@ public interface GridState {
      *            which returns true when we should delete the record
      * @return the grid where the matching record have been removed
      */
-    public GridState removeRecords(RecordFilter filter);
+    public Grid removeRecords(RecordFilter filter);
 
     /**
      * Only keep the first rows.
@@ -445,7 +445,7 @@ public interface GridState {
      *            the number of rows to keep
      * @return the limited grid
      */
-    public default GridState limitRows(long rowLimit) {
+    public default Grid limitRows(long rowLimit) {
         return removeRows(RowFilter.limitFilter(rowLimit));
     }
 
@@ -459,7 +459,7 @@ public interface GridState {
      *            the number of rows to drop
      * @return the grid consisting of the last rows
      */
-    public default GridState dropRows(long rowsToDrop) {
+    public default Grid dropRows(long rowsToDrop) {
         return removeRows(RowFilter.dropFilter(rowsToDrop));
     }
 
@@ -510,7 +510,7 @@ public interface GridState {
      * @param newColumnModel
      *            the column model to apply to the new grid
      */
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
     /**
      * Joins pre-computed change data with the current grid data, with a joiner function that can return multiple rows
@@ -525,7 +525,7 @@ public interface GridState {
      * @param newColumnModel
      *            the column model to apply to the new grid
      */
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel);
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
     /**
      * Joins pre-computed change data with the current grid data, record by record.
@@ -539,21 +539,21 @@ public interface GridState {
      * @param newColumnModel
      *            the column model to apply to the new grid
      */
-    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel);
+    public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel);
 
-    // Union of grid states
+    // Union of grids
 
     /**
-     * Creates a new grid state containing all rows in this grid, followed by all rows in the other grid supplied. The
-     * overlay models of this grid have priority over the others.
+     * Creates a new grid containing all rows in this grid, followed by all rows in the other grid supplied. The overlay
+     * models of this grid have priority over the others.
      * <p>
-     * The two grid states are required to have the same number of columns.
+     * The two grids are required to have the same number of columns.
      * 
      * @param other
      *            the grid to concatenate to this one
      * @return a new grid, union of the two
      */
-    public GridState concatenate(GridState other);
+    public Grid concatenate(Grid other);
 
     // Memory management
 

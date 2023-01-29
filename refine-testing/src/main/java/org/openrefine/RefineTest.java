@@ -58,7 +58,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.TestingDatamodelRunner;
@@ -161,11 +161,11 @@ public class RefineTest {
      * @return
      */
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
-        GridState state = createGrid(columns, rows);
+        Grid state = createGrid(columns, rows);
         return createProject(projectName, state);
     }
 
-    protected Project createProject(String projectName, GridState grid) {
+    protected Project createProject(String projectName, Grid grid) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
         Project project = new Project(grid, new LazyChangeDataStore(), new LazyCachedGridStore());
@@ -173,7 +173,7 @@ public class RefineTest {
         return project;
     }
 
-    protected GridState createGrid(String[] columns, Serializable[][] rows) {
+    protected Grid createGrid(String[] columns, Serializable[][] rows) {
         List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
         for (String column : columns) {
             columnMeta.add(new ColumnMetadata(column));
@@ -220,9 +220,9 @@ public class RefineTest {
         return rows;
     }
 
-    // We do not use the equals method of GridState here because GridState does not check for equality
+    // We do not use the equals method of Grid here because Grid does not check for equality
     // with its grid contents (because this would require fetching all rows in memory)
-    protected void assertGridEquals(GridState actual, GridState expected) {
+    protected void assertGridEquals(Grid actual, Grid expected) {
         Assert.assertEquals(actual.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(actual.collectRows(), expected.collectRows());
     }
@@ -294,11 +294,11 @@ public class RefineTest {
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
         Assert.assertNotNull(project.getHistory());
-        Assert.assertNotNull(project.getHistory().getInitialGridState());
-        ColumnModel model = project.getHistory().getInitialGridState().getColumnModel();
+        Assert.assertNotNull(project.getHistory().getInitialGrid());
+        ColumnModel model = project.getHistory().getInitialGrid().getColumnModel();
         Assert.assertNotNull(model);
         Assert.assertEquals(model.getColumns().size(), numCols);
-        Assert.assertEquals(project.getHistory().getInitialGridState().rowCount(), numRows);
+        Assert.assertEquals(project.getHistory().getInitialGrid().rowCount(), numRows);
     }
 
     /**

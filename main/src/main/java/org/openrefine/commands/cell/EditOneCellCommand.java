@@ -48,7 +48,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
@@ -113,7 +113,7 @@ public class EditOneCellCommand extends Command {
                 value = valueString;
             }
 
-            GridState state = project.getCurrentGridState();
+            Grid state = project.getCurrentGrid();
             Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             ColumnMetadata column = state.getColumnModel().getColumns().get(cellIndex);
 

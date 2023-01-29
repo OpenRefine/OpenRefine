@@ -57,7 +57,7 @@ import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.sorting.SortingConfig;
@@ -101,7 +101,7 @@ public class BinningClusterer extends Clusterer {
         }
 
         @Override
-        public BinningClusterer apply(GridState state) {
+        public BinningClusterer apply(Grid state) {
             BinningClusterer clusterer = new BinningClusterer();
             clusterer.initializeFromConfig(state, this);
             return clusterer;
@@ -162,7 +162,7 @@ public class BinningClusterer extends Clusterer {
         }
     }
 
-    public void initializeFromConfig(GridState state, BinningClustererConfig config) {
+    public void initializeFromConfig(Grid state, BinningClustererConfig config) {
         super.initializeFromConfig(state, config);
         _keyer = config.getKeyer();
         _parameters = config.getParameters();

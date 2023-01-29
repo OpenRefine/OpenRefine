@@ -43,13 +43,13 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 /**
- * A PLL-based implementation of a GridState.
+ * A PLL-based implementation of a Grid.
  * 
  * @author Antonin Delpeuch
  *
  */
 @JsonIgnoreType
-public class LocalGridState implements GridState {
+public class LocalGrid implements Grid {
 
     protected final LocalDatamodelRunner runner;
     protected final PairPLL<Long, IndexedRow> grid;
@@ -65,14 +65,14 @@ public class LocalGridState implements GridState {
     protected PairPLL<Long, Record> records;
 
     /**
-     * Constructs a grid state, supplying all required fields.
+     * Constructs a grid, supplying all required fields.
      * 
      * @param runner
      * @param columnModel
      * @param grid
      * @param overlayModels
      */
-    public LocalGridState(
+    public LocalGrid(
             LocalDatamodelRunner runner,
             ColumnModel columnModel,
             PairPLL<Long, IndexedRow> grid,
@@ -96,7 +96,7 @@ public class LocalGridState implements GridState {
      * @param columnModel
      * @param overlayModels
      */
-    public LocalGridState(
+    public LocalGrid(
             LocalDatamodelRunner runner,
             PairPLL<Long, Row> grid,
             ColumnModel columnModel,
@@ -115,7 +115,7 @@ public class LocalGridState implements GridState {
     }
 
     /**
-     * Constructs a grid state from a grid of records.
+     * Constructs a grid from a grid of records.
      *
      * @param records
      *            the PLL of records for the current grid, which is assumed to have consistent indexing
@@ -123,7 +123,7 @@ public class LocalGridState implements GridState {
      * @param columnModel
      * @param overlayModels
      */
-    public LocalGridState(
+    public LocalGrid(
             PairPLL<Long, Record> records,
             LocalDatamodelRunner runner,
             ColumnModel columnModel,
@@ -164,11 +164,11 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public GridState withColumnModel(ColumnModel newColumnModel) {
+    public Grid withColumnModel(ColumnModel newColumnModel) {
         if (constructedFromRows) {
-            return new LocalGridState(runner, newColumnModel, grid, overlayModels);
+            return new LocalGrid(runner, newColumnModel, grid, overlayModels);
         } else {
-            return new LocalGridState(records, runner, newColumnModel, overlayModels, grid.count());
+            return new LocalGrid(records, runner, newColumnModel, overlayModels, grid.count());
         }
     }
 
@@ -409,7 +409,7 @@ public class LocalGridState implements GridState {
 
         grid
                 .values()
-                .map(LocalGridState::serializeIndexedRow, "serialize indexed row")
+                .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
                 .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
 
         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
@@ -485,30 +485,30 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public GridState withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
+    public Grid withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
         if (constructedFromRows) {
-            return new LocalGridState(runner, columnModel, grid, newOverlayModels);
+            return new LocalGrid(runner, columnModel, grid, newOverlayModels);
         } else {
-            return new LocalGridState(records, runner, columnModel, newOverlayModels, grid.count());
+            return new LocalGrid(records, runner, columnModel, newOverlayModels, grid.count());
         }
     }
 
     @Override
-    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.mapValues((i, r) -> mapper.call(r.getLogicalIndex(), r.getRow()), "apply RowMapper");
-        return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels);
     }
 
     @Override
-    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+    public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.values()
                 .flatMap(tuple -> mapper.call(tuple.getLogicalIndex(), tuple.getRow()).stream(), "apply FlatRowMapper")
                 .zipWithIndex();
-        return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels);
     }
 
     @Override
-    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+    public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         PLL<Tuple2<Long, Row>> newGrid = grid.scanMap(
                 mapper.unit(),
                 tuple -> mapper.feed(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()),
@@ -516,47 +516,47 @@ public class LocalGridState implements GridState {
                 (s, tuple) -> Tuple2.of(tuple.getKey(), mapper.map(s, tuple.getValue().getLogicalIndex(), tuple.getValue().getRow())));
         PairPLL<Long, Row> paired = new PairPLL<>(newGrid, grid.getPartitioner());
 
-        return new LocalGridState(runner, paired, newColumnModel, overlayModels);
+        return new LocalGrid(runner, paired, newColumnModel, overlayModels);
     }
 
     @Override
-    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         if (mapper.preservesRecordStructure()) {
             PairPLL<Long, Record> newRecords = records()
                     .mapValues(
                             (index, record) -> new Record(record.getStartRowId(), record.getOriginalStartRowId(), mapper.call(record)),
                             "apply RecordMapper, preserving records");
-            return new LocalGridState(newRecords, runner, newColumnModel, overlayModels, grid.count());
+            return new LocalGrid(newRecords, runner, newColumnModel, overlayModels, grid.count());
         } else {
             PairPLL<Long, Row> grid = records()
                     .values()
                     .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper, not preserving records")
                     .zipWithIndex();
-            return new LocalGridState(runner, grid, newColumnModel, overlayModels);
+            return new LocalGrid(runner, grid, newColumnModel, overlayModels);
         }
     }
 
     @Override
-    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRows(SortingConfig sortingConfig, boolean permanent) {
         RowSorter rowSorter = new RowSorter(this, sortingConfig);
         if (permanent) {
             PairPLL<Long, Row> newRows = indexedRows()
                     .sort(rowSorter)
                     .map(IndexedRow::getRow, "apply IndexRow::getRow")
                     .zipWithIndex();
-            return new LocalGridState(runner, newRows, columnModel, overlayModels);
+            return new LocalGrid(runner, newRows, columnModel, overlayModels);
         } else {
             PairPLL<Long, IndexedRow> newRows = indexedRows()
                     .sort(rowSorter)
                     .zipWithIndex()
                     .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
                             "update row index after temporary sort");
-            return new LocalGridState(runner, columnModel, newRows, overlayModels);
+            return new LocalGrid(runner, columnModel, newRows, overlayModels);
         }
     }
 
     @Override
-    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRecords(SortingConfig sortingConfig, boolean permanent) {
         RecordSorter recordSorter = new RecordSorter(this, sortingConfig);
         PLL<Record> sorted = records()
                 .values()
@@ -565,7 +565,7 @@ public class LocalGridState implements GridState {
             PairPLL<Long, Row> newRows = sorted
                     .flatMap(record -> record.getRows().stream(), "record to rows")
                     .zipWithIndex();
-            return new LocalGridState(runner, newRows, columnModel, overlayModels);
+            return new LocalGrid(runner, newRows, columnModel, overlayModels);
         } else {
             PLL<IndexedRow> pll = sorted
                     .flatMap(record -> IteratorUtils.toList(record.getIndexedRows().iterator()).stream(),
@@ -574,28 +574,28 @@ public class LocalGridState implements GridState {
                     .zipWithIndex()
                     .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
                             "update row index after temporary sort");
-            return new LocalGridState(runner, columnModel, newRows, overlayModels);
+            return new LocalGrid(runner, columnModel, newRows, overlayModels);
         }
     }
 
     @Override
-    public GridState removeRows(RowFilter filter) {
+    public Grid removeRows(RowFilter filter) {
         PairPLL<Long, Row> newGrid = grid
                 .values()
                 .filter(tuple -> !filter.filterRow(tuple.getLogicalIndex(), tuple.getRow()))
                 .zipWithIndex()
                 .mapValues((index, indexedRow) -> indexedRow.getRow(), "drop old row indices before row removal");
-        return new LocalGridState(runner, newGrid, columnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, columnModel, overlayModels);
     }
 
     @Override
-    public GridState removeRecords(RecordFilter filter) {
+    public Grid removeRecords(RecordFilter filter) {
         PairPLL<Long, Row> newGrid = records()
                 .values()
                 .filter(record -> !filter.filterRecord(record))
                 .flatMap(record -> record.getRows().stream(), "record to rows")
                 .zipWithIndex();
-        return new LocalGridState(runner, newGrid, columnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, columnModel, overlayModels);
     }
 
     @Override
@@ -660,7 +660,7 @@ public class LocalGridState implements GridState {
      * @return the limited grid
      */
     @Override
-    public GridState limitRows(long rowLimit) {
+    public Grid limitRows(long rowLimit) {
         return removeRows(RowFilter.limitFilter(rowLimit));
     }
 
@@ -672,7 +672,7 @@ public class LocalGridState implements GridState {
      * @return the grid consisting of the last rows
      */
     @Override
-    public GridState dropRows(long rowsToDrop) {
+    public Grid dropRows(long rowsToDrop) {
         // We force the computation of partition sizes
         // because they would be computed anyway to re-index
         // the rows after the drop.
@@ -687,7 +687,7 @@ public class LocalGridState implements GridState {
                         new IndexedRow(tuple.getKey() - rowsToDrop, tuple.getValue().getRow())),
                         "adjust row ids after dropping rows")
                 .withPartitioner(partitioner);
-        return new LocalGridState(runner, columnModel, shifted, overlayModels);
+        return new LocalGrid(runner, columnModel, shifted, overlayModels);
     }
 
     protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(
@@ -706,56 +706,56 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof LocalChangeData<?>)) {
-            throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
+            throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()), "apply row change data joiner");
-        return new LocalGridState(runner, joined, newColumnModel, overlayModels);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof LocalChangeData<?>)) {
-            throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
+            throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream(),
                         "apply row change data joiner")
                 .zipWithIndex();
-        return new LocalGridState(runner, joined, newColumnModel, overlayModels);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         // TODO return records if the recordJoiner preserves their structure
         if (!(changeData instanceof LocalChangeData<?>)) {
-            throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
+            throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = records()
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
                         "apply record change data joiner")
                 .zipWithIndex();
-        return new LocalGridState(runner, joined, newColumnModel, overlayModels);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
     }
 
     @Override
-    public GridState concatenate(GridState other) {
-        if (!(other instanceof LocalGridState)) {
-            throw new IllegalArgumentException("Concatenating grid states from incompatible runners");
+    public Grid concatenate(Grid other) {
+        if (!(other instanceof LocalGrid)) {
+            throw new IllegalArgumentException("Concatenating grids from incompatible runners");
         }
-        LocalGridState otherLocal = (LocalGridState) other;
+        LocalGrid otherLocal = (LocalGrid) other;
         ColumnModel merged = columnModel.merge(other.getColumnModel());
         Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
         mergedOverlayModels.putAll(overlayModels);
-        return new LocalGridState(
+        return new LocalGrid(
                 runner,
                 grid.values()
                         .map(IndexedRow::getRow, "drop old row indices")
@@ -824,7 +824,7 @@ public class LocalGridState implements GridState {
 
     @Override
     public String toString() {
-        return String.format("[LocalGridState:\n%s\n]", grid.toString());
+        return String.format("[LocalGrid:\n%s\n]", grid.toString());
     }
 
     public QueryTree getRowsQueryTree() {

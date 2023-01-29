@@ -67,7 +67,7 @@ public class OdsExporterTests extends RefineTest {
     // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
-    GridState grid;
+    Grid grid;
     Engine engine;
     Properties options;
 

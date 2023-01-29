@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -62,10 +62,10 @@ public class HistoryTests {
     ChangeDataStore dataStore;
     CachedGridStore gridStore;
 
-    GridState initialState;
-    GridState intermediateState;
-    GridState finalState;
-    GridState newState;
+    Grid initialState;
+    Grid intermediateState;
+    Grid finalState;
+    Grid newState;
 
     ColumnModel columnModel;
 
@@ -87,10 +87,10 @@ public class HistoryTests {
     public void setUp() throws DoesNotApplyException {
         dataStore = mock(ChangeDataStore.class);
         gridStore = mock(CachedGridStore.class);
-        initialState = mock(GridState.class);
-        intermediateState = mock(GridState.class);
-        newState = mock(GridState.class);
-        finalState = mock(GridState.class);
+        initialState = mock(Grid.class);
+        intermediateState = mock(Grid.class);
+        newState = mock(Grid.class);
+        finalState = mock(Grid.class);
         columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
         firstChange = mock(Change.class);
         secondChange = mock(Change.class);
@@ -136,22 +136,22 @@ public class HistoryTests {
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCachedPosition(), 1); // the first operation is expensive, so this state is
                                                              // cached
-        Assert.assertEquals(history.getCurrentGridState(), intermediateState);
-        verify(history.getCurrentGridState(), times(1)).cache();
+        Assert.assertEquals(history.getCurrentGrid(), intermediateState);
+        verify(history.getCurrentGrid(), times(1)).cache();
         Assert.assertEquals(history.getEntries(), entries);
 
         history.undoRedo(secondChangeId);
 
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
-        Assert.assertEquals(history.getCurrentGridState(), finalState);
+        Assert.assertEquals(history.getCurrentGrid(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
 
         history.undoRedo(0);
 
         Assert.assertEquals(history.getPosition(), 0);
         Assert.assertEquals(history.getCachedPosition(), 0);
-        Assert.assertEquals(history.getCurrentGridState(), initialState);
+        Assert.assertEquals(history.getCurrentGrid(), initialState);
         Assert.assertEquals(history.getEntries(), entries);
 
         // All changes were called only once
@@ -169,8 +169,8 @@ public class HistoryTests {
     public void testConstructWithCachedGrids() throws DoesNotApplyException, IOException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
         Change thirdChange = mock(Change.class);
-        GridState thirdState = mock(GridState.class);
-        GridState fourthState = mock(GridState.class);
+        Grid thirdState = mock(Grid.class);
+        Grid fourthState = mock(Grid.class);
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.singleton(secondChangeId));
         when(gridStore.getCachedGrid(secondChangeId)).thenReturn(thirdState);
@@ -191,9 +191,9 @@ public class HistoryTests {
     public void testCacheIntermediateGrid() throws DoesNotApplyException, IOException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
         Change thirdChange = mock(Change.class);
-        GridState fourthState = mock(GridState.class);
-        GridState cachedSecondState = mock(GridState.class);
-        GridState rederivedThirdState = mock(GridState.class);
+        Grid fourthState = mock(Grid.class);
+        Grid cachedSecondState = mock(Grid.class);
+        Grid rederivedThirdState = mock(Grid.class);
         long thirdEntryId = 39827L;
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
@@ -235,14 +235,14 @@ public class HistoryTests {
         History history = new History(initialState, dataStore, gridStore, entries, 1);
 
         Assert.assertEquals(history.getPosition(), 1);
-        Assert.assertEquals(history.getCurrentGridState(), intermediateState);
+        Assert.assertEquals(history.getCurrentGrid(), intermediateState);
         Assert.assertEquals(history.getEntries(), entries);
 
         // Adding an entry when there are undone changes erases those changes
         history.addEntry(newEntry);
 
         Assert.assertEquals(history.getPosition(), 2);
-        Assert.assertEquals(history.getCurrentGridState(), newState);
+        Assert.assertEquals(history.getCurrentGrid(), newState);
         Assert.assertEquals(history.getEntries(), newEntries);
         verify(dataStore, times(1)).discardAll(secondChangeId);
     }

@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -107,7 +107,7 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws ColumnNotFoundException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(columnName);

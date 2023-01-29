@@ -55,7 +55,7 @@ import org.openrefine.importers.TabularParserHelper;
 import org.openrefine.importing.ImportingController;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -272,7 +272,7 @@ public class DatabaseImportController implements ImportingController {
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
 
         try {
-            GridState grid = tabularParserHelper.parseOneFile(
+            Grid grid = tabularParserHelper.parseOneFile(
                     RefineModel.getRunner(),
                     metadata,
                     job, // fileSource
@@ -400,7 +400,7 @@ public class DatabaseImportController implements ImportingController {
         long startTime = System.currentTimeMillis();
 
         try {
-            GridState grid = tabularParserHelper.parseOneFile(
+            Grid grid = tabularParserHelper.parseOneFile(
                     RefineModel.getRunner(),
                     metadata,
                     job, // fileSource

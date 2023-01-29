@@ -91,17 +91,17 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadGridState(File path) throws IOException {
-        return SparkGridState.loadFromFile(context, path);
+    public Grid loadGrid(File path) throws IOException {
+        return SparkGrid.loadFromFile(context, path);
     }
 
     @Override
-    public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         List<Tuple2<Long, Row>> tuples = IntStream.range(0, rows.size())
                 .mapToObj(i -> new Tuple2<Long, Row>((long) i, rows.get(i)))
                 .collect(Collectors.toList());
         JavaPairRDD<Long, Row> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
-        return new SparkGridState(columnModel, rdd, overlayModels, this, rows.size(), -1);
+        return new SparkGrid(columnModel, rdd, overlayModels, this, rows.size(), -1);
     }
 
     static private Function0<BoxedUnit> sparkShutdownHook() {
@@ -172,12 +172,12 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
         return loadTextFile(path, progress, encoding, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
         // TODO find a way to pass the encoding here?
         JavaRDD<String> lines = context.textFile(path);
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
@@ -193,7 +193,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
             // that exceed the desired row count
             indexedRows = RDDUtils.limit(indexedRows, limit);
         }
-        return new SparkGridState(columnModel, indexedRows, Collections.emptyMap(), this);
+        return new SparkGrid(columnModel, indexedRows, Collections.emptyMap(), this);
     }
 
     @Override

@@ -52,7 +52,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -133,9 +133,9 @@ public class PreviewExtendDataCommand extends Command {
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
 
-            GridState state = project.getCurrentGridState();
+            Grid state = project.getCurrentGrid();
             Engine engine = new Engine(state, engineConfig);
-            GridState sorted = state;
+            Grid sorted = state;
             if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                 sorted = sorted.reorderRows(sortingConfig, false);
             }

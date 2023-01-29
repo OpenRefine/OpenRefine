@@ -47,7 +47,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -81,7 +81,7 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws DoesNotApplyException {
         ColumnModel model = grid.getColumnModel();
         List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
@@ -95,7 +95,7 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());
         for (int i = 0; i != _columnNames.size(); i++) {

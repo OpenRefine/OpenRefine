@@ -45,7 +45,7 @@ import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -195,7 +195,7 @@ public class RangeFacetTests extends RefineTest {
 
     @Test
     public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "my column" },
                 new Serializable[][] {
                         { 89.2 },
@@ -212,7 +212,7 @@ public class RangeFacetTests extends RefineTest {
 
     @Test
     public void testNoNumericValue() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "my column" },
                 new Serializable[][] {
                         { "blah" },
@@ -227,7 +227,7 @@ public class RangeFacetTests extends RefineTest {
 
     @Test
     public void testSingleNumericValue() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "my column" },
                 new Serializable[][] {
                         { 12 },
@@ -242,7 +242,7 @@ public class RangeFacetTests extends RefineTest {
 
     @Test
     public void testTwoValues() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "my column", "other column" },
                 new Serializable[][] {
                         { 12, "foo" },
@@ -257,7 +257,7 @@ public class RangeFacetTests extends RefineTest {
 
     @Test
     public void testOtherFacet() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(
+        Grid grid = createGrid(
                 new String[] { "my column", "other column" },
                 new Serializable[][] {
                         { 12, "foo" },

@@ -21,7 +21,7 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.util.TestUtils;
 
-public class SparkGridStateTests extends SparkBasedTest {
+public class SparkGridTests extends SparkBasedTest {
 
     protected static class MyOverlayModel implements OverlayModel {
 
@@ -33,7 +33,7 @@ public class SparkGridStateTests extends SparkBasedTest {
         }
     }
 
-    protected SparkGridState state;
+    protected SparkGrid state;
     protected List<Tuple2<Long, Row>> rows;
 
     @BeforeMethod
@@ -51,7 +51,7 @@ public class SparkGridStateTests extends SparkBasedTest {
                         new ColumnMetadata("c")));
 
         OverlayModelResolver.registerOverlayModel("mymodel", MyOverlayModel.class);
-        state = new SparkGridState(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()), new SparkDatamodelRunner(context));
+        state = new SparkGrid(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()), new SparkDatamodelRunner(context));
 
         rows = new ArrayList<>();
         rows.add(new Tuple2<Long, Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
@@ -70,7 +70,7 @@ public class SparkGridStateTests extends SparkBasedTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals(state.toString(), "[GridState, 3 columns, 2 rows]");
+        Assert.assertEquals(state.toString(), "[Grid, 3 columns, 2 rows]");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class SparkGridStateTests extends SparkBasedTest {
         File tempFile = TestUtils.createTempDirectory("testgrid");
         state.saveToFile(tempFile);
 
-        SparkGridState loaded = SparkGridState.loadFromFile(context(), tempFile);
+        SparkGrid loaded = SparkGrid.loadFromFile(context(), tempFile);
 
         Assert.assertEquals(loaded.getOverlayModels(), state.getOverlayModels());
         List<Tuple2<Long, IndexedRow>> loadedGrid = loaded.getGrid().collect();

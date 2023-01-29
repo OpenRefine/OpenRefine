@@ -54,7 +54,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 
@@ -75,7 +75,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     }
 
     @Override
-    public GridState parse(DatamodelRunner runner,
+    public Grid parse(DatamodelRunner runner,
             ProjectMetadata metadata, final ImportingJob job, List<ImportingFileRecord> fileRecords,
             String format, long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);

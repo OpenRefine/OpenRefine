@@ -28,7 +28,7 @@ import org.openrefine.importing.FormatRegistry;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -48,7 +48,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
             + "\"columnDetails\":[],"
             + "\"limit\":0}";
 
-    private GridState expectedGrid = null;
+    private Grid expectedGrid = null;
     private File tempDir;
 
     @BeforeMethod
@@ -101,7 +101,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
+        Grid grid = ProjectManager.singleton.getProject(projectId).getCurrentGrid();
 
         assertGridEquals(grid, expectedGrid);
     }
@@ -115,7 +115,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
+        Grid grid = ProjectManager.singleton.getProject(projectId).getCurrentGrid();
 
         assertGridEquals(grid, expectedGrid);
     }

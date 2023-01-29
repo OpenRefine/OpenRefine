@@ -68,7 +68,7 @@ import org.openrefine.expr.WrappedCell;
 import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -189,7 +189,7 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
 
-            GridState state = project.getCurrentGridState();
+            Grid state = project.getCurrentGrid();
             Map<String, OverlayModel> overlayModels = state.getOverlayModels();
             ColumnModel columnModel = state.getColumnModel();
             Engine engine = new Engine(state, engineConfig);
@@ -201,7 +201,7 @@ public class PreviewExpressionCommand extends Command {
                 Properties bindings = ExpressionUtils.createBindings();
 
                 if (Mode.RowBased.equals(engine.getMode())) {
-                    GridState sorted = state;
+                    Grid sorted = state;
                     if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                         // TODO cache appropriately
                         sorted = state.reorderRows(sortingConfig, false);
@@ -215,7 +215,7 @@ public class PreviewExpressionCommand extends Command {
                                         repeat, repeatCount));
                     }
                 } else {
-                    GridState sorted = state;
+                    Grid sorted = state;
                     if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                         // TODO cache appropriately
                         sorted = state.reorderRecords(sortingConfig, false);

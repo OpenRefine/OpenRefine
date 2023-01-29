@@ -89,9 +89,9 @@ public class WbExpressionTest<T> extends RefineTest {
                         { "value A", "value B", "value C", "value D", "value E" } });
         server.url("rstrst").toString();
         warningStore = new QAWarningStore();
-        row = project.getCurrentGridState().getRow(0);
+        row = project.getCurrentGrid().getRow(0);
         ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0,
-                row, project.getCurrentGridState().getColumnModel(), warningStore);
+                row, project.getCurrentGrid().getColumnModel(), warningStore);
     }
 
     /**
@@ -223,7 +223,7 @@ public class WbExpressionTest<T> extends RefineTest {
                 server.url("/w/api.php").toString(),
                 0,
                 row,
-                project.getCurrentGridState().getColumnModel(),
+                project.getCurrentGrid().getColumnModel(),
                 warningStore);
 
     }

@@ -63,7 +63,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.util.ParsingUtilities;
 
@@ -121,7 +121,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFile);
 
-        GridState grid = null;
+        Grid grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        GridState grid = null;
+        Grid grid = null;
         try {
             grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
@@ -205,7 +205,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("dates.xls");
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         // The original value reads 2021-04-18 in the Excel file.
         // We make sure it is not shifted by a day because of timezone handling
@@ -244,7 +244,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);
@@ -287,7 +287,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);

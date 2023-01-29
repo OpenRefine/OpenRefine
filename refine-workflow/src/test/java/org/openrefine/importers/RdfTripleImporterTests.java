@@ -42,7 +42,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 
 public class RdfTripleImporterTests extends ImporterTest {
@@ -69,7 +69,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         String sampleRdf = "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.blood_on_the_tracks>.";
         StringReader reader = new StringReader(sampleRdf);
 
-        GridState grid = parseOneFile(SUT, reader);
+        Grid grid = parseOneFile(SUT, reader);
 
         ColumnModel columnModel = grid.getColumnModel();
 
@@ -90,7 +90,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 +
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.bringing_it_all_back_home>.";
         StringReader input = new StringReader(sampleRdf);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         // columns
@@ -125,7 +125,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 +
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.bringing_it_all_back_home>.";
         StringReader input = new StringReader(sampleRdf);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         // columns
@@ -155,7 +155,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 2);
@@ -188,7 +188,7 @@ public class RdfTripleImporterTests extends ImporterTest {
 
         StringReader input = new StringReader(sampleRdf);
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.RDFXML);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 3);
@@ -217,7 +217,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 4);
@@ -245,7 +245,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 4);
@@ -271,7 +271,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 4);
@@ -298,7 +298,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         String[] columns = { "subject",
                 "http://example.org/data#professor",
@@ -344,7 +344,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         StringReader input = new StringReader(sampleJsonld);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
-        GridState grid = parseOneFile(SUT, input);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 4);

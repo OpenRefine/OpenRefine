@@ -30,7 +30,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.overlay.OverlayModel;
@@ -46,7 +46,7 @@ import org.openrefine.util.ParsingUtilities;
 public class LegacyProjectImporter extends InputStreamImporter {
 
     @Override
-    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
             String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         // open the project archive
         if (!fileSource.endsWith(".tar")) {

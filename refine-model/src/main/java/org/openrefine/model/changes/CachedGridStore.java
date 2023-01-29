@@ -4,15 +4,15 @@ package org.openrefine.model.changes;
 import java.io.IOException;
 import java.util.Set;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 /**
- * An interface for accessing some intermediate grid states in a project, which are stored on disk.
+ * An interface for accessing some intermediate grids in a project, which are stored on disk.
  */
 public interface CachedGridStore {
 
     /**
-     * Lists the set of history entry ids for which the resulting grid state is cached.
+     * Lists the set of history entry ids for which the resulting grid is cached.
      */
     public Set<Long> listCachedGridIds();
 
@@ -25,7 +25,7 @@ public interface CachedGridStore {
      * @throws IOException
      *             if the grid could not be loaded from disk
      */
-    public GridState getCachedGrid(long id) throws IOException;
+    public Grid getCachedGrid(long id) throws IOException;
 
     /**
      * Discards the on-disk cache of a grid
@@ -38,15 +38,15 @@ public interface CachedGridStore {
     public void uncacheGrid(long id) throws IOException;
 
     /**
-     * Caches a grid state on disk.
+     * Caches a grid on disk.
      * 
      * @param id
      *            the id of the history entry which produced it
      * @param grid
      *            the grid to cache
-     * @return the same grid state read from disk instead.
+     * @return the same grid read from disk instead.
      * @throws IOException
      *             if caching the grid failed
      */
-    public GridState cacheGrid(long id, GridState grid) throws IOException;
+    public Grid cacheGrid(long id, Grid grid) throws IOException;
 }

@@ -42,7 +42,7 @@ import org.jsoup.helper.Validate;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -91,7 +91,7 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
         for (String columnName : _columnNames) {
             int columnIndex = columnIndex(model, columnName);
@@ -101,7 +101,7 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
         List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
             int columnIndex = columnIndex(state.getColumnModel(), columnName);

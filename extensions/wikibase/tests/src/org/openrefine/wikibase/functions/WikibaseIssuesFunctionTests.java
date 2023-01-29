@@ -18,7 +18,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.ControlFunctionRegistry;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.manifests.Manifest;
@@ -46,7 +46,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
 
     WikibaseSchema schema;
     Manifest manifest;
-    GridState grid;
+    Grid grid;
     Row row;
     int rowId;
     Properties bindings;

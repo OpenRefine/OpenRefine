@@ -63,7 +63,7 @@ import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
@@ -303,10 +303,10 @@ public class ImporterUtilities {
     }
 
     /**
-     * Given two grid states with potentially different columns, unify the two into a single grid state by adding
-     * columns of the second grid which are not present in the first at the end.
+     * Given two grids with potentially different columns, unify the two into a single grid by adding columns of the
+     * second grid which are not present in the first at the end.
      */
-    protected static GridState mergeGridStates(GridState state1, GridState state2) {
+    protected static Grid mergeGrids(Grid state1, Grid state2) {
         Map<Integer, Integer> positions = new HashMap<>();
         List<ColumnMetadata> mergedColumns = new ArrayList<>(state1.getColumnModel().getColumns());
         List<ColumnMetadata> columns2 = state2.getColumnModel().getColumns();
@@ -325,9 +325,9 @@ public class ImporterUtilities {
         ColumnModel mergedColumnModel = new ColumnModel(mergedColumns);
 
         int origSizeState1 = columnModel1.getColumns().size();
-        GridState translatedState1 = state1.mapRows(translateFirstGrid(origSizeState1, mergedColumns.size() - origSizeState1),
+        Grid translatedState1 = state1.mapRows(translateFirstGrid(origSizeState1, mergedColumns.size() - origSizeState1),
                 mergedColumnModel);
-        GridState translatedState2 = state2.mapRows(translateSecondGrid(mergedColumns.size(), positions), mergedColumnModel);
+        Grid translatedState2 = state2.mapRows(translateSecondGrid(mergedColumns.size(), positions), mergedColumnModel);
         return translatedState1.concatenate(translatedState2);
     }
 

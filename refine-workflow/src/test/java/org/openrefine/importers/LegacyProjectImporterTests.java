@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -44,7 +44,7 @@ public class LegacyProjectImporterTests extends ImporterTest {
     public void testLoadLegacyProject() throws Exception {
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/legacy-openrefine-project.tar.gz");
 
-        GridState grid = parseOneFile(SUT, stream);
+        Grid grid = parseOneFile(SUT, stream);
 
         ReconCandidate match = new ReconCandidate("Q573", "day", null, 100.0);
         StandardReconConfig reconConfig = ParsingUtilities.mapper.readValue(reconConfigJson, StandardReconConfig.class);
@@ -53,7 +53,7 @@ public class LegacyProjectImporterTests extends ImporterTest {
         Recon unmatchedRecon = new Recon(1609493961679556613L, 1609494430802L, Judgment.None, null, null, Collections.emptyList(),
                 reconConfig.service, reconConfig.identifierSpace, reconConfig.schemaSpace, "unknown", -1);
 
-        GridState expected = createGrid(new String[] { "a", "b", "trim" },
+        Grid expected = createGrid(new String[] { "a", "b", "trim" },
                 new Serializable[][] {
                         { "c", new Cell("d", matchedRecon), "d" },
                         { "e", new Cell("f", unmatchedRecon), "f" }

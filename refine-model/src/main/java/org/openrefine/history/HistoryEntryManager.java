@@ -40,7 +40,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -60,7 +60,7 @@ public class HistoryEntryManager {
     protected static final String GRID_CACHE_SUBDIR = "cache";
 
     /**
-     * Saves the history and the initial grid state to a directory.
+     * Saves the history and the initial grid to a directory.
      * 
      * @param dir
      *            the directory where the history should be saved.
@@ -70,7 +70,7 @@ public class HistoryEntryManager {
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Save the initial grid if does not exist yet (it is immutable)
         if (!gridFile.exists()) {
-            history.getInitialGridState().saveToFile(gridFile);
+            history.getInitialGrid().saveToFile(gridFile);
         }
         Metadata metadata = new Metadata();
         metadata.entries = history.getEntries();
@@ -85,9 +85,9 @@ public class HistoryEntryManager {
         // Load the metadata
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         // Load the initial grid
-        GridState gridState = runner.loadGridState(gridFile);
+        Grid grid = runner.loadGrid(gridFile);
         return new History(
-                gridState,
+                grid,
                 getChangeDataStore(runner, dir),
                 getCachedGridStore(runner, dir),
                 metadata.entries,
@@ -105,7 +105,7 @@ public class HistoryEntryManager {
     }
 
     /**
-     * The place where to store cached intermediate grid states.
+     * The place where to store cached intermediate grids.
      */
     public CachedGridStore getCachedGridStore(DatamodelRunner runner, File projectDir) {
         return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));

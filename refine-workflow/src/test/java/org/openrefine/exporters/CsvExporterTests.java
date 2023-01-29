@@ -55,7 +55,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 
 public class CsvExporterTests extends RefineTest {
@@ -68,7 +68,7 @@ public class CsvExporterTests extends RefineTest {
     // dependencies
     StringWriter writer;
     Engine engine;
-    GridState grid;
+    Grid grid;
     ProjectMetadata projectMetadata;
     Properties options;
 
@@ -166,7 +166,7 @@ public class CsvExporterTests extends RefineTest {
                         { "row2cell0", "row2cell1", "row2cell2" }
                 });
 
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -190,7 +190,7 @@ public class CsvExporterTests extends RefineTest {
                         { "row2cell0", "row2cell1", "row2cell2" }
                 });
 
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -214,7 +214,7 @@ public class CsvExporterTests extends RefineTest {
                         { "row2cell0", "row2cell1", "row2cell2" }
                 });
 
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -238,7 +238,7 @@ public class CsvExporterTests extends RefineTest {
                         { null, "row2cell1", "row2cell2" }
                 });
 
-        GridState grid = project.getCurrentGridState();
+        Grid grid = project.getCurrentGrid();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);

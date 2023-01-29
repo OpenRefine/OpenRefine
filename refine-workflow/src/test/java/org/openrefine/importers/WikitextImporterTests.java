@@ -50,7 +50,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
 
@@ -92,9 +92,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(0, 0, true, true, null, null);
-        GridState parsed = parse(input);
+        Grid parsed = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "Column 1", "Column 2", "Column 3" },
                 new Serializable[][] {
                         { "a", "b\n2", "c" },
@@ -123,9 +123,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(0, 0, true, true, null, null);
-        GridState parsed = parse(input);
+        Grid parsed = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "Column 1", "Column 2", "Column 3" },
                 new Serializable[][] {
                         { "a", "b\n2", "c" },
@@ -158,7 +158,7 @@ public class WikitextImporterTests extends ImporterTest {
             server.enqueue(new MockResponse().setBody(jsonResponse));
 
             prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/", server.url("endpoint").url().toString());
-            GridState grid = parse(input);
+            Grid grid = parse(input);
 
             List<Row> rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
             Assert.assertEquals(grid.getColumnModel().getColumns().size(), 3);
@@ -203,7 +203,7 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(-1, 1, true, true, null, null);
-        GridState grid = parse(input);
+        Grid grid = parse(input);
 
         List<Row> rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         ColumnModel columnModel = grid.getColumnModel();
@@ -235,9 +235,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(-1, 1, true, true, null, null);
-        GridState grid = parse(input);
+        Grid grid = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] {
                         "Shopping List", "Column", "Column2", "Column3", "Column4", "Column5"
                 },
@@ -264,9 +264,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(-1, 1, true, true, null, null);
-        GridState grid = parse(input);
+        Grid grid = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] {
                         "price", "fruit", "Column", "merchant", "Column2"
                 },
@@ -292,9 +292,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(-1, 1, true, true, null, null);
-        GridState grid = parse(input);
+        Grid grid = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] {
                         "price", "fruit", "Column", "merchant", "Column2"
                 },
@@ -324,9 +324,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|}\n";
 
         prepareOptions(0, 0, true, true, null, null);
-        GridState grid = parse(input);
+        Grid grid = parse(input);
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] {
                         "Column 1", "Column 2", "Column 3"
                 },
@@ -340,7 +340,7 @@ public class WikitextImporterTests extends ImporterTest {
 
     // --helpers--
 
-    private GridState parse(String wikitext) throws Exception {
+    private Grid parse(String wikitext) throws Exception {
         return parseOneFile(importer, new StringReader(wikitext));
     }
 

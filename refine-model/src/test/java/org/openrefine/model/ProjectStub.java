@@ -41,7 +41,7 @@ import org.openrefine.model.changes.LazyChangeDataStore;
 
 public class ProjectStub extends Project {
 
-    public ProjectStub(GridState state) {
+    public ProjectStub(Grid state) {
         super(state, new LazyChangeDataStore(), new LazyCachedGridStore());
     }
 

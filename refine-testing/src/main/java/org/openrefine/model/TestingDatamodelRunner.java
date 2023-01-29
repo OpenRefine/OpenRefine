@@ -26,7 +26,7 @@ import com.google.common.io.CountingInputStream;
 import org.testng.Assert;
 
 import org.openrefine.importers.MultiFileReadingProgress;
-import org.openrefine.model.GridState.Metadata;
+import org.openrefine.model.Grid.Metadata;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -95,9 +95,9 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadGridState(File path) throws IOException {
-        File gridPath = new File(path, GridState.GRID_PATH);
-        File metadataPath = new File(path, GridState.METADATA_PATH);
+    public Grid loadGrid(File path) throws IOException {
+        File gridPath = new File(path, Grid.GRID_PATH);
+        File metadataPath = new File(path, Grid.METADATA_PATH);
 
         List<Row> rows = new ArrayList<>();
 
@@ -135,7 +135,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
         }
 
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataPath, Metadata.class);
-        return new TestingGridState(metadata.columnModel, rows, metadata.overlayModels);
+        return new TestingGrid(metadata.columnModel, rows, metadata.overlayModels);
     }
 
     @Override
@@ -190,8 +190,8 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
-        return new TestingGridState(columnModel, rows, overlayModels);
+    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+        return new TestingGrid(columnModel, rows, overlayModels);
     }
 
     @Override
@@ -202,12 +202,12 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
         return loadTextFile(path, progress, GRID_ENCODING, Long.MAX_VALUE);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
         LineNumberReader reader = null;
         try {
             File file = new File(path);
@@ -221,7 +221,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
             progress.readingFile(file.getName(), inputStream.getCount());
 
             ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
-            return new TestingGridState(columnModel, rows, Collections.emptyMap());
+            return new TestingGrid(columnModel, rows, Collections.emptyMap());
         } finally {
             if (reader != null) {
                 reader.close();

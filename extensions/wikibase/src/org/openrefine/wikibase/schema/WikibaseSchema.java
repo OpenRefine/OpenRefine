@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.overlay.OverlayModel;
@@ -193,7 +193,7 @@ public class WikibaseSchema implements OverlayModel {
      *            a store in which issues will be emitted
      * @return entity updates are stored in their generating order (not merged yet).
      */
-    public List<EntityEdit> evaluate(GridState grid, Engine engine, QAWarningStore warningStore) {
+    public List<EntityEdit> evaluate(Grid grid, Engine engine, QAWarningStore warningStore) {
         if (!validated) {
             throw new IllegalStateException("The schema has not been validated before being evaluated");
         }
@@ -220,7 +220,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * Same as above, ignoring any warnings.
      */
-    public List<EntityEdit> evaluate(GridState grid, Engine engine) {
+    public List<EntityEdit> evaluate(Grid grid, Engine engine) {
         return evaluate(grid, engine, null);
     }
 

@@ -45,7 +45,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -57,7 +57,7 @@ import org.openrefine.util.TestUtils;
 
 public class ColumnRenameOperationTests extends RefineTest {
 
-    protected GridState initialState;
+    protected Grid initialState;
 
     @BeforeMethod
     public void setUpInitialState() {
@@ -91,7 +91,7 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void testRename() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnRenameOperation("foo", "newfoo").createChange();
-        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),

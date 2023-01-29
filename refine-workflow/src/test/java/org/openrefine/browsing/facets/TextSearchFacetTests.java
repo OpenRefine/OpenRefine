@@ -52,7 +52,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
@@ -62,7 +62,7 @@ import org.openrefine.util.TestUtils;
 public class TextSearchFacetTests extends RefineTest {
 
     // dependencies
-    private GridState grid;
+    private Grid grid;
     private List<Row> rows;
     private TextSearchFacetConfig textFilterConfig;
     private TextSearchFacet textFilter;

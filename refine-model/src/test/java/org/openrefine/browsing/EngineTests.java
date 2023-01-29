@@ -52,8 +52,8 @@ import org.openrefine.browsing.facets.FacetStateStub;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
-import org.openrefine.model.GridState.PartialAggregation;
+import org.openrefine.model.Grid;
+import org.openrefine.model.Grid.PartialAggregation;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -64,7 +64,7 @@ public class EngineTests {
 
     private Engine engine;
     private Engine enginePartial;
-    private GridState initialState;
+    private Grid initialState;
     private EngineConfig engineConfig;
     private EngineConfig engineConfigPartial;
     protected static RowInRecordFilter filterA = new RowInRecordFilter(true) {
@@ -94,7 +94,7 @@ public class EngineTests {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("column1"),
                 new ColumnMetadata("column2")));
-        initialState = mock(GridState.class);
+        initialState = mock(Grid.class);
         when(initialState.getColumnModel()).thenReturn(columnModel);
         Facet facetA = mock(Facet.class);
         Facet facetAll = mock(Facet.class);
@@ -124,7 +124,7 @@ public class EngineTests {
     public void testAccessors() {
         Assert.assertEquals(engine.getMode(), Mode.RowBased);
         Assert.assertEquals(engine.getConfig(), engineConfig);
-        Assert.assertEquals(engine.getGridState(), initialState);
+        Assert.assertEquals(engine.getGrid(), initialState);
     }
 
     @Test

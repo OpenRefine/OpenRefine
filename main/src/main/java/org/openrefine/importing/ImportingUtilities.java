@@ -74,7 +74,7 @@ import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -804,7 +804,7 @@ public class ImportingUtilities {
 
         try {
             job.metadata = createProjectMetadata(optionObj);
-            GridState state = record.parser.parse(
+            Grid state = record.parser.parse(
                     runner,
                     job.metadata,
                     job,
@@ -861,7 +861,7 @@ public class ImportingUtilities {
         ProjectMetadata pm = createProjectMetadata(optionObj);
         Project newProject = null;
         try {
-            GridState state = record.parser.parse(
+            Grid state = record.parser.parse(
                     runner,
                     pm,
                     job,

@@ -71,7 +71,7 @@ public class Project {
      * @param initialState
      *            the initial state of the project.
      */
-    public Project(GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public Project(Grid initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
         this(generateID(), new History(initialState, dataStore, gridStore));
     }
 
@@ -83,7 +83,7 @@ public class Project {
      * @param initialState
      *            the initial state of the project
      */
-    public Project(long projectId, GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+    public Project(long projectId, Grid initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
         this(projectId, new History(initialState, dataStore, gridStore));
     }
 
@@ -136,21 +136,21 @@ public class Project {
      * Convenience function to return the current column model from the history.
      */
     public ColumnModel getColumnModel() {
-        return history.getCurrentGridState().getColumnModel();
+        return history.getCurrentGrid().getColumnModel();
     }
 
     /**
-     * Convenience function to return the current grid state.
+     * Convenience function to return the current grid.
      */
-    public GridState getCurrentGridState() {
-        return history.getCurrentGridState();
+    public Grid getCurrentGrid() {
+        return history.getCurrentGrid();
     }
 
     /**
      * Convenience function to return the current overlay models
      */
     public Map<String, OverlayModel> getOverlayModels() {
-        return history.getCurrentGridState().getOverlayModels();
+        return history.getCurrentGrid().getOverlayModels();
     }
 
     /**

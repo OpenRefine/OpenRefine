@@ -148,7 +148,7 @@ public abstract class Command {
         if (c == null) {
             c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
         }
-        Engine engine = new Engine(project.getHistory().getCurrentGridState(), c);
+        Engine engine = new Engine(project.getHistory().getCurrentGrid(), c);
         return engine;
     }
 

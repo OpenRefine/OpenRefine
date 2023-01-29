@@ -13,7 +13,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
@@ -34,7 +34,7 @@ public class LineBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    protected int getColumnCount(GridState rawCells, RowMapper rowMapper, ObjectNode options) {
+    protected int getColumnCount(Grid rawCells, RowMapper rowMapper, ObjectNode options) {
         return 1;
     }
 
@@ -44,7 +44,7 @@ public class LineBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    protected GridState postTransform(GridState parsed, ObjectNode options) {
+    protected Grid postTransform(Grid parsed, ObjectNode options) {
         int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
         if (linesPerRow == 1) {
             return parsed;

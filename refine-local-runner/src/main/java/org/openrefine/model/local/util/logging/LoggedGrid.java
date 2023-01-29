@@ -18,20 +18,20 @@ import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
- * A grid state which wraps another one, adding logging to keep track of the timing of each operation.
+ * A grid which wraps another one, adding logging to keep track of the timing of each operation.
  */
-public class LoggedGridState implements GridState {
+public class LoggedGrid implements Grid {
 
-    protected final GridState grid;
+    protected final Grid grid;
     protected final LoggedDatamodelRunner runner;
 
-    public LoggedGridState(LoggedDatamodelRunner runner, GridState grid) {
+    public LoggedGrid(LoggedDatamodelRunner runner, Grid grid) {
         this.grid = grid;
         this.runner = runner;
     }
 
-    protected GridState wrap(GridState grid) {
-        return new LoggedGridState(runner, grid);
+    protected Grid wrap(Grid grid) {
+        return new LoggedGrid(runner, grid);
     }
 
     protected <T> T exec(String name, Supplier<T> action) {
@@ -42,7 +42,7 @@ public class LoggedGridState implements GridState {
         runner.exec(name, action);
     }
 
-    protected GridState wrap(String name, Supplier<GridState> action) {
+    protected Grid wrap(String name, Supplier<Grid> action) {
         return runner.wrap(runner.exec(name, action));
     }
 
@@ -61,7 +61,7 @@ public class LoggedGridState implements GridState {
     }
 
     @Override
-    public GridState withColumnModel(ColumnModel newColumnModel) {
+    public Grid withColumnModel(ColumnModel newColumnModel) {
         return wrap(grid.withColumnModel(newColumnModel));
     }
 
@@ -221,57 +221,57 @@ public class LoggedGridState implements GridState {
     }
 
     @Override
-    public GridState withOverlayModels(Map<String, OverlayModel> overlayModel) {
+    public Grid withOverlayModels(Map<String, OverlayModel> overlayModel) {
         return wrap(grid.withOverlayModels(overlayModel));
     }
 
     @Override
-    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         return wrap("mapRows", () -> grid.mapRows(mapper, newColumnModel));
     }
 
     @Override
-    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+    public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         return wrap("flatMapRows", () -> grid.flatMapRows(mapper, newColumnModel));
     }
 
     @Override
-    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+    public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         return wrap("scanMapRows", () -> grid.mapRows(mapper, newColumnModel));
     }
 
     @Override
-    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         return wrap("mapRecords", () -> grid.mapRecords(mapper, newColumnModel));
     }
 
     @Override
-    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRows(SortingConfig sortingConfig, boolean permanent) {
         return wrap("reorderRows", () -> grid.reorderRows(sortingConfig, permanent));
     }
 
     @Override
-    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRecords(SortingConfig sortingConfig, boolean permanent) {
         return wrap("reorderRecords", () -> grid.reorderRecords(sortingConfig, permanent));
     }
 
     @Override
-    public GridState removeRows(RowFilter filter) {
+    public Grid removeRows(RowFilter filter) {
         return wrap("removeRows", () -> grid.removeRows(filter));
     }
 
     @Override
-    public GridState removeRecords(RecordFilter filter) {
+    public Grid removeRecords(RecordFilter filter) {
         return wrap("removeRecords", () -> grid.removeRecords(filter));
     }
 
     @Override
-    public GridState limitRows(long rowLimit) {
+    public Grid limitRows(long rowLimit) {
         return wrap("limitRows", () -> grid.limitRows(rowLimit));
     }
 
     @Override
-    public GridState dropRows(long rowsToDrop) {
+    public Grid dropRows(long rowsToDrop) {
         return wrap("dropRows", () -> grid.dropRows(rowsToDrop));
     }
 
@@ -286,26 +286,26 @@ public class LoggedGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel) {
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel) {
         return wrap(
                 exec("join (with row joiner)", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel) {
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel) {
         return wrap(exec("join (with row flat joiner)",
                 () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel) {
+    public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel) {
         return wrap(exec("join with record joiner",
                 () -> grid.join(((LoggedChangeData<T>) changeData).changeData, recordJoiner, newColumnModel)));
     }
 
     @Override
-    public GridState concatenate(GridState other) {
-        return wrap(grid.concatenate(((LoggedGridState) other).grid));
+    public Grid concatenate(Grid other) {
+        return wrap(grid.concatenate(((LoggedGrid) other).grid));
     }
 
     @Override

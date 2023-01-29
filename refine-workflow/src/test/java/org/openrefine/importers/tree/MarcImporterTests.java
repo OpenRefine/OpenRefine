@@ -50,7 +50,7 @@ import org.testng.annotations.Test;
 import org.openrefine.importers.ImporterTest;
 import org.openrefine.importers.MarcImporter;
 import org.openrefine.importing.ImportingFileRecord;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
@@ -85,7 +85,7 @@ public class MarcImporterTests extends ImporterTest {
         // NOTE: This has the side effect of creating sample.mrc.xml
         parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 
-        GridState grid = parseFiles(parser, importingFileRecords, options);
+        Grid grid = parseFiles(parser, importingFileRecords, options);
 
         List<String> columnNames = grid.getColumnModel().getColumnNames();
         Assert.assertTrue(columnNames.contains("marc:record - marc:datafield - tag"));
@@ -111,7 +111,7 @@ public class MarcImporterTests extends ImporterTest {
         // NOTE: This has the side effect of creating scriblio.mrc.xml
         parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 
-        GridState grid = parseFiles(parser, importingFileRecords, options);
+        Grid grid = parseFiles(parser, importingFileRecords, options);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         assertEquals(grid.rowCount(), 30);

@@ -43,7 +43,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 
@@ -80,7 +80,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "col1" + sep + "col2" + sep + "col3";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -95,7 +95,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -116,7 +116,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "234" + sep + "data3";
 
         prepareOptions(sep, -1, 0, 0, 1, true, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -137,7 +137,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "Column 1");
@@ -157,7 +157,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1 " + sep + " 3.4 " + sep + " data3 ";
 
         prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -174,7 +174,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1" + sep + " 12" + sep + " data3";
 
         prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -192,7 +192,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", false);
         options.put("trimStrings", true);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -210,7 +210,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
         options.put("trimStrings", false);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -228,7 +228,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", multiLine);
         options.put("trimStrings", true);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -245,7 +245,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = " data1" + sep + sep + " data3";
 
         prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", false);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.rowCount(), 1);
@@ -264,7 +264,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 0, 0, 2, false, false, "\"", "[]", false);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
@@ -285,7 +285,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3" + sep + "data4" + sep + "data5" + sep + "data6";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 6);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -312,7 +312,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + sep + "data2";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -333,7 +333,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 0, 1, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -355,7 +355,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 1, 0, 1, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -381,7 +381,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data1" + sep + "data2" + sep + "data3";
 
         prepareOptions(sep, -1, 1, 3, 2, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
@@ -411,7 +411,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "data-row3-cell1" + sep + "data-row3-cell2" + sep + "data-row1-cell3";
 
         prepareOptions(sep, 2, 2, 3, 2, false, false, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
@@ -436,7 +436,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + sep + "data2\"" + sep + "data3" + sep + "data4";
 
         prepareOptions(sep, -1, 0, 0, 0, false, true, "\"", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 4);
         Assert.assertEquals(state.rowCount(), 1);
@@ -455,7 +455,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", true);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -476,7 +476,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", true);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -497,7 +497,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", false);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -520,7 +520,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", false);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -539,7 +539,7 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "'data1'" + sep + "'data2'" + sep + "'data3'";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "'", "[]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -559,7 +559,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + sep + "data2" + sep + "data3\n";
 
         prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]", multiLine);
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
@@ -577,7 +577,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         prepareOptions(",", -1, 0, 0, 0, true, true, "\"", "[]", false);
 
-        GridState state = parseOneString(SUT, SAMPLE_ROW);
+        Grid state = parseOneString(SUT, SAMPLE_ROW);
 
         Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
@@ -593,7 +593,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         prepareOptions(",", -1, 0, 0, 0, true, true, "\"", "[]", false);
 
-        GridState state = parseOneString(SUT, input);
+        Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);

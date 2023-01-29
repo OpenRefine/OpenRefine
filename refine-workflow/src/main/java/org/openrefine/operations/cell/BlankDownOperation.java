@@ -46,7 +46,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
@@ -95,7 +95,7 @@ public class BlankDownOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridState apply(GridState state, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid state, ChangeContext context) throws DoesNotApplyException {
             ColumnModel model = state.getColumnModel();
             int index = model.getColumnIndexByName(_columnName);
             if (index == -1) {

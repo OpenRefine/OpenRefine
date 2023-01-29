@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.TestUtils;
@@ -47,7 +47,7 @@ public class EditOneCellCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        GridState state = project.getCurrentGridState();
+        Grid state = project.getCurrentGrid();
         Row row0 = state.getRow(0);
         assertEquals(row0.cells.get(0).value, "a");
         assertEquals(row0.cells.get(1).value, "b");
@@ -67,7 +67,7 @@ public class EditOneCellCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        GridState state = project.getCurrentGridState();
+        Grid state = project.getCurrentGrid();
         Row row0 = state.getRow(0);
         assertEquals(row0.cells.get(0).value, "a");
         assertEquals(row0.cells.get(1).value, "b");
@@ -88,7 +88,7 @@ public class EditOneCellCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        GridState state = project.getCurrentGridState();
+        Grid state = project.getCurrentGrid();
         Row row0 = state.getRow(0);
         assertEquals(row0.cells.get(0).value, "a");
         assertEquals(row0.cells.get(1).value, "b");
@@ -108,7 +108,7 @@ public class EditOneCellCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        assertEquals("c", project.getCurrentGridState().getRow(1).cells.get(0).value, "c");
+        assertEquals("c", project.getCurrentGrid().getRow(1).cells.get(0).value, "c");
         TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 }

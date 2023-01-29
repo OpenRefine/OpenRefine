@@ -36,14 +36,14 @@ package org.openrefine.sorting;
 import java.io.Serializable;
 
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
 public class RecordSorter extends BaseSorter<Record> {
 
-    public RecordSorter(GridState state, SortingConfig config) {
+    public RecordSorter(Grid state, SortingConfig config) {
         super(state, config);
     }
 

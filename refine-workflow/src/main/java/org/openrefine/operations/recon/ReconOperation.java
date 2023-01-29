@@ -61,7 +61,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -106,7 +106,7 @@ public class ReconOperation extends EngineDependentOperation {
         return new ReconProcess(
                 project.getHistory(),
                 project.getProcessManager(),
-                new Engine(project.getCurrentGridState(), getEngineConfig()),
+                new Engine(project.getCurrentGrid(), getEngineConfig()),
                 getDescription());
     }
 
@@ -193,7 +193,7 @@ public class ReconOperation extends EngineDependentOperation {
 
         @Override
         public void run() {
-            GridState state = _history.getCurrentGridState();
+            Grid state = _history.getCurrentGrid();
             ColumnModel columnModel = state.getColumnModel();
 
             int columnIndex = columnModel.getColumnIndexByName(_columnName);

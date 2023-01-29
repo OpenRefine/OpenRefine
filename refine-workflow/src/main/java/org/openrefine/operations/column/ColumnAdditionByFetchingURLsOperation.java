@@ -61,7 +61,7 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -209,7 +209,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
     @Override
     public Process createProcess(Project project) throws Exception {
-        Engine engine = createEngine(project.getCurrentGridState());
+        Engine engine = createEngine(project.getCurrentGrid());
 
         Evaluable eval = MetaParser.parse(_urlExpression);
 
@@ -414,7 +414,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         @Override
         public void run() {
-            GridState state = _history.getCurrentGridState();
+            Grid state = _history.getCurrentGrid();
             ColumnModel columnModel = state.getColumnModel();
             ColumnMetadata column = columnModel.getColumnByName(_baseColumnName);
             if (column == null) {

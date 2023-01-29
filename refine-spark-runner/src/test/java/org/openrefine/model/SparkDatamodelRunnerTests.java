@@ -25,8 +25,8 @@ public class SparkDatamodelRunnerTests extends DatamodelRunnerTestBase {
     // Additional tests specific to the Spark implementation
 
     @Test
-    public void testGridStateFromMemoryHasCachedRowCount() {
-        SparkGridState grid = (SparkGridState) createGrid(new String[] { "foo" }, new Serializable[][] { { "bar" } });
+    public void testGridFromMemoryHasCachedRowCount() {
+        SparkGrid grid = (SparkGrid) createGrid(new String[] { "foo" }, new Serializable[][] { { "bar" } });
 
         Assert.assertTrue(grid.isRowCountCached());
         Assert.assertEquals(grid.rowCount(), 1L);

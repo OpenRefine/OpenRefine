@@ -36,8 +36,8 @@ import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.importers.MultiFileReadingProgressStub;
-import org.openrefine.model.GridState.ApproxCount;
-import org.openrefine.model.GridState.PartialAggregation;
+import org.openrefine.model.Grid.ApproxCount;
+import org.openrefine.model.Grid.PartialAggregation;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -68,7 +68,7 @@ public abstract class DatamodelRunnerTestBase {
 
     protected DatamodelRunner SUT;
 
-    protected GridState simpleGrid, longerGrid, gridToSort;
+    protected Grid simpleGrid, longerGrid, gridToSort;
     protected ChangeData<String> simpleChangeData;
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
@@ -97,7 +97,7 @@ public abstract class DatamodelRunnerTestBase {
         tempDir = null;
     }
 
-    protected GridState createGrid(String[] columnNames, Cell[][] cells) {
+    protected Grid createGrid(String[] columnNames, Cell[][] cells) {
         ColumnModel cm = new ColumnModel(Arrays.asList(columnNames)
                 .stream()
                 .map(name -> new ColumnMetadata(name))
@@ -109,7 +109,7 @@ public abstract class DatamodelRunnerTestBase {
         return SUT.create(cm, rows, Collections.emptyMap());
     }
 
-    protected GridState createGrid(String[] columnNames, Serializable[][] cellValues) {
+    protected Grid createGrid(String[] columnNames, Serializable[][] cellValues) {
         Cell[][] cells = new Cell[cellValues.length][];
         for (int i = 0; i != cellValues.length; i++) {
             cells[i] = new Cell[cellValues[i].length];
@@ -195,7 +195,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testWithOverlayModel() {
-        GridState withOverlayModel = simpleGrid.withOverlayModels(Collections.singletonMap("foo", overlayModel));
+        Grid withOverlayModel = simpleGrid.withOverlayModels(Collections.singletonMap("foo", overlayModel));
         Map<String, OverlayModel> overlayModels = withOverlayModel.getOverlayModels();
         Assert.assertEquals(overlayModels.get("foo"), overlayModel);
         Assert.assertNull(overlayModels.get("bar"));
@@ -218,7 +218,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testAccessRows() {
-        GridState state = simpleGrid;
+        Grid state = simpleGrid;
 
         Assert.assertEquals(state.rowCount(), 4L);
 
@@ -339,7 +339,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testAccessRecords() {
-        GridState state = simpleGrid;
+        Grid state = simpleGrid;
 
         Assert.assertEquals(state.recordCount(), 2L);
 
@@ -372,7 +372,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testRecordGroupingNoRecordStart() {
-        GridState noRecordStart = createGrid(new String[] { "foo", "bar" },
+        Grid noRecordStart = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { null, "a" },
                         { "", "b" },
@@ -390,7 +390,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testRecordsRespectKeyColumnIndex() {
-        GridState state = simpleGrid.withColumnModel(simpleGrid.getColumnModel().withKeyColumnIndex(1));
+        Grid state = simpleGrid.withColumnModel(simpleGrid.getColumnModel().withKeyColumnIndex(1));
 
         Assert.assertEquals(state.recordCount(), 4L);
         List<Record> records = Arrays.asList(
@@ -449,7 +449,7 @@ public abstract class DatamodelRunnerTestBase {
 
         simpleGrid.saveToFile(tempFile);
 
-        GridState loaded = SUT.loadGridState(tempFile);
+        Grid loaded = SUT.loadGrid(tempFile);
 
         Assert.assertEquals(loaded.rowCount(), 4L);
         List<Row> actualRows = loaded.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
@@ -468,7 +468,7 @@ public abstract class DatamodelRunnerTestBase {
             Assert.assertEquals(reporter.getPercentage(), 100);
         }
 
-        GridState loaded = SUT.loadGridState(tempFile);
+        Grid loaded = SUT.loadGrid(tempFile);
 
         Assert.assertEquals(loaded.rowCount(), 4L);
         List<Row> actualRows = loaded.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
@@ -487,12 +487,12 @@ public abstract class DatamodelRunnerTestBase {
                 "http://my.service/space", "http://my.service/schema", "batch", 0);
         Cell cell = new Cell("value", recon);
         List<Row> rows = Arrays.asList(new Row(Arrays.asList(cell)));
-        GridState grid = SUT.create(columnModel, rows, Collections.emptyMap());
+        Grid grid = SUT.create(columnModel, rows, Collections.emptyMap());
 
         File tempFile = new File(tempDir, "testgrid_recon");
         grid.saveToFile(tempFile);
 
-        GridState loaded = SUT.loadGridState(tempFile);
+        Grid loaded = SUT.loadGrid(tempFile);
         Assert.assertEquals(loaded.collectRows(), grid.collectRows());
     }
 
@@ -662,7 +662,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testMapRows() {
-        GridState mapped = simpleGrid.mapRows(
+        Grid mapped = simpleGrid.mapRows(
                 concatRowMapper, simpleGrid.getColumnModel());
 
         List<IndexedRow> rows = mapped.collectRows();
@@ -683,7 +683,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testFlatMapRows() {
-        GridState mapped = simpleGrid.flatMapRows(
+        Grid mapped = simpleGrid.flatMapRows(
                 rowDuplicator, simpleGrid.getColumnModel());
 
         Assert.assertEquals(mapped.getColumnModel(), simpleGrid.getColumnModel());
@@ -721,7 +721,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testStatefullyMapRows() {
-        GridState mapped = longerGrid.mapRows(
+        Grid mapped = longerGrid.mapRows(
                 statefulRowMapper, simpleGrid.getColumnModel());
 
         List<IndexedRow> rows = mapped.collectRows();
@@ -737,7 +737,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testMapRecords() {
-        GridState mapped = simpleGrid.mapRecords(
+        Grid mapped = simpleGrid.mapRecords(
                 concatRecordMapper, simpleGrid.getColumnModel());
 
         List<IndexedRow> rows = mapped.collectRows();
@@ -748,9 +748,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testReorderRowsPermanently() {
-        GridState reordered = gridToSort.reorderRows(sortingConfig, true);
+        Grid reordered = gridToSort.reorderRows(sortingConfig, true);
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { null, 0 },
                         { "a", 1 },
@@ -771,7 +771,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testReorderRowsTemporarily() {
-        GridState reordered = gridToSort.reorderRows(sortingConfig, false);
+        Grid reordered = gridToSort.reorderRows(sortingConfig, false);
 
         List<IndexedRow> expectedRows = Arrays.asList(
                 new IndexedRow(0L, 2L, new Row(Arrays.asList(null, new Cell(0, null)))),
@@ -794,9 +794,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testReorderRecordsPermanently() {
-        GridState reordered = gridToSort.reorderRecords(sortingConfig, true);
+        Grid reordered = gridToSort.reorderRecords(sortingConfig, true);
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", 1 },
                         { null, 0 },
@@ -809,7 +809,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testReorderRecordsTemporarily() {
-        GridState reordered = gridToSort.reorderRecords(sortingConfig, false);
+        Grid reordered = gridToSort.reorderRecords(sortingConfig, false);
 
         List<IndexedRow> expectedRows = Arrays.asList(
                 new IndexedRow(0L, 1L, new Row(Arrays.asList(new Cell("a", null), new Cell(1, null)))),
@@ -833,9 +833,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testRemoveRows() {
-        GridState removed = simpleGrid.removeRows(myRowFilter);
+        Grid removed = simpleGrid.removeRows(myRowFilter);
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "", 1 }
                 });
@@ -845,9 +845,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testRemoveRecords() {
-        GridState removed = simpleGrid.removeRecords(myRecordFilter);
+        Grid removed = simpleGrid.removeRecords(myRecordFilter);
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "", 1 }
@@ -859,8 +859,8 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testLimitRows() {
-        GridState limited = simpleGrid.limitRows(2L);
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid limited = simpleGrid.limitRows(2L);
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "", 1 }
@@ -872,8 +872,8 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testDropRows() {
-        GridState limited = simpleGrid.dropRows(2L);
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid limited = simpleGrid.dropRows(2L);
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "c", true },
                         { null, 123123123123L }
@@ -1109,9 +1109,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testJoinChangeData() {
-        GridState joined = simpleGrid.join(simpleChangeData, joiner, simpleGrid.getColumnModel());
+        Grid joined = simpleGrid.join(simpleChangeData, joiner, simpleGrid.getColumnModel());
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "first" },
                         { "", null },
@@ -1137,9 +1137,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testFlatJoinChangeData() {
-        GridState flatJoined = simpleGrid.join(simpleChangeData, flatJoiner, simpleGrid.getColumnModel());
+        Grid flatJoined = simpleGrid.join(simpleChangeData, flatJoiner, simpleGrid.getColumnModel());
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "a", "first" },
@@ -1168,9 +1168,9 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testRecordJoinChangeData() {
-        GridState joined = simpleGrid.join(simpleChangeData, recordJoiner, simpleGrid.getColumnModel());
+        Grid joined = simpleGrid.join(simpleChangeData, recordJoiner, simpleGrid.getColumnModel());
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "first" },
                         { "", "first" },
@@ -1183,13 +1183,13 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testConcatenate() {
-        GridState otherGrid = createGrid(new String[] { "foo2", "bar" },
+        Grid otherGrid = createGrid(new String[] { "foo2", "bar" },
                 new Serializable[][] {
                         { "k", "l" },
                         { "p", "q" }
                 });
 
-        GridState expected = createGrid(new String[] { "foo", "bar" },
+        Grid expected = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "", 1 },
@@ -1199,7 +1199,7 @@ public abstract class DatamodelRunnerTestBase {
                         { "p", "q" }
                 });
 
-        GridState concatenated = simpleGrid.concatenate(otherGrid);
+        Grid concatenated = simpleGrid.concatenate(otherGrid);
 
         Assert.assertEquals(concatenated.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(concatenated.collectRows(), expected.collectRows());
@@ -1207,7 +1207,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConcatenateIncompatibleNumberOfColumns() {
-        GridState otherGrid = createGrid(new String[] { "foo2" },
+        Grid otherGrid = createGrid(new String[] { "foo2" },
                 new Serializable[][] {
                         { "k" },
                         { "p" }
@@ -1221,9 +1221,9 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
+        Grid textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
 
-        GridState expected = createGrid(new String[] { "Column" },
+        Grid expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" },
@@ -1239,7 +1239,7 @@ public abstract class DatamodelRunnerTestBase {
         createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
 
         MultiFileReadingProgressStub progress = new MultiFileReadingProgressStub();
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress, utf8);
+        Grid textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress, utf8);
 
         // read the whole file
         textGrid.collectRows();
@@ -1255,9 +1255,9 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "longtextfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8, 7);
+        Grid textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8, 7);
 
-        GridState expected = createGrid(new String[] { "Column" },
+        Grid expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" },
@@ -1276,9 +1276,9 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfileWithNewline.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\n");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
+        Grid textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
 
-        GridState expected = createGrid(new String[] { "Column" },
+        Grid expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" },
@@ -1324,13 +1324,13 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     /**
-     * Because {@link GridState} implementations are not required to use the {@link Object#equals(Object)} method to
-     * compare the contents of grids, we use this helper to check that two grids have the same contents.
+     * Because {@link Grid} implementations are not required to use the {@link Object#equals(Object)} method to compare
+     * the contents of grids, we use this helper to check that two grids have the same contents.
      *
      * @param actual
      * @param expected
      */
-    public static void assertGridEquals(GridState actual, GridState expected) {
+    public static void assertGridEquals(Grid actual, Grid expected) {
         Assert.assertEquals(actual.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(actual.collectRows(), expected.collectRows());
         Assert.assertEquals(actual.getOverlayModels(), expected.getOverlayModels());

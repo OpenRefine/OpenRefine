@@ -41,7 +41,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -56,7 +56,7 @@ import org.openrefine.util.TestUtils;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
-    private GridState initialState;
+    private Grid initialState;
     private ReconConfig reconConfig;
     private String service = "http://my.service.com/api";
     private String identifierSpace = "http://my.service.com/identifierSpace";
@@ -112,12 +112,12 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
         long commonReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
         long otherReconId = applied.collectRows().get(2).getRow().getCell(1).recon.id;
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", reconConfig.createNewRecon(2891L)
@@ -147,13 +147,13 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
         long firstReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
         long secondReconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
         long thirdReconId = applied.collectRows().get(2).getRow().getCell(1).recon.id;
 
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.New)
@@ -177,7 +177,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testNotPreviouslyReconciled() throws DoesNotApplyException, ModelException {
-        GridState initialGrid = createGrid(
+        Grid initialGrid = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", "b" },
@@ -191,11 +191,11 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        GridState applied = change.apply(initialState, context);
+        Grid applied = change.apply(initialState, context);
 
         long commonReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
         long otherReconId = applied.collectRows().get(2).getRow().getCell(1).recon.id;
-        GridState expected = createGrid(
+        Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", reconConfig.createNewRecon(2891L)

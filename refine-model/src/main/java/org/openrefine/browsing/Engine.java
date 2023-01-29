@@ -52,8 +52,8 @@ import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.model.GridState;
-import org.openrefine.model.GridState.PartialAggregation;
+import org.openrefine.model.Grid;
+import org.openrefine.model.Grid.PartialAggregation;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
@@ -62,8 +62,8 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
- * Faceted browsing engine. Given a {@link GridState} and facet configurations, it can be used to compute facet
- * statistics and obtain a filtered view of the grid according to the facets. <br>
+ * Faceted browsing engine. Given a {@link Grid} and facet configurations, it can be used to compute facet statistics
+ * and obtain a filtered view of the grid according to the facets. <br>
  * It also computes datatype statistics for each column, serialized in the "columnStats" JSON field.
  */
 public class Engine {
@@ -79,7 +79,7 @@ public class Engine {
     public final static String MODE_ROW_BASED = "row-based";
     public final static String MODE_RECORD_BASED = "record-based";
 
-    protected final GridState _state;
+    protected final Grid _state;
     protected final List<Facet> _facets;
     protected final EngineConfig _config;
     protected PartialAggregation<AllFacetsState> _facetsState;
@@ -92,7 +92,7 @@ public class Engine {
         return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
     }
 
-    public Engine(GridState state, EngineConfig config) {
+    public Engine(Grid state, EngineConfig config) {
         _state = state;
         _config = config;
         _facets = config.getFacetConfigs().stream()
@@ -108,7 +108,7 @@ public class Engine {
     }
 
     @JsonIgnore
-    public GridState getGridState() {
+    public Grid getGrid() {
         return _state;
     }
 
@@ -173,7 +173,7 @@ public class Engine {
      */
     @JsonIgnore
     public Iterable<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
-        GridState sorted = _state;
+        Grid sorted = _state;
         if (!sortingConfig.getCriteria().isEmpty()) {
             // TODO refactor this so that we are not re-sorting the grid at every request, but cache it instead?
             if (Mode.RowBased.equals(getMode())) {

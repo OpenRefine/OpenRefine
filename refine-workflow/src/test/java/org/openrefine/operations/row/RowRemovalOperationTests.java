@@ -44,7 +44,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -68,7 +68,7 @@ public class RowRemovalOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
-    GridState initial;
+    Grid initial;
     ListFacetConfig facet;
 
     @BeforeTest
@@ -95,9 +95,9 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        GridState applied = change.apply(initial, mock(ChangeContext.class));
+        Grid applied = change.apply(initial, mock(ChangeContext.class));
 
-        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", null, "d" },
@@ -114,9 +114,9 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        GridState applied = change.apply(initial, mock(ChangeContext.class));
+        Grid applied = change.apply(initial, mock(ChangeContext.class));
 
-        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", null, "d" }

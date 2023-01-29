@@ -59,7 +59,7 @@ import com.google.common.base.CharMatcher;
 
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.recon.ReconType;
@@ -106,7 +106,7 @@ public class GuessTypesOfColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
 
-            GridState state = project.getCurrentGridState();
+            Grid state = project.getCurrentGrid();
             int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
             if (columnIndex == -1) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
@@ -137,19 +137,19 @@ public class GuessTypesOfColumnCommand extends Command {
      * Run relevance searches for the first n cells in the given column and count the types of the results. Return a
      * sorted list of types, from most frequent to least.
      * 
-     * @param gridState
+     * @param grid
      * @param cellIndex
      * @return
      * @throws IOException
      */
-    protected List<TypeGroup> guessTypes(GridState gridState, int cellIndex, String serviceUrl)
+    protected List<TypeGroup> guessTypes(Grid grid, int cellIndex, String serviceUrl)
             throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
 
         List<String> samples = new ArrayList<String>(sampleSize);
         Set<String> sampleSet = new HashSet<String>();
 
-        for (IndexedRow row : gridState.getRowsAfter(0, sampleSize)) {
+        for (IndexedRow row : grid.getRowsAfter(0, sampleSize)) {
             Object value = row.getRow().getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
                 String s = CharMatcher.whitespace().trimFrom(value.toString());

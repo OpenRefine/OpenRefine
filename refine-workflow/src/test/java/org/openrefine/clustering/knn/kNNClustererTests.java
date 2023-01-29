@@ -43,7 +43,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.clustering.ClustererConfigFactory;
 import org.openrefine.clustering.knn.kNNClusterer.kNNClustererConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -73,7 +73,7 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(new String[] { "values" },
+        Grid grid = createGrid(new String[] { "values" },
                 new Serializable[][] {
                         { "ab" },
                         { "abc" },
@@ -89,7 +89,7 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-        GridState grid = createGrid(new String[] { "values" },
+        Grid grid = createGrid(new String[] { "values" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" } });

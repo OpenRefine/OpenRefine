@@ -54,7 +54,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 public class HtmlExporterTests extends RefineTest {
 
@@ -69,7 +69,7 @@ public class HtmlExporterTests extends RefineTest {
     // dependencies
     StringWriter writer;
     Engine engine;
-    GridState grid;
+    Grid grid;
     ProjectMetadata projectMetadata;
     Properties options;
 

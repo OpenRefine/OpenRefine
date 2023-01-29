@@ -55,7 +55,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
@@ -139,12 +139,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @Override
     public Process createProcess(Project project)
             throws Exception {
-        GridState currentGridState = project.getCurrentGridState();
+        Grid currentGrid = project.getCurrentGrid();
         return new PerformEditsProcess(
                 project.getHistory(),
                 project.getProcessManager(),
-                currentGridState,
-                createEngine(currentGridState),
+                currentGrid,
+                createEngine(currentGrid),
                 editGroupsUrlSchema,
                 summary);
     }
@@ -155,7 +155,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ChangeData<RowNewReconUpdate> changeData = null;
             try {
                 changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer());
@@ -163,7 +163,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
             }
             NewReconRowJoiner joiner = new NewReconRowJoiner();
-            GridState joined = projectState.join(changeData, joiner, projectState.getColumnModel());
+            Grid joined = projectState.join(changeData, joiner, projectState.getColumnModel());
             return joined;
         }
 
@@ -178,7 +178,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         protected History _history;
         protected ProcessManager _processManager;
-        protected GridState _grid;
+        protected Grid _grid;
         protected Engine _engine;
         protected WikibaseSchema _schema;
         protected String _editGroupsUrlSchema;
@@ -186,7 +186,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected List<String> _tags;
         protected final long _historyEntryID;
 
-        protected PerformEditsProcess(History history, ProcessManager processManager, GridState grid, Engine engine,
+        protected PerformEditsProcess(History history, ProcessManager processManager, Grid grid, Engine engine,
                 String editGroupsUrlSchema, String summary) {
             super(description);
             this._history = history;

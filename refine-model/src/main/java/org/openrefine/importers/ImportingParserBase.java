@@ -48,7 +48,7 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -68,11 +68,11 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     @Override
-    public GridState parse(DatamodelRunner runner,
+    public Grid parse(DatamodelRunner runner,
             ProjectMetadata metadata, final ImportingJob job, List<ImportingFileRecord> fileRecords,
             String format, long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
-        List<GridState> gridStates = new ArrayList<>(fileRecords.size());
+        List<Grid> grids = new ArrayList<>(fileRecords.size());
 
         if (fileRecords.isEmpty()) {
             throw new IllegalArgumentException("No file provided");
@@ -85,35 +85,35 @@ abstract public class ImportingParserBase implements ImportingParser {
             }
 
             long fileLimit = limit < 0 ? limit : Math.max(limit - totalRows, 1L);
-            GridState gridState = parseOneFile(runner, metadata, job, fileRecord, fileLimit, options, progress);
-            gridStates.add(gridState);
-            totalRows += gridState.rowCount();
+            Grid grid = parseOneFile(runner, metadata, job, fileRecord, fileLimit, options, progress);
+            grids.add(grid);
+            totalRows += grid.rowCount();
 
             if (limit > 0 && totalRows >= limit) {
                 break;
             }
         }
-        return mergeGridStates(gridStates);
+        return mergeGrids(grids);
     }
 
     /**
      * Merges grids of individual files into one single grid.
      * 
-     * @param gridStates
+     * @param grids
      *            a list of grids returned by the importers
      */
-    protected GridState mergeGridStates(List<GridState> gridStates) {
-        if (gridStates.isEmpty()) {
-            throw new IllegalArgumentException("No grid states provided");
+    protected Grid mergeGrids(List<Grid> grids) {
+        if (grids.isEmpty()) {
+            throw new IllegalArgumentException("No grids provided");
         }
-        GridState current = gridStates.get(0);
-        for (int i = 1; i != gridStates.size(); i++) {
-            current = ImporterUtilities.mergeGridStates(current, gridStates.get(i));
+        Grid current = grids.get(0);
+        for (int i = 1; i != grids.size(); i++) {
+            current = ImporterUtilities.mergeGrids(current, grids.get(i));
         }
         return current;
     }
 
-    public GridState parseOneFile(
+    public Grid parseOneFile(
             DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,

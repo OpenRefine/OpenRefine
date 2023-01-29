@@ -59,7 +59,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
@@ -190,7 +190,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             runAndWait(op, 1500);
 
             // Inspect rows
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             String refVal = (String) rows.get(0).getRow().getCellValue(1).toString();
             Assert.assertEquals(rows.get(1).getRow().getCellValue(1).toString(), refVal);
             server.shutdown();
@@ -230,7 +230,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
-            GridState grid = project.getCurrentGridState();
+            Grid grid = project.getCurrentGrid();
             int newCol = 1;
             // Inspect rows
             List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
@@ -276,7 +276,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             process.run();
 
             // Inspect rows
-            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "first");
 
             RecordedRequest request = server.takeRequest();
@@ -328,7 +328,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
-            List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+            List<Row> rows = project.getCurrentGrid().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
             assertTrue(rows.get(0).getCellValue(1).toString().contains("HTTP error 429"), "missing 429 error");
             assertEquals(rows.get(1).getCellValue(1).toString(), "success");
 
@@ -377,7 +377,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             assertTrue(elapsed > 1600, "Exponential retries didn't take enough time - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error
-            List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+            List<Row> rows = project.getCurrentGrid().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
             assertTrue(rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
             assertEquals(rows.get(1).getCellValue(1).toString(), "success");
             assertTrue(rows.get(2).getCellValue(1).toString().contains("HTTP error 404"), "Missing 404 error");

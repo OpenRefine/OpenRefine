@@ -51,7 +51,7 @@ import org.openrefine.expr.MetaParser.LanguageInfo;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.overlay.OverlayModel;
 
@@ -141,8 +141,8 @@ public class GetModelsCommand extends Command {
             headersMap.put(headerLabel, info);
         }
 
-        GridState gridState = project.getCurrentGridState();
-        RecordModel recordModel = new RecordModel(gridState.rowCount() > gridState.recordCount());
+        Grid grid = project.getCurrentGrid();
+        RecordModel recordModel = new RecordModel(grid.rowCount() > grid.recordCount());
 
         respondJSON(response, new ModelsResponse(
                 project.getColumnModel(),

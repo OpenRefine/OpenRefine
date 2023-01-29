@@ -43,7 +43,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.templating.Parser;
 import org.openrefine.templating.Template;
@@ -78,7 +78,7 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer)
             throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;

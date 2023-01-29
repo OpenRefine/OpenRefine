@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 /**
  * Change which respects any facets applied to the project.
@@ -19,7 +19,7 @@ public abstract class EngineDependentChange implements Change {
         _engineConfig = engineConfig;
     }
 
-    protected Engine getEngine(GridState grid) {
+    protected Engine getEngine(Grid grid) {
         return new Engine(grid, _engineConfig);
     }
 

@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 
 import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 public class FileCachedGridStore implements CachedGridStore {
 
@@ -59,8 +59,8 @@ public class FileCachedGridStore implements CachedGridStore {
     }
 
     @Override
-    public GridState getCachedGrid(long id) throws IOException {
-        return runner.loadGridState(getGridPath(id));
+    public Grid getCachedGrid(long id) throws IOException {
+        return runner.loadGrid(getGridPath(id));
     }
 
     @Override
@@ -72,10 +72,10 @@ public class FileCachedGridStore implements CachedGridStore {
     }
 
     @Override
-    public GridState cacheGrid(long id, GridState grid) throws IOException {
+    public Grid cacheGrid(long id, Grid grid) throws IOException {
         File directory = getGridPath(id);
         grid.saveToFile(directory);
-        return runner.loadGridState(directory);
+        return runner.loadGrid(directory);
     }
 
 }

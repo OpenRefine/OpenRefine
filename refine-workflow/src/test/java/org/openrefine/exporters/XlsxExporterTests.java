@@ -58,7 +58,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 
 public class XlsxExporterTests extends RefineTest {
 
@@ -73,7 +73,7 @@ public class XlsxExporterTests extends RefineTest {
     // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
-    GridState grid;
+    Grid grid;
     Engine engine;
     Properties options;
 

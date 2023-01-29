@@ -4,7 +4,7 @@ package org.openrefine.model.changes;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 
@@ -28,7 +28,7 @@ public class StarFlagChange implements Change {
     }
 
     @Override
-    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         return projectState.mapRows(mapper(rowId, star, value), projectState.getColumnModel());
     }
 

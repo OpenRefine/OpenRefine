@@ -15,7 +15,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
@@ -62,7 +62,7 @@ public class DataExtensionChange extends EngineDependentChange {
     }
 
     @Override
-    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         ChangeData<RecordDataExtension> changeData;
         try {
             changeData = context.getChangeData("extend", new DataExtensionSerializer());
@@ -84,7 +84,7 @@ public class DataExtensionChange extends EngineDependentChange {
                             _columnTypes.get(i))));
         }
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, _columnNames.size());
-        GridState state = projectState.join(changeData, joiner, newColumnModel);
+        Grid state = projectState.join(changeData, joiner, newColumnModel);
 
         return state;
     }

@@ -38,12 +38,12 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 /**
- * A massively inefficient but very simple implementation of a GridState, for testing purposes.
+ * A massively inefficient but very simple implementation of a Grid, for testing purposes.
  * 
  * @author Antonin Delpeuch
  *
  */
-public class TestingGridState implements GridState {
+public class TestingGrid implements Grid {
 
     private ColumnModel columnModel;
     private Map<String, OverlayModel> overlayModels;
@@ -56,11 +56,11 @@ public class TestingGridState implements GridState {
     // This boolean indicates whether we pretend that the grid is cached or not.
     private boolean isCached = false;
 
-    public TestingGridState(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public TestingGrid(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         this(indexRows(rows), columnModel, overlayModels);
     }
 
-    protected TestingGridState(List<IndexedRow> indexedRows, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+    protected TestingGrid(List<IndexedRow> indexedRows, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
         this.columnModel = columnModel;
         this.indexedRows = indexedRows;
         this.rows = indexedRows.stream().map(IndexedRow::getRow).collect(Collectors.toList());
@@ -251,8 +251,8 @@ public class TestingGridState implements GridState {
     }
 
     protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
-        File gridPath = new File(file, GridState.GRID_PATH);
-        File metadataPath = new File(file, GridState.METADATA_PATH);
+        File gridPath = new File(file, Grid.GRID_PATH);
+        File metadataPath = new File(file, Grid.METADATA_PATH);
 
         gridPath.mkdirs();
         File partFile = new File(gridPath, "part-00000.gz");
@@ -346,7 +346,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
@@ -360,11 +360,11 @@ public class TestingGridState implements GridState {
             }
             rows.add(row);
         }
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
-    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+    public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
@@ -380,11 +380,11 @@ public class TestingGridState implements GridState {
             }
             rows.addAll(rowBatch);
         }
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
-    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+    public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
@@ -400,11 +400,11 @@ public class TestingGridState implements GridState {
             }
             rows.add(row);
         }
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
-    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+    public Grid mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
@@ -419,7 +419,7 @@ public class TestingGridState implements GridState {
             }
             rows.addAll(addedRows);
         }
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
@@ -453,30 +453,30 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public GridState withOverlayModels(Map<String, OverlayModel> overlayModel) {
-        return new TestingGridState(columnModel, rows, overlayModel);
+    public Grid withOverlayModels(Map<String, OverlayModel> overlayModel) {
+        return new TestingGrid(columnModel, rows, overlayModel);
     }
 
     @Override
-    public GridState withColumnModel(ColumnModel newColumnModel) {
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+    public Grid withColumnModel(ColumnModel newColumnModel) {
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
-    public GridState reorderRows(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRows(SortingConfig sortingConfig, boolean permanent) {
         List<IndexedRow> newRows = sortedRows(sortingConfig);
         if (permanent) {
-            return new TestingGridState(columnModel, newRows.stream().map(IndexedRow::getRow).collect(Collectors.toList()), overlayModels);
+            return new TestingGrid(columnModel, newRows.stream().map(IndexedRow::getRow).collect(Collectors.toList()), overlayModels);
         } else {
             List<IndexedRow> indexed = IntStream.range(0, newRows.size())
                     .mapToObj(i -> new IndexedRow((long) i, newRows.get(i).getLogicalIndex(), newRows.get(i).getRow()))
                     .collect(Collectors.toList());
-            return new TestingGridState(indexed, columnModel, overlayModels);
+            return new TestingGrid(indexed, columnModel, overlayModels);
         }
     }
 
     @Override
-    public GridState reorderRecords(SortingConfig sortingConfig, boolean permanent) {
+    public Grid reorderRecords(SortingConfig sortingConfig, boolean permanent) {
         List<IndexedRow> newRows = new ArrayList<>(rows.size());
         if (sortingConfig.getCriteria().isEmpty()) {
             newRows = indexedRows;
@@ -487,7 +487,7 @@ public class TestingGridState implements GridState {
                 }
             }
         }
-        return new TestingGridState(newRows, columnModel, overlayModels);
+        return new TestingGrid(newRows, columnModel, overlayModels);
     }
 
     private List<IndexedRow> sortedRows(SortingConfig sortingConfig) {
@@ -517,23 +517,23 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public GridState removeRows(RowFilter filter) {
+    public Grid removeRows(RowFilter filter) {
         List<Row> newRows = indexedRows
                 .stream()
                 .filter(ir -> !filter.filterRow(ir.getLogicalIndex(), ir.getRow()))
                 .map(ir -> ir.getRow())
                 .collect(Collectors.toList());
-        return new TestingGridState(columnModel, newRows, overlayModels);
+        return new TestingGrid(columnModel, newRows, overlayModels);
     }
 
     @Override
-    public GridState removeRecords(RecordFilter filter) {
+    public Grid removeRecords(RecordFilter filter) {
         List<Row> newRows = records
                 .stream()
                 .filter(r -> !filter.filterRecord(r))
                 .flatMap(r -> r.getRows().stream())
                 .collect(Collectors.toList());
-        return new TestingGridState(columnModel, newRows, overlayModels);
+        return new TestingGrid(columnModel, newRows, overlayModels);
     }
 
     @Override
@@ -595,7 +595,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -605,11 +605,11 @@ public class TestingGridState implements GridState {
                 .stream()
                 .map(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())))
                 .collect(Collectors.toList());
-        return new TestingGridState(newColumnModel, newRows, overlayModels);
+        return new TestingGrid(newColumnModel, newRows, overlayModels);
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -619,11 +619,11 @@ public class TestingGridState implements GridState {
                 .stream()
                 .flatMap(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())).stream())
                 .collect(Collectors.toList());
-        return new TestingGridState(newColumnModel, newRows, overlayModels);
+        return new TestingGrid(newColumnModel, newRows, overlayModels);
     }
 
     @Override
-    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -633,11 +633,11 @@ public class TestingGridState implements GridState {
                 .stream()
                 .flatMap(record -> deserializedJoiner.call(record, changeData.get(record.getStartRowId())).stream())
                 .collect(Collectors.toList());
-        return new TestingGridState(newColumnModel, rows, overlayModels);
+        return new TestingGrid(newColumnModel, rows, overlayModels);
     }
 
     @Override
-    public GridState concatenate(GridState other) {
+    public Grid concatenate(Grid other) {
         ColumnModel merged = columnModel.merge(other.getColumnModel());
 
         List<Row> otherRows = other.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
@@ -647,7 +647,7 @@ public class TestingGridState implements GridState {
 
         Map<String, OverlayModel> newOverlayModels = new HashMap<>(other.getOverlayModels());
         newOverlayModels.putAll(overlayModels);
-        return new TestingGridState(merged, newRows, newOverlayModels);
+        return new TestingGrid(merged, newRows, newOverlayModels);
     }
 
     @Override

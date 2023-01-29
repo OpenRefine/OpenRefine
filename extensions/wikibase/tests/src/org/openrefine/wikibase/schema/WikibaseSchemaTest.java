@@ -47,7 +47,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
@@ -99,7 +99,7 @@ public class WikibaseSchemaTest extends RefineTest {
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
 
-    private GridState grid;
+    private Grid grid;
 
     @BeforeMethod
     public void setUpProject() {

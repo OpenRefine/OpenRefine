@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -24,7 +24,7 @@ import org.openrefine.util.TestUtils;
 
 public class CellChangeTest extends RefineTest {
 
-    private GridState initialGrid;
+    private Grid initialGrid;
 
     private String serializedChange = ""
             + "{\n" +
@@ -42,14 +42,14 @@ public class CellChangeTest extends RefineTest {
                         { "a", 1 },
                         { 3, true }
                 });
-        initialGrid = project.getCurrentGridState();
+        initialGrid = project.getCurrentGrid();
     }
 
     @Test
     public void testCellChange() throws DoesNotApplyException {
         Change change = new CellChange(0L, "foo", "changed");
 
-        GridState newGrid = change.apply(initialGrid, mock(ChangeContext.class));
+        Grid newGrid = change.apply(initialGrid, mock(ChangeContext.class));
 
         Assert.assertEquals(newGrid.getRow(0L),
                 new Row(Arrays.asList(new Cell("changed", null), new Cell(1, null))));

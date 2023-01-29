@@ -8,7 +8,7 @@ import java.util.Properties;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Grid;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 
@@ -20,7 +20,7 @@ public class SchemaExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
+    public void export(Grid grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
             Writer writer) throws IOException {
         WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
