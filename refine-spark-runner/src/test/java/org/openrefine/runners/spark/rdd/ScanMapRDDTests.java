@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.openrefine.SparkBasedTest;
+import org.openrefine.runners.spark.SparkBasedTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -1,5 +1,5 @@
 
-package org.openrefine.util;
+package org.openrefine.runners.spark.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.stream.LongStream;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.openrefine.SparkBasedTest;
+import org.openrefine.runners.spark.SparkBasedTest;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 import org.testng.Assert;

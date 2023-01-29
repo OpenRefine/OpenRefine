@@ -1,15 +1,14 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.openrefine.SparkBasedTest;
+import org.openrefine.runners.spark.SparkBasedTest;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

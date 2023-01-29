@@ -1,5 +1,5 @@
 
-package org.openrefine.util;
+package org.openrefine.runners.spark.util;
 
 import java.util.*;
 
@@ -12,9 +12,9 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.rdd.PartitionedRDD;
-import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
-import org.openrefine.model.rdd.ZippedWithIndexRDD;
+import org.openrefine.runners.spark.rdd.PartitionedRDD;
+import org.openrefine.runners.spark.rdd.SortedRDD.SortedPartitioner;
+import org.openrefine.runners.spark.rdd.ZippedWithIndexRDD;
 
 import com.google.common.collect.Iterators;
 

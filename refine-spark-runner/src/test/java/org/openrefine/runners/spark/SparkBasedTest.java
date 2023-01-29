@@ -1,5 +1,5 @@
 
-package org.openrefine;
+package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.openrefine.io.OrderedLocalFileSystem;
+import org.openrefine.runners.spark.io.OrderedLocalFileSystem;
 import org.openrefine.model.Cell;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.util.RDDUtils;
+import org.openrefine.runners.spark.util.RDDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;

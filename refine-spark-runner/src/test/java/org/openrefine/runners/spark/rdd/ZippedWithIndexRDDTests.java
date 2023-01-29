@@ -1,13 +1,13 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.openrefine.SparkBasedTest;
-import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
+import org.openrefine.runners.spark.SparkBasedTest;
+import org.openrefine.runners.spark.rdd.SortedRDD.SortedPartitioner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

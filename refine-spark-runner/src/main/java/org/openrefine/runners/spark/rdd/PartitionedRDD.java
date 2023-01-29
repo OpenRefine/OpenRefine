@@ -1,5 +1,5 @@
 
-package org.openrefine.model.rdd;
+package org.openrefine.runners.spark.rdd;
 
 import org.apache.spark.Partition;
 import org.apache.spark.Partitioner;

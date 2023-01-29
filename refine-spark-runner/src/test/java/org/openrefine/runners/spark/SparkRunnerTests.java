@@ -1,9 +1,10 @@
 
-package org.openrefine.model;
+package org.openrefine.runners.spark;
 
 import java.io.Serializable;
 
-import org.openrefine.SparkBasedTest;
+import org.openrefine.model.Runner;
+import org.openrefine.model.RunnerTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
