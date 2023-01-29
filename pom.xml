@@ -54,13 +54,13 @@
   </developers>
 
   <modules>
-        <module>refine-model</module>
-        <module>refine-grel</module>
-        <module>refine-util</module>
-        <module>refine-testing</module>
-        <module>refine-spark-runner</module>
-        <module>refine-local-runner</module>
-	<module>refine-workflow</module>
+        <module>modules/refine-model</module>
+        <module>modules/refine-grel</module>
+        <module>modules/refine-util</module>
+        <module>modules/refine-testing</module>
+        <module>modules/refine-spark-runner</module>
+        <module>modules/refine-local-runner</module>
+        <module>modules/refine-workflow</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>
