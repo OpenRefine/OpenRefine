@@ -44,14 +44,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
-import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.FormatRegistry;
 import org.openrefine.importing.ImportingFormat;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.util.JSONUtilities;
@@ -81,7 +80,7 @@ public class CreateProjectCommand extends Command {
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job);
 
-            DatamodelRunner runner = RefineModel.getRunner();
+            Runner runner = RefineModel.getRunner();
 
             String format = parameters.getProperty("format");
 

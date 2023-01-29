@@ -29,8 +29,8 @@ import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.Runner;
+import org.openrefine.model.TestingRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -66,7 +66,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         MockitoAnnotations.initMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
-        DatamodelRunner runner = new TestingDatamodelRunner();
+        Runner runner = new TestingRunner();
         FileProjectManager.initialize(runner, dir);
 
         servlet = new RefineDbServletStub();

@@ -60,7 +60,7 @@ import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
@@ -81,7 +81,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+    public ObjectNode createParserUIInitializationData(Runner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         tabularParserHelper.createParserUIInitializationData(options);
@@ -99,7 +99,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
             String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);

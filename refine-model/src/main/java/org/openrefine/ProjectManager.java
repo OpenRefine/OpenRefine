@@ -47,7 +47,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.openrefine.history.HistoryEntryManager;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;

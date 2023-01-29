@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -27,7 +27,7 @@ public class FileCachedGridStoreTests {
 
     File baseDir;
     File subDir;
-    DatamodelRunner runner;
+    Runner runner;
     FileCachedGridStore SUT; // System Under Test
 
     @BeforeMethod
@@ -35,7 +35,7 @@ public class FileCachedGridStoreTests {
         baseDir = TestUtils.createTempDirectory("filecachedgridstore");
         subDir = new File(baseDir, "1234");
         subDir.mkdir();
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         SUT = new FileCachedGridStore(runner, baseDir);
     }
 

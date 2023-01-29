@@ -36,11 +36,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
@@ -60,7 +58,7 @@ public class FileProjectManagerTests {
     protected class FileProjectManagerStub extends FileProjectManager {
 
         protected FileProjectManagerStub(File dir) {
-            super(dir, mock(DatamodelRunner.class));
+            super(dir, mock(Runner.class));
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
 
         }

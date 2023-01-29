@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +35,8 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     @Override
     @JsonIgnore
-    public DatamodelRunner getDatamodelRunner() {
-        return new TestingDatamodelRunner();
+    public Runner getDatamodelRunner() {
+        return new TestingRunner();
     }
 
     protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)

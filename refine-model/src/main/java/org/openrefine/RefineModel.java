@@ -1,7 +1,7 @@
 
 package org.openrefine;
 
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +29,13 @@ public class RefineModel {
         }
     }
 
-    private static DatamodelRunner runner = null;
+    private static Runner runner = null;
 
-    public static DatamodelRunner getRunner() {
+    public static Runner getRunner() {
         return runner;
     }
 
-    public static void setRunner(DatamodelRunner newRunner) {
+    public static void setRunner(Runner newRunner) {
         runner = newRunner;
     }
 

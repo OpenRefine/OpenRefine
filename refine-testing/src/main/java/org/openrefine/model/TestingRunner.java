@@ -39,16 +39,16 @@ import com.google.common.io.CountingInputStream;
  * @author Antonin Delpeuch
  *
  */
-public class TestingDatamodelRunner implements DatamodelRunner {
+public class TestingRunner implements Runner {
 
-    public TestingDatamodelRunner() {
+    public TestingRunner() {
 
     }
 
     /**
-     * Constructor provided to match the expected signature of datamodel runners.
+     * Constructor provided to match the expected signature of runners.
      */
-    public TestingDatamodelRunner(RunnerConfiguration configuration) {
+    public TestingRunner(RunnerConfiguration configuration) {
 
     }
 

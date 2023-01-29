@@ -19,18 +19,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class LoggedDatamodelRunner implements DatamodelRunner {
+public class LoggedRunner implements Runner {
 
-    Logger logger = LoggerFactory.getLogger("datamodel runner");
+    Logger logger = LoggerFactory.getLogger("runner");
 
-    protected final DatamodelRunner runner;
+    protected final Runner runner;
 
-    public LoggedDatamodelRunner(RunnerConfiguration configuration) {
+    public LoggedRunner(RunnerConfiguration configuration) {
         String className = configuration.getParameter("wrappedClass", null);
         Class<?> runnerClass = null;
         try {
             runnerClass = this.getClass().getClassLoader().loadClass(className);
-            this.runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(configuration);
+            this.runner = (Runner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(configuration);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -44,7 +44,7 @@ public class LoggedDatamodelRunner implements DatamodelRunner {
         }
     }
 
-    public LoggedDatamodelRunner(DatamodelRunner runner) {
+    public LoggedRunner(Runner runner) {
         this.runner = runner;
     }
 

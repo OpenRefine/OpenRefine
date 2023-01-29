@@ -3,19 +3,18 @@ package org.openrefine.model.changes;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressReporter;
 
 public class FileChangeDataStore implements ChangeDataStore {
 
-    private DatamodelRunner _runner;
+    private Runner _runner;
     private File _baseDirectory;
 
-    public FileChangeDataStore(DatamodelRunner runner, File baseDirectory) {
+    public FileChangeDataStore(Runner runner, File baseDirectory) {
         _runner = runner;
         _baseDirectory = baseDirectory;
     }

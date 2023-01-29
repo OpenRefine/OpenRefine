@@ -11,11 +11,8 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.RefineServlet;
 import org.openrefine.RefineTest;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 public class CommandTestBase extends RefineTest {

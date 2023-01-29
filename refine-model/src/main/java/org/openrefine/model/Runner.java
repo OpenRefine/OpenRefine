@@ -17,9 +17,9 @@ import org.openrefine.overlay.OverlayModel;
  * Encapsulates the context required to implement, read and execute operations on {@link Grid} objects.
  * 
  * Implementations should have a constructor with a single parameter, a {@link RunnerConfiguration} object, which is
- * used to initialize the datamodel runner.
+ * used to initialize the runner.
  */
-public interface DatamodelRunner {
+public interface Runner {
 
     // charset used when writing a grid to a file, in our internal format
     public static final Charset GRID_ENCODING = Charset.forName("UTF-8");

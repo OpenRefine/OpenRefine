@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -51,14 +50,13 @@ import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class DefaultImportingController implements ImportingController {
@@ -181,7 +179,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
         ImportingUtilities.previewParse(job, format, optionObj, runner, exceptions);
 
         Writer w = response.getWriter();
@@ -219,7 +217,7 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
 
         String format = request.getParameter("format");
         ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
@@ -260,7 +258,7 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        DatamodelRunner runner = RefineModel.getRunner();
+        Runner runner = RefineModel.getRunner();
         ImportingUtilities.createProject(job, format, optionObj, runner, exceptions, false);
 
         HttpUtilities.respond(response, "ok", "done");

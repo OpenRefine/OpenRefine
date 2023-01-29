@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 public class FileChangeDataStoreTests {
 
-    DatamodelRunner runner;
+    Runner runner;
     MyChangeData changeData;
     MySerializer serializer;
     File dir;
@@ -41,7 +41,7 @@ public class FileChangeDataStoreTests {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         changeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
         when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);

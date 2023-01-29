@@ -3,7 +3,7 @@ package org.openrefine.importers;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -39,7 +39,7 @@ public abstract class URIImporter extends ImportingParserBase {
      * 
      * @return a parsed Grid
      */
-    public abstract Grid parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+    public abstract Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, String uri, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception;
 

@@ -46,7 +46,7 @@ import java.time.LocalDateTime;
 
 import org.mockito.Mockito;
 import org.openrefine.model.Project;
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -57,7 +57,7 @@ import org.openrefine.model.ProjectStub;
 
 public class ProjectManagerTests {
 
-    DatamodelRunner runner;
+    Runner runner;
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -66,7 +66,7 @@ public class ProjectManagerTests {
 
     @BeforeMethod
     public void SetUp() {
-        runner = mock(DatamodelRunner.class);
+        runner = mock(Runner.class);
         pm = new ProjectManagerStub(runner);
         SUT = spy(pm);
         project = mock(Project.class);

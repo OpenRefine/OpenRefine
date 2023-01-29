@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Supplies configuration parameters to a datamodel runner from a simple hash map.
+ * Supplies configuration parameters to a runner from a simple hash map.
  */
 public class RunnerConfigurationImpl extends RunnerConfiguration {
 

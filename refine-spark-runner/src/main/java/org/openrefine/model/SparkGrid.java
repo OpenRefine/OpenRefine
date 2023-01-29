@@ -74,7 +74,7 @@ public class SparkGrid implements Grid {
     // it involves running a (small) Spark job
     protected JavaPairRDD<Long, Record> records = null;
 
-    protected final SparkDatamodelRunner runner;
+    protected final SparkRunner runner;
 
     private transient long cachedRowCount;
     private transient long cachedRecordCount;
@@ -91,7 +91,7 @@ public class SparkGrid implements Grid {
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
-            SparkDatamodelRunner runner) {
+            SparkRunner runner) {
         this(columnModel, grid, overlayModels, runner, -1, -1);
     }
 
@@ -107,7 +107,7 @@ public class SparkGrid implements Grid {
             JavaPairRDD<Long, IndexedRow> grid,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
-            SparkDatamodelRunner runner) {
+            SparkRunner runner) {
         this(grid, columnModel, overlayModels, runner, -1, -1);
     }
 
@@ -125,7 +125,7 @@ public class SparkGrid implements Grid {
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
-            SparkDatamodelRunner runner,
+            SparkRunner runner,
             long cachedRowCount,
             long cachedRecordCount) {
         this.columnModel = columnModel;
@@ -156,7 +156,7 @@ public class SparkGrid implements Grid {
             JavaPairRDD<Long, IndexedRow> grid,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
-            SparkDatamodelRunner runner,
+            SparkRunner runner,
             long cachedRowCount,
             long cachedRecordCount) {
         this.columnModel = columnModel;
@@ -188,7 +188,7 @@ public class SparkGrid implements Grid {
 
     @JsonIgnore
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 
@@ -572,7 +572,7 @@ public class SparkGrid implements Grid {
         return new SparkGrid(metadata.columnModel,
                 grid,
                 metadata.overlayModels,
-                new SparkDatamodelRunner(context),
+                new SparkRunner(context),
                 metadata.rowCount,
                 metadata.recordCount);
     }

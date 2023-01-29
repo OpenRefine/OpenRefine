@@ -103,7 +103,7 @@ public class TestingGrid implements Grid {
     public List<IndexedRow> getRowsAfter(RowFilter filter, long start, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RowFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RowFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
         return indexedRows.stream()
                 .filter(tuple -> deserializedFilter.filterRow(tuple.getLogicalIndex(), tuple.getRow()) && tuple.getIndex() >= start)
@@ -123,7 +123,7 @@ public class TestingGrid implements Grid {
     public List<IndexedRow> getRowsBefore(RowFilter filter, long end, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RowFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RowFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
         // this is really not efficient but that is not the point of this implementation: it should just be correct
         List<IndexedRow> matchingRows = indexedRows.stream()
@@ -159,7 +159,7 @@ public class TestingGrid implements Grid {
     public List<Record> getRecordsAfter(RecordFilter filter, long start, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RecordFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RecordFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
         return records
                 .stream()
                 .filter(record -> record.getStartRowId() >= start && deserializedFilter.filterRecord(record))
@@ -176,7 +176,7 @@ public class TestingGrid implements Grid {
     public List<Record> getRecordsBefore(RecordFilter filter, long end, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RecordFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RecordFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
         List<Record> matching = records
                 .stream()
                 .filter(record -> record.getStartRowId() < end && deserializedFilter.filterRecord(record))
@@ -296,8 +296,8 @@ public class TestingGrid implements Grid {
 
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
-        initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
-        aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
+        initialState = TestingRunner.serializeAndDeserialize(initialState);
+        aggregator = TestingRunner.serializeAndDeserialize(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
         // of RowAggregator.
         long split = rowCount() / 2;
@@ -322,8 +322,8 @@ public class TestingGrid implements Grid {
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords) {
-        initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
-        aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
+        initialState = TestingRunner.serializeAndDeserialize(initialState);
+        aggregator = TestingRunner.serializeAndDeserialize(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
         // of FacetAggregator.
         long split = rowCount() / 2;
@@ -349,7 +349,7 @@ public class TestingGrid implements Grid {
     public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
+        mapper = TestingRunner.serializeAndDeserialize(mapper);
 
         List<Row> rows = new ArrayList<>(this.rows.size());
         for (IndexedRow indexedRow : indexedRows) {
@@ -367,7 +367,7 @@ public class TestingGrid implements Grid {
     public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
+        mapper = TestingRunner.serializeAndDeserialize(mapper);
 
         List<Row> rows = new ArrayList<>(this.rows.size());
         for (IndexedRow indexedRow : indexedRows) {
@@ -387,7 +387,7 @@ public class TestingGrid implements Grid {
     public <S extends Serializable> Grid mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
+        mapper = TestingRunner.serializeAndDeserialize(mapper);
 
         S currentState = mapper.unit();
         List<Row> rows = new ArrayList<>(this.rows.size());
@@ -407,7 +407,7 @@ public class TestingGrid implements Grid {
     public Grid mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        mapper = TestingDatamodelRunner.serializeAndDeserialize(mapper);
+        mapper = TestingRunner.serializeAndDeserialize(mapper);
 
         List<Row> rows = new ArrayList<>(this.rows.size());
         for (Record record : records) {
@@ -512,8 +512,8 @@ public class TestingGrid implements Grid {
 
     @Override
     @JsonIgnore
-    public DatamodelRunner getDatamodelRunner() {
-        return new TestingDatamodelRunner();
+    public Runner getDatamodelRunner() {
+        return new TestingRunner();
     }
 
     @Override
@@ -540,8 +540,8 @@ public class TestingGrid implements Grid {
     public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RowChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(rowMapper);
-        RowFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RowChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(rowMapper);
+        RowFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
         Map<Long, T> changeData = new HashMap<>();
         Stream<IndexedRow> filteredRows = indexedRows.stream()
@@ -569,8 +569,8 @@ public class TestingGrid implements Grid {
     public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RecordChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(recordMapper);
-        RecordFilter deserializedFilter = TestingDatamodelRunner.serializeAndDeserialize(filter);
+        RecordChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(recordMapper);
+        RecordFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
         Map<Long, T> changeData = new HashMap<>();
         Stream<Record> filteredRecords = records.stream()
@@ -599,7 +599,7 @@ public class TestingGrid implements Grid {
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RowChangeDataJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(rowJoiner);
+        RowChangeDataJoiner<T> deserializedJoiner = TestingRunner.serializeAndDeserialize(rowJoiner);
 
         List<Row> newRows = indexedRows
                 .stream()
@@ -613,7 +613,7 @@ public class TestingGrid implements Grid {
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RowChangeDataFlatJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(rowJoiner);
+        RowChangeDataFlatJoiner<T> deserializedJoiner = TestingRunner.serializeAndDeserialize(rowJoiner);
 
         List<Row> newRows = indexedRows
                 .stream()
@@ -627,7 +627,7 @@ public class TestingGrid implements Grid {
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        RecordChangeDataJoiner<T> deserializedJoiner = TestingDatamodelRunner.serializeAndDeserialize(recordJoiner);
+        RecordChangeDataJoiner<T> deserializedJoiner = TestingRunner.serializeAndDeserialize(recordJoiner);
 
         List<Row> rows = records
                 .stream()

@@ -1,7 +1,7 @@
 
 package org.openrefine.model.local.util.logging;
 
-import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -14,9 +14,9 @@ import java.util.Iterator;
 public class LoggedChangeData<T> implements ChangeData<T> {
 
     protected final ChangeData<T> changeData;
-    protected final LoggedDatamodelRunner runner;
+    protected final LoggedRunner runner;
 
-    public LoggedChangeData(LoggedDatamodelRunner runner, ChangeData<T> changeData) {
+    public LoggedChangeData(LoggedRunner runner, ChangeData<T> changeData) {
         this.runner = runner;
         this.changeData = changeData;
     }
@@ -27,7 +27,7 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
+    public Runner getDatamodelRunner() {
         return runner;
     }
 

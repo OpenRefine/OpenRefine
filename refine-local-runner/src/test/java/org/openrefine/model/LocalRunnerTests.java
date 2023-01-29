@@ -17,15 +17,15 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tests for this datamodel implementation are taken from the standard test suite, in {@link DatamodelRunnerTestBase}.
+ * Tests for this datamodel implementation are taken from the standard test suite, in {@link RunnerTestBase}.
  * 
  * @author Antonin Delpeuch
  *
  */
-public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
+public class LocalRunnerTests extends RunnerTestBase {
 
     @Override
-    public DatamodelRunner getDatamodelRunner() throws IOException {
+    public Runner getDatamodelRunner() throws IOException {
         Map<String, String> map = new HashMap<>();
         // these values are purposely very low for testing purposes,
         // so that we can check the partitioning strategy without using large files
@@ -33,7 +33,7 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
         map.put("maxSplitSize", "1024");
 
         RunnerConfiguration runnerConf = new RunnerConfigurationImpl(map);
-        return new LocalDatamodelRunner(runnerConf);
+        return new LocalRunner(runnerConf);
     }
 
     @Test

@@ -39,15 +39,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.RefineServlet;
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
