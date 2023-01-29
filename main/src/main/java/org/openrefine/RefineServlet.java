@@ -72,7 +72,7 @@ public class RefineServlet extends Butterfly {
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
-    static final private String DEFAULT_DATAMODEL_RUNNER_CLASS_NAME = "org.openrefine.model.LocalDatamodelRunner";
+    static final private String DEFAULT_DATAMODEL_RUNNER_CLASS_NAME = "org.openrefine.runners.local.LocalRunner";
 
     static final long serialVersionUID = 2386057901503517403L;
 
