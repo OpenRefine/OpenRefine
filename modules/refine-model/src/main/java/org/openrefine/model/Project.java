@@ -49,8 +49,8 @@ import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.process.ProcessManager;
 
 /**
- * A project is a table with overlay models and full edit history. This is the central concept of the OpenRefine
- * datamodel - most operations are done within a given project.
+ * A project is a table with overlay models and full edit history. This is the central concept of the OpenRefine data
+ * model - most operations are done within a given project.
  */
 public class Project {
 
