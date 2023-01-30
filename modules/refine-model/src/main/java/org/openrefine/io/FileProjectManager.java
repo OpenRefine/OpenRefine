@@ -82,8 +82,7 @@ public class FileProjectManager extends ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
     /**
-     * Initializes the project manager to store its workspace in a specific directory, and provide a default datamodel
-     * runner.
+     * Initializes the project manager to store its workspace in a specific directory, and provide a default runner.
      */
     static public synchronized void initialize(Runner runner, File dir) {
         if (singleton != null) {
@@ -97,8 +96,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     /**
-     * Initializes the project manager to store its workspace in a specific directory, without a default datamodel
-     * runner.
+     * Initializes the project manager to store its workspace in a specific directory, without a default runner.
      */
     static public synchronized void initialize(File dir) {
         if (singleton != null) {
