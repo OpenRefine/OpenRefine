@@ -336,7 +336,7 @@ ReconStandardServicePanel.prototype.start = function() {
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
       }
     },
-    { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+    { cellsChanged: true, columnStatsChanged: true }
   );
 };
 

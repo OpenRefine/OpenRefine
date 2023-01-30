@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.history.dag.DagSlice;
@@ -156,7 +157,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ChangeData<RowNewReconUpdate> changeData = null;
             try {
                 changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer());
@@ -165,18 +166,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             NewReconRowJoiner joiner = new NewReconRowJoiner();
             Grid joined = projectState.join(changeData, joiner, projectState.getColumnModel());
-            return joined;
+            return new ChangeResult(joined, GridPreservation.PRESERVES_RECORDS, null);
         }
 
         @Override
         public boolean isImmediate() {
             return false;
-        }
-
-        @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }
@@ -291,13 +286,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
                     Change change = new PerformWikibaseEditsChange();
 
-                    HistoryEntry entry = new HistoryEntry(
+                    _history.addEntry(
                             _historyEntryID,
                             _description,
                             PerformWikibaseEditsOperation.this,
                             change);
 
-                    _history.addEntry(entry);
                     _processManager.onDoneProcess(this);
                 }
             } catch (Exception e) {

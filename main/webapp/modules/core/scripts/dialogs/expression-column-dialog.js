@@ -9,7 +9,7 @@ var doTextTransform = function(columnName, expression, onError, repeat, repeatCo
         repeat: repeat,
         repeatCount: repeatCount
       },
-      { cellsChanged: true, rowIdsPreserved: true }
+      { cellsChanged: true }
     );
 };
 

@@ -75,8 +75,7 @@ public class DataExtensionChangeTest extends RefineTest {
             "        ],\n" +
             "        \"columnTypes\": [\n" +
             "          null\n" +
-            "        ],\n" +
-            "        \"dagSlice\": null\n" +
+            "        ]\n" +
             "      }";
 
     Project project;

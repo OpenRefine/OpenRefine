@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -90,7 +91,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
     public class TransposeRowsIntoColumnsChange implements Change {
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             ColumnModel newColumns = new ColumnModel(Collections.emptyList());
             List<ColumnMetadata> oldColumns = columnModel.getColumns();
@@ -151,18 +152,15 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
                     .filter(row -> !row.isEmpty())
                     .collect(Collectors.toList());
 
-            return projectState.getDatamodelRunner().create(newColumns, rows, projectState.getOverlayModels());
+            return new ChangeResult(
+                    projectState.getDatamodelRunner().create(newColumns, rows, projectState.getOverlayModels()),
+                    GridPreservation.NO_ROW_PRESERVATION,
+                    null);
         }
 
         @Override
         public boolean isImmediate() {
             return true;
-        }
-
-        @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }

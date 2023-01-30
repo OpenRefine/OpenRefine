@@ -27,6 +27,7 @@ package org.openrefine.wikibase.operations;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
@@ -75,21 +76,18 @@ public class SaveWikibaseSchemaOperation implements Operation {
         }
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
             newModels.put(overlayModelKey, _newSchema);
-            return projectState.withOverlayModels(newModels);
+            return new ChangeResult(
+                    projectState.withOverlayModels(newModels),
+                    GridPreservation.PRESERVES_RECORDS,
+                    null);
         }
 
         @Override
         public boolean isImmediate() {
             return true;
-        }
-
-        @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }

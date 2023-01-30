@@ -36,6 +36,7 @@ package org.openrefine.model.changes;
 import java.io.Serializable;
 import java.util.Collections;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.*;
@@ -69,7 +70,7 @@ public class CellChange implements Change {
     }
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         int index = projectState.getColumnModel().getColumnIndexByName(columnName);
         if (index == -1) {
             throw new DoesNotApplyException(
@@ -77,7 +78,12 @@ public class CellChange implements Change {
         }
         // set judgment id on recon if changed
         ColumnModel columnModel = projectState.getColumnModel();
-        return projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
+        boolean recordsPreserved = index != columnModel.getKeyColumnIndex();
+        Grid result = projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
+        return new ChangeResult(
+                result,
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS,
+                new TransformationSlice(columnName, Collections.emptySet()));
     }
 
     static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue, int keyColumnIndex) {
@@ -107,11 +113,6 @@ public class CellChange implements Change {
     public boolean isImmediate() {
         // this change has no corresponding operation, so it can not be derived from one
         return false;
-    }
-
-    @Override
-    public DagSlice getDagSlice() {
-        return new TransformationSlice(columnName, Collections.emptySet());
     }
 
 }

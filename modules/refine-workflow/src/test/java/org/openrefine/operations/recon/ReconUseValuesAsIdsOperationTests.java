@@ -36,14 +36,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -81,7 +84,9 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
 
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        Grid applied = op.createChange().apply(initialState, context);
+        Change.ChangeResult changeResult = op.createChange().apply(initialState, context);
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         ColumnModel columnModel = applied.getColumnModel();

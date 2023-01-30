@@ -200,7 +200,7 @@ public class MassEditOperation extends EngineDependentOperation {
         }
 
         @Override
-        public DagSlice getDagSlice() {
+        protected DagSlice getDagSlice() {
             Set<String> dependencies = new HashSet<>(_evaluable.getColumnDependencies(_columnName));
             dependencies.addAll(_engineConfig.getColumnDependencies());
             return new TransformationSlice(_columnName, dependencies);

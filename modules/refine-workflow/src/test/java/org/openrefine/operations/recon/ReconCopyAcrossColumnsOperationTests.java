@@ -35,6 +35,7 @@ import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
@@ -44,6 +45,7 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -90,7 +92,9 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
                 true).createChange();
 
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(
                 new String[] { "foo", "bar" },

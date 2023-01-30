@@ -445,7 +445,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         Optional.of(_reporter));
 
                 if (!_canceled) {
-                    HistoryEntry historyEntry = new HistoryEntry(
+                    _history.addEntry(
                             _historyEntryID,
                             _description,
                             ColumnAdditionByFetchingURLsOperation.this,
@@ -455,8 +455,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                     _newColumnName,
                                     Mode.RowBased,
                                     null));
-
-                    _history.addEntry(historyEntry);
                     _processManager.onDoneProcess(this);
                 }
             } catch (Exception e) {

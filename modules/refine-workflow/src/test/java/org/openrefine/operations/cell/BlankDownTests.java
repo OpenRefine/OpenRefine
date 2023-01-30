@@ -39,6 +39,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -47,6 +48,7 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -91,7 +93,11 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRowsNoFacets() throws DoesNotApplyException {
         Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-        Grid applied = change.apply(toBlankDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -108,7 +114,10 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRecordsNoFacets() throws DoesNotApplyException {
         Change change = new BlankDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-        Grid applied = change.apply(toBlankDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toBlankDown, mock(ChangeContext.class));
+        Grid applied = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -130,7 +139,10 @@ public class BlankDownTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new BlankDownOperation(engineConfig, "bar").createChange();
-        Grid applied = change.apply(toBlankDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -150,7 +162,11 @@ public class BlankDownTests extends RefineTest {
                 new DecoratedValue("c", "c"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new BlankDownOperation(engineConfig, "bar").createChange();
-        Grid applied = change.apply(toBlankDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {

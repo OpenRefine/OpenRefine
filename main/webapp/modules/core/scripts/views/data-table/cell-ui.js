@@ -491,7 +491,7 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
 DataTableCellUI.prototype._postProcessSeveralCells = function(config, columnStatsChanged) {
   Refine.postOperation(
     config,
-    { cellsChanged: true, columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true }
+    { cellsChanged: true, columnStatsChanged: columnStatsChanged }
   );
 };
 

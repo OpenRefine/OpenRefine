@@ -1,6 +1,7 @@
 
 package org.openrefine.model.changes;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
@@ -29,8 +30,11 @@ public class StarFlagChange implements Change {
     }
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-        return projectState.mapRows(mapper(rowId, star, value), projectState.getColumnModel());
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        return new ChangeResult(
+                projectState.mapRows(mapper(rowId, star, value), projectState.getColumnModel()),
+                GridPreservation.PRESERVES_RECORDS,
+                null);
     }
 
     protected static RowMapper mapper(long rowId, boolean star, boolean value) {
@@ -62,12 +66,6 @@ public class StarFlagChange implements Change {
     public boolean isImmediate() {
         // no corresponding operation
         return false;
-    }
-
-    @Override
-    public DagSlice getDagSlice() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

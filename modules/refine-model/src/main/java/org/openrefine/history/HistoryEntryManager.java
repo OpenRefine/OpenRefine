@@ -89,7 +89,7 @@ public class HistoryEntryManager {
         return new History(
                 grid,
                 getChangeDataStore(runner, dir),
-                getCachedGridStore(runner, dir),
+                getGridCache(runner, dir),
                 metadata.entries,
                 metadata.position);
     }
@@ -107,7 +107,7 @@ public class HistoryEntryManager {
     /**
      * The place where to store cached intermediate grids.
      */
-    public GridCache getCachedGridStore(Runner runner, File projectDir) {
+    public GridCache getGridCache(Runner runner, File projectDir) {
         return new FileGridCache(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
 

@@ -44,7 +44,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnName: column.name,
         clearData: false
       },
-      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+      { cellsChanged: true, columnStatsChanged: true }
     );
   };
 
@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnName: column.name,
         clearData: true
       },
-      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+      { cellsChanged: true, columnStatsChanged: true }
     );
   };
 
@@ -65,7 +65,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         op: "core/recon-match-best-candidates",
         columnName: column.name
       },
-      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+      { cellsChanged: true, columnStatsChanged: true }
     );
   };
 
@@ -82,7 +82,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           identifierSpace: identifierSpace,
           schemaSpace: schemaSpace
         },
-      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+      { cellsChanged: true, columnStatsChanged: true }
     );
   };
 
@@ -148,7 +148,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             identifierSpace: service.identifierSpace,
             schemaSpace: service.schemaSpace
         },
-        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+        { cellsChanged: true, columnStatsChanged: true }
         );
 
         DialogSystem.dismissUntil(level - 1);
@@ -235,7 +235,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
               identifierSpace: identifierSpace,
               schemaSpace: schemaSpace
             },
-            { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+            { cellsChanged: true, columnStatsChanged: true }
          );
     };
 
@@ -274,7 +274,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           expression: "cell.recon.match.id",
           onError: "set-to-blank"
         },
-        { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+        { modelsChanged: true },
         {
           onDone: function(o) {
             dismiss();
@@ -339,7 +339,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       } else {
         Refine.postOperation(
           config,
-          { rowsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+          { rowsChanged: true }
         );
         dismiss();
       }

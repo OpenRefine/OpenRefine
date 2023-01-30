@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -104,7 +105,7 @@ public class MultiValuedCellJoinOperation implements Operation {
     public class MultiValuedCellJoinChange implements Change {
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int columnIdx = columnModel.getColumnIndexByName(_columnName);
             if (columnIdx == -1) {
@@ -119,20 +120,17 @@ public class MultiValuedCellJoinOperation implements Operation {
             if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
                 projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
             }
-            return projectState.mapRecords(
-                    recordMapper(columnIdx, _separator),
-                    columnModel);
+            return new ChangeResult(
+                    projectState.mapRecords(
+                            recordMapper(columnIdx, _separator),
+                            columnModel),
+                    GridPreservation.NO_ROW_PRESERVATION,
+                    null);
         }
 
         @Override
         public boolean isImmediate() {
             return true;
-        }
-
-        @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }

@@ -870,7 +870,7 @@ public class ImportingUtilities {
                     -1,
                     optionObj);
             ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-            GridCache gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+            GridCache gridStore = ProjectManager.singleton.getGridCache(projectId);
             newProject = new Project(projectId, state, dataStore, gridStore);
             job.setProject(newProject);
         } catch (Exception e) {

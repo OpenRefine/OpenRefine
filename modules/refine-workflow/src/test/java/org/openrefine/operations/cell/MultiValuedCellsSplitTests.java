@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
@@ -127,7 +128,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
     @Test
     public void testSplit() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("foo", "key", "|", false).createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         Grid expectedState = createGrid(
                 new String[] { "key", "foo", "bar" },
@@ -152,7 +155,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
     @Test
     public void testSplitRespectsKeyColumn() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("foo", "bar", "|", false).createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         Grid expectedState = createGrid(
                 new String[] { "key", "foo", "bar" },
@@ -187,7 +192,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 ":",
                 false).createChange();
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<IndexedRow> rows = applied.collectRows();
 
@@ -204,7 +211,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 "\\W",
                 true).createChange();
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
 
@@ -227,7 +236,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 lengths).createChange();
 
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
 
@@ -249,7 +260,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})",
                 true).createChange();
 
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
         int keyCol = 0;
@@ -273,7 +286,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})",
                 true).createChange();
 
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
         int keyCol = 0;
@@ -299,7 +314,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})",
                 true).createChange();
 
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
         int keyCol = 0;
@@ -321,7 +338,9 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})",
                 true).createChange();
 
-        Grid applied = change.apply(smallGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(smallGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
 
