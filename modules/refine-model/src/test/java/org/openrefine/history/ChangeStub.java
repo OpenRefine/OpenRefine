@@ -14,18 +14,16 @@ import org.openrefine.model.changes.ChangeContext;
 public class ChangeStub implements Change {
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) {
-        return projectState;
+    public ChangeResult apply(Grid projectState, ChangeContext context) {
+        return new ChangeResult(
+                projectState,
+                GridPreservation.NO_ROW_PRESERVATION,
+                new OpaqueSlice(new ColumnModel(Arrays.asList(new ColumnMetadata("foo")))));
     }
 
     @Override
     public boolean isImmediate() {
         return false;
-    }
-
-    @Override
-    public DagSlice getDagSlice() {
-        return new OpaqueSlice(new ColumnModel(Arrays.asList(new ColumnMetadata("foo"))));
     }
 
 }

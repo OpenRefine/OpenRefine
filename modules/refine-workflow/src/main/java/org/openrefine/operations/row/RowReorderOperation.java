@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.row;
 
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
@@ -91,18 +92,14 @@ public class RowReorderOperation implements Operation {
         }
 
         @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+            Grid grid;
             if (Mode.RowBased.equals(_mode)) {
-                return projectState.reorderRows(_sorting, true);
+                grid = projectState.reorderRows(_sorting, true);
             } else {
-                return projectState.reorderRecords(_sorting, true);
+                grid = projectState.reorderRecords(_sorting, true);
             }
+            return new ChangeResult(grid, GridPreservation.NO_ROW_PRESERVATION, null);
         }
 
     }

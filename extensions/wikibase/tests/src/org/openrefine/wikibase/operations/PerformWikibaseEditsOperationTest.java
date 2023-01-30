@@ -34,6 +34,7 @@ import java.util.Collections;
 
 import org.mockito.Mockito;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -100,7 +101,9 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any()))
                         .thenReturn(changeData);
 
-        Grid applied = change.apply(grid, context);
+        Change.ChangeResult changeResult = change.apply(grid, context);
+        assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);

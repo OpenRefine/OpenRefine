@@ -47,40 +47,20 @@ public class HistoryEntryTests {
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
             + "\"change\" : {\n"
-            + "  \"dagSlice\" : {\n"
-            + "    \"columnModel\" : {\n"
-            + "      \"columns\" : [ {\n"
-            + "        \"name\" : \"foo\",\n"
-            + "        \"originalName\" : \"foo\"\n"
-            + "      } ],\n"
-            + "      \"keyCellIndex\" : 0,\n"
-            + "      \"keyColumnName\" : \"foo\"\n"
-            + "    },\n"
-            + "   \"type\" : \"opaque\"\n"
-            + "  },\n"
             + "  \"type\" : \"org.openrefine.history.ChangeStub\"\n"
             + "},\n"
+            + "\"gridPreservation\":\"preserves-rows\",\n"
             + "\"operation\":{\"op\":\"core/my-operation\","
             + "   \"description\":\"some description\"}"
             + "}";
 
     public static final String unknownOperationJson = "{\n" +
             "  \"change\" : {\n" +
-            "    \"dagSlice\" : {\n" +
-            "      \"columnModel\" : {\n" +
-            "        \"columns\" : [ {\n" +
-            "          \"name\" : \"foo\",\n" +
-            "          \"originalName\" : \"foo\"\n" +
-            "        } ],\n" +
-            "        \"keyCellIndex\" : 0,\n" +
-            "        \"keyColumnName\" : \"foo\"\n" +
-            "      },\n" +
-            "      \"type\" : \"opaque\"\n" +
-            "    },\n" +
             "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" +
             "  },\n" +
             "  \"description\" : \"some mysterious operation\",\n" +
             "  \"id\" : 1533633623158,\n" +
+            "\"gridPreservation\":\"preserves-rows\",\n" +
             "  \"operation\" : {\n" +
             "    \"description\" : \"some mysterious operation\",\n" +
             "    \"op\" : \"someextension/unknown-operation\",\n" +
@@ -99,7 +79,8 @@ public class HistoryEntryTests {
     public void serializeHistoryEntry() throws Exception {
         String json = "{\"id\":1533651837506,"
                 + "\"description\":\"Discard recon judgment for single cell on row 76, column organization_name, containing \\\"Catholic University Leuven\\\"\","
-                + "\"time\":\"2018-08-07T14:18:29Z\"}";
+                + "\"time\":\"2018-08-07T14:18:29Z\","
+                + "\"gridPreservation\":\"preserves-rows\"}";
         TestUtils.isSerializedTo(HistoryEntry.load(json), json, ParsingUtilities.defaultWriter);
     }
 
@@ -108,7 +89,8 @@ public class HistoryEntryTests {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-                + "\"time\":\"2018-08-07T09:06:37Z\"}";
+                + "\"time\":\"2018-08-07T09:06:37Z\","
+                + "\"gridPreservation\":\"preserves-rows\"}";
 
         HistoryEntry historyEntry = HistoryEntry.load(fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, ParsingUtilities.defaultWriter);

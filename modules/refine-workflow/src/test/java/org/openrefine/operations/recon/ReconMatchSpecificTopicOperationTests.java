@@ -34,6 +34,7 @@ import java.io.Serializable;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
@@ -45,6 +46,7 @@ import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -104,7 +106,9 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Grid applied = change.apply(initialState, context);
+        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         long reconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
 

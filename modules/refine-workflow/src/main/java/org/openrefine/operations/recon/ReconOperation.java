@@ -215,13 +215,11 @@ public class ReconOperation extends EngineDependentOperation {
                             Mode.RowBased,
                             _reconConfig);
 
-                    HistoryEntry historyEntry = new HistoryEntry(
+                    _history.addEntry(
                             _historyEntryID,
                             _description,
                             ReconOperation.this,
                             reconChange);
-
-                    _history.addEntry(historyEntry);
                     _manager.onDoneProcess(this);
                 }
             } catch (Exception e) {

@@ -38,6 +38,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
@@ -88,7 +89,9 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testReorder() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Grid applied = changeResult.getGrid();
 
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),

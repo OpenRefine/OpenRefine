@@ -74,10 +74,7 @@ public class QuickHistoryEntryProcess extends Process {
 
     @Override
     public HistoryEntry performImmediate() throws Exception {
-        if (_historyEntry == null) {
-            _historyEntry = new HistoryEntry(HistoryEntry.allocateID(), _briefDescription, _operation, _change);
-        }
-        _history.addEntry(_historyEntry);
+        _historyEntry = _history.addEntry(HistoryEntry.allocateID(), _briefDescription, _operation, _change);
         _done = true;
 
         return _historyEntry;

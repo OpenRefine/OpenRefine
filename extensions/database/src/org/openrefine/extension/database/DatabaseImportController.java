@@ -410,7 +410,7 @@ public class DatabaseImportController implements ImportingController {
                     limit, options);
             long projectId = Project.generateID();
             ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-            GridCache gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+            GridCache gridStore = ProjectManager.singleton.getGridCache(projectId);
             job.setProject(new Project(projectId, grid, dataStore, gridStore));
         } catch (Exception e) {
             exceptions.add(e);

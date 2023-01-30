@@ -67,8 +67,10 @@ public class HistoryEntry {
     private final Operation operation;
 
     // the actual change
+    protected final Change change;
 
-    final protected Change change;
+    // whether the change preserved the structure of the grid
+    protected final GridPreservation gridPreservation;
 
     // JsonIgnore because it is included later on in special cases, see {@link getJsonChange}.
     @JsonIgnore
@@ -85,12 +87,14 @@ public class HistoryEntry {
             @JsonProperty("id") long id,
             @JsonProperty("description") String description,
             @JsonProperty("operation") Operation operation,
-            @JsonProperty("change") Change change) throws NotImmediateOperationException {
+            @JsonProperty("change") Change change,
+            @JsonProperty("gridPreservation") GridPreservation gridPreservation) throws NotImmediateOperationException {
         this(id,
                 description,
                 operation,
                 OffsetDateTime.now(ZoneId.of("Z")),
-                change);
+                change,
+                gridPreservation);
     }
 
     protected HistoryEntry(
@@ -98,7 +102,8 @@ public class HistoryEntry {
             String description,
             Operation operation,
             OffsetDateTime time,
-            Change change) throws NotImmediateOperationException {
+            Change change,
+            GridPreservation gridPreservation) throws NotImmediateOperationException {
         this.id = id;
         this.description = description;
         this.operation = operation;
@@ -114,6 +119,7 @@ public class HistoryEntry {
             }
         }
         this.change = actualChange;
+        this.gridPreservation = gridPreservation != null ? gridPreservation : GridPreservation.NO_ROW_PRESERVATION;
     }
 
     static public HistoryEntry load(String s) throws IOException {
@@ -154,6 +160,11 @@ public class HistoryEntry {
         } else {
             return change;
         }
+    }
+
+    @JsonProperty("gridPreservation")
+    public GridPreservation getGridPreservation() {
+        return gridPreservation;
     }
 
 }

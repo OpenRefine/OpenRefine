@@ -43,6 +43,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Grid;
@@ -200,7 +201,10 @@ public class MassOperationTests extends RefineTest {
     @Test
     public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+
+        Grid applied = changeResult.getGrid();
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");
@@ -222,7 +226,10 @@ public class MassOperationTests extends RefineTest {
     public void testRecordsMode() throws DoesNotApplyException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+
+        Grid applied = changeResult.getGrid();
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");
@@ -238,16 +245,6 @@ public class MassOperationTests extends RefineTest {
         Row row4 = applied.getRow(5);
         Assert.assertEquals(row4.getCellValue(0), "v1");
         Assert.assertEquals(row4.getCellValue(1), "b");
-    }
-
-    @Test
-    public void testDagSlice() throws ParsingException {
-        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        DagSlice slice = change.getDagSlice();
-        Assert.assertTrue(slice instanceof TransformationSlice);
-        TransformationSlice transformation = (TransformationSlice) slice;
-        Assert.assertEquals(transformation.getColumnName(), "foo");
-        Assert.assertEquals(transformation.getInputColumns(), TestUtils.set("foo", "bar"));
     }
 
 }

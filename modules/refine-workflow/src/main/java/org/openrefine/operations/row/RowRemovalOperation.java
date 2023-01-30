@@ -36,6 +36,8 @@ package org.openrefine.operations.row;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
+import org.openrefine.history.HistoryEntry;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
@@ -71,24 +73,20 @@ public class RowRemovalOperation extends EngineDependentOperation {
         }
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             Engine engine = getEngine(projectState);
+            Grid result;
             if (Mode.RowBased.equals(engine.getMode())) {
-                return projectState.removeRows(engine.combinedRowFilters());
+                result = projectState.removeRows(engine.combinedRowFilters());
             } else {
-                return projectState.removeRecords(engine.combinedRecordFilters());
+                result = projectState.removeRecords(engine.combinedRecordFilters());
             }
+            return new ChangeResult(result, GridPreservation.NO_ROW_PRESERVATION, null);
         }
 
         @Override
         public boolean isImmediate() {
             return true;
-        }
-
-        @Override
-        public DagSlice getDagSlice() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }
