@@ -126,13 +126,13 @@ jobs:
     - name: Adapt PATH for Hadoop binaries
       id: path_hadoop_binaries
       run: |
-        "${{ github.workspace }}\refine-spark-runner\hadoop\bin" >> $GITHUB_PATH
+        "${{ github.workspace }}\modules\refine-spark-runner\hadoop\bin" >> $GITHUB_PATH
 
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
       env:
-        HADOOP_HOME: ${{ github.workspace }}\refine-spark-runner\hadoop
-        HADOOP_HOME_BIN: ${{ github.workspace }}\refine-spark-runner\hadoop\bin
+        HADOOP_HOME: ${{ github.workspace }}\modules\refine-spark-runner\hadoop
+        HADOOP_HOME_BIN: ${{ github.workspace }}\modules\refine-spark-runner\hadoop\bin
 
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
