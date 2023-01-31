@@ -163,7 +163,9 @@ $(function() {
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
 
     for (var i = 0; i < Refine.actionAreas.length; i++) {
-      Refine.actionAreas[i].ui.resize();
+      if (Refine.actionAreas[i].ui.resize) {
+        Refine.actionAreas[i].ui.resize();
+      }
     }
   };
   $(window).on("resize", resize);
