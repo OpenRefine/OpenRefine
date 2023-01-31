@@ -600,9 +600,9 @@ class ListFacet extends Facet {
     .text(originalContent)
     .on('keydown',function(evt) {
       if (!evt.shiftKey) {
-        if (evt.keyCode === 13) {
+        if (evt.key === "Enter") {
           commit();
-        } else if (evt.keyCode === 27) {
+        } else if (evt.key === "Escape") {
           MenuSystem.dismissAll();
         }
       }
