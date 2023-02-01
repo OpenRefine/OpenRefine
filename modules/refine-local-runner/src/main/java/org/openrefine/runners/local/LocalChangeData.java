@@ -79,7 +79,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return runner;
     }
 

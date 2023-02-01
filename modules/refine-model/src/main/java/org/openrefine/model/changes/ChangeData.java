@@ -10,10 +10,9 @@ import org.openrefine.process.ProgressReporter;
 /**
  * Some external data, obtained by communicating with an external service or performing an expensive computation whose
  * result should be persisted in the project data.
- * 
+ * <p>
  * This data is indexed by row ids from the original grid it was computed from, making it easy to join both to obtain
  * the final state of the grid after this expensive computation.
- * 
  *
  * @param <T>
  *            the type of data to store for each row. It should be serializable with Jackson.
@@ -32,7 +31,7 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
     /**
      * The runner which was used to create this change data.
      */
-    public Runner getDatamodelRunner();
+    public Runner getRunner();
 
     /**
      * Saves the change data to a specified directory, following OpenRefine's format for change data.

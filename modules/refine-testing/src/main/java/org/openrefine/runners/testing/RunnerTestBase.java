@@ -895,7 +895,7 @@ public abstract class RunnerTestBase {
 
         ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
 
-        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), "first");
         Assert.assertNull(loaded.get(1L)); // not included in changedata
         Assert.assertEquals(loaded.get(2L), "third");
@@ -912,7 +912,7 @@ public abstract class RunnerTestBase {
 
         ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
 
-        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), "first");
         Assert.assertNull(loaded.get(1L)); // not included in changedata
         Assert.assertEquals(loaded.get(2L), "third");
@@ -927,7 +927,7 @@ public abstract class RunnerTestBase {
 
         ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
 
-        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), "first");
         Assert.assertNull(loaded.get(1L));
         Assert.assertEquals(loaded.get(2L), "third");

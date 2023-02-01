@@ -32,7 +32,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     @Override
     @JsonIgnore
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return new TestingRunner();
     }
 
