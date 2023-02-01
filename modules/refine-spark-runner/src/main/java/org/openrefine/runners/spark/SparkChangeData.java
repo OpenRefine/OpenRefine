@@ -64,7 +64,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return runner;
     }
 

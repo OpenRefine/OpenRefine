@@ -27,7 +27,7 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return runner;
     }
 
