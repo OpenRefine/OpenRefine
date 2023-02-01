@@ -17,10 +17,7 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -246,21 +243,11 @@ public class TestingGrid implements Grid {
 
         gridPath.mkdirs();
         File partFile = new File(gridPath, "part-00000.gz");
-        FileOutputStream fos = null;
-        GZIPOutputStream gos = null;
-        try {
-            fos = new FileOutputStream(partFile);
-            gos = new GZIPOutputStream(fos);
+        try (FileOutputStream fos = new FileOutputStream(partFile);
+                GZIPOutputStream gos = new GZIPOutputStream(fos);) {
             for (IndexedRow row : indexedRows) {
                 ParsingUtilities.saveWriter.writeValue(gos, row);
                 gos.write('\n');
-            }
-        } finally {
-            if (gos != null) {
-                gos.close();
-            }
-            if (fos != null) {
-                fos.close();
             }
         }
         if (progressReporter.isPresent()) {
@@ -269,6 +256,12 @@ public class TestingGrid implements Grid {
         }
 
         ParsingUtilities.saveWriter.writeValue(metadataPath, this);
+
+        File completionMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
+        try (FileOutputStream fosCompletion = new FileOutputStream(completionMarker)) {
+            Writer writer = new OutputStreamWriter(fosCompletion);
+            writer.close();
+        }
         if (progressReporter.isPresent()) {
             progressReporter.get().reportProgress(100);
         }

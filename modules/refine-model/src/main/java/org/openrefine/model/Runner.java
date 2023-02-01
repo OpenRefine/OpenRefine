@@ -23,6 +23,8 @@ public interface Runner {
 
     // charset used when writing a grid to a file, in our internal format
     public static final Charset GRID_ENCODING = Charset.forName("UTF-8");
+    // name of the empty file considered a completion marker in the serialization of Grid and ChangeData objects
+    public static final String COMPLETION_MARKER_FILE_NAME = "_SUCCESS";
 
     /**
      * Loads a {@link Grid} serialized at a given location.

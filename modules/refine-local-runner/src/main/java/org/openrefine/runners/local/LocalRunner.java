@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -118,7 +119,11 @@ public class LocalRunner implements Runner {
                 }, "deserialize")
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<T>(this, pll, null);
+        Callable<Boolean> isComplete = () -> {
+            File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
+            return completionMarker.exists();
+        };
+        return new LocalChangeData<T>(this, pll, null, isComplete);
     }
 
     @Override
@@ -165,7 +170,8 @@ public class LocalRunner implements Runner {
                 .parallelize(defaultParallelism, withoutNulls)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<T>(this, pll, null); // no need for parent partition sizes, since pll has cached ones
+        return new LocalChangeData<T>(this, pll, null, () -> true); // no need for parent partition sizes, since pll has
+                                                                    // cached ones
     }
 
     @Override

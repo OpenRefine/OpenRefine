@@ -1073,7 +1073,7 @@ public class SparkGrid implements Grid {
             data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
         }
 
-        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
     }
 
     private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
@@ -1120,7 +1120,7 @@ public class SparkGrid implements Grid {
             data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
         }
 
-        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
     }
 
     private static <T> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
