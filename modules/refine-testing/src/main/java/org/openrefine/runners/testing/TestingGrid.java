@@ -502,7 +502,7 @@ public class TestingGrid implements Grid {
 
     @Override
     @JsonIgnore
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return new TestingRunner();
     }
 

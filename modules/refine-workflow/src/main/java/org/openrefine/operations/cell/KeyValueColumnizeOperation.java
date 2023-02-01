@@ -41,7 +41,6 @@ import java.util.Map;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -286,7 +285,7 @@ public class KeyValueColumnizeOperation implements Operation {
             }
 
             return new ChangeResult(
-                    projectState.getDatamodelRunner().create(finalColumnModel, finalRows, projectState.getOverlayModels()),
+                    projectState.getRunner().create(finalColumnModel, finalRows, projectState.getOverlayModels()),
                     GridPreservation.NO_ROW_PRESERVATION,
                     null);
         }

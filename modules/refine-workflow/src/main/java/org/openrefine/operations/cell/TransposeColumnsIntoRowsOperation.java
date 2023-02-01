@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -360,7 +359,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
                     .collect(Collectors.toList());
             ColumnModel newColumnModel = new ColumnModel(newColumns);
             return new ChangeResult(
-                    projectState.getDatamodelRunner().create(newColumnModel, rows, projectState.getOverlayModels()),
+                    projectState.getRunner().create(newColumnModel, rows, projectState.getOverlayModels()),
                     GridPreservation.NO_ROW_PRESERVATION,
                     null);
         }
