@@ -323,7 +323,7 @@ ReconStandardServicePanel.prototype.start = function() {
 
   Refine.postOperation(
     {
-      op: "core/reconcile",
+      op: "core/recon",
       columnName: this._column.name,
       config: {
         mode: "standard-service",
