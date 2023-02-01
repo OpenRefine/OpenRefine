@@ -193,7 +193,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       function(extension, endpoint, identifierSpace, schemaSpace) {
         Refine.postOperation(
             {
-              op: "core/extend-data", 
+              op: "core/extend-reconciled-data", 
               baseColumnName: column.name,
 	      endpoint: endpoint,
               identifierSpace: identifierSpace,
