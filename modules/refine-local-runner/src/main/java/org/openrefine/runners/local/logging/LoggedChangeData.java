@@ -59,6 +59,11 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
+    public boolean isComplete() {
+        return changeData.isComplete();
+    }
+
+    @Override
     public Iterator<IndexedData<T>> iterator() {
         return runner.exec("iterator", () -> changeData.iterator());
     }

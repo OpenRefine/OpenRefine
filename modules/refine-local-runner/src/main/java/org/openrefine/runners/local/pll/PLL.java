@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Grid;
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.runners.local.pll.util.QueryTree;
 
@@ -591,13 +592,7 @@ public abstract class PLL<T> {
      * @throws InterruptedException
      */
     public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
-        // Using the Hadoop API:
-        /*
-         * OutputFormat<NullWritable, Text> outputFormat = new TextOutputFormat<NullWritable, Text>();
-         * mapPartitions((index,stream) -> { Text text = new Text(); return stream.map(e -> {text.set(e.toString());
-         * return text; }); }, false) .mapToPair(text -> Tuple2.of(NullWritable.get(), text)) .saveAsHadoopFile(path,
-         * NullWritable.class, Text.class, outputFormat, GzipCodec.class);
-         */
+
         File gridPath = new File(path);
         gridPath.mkdirs();
 
@@ -618,6 +613,13 @@ public abstract class PLL<T> {
             // if the operation was interrupted, we remove all the files we were writing
             FileUtils.deleteDirectory(gridPath);
             throw e;
+        }
+
+        // Write an empty file as success marker
+        File successMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
+        try (FileOutputStream fos = new FileOutputStream(successMarker)) {
+            Writer writer = new OutputStreamWriter(fos);
+            writer.close();
         }
 
         if (progressReporter.isPresent()) {

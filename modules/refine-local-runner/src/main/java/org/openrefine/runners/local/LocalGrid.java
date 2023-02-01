@@ -619,7 +619,8 @@ public class LocalGrid implements Grid {
         return new LocalChangeData<T>(
                 runner,
                 data.filter(tuple -> tuple.getValue() != null),
-                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
+                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
+                () -> false);
     }
 
     protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
@@ -651,7 +652,8 @@ public class LocalGrid implements Grid {
         return new LocalChangeData<T>(
                 runner,
                 data.filter(tuple -> tuple.getValue() != null),
-                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
+                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
+                () -> false);
     }
 
     /**

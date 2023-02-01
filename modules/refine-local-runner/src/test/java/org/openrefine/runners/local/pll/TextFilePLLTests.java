@@ -91,6 +91,10 @@ public class TextFilePLLTests extends PLLTestsBase {
         File tempFile = new File(tempDir, "roundtrip.txt");
         pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
 
+        // check for presence of the _SUCCESS marker
+        File successMarker = new File(tempFile, "_SUCCESS");
+        Assert.assertTrue(successMarker.exists());
+
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
 
         Assert.assertEquals(pll.collect(), deserializedPLL.collect());

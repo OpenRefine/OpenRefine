@@ -28,18 +28,23 @@ public class SparkChangeData<T> implements ChangeData<T> {
 
     private final JavaPairRDD<Long, T> data;
     private final SparkRunner runner;
+    private final boolean complete;
 
     /**
-     * Constructs a change data.
-     * 
-     * The RDD is expected not to contain any null value (they should be filtered out first).
+     * Constructs a change data. The RDD is expected not to contain any null value (they should be filtered out first).
      * 
      * @param data
+     *            the RDD of external data
      * @param runner
+     *            the runner it should be associated with
+     * @param isComplete
+     *            whether the RDD is loaded from a cached location and is fully computed, in which case using it will
+     *            not trigger any new actual computation
      */
-    public SparkChangeData(JavaPairRDD<Long, T> data, SparkRunner runner) {
+    public SparkChangeData(JavaPairRDD<Long, T> data, SparkRunner runner, boolean isComplete) {
         this.data = data;
         this.runner = runner;
+        this.complete = isComplete;
     }
 
     public JavaPairRDD<Long, T> getData() {
@@ -83,6 +88,11 @@ public class SparkChangeData<T> implements ChangeData<T> {
         // which should probably be passed when constructing the object (so that it can be inferred from
         // the parent Grid)
         progressReporter.reportProgress(100);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return complete;
     }
 
     protected static <T> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data) throws IOException {

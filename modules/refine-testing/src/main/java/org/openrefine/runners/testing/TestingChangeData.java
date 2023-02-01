@@ -1,10 +1,7 @@
 
 package org.openrefine.runners.testing;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
@@ -41,28 +38,20 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
         file.mkdirs();
         File partFile = new File(file, "part-00000.gz");
-        FileOutputStream fos = null;
-        GZIPOutputStream gos = null;
-        OutputStreamWriter writer = null;
-
-        try {
-            fos = new FileOutputStream(partFile);
-            gos = new GZIPOutputStream(fos);
-            writer = new OutputStreamWriter(gos);
+        try (FileOutputStream fos = new FileOutputStream(partFile);
+                GZIPOutputStream gos = new GZIPOutputStream(fos);
+                OutputStreamWriter writer = new OutputStreamWriter(gos);) {
             for (IndexedData<T> row : this) {
                 row.write(writer, serializer);
             }
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-            if (gos != null) {
-                gos.close();
-            }
-            if (fos != null) {
-                fos.close();
-            }
         }
+
+        File completionMarker = new File(file, Runner.COMPLETION_MARKER_FILE_NAME);
+        try (FileOutputStream fosCompletion = new FileOutputStream(completionMarker)) {
+            Writer writerCompletion = new OutputStreamWriter(fosCompletion);
+            writerCompletion.close();
+        }
+
         if (progressReporter.isPresent()) {
             progressReporter.get().reportProgress(100);
         }
@@ -74,6 +63,11 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
         saveToFile(file, serializer, Optional.ofNullable(progressReporter));
+    }
+
+    @Override
+    public boolean isComplete() {
+        return true;
     }
 
     @Override

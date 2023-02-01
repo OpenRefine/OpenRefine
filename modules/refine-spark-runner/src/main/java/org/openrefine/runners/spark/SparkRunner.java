@@ -138,7 +138,7 @@ public class SparkRunner implements Runner {
                 .mapValues(p -> p.getData())
                 .persist(StorageLevel.MEMORY_ONLY());
 
-        return new SparkChangeData<T>(data, this);
+        return new SparkChangeData<T>(data, this, true);
     }
 
     protected static <T> Function<String, Tuple2<Long, T>> parseIndexedData(Type expectedType) {
@@ -169,7 +169,7 @@ public class SparkRunner implements Runner {
                 .map(i -> new Tuple2<Long, T>(i.getId(), i.getData()))
                 .collect(Collectors.toList());
         JavaPairRDD<Long, T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
-        return new SparkChangeData<T>(rdd, this);
+        return new SparkChangeData<T>(rdd, this, true);
     }
 
     @Override

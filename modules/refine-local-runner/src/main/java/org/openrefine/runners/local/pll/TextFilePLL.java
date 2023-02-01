@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
+import org.openrefine.model.Runner;
 import org.openrefine.runners.local.pll.util.LineReader;
 
 /**
@@ -58,7 +59,10 @@ public class TextFilePLL extends PLL<String> {
             });
 
             for (File subFile : files) {
-                addPartitionsForFile(subFile);
+                // the completion marker should not be read as a partition, because it is empty
+                if (!Runner.COMPLETION_MARKER_FILE_NAME.equals(subFile.getName())) {
+                    addPartitionsForFile(subFile);
+                }
             }
         } else {
             addPartitionsForFile(file);

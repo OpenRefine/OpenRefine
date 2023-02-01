@@ -41,9 +41,8 @@ import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.TestUtils;
 
 /**
- * A collection of generic tests that any implementation of {@link Runner} should satisfy.
- * 
- * These tests are provided in this module so that other implementations can reuse this test class.
+ * A collection of generic tests that any implementation of {@link Runner} should satisfy. These tests are provided in
+ * this module so that other implementations can reuse this test class.
  * 
  * @author Antonin Delpeuch
  *
@@ -440,6 +439,7 @@ public abstract class RunnerTestBase {
         Assert.assertEquals(actualRows, expectedRows);
         Assert.assertEquals(loaded.recordCount(), 2L);
         Assert.assertEquals(loaded.collectRecords(), expectedRecords);
+        Assert.assertTrue(new File(tempFile, "grid/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
     }
 
     @Test
@@ -459,6 +459,7 @@ public abstract class RunnerTestBase {
         Assert.assertEquals(actualRows, expectedRows);
         Assert.assertEquals(loaded.recordCount(), 2L);
         Assert.assertEquals(loaded.collectRecords(), expectedRecords);
+        Assert.assertTrue(new File(tempFile, "grid/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
     }
 
     @Test
@@ -900,6 +901,10 @@ public abstract class RunnerTestBase {
         Assert.assertNull(loaded.get(1L)); // not included in changedata
         Assert.assertEquals(loaded.get(2L), "third");
         Assert.assertNull(loaded.get(3L)); // null from creation
+
+        // the change data was loaded from a file with a completion marker, so it is complete
+        Assert.assertTrue(new File(tempFile, "data/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
+        Assert.assertTrue(loaded.isComplete());
     }
 
     @Test
@@ -917,6 +922,10 @@ public abstract class RunnerTestBase {
         Assert.assertNull(loaded.get(1L)); // not included in changedata
         Assert.assertEquals(loaded.get(2L), "third");
         Assert.assertNull(loaded.get(3L)); // null from creation
+
+        // the change data was loaded from a file with a completion marker, so it is complete
+        Assert.assertTrue(new File(tempFile, "data/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
+        Assert.assertTrue(loaded.isComplete());
     }
 
     @Test

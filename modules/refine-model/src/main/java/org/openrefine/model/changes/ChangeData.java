@@ -26,12 +26,12 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      *            the 0-based row index
      * @return null if there is no such change data for the given row id
      */
-    public T get(long rowId);
+    T get(long rowId);
 
     /**
      * The runner which was used to create this change data.
      */
-    public Runner getRunner();
+    Runner getRunner();
 
     /**
      * Saves the change data to a specified directory, following OpenRefine's format for change data.
@@ -41,7 +41,7 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      * @param serializer
      *            the serializer used to convert the items to strings
      */
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException;
+    void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException;
 
     /**
      * Saves the change data to a specified directory, following OpenRefine's format for change data.
@@ -53,7 +53,14 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
      * @param progressReporter
      *            callback to report the progress of the writing process
      */
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
+    void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
             throws IOException, InterruptedException;
+
+    /**
+     * Whether the entire change data is available to be iterated on statically, without performing any new computation
+     * or fetching. This happens when this ChangeData object is loaded back from disk and a suitable completion marker
+     * was found.
+     */
+    boolean isComplete();
 
 }

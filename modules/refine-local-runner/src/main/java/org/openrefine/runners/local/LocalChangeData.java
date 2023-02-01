@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
@@ -28,6 +29,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     private final PairPLL<Long, T> grid;
     private final List<Long> parentPartitionFirstIndices;
     private final Long parentSize;
+    private final Callable<Boolean> complete;
 
     /**
      * Constructs a change data.
@@ -40,9 +42,10 @@ public class LocalChangeData<T> implements ChangeData<T> {
      *            available). This is used to compute progress as a percentage of the original grid swept through. This
      *            is more efficient than counting the number of elements in each partition of the change data.
      */
-    public LocalChangeData(LocalRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes) {
+    public LocalChangeData(LocalRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes, Callable<Boolean> complete) {
         this.runner = runner;
         this.grid = grid;
+        this.complete = complete;
         if (parentPartitionSizes == null) {
             parentPartitionFirstIndices = null;
             parentSize = null;
@@ -126,6 +129,15 @@ public class LocalChangeData<T> implements ChangeData<T> {
     public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
             throws IOException, InterruptedException {
         saveToFile(file, serializer, Optional.ofNullable(progressReporter));
+    }
+
+    @Override
+    public boolean isComplete() {
+        try {
+            return complete.call();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public PairPLL<Long, T> getPLL() {
