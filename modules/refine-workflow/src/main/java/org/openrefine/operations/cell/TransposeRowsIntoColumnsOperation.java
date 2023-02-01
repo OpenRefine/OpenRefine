@@ -152,7 +152,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
                     .collect(Collectors.toList());
 
             return new ChangeResult(
-                    projectState.getDatamodelRunner().create(newColumns, rows, projectState.getOverlayModels()),
+                    projectState.getRunner().create(newColumns, rows, projectState.getOverlayModels()),
                     GridPreservation.NO_ROW_PRESERVATION);
         }
 

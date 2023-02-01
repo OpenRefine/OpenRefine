@@ -61,7 +61,7 @@ public class SparkGridTests extends SparkBasedTest {
 
     @Test
     public void testDatamodelRunner() {
-        Assert.assertTrue(state.getDatamodelRunner() instanceof SparkRunner);
+        Assert.assertTrue(state.getRunner() instanceof SparkRunner);
     }
 
     @Test

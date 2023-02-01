@@ -156,7 +156,7 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return runner;
     }
 

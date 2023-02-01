@@ -187,7 +187,7 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testDatamodelRunner() {
-        Assert.assertNotNull(simpleGrid.getDatamodelRunner());
+        Assert.assertNotNull(simpleGrid.getRunner());
     }
 
     protected static RowFilter myRowFilter = new RowFilter() {

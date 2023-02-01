@@ -71,7 +71,7 @@ public class LineBasedImporter extends LineBasedImporterBase {
                 columns.add(new ColumnMetadata("Column " + (i + 1)));
             }
             ColumnModel columnModel = new ColumnModel(columns);
-            return parsed.getDatamodelRunner().create(columnModel, newRows, Collections.emptyMap());
+            return parsed.getRunner().create(columnModel, newRows, Collections.emptyMap());
         }
     }
 

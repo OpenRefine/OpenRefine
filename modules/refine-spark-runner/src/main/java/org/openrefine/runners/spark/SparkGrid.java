@@ -189,7 +189,7 @@ public class SparkGrid implements Grid {
 
     @JsonIgnore
     @Override
-    public Runner getDatamodelRunner() {
+    public Runner getRunner() {
         return runner;
     }
 
