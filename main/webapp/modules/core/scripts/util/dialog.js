@@ -37,7 +37,7 @@ DialogSystem = {
 
 var escapeKey = function(event) {
   var level = DialogSystem._layers.length;
-  if (event.keyCode == 27) {
+  if (event.key == "Escape") {
       DialogSystem.dismissUntil(level - 1);
   }
 }

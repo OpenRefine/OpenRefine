@@ -214,13 +214,13 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   .text(originalContent)
   .on('keydown',function(evt) {
     if (!evt.shiftKey) {
-      if (evt.keyCode == 13) {
+      if (evt.key == "Enter") {
         if (evt.ctrlKey) {
           elmts.okallButton.trigger('click');
         } else {
           elmts.okButton.trigger('click');
         }
-      } else if (evt.keyCode == 27) {
+      } else if (evt.key == "Escape") {
         MenuSystem.dismissAll();
       }
     }
