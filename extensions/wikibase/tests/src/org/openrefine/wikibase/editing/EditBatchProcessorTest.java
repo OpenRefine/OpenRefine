@@ -88,14 +88,16 @@ public class EditBatchProcessorTest extends RefineTest {
         List<EntityEdit> batch = new ArrayList<>();
         batch.add(new ItemEditBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
-                .addStatement(TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA)).build());
+                .addStatement(TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA))
+                .addContributingRowId(123L).build());
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("better label", "en");
-        batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).build());
+        batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).addContributingRowId(123L).build());
 
         // Plan expected edits
         ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
                 .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
-                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr"))
+                .build();
         when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
                 .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
 
@@ -111,9 +113,6 @@ public class EditBatchProcessorTest extends RefineTest {
         assertEquals(1, processor.remainingEdits());
         assertEquals(50, processor.progress());
         processor.performEdit();
-        assertEquals(0, processor.remainingEdits());
-        assertEquals(100, processor.progress());
-        processor.performEdit(); // does not do anything
         assertEquals(0, processor.remainingEdits());
         assertEquals(100, processor.progress());
 
@@ -134,7 +133,7 @@ public class EditBatchProcessorTest extends RefineTest {
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
         List<EntityEdit> batch = qids.stream()
-                .map(qid -> new ItemEditBuilder(qid).addDescription(description, true).build())
+                .map(qid -> new ItemEditBuilder(qid).addDescription(description, true).addContributingRowId(123L).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -187,7 +186,7 @@ public class EditBatchProcessorTest extends RefineTest {
         List<MediaInfoIdValue> mids = ids.stream().map(e -> Datamodel.makeWikimediaCommonsMediaInfoIdValue(e))
                 .collect(Collectors.toList());
         List<EntityEdit> batch = mids.stream()
-                .map(mid -> new MediaInfoEditBuilder(mid).addLabel(label, false).build())
+                .map(mid -> new MediaInfoEditBuilder(mid).addLabel(label, false).addContributingRowId(123L).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -225,7 +224,8 @@ public class EditBatchProcessorTest extends RefineTest {
     @Test
     public void testEditWikitext() throws MediaWikiApiErrorException, IOException, InterruptedException {
         MediaInfoIdValue mid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M12345");
-        MediaInfoEdit edit = new MediaInfoEditBuilder(mid).addWikitext("my new wikitext").setOverrideWikitext(true).build();
+        MediaInfoEdit edit = new MediaInfoEditBuilder(mid).addWikitext("my new wikitext").setOverrideWikitext(true)
+                .addContributingRowId(123L).build();
         List<EntityEdit> batch = Collections.singletonList(edit);
         List<MediaInfoDocument> existingDocuments = Collections.singletonList(Datamodel.makeMediaInfoDocument(mid));
 

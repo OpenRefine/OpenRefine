@@ -67,9 +67,7 @@ import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ExtendDataOperation.DataExtensionProducer;
-import org.openrefine.process.LongRunningProcessStub;
-import org.openrefine.process.Process;
+import org.openrefine.model.changes.DataExtensionChange.DataExtensionProducer;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.slf4j.LoggerFactory;
@@ -234,13 +232,6 @@ public class ExtendDataOperationTests extends RefineTest {
     }
 
     @Test
-    public void serializeExtendDataProcess() throws Exception {
-        Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
-                .createProcess(project);
-        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()), ParsingUtilities.defaultWriter);
-    }
-
-    @Test
     public void serializeDataExtensionConfigWithoutBatchSize() throws IOException {
         TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJsonWithBatchSize,
                 ParsingUtilities.defaultWriter);
@@ -391,8 +382,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     RECON_SCHEMA_SPACE,
                     extension,
                     1);
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGrid().collectRows();
@@ -443,8 +433,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             // Test to be updated as countries change currencies!
             List<IndexedRow> rows = project.getCurrentGrid().collectRows();
@@ -495,8 +484,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). But thanks to
@@ -549,8 +537,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second

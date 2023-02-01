@@ -58,7 +58,6 @@ public class Project {
     // The complete history of transformations executed on this project
     private final History history;
 
-    transient private ProcessManager processManager = new ProcessManager();
     // by default, the project has never been saved so far.
     transient private LocalDateTime _lastSave = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
 
@@ -71,7 +70,7 @@ public class Project {
      *            the initial state of the project.
      */
     public Project(Grid initialState, ChangeDataStore dataStore, GridCache gridStore) {
-        this(generateID(), new History(initialState, dataStore, gridStore));
+        this(generateID(), initialState, dataStore, gridStore);
     }
 
     /**
@@ -83,7 +82,7 @@ public class Project {
      *            the initial state of the project
      */
     public Project(long projectId, Grid initialState, ChangeDataStore dataStore, GridCache gridStore) {
-        this(projectId, new History(initialState, dataStore, gridStore));
+        this(projectId, new History(initialState, dataStore, gridStore, projectId));
     }
 
     /**
@@ -112,7 +111,7 @@ public class Project {
     }
 
     public ProcessManager getProcessManager() {
-        return this.processManager;
+        return this.history.getChangeDataStore().getProcessManager();
     }
 
     public History getHistory() {

@@ -52,7 +52,6 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.process.Process;
-import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -116,16 +115,8 @@ public class ApplyOperationsCommand extends Command {
         }
 
         try {
-            Process process = operation.createProcess(project);
-            OperationApplicationResult applicationResult = null;
-            if (process.isImmediate() && !project.getProcessManager().hasPending()) {
-                HistoryEntry historyEntry = process.performImmediate();
-                applicationResult = new OperationApplicationResult(historyEntry);
-            } else {
-                project.getProcessManager().queueProcess(process);
-                applicationResult = new OperationApplicationResult();
-            }
-            return applicationResult;
+            HistoryEntry historyEntry = project.getHistory().addEntry(operation);
+            return new OperationApplicationResult(historyEntry);
         } catch (Exception e) {
             // TODO make catch block narrower, only catching certain expected exceptions
             // such as DoesNotApplyException. This requires tightening the exceptions in the Process
@@ -139,7 +130,7 @@ public class ApplyOperationsCommand extends Command {
     protected static class OperationApplicationResult {
 
         @JsonProperty("status")
-        final String status; // whether the operation is "applied", "pending" or "failed"
+        final String status; // whether the operation is "applied" or "failed"
         @JsonProperty("historyEntry")
         @JsonInclude(JsonInclude.Include.NON_NULL)
         HistoryEntry historyEntry = null; // if the operation is "applied", the corresponding history entry
@@ -151,10 +142,6 @@ public class ApplyOperationsCommand extends Command {
         public OperationApplicationResult(HistoryEntry historyEntry) {
             this.status = "applied";
             this.historyEntry = historyEntry;
-        }
-
-        public OperationApplicationResult() {
-            this.status = "pending";
         }
 
         public OperationApplicationResult(String errorMessage) {

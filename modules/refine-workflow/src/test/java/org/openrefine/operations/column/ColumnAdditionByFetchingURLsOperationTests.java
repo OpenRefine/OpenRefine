@@ -59,7 +59,6 @@ import org.openrefine.operations.OnError;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
-import org.openrefine.process.LongRunningProcessStub;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
@@ -124,28 +123,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
-    private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project);
-        runAndWait(pm, process, timeout);
-    }
-
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json,
                 ParsingUtilities.defaultWriter);
-    }
-
-    @Test
-    public void serializeUrlFetchingProcess() throws Exception {
-        project = createProject("UrlFetchingTests",
-                new String[] { "foo" },
-                new Serializable[][] {
-                        { "bar" }
-                });
-        Operation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
-        Process process = op.createProcess(project);
-        TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
 
     /**
@@ -187,7 +168,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             // We have 6 rows and 500 ms per row but only two distinct
             // values so we should not wait much more than ~1000 ms to get the
             // results.
-            runAndWait(op, 1500);
+            project.getHistory().addEntry(op);
 
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGrid().collectRows();
@@ -227,8 +208,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             Grid grid = project.getCurrentGrid();
             int newCol = 1;
@@ -272,8 +252,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     50,
                     true,
                     headers);
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGrid().collectRows();
@@ -320,8 +299,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries @1 sec) + final response
             long start = System.currentTimeMillis();
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             long elapsed = System.currentTimeMillis() - start;
@@ -369,8 +347,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
             long start = System.currentTimeMillis();
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-            process.run();
+            project.getHistory().addEntry(op);
 
             // Make sure that our exponential back off is working
             long elapsed = System.currentTimeMillis() - start;

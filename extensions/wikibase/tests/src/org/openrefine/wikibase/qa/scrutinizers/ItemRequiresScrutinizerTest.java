@@ -47,6 +47,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -72,6 +73,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .addStatement(add(requiredStatement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -97,6 +99,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .addStatement(add(requiredStatement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -119,6 +122,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -144,6 +148,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(id)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);

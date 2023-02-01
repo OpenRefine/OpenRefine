@@ -132,7 +132,7 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
         for (WbNameDescExpr expr : getNameDescs()) {
             expr.contributeTo(update, ctxt);
         }
-        return update.build();
+        return update.addContributingRowId(ctxt.getRowId()).build();
     }
 
     @JsonProperty("subject")

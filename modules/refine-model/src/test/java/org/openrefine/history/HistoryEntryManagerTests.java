@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mockito.Mockito;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Runner;
@@ -22,7 +21,6 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
-import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -59,7 +57,7 @@ public class HistoryEntryManagerTests {
     };
 
     @BeforeMethod
-    public void setUp() throws NotImmediateOperationException, IOException, DoesNotApplyException {
+    public void setUp() throws IOException, DoesNotApplyException {
         runner = mock(Runner.class);
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("a"),
@@ -74,7 +72,7 @@ public class HistoryEntryManagerTests {
         Change change = new MyChange();
         gridStore = mock(GridCache.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-        history = new History(grid, mock(ChangeDataStore.class), gridStore);
+        history = new History(grid, mock(ChangeDataStore.class), gridStore, 34983L);
         history.addEntry(1234L, "some description", new UnknownOperation("my-op", "some desc"), change);
         sut = new HistoryEntryManager();
     }
@@ -84,7 +82,7 @@ public class HistoryEntryManagerTests {
         File tempFile = TestUtils.createTempDirectory("testhistory");
         sut.save(history, tempFile);
 
-        History recovered = sut.load(runner, tempFile);
+        History recovered = sut.load(runner, tempFile, 34983L);
         Assert.assertEquals(recovered.getPosition(), 1);
         Grid state = recovered.getCurrentGrid();
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);

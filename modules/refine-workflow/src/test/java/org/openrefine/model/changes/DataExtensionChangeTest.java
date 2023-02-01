@@ -75,7 +75,13 @@ public class DataExtensionChangeTest extends RefineTest {
             "        ],\n" +
             "        \"columnTypes\": [\n" +
             "          null\n" +
-            "        ]\n" +
+            "        ]\n," +
+            "        \"extension\": {" +
+            "           \"batchSize\": 10," +
+            "           \"properties\": [" +
+            "              {\"id\": \"P123\", \"name\": \"date of birth\"}" +
+            "           ]" +
+            "        }" +
             "      }";
 
     Project project;

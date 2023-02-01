@@ -51,7 +51,6 @@ import org.openrefine.model.changes.ReconCellChange;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconJudgeOneCellCommand extends Command {
 
@@ -162,22 +161,8 @@ public class ReconJudgeOneCellCommand extends Command {
 
             Change change = new ReconCellChange(rowIndex, column.getName(), newRecon);
 
-            QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                    project.getHistory(),
-                    description,
-                    null,
-                    change);
-
-            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
-            if (historyEntry != null) {
-                /*
-                 * If the process is done, write back the cell's data so that the client side can update its UI right
-                 * away.
-                 */
-                respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, newCell));
-            } else {
-                respond(response, "{ \"code\" : \"pending\" }");
-            }
+            HistoryEntry historyEntry = project.getHistory().addEntry(description, null, change);
+            respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, newCell));
         } catch (Exception e) {
             respondException(response, e);
         }

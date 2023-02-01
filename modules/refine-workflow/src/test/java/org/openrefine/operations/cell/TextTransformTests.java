@@ -18,7 +18,6 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -69,7 +68,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRowsMode() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testTransformColumnInRowsMode() throws DoesNotApplyException {
         Change change = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -95,7 +94,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformIdentity() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testTransformIdentity() throws DoesNotApplyException {
         Change change = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -111,7 +110,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRecordsMode() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testTransformColumnInRecordsMode() throws DoesNotApplyException {
         Change change = new TextTransformOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
@@ -145,8 +144,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0);
 
-        org.openrefine.process.Process process = operation.createProcess(project);
-        ((Runnable) process).run();
+        project.getHistory().addEntry(operation);
         Grid applied = project.getCurrentGrid();
 
         Grid expected = createGrid(

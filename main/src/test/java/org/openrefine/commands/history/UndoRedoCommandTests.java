@@ -32,7 +32,7 @@ public class UndoRedoCommandTests extends CommandTestBase {
     Project project;
 
     @BeforeMethod
-    public void setUpCommand() throws Change.DoesNotApplyException, Operation.NotImmediateOperationException {
+    public void setUpCommand() throws Change.DoesNotApplyException {
         command = new UndoRedoCommand();
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
 

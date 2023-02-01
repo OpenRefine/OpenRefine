@@ -1,5 +1,6 @@
 {
   "type": "item",
+  "contributingRowIds": [ 123 ],
   "addedAliases": [],
   "descriptions": [],
   "descriptionsIfNew": [],

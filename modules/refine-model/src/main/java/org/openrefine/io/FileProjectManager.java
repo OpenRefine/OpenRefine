@@ -282,7 +282,7 @@ public class FileProjectManager extends ProjectManager {
         File dir = getProjectDir(id);
         History history;
         try {
-            history = _historyEntryManager.load(_runner, dir);
+            history = _historyEntryManager.load(_runner, dir, id);
         } catch (DoesNotApplyException e) {
             throw new IOException(e);
         }

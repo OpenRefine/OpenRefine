@@ -97,6 +97,7 @@ public class QuickStatementsExporterTest extends RefineTest {
     public void testImpossibleScheduling() throws IOException {
         StatementEdit sNewAtoNewB = TestingData.generateStatementAddition(newIdA, newIdB);
         TermedStatementEntityEdit update = new ItemEditBuilder(newIdA).addStatement(sNewAtoNewB)
+                .addContributingRowId(123L)
                 .build();
 
         assertEquals(QuickStatementsExporter.impossibleSchedulingErrorMessage, export(update));
@@ -110,7 +111,9 @@ public class QuickStatementsExporterTest extends RefineTest {
          */
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1)
                 .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true).build();
+                .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
+                .addContributingRowId(123L)
+                .build();
 
         assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
     }
@@ -120,7 +123,9 @@ public class QuickStatementsExporterTest extends RefineTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("my new item", "en"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("isn't it awesome?", "en"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("fabitem", "en")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("fabitem", "en"))
+                .addContributingRowId(123L)
+                .build();
 
         assertEquals("CREATE\n" + "LAST\tLen\t\"my new item\"\n" + "LAST\tDen\t\"isn't it awesome?\"\n"
                 + "LAST\tAen\t\"fabitem\"\n", export(update));
@@ -131,6 +136,7 @@ public class QuickStatementsExporterTest extends RefineTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1)
                 .addStatement(new StatementEdit(TestingData.generateStatement(qid1, qid2),
                         StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE))
+                .addContributingRowId(123L)
                 .build();
 
         assertEquals("- Q1377\tP38\tQ865528\n", export(update));
@@ -148,7 +154,7 @@ public class QuickStatementsExporterTest extends RefineTest {
         Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
         StatementEdit statementUpdate = new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE);
-        TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate).addContributingRowId(123L).build();
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
     }
@@ -162,6 +168,7 @@ public class QuickStatementsExporterTest extends RefineTest {
                 StatementEditingMode.ADD_OR_MERGE);
 
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate)
+                .addContributingRowId(123L)
                 .build();
 
         assertEquals("Q1377\tP123\tsomevalue\n", export(update));
@@ -176,6 +183,7 @@ public class QuickStatementsExporterTest extends RefineTest {
                 StatementEditingMode.ADD_OR_MERGE);
 
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate)
+                .addContributingRowId(123L)
                 .build();
 
         assertEquals("Q1377\tP123\tnovalue\n", export(update));
@@ -207,6 +215,7 @@ public class QuickStatementsExporterTest extends RefineTest {
                 StatementEditingMode.ADD_OR_MERGE);
 
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate)
+                .addContributingRowId(123L)
                 .build();
 
         assertEquals(

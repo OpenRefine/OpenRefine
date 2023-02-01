@@ -4,7 +4,9 @@ package org.openrefine.operations;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.Change;
 import org.openrefine.process.Process;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -54,12 +56,13 @@ public class UnknownOperation implements Operation {
         return opCode;
     }
 
+    @Override
+    public Change createChange() throws ParsingException {
+        throw new ParsingException("Unknown operation of type " + opCode + " cannot be applied.");
+    }
+
     public String getDescription() {
         return description;
     }
 
-    @Override
-    public Process createProcess(Project project) throws Exception {
-        throw new IllegalStateException("An unknown operation cannot be executed");
-    }
 }

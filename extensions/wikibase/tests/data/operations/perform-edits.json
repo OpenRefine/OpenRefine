@@ -9,5 +9,6 @@
     "facets": []
   },
   "tag" : "openrefine-${version}",
+  "batchSize": 50,
   "maxEditsPerMinute": 60
 }

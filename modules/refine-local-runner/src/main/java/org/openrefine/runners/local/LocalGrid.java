@@ -412,7 +412,7 @@ public class LocalGrid implements Grid {
         grid
                 .values()
                 .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
-                .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
+                .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter, 0);
 
         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
     }
@@ -601,18 +601,29 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper, Optional<ChangeData<T>> incompleteChangeData) {
         PairPLL<Long, IndexedRow> filteredGrid = grid
                 .filter(tuple -> filter.filterRow(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()));
         PairPLL<Long, T> data;
-        if (rowMapper.getBatchSize() == 1) {
-            data = filteredGrid.mapValues(
-                    (id, row) -> rowMapper.call(row.getLogicalIndex(), row.getRow()), "apply row change data producer");
+        if (incompleteChangeData.isEmpty()) {
+            if (rowMapper.getBatchSize() == 1) {
+                data = filteredGrid.mapValues(
+                        (id, row) -> rowMapper.call(row.getLogicalIndex(), row.getRow()), "apply row change data producer");
+            } else {
+                data = filteredGrid
+                        .values()
+                        .batchPartitions(rowMapper.getBatchSize())
+                        .flatMap(rowBatch -> applyRowChangeDataMapper(rowMapper, rowBatch), "apply row change data producer")
+                        .mapToPair(indexedData -> indexedData, "bureaucratic map to pair")
+                        .withPartitioner(grid.getPartitioner());
+            }
         } else {
+            PairPLL<Long, T> incompletePLL = ((LocalChangeData<T>) incompleteChangeData.get()).getPLL();
             data = filteredGrid
-                    .values()
+                    .outerJoinOrdered(incompletePLL, Comparator.naturalOrder())
                     .batchPartitions(rowMapper.getBatchSize())
-                    .flatMap(rowBatch -> applyRowChangeDataMapper(rowMapper, rowBatch), "apply row change data producer")
+                    .flatMap(rowBatch -> applyRowChangeDataMapperWithIncompleteData(rowMapper, rowBatch),
+                            "apply row change data producer to missing rows")
                     .mapToPair(indexedData -> indexedData, "bureaucratic map to pair")
                     .withPartitioner(grid.getPartitioner());
         }
@@ -620,7 +631,8 @@ public class LocalGrid implements Grid {
                 runner,
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
-                () -> false);
+                () -> false,
+                rowMapper.getMaxConcurrency());
     }
 
     protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
@@ -634,18 +646,54 @@ public class LocalGrid implements Grid {
                 .mapToObj(i -> new Tuple2<Long, T>(rowBatch.get(i).getIndex(), changeData.get(i)));
     }
 
+    protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapperWithIncompleteData(
+            RowChangeDataProducer<T> rowMapper,
+            List<Tuple2<Long, Tuple2<IndexedRow, T>>> rowBatch) {
+        List<IndexedRow> toCompute = rowBatch.stream()
+                .filter(tuple -> tuple.getValue().getValue() == null)
+                .map(tuple -> tuple.getValue().getKey())
+                .collect(Collectors.toList());
+        List<T> changeData = rowMapper.callRowBatch(toCompute);
+        if (changeData.size() != toCompute.size()) {
+            throw new IllegalStateException(
+                    String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), toCompute.size()));
+        }
+        Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
+                .mapToObj(i -> i)
+                .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> changeData.get(i)));
+        return IntStream.range(0, rowBatch.size())
+                .mapToObj(i -> {
+                    T preComputed = rowBatch.get(i).getValue().getValue();
+                    long rowIndex = rowBatch.get(i).getKey();
+                    if (preComputed == null) {
+                        preComputed = indexedChangeData.get(rowIndex);
+                    }
+                    return Tuple2.of(rowIndex, preComputed);
+                });
+    }
+
     @Override
     public <T> ChangeData<T> mapRecords(RecordFilter filter,
-            RecordChangeDataProducer<T> recordMapper) {
+            RecordChangeDataProducer<T> recordMapper, Optional<ChangeData<T>> incompleteChangeData) {
         PairPLL<Long, Record> filteredRecords = records().filter(tuple -> filter.filterRecord(tuple.getValue()));
         PairPLL<Long, T> data;
-        if (recordMapper.getBatchSize() == 1) {
-            data = filteredRecords
-                    .mapValues((id, record) -> recordMapper.call(record), "apply record change data producer");
+        if (incompleteChangeData.isEmpty()) {
+            if (recordMapper.getBatchSize() == 1) {
+                data = filteredRecords
+                        .mapValues((id, record) -> recordMapper.call(record), "apply record change data producer");
+            } else {
+                data = filteredRecords
+                        .batchPartitions(recordMapper.getBatchSize())
+                        .flatMap(batch -> applyRecordChangeDataMapper(recordMapper, batch), "apply record change data mapper")
+                        .mapToPair(tuple -> tuple, "bureaucratic map to pair")
+                        .withPartitioner(filteredRecords.getPartitioner());
+            }
         } else {
+            PairPLL<Long, T> incompletePLL = ((LocalChangeData<T>) incompleteChangeData.get()).getPLL();
             data = filteredRecords
+                    .outerJoinOrdered(incompletePLL, Comparator.naturalOrder())
                     .batchPartitions(recordMapper.getBatchSize())
-                    .flatMap(batch -> applyRecordChangeDataMapper(recordMapper, batch), "apply record change data mapper")
+                    .flatMap(batch -> applyRecordChangeDataMapperWithIncompleteData(recordMapper, batch), "apply record change data mapper")
                     .mapToPair(tuple -> tuple, "bureaucratic map to pair")
                     .withPartitioner(filteredRecords.getPartitioner());
         }
@@ -653,7 +701,8 @@ public class LocalGrid implements Grid {
                 runner,
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
-                () -> false);
+                () -> false,
+                recordMapper.getMaxConcurrency());
     }
 
     /**
@@ -707,6 +756,33 @@ public class LocalGrid implements Grid {
         }
         return IntStream.range(0, recordBatch.size())
                 .mapToObj(i -> new Tuple2<Long, T>(recordBatch.get(i).getKey(), changeData.get(i)));
+    }
+
+    protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapperWithIncompleteData(
+            RecordChangeDataProducer<T> recordMapper,
+            List<Tuple2<Long, Tuple2<Record, T>>> recordBatch) {
+        List<Record> toCompute = recordBatch.stream()
+                .filter(tuple -> tuple.getValue().getValue() == null)
+                .map(tuple -> tuple.getValue().getKey())
+                .collect(Collectors.toList());
+        List<T> changeData = recordMapper.callRecordBatch(toCompute);
+        if (changeData.size() != toCompute.size()) {
+            throw new IllegalStateException(
+                    String.format("Change data producer returned %d results on a batch of %d records", changeData.size(),
+                            toCompute.size()));
+        }
+        Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
+                .mapToObj(i -> i)
+                .collect(Collectors.toMap(i -> toCompute.get(i).getStartRowId(), i -> changeData.get(i)));
+        return IntStream.range(0, recordBatch.size())
+                .mapToObj(i -> {
+                    T preComputed = recordBatch.get(i).getValue().getValue();
+                    long rowIndex = recordBatch.get(i).getKey();
+                    if (preComputed == null) {
+                        preComputed = indexedChangeData.get(rowIndex);
+                    }
+                    return Tuple2.of(rowIndex, preComputed);
+                });
     }
 
     @Override

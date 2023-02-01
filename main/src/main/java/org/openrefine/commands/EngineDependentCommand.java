@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.process.Process;
 
@@ -74,9 +75,9 @@ abstract public class EngineDependentCommand extends Command {
             Project project = getProject(request);
 
             Operation op = createOperation(project, request, getEngineConfig(request));
-            Process process = op.createProcess(project);
+            Change change = op.createChange();
 
-            performProcessAndRespond(request, response, project, process);
+            addHistoryEntryAndRespond(request, response, project, op.getDescription(), op, change);
         } catch (Exception e) {
             respondException(response, e);
         }

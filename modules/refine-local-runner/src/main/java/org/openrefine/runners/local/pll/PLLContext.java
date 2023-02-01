@@ -43,14 +43,10 @@ public class PLLContext {
 
     /**
      * Loads a text file as a PLL.
-     * 
-     * @param path
-     * @param encoding
-     * @return
-     * @throws IOException
+     *
      */
-    public TextFilePLL textFile(String path, Charset encoding) throws IOException {
-        return new TextFilePLL(this, path, encoding);
+    public TextFilePLL textFile(String path, Charset encoding, boolean ignoreEarlyEOF) throws IOException {
+        return new TextFilePLL(this, path, encoding, ignoreEarlyEOF);
     }
 
     /**

@@ -517,7 +517,8 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     /**
      * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
-     * PairPLL with the inner join of both PLLs.
+     * PairPLL with the inner join of both PLLs. This resulting PLL is partitioned with the same partitioner as the left
+     * PLL (the instance on which this method is called).
      */
     public <W> PairPLL<K, Tuple2<V, W>> innerJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
         OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, true);
@@ -526,7 +527,8 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     /**
      * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
-     * PairPLL with the outer join of both PLLs.
+     * PairPLL with the outer join of both PLLs. This resulting PLL is partitioned with the same partitioner as the left
+     * PLL (the instance on which this method is called).
      */
     public <W> PairPLL<K, Tuple2<V, W>> outerJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
         OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, false);

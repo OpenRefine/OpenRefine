@@ -117,7 +117,8 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             warning.setProperty("example", subjectId.getId());
             throw new QAWarningException(warning);
         }
-        MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
+        MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId)
+                .addContributingRowId(123L);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
                 StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);

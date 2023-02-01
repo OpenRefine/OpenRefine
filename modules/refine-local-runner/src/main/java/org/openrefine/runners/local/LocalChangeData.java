@@ -30,22 +30,31 @@ public class LocalChangeData<T> implements ChangeData<T> {
     private final List<Long> parentPartitionFirstIndices;
     private final Long parentSize;
     private final Callable<Boolean> complete;
+    private final int maxConcurrency;
 
     /**
      * Constructs a change data.
-     * 
-     * @param runner
+     *
      * @param grid
      *            expected not to contain any null value (they should be filtered out first)
      * @param parentPartitionSizes
      *            the size of each partition in the grid this change data was generated from (can be null if not
      *            available). This is used to compute progress as a percentage of the original grid swept through. This
      *            is more efficient than counting the number of elements in each partition of the change data.
+     * @param maxConcurrency
+     *            the maximum number of concurrent calls to the underlying resource (fetcher). This is respected when
+     *            saving the change data to a file.
      */
-    public LocalChangeData(LocalRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes, Callable<Boolean> complete) {
+    public LocalChangeData(
+            LocalRunner runner,
+            PairPLL<Long, T> grid,
+            List<Long> parentPartitionSizes,
+            Callable<Boolean> complete,
+            int maxConcurrency) {
         this.runner = runner;
         this.grid = grid;
         this.complete = complete;
+        this.maxConcurrency = maxConcurrency;
         if (parentPartitionSizes == null) {
             parentPartitionFirstIndices = null;
             parentSize = null;
@@ -115,9 +124,9 @@ public class LocalChangeData<T> implements ChangeData<T> {
         if (useNativeProgressReporting) {
             // this relies on the cached partition sizes in the change data grid
             serialized
-                    .saveAsTextFile(file.getAbsolutePath(), progressReporter);
+                    .saveAsTextFile(file.getAbsolutePath(), progressReporter, maxConcurrency);
         } else {
-            serialized.saveAsTextFile(file.getAbsolutePath(), Optional.empty());
+            serialized.saveAsTextFile(file.getAbsolutePath(), Optional.empty(), maxConcurrency);
             progressReporter.get().reportProgress(100);
         }
     }

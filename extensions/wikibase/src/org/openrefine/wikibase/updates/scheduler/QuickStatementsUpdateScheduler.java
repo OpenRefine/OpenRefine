@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -72,6 +73,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
         if (edit instanceof ItemEdit) {
             ItemEdit update = (ItemEdit) edit;
             ItemEditBuilder remainingUpdateBuilder = new ItemEditBuilder(update.getEntityId())
+                    .addContributingRowIds(update.getContributingRowIds())
                     .addLabels(update.getLabels(), true)
                     .addLabels(update.getLabelsIfNew(), false)
                     .addDescriptions(update.getDescriptions(), true)
@@ -87,7 +89,8 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
                     EntityIdValue pointer = pointers.stream().findFirst().get();
                     ItemEditBuilder referencingBuilder = referencingUpdates.get(pointer);
                     if (referencingBuilder == null) {
-                        referencingBuilder = new ItemEditBuilder(update.getEntityId());
+                        referencingBuilder = new ItemEditBuilder(update.getEntityId())
+                                .addContributingRowIds(update.getContributingRowIds());
                     }
                     referencingBuilder.addStatement(statement);
                     referencingUpdates.put(pointer, referencingBuilder);
@@ -171,7 +174,11 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 
         // Reconstruct
         List<EntityEdit> fullSchedule = new ArrayList<>();
-        Set<EntityIdValue> mentionedNewEntities = new HashSet<>(pointerUpdates.keySet());
+        Map<EntityIdValue, Set<Long>> mentionedNewEntities = pointerUpdates.entrySet()
+                .stream()
+                .collect(Collectors.toMap(update -> update.getKey(),
+                        update -> update.getValue().getUpdates().get(0).getContributingRowIds()));// new
+                                                                                                  // HashMap<>(pointerUpdates.keySet());
         for (EntityEdit update : pointerFreeUpdates.getUpdates()) {
             fullSchedule.add(update);
             UpdateSequence backPointers = pointerUpdates.get(update.getEntityId());
@@ -184,8 +191,9 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
         // Create any entity that was referred to but untouched
         // (this is just for the sake of correctness, it would be bad to do that
         // as the entities would remain blank in this batch).
-        for (EntityIdValue missingId : mentionedNewEntities) {
-            fullSchedule.add(new ItemEditBuilder(missingId).build());
+        for (Entry<EntityIdValue, Set<Long>> entry : mentionedNewEntities.entrySet()) {
+            EntityIdValue missingId = entry.getKey();
+            fullSchedule.add(new ItemEditBuilder(missingId).addContributingRowIds(entry.getValue()).build());
             fullSchedule.addAll(pointerUpdates.get(missingId).getUpdates());
         }
         return fullSchedule;

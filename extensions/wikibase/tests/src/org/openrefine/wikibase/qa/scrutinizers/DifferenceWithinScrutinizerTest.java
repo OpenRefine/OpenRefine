@@ -60,6 +60,7 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
+                .addContributingRowId(123L)
                 .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
@@ -90,6 +91,7 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
+                .addContributingRowId(123L)
                 .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);

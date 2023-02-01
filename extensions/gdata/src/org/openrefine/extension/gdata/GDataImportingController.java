@@ -263,7 +263,7 @@ public class GDataImportingController implements ImportingController {
                     100,
                     optionObj);
             // this is just a preview so there will not be any changes applied on the project.
-            job.setProject(new Project(grid, new LazyChangeDataStore(), new LazyGridCache()));
+            job.setProject(new Project(grid, new LazyChangeDataStore(runner), new LazyGridCache()));
         } catch (Exception e1) {
             exceptions.add(e1);
         }

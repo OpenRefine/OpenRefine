@@ -584,14 +584,12 @@ public abstract class PLL<T> {
 
     /**
      * Write the PLL to a directory, containing one file for each partition.
-     * 
-     * @param path
+     *
      * @param progressReporter
      *            optionally reports progress of the write operation
-     * @throws IOException
-     * @throws InterruptedException
      */
-    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
+    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter, int maxConcurrency)
+            throws IOException, InterruptedException {
 
         File gridPath = new File(path);
         gridPath.mkdirs();
@@ -608,7 +606,7 @@ public abstract class PLL<T> {
                     throw new UncheckedIOException(e);
                 }
                 return false;
-            });
+            }, maxConcurrency);
         } catch (InterruptedException e) {
             // if the operation was interrupted, we remove all the files we were writing
             FileUtils.deleteDirectory(gridPath);
@@ -637,7 +635,7 @@ public abstract class PLL<T> {
         GZIPOutputStream gos = null;
         try {
             fos = new FileOutputStream(partFile);
-            gos = new GZIPOutputStream(fos);
+            gos = new GZIPOutputStream(fos, 512, true);
             Writer writer = new OutputStreamWriter(gos);
             Stream<T> stream = iterate(partition);
             if (progressReporter.isPresent()) {
@@ -647,6 +645,7 @@ public abstract class PLL<T> {
                 try {
                     writer.write(row.toString());
                     writer.write('\n');
+                    writer.flush();
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -671,15 +670,17 @@ public abstract class PLL<T> {
      *            return type of the function to be applied to all partitions
      * @param partitionFunction
      *            the function to be applied to all partitions
+     * @param maxConcurrency
+     *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
      * @return
      * @throws InterruptedException
      */
-    public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction) throws InterruptedException {
-        return runOnPartitions(partitionFunction, getPartitions().stream());
+    public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, int maxConcurrency) throws InterruptedException {
+        return runOnPartitions(partitionFunction, getPartitions().stream(), maxConcurrency);
     }
 
     /**
-     * Same as {@link #runOnPartitions(Function)} but wrapping any {@link InterruptedException} in an unchecked
+     * Same as {@link #runOnPartitions(Function, int)} but wrapping any {@link InterruptedException} in an unchecked
      * {@link PLLExecutionError}.
      * 
      * @param <U>
@@ -688,7 +689,7 @@ public abstract class PLL<T> {
      */
     public <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction) {
         try {
-            return runOnPartitions(partitionFunction);
+            return runOnPartitions(partitionFunction, 0);
         } catch (InterruptedException e) {
             throw new PLLExecutionError(e);
         }
@@ -703,11 +704,22 @@ public abstract class PLL<T> {
      *            the function to be applied to all partitions
      * @param partitions
      *            the partitions to apply the function on
+     * @param maxConcurrency
+     *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
      * @return
      * @throws InterruptedException
      */
-    protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions)
+    protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions,
+            int maxConcurrency)
             throws InterruptedException {
+        if (maxConcurrency > 0 && maxConcurrency < numPartitions()) {
+            // since we have no easy way to control how many jobs are executed at the same time,
+            // we just resort to synchronous, sequential execution on all partitions in order
+            return partitions.sequential()
+                    .map(partition -> partitionFunction.apply(partition))
+                    .collect(Collectors.toList());
+        }
+        // otherwise we can run at least numPartitions jobs at the same time
         List<ListenableFuture<U>> tasks = partitions
                 .map(partition -> context.getExecutorService().submit(() -> partitionFunction.apply(partition)))
                 .collect(Collectors.toList());
@@ -724,18 +736,13 @@ public abstract class PLL<T> {
     }
 
     /**
-     * Same as {@link #runOnPartitions(Function, Stream)} but wrapping any {@link InterruptedException} as an unchecked
-     * {@link PLLExecutionError}.
-     * 
-     * @param <U>
-     * @param partitionFunction
-     * @param partitions
-     * @return
+     * Same as {@link #runOnPartitions(Function, Stream, int)} but wrapping any {@link InterruptedException} as an
+     * unchecked {@link PLLExecutionError}.
      */
     protected <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction,
             Stream<? extends Partition> partitions) {
         try {
-            return runOnPartitions(partitionFunction, partitions);
+            return runOnPartitions(partitionFunction, partitions, 0);
         } catch (InterruptedException e) {
             throw new PLLExecutionError(e);
         }

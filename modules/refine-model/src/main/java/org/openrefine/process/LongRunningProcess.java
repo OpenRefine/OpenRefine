@@ -72,11 +72,6 @@ abstract public class LongRunningProcess extends Process {
     }
 
     @Override
-    public boolean isImmediate() {
-        return false;
-    }
-
-    @Override
     public boolean isRunning() {
         return _thread != null && _thread.isAlive();
     }

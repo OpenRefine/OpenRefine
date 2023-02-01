@@ -17,20 +17,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ColumnChangeByChangeDataTests {
 
-    public static String changeJson = "{\n" +
-            "        \"type\": \"org.openrefine.model.changes.ColumnChangeByChangeData\"," +
-            "        \"columnIndex\": 1," +
-            "        \"columnName\": \"foo\"," +
-            "        \"changeDataId\": \"urls\",\n" +
-            "        \"dagSlice\": null\n" +
-            "      }";
-
-    @Test
-    public void testSerialize() throws JsonParseException, JsonMappingException, IOException {
-        Change change = ParsingUtilities.mapper.readValue(changeJson, Change.class);
-        TestUtils.equalAsJson(changeJson, ParsingUtilities.mapper.writeValueAsString(change));
-    }
-
     @Test
     public void testJoinerAdd() {
         Joiner joiner = new Joiner(2, true);

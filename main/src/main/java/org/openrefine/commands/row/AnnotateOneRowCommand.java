@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.StarFlagChange;
-import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class AnnotateOneRowCommand extends Command {
 
@@ -67,13 +66,8 @@ public class AnnotateOneRowCommand extends Command {
                 boolean starred = "true".endsWith(starredString);
                 String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1);
 
-                QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                        project.getHistory(),
-                        description,
-                        null,
+                addHistoryEntryAndRespond(request, response, project, description, null,
                         new StarFlagChange(rowIndex, true, starred));
-
-                performProcessAndRespond(request, response, project, process);
                 return;
             }
 
@@ -82,13 +76,8 @@ public class AnnotateOneRowCommand extends Command {
                 boolean flagged = "true".endsWith(flaggedString);
                 String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1);
 
-                QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                        project.getHistory(),
-                        description,
-                        null,
+                addHistoryEntryAndRespond(request, response, project, description, null,
                         new StarFlagChange(rowIndex, false, flagged));
-
-                performProcessAndRespond(request, response, project, process);
                 return;
             }
 

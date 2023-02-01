@@ -1,13 +1,21 @@
 
 package org.openrefine.runners.local;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.IndexedData;
 import org.openrefine.runners.testing.RunnerTestBase;
+import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
@@ -93,6 +101,45 @@ public class LocalRunnerTests extends RunnerTestBase {
 
         // caching a small grid should always be possible
         assertTrue(smallGrid.smallEnoughToCacheInMemory());
+    }
+
+    @Test
+    public void testParseIncompleteChangeData() throws IOException {
+        List<IndexedData<JsonNode>> indexedDataList = Collections.singletonList(
+                new IndexedData<>(34L, ParsingUtilities.mapper.readTree("{\"foo\":2}")));
+        ChangeDataSerializer<JsonNode> serializer = new ChangeDataSerializer<JsonNode>() {
+
+            @Override
+            public String serialize(JsonNode changeDataItem) {
+                try {
+                    return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public JsonNode deserialize(String serialized) throws IOException {
+                return ParsingUtilities.mapper.readTree(serialized);
+            }
+        };
+
+        // set up a truncated test file, where the JSON serialization of a record abruptly stops
+        File tempFile = new File(tempDir, "incomplete_changedata_1");
+        tempFile.mkdir();
+        File changeDataFile = new File(tempFile, "part-00000");
+        try (FileWriter writer = new FileWriter(changeDataFile)) {
+            // the first line is written out fine
+            writer.write(indexedDataList.get(0).writeAsString(serializer) + "\n");
+            // the second is interrupted abruptly
+            writer.write("56,{\"some unfinished json");
+        }
+
+        ChangeData<JsonNode> changeData = getDatamodelRunner().loadChangeData(tempFile, serializer);
+
+        Assert.assertFalse(changeData.isComplete());
+        Assert.assertEquals(changeData.get(34L), indexedDataList.get(0).getData());
+        Assert.assertNull(changeData.get(56L));
     }
 
 }

@@ -220,6 +220,7 @@ public class GetRowsCommand extends Command {
                 project = getProject(request);
             }
 
+            project.getHistory().refreshCurrentGrid();
             Engine engine = getEngine(request, project);
             Grid entireGrid = project.getCurrentGrid();
 

@@ -39,12 +39,14 @@ public class PerformWikibaseEditsCommand extends EngineDependentCommand {
             throws Exception {
         String summary = request.getParameter("summary");
         String maxlagStr = request.getParameter("maxlag");
+        String batchSizeStr = request.getParameter("batchSize");
         int maxlag = maxlagStr == null ? 5 : Integer.parseInt(maxlagStr);
+        int batchSize = batchSizeStr == null ? 50 : Integer.parseInt(batchSizeStr);
         String maxEditsPerMinuteStr = request.getParameter("maxEditsPerMinute");
         Integer maxEditsPerMinute = maxEditsPerMinuteStr == null ? null : Integer.parseInt(maxEditsPerMinuteStr);
         String tag = request.getParameter("tag");
         String editGroupsUrlSchema = request.getParameter("editGroupsUrlSchema");
-        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag, editGroupsUrlSchema, maxEditsPerMinute, tag);
+        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag, batchSize, editGroupsUrlSchema, maxEditsPerMinute, tag);
     }
 
 }

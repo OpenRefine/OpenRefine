@@ -168,7 +168,7 @@ public class RefineTest {
     protected Project createProject(String projectName, Grid grid) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
-        Project project = new Project(grid, new LazyChangeDataStore(), new LazyGridCache());
+        Project project = new Project(grid, new LazyChangeDataStore(runner()), new LazyGridCache());
         ProjectManager.singleton.registerProject(project, meta);
         return project;
     }
