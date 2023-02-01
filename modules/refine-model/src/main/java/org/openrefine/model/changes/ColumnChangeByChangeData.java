@@ -2,50 +2,48 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.*;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
-import org.openrefine.model.ModelException;
+import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.operations.OnError;
+import org.openrefine.overlay.OverlayModel;
 
 /**
- * Adds a new column based on data fetched from an external process. If no column name is supplied, then the change will
- * replace the column at the given index instead (merging with existing contents in rows not covered by the change
- * data).
+ * Adds a new column based on data fetched from an external process. If no new column name is supplied, then the change
+ * will replace the column with the given name (merging with existing contents in rows not covered by the change data).
  * <p>
  * New recon config and stats can be supplied for the column changed or created. If a recon config and no recon stats
  * are provided, the change computes the new recon stats on the fly.
  */
-public class ColumnChangeByChangeData implements Change {
+public abstract class ColumnChangeByChangeData implements Change {
 
     private final String _changeDataId;
-    private final int _columnIndex;
+    private final String _newColumnName;
     private final String _columnName;
-    private final Engine.Mode _engineMode;
+    private final EngineConfig _engineConfig;
     private final ReconConfig _reconConfig;
 
     @JsonCreator
     public ColumnChangeByChangeData(
             @JsonProperty("changeDataId") String changeDataId,
-            @JsonProperty("columnIndex") int columnIndex,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("mode") Engine.Mode mode,
+            @JsonProperty("newColumnName") String newColumnName,
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("reconConfig") ReconConfig reconConfig) {
         _changeDataId = changeDataId;
-        _columnIndex = columnIndex;
+        _newColumnName = newColumnName;
         _columnName = columnName;
-        _engineMode = mode;
+        _engineConfig = engineConfig;
         _reconConfig = reconConfig;
     }
 
@@ -54,9 +52,9 @@ public class ColumnChangeByChangeData implements Change {
         return _changeDataId;
     }
 
-    @JsonProperty("columnIndex")
-    public int getColumnIndex() {
-        return _columnIndex;
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
     }
 
     @JsonProperty("columnName")
@@ -64,9 +62,9 @@ public class ColumnChangeByChangeData implements Change {
         return _columnName;
     }
 
-    @JsonProperty("mode")
-    public Engine.Mode getMode() {
-        return _engineMode;
+    @JsonProperty("engineConfig")
+    public EngineConfig getEngineConfig() {
+        return _engineConfig;
     }
 
     @JsonProperty("reconConfig")
@@ -77,11 +75,17 @@ public class ColumnChangeByChangeData implements Change {
     @Override
     public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         ColumnModel columnModel = projectState.getColumnModel();
-        if (_columnName != null) {
-            ColumnMetadata column = new ColumnMetadata(_columnName)
+        int baseColumnIndex = columnModel.getColumnIndexByName(_columnName);
+        if (baseColumnIndex == -1) {
+            throw new Change.DoesNotApplyException(String.format("Column '{}' not found", _columnName));
+        }
+        int newColumnIndex = baseColumnIndex;
+        if (_newColumnName != null) {
+            ColumnMetadata column = new ColumnMetadata(_newColumnName)
                     .withReconConfig(_reconConfig);
+            newColumnIndex = baseColumnIndex + 1;
             try {
-                columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
+                columnModel = projectState.getColumnModel().insertColumn(newColumnIndex, column);
             } catch (ModelException e) {
                 throw new Change.DoesNotApplyException(
                         String.format("A column with name '{}' cannot be added as the name conflicts with an existing column",
@@ -89,16 +93,17 @@ public class ColumnChangeByChangeData implements Change {
             }
         } else if (_reconConfig != null) {
             columnModel = columnModel
-                    .withReconConfig(_columnIndex, _reconConfig);
+                    .withReconConfig(baseColumnIndex, _reconConfig);
         }
 
-        Joiner joiner = new Joiner(_columnIndex, _columnName != null);
+        Joiner joiner = new Joiner(newColumnIndex, _newColumnName != null);
 
         Grid joined;
-        if (Engine.Mode.RowBased.equals(_engineMode)) {
+        if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
             ChangeData<Cell> changeData = null;
             try {
-                changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer());
+                changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
+                        partialChangeData -> getChangeDataRowBased(projectState, baseColumnIndex, context, partialChangeData));
             } catch (IOException e) {
                 throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
             }
@@ -106,7 +111,8 @@ public class ColumnChangeByChangeData implements Change {
         } else {
             ChangeData<List<Cell>> changeData = null;
             try {
-                changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer());
+                changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
+                        partialChangeData -> getChangeDataRecordBased(projectState, baseColumnIndex, context, partialChangeData));
             } catch (IOException e) {
                 throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
             }
@@ -119,7 +125,33 @@ public class ColumnChangeByChangeData implements Change {
 
     @Override
     public boolean isImmediate() {
-        return false;
+        return true;
+    }
+
+    protected ChangeData<Cell> getChangeDataRowBased(Grid state, int columnIndex, ChangeContext changeContext,
+            Optional<ChangeData<Cell>> partialChangeData) {
+        ColumnModel columnModel = state.getColumnModel();
+        Engine engine = new Engine(state, _engineConfig);
+
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = getChangeDataProducer(columnIndex, _columnName, columnModel,
+                state.getOverlayModels(), changeContext);
+
+        RowFilter filter = engine.combinedRowFilters();
+        ChangeData<Cell> changeData = state.mapRows(filter, changeDataProducer, partialChangeData);
+        return changeData;
+    }
+
+    protected ChangeData<List<Cell>> getChangeDataRecordBased(Grid state, int columnIndex, ChangeContext changeContext,
+            Optional<ChangeData<List<Cell>>> partialChangeData) {
+        ColumnModel columnModel = state.getColumnModel();
+        Engine engine = new Engine(state, _engineConfig);
+
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = getChangeDataProducer(columnIndex, _columnName, columnModel,
+                state.getOverlayModels(), changeContext);
+
+        RecordFilter filter = engine.combinedRecordFilters();
+        ChangeData<List<Cell>> changeData = state.mapRecords(filter, changeDataProducer, partialChangeData);
+        return changeData;
     }
 
     public static class Joiner implements RowChangeDataJoiner<Cell>, RecordChangeDataJoiner<List<Cell>> {
@@ -160,6 +192,60 @@ public class ColumnChangeByChangeData implements Change {
             return result;
         }
 
+    }
+
+    public abstract RowInRecordChangeDataProducer<Cell> getChangeDataProducer(
+            int columnIndex,
+            String columnName,
+            ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels, ChangeContext changeContext);
+
+    public static RowInRecordChangeDataProducer<Cell> evaluatingChangeDataProducer(
+            int columnIndex,
+            String baseColumnName,
+            OnError onError,
+            Evaluable eval,
+            ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels,
+            long projectId) {
+        return new RowInRecordChangeDataProducer<Cell>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Cell call(Record record, long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
+                Cell newCell = null;
+
+                Properties bindings = new Properties();
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels);
+                bindings.put("project_id", projectId);
+
+                Object o = eval.evaluate(bindings);
+                if (o != null) {
+                    if (o instanceof Cell) {
+                        newCell = (Cell) o;
+                    } else if (o instanceof WrappedCell) {
+                        newCell = ((WrappedCell) o).cell;
+                    } else {
+                        Serializable v = ExpressionUtils.wrapStorable(o);
+                        if (ExpressionUtils.isError(v)) {
+                            if (onError == OnError.SetToBlank) {
+                                return null;
+                            } else if (onError == OnError.KeepOriginal) {
+                                v = cell != null ? cell.value : null;
+                            }
+                        }
+
+                        if (v != null) {
+                            newCell = new Cell(v, null);
+                        }
+                    }
+                }
+                return newCell;
+            }
+
+        };
     }
 
 }

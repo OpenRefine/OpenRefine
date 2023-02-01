@@ -221,7 +221,7 @@ public class WbExpressionTest<T> extends RefineTest {
         ctxt = new ExpressionContext("http://www.wikidata.org/entity/",
                 Collections.emptyMap(),
                 server.url("/w/api.php").toString(),
-                0,
+                123L,
                 row,
                 project.getCurrentGrid().getColumnModel(),
                 warningStore);

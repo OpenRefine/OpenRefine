@@ -21,7 +21,6 @@ import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.FillDownOperation;
 import org.openrefine.operations.cell.TextTransformOperation;
 import org.openrefine.util.ParsingUtilities;
@@ -31,7 +30,7 @@ public class UndoRedoCommandTests extends CommandTestBase {
     Project project;
 
     @BeforeMethod
-    public void setUpCommand() throws Change.DoesNotApplyException, Operation.NotImmediateOperationException {
+    public void setUpCommand() throws Change.DoesNotApplyException {
         command = new UndoRedoCommand();
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
 

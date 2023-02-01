@@ -40,8 +40,8 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testNoNewItem()
             throws ImpossibleSchedulingException {
-        EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
-        EntityEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).build();
+        EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).addContributingRowId(123L).build();
+        EntityEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).addContributingRowId(123L).build();
         List<EntityEdit> scheduled = schedule(updateA, updateB);
         assertEquals(Arrays.asList(updateA, updateB), scheduled);
     }
@@ -50,11 +50,11 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     public void testSplitUpdate()
             throws ImpossibleSchedulingException {
         EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
-                .addStatement(sAtoNewB).build();
-        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
-        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).build();
-        EntityEdit splitUpdateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).build();
-        EntityEdit splitUpdateB = new ItemEditBuilder(existingIdA).addStatement(sAtoNewB).build();
+                .addStatement(sAtoNewB).addContributingRowId(123L).build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addContributingRowId(123L).build();
+        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).addContributingRowId(123L).build();
+        EntityEdit splitUpdateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).addContributingRowId(123L).build();
+        EntityEdit splitUpdateB = new ItemEditBuilder(existingIdA).addStatement(sAtoNewB).addContributingRowId(123L).build();
         List<EntityEdit> scheduled = schedule(updateA);
         assertSetEquals(Arrays.asList(newUpdateA, splitUpdateA, newUpdateB, splitUpdateB), scheduled);
     }
@@ -62,14 +62,20 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test(expectedExceptions = ImpossibleSchedulingException.class)
     public void testImpossibleForQS()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit update = new ItemEditBuilder(newIdA).addStatement(sNewAtoNewB).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(newIdA)
+                .addStatement(sNewAtoNewB)
+                .addContributingRowId(123L)
+                .build();
         schedule(update);
     }
 
     @Test
     public void testSelfEditOnNewITem()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit update = new ItemEditBuilder(newIdA).addStatement(sNewAtoNewA).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(newIdA)
+                .addStatement(sNewAtoNewA)
+                .addContributingRowId(123L)
+                .build();
         assertEquals(Arrays.asList(update), schedule(update));
     }
 

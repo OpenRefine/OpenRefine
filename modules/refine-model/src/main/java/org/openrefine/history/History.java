@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.RefineModel;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -64,6 +65,9 @@ public class History {
 
     private static final Logger logger = LoggerFactory.getLogger(History.class);
 
+    // required for passing as ChangeContext to all changes (who can rely on this, for instance in the cross function)
+    @JsonProperty("projectId")
+    protected final long _projectId;
     @JsonProperty("entries")
     protected List<HistoryEntry> _entries;
     @JsonProperty("position")
@@ -80,6 +84,9 @@ public class History {
     // stores whether the grid at the same index is read directly from disk or not
     @JsonIgnore
     protected List<Boolean> _cachedOnDisk;
+    // stores whether the grid depends on change data being fetched, and is therefore worth refreshing regularly
+    @JsonIgnore
+    protected List<Boolean> _inProgress;
     @JsonIgnore
     protected ChangeDataStore _dataStore;
     @JsonIgnore
@@ -95,16 +102,19 @@ public class History {
      * @param gridStore
      *            where to store intermediate cached grids
      */
-    public History(Grid initialGrid, ChangeDataStore dataStore, GridCache gridStore) {
+    public History(Grid initialGrid, ChangeDataStore dataStore, GridCache gridStore, long projectId) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _cachedOnDisk = new ArrayList<>();
+        _inProgress = new ArrayList<>();
         _states.add(initialGrid);
         _cachedOnDisk.add(true);
+        _inProgress.add(false);
         _position = 0;
         _cachedPosition = 0;
         _dataStore = dataStore;
         _gridStore = gridStore;
+        _projectId = projectId;
     }
 
     /**
@@ -126,8 +136,9 @@ public class History {
             ChangeDataStore dataStore,
             GridCache gridStore,
             List<HistoryEntry> entries,
-            int position) throws DoesNotApplyException {
-        this(initialGrid, dataStore, gridStore);
+            int position,
+            long projectId) throws DoesNotApplyException {
+        this(initialGrid, dataStore, gridStore, projectId);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
         for (HistoryEntry entry : entries) {
             Grid grid = null;
@@ -141,11 +152,12 @@ public class History {
             }
             _states.add(grid);
             _cachedOnDisk.add(grid != null);
+            _inProgress.add(false);
             _entries.add(entry);
         }
 
         // ensure the grid of the current position is computed (invariant)
-        getGrid(position);
+        getGrid(position, false);
         _position = position;
         updateCachedPosition();
     }
@@ -177,30 +189,29 @@ public class History {
 
     /**
      * Returns the state of the grid at a given index in the history
-     * 
+     *
      * @param position
      *            a 0-based index in the list of successive grids
+     * @param refresh
+     *            whether the grid should be refreshed if it depends on change data being currently fetched
      */
-    protected Grid getGrid(int position) throws DoesNotApplyException {
+    protected Grid getGrid(int position, boolean refresh) throws DoesNotApplyException {
         Grid grid = _states.get(position);
-        if (grid != null) {
+        if (grid != null && !(refresh && _inProgress.get(position))) {
             return grid;
         } else {
             // this state has not been computed yet,
             // so we compute it recursively from the previous one.
             // we know for sure that position > 0 because the initial grid
             // is always present
-            Grid previous = getGrid(position - 1);
+            Grid previous = getGrid(position - 1, refresh);
             HistoryEntry entry = _entries.get(position - 1);
-            ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
+            ChangeContext context = ChangeContext.create(entry.getId(), _projectId, _dataStore, entry.getDescription());
             Change change = entry.getChange();
             Grid newState = change.apply(previous, context).getGrid();
             _states.set(position, newState);
+            _inProgress.set(position, _inProgress.get(position - 1) || _dataStore.needsRefreshing(entry.getId()));
             _cachedOnDisk.set(position, false);
-            /*
-             * // maybe a good optimization idea? but how do we keep track of which grid we have cached? if
-             * (!change.isImmediate() && smallEnoughToCacheInMemory(newState)) { newState.cache(); }
-             */
             return newState;
         }
     }
@@ -230,6 +241,17 @@ public class History {
         return _gridStore;
     }
 
+    public HistoryEntry addEntry(Operation operation) throws ParsingException, DoesNotApplyException {
+        return addEntry(operation.getDescription(), operation, operation.createChange());
+    }
+
+    public HistoryEntry addEntry(
+            String description,
+            Operation operation,
+            Change change) throws DoesNotApplyException {
+        return addEntry(HistoryEntry.allocateID(), description, operation, change);
+    }
+
     /**
      * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
      * histories
@@ -237,7 +259,7 @@ public class History {
     public HistoryEntry addEntry(long id,
             String description,
             Operation operation,
-            Change change) throws DoesNotApplyException, Operation.NotImmediateOperationException {
+            Change change) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
 
@@ -257,14 +279,17 @@ public class History {
             _entries = _entries.subList(0, _position);
             _states = _states.subList(0, _position + 1);
             _cachedOnDisk = _cachedOnDisk.subList(0, _position + 1);
+            _inProgress = _inProgress.subList(0, _position + 1);
         }
 
-        ChangeContext context = ChangeContext.create(id, _dataStore);
+        // TODO refactor this so that it does not duplicate the logic of getGrid
+        ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, description);
         Change.ChangeResult changeResult = change.apply(getCurrentGrid(), context);
         Grid newState = changeResult.getGrid();
         HistoryEntry entry = new HistoryEntry(id, description, operation, change, changeResult.getGridPreservation());
         _states.add(newState);
         _cachedOnDisk.add(false);
+        _inProgress.add(_inProgress.get(_position) || _dataStore.needsRefreshing(entry.getId()));
         _entries.add(entry);
         _position++;
         updateCachedPosition();
@@ -274,7 +299,7 @@ public class History {
     protected void cacheIntermediateGridOnDisk(int position) throws DoesNotApplyException, IOException {
         Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
-        Grid grid = getGrid(position);
+        Grid grid = getGrid(position, false);
         long historyEntryId = _entries.get(position - 1).getId();
         Grid cached = _gridStore.cacheGrid(historyEntryId, grid);
         synchronized (this) {
@@ -285,7 +310,7 @@ public class History {
                 _states.set(i, null);
             }
             // make sure the current position is computed
-            getGrid(_position);
+            getGrid(_position, false);
         }
     }
 
@@ -294,7 +319,7 @@ public class History {
         // Find the last expensive operation before the current one.
         int newCachedPosition = _position;
         while (newCachedPosition > 0 &&
-                _entries.get(newCachedPosition - 1).getChange().isImmediate() && // we found an expensive change
+                !isChangeExpensive(newCachedPosition - 1) && // we found an expensive change
                 _states.get(newCachedPosition - 1) != null // or we found a grid that is not computed yet, meaning it
                                                            // (or anything before it) is not currently needed
         ) {
@@ -313,6 +338,22 @@ public class History {
             if (previousCachedPosition > 0 && _cachedOnDisk.get(previousCachedPosition)) {
                 // TODO uncache off disk
             }
+        }
+    }
+
+    /**
+     * Determines if the change at the given index was expensive to compute or not.
+     */
+    private boolean isChangeExpensive(int index) {
+        // for now, we are disabling caching by considering all changes inexpensive. TODO reintroduce it
+        return false;
+    }
+
+    public void refreshCurrentGrid() {
+        try {
+            getGrid(_position, true);
+        } catch (DoesNotApplyException e) {
+            throw new IllegalStateException("Recomputing the current grid failed", e);
         }
     }
 
@@ -341,7 +382,7 @@ public class History {
             _position = 0;
         } else {
             _position = entryIndex(lastDoneEntryID) + 1;
-            getGrid(_position);
+            getGrid(_position, false);
         }
 
         GridPreservation gridPreservation = _position == oldPosition ? GridPreservation.PRESERVES_RECORDS

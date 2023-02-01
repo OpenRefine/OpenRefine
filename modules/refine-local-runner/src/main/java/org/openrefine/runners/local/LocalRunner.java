@@ -81,7 +81,7 @@ public class LocalRunner implements Runner {
 
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext
-                .textFile(gridFile.getAbsolutePath(), GRID_ENCODING)
+                .textFile(gridFile.getAbsolutePath(), GRID_ENCODING, false)
                 .mapToPair(s -> parseIndexedRow(s), "parse row from JSON");
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
         return new LocalGrid(this, rows, metadata.columnModel, metadata.overlayModels);
@@ -108,22 +108,28 @@ public class LocalRunner implements Runner {
     @Override
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
+        File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
+        Callable<Boolean> isComplete = () -> completionMarker.exists();
+        boolean alreadyComplete = completionMarker.exists();
         PairPLL<Long, T> pll = pllContext
-                .textFile(path.getAbsolutePath(), GRID_ENCODING)
+                .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete)
                 .map(line -> {
                     try {
                         return IndexedData.<T> read(line, serializer);
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        if (alreadyComplete) {
+                            throw new UncheckedIOException(e);
+                        } else {
+                            return null;
+                        }
                     }
                 }, "deserialize")
+                .mapPartitions((index, partition) -> partition.takeWhile(indexedData -> indexedData != null),
+                        "filter out incomplete records", false)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
-        Callable<Boolean> isComplete = () -> {
-            File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
-            return completionMarker.exists();
-        };
-        return new LocalChangeData<T>(this, pll, null, isComplete);
+
+        return new LocalChangeData<T>(this, pll, null, isComplete, 0);
     }
 
     @Override
@@ -133,7 +139,7 @@ public class LocalRunner implements Runner {
 
     @Override
     public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
-        TextFilePLL textPLL = pllContext.textFile(path, encoding);
+        TextFilePLL textPLL = pllContext.textFile(path, encoding, false);
         textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
                 .map(s -> new Row(Arrays.asList(new Cell(s, null))), "wrap as row with single cell");
@@ -170,8 +176,8 @@ public class LocalRunner implements Runner {
                 .parallelize(defaultParallelism, withoutNulls)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<T>(this, pll, null, () -> true); // no need for parent partition sizes, since pll has
-                                                                    // cached ones
+        // no need for parent partition sizes, since pll has cached ones
+        return new LocalChangeData<T>(this, pll, null, () -> true, 0);
     }
 
     @Override

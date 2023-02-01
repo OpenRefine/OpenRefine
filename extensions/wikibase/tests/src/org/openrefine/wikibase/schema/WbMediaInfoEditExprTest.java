@@ -74,6 +74,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
     public void testEvaluate() {
         setRow("", "", "3.898,4.389", "my label", matchedCell);
         MediaInfoEdit result = new MediaInfoEditBuilder(subject).addLabel(label, true).addStatement(fullStatement)
+                .addContributingRowId(123L)
                 .build();
         evaluatesTo(result, expr);
     }
@@ -112,14 +113,14 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
     @Test
     public void testStatementSkipped() {
         setRow("", "", "3.898,invalid4.389", "my label", matchedCell);
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addLabel(label, true).build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addLabel(label, true).addContributingRowId(123L).build();
         evaluatesTo(result, expr);
     }
 
     @Test
     public void testLabelSkipped() {
         setRow("", "", "3.898,4.389", "", matchedCell);
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addStatement(fullStatement).build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addStatement(fullStatement).addContributingRowId(123L).build();
         evaluatesTo(result, expr);
     }
 
@@ -145,7 +146,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
         setRow("", "", "3.898,4.389", "my label", matchedCell);
 
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").addContributingRowId(123L).build();
         evaluatesTo(result, filePathExpr);
     }
 
@@ -157,7 +158,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
         setRow("", "", "3.898,4.389", "my label", matchedCell);
 
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").addContributingRowId(123L).build();
         evaluatesTo(result, filePathExpr);
     }
 
@@ -169,7 +170,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
         setRow("", "", "3.898,4.389", "my label", matchedCell);
 
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFilePath("C:\\Foo.png").addContributingRowId(123L).build();
         evaluatesTo(result, filePathExpr);
     }
 
@@ -195,7 +196,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
 
         setRow("", "", "3.898,4.389", "my label", matchedCell);
 
-        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").build();
+        MediaInfoEdit result = new MediaInfoEditBuilder(subject).addFileName("Foo.png").addContributingRowId(123L).build();
         evaluatesTo(result, filePathExpr);
     }
 
@@ -209,6 +210,7 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
         MediaInfoEdit result = new MediaInfoEditBuilder(subject)
                 .addWikitext("my new wikitext")
                 .setOverrideWikitext(true)
+                .addContributingRowId(123L)
                 .build();
         evaluatesTo(result, wikitextExpr);
     }

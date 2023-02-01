@@ -55,7 +55,6 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnSplitOperation.ColumnSplitChange;
 import org.openrefine.util.ParsingUtilities;
@@ -135,13 +134,13 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test(expectedExceptions = Change.DoesNotApplyException.class)
-    public void testDoesNotExist() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testDoesNotExist() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "does_not_exist", false, false, new int[] { 1, 2 }).createChange();
         SUT.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test
-    public void testSeparator() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testSeparator() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", false, false, ",", false, 0).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         // we are splitting the first column, but that first column will be preserved, so record structure is preserved
@@ -175,7 +174,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSeparatorMaxColumns() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testSeparatorMaxColumns() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", false, false, ",", false, 2).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
@@ -199,7 +198,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSeparatorDetectType() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testSeparatorDetectType() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", true, false, ",", false, 2).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
@@ -215,7 +214,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSeparatorRemoveColumn() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testSeparatorRemoveColumn() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", true, true, ",", false, 2).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -230,7 +229,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRegex() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testRegex() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "bar", false, false, "[A-Z]", true, 0).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         Grid result = changeResult.getGrid();
@@ -253,7 +252,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testLengths() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testLengths() throws DoesNotApplyException {
         Change SUT = new ColumnSplitOperation(EngineConfig.ALL_ROWS, "hello", false, false, new int[] { 1, 2 }).createChange();
         Change.ChangeResult changeResult = SUT.apply(toSplit, mock(ChangeContext.class));
         Grid result = changeResult.getGrid();
@@ -274,7 +273,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRespectsFacets() throws DoesNotApplyException, NotImmediateOperationException {
+    public void testRespectsFacets() throws DoesNotApplyException {
         ColumnSplitChange SUT = (ColumnSplitChange) new ColumnSplitOperation(EngineConfig.ALL_ROWS, "foo", false, false, ",", false, 0)
                 .createChange();
 

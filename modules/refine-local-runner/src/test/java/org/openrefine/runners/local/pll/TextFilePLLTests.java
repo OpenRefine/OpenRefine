@@ -1,9 +1,7 @@
 
 package org.openrefine.runners.local.pll;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,12 +32,12 @@ public class TextFilePLLTests extends PLLTestsBase {
         textFile = new File(tempDir, "textfile.txt");
         createTestTextFile(textFile, "foo\nbar\nbaz");
 
-        // this file will have 9 * 64 - 1 = 575 characters, which is enough to be split in 4 partitions of more than 128
+        // this file will have 9 * 64 - 1 = 575 characters, which is enough to be split in 4 partitions of more than 128
         // bytes
         longerTextFile = new File(tempDir, "longertextfile.txt");
         createTestTextFile(longerTextFile, String.join("\n", Collections.nCopies(64, "aaaaaaaa")));
 
-        // this file will have 9 * 2048 - 1 = 18431 characters, which is too much to be split in 4 partitions only
+        // this file will have 9 * 2048 - 1 = 18431 characters, which is too much to be split in 4 partitions only
         veryLongTextFile = new File(tempDir, "verylongtextfile.txt");
         createTestTextFile(veryLongTextFile, String.join("\n", Collections.nCopies(2048, "aaaaaaaa")));
     }
@@ -89,7 +87,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testRoundTripSerialization() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         File tempFile = new File(tempDir, "roundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
 
         // check for presence of the _SUCCESS marker
         File successMarker = new File(tempFile, "_SUCCESS");
@@ -106,7 +104,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
@@ -123,7 +121,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter));
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter), 0);
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
@@ -137,7 +135,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter));
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter), 0);
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
@@ -164,6 +162,31 @@ public class TextFilePLLTests extends PLLTestsBase {
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
+    @Test
+    public void testReadIncompletePLL() throws IOException, InterruptedException {
+        PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath(), utf8);
+        int nbPartitions = pll.getPartitions().size();
+
+        File tempFile = new File(tempDir, "largerroundtrip.txt");
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
+
+        // truncate various partitions at various sizes and remove the completion marker
+        truncateFile(new File(tempFile, "part-00001.gz"), 1);
+        truncateFile(new File(tempFile, "part-00002.gz"), 2);
+        truncateFile(new File(tempFile, "part-00003.gz"), 3);
+        truncateFile(new File(tempFile, "part-00004.gz"), 4);
+        truncateFile(new File(tempFile, "part-00005.gz"), 5);
+        truncateFile(new File(tempFile, "part-00006.gz"), 6);
+        truncateFile(new File(tempFile, "part-00007.gz"), 10);
+        truncateFile(new File(tempFile, "part-00008.gz"), 20);
+        File successMarker = new File(tempFile, "_SUCCESS");
+        successMarker.delete();
+
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true);
+        Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
+        Assert.assertEquals(deserializedPLL.count(), 1138L);
+    }
+
     protected void createTestTextFile(File file, String contents) throws IOException {
         FileWriter fileWriter = null;
         try {
@@ -172,6 +195,16 @@ public class TextFilePLLTests extends PLLTestsBase {
         } finally {
             if (fileWriter != null) {
                 fileWriter.close();
+            }
+        }
+    }
+
+    // Helper to simulate a truncated file obtained from an interrupted serialization
+    protected void truncateFile(File file, int maxLength) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] contents = fis.readNBytes(maxLength);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(contents);
             }
         }
     }

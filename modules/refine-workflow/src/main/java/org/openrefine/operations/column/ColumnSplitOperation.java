@@ -202,7 +202,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                 (Mode.Separator.equals(_mode) ? " by separator" : " by field lengths");
     }
 
-    public Change createChange() throws NotImmediateOperationException {
+    public Change createChange() {
         return new ColumnSplitChange(_engineConfig);
     }
 

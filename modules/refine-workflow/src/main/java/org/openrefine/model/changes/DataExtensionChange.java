@@ -2,25 +2,21 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
+import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
 import org.openrefine.model.recon.ReconType;
+import org.openrefine.model.recon.ReconciledDataExtensionJob;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.util.ParsingUtilities;
@@ -41,6 +37,8 @@ public class DataExtensionChange extends EngineDependentChange {
     private final List<String> _columnNames;
     @JsonProperty("columnTypes")
     private final List<ReconType> _columnTypes;
+    @JsonProperty("extension")
+    private final ReconciledDataExtensionJob.DataExtensionConfig _extension;
 
     @JsonCreator
     public DataExtensionChange(
@@ -51,7 +49,8 @@ public class DataExtensionChange extends EngineDependentChange {
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("columnInsertIndex") int columnInsertIndex,
             @JsonProperty("columnNames") List<String> columnNames,
-            @JsonProperty("columnTypes") List<ReconType> columnTypes) {
+            @JsonProperty("columnTypes") List<ReconType> columnTypes,
+            @JsonProperty("extension") ReconciledDataExtensionJob.DataExtensionConfig extension) {
         super(engineConfig);
         _baseColumnName = baseColumnName;
         _endpoint = endpoint;
@@ -60,20 +59,39 @@ public class DataExtensionChange extends EngineDependentChange {
         _columnInsertIndex = columnInsertIndex;
         _columnNames = columnNames;
         _columnTypes = columnTypes;
+        _extension = extension;
     }
 
     @Override
     public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-        ChangeData<RecordDataExtension> changeData;
-        try {
-            changeData = context.getChangeData("extend", new DataExtensionSerializer());
-        } catch (IOException e) {
-            throw new DoesNotApplyException(String.format("Unable to retrieve change data for data extension"));
+        /**
+         * This operation does not always respect the rows mode, because when fetching multiple values for the same row,
+         * the extra values are spread in the record of the given row. Therefore, the fetching is done in records mode
+         * at all times, but in rows mode we also pass down the row filter to the fetcher so that it can filter out rows
+         * that should not be fetched inside a given record.
+         */
+
+        Engine engine = new Engine(projectState, _engineConfig);
+        RowFilter rowFilter = RowFilter.ANY_ROW;
+        if (Engine.Mode.RowBased.equals(engine.getMode())) {
+            rowFilter = engine.combinedRowFilters();
         }
         int baseColumnId = projectState.getColumnModel().getColumnIndexByName(_baseColumnName);
         if (baseColumnId == -1) {
             throw new ColumnNotFoundException(_baseColumnName);
         }
+        ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
+        DataExtensionProducer producer = new DataExtensionProducer(job, baseColumnId, rowFilter);
+        Function<Optional<ChangeData<RecordDataExtension>>, ChangeData<RecordDataExtension>> changeDataCompletion = incompleteChangeData -> projectState
+                .mapRecords(engine.combinedRecordFilters(), producer, incompleteChangeData);
+
+        ChangeData<RecordDataExtension> changeData;
+        try {
+            changeData = context.getChangeData("extend", new DataExtensionSerializer(), changeDataCompletion);
+        } catch (IOException e) {
+            throw new DoesNotApplyException(String.format("Unable to retrieve change data for data extension"));
+        }
+
         ColumnModel newColumnModel = projectState.getColumnModel();
         for (int i = 0; i != _columnNames.size(); i++) {
             newColumnModel = newColumnModel.insertUnduplicatedColumn(
@@ -162,6 +180,74 @@ public class DataExtensionChange extends EngineDependentChange {
                 }
             }
             return newRows;
+        }
+
+    }
+
+    public static class DataExtensionProducer implements RecordChangeDataProducer<RecordDataExtension> {
+
+        private static final long serialVersionUID = -7946297987163653933L;
+        private final ReconciledDataExtensionJob _job;
+        private final int _cellIndex;
+        private final RowFilter _rowFilter;
+
+        public DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex, RowFilter rowFilter) {
+            _job = job;
+            _cellIndex = cellIndex;
+            _rowFilter = rowFilter;
+        }
+
+        @Override
+        public RecordDataExtension call(Record record) {
+            return callRecordBatch(Collections.singletonList(record)).get(0);
+        }
+
+        @Override
+        public List<RecordDataExtension> callRecordBatch(List<Record> records) {
+
+            Set<String> ids = new HashSet<>();
+
+            for (Record record : records) {
+                for (IndexedRow indexedRow : record.getIndexedRows()) {
+                    Row row = indexedRow.getRow();
+                    if (!_rowFilter.filterRow(indexedRow.getIndex(), row)) {
+                        continue;
+                    }
+                    Cell cell = row.getCell(_cellIndex);
+                    if (cell != null && cell.recon != null && cell.recon.match != null) {
+                        ids.add(cell.recon.match.id);
+                    }
+                }
+            }
+
+            Map<String, DataExtension> extensions;
+            try {
+                extensions = _job.extend(ids);
+            } catch (Exception e) {
+                e.printStackTrace();
+                extensions = Collections.emptyMap();
+            }
+
+            List<RecordDataExtension> results = new ArrayList<>();
+            for (Record record : records) {
+                Map<Long, DataExtension> recordExtensions = new HashMap<>();
+                for (IndexedRow indexedRow : record.getIndexedRows()) {
+                    if (!_rowFilter.filterRow(indexedRow.getIndex(), indexedRow.getRow())) {
+                        continue;
+                    }
+                    Cell cell = indexedRow.getRow().getCell(_cellIndex);
+                    if (cell != null && cell.recon != null && cell.recon.match != null) {
+                        recordExtensions.put(indexedRow.getIndex(), extensions.get(cell.recon.match.id));
+                    }
+                }
+                results.add(new RecordDataExtension(recordExtensions));
+            }
+            return results;
+        }
+
+        @Override
+        public int getBatchSize() {
+            return _job.getBatchSize();
         }
 
     }

@@ -11,7 +11,13 @@ import org.openrefine.model.Row;
 /**
  * A function which computes change data to be persisted to disk, to be later joined back to the project to produce the
  * new grid. This data might be serialized because it is volatile or expensive to compute.
- * 
+ * <p>
+ * The calls to the external resource can be batched by overriding {@link #getBatchSize()} to specify the size of
+ * batches and {@link #callRowBatch(List)} for the batch processing itself. In that case, the {@link #call(long, Row)}
+ * method's implementation can be omitted (by throwing NotImplementedException for instance).
+ * <p>
+ * It is also possible to limit the number of concurrent calls to the producer (for instance for rate-limited resources)
+ * by overriding {@link #getMaxConcurrency()}.
  *
  * @param <T>
  */
@@ -42,5 +48,12 @@ public interface RowChangeDataProducer<T> extends Serializable {
      */
     public default int getBatchSize() {
         return 1;
+    }
+
+    /**
+     * The maximum number of concurrent calls to this change data producer. If 0, there is no limit to the concurrency.
+     */
+    public default int getMaxConcurrency() {
+        return 0;
     }
 }

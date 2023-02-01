@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
@@ -52,13 +53,32 @@ public class FileChangeDataStoreTests {
 
     @Test
     public void testStoreRetrieveAndDelete() throws IOException, InterruptedException {
-        SUT.store(changeData, 123, "data", serializer, Optional.empty());
+        ChangeDataId changeDataId = new ChangeDataId(123, "data");
+        when(changeData.isComplete()).thenReturn(true);
+
+        SUT.store(changeData, changeDataId, serializer, Optional.empty());
+
         verify(changeData, times(1)).saveToFile(any(), eq(serializer));
         Assert.assertTrue(new File(new File(dir, "123"), "data").exists());
-        ChangeData<String> retrieved = SUT.retrieve(123, "data", serializer);
+        Assert.assertFalse(SUT.needsRefreshing(123));
+        ChangeData<String> retrieved = SUT.retrieve(new ChangeDataId(123, "data"), serializer);
         Assert.assertEquals(retrieved, changeData);
+
         SUT.discardAll(123);
+
         Assert.assertFalse(new File(dir, "123").exists());
+    }
+
+    @Test
+    public void testRetrieveOrCompute() throws IOException {
+        ChangeDataId changeDataId = new ChangeDataId(456, "data");
+        when(changeData.isComplete()).thenReturn(false);
+        Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
+
+        ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description");
+
+        Assert.assertTrue(SUT.needsRefreshing(456));
+        Assert.assertEquals(returnedChangeData, changeData);
     }
 
     // to ease mocking

@@ -52,7 +52,6 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
-import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.ParsingUtilities;
 
 public class EditOneCellCommand extends Command {
@@ -130,22 +129,8 @@ public class EditOneCellCommand extends Command {
 
             Change change = new CellChange(rowIndex, column.getName(), value);
 
-            QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                    project.getHistory(),
-                    description,
-                    null,
-                    change);
-
-            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
-            if (historyEntry != null) {
-                /*
-                 * If the operation has been done, return the new cell's data so the client side can update the cell's
-                 * rendering right away.
-                 */
-                respondJSON(response, new EditResult("ok", historyEntry, newCell));
-            } else {
-                respond(response, "{ \"code\" : \"pending\" }");
-            }
+            HistoryEntry historyEntry = project.getHistory().addEntry(description, null, change);
+            respondJSON(response, new EditResult("ok", historyEntry, newCell));
         } catch (Exception e) {
             respondException(response, e);
         }

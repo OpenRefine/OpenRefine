@@ -24,10 +24,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
-import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.*;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.util.DoubleAccumulator;
@@ -1061,18 +1058,58 @@ public class SparkGrid implements Grid {
     }
 
     @Override
-    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper,
+            java.util.Optional<ChangeData<T>> incompleteChangeData) {
         JavaPairRDD<Long, T> data;
         JavaPairRDD<Long, IndexedRow> filteredGrid = grid.filter(wrapRowFilter(filter));
-        if (rowMapper.getBatchSize() == 1) {
-            data = RDDUtils.mapKeyValuesToValues(filteredGrid, rowMap(rowMapper));
+        if (incompleteChangeData.isEmpty()) {
+            if (rowMapper.getBatchSize() == 1) {
+                data = RDDUtils.mapKeyValuesToValues(filteredGrid, rowMap(rowMapper));
+            } else {
+                JavaRDD<List<IndexedRow>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(),
+                        rowMapper.getBatchSize());
+                data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
+            }
         } else {
-            JavaRDD<List<IndexedRow>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(),
-                    rowMapper.getBatchSize());
-            data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
+            JavaPairRDD<Long, T> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
+            data = RDDUtils.partitionWiseBatching(filteredGrid.leftOuterJoin(incompleteRDD).values(),
+                    rowMapper.getBatchSize())
+                    .flatMapToPair(wrapRowChangeDataProducer(rowMapper));
         }
 
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
+    }
+
+    protected static <T> PairFlatMapFunction<List<Tuple2<IndexedRow, Optional<T>>>, Long, T> wrapRowChangeDataProducer(
+            RowChangeDataProducer<T> rowMapper) {
+        return new PairFlatMapFunction<List<Tuple2<IndexedRow, Optional<T>>>, Long, T>() {
+
+            @Override
+            public Iterator<Tuple2<Long, T>> call(List<Tuple2<IndexedRow, Optional<T>>> tuple2s) throws Exception {
+                List<IndexedRow> toCompute = tuple2s.stream()
+                        .filter(tuple -> !tuple._2.isPresent())
+                        .map(tuple -> tuple._1)
+                        .collect(Collectors.toList());
+                List<T> changeData = rowMapper.callRowBatch(toCompute);
+                if (changeData.size() != toCompute.size()) {
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(),
+                                    toCompute.size()));
+                }
+                Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
+                        .mapToObj(i -> i)
+                        .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> changeData.get(i)));
+                return IntStream.range(0, tuple2s.size())
+                        .mapToObj(i -> {
+                            T preComputed = tuple2s.get(i)._2.orNull();
+                            long rowIndex = tuple2s.get(i)._1.getIndex();
+                            if (preComputed == null) {
+                                preComputed = indexedChangeData.get(rowIndex);
+                            }
+                            return Tuple2.apply(rowIndex, preComputed);
+                        }).iterator();
+            }
+        };
     }
 
     private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
@@ -1109,14 +1146,21 @@ public class SparkGrid implements Grid {
 
     @Override
     public <T> ChangeData<T> mapRecords(RecordFilter filter,
-            RecordChangeDataProducer<T> recordMapper) {
+            RecordChangeDataProducer<T> recordMapper, java.util.Optional<ChangeData<T>> incompleteChangeData) {
         JavaPairRDD<Long, T> data;
         JavaPairRDD<Long, Record> filteredGrid = getRecords().filter(wrapRecordFilter(filter));
-        if (recordMapper.getBatchSize() == 1) {
-            data = RDDUtils.mapKeyValuesToValues(filteredGrid, recordMap(recordMapper));
+        if (incompleteChangeData.isEmpty()) {
+            if (recordMapper.getBatchSize() == 1) {
+                data = RDDUtils.mapKeyValuesToValues(filteredGrid, recordMap(recordMapper));
+            } else {
+                JavaRDD<List<Record>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(), recordMapper.getBatchSize());
+                data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
+            }
         } else {
-            JavaRDD<List<Record>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(), recordMapper.getBatchSize());
-            data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
+            JavaPairRDD<Long, T> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
+            data = RDDUtils.partitionWiseBatching(filteredGrid.leftOuterJoin(incompleteRDD).values(),
+                    recordMapper.getBatchSize())
+                    .flatMapToPair(wrapRecordChangeDataProducer(recordMapper));
         }
 
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
@@ -1139,6 +1183,38 @@ public class SparkGrid implements Grid {
                         .iterator();
             }
 
+        };
+    }
+
+    protected static <T> PairFlatMapFunction<List<Tuple2<Record, Optional<T>>>, Long, T> wrapRecordChangeDataProducer(
+            RecordChangeDataProducer<T> rowMapper) {
+        return new PairFlatMapFunction<List<Tuple2<Record, Optional<T>>>, Long, T>() {
+
+            @Override
+            public Iterator<Tuple2<Long, T>> call(List<Tuple2<Record, Optional<T>>> tuple2s) throws Exception {
+                List<Record> toCompute = tuple2s.stream()
+                        .filter(tuple -> !tuple._2.isPresent())
+                        .map(tuple -> tuple._1)
+                        .collect(Collectors.toList());
+                List<T> changeData = rowMapper.callRecordBatch(toCompute);
+                if (changeData.size() != toCompute.size()) {
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(),
+                                    toCompute.size()));
+                }
+                Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
+                        .mapToObj(i -> i)
+                        .collect(Collectors.toMap(i -> toCompute.get(i).getStartRowId(), i -> changeData.get(i)));
+                return IntStream.range(0, tuple2s.size())
+                        .mapToObj(i -> {
+                            T preComputed = tuple2s.get(i)._2.orNull();
+                            long rowIndex = tuple2s.get(i)._1.getStartRowId();
+                            if (preComputed == null) {
+                                preComputed = indexedChangeData.get(rowIndex);
+                            }
+                            return Tuple2.apply(rowIndex, preComputed);
+                        }).iterator();
+            }
         };
     }
 

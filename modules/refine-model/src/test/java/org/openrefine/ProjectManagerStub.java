@@ -120,7 +120,7 @@ public class ProjectManagerStub extends ProjectManager {
 
     @Override
     public ChangeDataStore getChangeDataStore(long projectID) {
-        return new LazyChangeDataStore();
+        return new LazyChangeDataStore(runner);
     }
 
     @Override

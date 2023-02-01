@@ -26,6 +26,7 @@ public class MediaInfoEditBuilder {
     private String fileName;
     private String wikitext;
     private boolean overrideWikitext;
+    private Set<Long> contributingRowIds;
     private boolean built;
 
     /**
@@ -44,6 +45,7 @@ public class MediaInfoEditBuilder {
         this.fileName = null;
         this.wikitext = null;
         this.overrideWikitext = false;
+        this.contributingRowIds = new HashSet<>();
         this.built = false;
     }
 
@@ -139,6 +141,11 @@ public class MediaInfoEditBuilder {
         return this;
     }
 
+    public MediaInfoEditBuilder addContributingRowId(long rowId) {
+        this.contributingRowIds.add(rowId);
+        return this;
+    }
+
     /**
      * Constructs the {@link MediaInfoEdit}.
      * 
@@ -146,6 +153,6 @@ public class MediaInfoEditBuilder {
      */
     public MediaInfoEdit build() {
         built = true;
-        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext);
+        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext, contributingRowIds);
     }
 }

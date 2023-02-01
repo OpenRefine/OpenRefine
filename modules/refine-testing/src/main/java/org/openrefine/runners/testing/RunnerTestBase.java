@@ -972,11 +972,52 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testGenerateRowChangeData() {
-        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper);
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper, Optional.empty());
 
         Assert.assertEquals(changeData.get(0L), "b_concat");
         Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
     }
+
+    @Test
+    public void testComputeChangeDataFromIncompleteState() throws IOException, InterruptedException {
+        ChangeData<String> incomplete = simpleGrid.mapRows(firstTwoRows, concatChangeMapper, Optional.empty());
+        File tempFile = TestUtils.createTempDirectory("test_row_based_change_data_from_incomplete");
+        incomplete.saveToFile(tempFile, stringSerializer);
+
+        // artificially pretend that the change data is incomplete by removing the completion marker
+        File completionMarker = new File(tempFile, Runner.COMPLETION_MARKER_FILE_NAME);
+        completionMarker.delete();
+
+        // reload the now properly incomplete change data
+        incomplete = SUT.loadChangeData(tempFile, stringSerializer);
+
+        // complete it with more rows
+
+        ChangeData<String> complete = simpleGrid.mapRows(RowFilter.ANY_ROW, countingChangeMapper, Optional.of(incomplete));
+
+        // the first two rows were computed by the first mapper
+        Assert.assertEquals(complete.get(0L), "b_concat");
+        Assert.assertEquals(complete.get(1L), "1_concat");
+        // the last two are computed by the last mapper
+        Assert.assertEquals(complete.get(2L), "true_concat_v2");
+        Assert.assertEquals(complete.get(3L), "123123123123_concat_v2");
+    }
+
+    protected static RowFilter firstTwoRows = new RowFilter() {
+
+        @Override
+        public boolean filterRow(long rowIndex, Row row) {
+            return rowIndex < 2L;
+        }
+    };
+
+    protected static RowChangeDataProducer<String> countingChangeMapper = new RowChangeDataProducer<String>() {
+
+        @Override
+        public String call(long rowId, Row row) {
+            return concatChangeMapper.call(rowId, row) + "_v2";
+        }
+    };
 
     public static RowChangeDataProducer<String> batchedChangeMapper = new RowChangeDataProducer<String>() {
 
@@ -1007,7 +1048,7 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testGenerateBatchedChangeData() {
-        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, batchedChangeMapper);
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, batchedChangeMapper, Optional.empty());
 
         Assert.assertEquals(changeData.get(0L), ",b");
         Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
@@ -1038,7 +1079,7 @@ public abstract class RunnerTestBase {
     // TODO: require a more specific exception
     @Test(expectedExceptions = Exception.class)
     public void testGenerateFaultyRowChangeData() {
-        ChangeData<String> changeData = simpleGrid.mapRows(RowFilter.ANY_ROW, faultyBatchedChangeMapper);
+        ChangeData<String> changeData = simpleGrid.mapRows(RowFilter.ANY_ROW, faultyBatchedChangeMapper, Optional.empty());
         changeData.get(1L);
     }
 
@@ -1070,11 +1111,51 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testGenerateRecordChangeData() {
-        ChangeData<String> changeData = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, recordChangeMapper);
+        ChangeData<String> changeData = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, recordChangeMapper, Optional.empty());
 
         Assert.assertEquals(changeData.get(0L), "b1");
         Assert.assertNull(changeData.get(1L)); // because it is not a record start position
         Assert.assertEquals(changeData.get(2L), "true123123123123");
+    }
+
+    protected static RecordFilter firstRecord = new RecordFilter() {
+
+        @Override
+        public boolean filterRecord(Record record) {
+            return record.getStartRowId() == 0;
+        }
+    };
+
+    protected static RecordChangeDataProducer<String> countingRecordChangeMapper = new RecordChangeDataProducer<String>() {
+
+        @Override
+        public String call(Record record) {
+            return recordChangeMapper.call(record) + "_v2";
+        }
+    };
+
+    @Test
+    public void testComputeChangeDataFromIncompleteStateInRecordsMode() throws IOException, InterruptedException {
+
+        ChangeData<String> incomplete = simpleGrid.mapRecords(firstRecord, recordChangeMapper, Optional.empty());
+        File tempFile = TestUtils.createTempDirectory("test_record_based_change_data_from_incomplete");
+        incomplete.saveToFile(tempFile, stringSerializer);
+
+        // artificially pretend that the change data is incomplete by removing the completion marker
+        File completionMarker = new File(tempFile, Runner.COMPLETION_MARKER_FILE_NAME);
+        completionMarker.delete();
+
+        // reload the now properly incomplete change data
+        incomplete = SUT.loadChangeData(tempFile, stringSerializer);
+
+        // complete it with more records
+
+        ChangeData<String> complete = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, countingRecordChangeMapper, Optional.of(incomplete));
+
+        // the first record was computed by the first mapper
+        Assert.assertEquals(complete.get(0L), "b1");
+        // the second by the last mapper
+        Assert.assertEquals(complete.get(2L), "true123123123123_v2");
     }
 
     public static RecordChangeDataProducer<String> faultyBatchedRecordChangeMapper = new RecordChangeDataProducer<String>() {
@@ -1102,7 +1183,7 @@ public abstract class RunnerTestBase {
     // TODO: require a more specific exception
     @Test(expectedExceptions = Exception.class)
     public void testGenerateFaultyRecordChangeData() {
-        simpleGrid.mapRecords(RecordFilter.ANY_RECORD, faultyBatchedRecordChangeMapper).get(0L);
+        simpleGrid.mapRecords(RecordFilter.ANY_RECORD, faultyBatchedRecordChangeMapper, Optional.empty()).get(0L);
     }
 
     @Test

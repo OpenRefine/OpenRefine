@@ -29,6 +29,7 @@ package org.openrefine.process;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -45,6 +46,10 @@ public class LongRunningProcessTests {
             return null;
         }
 
+        @Override
+        public ChangeDataId getChangeDataId() {
+            return new ChangeDataId(1234L, "recon");
+        }
     }
 
     @Test
@@ -54,7 +59,7 @@ public class LongRunningProcessTests {
         TestUtils.isSerializedTo(process, "{"
                 + "\"id\":" + hashCode + ","
                 + "\"description\":\"some description\","
-                + "\"immediate\":false,"
+                + "\"changeDataId\":{\"historyEntryId\":1234,\"subDirectory\":\"recon\"},"
                 + "\"status\":\"pending\","
                 + "\"progress\":0}", ParsingUtilities.defaultWriter);
     }

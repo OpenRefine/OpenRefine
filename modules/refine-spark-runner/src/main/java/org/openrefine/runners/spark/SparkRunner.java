@@ -128,6 +128,9 @@ public class SparkRunner implements Runner {
     @Override
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
+        if (!path.exists()) {
+            throw new IOException("Path " + path.toString() + " does not exist");
+        }
         /*
          * The text files corresponding to each partition are read in the correct order thanks to our dedicated file
          * system OrderedLocalFileSystem. https://issues.apache.org/jira/browse/SPARK-5300

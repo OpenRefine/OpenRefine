@@ -813,7 +813,7 @@ public class ImportingUtilities {
                     100,
                     optionObj);
             // this is a preview, so we will not need to store any change data on this project
-            job.setProject(new Project(state, new LazyChangeDataStore(), new LazyGridCache()));
+            job.setProject(new Project(state, new LazyChangeDataStore(runner), new LazyGridCache()));
         } catch (Exception e) {
             exceptions.add(e);
         }

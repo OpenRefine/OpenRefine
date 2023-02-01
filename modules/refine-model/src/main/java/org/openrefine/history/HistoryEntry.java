@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 
@@ -88,7 +87,7 @@ public class HistoryEntry {
             @JsonProperty("description") String description,
             @JsonProperty("operation") Operation operation,
             @JsonProperty("change") Change change,
-            @JsonProperty("gridPreservation") GridPreservation gridPreservation) throws NotImmediateOperationException {
+            @JsonProperty("gridPreservation") GridPreservation gridPreservation) {
         this(id,
                 description,
                 operation,
@@ -103,7 +102,7 @@ public class HistoryEntry {
             Operation operation,
             OffsetDateTime time,
             Change change,
-            GridPreservation gridPreservation) throws NotImmediateOperationException {
+            GridPreservation gridPreservation) {
         this.id = id;
         this.description = description;
         this.operation = operation;

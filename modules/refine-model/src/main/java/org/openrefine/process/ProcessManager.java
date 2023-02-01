@@ -43,11 +43,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.HistoryEntry;
-
 public class ProcessManager {
 
-    @JsonProperty("processes")
+    @JsonIgnore
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
@@ -77,16 +75,15 @@ public class ProcessManager {
         return null;
     }
 
-    public HistoryEntry queueProcess(Process process) throws Exception {
-        if (process.isImmediate() && _processes.size() == 0) {
-            _latestExceptions = null;
-            return process.performImmediate();
-        } else {
-            _processes.add(process);
+    @JsonProperty("processes")
+    public List<Process> getProcesses() {
+        return _processes;
+    }
 
-            update();
-        }
-        return null;
+    public void queueProcess(Process process) {
+        _processes.add(process);
+
+        update();
     }
 
     public boolean hasPending() {
@@ -112,7 +109,7 @@ public class ProcessManager {
 
     public void cancelAll() {
         for (Process p : _processes) {
-            if (!p.isImmediate() && p.isRunning()) {
+            if (p.isRunning()) {
                 p.cancel();
             }
         }
@@ -123,16 +120,7 @@ public class ProcessManager {
     protected void update() {
         while (_processes.size() > 0) {
             Process p = _processes.get(0);
-            if (p.isImmediate()) {
-                _latestExceptions = null;
-                try {
-                    p.performImmediate();
-                } catch (Exception e) {
-                    // TODO: Not sure what to do yet
-                    e.printStackTrace();
-                }
-                _processes.remove(0);
-            } else if (p.isDone()) {
+            if (p.isDone()) {
                 _processes.remove(0);
             } else {
                 if (!p.isRunning()) {

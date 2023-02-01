@@ -50,7 +50,6 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconCellChange;
-import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconClearOneCellCommand extends Command {
 
@@ -102,22 +101,8 @@ public class ReconClearOneCellCommand extends Command {
 
             Change change = new ReconCellChange(rowIndex, column.getName(), null);
 
-            QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                    project.getHistory(),
-                    description,
-                    null,
-                    change);
-
-            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
-            if (historyEntry != null) {
-                /*
-                 * If the process is done, write back the cell's data so that the client side can update its UI right
-                 * away.
-                 */
-                respondJSON(response, new CellResponse(historyEntry, newCell));
-            } else {
-                respond(response, "{ \"code\" : \"pending\" }");
-            }
+            HistoryEntry historyEntry = project.getHistory().addEntry(description, null, change);
+            respondJSON(response, new CellResponse(historyEntry, newCell));
         } catch (Exception e) {
             respondException(response, e);
         }

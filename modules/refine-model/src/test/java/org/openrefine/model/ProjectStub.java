@@ -42,7 +42,7 @@ import org.openrefine.model.changes.LazyGridCache;
 public class ProjectStub extends Project {
 
     public ProjectStub(Grid state) {
-        super(state, new LazyChangeDataStore(), new LazyGridCache());
+        super(state, new LazyChangeDataStore(state.getRunner()), new LazyGridCache());
     }
 
     public ProjectStub(long id) {

@@ -40,7 +40,6 @@ import java.util.Properties;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -51,11 +50,8 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.*;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
-import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ColumnChangeByChangeData;
-import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
 import org.openrefine.overlay.OverlayModel;
@@ -128,14 +124,27 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
-            Mode engineMode) {
+    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable) {
         return new ColumnChangeByChangeData(
                 "eval",
-                columnIndex,
+                _baseColumnName,
                 null,
-                engineMode,
-                null);
+                _engineConfig,
+                null) {
+
+            @Override
+            public RowInRecordChangeDataProducer<Cell> getChangeDataProducer(int columnIndex, String columnName, ColumnModel columnModel,
+                    Map<String, OverlayModel> overlayModels, ChangeContext changeContext) {
+                return evaluatingChangeDataProducer(
+                        columnIndex,
+                        columnName,
+                        _onError,
+                        evaluable,
+                        columnModel,
+                        overlayModels,
+                        changeContext.getProjectId());
+            }
+        };
     }
 
     protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel,

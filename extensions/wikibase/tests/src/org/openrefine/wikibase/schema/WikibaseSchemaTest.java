@@ -152,9 +152,9 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         List<EntityEdit> updates = schema.evaluate(grid, engine);
         List<EntityEdit> expected = new ArrayList<>();
-        TermedStatementEntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).build();
+        TermedStatementEntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).addContributingRowId(123L).build();
         expected.add(update1);
-        TermedStatementEntityEdit update2 = new ItemEditBuilder(qid2).addStatement(statementUpdate2).build();
+        TermedStatementEntityEdit update2 = new ItemEditBuilder(qid2).addStatement(statementUpdate2).addContributingRowId(123L).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
@@ -223,7 +223,7 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, engineConfig);
         List<EntityEdit> updates = schema.evaluate(grid, engine);
         List<EntityEdit> expected = new ArrayList<>();
-        EntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).build();
+        EntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).addContributingRowId(123L).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }

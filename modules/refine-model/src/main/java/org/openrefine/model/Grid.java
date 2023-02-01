@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -469,34 +470,41 @@ public interface Grid {
      * Extract change data by applying a function to each filtered row. The calls to the change data producer are
      * batched if requested by the producer.
      * <p>
-     * 
+     *
      * @param <T>
      *            the type of change data that is serialized to disk for each row
      * @param filter
      *            a filter to select which rows to map
      * @param rowMapper
      *            produces the change data for each row
+     * @param incompleteChangeData
+     *            a previously, incompletely fetched version of the same change data, from which the computation should
+     *            be resumed, to avoid recomputing the items already in the incomplete change data
      * @throws IllegalStateException
      *             if the row mapper returns a batch of results with a different size than the batch of rows it was
      *             called on
      */
-    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper, Optional<ChangeData<T>> incompleteChangeData);
 
     /**
      * Extract change data by applying a function to each filtered record. The calls to the change data producer are
      * batched if requested by the producer.
-     * 
+     *
      * @param <T>
      *            the type of change data that is serialized to disk for each row
      * @param filter
      *            a filter to select which rows to map
      * @param recordMapper
      *            produces the change data for each record
+     * @param incompleteChangeData
+     *            a previously, incompletely fetched version of the same change data, from which the computation should
+     *            be resumed, to avoid recomputing the items already in the incomplete change data
      * @throws IllegalStateException
      *             if the record mapper returns a batch of results with a different size than the batch of records it
      *             was called on
      */
-    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper);
+    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper,
+            Optional<ChangeData<T>> incompleteChangeData);
 
     /**
      * Joins pre-computed change data with the current grid data, row by row.

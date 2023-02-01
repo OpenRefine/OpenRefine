@@ -281,7 +281,7 @@ public class DatabaseImportController implements ImportingController {
                     new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
                     limit, options);
             // this is just a preview so no changes will be applied to this project
-            job.setProject(new Project(grid, new LazyChangeDataStore(), new LazyGridCache()));
+            job.setProject(new Project(grid, new LazyChangeDataStore(RefineModel.getRunner()), new LazyGridCache()));
         } catch (Exception e) {
             exceptions.add(e);
             e.printStackTrace();

@@ -51,6 +51,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
@@ -76,6 +77,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);

@@ -35,44 +35,21 @@ package org.openrefine.operations.recon;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.History;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
-import org.openrefine.model.IndexedRow;
-import org.openrefine.model.Project;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.changes.ChangeData;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.DataExtensionChange;
-import org.openrefine.model.changes.DataExtensionChange.DataExtensionSerializer;
-import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
-import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
-import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OperationDescription;
-import org.openrefine.process.LongRunningProcess;
-import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 
 public class ExtendDataOperation extends EngineDependentOperation {
 
@@ -109,186 +86,41 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     @Override
-    public String getDescription() {
-        return OperationDescription.recon_extend_data_brief(_columnInsertIndex, _baseColumnName);
+    public Change createChange() throws ParsingException {
+        ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
+
+        /**
+         * Prefetch column names with an initial request.
+         */
+        try {
+            job.extend(Collections.emptySet());
+        } catch (Exception e) {
+            throw new ParsingException("Unable to fetch column metadata from service: " + e.getMessage());
+        }
+        List<String> columnNames = new ArrayList<>();
+        for (ColumnInfo info : job.columns) {
+            columnNames.add(info.name);
+        }
+
+        List<ReconType> columnTypes = new ArrayList<>();
+        for (ColumnInfo info : job.columns) {
+            columnTypes.add(info.expectedType);
+        }
+
+        return new DataExtensionChange(
+                _engineConfig,
+                _baseColumnName,
+                _endpoint,
+                _identifierSpace,
+                _schemaSpace,
+                _columnInsertIndex,
+                columnNames,
+                columnTypes,
+                _extension);
     }
 
     @Override
-    public Process createProcess(Project project) throws Exception {
-        return new ExtendDataProcess(
-                project.getHistory(),
-                project.getProcessManager(),
-                getEngineConfig(),
-                getDescription(),
-                _identifierSpace,
-                _schemaSpace);
-    }
-
-    public class ExtendDataProcess extends LongRunningProcess implements Runnable {
-
-        final protected History _history;
-        final protected ProcessManager _processManager;
-        final protected EngineConfig _engineConfig;
-        final protected long _historyEntryID;
-        protected int _cellIndex;
-        protected ReconciledDataExtensionJob _job;
-
-        public ExtendDataProcess(
-                History history,
-                ProcessManager processManager,
-                EngineConfig engineConfig,
-                String description,
-                String identifierSpace,
-                String schemaSpace) {
-            super(description);
-            _history = history;
-            _processManager = processManager;
-            _engineConfig = engineConfig;
-            _historyEntryID = HistoryEntry.allocateID();
-
-            _job = new ReconciledDataExtensionJob(_extension, _endpoint, identifierSpace, schemaSpace);
-        }
-
-        @Override
-        protected Runnable getRunnable() {
-            return this;
-        }
-
-        @Override
-        public void run() {
-            Grid state = _history.getCurrentGrid();
-            Engine engine = new Engine(state, _engineConfig);
-
-            ColumnModel columnModel = state.getColumnModel();
-
-            try {
-                _cellIndex = columnModel.getColumnIndexByName(_baseColumnName);
-                if (_cellIndex == -1) {
-                    throw new Exception("No column named " + _baseColumnName);
-                }
-
-                /**
-                 * Prefetch column names with an initial request.
-                 */
-                _job.extend(Collections.emptySet());
-                List<String> columnNames = new ArrayList<>();
-                for (ColumnInfo info : _job.columns) {
-                    columnNames.add(info.name);
-                }
-
-                List<ReconType> columnTypes = new ArrayList<>();
-                for (ColumnInfo info : _job.columns) {
-                    columnTypes.add(info.expectedType);
-                }
-
-                /**
-                 * This operation does not always respect the rows mode, because when fetching multiple values for the
-                 * same row, the extra values are spread in the record of the given row. Therefore, the fetching is done
-                 * in records mode at all times, but in rows mode we also pass down the row filter to the fetcher so
-                 * that it can filter out rows that should not be fetched inside a given record.
-                 */
-
-                RowFilter rowFilter = RowFilter.ANY_ROW;
-                if (Mode.RowBased.equals(engine.getMode())) {
-                    rowFilter = engine.combinedRowFilters();
-                }
-                DataExtensionProducer producer = new DataExtensionProducer(_job, _cellIndex, rowFilter);
-                ChangeData<RecordDataExtension> changeData = state.mapRecords(engine.combinedRecordFilters(), producer);
-
-                _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer(),
-                        Optional.of(_reporter));
-
-                if (!_canceled) {
-                    _history.addEntry(
-                            _historyEntryID,
-                            _description,
-                            ExtendDataOperation.this,
-                            new DataExtensionChange(
-                                    _engineConfig,
-                                    _baseColumnName,
-                                    _endpoint,
-                                    _identifierSpace,
-                                    _schemaSpace,
-                                    _columnInsertIndex,
-                                    columnNames,
-                                    columnTypes));
-                    _processManager.onDoneProcess(this);
-                }
-            } catch (Exception e) {
-                if (_canceled) {
-                    _history.getChangeDataStore().discardAll(_historyEntryID);
-                } else {
-                    _processManager.onFailedProcess(this, e);
-                }
-            }
-        }
-    }
-
-    protected static class DataExtensionProducer implements RecordChangeDataProducer<RecordDataExtension> {
-
-        private static final long serialVersionUID = -7946297987163653933L;
-        private final ReconciledDataExtensionJob _job;
-        private final int _cellIndex;
-        private final RowFilter _rowFilter;
-
-        protected DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex, RowFilter rowFilter) {
-            _job = job;
-            _cellIndex = cellIndex;
-            _rowFilter = rowFilter;
-        }
-
-        @Override
-        public RecordDataExtension call(Record record) {
-            return callRecordBatch(Collections.singletonList(record)).get(0);
-        }
-
-        @Override
-        public List<RecordDataExtension> callRecordBatch(List<Record> records) {
-
-            Set<String> ids = new HashSet<>();
-
-            for (Record record : records) {
-                for (IndexedRow indexedRow : record.getIndexedRows()) {
-                    Row row = indexedRow.getRow();
-                    if (!_rowFilter.filterRow(indexedRow.getIndex(), row)) {
-                        continue;
-                    }
-                    Cell cell = row.getCell(_cellIndex);
-                    if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        ids.add(cell.recon.match.id);
-                    }
-                }
-            }
-
-            Map<String, DataExtension> extensions;
-            try {
-                extensions = _job.extend(ids);
-            } catch (Exception e) {
-                e.printStackTrace();
-                extensions = Collections.emptyMap();
-            }
-
-            List<RecordDataExtension> results = new ArrayList<>();
-            for (Record record : records) {
-                Map<Long, DataExtension> recordExtensions = new HashMap<>();
-                for (IndexedRow indexedRow : record.getIndexedRows()) {
-                    if (!_rowFilter.filterRow(indexedRow.getIndex(), indexedRow.getRow())) {
-                        continue;
-                    }
-                    Cell cell = indexedRow.getRow().getCell(_cellIndex);
-                    if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        recordExtensions.put(indexedRow.getIndex(), extensions.get(cell.recon.match.id));
-                    }
-                }
-                results.add(new RecordDataExtension(recordExtensions));
-            }
-            return results;
-        }
-
-        @Override
-        public int getBatchSize() {
-            return _job.getBatchSize();
-        }
-
+    public String getDescription() {
+        return OperationDescription.recon_extend_data_brief(_columnInsertIndex, _baseColumnName);
     }
 }

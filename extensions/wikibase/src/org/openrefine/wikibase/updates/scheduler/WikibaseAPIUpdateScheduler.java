@@ -24,11 +24,7 @@
 
 package org.openrefine.wikibase.updates.scheduler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -66,9 +62,9 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      */
     private UpdateSequence pointerFullUpdates;
     /**
-     * The set of all new entities referred to in the whole batch.
+     * The set of all new entities referred to in the whole batch, mapping to a row id where they are referred to
      */
-    private Set<EntityIdValue> allPointers;
+    private Map<EntityIdValue, Long> allPointers;
 
     private PointerExtractor extractor = new PointerExtractor();
 
@@ -77,7 +73,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         List<EntityEdit> result = new ArrayList<>();
         pointerFreeUpdates = new UpdateSequence();
         pointerFullUpdates = new UpdateSequence();
-        allPointers = new HashSet<>();
+        allPointers = new HashMap<>();
 
         for (EntityEdit update : updates) {
             splitUpdate(update);
@@ -87,18 +83,27 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         result.addAll(pointerFreeUpdates.getUpdates());
 
         // Part 1': add the remaining new entities that have not been touched
-        Set<EntityIdValue> unseenPointers = new HashSet<>(allPointers);
-        unseenPointers.removeAll(pointerFreeUpdates.getSubjects());
-        // Only items can be created explicitly: other entity types need at least some non-blank field.
-        // Therefore we check that all entities are items.
-        Optional<EntityIdValue> uncreatableEntity = unseenPointers.stream().filter(t -> !(t instanceof ItemIdValue)).findAny();
-        if (uncreatableEntity.isPresent()) {
-            throw new ImpossibleSchedulingException("The batch contains a reference to a new entity (" +
-                    uncreatableEntity.toString() + ") which is never explicitly created in the batch. " +
-                    "It cannot be created implicitly as creating a blank entity of this type is impossible.");
+        Map<EntityIdValue, Long> unseenPointers = new HashMap<>(allPointers);
+        for (EntityIdValue id : pointerFreeUpdates.getSubjects()) {
+            unseenPointers.remove(id);
         }
-        // TODO For now, we know that they are all item updates because items are the only things we can create
-        result.addAll(unseenPointers.stream().map(t -> new ItemEditBuilder(t).build()).collect(Collectors.toList()));
+        // Only items can be created explicitly: other entity types need at least some non-blank field.
+        // Therefore, we check that all entities are items.
+        Optional<Map.Entry<EntityIdValue, Long>> uncreatableEntity = unseenPointers
+                .entrySet()
+                .stream()
+                .filter(t -> !(t.getKey() instanceof ItemIdValue))
+                .findAny();
+        if (uncreatableEntity.isPresent()) {
+            throw new ImpossibleSchedulingException(
+                    "The batch contains on row " + uncreatableEntity.get().getValue() + " a reference to a new entity (" +
+                            uncreatableEntity.get().getKey().toString() + ") which is never explicitly created in the batch. " +
+                            "It cannot be created implicitly as creating a blank entity of this type is impossible.");
+        }
+        // At this stage, we know that all entities are items, thanks to the check above
+        result.addAll(unseenPointers.entrySet().stream().map(entry -> new ItemEditBuilder(entry.getKey())
+                .addContributingRowId(entry.getValue())
+                .build()).collect(Collectors.toList()));
 
         // Part 2: add all the pointer full updates
         result.addAll(pointerFullUpdates.getUpdates());
@@ -114,6 +119,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     protected void splitUpdate(EntityEdit edit) {
         // TODO (antonin, 2022-05-08): there is a lot of duplication in the two cases below (Item / MediaInfo),
         // could we refactor that?
+        long rowId = edit.getContributingRowIds().stream().findAny().get();
         if (edit instanceof ItemEdit) {
             ItemEdit update = (ItemEdit) edit;
             ItemEditBuilder pointerFreeBuilder = new ItemEditBuilder(update.getEntityId())
@@ -121,8 +127,10 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
                     .addLabels(update.getLabelsIfNew(), false)
                     .addDescriptions(update.getDescriptions(), true)
                     .addDescriptions(update.getDescriptionsIfNew(), false)
-                    .addAliases(update.getAliases());
-            ItemEditBuilder pointerFullBuilder = new ItemEditBuilder(update.getEntityId());
+                    .addAliases(update.getAliases())
+                    .addContributingRowIds(update.getContributingRowIds());
+            ItemEditBuilder pointerFullBuilder = new ItemEditBuilder(update.getEntityId())
+                    .addContributingRowIds(update.getContributingRowIds());
 
             for (StatementEdit statement : update.getStatementEdits()) {
                 Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
@@ -131,7 +139,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
                 } else {
                     pointerFullBuilder.addStatement(statement);
                 }
-                allPointers.addAll(pointers);
+                pointers.stream().forEach(pointer -> allPointers.put(pointer, rowId));
             }
 
             if (update.isNew()) {
@@ -168,7 +176,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
                 } else {
                     pointerFullBuilder.addStatement(statement);
                 }
-                allPointers.addAll(pointers);
+                pointers.stream().forEach(pointer -> allPointers.put(pointer, rowId));
             }
 
             if (update.isNew()) {

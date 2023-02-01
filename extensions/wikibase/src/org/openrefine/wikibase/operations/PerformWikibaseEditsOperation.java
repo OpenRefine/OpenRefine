@@ -27,15 +27,10 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,7 +39,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
@@ -52,14 +46,9 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.History;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Grid;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.*;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
@@ -70,9 +59,6 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.process.LongRunningProcess;
-import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.commands.ConnectionManager;
 import org.openrefine.wikibase.editing.EditBatchProcessor;
@@ -99,6 +85,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @JsonProperty("maxlag")
     private int maxlag;
 
+    @JsonProperty("batchSize")
+    private int batchSize;
+
     @JsonProperty("editGroupsUrlSchema")
     private String editGroupsUrlSchema;
 
@@ -113,6 +102,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("summary") String summary,
             @JsonProperty("maxlag") Integer maxlag,
+            @JsonProperty("batchSize") Integer batchSize,
             @JsonProperty("editGroupsUrlSchema") String editGroupsUrlSchema,
             @JsonProperty("maxEditsPerMinute") Integer maxEditsPerMinute,
             @JsonProperty("tag") String tag) {
@@ -126,6 +116,10 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             maxlag = 5;
         }
         this.maxlag = maxlag;
+        if (batchSize == null) {
+            batchSize = 50;
+        }
+        this.batchSize = batchSize;
         this.maxEditsPerMinute = maxEditsPerMinute == null ? Manifest.DEFAULT_MAX_EDITS_PER_MINUTE : maxEditsPerMinute;
         this.tagTemplate = tag == null ? Manifest.DEFAULT_TAG_TEMPLATE : tag;
         // a fallback to Wikidata for backwards compatibility is done later on
@@ -133,33 +127,92 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
+    public Change createChange() throws ParsingException {
+        String editGroupId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
+        return new PerformWikibaseEditsChange(editGroupId, this);
+    }
+
+    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
-    public Process createProcess(Project project)
-            throws Exception {
-        Grid currentGrid = project.getCurrentGrid();
-        return new PerformEditsProcess(
-                project.getHistory(),
-                project.getProcessManager(),
-                currentGrid,
-                createEngine(currentGrid),
-                editGroupsUrlSchema,
-                summary);
-    }
-
     static public class PerformWikibaseEditsChange implements Change {
 
-        public PerformWikibaseEditsChange() {
+        private final String editGroupId;
+        private final PerformWikibaseEditsOperation operation;
+
+        @JsonCreator
+        public PerformWikibaseEditsChange(
+                @JsonProperty("editGroupId") String editGroupId,
+                @JsonProperty("operation") PerformWikibaseEditsOperation operation) {
+            this.editGroupId = editGroupId;
+            this.operation = operation;
         }
 
         @Override
         public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            ChangeData<RowNewReconUpdate> changeData = null;
+            String tag = operation.tagTemplate;
+            if (tag.contains("${version}")) {
+                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+                if (matcher.matches()) {
+                    tag = tag.replace("${version}", matcher.group(1));
+                }
+            }
+            List<String> tags = Collections.singletonList(tag);
+            Engine engine = new Engine(projectState, operation._engineConfig);
+
+            // Validate schema
+            WikibaseSchema schema = (WikibaseSchema) projectState.getOverlayModels().get("wikibaseSchema");
+            ValidationState validation = new ValidationState(projectState.getColumnModel());
+            schema.validate(validation);
+            if (!validation.getValidationErrors().isEmpty()) {
+                throw new IllegalStateException("Schema is incomplete");
+            }
+
+            ChangeData<RowEditingResults> changeData = null;
             try {
-                changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer());
+                changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer(), existingChangeData -> {
+                    // TODO resume from existing change data
+                    NewEntityLibrary library = new NewEntityLibrary();
+
+                    // Get Wikibase connection
+                    ConnectionManager manager = ConnectionManager.getInstance();
+                    String mediaWikiApiEndpoint = schema.getMediaWikiApiEndpoint();
+                    if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
+                        // TODO find a way to signal to the user that they should re-login
+                        return existingChangeData.orElse(projectState.getRunner().create(Collections.emptyList()));
+                    }
+                    ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
+
+                    // Prepare edit summary
+                    String summary;
+                    if (StringUtils.isBlank(operation.editGroupsUrlSchema)) {
+                        summary = operation.summary;
+                    } else {
+                        // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                        // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                        // from the user-supplied ones, we replace these separators by similar unicode characters to
+                        // make sure they can be told apart.
+                        String summaryWithoutCommas = operation.summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
+                        summary = summaryWithoutCommas + " " + operation.editGroupsUrlSchema.replace("${batch_id}", editGroupId);
+                    }
+
+                    RowEditingResultsProducer changeProducer = new RowEditingResultsProducer(
+                            connection,
+                            schema,
+                            projectState.getColumnModel(),
+                            summary,
+                            operation.batchSize,
+                            operation.maxlag,
+                            tags,
+                            operation.maxEditsPerMinute,
+                            library);
+                    ChangeData<RowEditingResults> newChangeData = projectState.mapRows(engine.combinedRowFilters(), changeProducer,
+                            existingChangeData);
+                    return newChangeData;
+                });
             } catch (IOException e) {
                 throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
             }
@@ -175,224 +228,157 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     }
 
-    public class PerformEditsProcess extends LongRunningProcess implements Runnable {
+    protected static class RowEditingResults implements Serializable {
 
-        protected History _history;
-        protected ProcessManager _processManager;
-        protected Grid _grid;
-        protected Engine _engine;
-        protected WikibaseSchema _schema;
-        protected String _editGroupsUrlSchema;
-        protected String _summary;
-        protected List<String> _tags;
-        protected final long _historyEntryID;
+        private final Map<Long, String> newEntities;
+        private final List<String> errors;
 
-        protected PerformEditsProcess(History history, ProcessManager processManager, Grid grid, Engine engine,
-                String editGroupsUrlSchema, String summary) {
-            super(description);
-            this._history = history;
-            this._processManager = processManager;
-            this._grid = grid;
-            this._engine = engine;
-            this._schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
-            this._summary = summary;
-            String tag = tagTemplate;
-            if (tag.contains("${version}")) {
-                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-                if (matcher.matches()) {
-                    tag = tag.replace("${version}", matcher.group(1));
-                }
-            }
-            this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
-            this._historyEntryID = HistoryEntry.allocateID();
-            if (editGroupsUrlSchema == null &&
-                    ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
-                // For backward compatibility, if no editGroups schema is provided
-                // and we edit Wikidata, then add Wikidata's editGroups schema
-                editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
-            }
-            this._editGroupsUrlSchema = editGroupsUrlSchema;
-
-            // validate the schema
-            ValidationState validation = new ValidationState(grid.getColumnModel());
-            _schema.validate(validation);
-            if (!validation.getValidationErrors().isEmpty()) {
-                throw new IllegalStateException("Schema is incomplete");
-            }
-        }
-
-        @Override
-        public void run() {
-
-            WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
-            ConnectionManager manager = ConnectionManager.getInstance();
-            String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
-            if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
-                return;
-            }
-            ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
-            WikibaseDataFetcher fetcher = new WikibaseDataFetcher(connection, _schema.getSiteIri());
-            WikibaseDataEditor editor = new WikibaseDataEditor(connection, _schema.getSiteIri());
-
-            String summary;
-            if (StringUtils.isBlank(_editGroupsUrlSchema)) {
-                summary = _summary;
-            } else {
-                // Generate batch id
-                String batchId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
-                // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-                // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-                // from the user-supplied ones, we replace these separators by similar unicode characters to
-                // make sure they can be told apart.
-                String summaryWithoutCommas = _summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
-                summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
-            }
-
-            // Evaluate the schema
-            List<EntityEdit> entityDocuments = _schema.evaluate(_grid, _engine);
-
-            // Prepare the edits
-            NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, entityDocuments, newEntityLibrary, summary,
-                    maxlag, _tags, 50, maxEditsPerMinute);
-
-            // Perform edits
-            logger.info("Performing edits");
-            while (processor.remainingEdits() > 0) {
-                try {
-                    processor.performEdit();
-                } catch (InterruptedException e) {
-                    _canceled = true;
-                }
-                _progress = processor.progress();
-                if (_canceled) {
-                    break;
-                }
-            }
-
-            // Saving the ids of the newly created entities should take much less time
-            // hence it is okay to do it only when we reached progress 100.
-            NewReconChangeDataProducer rowMapper = new NewReconChangeDataProducer(newEntityLibrary);
-            ChangeData<RowNewReconUpdate> changeData = _grid.mapRows(RowFilter.ANY_ROW, rowMapper);
-            try {
-                _history.getChangeDataStore().store(changeData, _historyEntryID, changeDataId, new RowNewReconUpdateSerializer(),
-                        Optional.empty());
-
-                _progress = 100;
-
-                if (!_canceled) {
-
-                    Change change = new PerformWikibaseEditsChange();
-
-                    _history.addEntry(
-                            _historyEntryID,
-                            _description,
-                            PerformWikibaseEditsOperation.this,
-                            change);
-
-                    _processManager.onDoneProcess(this);
-                }
-            } catch (Exception e) {
-                _processManager.onFailedProcess(this, e);
-            }
-        }
-
-        @Override
-        protected Runnable getRunnable() {
-            return this;
-        }
-    }
-
-    protected static class RowNewReconUpdate implements Serializable {
-
-        private static final long serialVersionUID = 4071296846913437839L;
-        private final Map<Integer, String> newEntities;
-
-        @JsonCreator
-        protected RowNewReconUpdate(
-                @JsonProperty("newEntities") Map<Integer, String> newEntities) {
+        protected RowEditingResults(
+                @JsonProperty("newEntities") Map<Long, String> newEntities,
+                @JsonProperty("errors") List<String> errors) {
             this.newEntities = newEntities;
+            this.errors = errors;
         }
 
         @JsonProperty("newEntities")
-        public Map<Integer, String> getNewEntities() {
+        public Map<Long, String> getNewEntities() {
             return newEntities;
+        }
+
+        @JsonProperty("errors")
+        public List<String> getErrors() {
+            return errors;
         }
     }
 
-    protected static class NewReconChangeDataProducer implements RowChangeDataProducer<RowNewReconUpdate> {
+    protected static class RowEditingResultsProducer implements RowChangeDataProducer<RowEditingResults> {
 
-        private static final long serialVersionUID = -1754921123832421920L;
+        protected final ApiConnection connection;
+        protected final WikibaseSchema schema;
+        protected final ColumnModel columnModel;
+        protected final String summary;
+        protected final int batchSize;
+        protected final int maxLag;
+        protected final int maxEditsPerMinute;
+        protected final List<String> tags;
         protected final NewEntityLibrary library;
+        protected final WikibaseDataFetcher fetcher;
+        protected final WikibaseDataEditor editor;
 
-        protected NewReconChangeDataProducer(NewEntityLibrary newItemLibrary) {
-            library = newItemLibrary;
+        RowEditingResultsProducer(ApiConnection connection, WikibaseSchema schema, ColumnModel columnModel, String summary, int batchSize,
+                int maxLag, List<String> tags, int maxEditsPerMinute, NewEntityLibrary library) {
+            this.schema = schema;
+            this.columnModel = columnModel;
+            this.summary = summary;
+            this.connection = connection;
+            this.batchSize = batchSize;
+            this.maxLag = maxLag;
+            this.maxEditsPerMinute = maxEditsPerMinute;
+            this.tags = tags;
+            this.library = library;
+            fetcher = new WikibaseDataFetcher(connection, schema.getSiteIri());
+            editor = new WikibaseDataEditor(connection, schema.getSiteIri());
         }
 
         @Override
-        public RowNewReconUpdate call(long rowId, Row row) {
-            Map<Integer, String> map = new HashMap<>();
-            List<Cell> cells = row.getCells();
-            for (int i = 0; i != cells.size(); i++) {
-                Cell cell = cells.get(i);
-                if (cell != null && cell.recon != null &&
-                        Judgment.New.equals(cell.recon.judgment)) {
-                    long id = cell.recon.id;
-                    String qid = library.getId(id);
-                    if (qid != null) {
-                        map.put(i, qid);
-                    }
-                }
-            }
-            if (map.isEmpty()) {
-                return null;
-            } else {
-                return new RowNewReconUpdate(map);
-            }
+        public RowEditingResults call(long rowId, Row row) {
+            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
         }
 
+        @Override
+        public List<RowEditingResults> callRowBatch(List<IndexedRow> rows) {
+            List<EntityEdit> edits = schema.evaluate(columnModel, rows, null);
+            EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, edits, library, summary,
+                    maxLag, tags, batchSize, maxEditsPerMinute);
+            Map<Long, List<String>> rowEditingErrors = new HashMap<>();
+            while (processor.remainingEdits() > 0) {
+                try {
+                    EditBatchProcessor.EditResult editResult = processor.performEdit();
+                    if (editResult.getErrorCode() != null || editResult.getErrorMessage() != null) {
+                        long firstLine = editResult.getCorrespondingRowIds().stream().min(Comparator.naturalOrder()).get();
+                        List<String> logLine = rowEditingErrors.get(firstLine);
+                        if (logLine == null) {
+                            logLine = new ArrayList<>();
+                            rowEditingErrors.put(firstLine, logLine);
+                        }
+                        logLine.add(String.format("[%s] %s", editResult.getErrorCode(), editResult.getErrorMessage()));
+                    }
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            List<RowEditingResults> rowEditingResults = new ArrayList<>();
+            for (IndexedRow indexedRow : rows) {
+                Map<Long, String> newEntityIds = new HashMap<>();
+                indexedRow.getRow().getCells().stream()
+                        .forEach(cell -> {
+                            if (cell != null && cell.recon != null && Judgment.New.equals(cell.recon.judgment)) {
+                                long id = cell.recon.id;
+                                String entityId = library.getId(id);
+                                if (entityId != null) {
+                                    newEntityIds.put(id, entityId);
+                                }
+                            }
+                        });
+                List<String> errors = rowEditingErrors.getOrDefault(indexedRow.getIndex(), Collections.emptyList());
+                rowEditingResults.add(new RowEditingResults(newEntityIds, errors));
+            }
+            return rowEditingResults;
+        }
+
+        @Override
+        public int getBatchSize() {
+            return batchSize;
+        }
+
+        @Override
+        public int getMaxConcurrency() {
+            return 1;
+        }
     }
 
-    protected static class NewReconRowJoiner implements RowChangeDataJoiner<RowNewReconUpdate> {
+    protected static class NewReconRowJoiner implements RowChangeDataJoiner<RowEditingResults> {
 
         private static final long serialVersionUID = -1042195464154951531L;
 
         @Override
-        public Row call(long rowId, Row row, RowNewReconUpdate changeData) {
+        public Row call(long rowId, Row row, RowEditingResults changeData) {
             if (changeData == null) {
                 return row;
             }
-            Row newRow = row;
-            for (Entry<Integer, String> t : changeData.getNewEntities().entrySet()) {
-                Cell cell = row.getCell(t.getKey());
-                if (cell == null || cell.recon == null) {
-                    continue;
-                }
-                Recon recon = cell.recon;
-                if (Recon.Judgment.New.equals(recon.judgment)) {
-                    ReconCandidate newMatch = new ReconCandidate(t.getValue(), cell.value.toString(),
-                            new String[0], 100);
-                    recon = recon
-                            .withJudgment(Recon.Judgment.Matched)
-                            .withMatch(newMatch)
-                            .withCandidate(newMatch);
-
-                }
-                Cell newCell = new Cell(cell.value, recon);
-                newRow = newRow.withCell(t.getKey(), newCell);
-            }
-            return newRow;
+            List<Cell> newCells = row.getCells().stream()
+                    .map(cell -> {
+                        if (cell != null && cell.recon != null && Judgment.New.equals(cell.recon.judgment)) {
+                            long id = cell.recon.id;
+                            String entityId = changeData.getNewEntities().get(id);
+                            if (entityId == null) {
+                                return cell;
+                            } else {
+                                Recon recon = cell.recon;
+                                ReconCandidate newMatch = new ReconCandidate(entityId, cell.value.toString(),
+                                        new String[0], 100);
+                                recon = recon
+                                        .withJudgment(Recon.Judgment.Matched)
+                                        .withMatch(newMatch)
+                                        .withCandidate(newMatch);
+                                return new Cell(cell.value, recon);
+                            }
+                        } else {
+                            return cell;
+                        }
+                    })
+                    .collect(Collectors.toList());
+            return new Row(newCells, row.flagged, row.starred);
         }
 
     }
 
-    protected static class RowNewReconUpdateSerializer implements ChangeDataSerializer<RowNewReconUpdate> {
+    protected static class RowNewReconUpdateSerializer implements ChangeDataSerializer<RowEditingResults> {
 
         private static final long serialVersionUID = -165445357950934740L;
 
         @Override
-        public String serialize(RowNewReconUpdate changeDataItem) {
+        public String serialize(RowEditingResults changeDataItem) {
             try {
                 return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
             } catch (JsonProcessingException e) {
@@ -401,8 +387,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
 
         @Override
-        public RowNewReconUpdate deserialize(String serialized) throws IOException {
-            return ParsingUtilities.mapper.readValue(serialized, RowNewReconUpdate.class);
+        public RowEditingResults deserialize(String serialized) throws IOException {
+            return ParsingUtilities.mapper.readValue(serialized, RowEditingResults.class);
         }
 
     }

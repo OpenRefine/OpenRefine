@@ -521,7 +521,7 @@ public class TestingGrid implements Grid {
     }
 
     @Override
-    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper, Optional<ChangeData<T>> incompleteChangeData) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RowChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(rowMapper);
@@ -530,8 +530,25 @@ public class TestingGrid implements Grid {
         Map<Long, T> changeData = new HashMap<>();
         Stream<IndexedRow> filteredRows = indexedRows.stream()
                 .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow()));
+
+        // add data from any previously computed change data
+        if (incompleteChangeData.isPresent()) {
+            filteredRows.forEach(ir -> {
+                T precomputed = incompleteChangeData.get().get(ir.getIndex());
+                if (precomputed != null) {
+                    changeData.put(ir.getIndex(), precomputed);
+                }
+            });
+            filteredRows = indexedRows.stream()
+                    .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow())
+                            && incompleteChangeData.get().get(ir.getIndex()) == null);
+        }
+
+        // compute missing change data items
         if (deserializedMapper.getBatchSize() == 1) {
-            filteredRows.forEach(ir -> changeData.put(ir.getIndex(), deserializedMapper.call(ir.getIndex(), ir.getRow())));
+            filteredRows.forEach(ir -> {
+                changeData.put(ir.getIndex(), deserializedMapper.call(ir.getIndex(), ir.getRow()));
+            });
         } else {
             Iterator<List<IndexedRow>> batches = Iterators.partition(filteredRows.iterator(), deserializedMapper.getBatchSize());
             while (batches.hasNext()) {
@@ -550,7 +567,8 @@ public class TestingGrid implements Grid {
     }
 
     @Override
-    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
+    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper,
+            Optional<ChangeData<T>> incompleteChangeData) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RecordChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(recordMapper);
@@ -559,6 +577,19 @@ public class TestingGrid implements Grid {
         Map<Long, T> changeData = new HashMap<>();
         Stream<Record> filteredRecords = records.stream()
                 .filter(ir -> deserializedFilter.filterRecord(ir));
+
+        // add data from any previously computed change data
+        if (incompleteChangeData.isPresent()) {
+            filteredRecords.forEach(ir -> {
+                T precomputed = incompleteChangeData.get().get(ir.getStartRowId());
+                if (precomputed != null) {
+                    changeData.put(ir.getStartRowId(), precomputed);
+                }
+            });
+            filteredRecords = records.stream()
+                    .filter(ir -> deserializedFilter.filterRecord(ir) && incompleteChangeData.get().get(ir.getStartRowId()) == null);
+        }
+
         if (deserializedMapper.getBatchSize() == 1) {
             filteredRecords.forEach(record -> changeData.put(record.getStartRowId(), deserializedMapper.call(record)));
         } else {

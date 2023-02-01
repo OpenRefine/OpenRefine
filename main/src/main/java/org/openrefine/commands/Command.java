@@ -59,7 +59,8 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.process.Process;
+import org.openrefine.model.changes.Change;
+import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
@@ -277,26 +278,22 @@ public abstract class Command {
         }
     }
 
-    static protected void performProcessAndRespond(
+    static protected void addHistoryEntryAndRespond(
             HttpServletRequest request,
             HttpServletResponse response,
             Project project,
-            Process process) throws Exception {
+            String description,
+            Operation operation,
+            Change change) throws Exception {
 
-        HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
-        if (historyEntry != null) {
-            Writer w = response.getWriter();
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
+        HistoryEntry historyEntry = project.getHistory().addEntry(description, operation, change);
+        Writer w = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
-            w.flush();
-            w.close();
-        } else {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            respond(response, "{ \"code\" : \"pending\" }");
-        }
+        w.flush();
+        w.close();
     }
 
     static protected void respond(HttpServletResponse response, String content)

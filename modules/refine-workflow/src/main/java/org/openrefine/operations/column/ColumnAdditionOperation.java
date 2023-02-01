@@ -38,7 +38,6 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.model.Cell;
@@ -143,7 +142,8 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
 
     protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
             Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
-        RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, baseColumnName, onError, eval, columnModel,
+        RowInRecordChangeDataProducer<Cell> changeDataProducer = ColumnChangeByChangeData.evaluatingChangeDataProducer(columnIndex,
+                baseColumnName, onError, eval, columnModel,
                 overlayModels,
                 0L);
         return new RowInRecordMapper() {
@@ -185,13 +185,27 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
-            Mode engineMode) {
+    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable) {
         return new ColumnChangeByChangeData(
                 "eval",
-                columnIndex + 1,
+                _baseColumnName,
                 _newColumnName,
-                engineMode,
-                null);
+                _engineConfig,
+                null) {
+
+            @Override
+            public RowInRecordChangeDataProducer<Cell> getChangeDataProducer(
+                    int columnIndex, String columnName, ColumnModel columnModel,
+                    Map<String, OverlayModel> overlayModels, ChangeContext changeContext) {
+                return evaluatingChangeDataProducer(
+                        columnIndex,
+                        columnName,
+                        _onError,
+                        evaluable,
+                        columnModel,
+                        overlayModels,
+                        changeContext.getProjectId());
+            }
+        };
     }
 }

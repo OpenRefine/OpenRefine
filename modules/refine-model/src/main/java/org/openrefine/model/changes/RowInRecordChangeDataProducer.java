@@ -58,4 +58,9 @@ public abstract class RowInRecordChangeDataProducer<T> implements RecordChangeDa
         return 1;
     }
 
+    @Override
+    public int getMaxConcurrency() {
+        return 0;
+    }
+
 }

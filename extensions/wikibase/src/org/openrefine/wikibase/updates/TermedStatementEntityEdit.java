@@ -68,6 +68,8 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
      * @param aliases
      *            the aliases to add on the item. In theory their order should matter but in practice people rarely rely
      *            on the order of aliases so this is just kept as a set for simplicity.
+     * @param contributingRowIds
+     *            the set of row ids which generated this edit
      */
     public TermedStatementEntityEdit(
             EntityIdValue id,
@@ -76,8 +78,9 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
             Set<MonolingualTextValue> labelsIfNew,
             Set<MonolingualTextValue> descriptions,
             Set<MonolingualTextValue> descriptionsIfNew,
-            Set<MonolingualTextValue> aliases) {
-        super(id, statements, new HashMap<>(), new HashMap<>());
+            Set<MonolingualTextValue> aliases,
+            Set<Long> contributingRowIds) {
+        super(id, statements, new HashMap<>(), new HashMap<>(), contributingRowIds);
         Validate.notNull(id);
         if (statements == null) {
             statements = Collections.emptyList();
@@ -116,8 +119,9 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
             Map<String, MonolingualTextValue> labelsIfNew,
             Map<String, MonolingualTextValue> descriptions,
             Map<String, MonolingualTextValue> descriptionsIfNew,
-            Map<String, List<MonolingualTextValue>> aliases) {
-        super(id, statements, labels, labelsIfNew);
+            Map<String, List<MonolingualTextValue>> aliases,
+            Set<Long> contributingRowIds) {
+        super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.descriptions = descriptions;
         this.descriptionsIfNew = descriptionsIfNew;
         this.aliases = aliases;

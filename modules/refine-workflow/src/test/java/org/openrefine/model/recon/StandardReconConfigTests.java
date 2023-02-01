@@ -59,8 +59,6 @@ import org.openrefine.model.recon.StandardReconConfig.ColumnDetail;
 import org.openrefine.model.recon.StandardReconConfig.ReconResult;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation;
-import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -256,16 +254,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.ALL_ROWS, "director", config);
-            Process process = op.createProcess(project);
-            ProcessManager pm = project.getProcessManager();
-            process.startPerforming(pm);
-            Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
-            Assert.assertFalse(process.isRunning());
+            project.getHistory().addEntry(op);
 
             RecordedRequest request1 = server.takeRequest();
 
@@ -364,17 +353,8 @@ public class StandardReconConfigTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
-            Process process = op.createProcess(project);
-            ProcessManager pm = project.getProcessManager();
-            process.startPerforming(pm);
-            Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
-            Assert.assertFalse(process.isRunning());
 
+            project.getHistory().addEntry(op);
             server.takeRequest(); // ignore the first request which was a 503 error
             RecordedRequest request1 = server.takeRequest();
 

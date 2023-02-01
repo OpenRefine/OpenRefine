@@ -79,7 +79,7 @@ public class HistoryEntryManager {
         ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
     }
 
-    public History load(Runner runner, File dir) throws IOException, DoesNotApplyException {
+    public History load(Runner runner, File dir, long projectId) throws IOException, DoesNotApplyException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Load the metadata
@@ -91,7 +91,8 @@ public class HistoryEntryManager {
                 getChangeDataStore(runner, dir),
                 getGridCache(runner, dir),
                 metadata.entries,
-                metadata.position);
+                metadata.position,
+                projectId);
     }
 
     /**

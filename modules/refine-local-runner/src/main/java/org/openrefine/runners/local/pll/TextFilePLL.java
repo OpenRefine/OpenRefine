@@ -1,12 +1,7 @@
 
 package org.openrefine.runners.local.pll;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -24,7 +19,7 @@ import org.openrefine.model.Runner;
 import org.openrefine.runners.local.pll.util.LineReader;
 
 /**
- * A PLL whose contents are read from a set of text files. The text files are partitioned using a method similar to that
+ * A PLL whose contents are read from a set of text files. The text files are partitioned using a method similar to that
  * of Hadoop, using new lines as boundaries.
  * 
  * This class aims at producing a certain number of partitions determined by the default parallelism of the PLL context.
@@ -38,12 +33,30 @@ public class TextFilePLL extends PLL<String> {
     private final List<TextFilePartition> partitions;
     private final String path;
     private final Charset encoding;
+    private final boolean ignoreEarlyEOF;
     private ReadingProgressReporter progress;
 
     public TextFilePLL(PLLContext context, String path, Charset encoding) throws IOException {
+        this(context, path, encoding, false);
+    }
+
+    /**
+     * Constructs a PLL out of a text file.
+     *
+     * @param context
+     *            the associated context, whose thread pool will be used
+     * @param path
+     *            the path to the file or directory whose contents should be read
+     * @param encoding
+     *            the encoding in which the files should be read
+     * @param ignoreEarlyEOF
+     *            whether to ignore early ends of files, due to an interrupted write
+     */
+    public TextFilePLL(PLLContext context, String path, Charset encoding, boolean ignoreEarlyEOF) throws IOException {
         super(context, "Text file from " + path);
         this.path = path;
         this.encoding = encoding;
+        this.ignoreEarlyEOF = ignoreEarlyEOF;
         this.progress = null;
 
         File file = new File(path);
@@ -121,9 +134,18 @@ public class TextFilePLL extends PLL<String> {
                 // if we decompress, we count the bytes before decompression (since that is how the file size was
                 // computed).
                 countingIs = new CountingInputStream(bufferedIs);
-                bufferedIs = new GzipCompressorInputStream(bufferedIs);
+                try {
+                    bufferedIs = new GzipCompressorInputStream(bufferedIs);
+                } catch (IOException e) {
+                    if (ignoreEarlyEOF) {
+                        // this partition was truncated very early, in the Gzip header.
+                        // No content in it is recoverable. We replace it by an empty stream
+                        bufferedIs = new ByteArrayInputStream(new byte[] {});
+                    } else {
+                        throw e;
+                    }
+                }
                 lineReader = new LineReader(bufferedIs, encoding);
-
             } else {
                 countingIs = new CountingInputStream(bufferedIs);
                 lineReader = new LineReader(countingIs, encoding);
@@ -158,6 +180,12 @@ public class TextFilePLL extends PLL<String> {
                         }
                         if (nextLine == null && lastOffsetSeen > lastOffsetReported) {
                             reportProgress();
+                        }
+                    } catch (EOFException e) {
+                        if (ignoreEarlyEOF) {
+                            nextLine = null;
+                        } else {
+                            throw new UncheckedIOException(e);
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);

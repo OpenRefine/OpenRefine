@@ -9,8 +9,8 @@ import org.openrefine.model.Record;
 
 /**
  * A function which computes change data to be persisted to disk, to be later joined back to the project to produce the
- * new grid. This data might be serialized because it is volatile or expensive to compute.
- * 
+ * new grid. This data might be serialized because it is volatile or expensive to compute. This is the record-wise
+ * equivalent to {@link RowChangeDataProducer}.
  *
  * @param <T>
  */
@@ -41,5 +41,12 @@ public interface RecordChangeDataProducer<T> extends Serializable {
      */
     public default int getBatchSize() {
         return 1;
+    }
+
+    /**
+     * The maximum number of concurrent calls to this change data producer. If 0, there is no limit to the concurrency.
+     */
+    public default int getMaxConcurrency() {
+        return 0;
     }
 }

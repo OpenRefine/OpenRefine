@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.openrefine.browsing.facets.RecordAggregator;
@@ -276,13 +277,14 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
-        return wrap(exec("mapRows (to ChangeData)", () -> grid.mapRows(filter, rowMapper)));
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper, Optional<ChangeData<T>> incompleteChangeData) {
+        return wrap(exec("mapRows (to ChangeData)", () -> grid.mapRows(filter, rowMapper, incompleteChangeData)));
     }
 
     @Override
-    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
-        return wrap(exec("mapRecords (to ChangeData)", () -> grid.mapRecords(filter, recordMapper)));
+    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper,
+            Optional<ChangeData<T>> incompleteChangeData) {
+        return wrap(exec("mapRecords (to ChangeData)", () -> grid.mapRecords(filter, recordMapper, incompleteChangeData)));
     }
 
     @Override
