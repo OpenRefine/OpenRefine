@@ -50,6 +50,7 @@ class ListFacet extends Facet {
 
     this._data = null;
 
+    this._initialHeightSet = false;
     this._initializeUI();
     this._update();
   };
@@ -401,14 +402,17 @@ class ListFacet extends Facet {
     this._renderBodyControls();
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
 
-    let innerList = this._elmts.bodyInnerDiv[0];
-    let innerHeight = innerList.clientHeight;
-    let defaultMaxHeight = 17*13;
+    if (!this._initialHeightSet) {
+      let innerList = this._elmts.bodyInnerDiv[0];
+      let innerHeight = innerList.clientHeight;
+      let defaultMaxHeight = 17 * 13;
 
-    if (innerHeight > defaultMaxHeight) {
-      this._elmts.bodyDiv.height(defaultMaxHeight+'px');
-    } else {
-      this._elmts.bodyDiv.height((innerHeight+1)+'px');
+      if (innerHeight > defaultMaxHeight) {
+        this._elmts.bodyDiv.height(defaultMaxHeight + 'px');
+      } else {
+        this._elmts.bodyDiv.height((innerHeight + 1) + 'px');
+      }
+      this._initialHeightSet = true;
     }
 
     var getChoice = function(elmt) {
