@@ -7,7 +7,7 @@ on:
 jobs:
   # Best used in combination with actions/stale to assign a Stale label
   
-  unassign-issues-labeled-waiting-for-contributor-after-7-days-of-inactivity:
+  unassign-good-first-issues-after-90-days-of-inactivity:
     name: Unassign issues labeled "good first issue" after 90 days of inactivity.
     runs-on: ubuntu-latest
     steps:
