@@ -2,7 +2,7 @@ name: Unassign contributors from issues after a delay
 
 on:
   schedule:
-    cron: '0 0 * * *'
+    - cron: '39 4 * * *'
 
 jobs:
   # Best used in combination with actions/stale to assign a Stale label
