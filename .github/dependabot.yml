@@ -17,6 +17,7 @@ updates:
   - dependency-name: "jetty-*"
     versions:
       - ">= 10.0.0"
+  - dependency-name: "formatter-maven-plugin"
   target-branch: "master"
     
 # For main webapp
