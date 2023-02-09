@@ -177,11 +177,16 @@ HistoryPanel.prototype._render = function() {
 HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
   var self = this;
 
+  var updateOptions = { everythingChanged: true, warnAgainstHistoryErasure: false };
   Refine.postCoreProcess(
       "undo-redo",
       { lastDoneID: lastDoneID },
       null,
-      { everythingChanged: true, warnAgainstHistoryErasure: false }
+      updateOptions,
+      { onDone: function(o) {
+        updateOptions.rowIdsPreserved = o.gridPreservation !== 'no-row-preservation';
+        updateOptions.recordIdsPreserved = o.gridPreservation === 'preserves-records';
+      }}
   );
 };
 

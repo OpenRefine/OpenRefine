@@ -35,6 +35,7 @@ package org.openrefine.history;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -324,14 +325,32 @@ public class History {
         }
     }
 
-    synchronized public void undoRedo(long lastDoneEntryID) throws DoesNotApplyException {
+    /**
+     * Rewinds or brings the history forward.
+     *
+     * @param lastDoneEntryID
+     *            the id of the last change to be performed before the desired state of the project. Use 0L for the
+     *            initial state.
+     * @return the degree to which the grid was preserved while changing the position in the history
+     * @throws DoesNotApplyException
+     *             if the application of changes required for this move did not succeed
+     */
+    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws DoesNotApplyException {
+        int oldPosition = _position;
         if (lastDoneEntryID == 0) {
             _position = 0;
         } else {
             _position = entryIndex(lastDoneEntryID) + 1;
             getGrid(_position);
         }
+
+        GridPreservation gridPreservation = _position == oldPosition ? GridPreservation.PRESERVES_RECORDS
+                : _entries.subList(Math.min(oldPosition, _position), Math.max(oldPosition, _position)).stream()
+                        .map(item -> item.getGridPreservation() == null ? GridPreservation.NO_ROW_PRESERVATION : item.getGridPreservation())
+                        .min(Comparator.naturalOrder()).get();
+
         updateCachedPosition();
+        return gridPreservation;
     }
 
     synchronized public long getPrecedingEntryID(long entryID) {

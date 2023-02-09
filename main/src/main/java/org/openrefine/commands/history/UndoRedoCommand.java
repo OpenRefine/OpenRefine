@@ -39,7 +39,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Project;
 
 public class UndoRedoCommand extends Command {
@@ -68,11 +71,23 @@ public class UndoRedoCommand extends Command {
         }
 
         try {
-            project.getHistory().undoRedo(lastDoneID);
+            GridPreservation gridPreservation = project.getHistory().undoRedo(lastDoneID);
 
-            respond(response, "{ \"code\" : \"ok\" }");
+            respondJSON(response, new Response(gridPreservation));
         } catch (Exception e) {
             respondException(response, e);
+        }
+    }
+
+    private static class Response {
+
+        @JsonProperty("gridPreservation")
+        final GridPreservation gridPreservation;
+        @JsonProperty("code")
+        final String code = "ok";
+
+        protected Response(GridPreservation gridPreservation) {
+            this.gridPreservation = gridPreservation;
         }
     }
 }

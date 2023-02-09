@@ -134,6 +134,10 @@ public class HistoryTests {
         when(secondEntry.getChange()).thenReturn(secondChange);
         when(newEntry.getChange()).thenReturn(newChange);
 
+        when(firstEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_RECORDS);
+        when(secondEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_ROWS);
+        when(newEntry.getGridPreservation()).thenReturn(GridPreservation.NO_ROW_PRESERVATION);
+
         entries = Arrays.asList(firstEntry, secondEntry);
     }
 
@@ -150,19 +154,21 @@ public class HistoryTests {
         verify(history.getCurrentGrid(), times(1)).cache();
         Assert.assertEquals(history.getEntries(), entries);
 
-        history.undoRedo(secondChangeId);
+        GridPreservation gridPreservation = history.undoRedo(secondChangeId);
 
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
         Assert.assertEquals(history.getCurrentGrid(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
+        Assert.assertEquals(gridPreservation, GridPreservation.PRESERVES_ROWS);
 
-        history.undoRedo(0);
+        GridPreservation gridPreservation2 = history.undoRedo(0);
 
         Assert.assertEquals(history.getPosition(), 0);
         Assert.assertEquals(history.getCachedPosition(), 0);
         Assert.assertEquals(history.getCurrentGrid(), initialState);
         Assert.assertEquals(history.getEntries(), entries);
+        Assert.assertEquals(gridPreservation2, GridPreservation.PRESERVES_ROWS);
 
         // All changes were called only once
         verify(firstChange, times(1)).apply(eq(initialState), any());
