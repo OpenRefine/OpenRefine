@@ -47,9 +47,6 @@ Refine.SetLanguageUI = function(elmt) {
 	});
 };
 
-Refine.SetLanguageUI.prototype.resize = function() {
-};
-
 Refine.actionAreas.push({
 	id : "lang-settings",
 	label : $.i18n('core-index-lang/lang-settings'),
