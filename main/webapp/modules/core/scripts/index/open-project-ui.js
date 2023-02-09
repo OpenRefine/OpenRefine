@@ -263,6 +263,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     tags.map(function(tag){
         $("<span/>")
         .addClass("project-tag")
+        .attr("data-tag-name", tag)
         .text(tag)
         .appendTo(tagsCell);
         $(tr).addClass(tag);
@@ -360,6 +361,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
             data.map(function(tag){
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
+                .attr("data-tag-name", tag)
                 .text(tag)
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
@@ -369,6 +371,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
             data.split(",").map(function(tag){
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
+                .attr("data-tag-name", tag)
                 .text(tag)
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
