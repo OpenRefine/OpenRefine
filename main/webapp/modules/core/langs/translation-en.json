@@ -412,7 +412,7 @@
     "core-project/continue-remaining": "Continue with the remaining operations?",
     "core-project/undo": "Undo",
     "core-project/confirm-erasure-of-project-history": "Confirm deletion of project history",
-    "core-project/applying-change-erases-entries": "Applying this change will delete the following {{plural:$1|history entry|$1 history entries}}:",
+    "core-project/applying-change-erases-entries": "Applying this change will overwrite the following {{plural:$1|history entry|$1 history entries}}:",
     "core-project/do-not-warn": "Do not warn about this in the future",
     "core-recon/add-std-srv": "Add standard service",
     "core-recon/access-service": "Access service API",
