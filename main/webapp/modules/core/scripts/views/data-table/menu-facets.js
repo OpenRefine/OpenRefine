@@ -158,7 +158,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "value.split(' ')"
+                  "expression": "value.split(/(?U)[\\W]+/)"
                 }
             );
           }
