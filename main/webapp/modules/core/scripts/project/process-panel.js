@@ -117,7 +117,7 @@ ProcessPanel.prototype.undo = function() {
         "undo-redo",
         { undoID: this._latestHistoryEntry.id },
         null,
-        { everythingChanged: true }
+        { everythingChanged: true, warnAgainstHistoryErasure: false }
     );
   }
 };
