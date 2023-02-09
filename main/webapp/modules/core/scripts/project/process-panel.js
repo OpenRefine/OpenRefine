@@ -113,11 +113,16 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
 
 ProcessPanel.prototype.undo = function() {
   if (this._latestHistoryEntry !== null) {
+    var updateOptions = { everythingChanged: true, warnAgainstHistoryErasure: false };
     Refine.postCoreProcess(
         "undo-redo",
         { undoID: this._latestHistoryEntry.id },
         null,
-        { everythingChanged: true, warnAgainstHistoryErasure: false }
+        updateOptions,
+        { onDone: function(o) {
+          updateOptions.rowIdsPreserved = o.gridPreservation !== 'no-row-preservation';
+          updateOptions.recordIdsPreserved = o.gridPreservation === 'preserves-records';
+        }}
     );
   }
 };
