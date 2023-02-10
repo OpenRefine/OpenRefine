@@ -315,7 +315,7 @@ DataTableCellUI.prototype._doMatchTopicToOneCell = function(candidate) {
     id : candidate.id,
     name: candidate.name,
     score: candidate.score,
-    types: candidate.types.join(",")
+    types: candidate.types
   });
 };
 
@@ -325,7 +325,7 @@ DataTableCellUI.prototype._doMatchTopicToSimilarCells = function(candidate) {
       id : candidate.id,
       name: candidate.name,
       score: candidate.score,
-      types: candidate.types.join(",")
+      types: candidate.types
     }
   }, true);
 };
@@ -393,7 +393,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
       if (match.notable) {
         notable_types = $.map(match.notable, function(elmt) {
           return typeof elmt == "string" ? elmt : elmt.id; 
-        }).join(",");
+        });
       }
       var params = {
         judgment: "matched",
