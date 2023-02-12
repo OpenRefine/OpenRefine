@@ -79,7 +79,8 @@ set OPTS=
 rem --- Argument parsing --------------------------------------------
 
 :loop
-if ""%1"" == """" goto readIniFile
+if ""%1"" == """" goto endArgumentParsing
+if ""%1"" == ""/c"" goto arg-c
 if ""%1"" == ""/?"" goto usage
 if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
@@ -89,8 +90,7 @@ if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
-if ""%1"" == ""/c"" goto arg-c
-goto readIniFile
+goto endArgumentParsing
 
 :arg-p
 set REFINE_PORT=%2
@@ -130,6 +130,8 @@ shift
 shift
 goto loop
 
+:endArgumentParsing
+
 :readIniFile
 
 rem --- Read ini file -----------------------------------------------
@@ -143,8 +145,6 @@ echo Using %REFINE_INI_PATH% for configuration
 for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
     set %%a=%%b
 )
-
-:endArgumentParsing
 
 rem --- Check JAVA_HOME ---------------------------------------------
 
