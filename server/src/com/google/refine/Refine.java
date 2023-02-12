@@ -173,7 +173,7 @@ class RefineServer extends Server {
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
-            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
+            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory() + " bytes");
         }
 
         HttpConfiguration httpConfig = new HttpConfiguration();
