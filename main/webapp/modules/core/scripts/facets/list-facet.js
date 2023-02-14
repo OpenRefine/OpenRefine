@@ -223,7 +223,7 @@ class ListFacet extends Facet {
   _copyChoices() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("600px");
+    frame.css({"min-width" : "600px"});
 
     var header = $('<div></div>').addClass("dialog-header").text($.i18n('core-facets/facet-choices')).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
