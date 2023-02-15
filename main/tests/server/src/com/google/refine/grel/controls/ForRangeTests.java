@@ -27,15 +27,55 @@
 
 package com.google.refine.grel.controls;
 
+import com.google.refine.RefineTest;
+import com.google.refine.expr.*;
+import com.google.refine.model.Project;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
 
-public class ForRangeTests {
+import java.util.Properties;
+
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
+public class ForRangeTests extends RefineTest {
 
     @Test
     public void serializeForRange() {
         String json = "{\"description\":\"Iterates over the variable v starting at \\\"from\\\", incrementing by \\\"step\\\" each time while less than \\\"to\\\". At each iteration, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"number from, number to, number step, variable v, expression e\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new ForRange(), json);
+    }
+
+    @Test
+    public void testForRangeArray() throws ParsingException {
+        String test[] = { "forRange(10.5,8,-0.5,v,v).join(',')", "10.5,10.0,9.5,9.0,8.5" };
+        bindings = new Properties();
+        bindings.put("v", "");
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testEvalError() {
+        bindings = new Properties();
+        bindings.put("v", "");
+        String tests[] = {
+                "forRange(10,0,1,v,v)",
+                "forRange(0,10,-1,v,v)",
+                "forRange(10,10,-1,v,v)",
+                "forRange(10,0,0,v,v)",
+        };
+        for (String test : tests) {
+            try {
+                Evaluable eval = MetaParser.parse("grel:" + test);
+                Object result = eval.evaluate(bindings);
+                Assert.assertTrue(result instanceof EvalError);
+            } catch (ParsingException e) {
+                Assert.fail("Unexpected parse failure: " + test);
+            }
+        }
     }
 }
