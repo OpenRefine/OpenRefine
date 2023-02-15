@@ -250,7 +250,7 @@ jobs:
       uses: shogo82148/actions-upload-release-asset@v1.6.3
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
+        asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
         asset_name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
         asset_content_type: application/zip
 
