@@ -53,7 +53,8 @@ import com.google.refine.model.Row;
  */
 public class CrossTests extends RefineTest {
 
-    private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
+    private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
     @Override
     @BeforeTest
@@ -369,8 +370,15 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
-        assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message,
-                "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
+        assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message, ERROR_MSG);
+    }
+
+    @Test
+    public void crossFunctionNullParams() throws Exception {
+        assertEquals(((EvalError) invoke("cross", "dummy", null, null)).message, ERROR_MSG);
+        assertEquals(((EvalError) invoke("cross", "dummy", null)).message, ERROR_MSG);
+        assertEquals(((EvalError) invoke("cross", "dummy", null, "test")).message, ERROR_MSG);
+        assertEquals(((EvalError) invoke("cross", "dummy", 1.0, 1)).message, ERROR_MSG);
     }
 
 }

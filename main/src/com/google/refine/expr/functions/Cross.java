@@ -59,13 +59,13 @@ public class Cross implements Function {
             // if 2nd argument is omitted or set to "", use the current project name
             Object targetProjectName = "";
             boolean isCurrentProject = false;
-            if (args.length < 2 || args[1].equals("")) {
+            if (args.length < 2 || "".equals(args[1])) {
                 isCurrentProject = true;
             } else {
                 targetProjectName = args[1];
             }
             // if 3rd argument is omitted or set to "", use the index column
-            Object targetColumnName = args.length < 3 || args[2].equals("") ? INDEX_COLUMN_NAME : args[2];
+            Object targetColumnName = args.length < 3 || "".equals(args[2]) ? INDEX_COLUMN_NAME : args[2];
 
             long targetProjectID;
             ProjectLookup lookup;
