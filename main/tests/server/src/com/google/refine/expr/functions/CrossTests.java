@@ -55,7 +55,8 @@ import com.google.refine.model.Row;
 public class CrossTests extends RefineTest {
 
     private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
-    private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
     @Override
     @BeforeTest
@@ -227,8 +228,9 @@ public class CrossTests extends RefineTest {
     }
 
     /**
-     * Check that record field accessor works for a list of WrappedRecords
-     * (technically not a cross() test, but this is pretty much the only place they're used)
+     * Check that record field accessor works for a list of WrappedRecords.
+     *
+     * (Technically not a cross() test, but this is pretty much the only place they're used)
      */
     @Test
     public void crossFunctionRecordFieldLookup() throws Exception {
