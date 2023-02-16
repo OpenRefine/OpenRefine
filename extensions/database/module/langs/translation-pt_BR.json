@@ -59,5 +59,7 @@
     "database-import/checking": "Validando consulta …",
     "database-import/preparing": "Preparando resultado …",
     "database-import/title": "Servidores de banco de dados",
-    "database-source/new-connection-legend": "Novo editor de conexão"
+    "database-source/new-connection-legend": "Novo editor de conexão",
+    "database-import/importer-name": "Banco de Dados",
+    "database-parsing/disable-auto-preview": "Desativar visualização automática"
 }
