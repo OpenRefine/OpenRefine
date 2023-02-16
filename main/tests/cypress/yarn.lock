@@ -1081,10 +1081,10 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz"
   integrity sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
 
-jsdoc@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-4.0.0.tgz#9569f79ea5b14ba4bc726da1a48fe6a241ad7893"
-  integrity sha512-tzTgkklbWKrlaQL2+e3NNgLcZu3NaK2vsHRx7tyHQ+H5jcB9Gx0txSd2eJWlMC/xU1+7LQu4s58Ry0RkuaEQVg==
+jsdoc@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-4.0.1.tgz#c9c723410210d6fdb303a096a5e51dcdc7fbcb96"
+  integrity sha512-UjvSrLYb270Mq25RN4AGGg2uqKRV90nCqkGsI4gD3RIR1lgMN8nWxK/am8Rsj33tWyprzZdA+0q1qY07m0Ar7w==
   dependencies:
     "@babel/parser" "^7.9.4"
     "@jsdoc/salty" "^0.2.1"
