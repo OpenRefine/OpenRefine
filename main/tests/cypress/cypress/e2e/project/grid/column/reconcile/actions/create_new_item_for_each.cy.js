@@ -51,6 +51,7 @@ describe('Create new item for each cell', () => {
           'Create a new item for each cell',
         ]);
 
+        cy.get('#dialog-recon-service-select').find('option').should('have.length.at.least', 1);
         cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
         // ensure column is reconciled
