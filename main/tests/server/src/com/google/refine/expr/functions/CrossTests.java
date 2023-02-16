@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2018,2023 OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -218,9 +219,21 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionOneToManyTest() throws Exception {
-        Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", "john", "My Address Book", "friend")).get(1)).row);
+        List<WrappedRow> rows = (((List<WrappedRow>) invoke("cross", "john", "My Address Book", "friend")));
+        assertEquals(rows.size(), 2);
+        Row row = rows.get(1).row;
         String address = row.getCell(1).value.toString();
         assertEquals(address, "999 XXXXXX St.");
+    }
+
+    /**
+     * Check that record field accessor works for a list of WrappedRecords
+     * (technically not a cross() test, but this is pretty much the only place they're used)
+     */
+    @Test
+    public void crossFunctionRecordFieldLookup() throws Exception {
+        String test[] = { "'john'.cross('My Address Book', 'friend').record.index.toString()", "[0, 2]" };
+        parseEval(bindings, test);
     }
 
     @Test
