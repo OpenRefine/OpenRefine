@@ -19,6 +19,7 @@ import './openrefine_api';
 import './ext_wikibase';
 
 let token;
+let loadedProjectIds = [];
 // Hide fetch/XHR requests
 const app = window.top;
 if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
@@ -33,7 +34,7 @@ if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
 beforeEach(() => {
   cy.wrap(token, { log: false }).as('token');
   cy.wrap(token, { log: false }).as('deletetoken');
-  cy.wrap([], { log: false }).as('loadedProjectIds');
+  cy.wrap(loadedProjectIds, { log: false }).as('loadedProjectIds');
 });
 
 afterEach(() => {
