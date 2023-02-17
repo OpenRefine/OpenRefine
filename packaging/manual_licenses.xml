@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licenseSummary>
+  <dependencies>
+    <dependency>
+      <groupId>\Qcom.github.albfernandez\E</groupId>
+      <artifactId>\Qjuniversalchardet\E</artifactId>
+      <licenses>
+		    <license>
+			    <name>Mozilla Public License Version 1.1</name>
+			    <url>https://www.mozilla.org/en-US/MPL/1.1/</url>
+		    </license>
+        <comments>The library is subject to the Mozilla Public License Version 1.1.  Alternatively, the library may be used under the terms of either the GNU General Public License Version 2 or later, or the GNU Lesser General Public License 2.1 or later.
+        </comments>  
+      </licenses>
+      <downloaderMessages>
+        <downloaderMessage>Unable to retrieve license from URL 'https://raw.githubusercontent.com/albfernandez/juniversalchardet/main/LICENSE' for dependency 'com.github.albfernandez:juniversalchardet': The requested name is valid, but no data of the requested type was found (raw.githubusercontent.com)</downloaderMessage>
+      </downloaderMessages>
+    </dependency>
+    <dependency>
+      <groupId>\Qoro\E</groupId>
+      <artifactId>\Qoro\E</artifactId>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://apache.org/licenses/LICENSE-2.0</url>
+        </license>
+        <comments>It's manifest LICENSE is shown as Apache 1.1 license, which has now been superceded by Apache 2.0 license</comments>
+      </licenses>
+      <downloaderMessages>
+        <downloaderMessage>No license information available for: oro:oro:2.0.8. However, manifest LICENSE is shown as Apache 1.1 license superceded by Apache 2.0 license and will use that instead</downloaderMessage>
+      </downloaderMessages>
+    </dependency>
+  </dependencies>
+</licenseSummary>

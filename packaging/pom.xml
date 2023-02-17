@@ -123,6 +123,12 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <version>${license-plugin.version}</version>
+        <configuration>
+          <socketTimeout>10000</socketTimeout>
+          <connectTimeout>10000</connectTimeout>
+          <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+          <licensesConfigFile>${project-basedir}/manual_licenses.xml</licensesConfigFile>
+        </configuration>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
@@ -755,4 +761,3 @@
     </dependency>
   </dependencies>
 </project>
-
