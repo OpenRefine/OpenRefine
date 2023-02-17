@@ -62,8 +62,6 @@ public class WrappedRow implements HasFields {
         } else if ("record".equals(name)) {
             return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
         } else if ("columnNames".equals(name)) {
-            Project project = (Project) bindings.get("project");
-
             return project.columnModel.getColumnNames();
         } else {
             return row.getField(name, bindings);

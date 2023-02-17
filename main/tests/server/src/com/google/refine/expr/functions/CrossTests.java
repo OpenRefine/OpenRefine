@@ -234,8 +234,27 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionRecordFieldLookup() throws Exception {
-        String test[] = { "'john'.cross('My Address Book', 'friend').record.index.toString()", "[0, 2]" };
-        parseEval(bindings, test);
+        String tests[][] = {
+                { "'john'.cross('My Address Book', 'friend').cells[0]['friend'].value", "john" },
+                { "'john'.cross('My Address Book', 'friend').index.toString()", "[0, 2]" },
+                { "'john'.cross('My Address Book', 'friend').columnNames[0].toString()", "[friend, address]" },
+                // Make sure delegation from WrappedRow to Row works
+                { "'john'.cross('My Address Book', 'friend').flagged.toString()", "[false, false]" },
+                { "'john'.cross('My Address Book', 'friend').starred.toString()", "[false, false]" },
+                // Unknown field names return null value rather than an error
+                { "'john'.cross('My Address Book', 'friend').foo.toString()", "[null, null]" },
+                // TODO: I'm not sure what record.cells is supposed to return. Returning single valued lists seems weird
+                { "'john'.cross('My Address Book', 'friend').record.cells['friend'].value.toString()", "[[john], [john]]" },
+                { "'john'.cross('My Address Book', 'friend').record.index.toString()", "[0, 2]" },
+                { "'john'.cross('My Address Book', 'friend').record.fromRowIndex.toString()", "[0, 2]" },
+                { "'john'.cross('My Address Book', 'friend').record.toRowIndex.toString()", "[1, 3]" },
+                { "'john'.cross('My Address Book', 'friend').record.rowCount.toString()", "[1, 1]" },
+                // Below returns null on error intentionally
+                { "'john'.cross('My Address Book', 'friend').record.foo.toString()", "[null, null]" },
+        };
+        for (String[] test : tests) {
+            parseEval(bindings, test);
+        }
     }
 
     @Test
