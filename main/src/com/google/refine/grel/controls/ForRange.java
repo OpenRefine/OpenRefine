@@ -69,7 +69,7 @@ public class ForRange implements Control {
         } else if (ExpressionUtils.isError(stepO)) {
             return stepO;
         } else if (!(fromO instanceof Number) || !(toO instanceof Number) || !(stepO instanceof Number)) {
-            return ControlEvalError.for_range();
+            return new EvalError(ControlEvalError.for_range());
         }
 
         String indexName = ((VariableExpr) args[3]).getName();
@@ -83,32 +83,46 @@ public class ForRange implements Control {
                 long step = ((Number) stepO).longValue();
                 double to = ((Number) toO).doubleValue();
 
-                if (!((from < to && step > 0) || (from > to && step < 0))) {
+                if (step == 0) {
                     return new EvalError(EvalErrorMessage.invalid_arg());
                 }
 
-                int rangeSize = (int) Math.ceil(Math.abs(from - to) / Math.abs(step));
-                for (int i = 0; i < rangeSize; i++) {
-                    bindings.put(indexName, from);
-                    Object r = args[4].evaluate(bindings);
-                    results.add(r);
-                    from += step;
+                if (step <= Math.abs(from - to)) {
+                    while (from < to && step > 0) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
+                    while (from > to && step < 0) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
                 }
             } else {
                 double from = ((Number) fromO).doubleValue();
                 double step = ((Number) stepO).doubleValue();
                 double to = ((Number) toO).doubleValue();
 
-                if (!((from < to && step > 0) || (from > to && step < 0))) {
+                if (step == 0) {
                     return new EvalError(EvalErrorMessage.invalid_arg());
                 }
 
-                int rangeSize = (int) Math.ceil(Math.abs(from - to) / Math.abs(step));
-                for (int i = 0; i < rangeSize; i++) {
-                    bindings.put(indexName, from);
-                    Object r = args[4].evaluate(bindings);
-                    results.add(r);
-                    from += step;
+                if (step <= Math.abs(from - to)) {
+                    while (from < to && step > 0) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
+                    while (from > to && step < 0) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
                 }
             }
             return results.toArray();

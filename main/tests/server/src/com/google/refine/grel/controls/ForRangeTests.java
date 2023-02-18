@@ -51,23 +51,67 @@ public class ForRangeTests extends RefineTest {
     }
 
     @Test
-    public void testForRangeArray() throws ParsingException {
-        String test[] = { "forRange(10.5,8,-0.5,v,v).join(',')", "10.5,10.0,9.5,9.0,8.5" };
+    public void testForRangeWithPositiveIncrement() throws ParsingException {
+        String test[] = { "forRange(0,6,1,v,v).join(',')", "0,1,2,3,4,5" };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);
     }
 
     @Test
-    public void testEvalError() {
+    public void testForRangeWithNegativeIncrement() throws ParsingException {
+        String test[] = { "forRange(6,0,-1,v,v).join(',')", "6,5,4,3,2,1" };
         bindings = new Properties();
         bindings.put("v", "");
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testForRangeWithSameStartAndEndValues() throws ParsingException {
+        String test[] = { "forRange(10,10,1,v,v).join(',')", "" };
+        bindings = new Properties();
+        bindings.put("v", "");
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testForRangeWithFloatingPointValues() throws ParsingException {
+        String test[] = { "forRange(0,0.6,0.1,v,v).join(',')", "0.0,0.1,0.2,0.3,0.4,0.5" };
+        bindings = new Properties();
+        bindings.put("v", "");
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testForRangeWithImpossibleStep() {
         String tests[] = {
-                "forRange(10,0,1,v,v)",
-                "forRange(0,10,-1,v,v)",
-                "forRange(10,10,-1,v,v)",
+                "forRange(0,10,15,v,v).join(',')",
+                "forRange(0,10,-1,v,v).join(',')",
+                "forRange(10,0,1,v,v).join(',')"
+        };
+        bindings = new Properties();
+        bindings.put("v", "");
+        for (String test : tests) {
+            try {
+                Evaluable eval = MetaParser.parse("grel:" + test);
+                Object result = eval.evaluate(bindings);
+                Assert.assertEquals(result.toString(), "", "Wrong result for expression: " + test);
+            } catch (ParsingException e) {
+                Assert.fail("Unexpected parse failure: " + test);
+            }
+        }
+    }
+
+    @Test
+    public void testEvalError() {
+        String tests[] = {
+                "forRange(test,0,1,v,v)",
+                "forRange(0,test,1,v,v)",
+                "forRange(10,0,test,v,v)",
                 "forRange(10,0,0,v,v)",
         };
+        bindings = new Properties();
+        bindings.put("v", "");
         for (String test : tests) {
             try {
                 Evaluable eval = MetaParser.parse("grel:" + test);
