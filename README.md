@@ -59,7 +59,7 @@ OpenRefine is open source software and is licensed under the BSD license located
 
 ## Credits
 
-This software was created by Metaweb Technologies, Inc. and originally written and conceived by David Huynh <dfhuynh@google.com>. Metaweb Technologies, Inc. was acquired by Google, Inc. in July 2010 and the product was renamed Google Refine. In October 2012, it was renamed OpenRefine as it transitioned to a community-driven project.
+This software was created by Metaweb Technologies, Inc. and originally written and conceived by [David Huynh](https://github.com/dfhuynh). Metaweb Technologies, Inc. was acquired by Google, Inc. in July 2010 and the product was renamed Google Refine. In October 2012, it was renamed OpenRefine as it transitioned to a community-driven project.
 
 Since 2020, OpenRefine is fiscally sponsored by [Code for Science and Society](https://www.codeforsociety.org/) (CS&S).
 
