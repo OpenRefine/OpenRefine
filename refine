@@ -71,18 +71,6 @@ and <action> is one of
    server_test ......................... Run only the server tests
    extensions_test ..................... Run only the extensions tests
    ui_tests ............................ Run only the UI tests
-   
-   broker .............................. Run OpenRefine Broker
-   
-   broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
-   broker_appengine_upload <id> <ver> .. Upload OpenRefine to Google App Engine
-   
-   findbugs ............................ Run Findbugs against OpenRefine
-   pmd ................................. Run PMD against OpenRefine
-   cpd ................................. Run Copy/Paste Detection against OpenRefine
-   jslint .............................. Run JSlint against OpenRefine
-
-   whitespace <extension> .............. Normalize whitespace in files with the given extension
 
    mac_dist <version> .................. Make MacOSX binary distribution
    windows_dist <version> .............. Make Windows binary distribution
@@ -490,12 +478,6 @@ test() {
 
 
 ui_tests() {
-    download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
-    RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
-    echo "Starting reconcile-csv-0.1.2 ..."
-    $RECONCILE_SERVER_CMD 2>&1 &
-    RECONCILE_SERVER_PID="$!"
-
     get_revision
 
     CYPRESS_RECORD=0
@@ -640,131 +622,6 @@ run() {
         "${RUN_CMD[@]}" &
         REFINE_PID="$!"
     fi
-}
-
-broker_build() {
-    build_prepare
-    get_revision
-    # TODO migrate to Maven
-    $MVN prepare_broker
-}
-
-broker_run() {
-    FORK=$1
-
-    if [ ! -d "broker/core/WEB-INF/lib" ] ; then
-        broker_build
-        echo ""
-    fi
-
-    if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
-        add_option "-Drefine.development=true"
-    fi
-
-    add_option "-Drefine.webapp=broker/core"
-    add_option "-Drefine.headless=true"
-
-    add_option "-Drefine.port=$REFINE_PORT"
-    add_option "-Drefine.host=0.0.0.0"
-
-    LIB_PATHS=`cat server/classpath.txt`
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
-
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
-
-    #echo "$RUN_CMD"
-    #echo ""
-
-    echo "Starting OpenRefine Broker at 'http://0.0.0.0:${REFINE_PORT}/'"
-    echo ""
-
-    if [ -z "$FORK" ] ; then
-        exec $RUN_CMD
-    else
-        $RUN_CMD &
-        REFINE_PID="$!"
-    fi
-
-}
-
-broker_appengine_build() {
-    appengine_prepare
-    get_revision
-
-    MVN_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
-
-    if [ "$1" ] ; then
-        MVN_PARAMS="$MVN_PARAMS -Dappengine.app_id=$1"
-    fi
-
-    if [ "$2" ] ; then
-        MVN_PARAMS="$MVN_PARAMS -Dappengine.version=$2"
-    fi
-
-    # TODO migrate this to Maven
-    $MVN prepare_broker_appengine
-}
-
-broker_appengine_upload() {
-    broker_appengine_build $1 $2
-    "$APPENGINE" update "$REFINE_BUILD_DIR/broker/appengine"
-}
-
-broker_appengine_run() {
-    broker_appengine_build $1 $2
-    "$APPENGINE_LOCAL" "$REFINE_BUILD_DIR/broker/appengine"
-}
-
-findbugs() {
-    findbugs_prepare
-
-    MVN_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
-    ant findbugs
-
-    display "$REFINE_BUILD_DIR/reports/findbugs.html"
-}
-
-pmd() {
-    pmd_prepare
-
-    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
-    ant pmd
-
-    display "$REFINE_BUILD_DIR/reports/pmd.html"
-}
-
-cpd() {
-    pmd_prepare
-
-    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
-    ant cpd
-
-    display "$REFINE_BUILD_DIR/reports/cpd.txt"
-}
-
-jslint() {
-    jslint_prepare
-
-    ANT_PARAMS="-Djslint.dir=${REFINE_TOOLS_DIR}/${JSLINT_DIR}"
-    ant jslint
-
-    display "$REFINE_BUILD_DIR/reports/jslint.txt"
-}
-
-whitespace() {
-    [ $# -gt 0 ] || usage
-
-    for i in `find . -name *.$1`; do
-        # expand tabs to spaces
-        expand -t 4 < $i > $i.1
-
-        # convert DOS to UNIX newlines
-        tr -d '\r' < $i.1 > $i.2
-
-        rm $i $i.1
-        mv $i.2 $i
-    done
 }
 
 checkJavaMajorVersion() {
@@ -987,7 +844,6 @@ fi
 case "$ACTION" in
   build) build_prepare; do_mvn process-resources; do_mvn compile\ test-compile;;
   clean) do_mvn clean;;
-  whitespace) whitespace $1;;
   test) test $1;;
   tests) test $1;;
   ui_tests) ui_tests;;    
@@ -995,14 +851,7 @@ case "$ACTION" in
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
   extensions_tests) extensions_test $1;;
-  findbugs) findbugs;;  
-  pmd) pmd;;  
-  cpd) cpd;;  
-  jslint) jslint;;  
-  run) run;;  
-  broker) broker_run;;
-  broker_appengine_run) broker_appengine_run $1 $2;;
-  broker_appengine_upload) broker_appengine_upload $1 $2;;
+  run) run;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
