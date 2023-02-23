@@ -337,14 +337,6 @@ class RefineServer extends Server {
             servlet.setInitOrder(1);
             servlet.doStart();
         }
-
-        servlet = context.getServletHandler().getServlet("refine-broker");
-        if (servlet != null) {
-            servlet.setInitParameter("refine.data", getDataDir() + "/broker");
-            servlet.setInitParameter("refine.development", Configurations.get("refine.development", "false"));
-            servlet.setInitOrder(1);
-            servlet.doStart();
-        }
     }
 
     static private String getDataDir() {
