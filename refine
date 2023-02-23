@@ -537,8 +537,6 @@ ui_tests() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
-    echo "Killing Reconciliation Server"
-    /bin/kill -9 $RECONCILE_SERVER_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
 
