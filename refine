@@ -114,33 +114,6 @@ check_downloaders() {
     fi
 }
 
-check_unzip() {
-    UNZIP="`command -v unzip 2> /dev/null`"
-    
-    if [ -z "$UNZIP" ] ; then
-        error "We need 'unzip' present in PATH to expand external dependencies."
-    fi
-}
-    
-check_python() {
-    PYTHON="`command -v python 2> /dev/null`"
-    if [ -z "$PYTHON" ] ; then
-        error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
-    fi
-    PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.6" ] && [ "$PYTHON_VERSION" != "2.7" ]; then
-        error "This action requires Python version 2.6.x. or 2.7.x. You can download it for free at http://www.python.org/"
-    fi
-}
-
-check_pywin32() {
-    PYWIN32="`$PYTHON -c 'import win32api' 2>&1`"
-
-    if [ ! -z "$PYWIN32" ] ; then
-        error "This action requires you to have 'pywin32' windows extensions for Python installed on your machine. You can download it for free at http://sourceforge.net/projects/pywin32/"
-    fi
-}
-
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
@@ -226,27 +199,6 @@ download() {
     fi
 }
 
-tool_download() {
-    URL=$1
-    FILE=$2
-    DIR=$3
-    
-    cd $REFINE_TOOLS_DIR
-        if [ ! -f "$FILE" ] ; then
-            download $URL $FILE
-        fi
-        if [ ! -d "$DIR" ] ; then
-            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ] ; then
-                tar xzf $FILE || error "Error while expanding $FILE"
-            fi
-            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ] ; then
-                check_unzip
-                $UNZIP -q $FILE || error "Error while expanding $FILE"
-            fi
-        fi
-    cd ..
-}
-
 load_data() {
     FILE=$1
     NAME=$2
@@ -322,48 +274,6 @@ mvn_prepare() {
         MVN="$MVN_HOME/bin/mvn"
     fi
 }
-
-appengine_prepare() {
-    if [ -z "$APPENGINE_HOME" ] ; then
-        error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
-    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ] ; then
-        error "Environment variable APPENGINE_HOME is set to '$APPENGINE_HOME' which doesn't point to a valid Google App Engine SDK."
-    fi
-    APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
-    APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
-    
-    ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
-}
-   
-virtualenv_prepare() {
-    check_python
-
-    VIRTUALENV_DIR="virtualenv-1.9.1"
-    VIRTUALENV_FILE="${VIRTUALENV_DIR}.tar.gz"
-    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
-
-    tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
-    
-    PYTHON_LOCAL="$REFINE_TOOLS_DIR/python"
-    if [ "$OS" = "windows" ] ; then
-        PYTHON_LOCAL="${PYTHON_LOCAL}_win"
-    fi
-    
-    if [ ! -d "$PYTHON_LOCAL" ] ; then
-        $PYTHON $REFINE_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
-    fi
-    
-    PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
-
-    if [ "$OS" = "windows" ] ; then
-        PYTHON="$PYTHON_HOME/Scripts/python.exe"
-        PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
-    else 
-        PYTHON="$PYTHON_HOME/bin/python"
-        PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
-    fi
-}
-    
 # ----------------------------------------------------------------------------------------------
 
 do_mvn() {
