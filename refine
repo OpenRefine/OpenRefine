@@ -306,6 +306,7 @@ tools_prepare() {
 }
 
 mvn_prepare() {
+    tools_prepare
     if [ "$MAVEN_HOME" ] ; then
         MVN="$MAVEN_HOME/bin/mvn"
     elif [ "$M2_HOME" ] ; then
