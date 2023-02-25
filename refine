@@ -314,9 +314,8 @@ mvn_prepare() {
         MVN="`command -v mvn 2> /dev/null`"
     fi
 
-    if [ -z "$MVN" ] ; then
-        echo "mvn not found. Exiting..."
-        exit -1;
+    if [ ! -x "$MVN" ] ; then
+        error "Apache Maven not found. Please make sure that M2_HOME or MAVEN_HOME environment variables are set or that 'mvn' is in your system PATH."
     fi
 }
 
