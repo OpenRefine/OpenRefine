@@ -87,14 +87,15 @@ public class ForRange implements Control {
                     return new EvalError(EvalErrorMessage.invalid_arg());
                 }
 
-                if (step <= Math.abs(from - to)) {
-                    while (from < to && step > 0) {
+                if (step > 0) {
+                    while (from < to) {
                         bindings.put(indexName, from);
                         Object r = args[4].evaluate(bindings);
                         results.add(r);
                         from += step;
                     }
-                    while (from > to && step < 0) {
+                } else {
+                    while (from > to) {
                         bindings.put(indexName, from);
                         Object r = args[4].evaluate(bindings);
                         results.add(r);
@@ -110,14 +111,15 @@ public class ForRange implements Control {
                     return new EvalError(EvalErrorMessage.invalid_arg());
                 }
 
-                if (step <= Math.abs(from - to)) {
-                    while (from < to && step > 0) {
+                if (step > 0) {
+                    while (from < to) {
                         bindings.put(indexName, from);
                         Object r = args[4].evaluate(bindings);
                         results.add(r);
                         from += step;
                     }
-                    while (from > to && step < 0) {
+                } else {
+                    while (from > to) {
                         bindings.put(indexName, from);
                         Object r = args[4].evaluate(bindings);
                         results.add(r);

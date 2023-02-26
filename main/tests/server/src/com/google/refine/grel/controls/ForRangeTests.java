@@ -76,7 +76,7 @@ public class ForRangeTests extends RefineTest {
 
     @Test
     public void testForRangeWithFloatingPointValues() throws ParsingException {
-        String test[] = { "forRange(0,0.6,0.1,v,v).join(',')", "0.0,0.1,0.2,0.3,0.4,0.5" };
+        String test[] = { "forRange(0,0.6,0.1,v,v.toString('%.3f')).join(',')", "0.000,0.100,0.200,0.300,0.400,0.500" };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);
@@ -85,7 +85,6 @@ public class ForRangeTests extends RefineTest {
     @Test
     public void testForRangeWithImpossibleStep() {
         String tests[] = {
-                "forRange(0,10,15,v,v).join(',')",
                 "forRange(0,10,-1,v,v).join(',')",
                 "forRange(10,0,1,v,v).join(',')"
         };
@@ -96,6 +95,24 @@ public class ForRangeTests extends RefineTest {
                 Evaluable eval = MetaParser.parse("grel:" + test);
                 Object result = eval.evaluate(bindings);
                 Assert.assertEquals(result.toString(), "", "Wrong result for expression: " + test);
+            } catch (ParsingException e) {
+                Assert.fail("Unexpected parse failure: " + test);
+            }
+        }
+    }
+
+    @Test
+    public void testForRangeWithStepBiggerThanRange() {
+        String tests[] = {
+                "forRange(0,10,15,v,v).join(',')"
+        };
+        bindings = new Properties();
+        bindings.put("v", "");
+        for (String test : tests) {
+            try {
+                Evaluable eval = MetaParser.parse("grel:" + test);
+                Object result = eval.evaluate(bindings);
+                Assert.assertEquals(result.toString(), "0", "Wrong result for expression: " + test);
             } catch (ParsingException e) {
                 Assert.fail("Unexpected parse failure: " + test);
             }
