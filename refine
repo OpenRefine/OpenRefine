@@ -247,31 +247,16 @@ tools_prepare() {
 
 mvn_prepare() {
     tools_prepare
+    if [ "$MAVEN_HOME" ] ; then
+        MVN="$MAVEN_HOME/bin/mvn"
+    elif [ "$M2_HOME" ] ; then
+        MVN="$M2_HOME/bin/mvn"
+    else
+        MVN="`command -v mvn 2> /dev/null`"
+    fi
 
-    MVN_VERSION="3.8.5"
-    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
-    MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
-    MVN_DIR="apache-maven-${MVN_VERSION}"
-
-    MVN="`command -v mvn 2> /dev/null`"
-
-    if [ -z "$MVN" ] ; then
-        if [ -z "$MVN_HOME" ] ; then
-            cd $REFINE_TOOLS_DIR
-                if [ ! -f "$MVN_FILE" ] ; then
-                    echo "\nCould not find Maven locally, starting download for Maven ..."
-                    download $MVN_URL $MVN_FILE
-                fi
-                if [ ! -d "$MVN_DIR" ] ; then
-                    tar xzf $MVN_FILE -C . || error "Error while expanding $MVN_FILE"
-                fi
-                export MVN_HOME="`pwd`/$MVN_DIR"
-                if [ "$OS" = "windows" ] ; then
-                    export MVN_HOME=`cygpath --unix "$MVN_HOME"`
-                fi
-            cd ..
-        fi
-        MVN="$MVN_HOME/bin/mvn"
+    if [ ! -x "$MVN" ] ; then
+        error "Apache Maven not found. Please make sure that M2_HOME or MAVEN_HOME environment variables are set or that 'mvn' is in your system PATH."
     fi
 }
 # ----------------------------------------------------------------------------------------------

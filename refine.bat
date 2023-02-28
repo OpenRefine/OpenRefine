@@ -64,11 +64,11 @@ echo.
 
 echo   clean ..................... Clean compiled classes
 echo.
-goto end
+goto :eof
 
 :fail
 echo Type 'refine /h' for usage.
-goto end
+goto :eof
 
 :endUtils
 
@@ -275,25 +275,21 @@ echo -----------------------
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 %JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
-goto end
+goto :eof
 
 :doMvn
-if not "%MAVEN_HOME%" == "" goto gotMvnHome
-echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it.
-echo.
-echo You can download it from
-echo.
-echo   https://maven.apache.org/
-echo
-echo The environment variable MAVEN_HOME should not include the final "bin" directory, such as:
-echo
-echo   C:\Program Files (x86)\Apache\Maven
-echo.
-echo If you don't know how to set environment variables, follow the instructions at
-echo.
-echo   http://bit.ly/1c2gkR
-echo.
-:gotMvnHome
+if defined MAVEN_HOME (
+    set "MVN=%MAVEN_HOME%\bin\mvn"
+) else if defined M2_HOME (
+    set "MVN=%M2_HOME%\bin\mvn"
+) else (
+    set "MVN=mvn"
+)
+
+if not exist "%MVN%" (
+    echo Apache Maven not found. Please set M2_HOME or MAVEN_HOME environment variables or ensure that 'mvn' is in your system PATH.
+    exit /b 1
+)
 set MVN_ACTION=""%ACTION%""
 if ""%ACTION%"" == ""build"" goto :build-setup
 goto :endif
@@ -307,8 +303,6 @@ set MVN_ACTION=compile test-compile dependency:build-classpath
 if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions
-call "%MAVEN_HOME%\bin\mvn.cmd" process-resources
-call "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
-goto end
-
-:end
+call "%MVN%" process-resources
+call "%MVN%" %MVN_ACTION%
+goto :eof
