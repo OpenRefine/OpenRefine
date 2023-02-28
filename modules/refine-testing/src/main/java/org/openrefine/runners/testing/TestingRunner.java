@@ -162,8 +162,12 @@ public class TestingRunner implements Runner {
         return new TestingChangeData<T>(data);
     }
 
-    private List<File> sortedListFiles(File directory) {
-        List<File> files = Arrays.asList(directory.listFiles());
+    private List<File> sortedListFiles(File directory) throws IOException {
+        File[] listFiles = directory.listFiles();
+        if (listFiles == null) {
+            throw new IOException("Directory " + directory.toString() + " not found");
+        }
+        List<File> files = Arrays.asList(listFiles);
         files.sort(new Comparator<File>() {
 
             @Override

@@ -888,6 +888,11 @@ public abstract class RunnerTestBase {
 
     };
 
+    @Test(expectedExceptions = IOException.class)
+    public void testLoadChangeDataDoesNotExist() throws IOException {
+        SUT.loadChangeData(new File(tempDir, "doesNotExist"), stringSerializer);
+    }
+
     @Test
     public void testSerializeChangeDataNoProgress() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "test_change_data");
