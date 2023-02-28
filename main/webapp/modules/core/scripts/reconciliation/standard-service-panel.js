@@ -269,7 +269,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
   }
 };
 
-ReconStandardServicePanel.prototype.start = function() {
+ReconStandardServicePanel.prototype.start = function(onDone) {
   var self = this;
 
   var type = this._elmts.typeInput.data("data.suggest");
@@ -336,7 +336,8 @@ ReconStandardServicePanel.prototype.start = function() {
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
       }
     },
-    { cellsChanged: true, columnStatsChanged: true }
+    { cellsChanged: true, columnStatsChanged: true },
+    { onDone }
   );
 };
 
