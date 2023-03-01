@@ -82,7 +82,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 new Serializable[][] {
                         { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched).withId(1L)) },
                         { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New).withId(2L)) },
-                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", "b" }
                 });
         ColumnModel columnModel = initialState.getColumnModel();
         initialState = initialState.withColumnModel(columnModel.withReconConfig(1, reconConfig));
@@ -140,7 +141,11 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                                 .withId(commonReconId)
                                 .withJudgmentAction("similar")
                                 .withJudgment(Judgment.New)) },
-                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", new Cell("b", reconConfig.createNewRecon(2891L)
+                                .withId(commonReconId)
+                                .withJudgmentAction("similar")
+                                .withJudgment(Judgment.New)) }
                 });
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
@@ -175,7 +180,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                                 .withMatchRank(0)
                                 .withJudgmentAction("similar")
                                 .withJudgmentHistoryEntry(2891L)) },
-                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", "b" }
                 });
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
