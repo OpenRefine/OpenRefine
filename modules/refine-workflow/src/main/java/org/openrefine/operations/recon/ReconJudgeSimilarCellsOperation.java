@@ -181,7 +181,7 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value) && cell.recon != null) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
 
                     if (similarValue.equals(value)) {
