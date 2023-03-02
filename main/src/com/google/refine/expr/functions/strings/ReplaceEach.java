@@ -6,7 +6,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
-import org.apache.commons.lang.StringUtils;
+import com.google.refine.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -29,7 +29,7 @@ public class ReplaceEach implements Function {
                 String[] searchArgs = new String[((Object[]) args[1]).length];
                 Object[] originalSearchArgs = (Object[]) args[1];
                 for (var i = 0; i < searchArgs.length; i++) {
-                    searchArgs[i] = originalSearchArgs[i].toString();
+                    searchArgs[i] = StringUtils.toString(originalSearchArgs[i]);
                 }
                 String[] search = searchArgs, replace;
 
@@ -39,7 +39,7 @@ public class ReplaceEach implements Function {
                     String[] replaceArgs = new String[((Object[]) args[2]).length];
                     Object[] originalReplaceArgs = (Object[]) args[2];
                     for (var i = 0; i < replaceArgs.length; i++) {
-                        replaceArgs[i] = originalReplaceArgs[i].toString();
+                        replaceArgs[i] = StringUtils.toString(originalReplaceArgs[i]);
                     }
                     replace = replaceArgs;
                 }
@@ -55,7 +55,7 @@ public class ReplaceEach implements Function {
                     }
 
                     // replace each occurrence of search with corresponding element in replace
-                    return StringUtils.replaceEachRepeatedly((String) args[0], search, replace);
+                    return org.apache.commons.lang.StringUtils.replaceEachRepeatedly((String) args[0], search, replace);
                 } else {
                     // replacements must be equal to or less than the number of search strings.");
                     return new EvalError(
