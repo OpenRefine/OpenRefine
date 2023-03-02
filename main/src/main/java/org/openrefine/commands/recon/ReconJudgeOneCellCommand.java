@@ -80,10 +80,12 @@ public class ReconJudgeOneCellCommand extends Command {
             if (id != null) {
                 String scoreString = request.getParameter("score");
 
+                String typesString = request.getParameter("types");
+                String[] types = typesString == null ? new String[] {} : typesString.split(",");
                 match = new ReconCandidate(
                         id,
                         request.getParameter("name"),
-                        request.getParameter("types").split(","),
+                        types,
                         scoreString != null ? Double.parseDouble(scoreString) : 100);
             }
 
