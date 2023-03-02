@@ -79,7 +79,7 @@ if (missedFiles.length) {
 
 const browsers = process.env.browsers.split(',');
 console.log(
-  `name=matrix::{"browser":${JSON.stringify(
+  `::set-output name=matrix::{"browser":${JSON.stringify(
     browsers
   )}, "specs":${JSON.stringify(mergedGroups)}} >> $GITHUB_OUTPUT`
 );
