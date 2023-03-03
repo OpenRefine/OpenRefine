@@ -184,7 +184,7 @@ jobs:
           specs=$(cat $GITHUB_OUTPUT | grep "^specs=" | cut -d "=" -f2)
           echo "$browser"
           echo "$specs"
-
+          
       - name: Test with Cypress on ${{ browser }}
         run: | 
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
