@@ -139,8 +139,9 @@ jobs:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest
     strategy:
-      browser: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.browser)}}
-      specs: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.specs)}}
+      matrix:
+        browser: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.browser)}}
+        specs: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.specs)}}
     steps:
       - uses: actions/checkout@v3
         with:
