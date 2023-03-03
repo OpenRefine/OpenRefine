@@ -115,9 +115,8 @@ jobs:
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix:
-        browser: ${{ steps.set-matrix.outputs.browser }}
-        specs: ${{ steps.set-matrix.outputs.specs }}
+      browser: ${{ steps.set-matrix.outputs.browser }}
+      specs: ${{ steps.set-matrix.outputs.specs }}
     steps:
       - uses: actions/checkout@v3
         with:
