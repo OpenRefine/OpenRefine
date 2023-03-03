@@ -84,4 +84,4 @@ const testMatrix = {
   specs: mergedGroups,
 };
 
-console.log(JSON.stringify(testMatrix));
+console.log('matrix='+JSON.stringify(testMatrix));
