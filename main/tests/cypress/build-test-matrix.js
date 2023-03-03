@@ -83,6 +83,5 @@ const output = {
   specs: mergedGroups,
 };
 
-console.log(Object.entries(output).map(([key, value]))
-    `$(key)=${JSON.stringify(value)} >> $GITHUB_OUTPUT`
-);
+console.log(Object.entries(output).map(([key, value]) =>
+    `$(key)=${JSON.stringify(value)} >> $GITHUB_OUTPUT`));
