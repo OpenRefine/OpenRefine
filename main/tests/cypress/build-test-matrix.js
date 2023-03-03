@@ -78,8 +78,11 @@ if (missedFiles.length) {
 }
 
 const browsers = process.env.browsers.split(',');
-console.log(
-  `::set-output name=matrix::{"browser":${JSON.stringify(
-    browsers
-  )}, "specs":${JSON.stringify(mergedGroups)}} >> $GITHUB_OUTPUT`
+const output = {
+  browser: browsers,
+  specs: mergedGroups,
+};
+
+console.log(Object.entries(output).map(([key, value]))
+    `$(key)=${JSON.stringify(value)} >> $GITHUB_OUTPUT`
 );
