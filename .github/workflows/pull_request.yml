@@ -126,7 +126,7 @@ jobs:
         with:
           node-version: '14'
       - id: set-matrix
-        run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
+        run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js
         env:
           browsers: chrome
   ui_test:
