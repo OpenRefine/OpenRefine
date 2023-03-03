@@ -177,15 +177,22 @@ jobs:
           cd ./main/tests/cypress
           npm i -g yarn
           yarn install
+          
+      - name: Get Browser and Specs from $GITHUB_OUTPUT
+        run: |
+          browser=$(cat $GITHUB_OUTPUT | grep "^browser=" | cut -d "=" -f2)
+          specs=$(cat $GITHUB_OUTPUT | grep "^specs=" | cut -d "=" -f2)
+          echo "$browser"
+          echo "$specs"
 
-      - name: Test with Cypress on ${{ matrix.browser }}
+      - name: Test with Cypress on ${{ browser }}
         run: | 
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
           echo REFINE_MEMORY=4096M >> ./refine.ini
           ./refine ui_tests
         env:
-          CYPRESS_BROWSER: ${{ matrix.browser }}
+          CYPRESS_BROWSER: ${{ browser }}
           CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_SPECS: ${{ matrix.specs }}
+          CYPRESS_SPECS: ${{ specs }}
