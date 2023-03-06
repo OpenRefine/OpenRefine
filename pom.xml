@@ -82,7 +82,7 @@
     <jena.version>4.6.1</jena.version>
     <poi.version>5.2.3</poi.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
-    <commons-fileupload.version>1.4</commons-fileupload.version>
+    <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-validator.version>1.7</commons-validator.version>
