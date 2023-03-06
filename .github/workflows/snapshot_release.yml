@@ -23,9 +23,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3.6.0
         with:
-          node-version: '14'
+          node-version: '16'
       - id: set-matrix
-        run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
+        run: npm install --save glob@9.2.1 && node main/tests/cypress/build-test-matrix.js
         env:
           browsers: chrome
   ui_test:
