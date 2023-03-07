@@ -21,7 +21,7 @@
     "devDependencies": {
         "eslint": "^8.35.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^8.6.0",
+        "eslint-config-prettier": "^8.7.0",
         "eslint-plugin-cypress": "^2.12.1",
         "jsdoc": "^4.0.2",
         "prettier": "2.8.4"
