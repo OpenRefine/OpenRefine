@@ -79,56 +79,20 @@ set OPTS=
 rem --- Argument parsing --------------------------------------------
 
 :loop
-if ""%1"" == """" goto readIniFile
-if ""%1"" == ""/?"" goto usage
-if ""%1"" == ""/h"" goto usage
-if ""%1"" == ""/p"" goto arg-p
-if ""%1"" == ""/i"" goto arg-i
-if ""%1"" == ""/H"" goto arg-H
-if ""%1"" == ""/w"" goto arg-w
-if ""%1"" == ""/d"" goto arg-d
-if ""%1"" == ""/m"" goto arg-m
-if ""%1"" == ""/x"" goto arg-x
-if ""%1"" == ""/c"" goto arg-c
-goto readIniFile
-
-:arg-p
-set REFINE_PORT=%2
-goto shift2loop
-
-:arg-i
-set REFINE_INTERFACE=%2
-goto shift2loop
-
-:arg-H
-set REFINE_HOST=%2
-goto shift2loop
-
-:arg-w
-set REFINE_WEBAPP=%2
-goto shift2loop
-
-:arg-m
-set REFINE_MEMORY=%2
-set REFINE_MIN_MEMORY=%2
-goto shift2loop
-
-:arg-d
-set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
-goto shift2loop
-
-:arg-x
-set OPTS=%OPTS% -Dcom.sun.management.jmxremote
-goto shift2loop
-
-:arg-c
-set REFINE_INI_PATH=%~2
-goto shift2loop
-
-:shift2loop
-shift
-shift
-goto loop
+if "%~1"=="" goto readIniFile
+if "%~1"=="/?" goto usage
+if "%~1"=="/h" goto usage
+if "%~1"=="/p" set "REFINE_PORT=%~2" & shift & goto loop
+if "%~1"=="/i" set "REFINE_INTERFACE=%~2" & shift & goto loop
+if "%~1"=="/H" set "REFINE_HOST=%~2" & shift & goto loop
+if "%~1"=="/w" set "REFINE_WEBAPP=%~2" & shift & goto loop
+if "%~1"=="/m" set "REFINE_MEMORY=%~2" & set "REFINE_MIN_MEMORY=%~2" & shift & goto loop
+if "%~1"=="/d" set "REFINE_DATA_DIR=%~2" & shift & goto loop
+if "%~1"=="/debug" set "OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" & shift & goto loop
+if "%~1"=="/x" set "REFINE_EXTRA_OPTS=%~2" & shift & goto loop
+if "%~1"=="/jmx" set "OPTS=%OPTS% -Dcom.sun.management.jmxremote" & shift & goto loop
+if "%~1"=="/c" set "REFINE_INI_PATH=%~2" & shift & goto loop
+if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & goto loop
 
 :readIniFile
 
@@ -205,9 +169,18 @@ if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
 
+if not "%REFINE_DATA_DIR%" == "" set OPTS=%OPTS% -Drefine.data_dir=%REFINE_DATA_DIR%
+
 if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
 set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
+
+if not "%REFINE_VERBOSITY%" == "" goto gotVerbosity
+set REFINE_VERBOSITY=info
+:gotVerbosity
+set OPTS=%OPTS% -Drefine.verbosity=%REFINE_VERBOSITY%
+
+if not "%REFINE_EXTRA_OPTS%" == "" set OPTS=%OPTS% -D%REFINE_EXTRA_OPTS%
 
 if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
 if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
