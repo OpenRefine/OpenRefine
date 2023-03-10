@@ -49,12 +49,12 @@
 }
 
 .schema-alignment-dialog-entity-edits-area {
-  max-width: 70em;
+  max-width: 100%;
 }
 
 .schema-alignment-dialog-statements-area {
   padding: 10px;
-  max-width: 900px;
+  max-width: 100%;
   overflow-y: auto;
 }
 
@@ -66,16 +66,31 @@
   margin: 1em;
 }
 
-.schema-alignment-save {
+.schema-alignment-save-a {
   float: right;
-  padding: 1em;
+  padding: 2em;
+}
+
+#schema-alignment-entity-add-buttons .wbs-toolbar{
+  float: left;
+  padding: 2em;  
+}
+
+.schema-alignment-save-b {
+  float: right;
+  padding: 2em;
 }
 
 .schema-alignment-save button:disabled {
   color: gray;
 }
 
-.schema-alignment-save button {
+.schema-alignment-save-a button {
+  font-weight: normal;
+  width: 100%;
+}
+
+.schema-alignment-save-b button {
   font-weight: normal;
   width: 100%;
 }
@@ -183,6 +198,7 @@
   margin: 5px;
   white-space: normal;
   word-wrap: break-word;
+  padding: 10px;
 }
 
 .wbs-target-input {
@@ -238,7 +254,7 @@ input[type="checkbox"].wbs-wikitext-override {
 .wbs-toolbar {
   float: right;
   width: 100px;
-  padding: 2px;
+  padding: 10px;
 }
 
 .wbs-toolbar a {
@@ -268,7 +284,7 @@ input[type="checkbox"].wbs-wikitext-override {
   display: inline-block;
 }
 
-.wbs-entity-contents {
+.wbs-entity-contents, .wbs-entity-input {
   padding-left: 10px;
   margin-left: 20px;
   border-left: 3px solid gray;
@@ -312,6 +328,16 @@ input[type="checkbox"].wbs-wikitext-override {
 .wbs-entity {
   margin-bottom: 5px;
   padding-right: 5px;
+  padding: 10px;
+  border-bottom: solid #d3deff;
+}
+
+.wbs-entity .wbs-entity-contents .wbs-toolbar{
+  padding: 15px;
+}
+
+.wbs-entity .wbs-entity-contents .wbs-statement-group-container .wbs-right .wbs-toolbar{
+  padding: 5px;
 }
 
 .wbs-statement-group {
@@ -392,7 +418,7 @@ input[type="checkbox"].wbs-wikitext-override {
 
 .wbs-copy-reference {
   float: left;
-  padding: 2px;
+  padding: 5px;
 }
 
 .wbs-copied-reference {
@@ -456,7 +482,7 @@ input[type="checkbox"].wbs-wikitext-override {
 }
 
 .wbs-reference-header {
-  height: 22px;
+  height: 30px;
   overflow: hidden;
   display: block;
   background-color: #b6c8ec;
@@ -488,7 +514,6 @@ input[type="checkbox"].wbs-wikitext-override {
   border-bottom: 1px solid #c8ccd1;
 }
 
-
 .wbs-namedesc-container:empty:before {
   content: attr(data-emptyplaceholder);
   color: gray;
@@ -498,7 +523,7 @@ input[type="checkbox"].wbs-wikitext-override {
 
 .wbs-namedesc {
   background-color: #eaecf0;
-  padding: 5px;
+  padding: 10px;
 }
 
 .wbs-namedesc-type, .wbs-namedesc-value {
@@ -522,6 +547,11 @@ input[type="checkbox"].wbs-wikitext-override {
 /* do not let users pick a term type for mediainfo entities as only labels are supported */
 #schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
   display: none;
+  width: 100%;
+}
+
+.wbs-entity .wbs-entity-contents .wbs-namedesc-container .wbs-namedesc .wbs-toolbar{
+  padding: 2px;
 }
 
 .wbs-language-input {
