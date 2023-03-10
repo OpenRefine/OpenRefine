@@ -42,16 +42,23 @@ echo.
 echo  "/w <path>" path to the webapp
 echo     default src\main\webapp
 echo.
-echo  "/d" enable JVM debugging (on port 8000)
+echo  "/d <path>" path to the data directory
+echo     default: OS dependent
 echo.
 echo  "/m <memory>" max memory heap size to use
 echo     default: 1400M
 echo.
-echo  "/x" enable JMX monitoring (for jconsole and friends)
+echo  "v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
+echo.
+echo  "/x <name=value>" additional configuration parameters to pass to OpenRefine
+echo     default: [none]
 echo.
 echo  "/c <path>" path to the refine.ini file
 echo     default .\refine.ini
 echo.
+echo  "/debug" enable JVM debugging (on port 8000)
+echo.
+echo  "/jmx" enable JMX monitoring (for jconsole and jvisualvm)
 echo "and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
@@ -82,17 +89,17 @@ rem --- Argument parsing --------------------------------------------
 if "%~1"=="" goto readIniFile
 if "%~1"=="/?" goto usage
 if "%~1"=="/h" goto usage
-if "%~1"=="/p" set "REFINE_PORT=%~2" & shift & goto loop
-if "%~1"=="/i" set "REFINE_INTERFACE=%~2" & shift & goto loop
-if "%~1"=="/H" set "REFINE_HOST=%~2" & shift & goto loop
-if "%~1"=="/w" set "REFINE_WEBAPP=%~2" & shift & goto loop
-if "%~1"=="/m" set "REFINE_MEMORY=%~2" & set "REFINE_MIN_MEMORY=%~2" & shift & goto loop
-if "%~1"=="/d" set "REFINE_DATA_DIR=%~2" & shift & goto loop
+if "%~1"=="/p" set "REFINE_PORT=%~2" & shift & shift & goto loop
+if "%~1"=="/i" set "REFINE_INTERFACE=%~2" & shift & shift & goto loop
+if "%~1"=="/H" set "REFINE_HOST=%~2" & shift & shift & goto loop
+if "%~1"=="/w" set "REFINE_WEBAPP=%~2" & shift & shift & goto loop
+if "%~1"=="/m" set "REFINE_MEMORY=%~2" & set "REFINE_MIN_MEMORY=%~2" & shift & shift & goto loop
+if "%~1"=="/d" set "REFINE_DATA_DIR=%~2" & shift & shift & goto loop
 if "%~1"=="/debug" set "OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" & shift & goto loop
-if "%~1"=="/x" set "REFINE_EXTRA_OPTS=%~2" & shift & goto loop
+if "%~1"=="/x" set "REFINE_EXTRA_OPTS=%~2" & shift & shift & goto loop
 if "%~1"=="/jmx" set "OPTS=%OPTS% -Dcom.sun.management.jmxremote" & shift & goto loop
-if "%~1"=="/c" set "REFINE_INI_PATH=%~2" & shift & goto loop
-if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & goto loop
+if "%~1"=="/c" set "REFINE_INI_PATH=%~2" & shift & shift & goto loop
+if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & shift & goto loop
 
 :readIniFile
 
