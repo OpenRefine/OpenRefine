@@ -19,7 +19,7 @@ Community forum: **https://forum.openrefine.org**
 * [OpenRefine Releases](https://github.com/OpenRefine/OpenRefine/releases)
 
 ## Snapshot releases
- 
+
 Latest development version, packaged for:
 * [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=linux&p=tar.gz)
 * [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=mac&p=dmg)
