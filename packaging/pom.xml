@@ -421,26 +421,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.3</version>
-
-            <!-- This is a clean snapshot of launch4j's master branch,
-                which includes fixes to Java discovery that we need
-                to support recent versions of Java.
-                When the maven plugin is updated to use launch4j-3.13,
-                this can be removed. -->
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.launch4j</groupId>
-            <artifactId>launch4j</artifactId>
-            <classifier>core</classifier>
-            <version>3.14</version>
-          </dependency>
-          <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-          <version>1.4.19</version>
-        </dependency>
-        </dependencies>
+        <version>2.3.2</version>
         <executions>
           <execution>
             <id>l4j-clui-without-jre</id>
@@ -463,7 +444,6 @@
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
                 <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>false</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
