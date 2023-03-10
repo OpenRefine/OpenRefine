@@ -843,7 +843,7 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
+    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; echo "set memory to $1"; shift; continue;;
     -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
