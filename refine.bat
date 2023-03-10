@@ -59,7 +59,8 @@ echo.
 echo  "/debug" enable JVM debugging (on port 8000)
 echo.
 echo  "/jmx" enable JMX monitoring (for jconsole and jvisualvm)
-echo "and <action> is one of
+echo.
+echo  and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine (using only "refine" or "./refine" will also start OpenRefine)
