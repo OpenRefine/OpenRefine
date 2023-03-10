@@ -48,7 +48,7 @@ echo.
 echo  "/m <memory>" max memory heap size to use
 echo     default: 1400M
 echo.
-echo  "v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
+echo  "/v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
 echo.
 echo  "/x <name=value>" additional configuration parameters to pass to OpenRefine
 echo     default: [none]
