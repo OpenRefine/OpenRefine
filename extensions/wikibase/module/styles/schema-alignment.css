@@ -77,11 +77,6 @@
   padding: 2em;  
 }
 
-/* .schema-alignment-save {
-  float: right;
-  padding: 2em;
-} */
-
 .schema-alignment-save button:disabled {
   color: gray;
 }
@@ -90,11 +85,6 @@
   font-weight: normal;
   width: 100%;
 }
-
-/* .schema-alignment-save-b button {
-  font-weight: normal;
-  width: 100%;
-} */
 
 .schema-alignment-dialog-columns-area {
   border: 1px solid #bcf;
@@ -333,10 +323,6 @@ input[type="checkbox"].wbs-wikitext-override {
   border-bottom: solid #d3deff;
 }
 
-/* .wbs-entity .wbs-entity-contents .wbs-toolbar{
-  padding: 15px;
-} */
-
 .wbs-entity .wbs-entity-contents .wbs-statement-group-container .wbs-right .wbs-toolbar{
   padding: 5px;
 }
@@ -548,7 +534,6 @@ input[type="checkbox"].wbs-wikitext-override {
 /* do not let users pick a term type for mediainfo entities as only labels are supported */
 #schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
   display: none;
-  /* width: 100%; */
 }
 
 .wbs-entity .wbs-entity-contents .wbs-namedesc-container .wbs-namedesc .wbs-toolbar{
