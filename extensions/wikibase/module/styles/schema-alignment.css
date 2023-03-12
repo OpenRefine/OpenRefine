@@ -54,7 +54,7 @@
 
 .schema-alignment-dialog-statements-area {
   padding: 10px;
-  max-width: 100%;
+  max-width: 900px;
   overflow-y: auto;
 }
 
@@ -66,9 +66,10 @@
   margin: 1em;
 }
 
-.schema-alignment-save-a {
+.schema-alignment-save {
   float: right;
   padding: 2em;
+  
 }
 
 #schema-alignment-entity-add-buttons .wbs-toolbar{
@@ -76,24 +77,24 @@
   padding: 2em;  
 }
 
-.schema-alignment-save-b {
+/* .schema-alignment-save {
   float: right;
   padding: 2em;
-}
+} */
 
 .schema-alignment-save button:disabled {
   color: gray;
 }
 
-.schema-alignment-save-a button {
+.schema-alignment-save button {
   font-weight: normal;
   width: 100%;
 }
 
-.schema-alignment-save-b button {
+/* .schema-alignment-save-b button {
   font-weight: normal;
   width: 100%;
-}
+} */
 
 .schema-alignment-dialog-columns-area {
   border: 1px solid #bcf;
@@ -198,7 +199,7 @@
   margin: 5px;
   white-space: normal;
   word-wrap: break-word;
-  padding: 10px;
+  padding: 5px;
 }
 
 .wbs-target-input {
@@ -284,7 +285,7 @@ input[type="checkbox"].wbs-wikitext-override {
   display: inline-block;
 }
 
-.wbs-entity-contents, .wbs-entity-input {
+.wbs-entity-contents {
   padding-left: 10px;
   margin-left: 20px;
   border-left: 3px solid gray;
@@ -332,9 +333,9 @@ input[type="checkbox"].wbs-wikitext-override {
   border-bottom: solid #d3deff;
 }
 
-.wbs-entity .wbs-entity-contents .wbs-toolbar{
+/* .wbs-entity .wbs-entity-contents .wbs-toolbar{
   padding: 15px;
-}
+} */
 
 .wbs-entity .wbs-entity-contents .wbs-statement-group-container .wbs-right .wbs-toolbar{
   padding: 5px;
@@ -482,7 +483,7 @@ input[type="checkbox"].wbs-wikitext-override {
 }
 
 .wbs-reference-header {
-  height: 30px;
+  height: 22px;
   overflow: hidden;
   display: block;
   background-color: #b6c8ec;
@@ -523,7 +524,7 @@ input[type="checkbox"].wbs-wikitext-override {
 
 .wbs-namedesc {
   background-color: #eaecf0;
-  padding: 10px;
+  padding: 5px;
 }
 
 .wbs-namedesc-type, .wbs-namedesc-value {
@@ -547,7 +548,7 @@ input[type="checkbox"].wbs-wikitext-override {
 /* do not let users pick a term type for mediainfo entities as only labels are supported */
 #schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
   display: none;
-  width: 100%;
+  /* width: 100%; */
 }
 
 .wbs-entity .wbs-entity-contents .wbs-namedesc-container .wbs-namedesc .wbs-toolbar{
