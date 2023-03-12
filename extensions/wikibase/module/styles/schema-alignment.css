@@ -68,13 +68,13 @@
 
 .schema-alignment-save {
   float: right;
-  padding: 2em;
+  padding: 1em;
   
 }
 
 #schema-alignment-entity-add-buttons .wbs-toolbar{
   float: left;
-  padding: 2em;  
+  padding: 1em;  
 }
 
 .schema-alignment-save button:disabled {
@@ -189,7 +189,6 @@
   margin: 5px;
   white-space: normal;
   word-wrap: break-word;
-  padding: 5px;
 }
 
 .wbs-target-input {
@@ -245,7 +244,7 @@ input[type="checkbox"].wbs-wikitext-override {
 .wbs-toolbar {
   float: right;
   width: 100px;
-  padding: 10px;
+  padding: 2px;
 }
 
 .wbs-toolbar a {
@@ -321,10 +320,6 @@ input[type="checkbox"].wbs-wikitext-override {
   padding-right: 5px;
   padding: 10px;
   border-bottom: solid #d3deff;
-}
-
-.wbs-entity .wbs-entity-contents .wbs-statement-group-container .wbs-right .wbs-toolbar{
-  padding: 5px;
 }
 
 .wbs-statement-group {
@@ -405,7 +400,7 @@ input[type="checkbox"].wbs-wikitext-override {
 
 .wbs-copy-reference {
   float: left;
-  padding: 5px;
+  padding: 2px;
 }
 
 .wbs-copied-reference {
@@ -534,10 +529,6 @@ input[type="checkbox"].wbs-wikitext-override {
 /* do not let users pick a term type for mediainfo entities as only labels are supported */
 #schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
   display: none;
-}
-
-.wbs-entity .wbs-entity-contents .wbs-namedesc-container .wbs-namedesc .wbs-toolbar{
-  padding: 2px;
 }
 
 .wbs-language-input {
