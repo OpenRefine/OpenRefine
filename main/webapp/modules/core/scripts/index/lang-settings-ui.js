@@ -48,7 +48,7 @@ Refine.SetLanguageUI = function(elmt) {
 };
 
 Refine.actionAreas.push({
-	id : "lang-settings",
+	id : "language-settings",
 	label : $.i18n('core-index-lang/lang-settings'),
 	uiClass : Refine.SetLanguageUI
 });
