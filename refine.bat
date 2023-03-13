@@ -25,54 +25,32 @@ rem --- First two utilities for exiting ----------------------------------------
 goto endUtils
 
 :usage
-echo Usage %0 [options] ^<action^>
-echo where [options] include:
+echo Usage: %0 [options] ^<action^>
 echo.
-echo  "/?" print this message and exit
+echo Options
+echo.    /?                      Print this message and exit.
+echo     /c ^<path^>               Path to the refine.ini file. Default: .\refine.ini.
+echo     /d ^<path^>               Path to the data directory. Default: OS dependent.
+echo     /debug                  Enable JVM debugging (on port 8000).
+echo     /H ^<host^>               Expected host header value (* to disable checks). Default: ^<interface^>.
+echo     /i ^<interface^>          The network interface OpenRefine should bind to. Default: 127.0.0.1.
+echo     /jmx                    Enable JMX monitoring.
+echo     /m ^<memory^>             Set JVM min and max memory heap size to use. Default: 1400M.
+echo     /p ^<port^>               The port that OpenRefine should bind to. Default: 3333.
+echo     /v ^<level^>              Verbosity level [error, warn, info, debug, trace].
+echo     /w ^<path^>               Path to the webapp. Default: src\main\webapp.
+echo     /x ^<name=value^>         Additional configuration parameters to pass to OpenRefine.
 echo.
-echo  "/p <port>" the port that OpenRefine will listen to
-echo     default: 3333
-echo.
-echo  "/i <interface>" the network interface OpenRefine should bind to
-echo     default: 127.0.0.1
-echo.
-echo  "/H <host>" the expected value for the Host header (set to * to disable checks)
-echo     default: ^<interface^>
-echo.
-echo  "/w <path>" path to the webapp
-echo     default src\main\webapp
-echo.
-echo  "/d <path>" path to the data directory
-echo     default: OS dependent
-echo.
-echo  "/m <memory>" max memory heap size to use
-echo     default: 1400M
-echo.
-echo  "/v <level>" verbosity level [from low to high: error,warn,info,debug,trace]
-echo.
-echo  "/x <name=value>" additional configuration parameters to pass to OpenRefine
-echo     default: [none]
-echo.
-echo  "/c <path>" path to the refine.ini file
-echo     default .\refine.ini
-echo.
-echo  "/debug" enable JVM debugging (on port 8000)
-echo.
-echo  "/jmx" enable JMX monitoring (for jconsole and jvisualvm)
-echo.
-echo  "and <action>" is one of
-echo.
-echo   build ..................... Build OpenRefine
-echo   run ....................... Run OpenRefine (using only "refine" or "./refine" will also start OpenRefine)
-echo.
-echo   test ...................... Run all the tests
-echo   server_test ............... Run the server tests
-echo   extensions_test ........... Run the extensions tests
-echo.
-
-echo   clean ..................... Clean compiled classes
-echo.
+echo Actions
+echo     build                   Build OpenRefine.
+echo     clean                   Clean compiled classes.
+echo     extensions_test         Run the extensions tests.
+echo     run                     Run OpenRefine.
+echo     server_test             Run the server tests.
+echo     test                    Run all the tests.
 goto :eof
+
+
 
 :fail
 echo Type 'refine /h' for usage.
