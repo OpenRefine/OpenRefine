@@ -66,10 +66,16 @@
   margin: 1em;
 }
 
+.schema-alignment-save-buttons{
+  display:flex; 
+  flex-direction: row; 
+  float: right; 
+  align-items: right;
+  padding: 12px;
+}
+
 .schema-alignment-save {
-  float: right;
-  padding: 1em;
-  
+  padding-right: 10px; 
 }
 
 #schema-alignment-entity-add-buttons .wbs-toolbar{
@@ -82,6 +88,15 @@
 }
 
 .schema-alignment-save button {
+  font-weight: normal;
+  width: 100%;
+}
+
+.schema-alignment-discard button:disabled {
+  color: gray;
+}
+
+.schema-alignment-discard button {
   font-weight: normal;
   width: 100%;
 }
@@ -495,6 +510,7 @@ input[type="checkbox"].wbs-wikitext-override {
 .wbs-namedesc:last-child {
   border-bottom: 1px solid #c8ccd1;
 }
+
 
 .wbs-namedesc-container:empty:before {
   content: attr(data-emptyplaceholder);
