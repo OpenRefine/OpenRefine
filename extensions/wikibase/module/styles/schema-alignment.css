@@ -70,7 +70,6 @@
   display:flex; 
   flex-direction: row; 
   float: right; 
-  align-items: right;
   padding: 12px;
 }
 
