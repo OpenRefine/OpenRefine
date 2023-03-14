@@ -263,6 +263,10 @@ public class Project {
     public void update() {
         columnModel.update();
         recordModel.update(this);
+        // Old projects may have a row count of 0, but we don't want the act of filling this in to change modified time.
+        if (getMetadata() != null) {
+            getMetadata().setRowCountInternal(rows.size());
+        }
     }
 
     // wrapper of processManager variable to allow unit testing

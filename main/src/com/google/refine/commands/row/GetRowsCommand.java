@@ -207,7 +207,7 @@ public class GetRowsCommand extends Command {
                 filteredRecords.accept(project, visitor);
             }
 
-            // Pool all the recons occuring in the rows seen
+            // Pool all the recons occurring in the rows seen
             for (WrappedRow wr : rwv.results) {
                 for (Cell c : wr.row.cells) {
                     if (c != null && c.recon != null) {
@@ -224,11 +224,6 @@ public class GetRowsCommand extends Command {
             ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
                 writer.write(")");
-            }
-
-            // metadata refresh for row mode and record mode
-            if (project.getMetadata() != null) {
-                project.getMetadata().setRowCount(project.rows.size());
             }
         } catch (Exception e) {
             respondException(response, e);
