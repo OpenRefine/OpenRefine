@@ -57,7 +57,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
@@ -146,7 +146,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
 
             command.doPost(request, response);
 
-            TestUtils.assertEqualAsJson(guessedTypes, writer.toString());
+            TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
             RecordedRequest request = server.takeRequest();
             Assert.assertEquals(request.getBody().readUtf8(), expectedQuery);
