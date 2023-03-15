@@ -140,7 +140,7 @@ check_running() {
         fi    
         
         if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
+            error "OpenRefine isn't running on $URL. Maybe a proxy issue?"
         fi
     else
         RUNNING=""
