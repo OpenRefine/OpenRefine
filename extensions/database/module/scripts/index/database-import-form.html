@@ -1,12 +1,12 @@
 <div  bind="databasePanel" class="database-container">
     
          <div id = "databaseLayoutDiv" class="grid-layout layout-div">
-                <div><button type="button" id="newConnectionButtonDiv" bind="newConnectionButton">New Connection</button></div>
+                <div><button type="button" class="button" id="newConnectionButtonDiv" bind="newConnectionButton">New connection</button></div>
                 <div style="margin-top:1px; padding-right:1px;"></div>
                 <div class="sidebarDiv" bind="sidebarDiv">
                  
               <div class="custom-restricted database-border">	
-                <span id="savedConnectionSpan">Saved Connections</span>
+                <span id="savedConnectionSpan">Saved connections</span>
                 <ul bind="menuListUl" id="menuListUl"></ul>
             </div>
                
@@ -60,14 +60,14 @@
                                         </div>
                                        
                                         <div id="newConnectionControlDiv">
-                                           <button type="button" id="databaseTestButton" bind="testDatabaseButton"><span>Test</span></button>
-                                           <button type="button" id="databaseSaveButton" bind="saveConnectionButton">Save</button>
-                                           <button type="button" id="databaseConnectButton" bind="databaseConnectButton">Connect</button>
+                                           <button type="button" class="button" id="databaseTestButton" bind="testDatabaseButton"><span>Test</span></button>
+                                           <button type="button" class="button" id="databaseSaveButton" bind="saveConnectionButton">Save</button>
+                                           <button type="button" class="button" id="databaseConnectButton" bind="databaseConnectButton">Connect</button>
                                        </div>
                                        
                                        <div id="editConnectionControlDiv" style="display: none;">
-                                           <button type="button" id="connectionEditButton" bind="editConnectionButton"><span>Edit</span></button>
-                                           <button type="button" id="connectionEditCancelButton" bind="cancelEditConnectionButton">Cancel</button>
+                                           <button type="button" class="button" id="connectionEditButton" bind="editConnectionButton"><span>Edit</span></button>
+                                           <button type="button" class="button" id="connectionEditCancelButton" bind="cancelEditConnectionButton">Cancel</button>
                                          
                                        </div>
                                			
