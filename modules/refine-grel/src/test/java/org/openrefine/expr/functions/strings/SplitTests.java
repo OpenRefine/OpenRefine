@@ -28,8 +28,12 @@
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.regex.Pattern;
 
 import org.openrefine.grel.FunctionTestBase;
+import org.openrefine.expr.EvalError;
 import org.testng.annotations.Test;
 
 public class SplitTests extends FunctionTestBase {
@@ -39,6 +43,16 @@ public class SplitTests extends FunctionTestBase {
         assertEquals(invoke("split", "a,,b,c,d", ","), new String[] { "a", "b", "c", "d" });
         assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] { "a", "", "b", "c", "d" });
         assertEquals(invoke("split", "", ","), new String[] {});
-        assertEquals(invoke("split", ",,,", ","), new String[] { "" }); // TODO: Should this return an empty array?
+        assertEquals(invoke("split", ",,,", ","), new String[] {});
+        assertEquals(invoke("split", " a b c ", " "), new String[] { "a", "b", "c" });
+        assertEquals(invoke("split", " a b  c ", " "), new String[] { "a", "b", "c" });
+        assertEquals(invoke("split", " a b  c ", " ", true), new String[] { "", "a", "b", "", "c", "" });
+        // Third argument must be boolean, not a string which looks like a boolean (or anything else)
+        assertTrue(invoke("split", " a b  c ", " ", "true") instanceof EvalError);
+
+        assertEquals(invoke("split", " a b  c ", Pattern.compile("[\\W]+")), new String[] { "a", "b", "c" });
+        // Pattern.split() has the unusual behavior of returning an empty token when there's a leading pattern match
+        assertEquals(invoke("split", " a b  c ", Pattern.compile("[\\W]+"), true), new String[] { "", "a", "b", "c" });
+
     }
 }

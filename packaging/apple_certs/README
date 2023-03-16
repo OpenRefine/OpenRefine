@@ -4,3 +4,7 @@ Apple distribution certificates
 Those certificates are used to code-sign OpenRefine binaries.
 They are decoded in the CI using the embedded GPG key.
 
+The libjffi-1.2.jnilib file is a version of a shared library recompiled by us using a newer Xcode SDK so that it can be signed.
+This is a temporary measure until this is fixed upstream:
+https://github.com/jnr/jffi/issues/123
+

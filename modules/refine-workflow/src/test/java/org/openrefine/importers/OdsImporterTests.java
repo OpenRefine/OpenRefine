@@ -52,8 +52,7 @@ public class OdsImporterTests extends ImporterTest {
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), 6);
-        Assert.assertEquals(rows.get(1).cells.size(), 5); // should probably be two, but is currently 5 as of
-                                                          // odfdom-java:0.9.0
+        Assert.assertEquals(rows.get(1).cells.size(), 2);
         Assert.assertEquals(rows.get(0).getCellValue(0), "c");
         Assert.assertEquals(rows.get(3).getCellValue(0), 3.0);
     }
@@ -78,7 +77,7 @@ public class OdsImporterTests extends ImporterTest {
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         assertEquals(rows.size(), 5);
         Row row = rows.get(0);
-        assertEquals(row.cells.size(), 9); // should be 8, but is currently 9 as of odfdom-java:0.9.0
+        assertEquals(row.cells.size(), 8);
         assertEquals((String) row.getCellValue(1), "2 Days In New York");
         assertEquals(((OffsetDateTime) row.getCellValue(3)).toString().substring(0, 10), "2012-03-28");
         assertEquals(((Number) row.getCellValue(5)).doubleValue(), 4.5, 0.0000001);

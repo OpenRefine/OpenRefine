@@ -1,0 +1,121 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#expression-preview-tabs .ui-tabs-nav li a {
+  padding: 0.15em 1em;
+}
+
+textarea.expression-preview-code {
+  font-family: monospace;
+  height: 5em;
+  vertical-align: top;
+}
+
+.expression-preview-parsing-status {
+  color: var(--light-grey);
+}
+
+.expression-preview-parsing-status.error {
+  color: red;
+}
+
+#expression-preview-tabs-preview,
+#expression-preview-tabs-help,
+#expression-preview-tabs-history,
+#expression-preview-tabs-starred {
+  padding: var(--padding-tight);
+  overflow: hidden;
+}
+
+#expression-preview-tabs-preview>div,
+#expression-preview-tabs-help>div,
+#expression-preview-tabs-history>div,
+#expression-preview-tabs-starred {
+  height: 200px;
+  overflow: auto;
+}
+
+#expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
+#expression-preview-tabs-help td, #expression-preview-tabs-help th,
+#expression-preview-tabs-history td, #expression-preview-tabs-history th,
+#expression-preview-tabs-starred td, #expression-preview-tabs-starred th {
+  padding: var(--padding-tight);
+}
+
+.expression-preview-table-wrapper {
+  padding: var(--padding-normal);
+  width: 100%;
+}
+
+.expression-preview-container td {
+  padding: 2px 5px;
+  border-top: 1px solid #ccc;
+}
+
+td.expression-preview-heading {
+  border-top: none;
+  background: #ddd;
+  font-weight: bold;
+}
+
+td.expression-preview-value {
+  max-width: 250px !important;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+}
+
+.expression-preview-special-value {
+  color: #aaa;
+}
+
+.expression-preview-help-container h3 {
+  margin-top: var(--padding-looser);
+  margin-bottom: var(--padding-normal);
+  border-bottom: 1px solid var(--light-grey);
+}
+
+.expression-preview-doc-item-title {
+  font-weight: bold;
+  text-align: right;
+}
+
+.expression-preview-doc-item-params {}
+
+.expression-preview-doc-item-returns {}
+
+.expression-preview-doc-item-desc {
+  max-width: 250px;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+  color: #666;
+}

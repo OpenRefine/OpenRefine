@@ -37,7 +37,7 @@ DialogSystem = {
 
 var escapeKey = function(event) {
   var level = DialogSystem._layers.length;
-  if (event.keyCode == 27) {
+  if (event.key == "Escape") {
       DialogSystem.dismissUntil(level - 1);
   }
 }
@@ -75,6 +75,15 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   var level = DialogSystem._layers.length;
 
   DialogSystem.setupEscapeKeyHandling();
+
+  elmt.attr("aria-role", "dialog");
+  var dialogHeader = elmt.find(".dialog-header");
+  if (dialogHeader.length && dialogHeader[0].id) {
+    elmt.attr("aria-labeledby", dialogHeader[0].id);
+  }
+
+  elmt.attr("tabindex", -1);
+  elmt.focus();
 
   return level;
 };

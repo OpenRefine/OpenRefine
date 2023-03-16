@@ -44,6 +44,14 @@ public class SnakOnlyStatementMergerTests {
             TestingData.newPropertyIdA,
             value2);
 
+    Statement statement4 = Datamodel.makeStatement(
+            Datamodel.makeClaim(TestingData.matchedId, Datamodel.makeNoValueSnak(pid), Collections.emptyList()),
+            Collections.emptyList(), StatementRank.NORMAL, "");
+
+    Statement statement5 = Datamodel.makeStatement(
+            Datamodel.makeClaim(TestingData.matchedId, Datamodel.makeSomeValueSnak(pid), Collections.emptyList()),
+            Collections.emptyList(), StatementRank.NORMAL, "");
+
     SnakGroup qualifier = Datamodel.makeSnakGroup(Collections.singletonList(Datamodel.makeValueSnak(qualifierPid, value2)));
     Claim claim1 = Datamodel.makeClaim(TestingData.matchedId, Datamodel.makeValueSnak(pid, value1), Collections.singletonList(qualifier));
     Statement statement1WithQualifier = Datamodel.makeStatement(claim1, Collections.emptyList(), StatementRank.NORMAL, "");
@@ -56,6 +64,10 @@ public class SnakOnlyStatementMergerTests {
         assertFalse(SUT.match(statement1, statement2));
         assertFalse(SUT.match(statement2, statement3));
         assertTrue(SUT.match(statement1, statement1WithQualifier));
+        assertFalse(SUT.match(statement1, statement4));
+        assertFalse(SUT.match(statement1, statement5));
+        assertFalse(SUT.match(statement4, statement5));
+        assertTrue(SUT.match(statement5, statement5));
     }
 
     @Test

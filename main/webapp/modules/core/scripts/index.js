@@ -51,6 +51,7 @@ Refine.selectActionArea = function(id) {
     if (id == actionArea.id) {
       actionArea.tabElmt.addClass('selected');
       actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '55');
+      window.location.hash = id;
     }
   }
 };
@@ -163,7 +164,9 @@ $(function() {
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
 
     for (var i = 0; i < Refine.actionAreas.length; i++) {
-      Refine.actionAreas[i].ui.resize();
+      if (Refine.actionAreas[i].ui.resize) {
+        Refine.actionAreas[i].ui.resize();
+      }
     }
   };
   $(window).on("resize", resize);
@@ -188,7 +191,20 @@ $(function() {
   for (var i = 0; i < Refine.actionAreas.length; i++) {
     renderActionArea(Refine.actionAreas[i]);
   }
-  Refine.selectActionArea('create-project');
+
+  // check for url hash and select the appropriate action area
+  var hash = window.location.hash;
+  if (hash.length > 0) {
+    hash = hash.substring(1);
+    for (var i = 0; i < Refine.actionAreas.length; i++) {
+      if (Refine.actionAreas[i].id === hash) {
+        Refine.selectActionArea(hash);
+        break;
+      }
+    }
+  } else {
+    Refine.selectActionArea('create-project');
+  }
 
   $("#slogan").text($.i18n('core-index/slogan')+".");
   $("#or-index-pref").text($.i18n('core-index/preferences'));

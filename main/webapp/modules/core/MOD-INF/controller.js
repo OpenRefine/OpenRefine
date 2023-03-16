@@ -422,27 +422,29 @@ function init() {
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "3rdparty/select2/select2.css",
       "3rdparty/tablesorter/theme.blue.css",
-      "styles/jquery-ui-overrides.less",
-      "styles/common.less",
+
+      "styles/theme.css",
+      "styles/jquery-ui-overrides.css",
+      "styles/common.css",
       "styles/pure.css",
-      "styles/util/dialog.less",
-      "styles/util/encoding.less",
+      "styles/util/dialog.css",
+      "styles/util/encoding.css",
       
-      "styles/index.less",
-      "styles/index/create-project-ui.less",
-      "styles/index/open-project-ui.less",
-      "styles/index/import-project-ui.less",
+      "styles/index.css",
+      "styles/index/create-project-ui.css",
+      "styles/index/open-project-ui.css",
+      "styles/index/import-project-ui.css",
 
-      "styles/index/default-importing-controller.less",
-      "styles/index/default-importing-file-selection-panel.less",
-      "styles/index/default-importing-parsing-panel.less",
+      "styles/index/default-importing-controller.css",
+      "styles/index/default-importing-file-selection-panel.css",
+      "styles/index/default-importing-parsing-panel.css",
 
-      "styles/index/default-importing-sources.less",
-      "styles/views/data-table-view.less", // for the preview table's styles
-      "styles/index/fixed-width-parser-ui.less",
-      "styles/index/xml-parser-ui.less",
-      "styles/index/json-parser-ui.less",
-      "styles/index/wikitext-parser-ui.less",
+      "styles/index/default-importing-sources.css",
+      "styles/views/data-table-view.css", // for the preview table's styles
+      "styles/index/fixed-width-parser-ui.css",
+      "styles/index/xml-parser-ui.css",
+      "styles/index/json-parser-ui.css",
+      "styles/index/wikitext-parser-ui.css",
     ]
   );
 
@@ -485,6 +487,12 @@ function init() {
       "scripts/facets/scatterplot-facet.js",
       "scripts/facets/text-search-facet.js",
 
+      "scripts/views/data-table/cell-renderers/null-renderer.js",
+      "scripts/views/data-table/cell-renderers/error-renderer.js",
+      "scripts/views/data-table/cell-renderers/simple-value-renderer.js",
+      "scripts/views/data-table/cell-renderers/recon-renderer.js",
+      "scripts/views/data-table/cell-renderers/registry.js",
+
       "scripts/views/data-table/data-table-view.js",
       "scripts/views/data-table/cell-ui.js",
       "scripts/views/data-table/column-header-ui.js",
@@ -519,37 +527,38 @@ function init() {
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
-      "styles/jquery-ui-overrides.less",
-      "styles/common.less",
+      "styles/theme.css",
+      "styles/jquery-ui-overrides.css",
+      "styles/common.css",
       "styles/pure.css",
 
-      "styles/util/menu.less",
-      "styles/util/dialog.less",
-      "styles/util/custom-suggest.less",
-      "styles/util/encoding.less",
+      "styles/util/menu.css",
+      "styles/util/dialog.css",
+      "styles/util/custom-suggest.css",
+      "styles/util/encoding.css",
 
-      "styles/project.less",
-      "styles/project/sidebar.less",
-      "styles/project/facets.less",
-      "styles/project/process.less",
+      "styles/project.css",
+      "styles/project/sidebar.css",
+      "styles/project/facets.css",
+      "styles/project/process.css",
 
-      "styles/widgets/histogram-widget.less",
-      "styles/widgets/slider-widget.less",
+      "styles/widgets/histogram-widget.css",
+      "styles/widgets/slider-widget.css",
 
-      "styles/views/data-table-view.less",
-      "styles/views/column-join.less",
+      "styles/views/data-table-view.css",
+      "styles/views/column-join.css",
 
-      "styles/dialogs/expression-preview-dialog.less",
-      "styles/dialogs/clustering-dialog.less",
-      "styles/dialogs/scatterplot-dialog.less",
-      "styles/dialogs/column-reordering-dialog.less",
-      "styles/dialogs/custom-tabular-exporter-dialog.less",
-      "styles/dialogs/sql-exporter-dialog.less",
-      "styles/dialogs/recon-service-selection-dialog.less",
-      "styles/dialogs/confirm-history-erasure-dialog.less",
-      "styles/reconciliation/recon-dialog.less",
-      "styles/reconciliation/standard-service-panel.less",
-      "styles/reconciliation/add-column-by-reconciliation.less",
+      "styles/dialogs/expression-preview-dialog.css",
+      "styles/dialogs/clustering-dialog.css",
+      "styles/dialogs/scatterplot-dialog.css",
+      "styles/dialogs/column-reordering-dialog.css",
+      "styles/dialogs/custom-tabular-exporter-dialog.css",
+      "styles/dialogs/sql-exporter-dialog.css",
+      "styles/dialogs/recon-service-selection-dialog.css",
+      "styles/dialogs/confirm-history-erasure-dialog.css",
+      "styles/reconciliation/recon-dialog.css",
+      "styles/reconciliation/standard-service-panel.css",
+      "styles/reconciliation/add-column-by-reconciliation.css",
     ]
   );
 
@@ -568,10 +577,12 @@ function init() {
     [
       "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
-      "styles/jquery-ui-overrides.less",
-      "styles/common.less",
+
+      "styles/theme.css",
+      "styles/jquery-ui-overrides.css",
+      "styles/common.css",
       "styles/pure.css",
-      "styles/util/dialog.less"
+      "styles/util/dialog.css"
     ]
   );
 }

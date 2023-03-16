@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <wdtk.version>0.14.1</wdtk.version>
+    <wdtk.version>0.14.4</wdtk.version>
   </properties>
   <build>
     <finalName>openrefine-wikidata</finalName>

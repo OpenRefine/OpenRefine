@@ -725,7 +725,7 @@
     "core-views/choose-reconciliation-service": "Elija un servicio de cotejo",
     "core-recon/add-std-srv": "Añadir un servicio estándar",
     "core-dialogs/lb-formats-quotation": "Siempre citar el texto",
-    "core-dialogs/record-fields": "Una o más filas agrupadas para formar un registro; el objeto tiene más campos. Más detalles en '<a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>'",
+    "core-dialogs/record-fields": "Una o más filas agrupadas para formar un registro; el objeto tiene más campos. Más detalles en '<a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>'",
     "core-dialogs/no-clustering-functions-and-distances": "No se pudieron cargar las funciones de agrupamiento y las distancias.",
     "core-views/replace-dont-escape": "utilice \\n para saltos de renglón, \\t para tabuladores, \\\\n para \\n, \\\\t para \\t.",
     "core-views/replacement-info": "Si se marca la opción «Expresión regular» y el modelo de búsqueda contiene grupos delimitados por paréntesis, $0 devolverá la cadena completa encontrada por el modelo, y $1, $2…, los grupos primero y segundo, respectivamente.",
@@ -801,5 +801,8 @@
     "core-about/thanks": "Agradecimientos especiales",
     "core-about/history": "<a href='$1'>$2</a> desarrolló originalmente OpenRefine bajo el nombre «Freebase Gridworks». Metaweb fue adquirida por <a href='$3'>$4</a> en julio de 2010 y el nombre del producto cambió a Google Refine. En octubre de 2012, el producto comenzó a conocerse como OpenRefine cuando pasó a ser un proyecto respaldado por la comunidad.",
     "core-about/contributors": "Colaboradores (en orden cronológico)",
-    "core-views/edit-all-columns": "Editar todas las columnas"
+    "core-views/edit-all-columns": "Editar todas las columnas",
+    "core-index-import/invalid-url": "URL inválido",
+    "core-index-import/blank-url": "URL en blanco",
+    "core-index-import/remove-row": "Remover esta fila"
 }

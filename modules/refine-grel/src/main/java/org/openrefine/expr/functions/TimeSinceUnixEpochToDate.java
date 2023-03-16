@@ -33,11 +33,11 @@ public class TimeSinceUnixEpochToDate implements Function {
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
                 } else if (unit.equals("millisecond")) {
-                    instant = Instant.ofEpochSecond(epoch / 1000);
+                    instant = Instant.ofEpochMilli(epoch);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
                 } else if (unit.equals("microsecond")) {
-                    instant = Instant.ofEpochSecond(epoch / 1000000);
+                    instant = Instant.ofEpochSecond(epoch / 1000000, epoch % 1000000 * 1000);
                     date = OffsetDateTime.ofInstant(instant, zoneId);
                     return date;
                 }

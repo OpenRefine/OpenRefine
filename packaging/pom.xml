@@ -307,14 +307,64 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
                 </exec>
 
+                <!-- remove any existing DMG (hdiutil fails otherwise) -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg value="-f"/>
+                    <arg value="${mac.dmg.path}"/>
+		</exec>
+
+                <!-- Remove quarantine bit set recursively on JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
+                    <arg line="-rd"/>
+                    <arg line="com.apple.quarantine"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
+                </exec>
+
+                <!-- Codesign JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                    <arg value="--entitlements" />
+                    <arg value="../Entitlements.plist" />
+                    <arg value="--sign"/>
+                    <arg value="${mac.signing.identity}"/>
+                    <arg value="--deep"/>
+                    <arg value="--force"/>
+                    <arg value="--timestamp"/>
+                    <arg value="--options"/>
+                    <arg value="runtime"/>
+                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
+                </exec>
+
+                <!-- Codesign jars with native code in them -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
+                    <arg value="${basedir}/apple_certs/codesign.sh" />
+                    <arg value="OpenRefine.app" />
+                    <arg value="${mac.signing.identity}" />
+                    <arg value="../../Entitlements.plist" />
+                </exec>
+
+                <!-- Codesign app -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                    <arg value="--entitlements" />
+                    <arg value="../Entitlements.plist" />
+                    <arg value="--sign"/>
+                    <arg value="${mac.signing.identity}"/>
+                    <arg value="--deep"/>
+                    <arg value="--force"/>
+                    <arg value="--timestamp"/>
+                    <arg value="--options"/>
+                    <arg value="runtime"/>
+                    <arg value="${mac.build.directory}/OpenRefine.app"/>
+                </exec>
+
                 <!-- Create DMG (Mac OS X) -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
-                    <arg value="create"/>
-                    <arg value="-noanyowners"/>
-                    <arg value="-imagekey"/>
-                    <arg value="zlib-level=9"/>
-                    <arg value="-srcfolder"/>
-                    <arg value="${mac.build.directory}"/>
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3">
+                    <arg value="-m"/>
+                    <arg value="dmgbuild"/>
+                    <arg value="-s"/>
+                    <arg value="../dmg_settings.py"/>
+                    <arg value="-D"/>
+                    <arg value="app=${mac.build.directory}/OpenRefine.app"/>
+                    <arg value="OpenRefine"/>
                     <arg value="${mac.dmg.path}"/>
                 </exec>
 
@@ -337,6 +387,28 @@
                     <arg value="${mac.build.directory}"/>
                 </exec>
 
+                <!-- Send DMG file to Apple's notarization service -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="submit"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                    <arg value="--wait"/>
+                    <arg value="--timeout"/>
+                    <arg value="${apple.notarization.timeout}"/>
+                </exec>
+
+                <!-- Staple the notarization ticket to the DMG bundle -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="stapler"/>
+                    <arg value="staple"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
               </target>
             </configuration>
           </execution>
@@ -346,26 +418,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.3</version>
-
-            <!-- This is a clean snapshot of launch4j's master branch,
-                which includes fixes to Java discovery that we need
-                to support recent versions of Java.
-                When the maven plugin is updated to use launch4j-3.13,
-                this can be removed. -->
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.launch4j</groupId>
-            <artifactId>launch4j</artifactId>
-            <classifier>core</classifier>
-            <version>3.14</version>
-          </dependency>
-          <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-          <version>1.4.19</version>
-        </dependency>
-        </dependencies>
+        <version>2.3.2</version>
         <executions>
           <execution>
             <id>l4j-clui-without-jre</id>
@@ -378,7 +431,7 @@
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
-              <downloadUrl>https://docs.openrefine.org/manual/installing#java</downloadUrl>
+              <downloadUrl>https://openrefine.org/docs/manual/installing#java</downloadUrl>
               <classPath>
                 <mainClass>com.google.refine.Refine</mainClass>
                 <jarLocation>server/target/lib/</jarLocation>
@@ -388,7 +441,6 @@
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
                 <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>false</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -453,12 +505,93 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>2.22.2</version>
         <configuration>
           <skip>true</skip>
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <inherited>false</inherited>
+        <executions>
+          <!-- Attach tar.gz artifact for linux -->
+          <execution>
+              <id>attach-linux</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <artifacts>
+                      <artifact>
+                          <file>${project.build.directory}/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+                          <type>tar.gz</type>
+                          <classifier>linux</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+
+          <!-- Attach the zip file for windows, without embedded JRE -->
+          <execution>
+              <id>attach-win-without-jre</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <skipAttach>${skipCreateExe}</skipAttach>
+                  <artifacts>
+                      <artifact>
+                          <file>${project.build.directory}/${project.build.finalName}-win-${project.version}.zip</file>
+                          <type>zip</type>
+                          <classifier>win</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+
+          <!-- Attach the zip file for windows, with embedded JRE -->
+          <execution>
+              <id>attach-win-with-jre</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <skipAttach>${skipCreateExe}</skipAttach>
+                  <artifacts>
+                      <artifact>
+                          <file>${project.build.directory}/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+                          <type>zip</type>
+                          <classifier>win-with-java</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+
+          <!-- Attach the final DMG for MacOS -->
+          <execution>
+              <id>attach-dmg</id>
+              <phase>deploy</phase>
+              <goals>
+                  <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                  <artifacts>
+                      <artifact>
+                          <file>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</file>
+                          <type>dmg</type>
+                          <classifier>mac</classifier>
+                      </artifact>
+                  </artifacts>
+              </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
     	<plugins>
@@ -494,7 +627,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.5.0</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -511,6 +644,74 @@
           </executions>
         </plugin>
         <plugin>
+          <groupId>sh.tak.appbundler</groupId>
+          <artifactId>appbundle-maven-plugin</artifactId>
+          <version>1.2.0</version>
+          <dependencies>
+            <dependency>
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+                   https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-archiver</artifactId>
+              <version>4.6.2</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.velocity</groupId>
+              <artifactId>velocity-tools</artifactId>
+              <version>2.0</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <mainClass>com.google.refine.Refine</mainClass>
+            <bundleName>OpenRefine</bundleName>
+            <buildDirectory>${project.build.directory}/${mac.build.directory}</buildDirectory>
+            <iconFile>${mac.icon.path}</iconFile>
+            <generateDiskImageFile>false</generateDiskImageFile>
+            <jvmVersion>1.8</jvmVersion>
+            <jrePath>${mac.jre.path}</jrePath>
+            <jvmOptions>
+              <param>-Xms512M</param>
+              <param>-Xmx2048M</param>
+              <param>-Drefine.version=${project.version}</param>
+              <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
+            </jvmOptions>
+            <additionalResources>
+              <fileSet>
+                <directory>target</directory>
+                <includes>
+                  <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
+                </includes>
+              </fileSet>
+            </additionalResources>
+            <additionalBundledClasspathResources>
+              <fileSet>
+                <directory>${rootdir}/server/target/lib/</directory>
+                <includes>
+                  <include>*.jar</include>
+                </includes>
+              </fileSet>
+              <fileSet>
+                <directory>${rootdir}/server/target</directory>
+                <includes>
+                  <include>openrefine-${project.version}-server.jar</include>
+                </includes>
+                <excludes>
+                  <exclude>**/lib/**</exclude>
+                  <exclude>**/org/**</exclude>
+                </excludes>
+              </fileSet>
+            </additionalBundledClasspathResources>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+         <plugin>
 	   <groupId>org.apache.maven.plugins</groupId>
 	   <artifactId>maven-deploy-plugin</artifactId>
 	   <version>${maven-deploy-plugin.version}</version>

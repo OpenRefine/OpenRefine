@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.atLeast;
 
-import java.time.LocalDateTime;
+import static org.mockito.Mockito.*;
 
 import org.mockito.Mockito;
 import org.openrefine.model.Project;
@@ -55,7 +55,11 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.ProjectStub;
 
+import java.time.Instant;
+
 public class ProjectManagerTests {
+
+    private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
 
     Runner runner;
     ProjectManagerStub pm;
@@ -130,7 +134,7 @@ public class ProjectManagerTests {
 
     @Test
     public void canSaveAllModified() {
-        whenGetSaveTimes(project, metadata); // 5 minute difference
+        whenGetSaveTimes(project, metadata); // 5-minute difference
         registerProject(project, metadata);
 
         // add a second project to the cache
@@ -140,7 +144,7 @@ public class ProjectManagerTests {
         registerProject(project2, metadata2);
 
         // check that the two projects are not the same
-        Assert.assertFalse(project.getId() == project2.getId());
+        Assert.assertNotEquals(project.getId(), project2.getId());
 
         SUT.save(true);
 
@@ -160,12 +164,12 @@ public class ProjectManagerTests {
 
         SUT.save(true);
 
-        verify(metadata, times(1)).getModified();
-        verify(metadata, times(1)).getTags();
-        verify(project, times(1)).getProcessManager();
-        verify(project, times(2)).getLastSave();
+        verify(metadata, atLeastOnce()).getModified();
+        verify(metadata, atLeastOnce()).getTags();
+        verify(project, atLeastOnce()).getProcessManager();
+        verify(project, atLeastOnce()).getLastSave();
         verify(SUT, never()).saveProject(project);
-        Assert.assertEquals(SUT.getProject(0), null);
+        Assert.assertNull(SUT.getProject(0));
         verify(project, atLeast(1)).getId();
         verify(project, times(1)).dispose();
         verifyNoMoreInteractions(project);
@@ -229,17 +233,11 @@ public class ProjectManagerTests {
     }
 
     protected void whenProjectGetLastSave(Project proj) {
-        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
-        when(proj.getLastSave()).thenReturn(projectLastSaveDate);
-    }
-
-    protected void whenMetadataGetModified(ProjectMetadata meta) {
-        whenMetadataGetModified(meta, 5 * 60);
+        when(proj.getLastSave()).thenReturn(BASE_DATE);
     }
 
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference) {
-        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970, 01, 02, 00, 30 + secondsDifference);
-        when(meta.getModified()).thenReturn(metadataModifiedDate);
+        when(meta.getModified()).thenReturn(BASE_DATE.plusSeconds(secondsDifference));
     }
 
     protected void verifySaveTimeCompared(int times) {

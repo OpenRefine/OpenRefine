@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ package org.openrefine;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +64,11 @@ public class ProjectMetadata {
     public final static String OLD_FILE_NAME = "metadata.old.json";
 
     @JsonProperty("created")
-    private final LocalDateTime _created;
+    private final Instant _created;
     @JsonProperty("modified")
-    private LocalDateTime _modified;
+    private Instant _modified;
     @JsonIgnore
-    private LocalDateTime written = null;
+    private Instant written = null;
     @JsonProperty("name")
     private String _name = "";
     @JsonProperty("password")
@@ -123,17 +123,17 @@ public class ProjectMetadata {
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
-    protected ProjectMetadata(LocalDateTime date) {
+    protected ProjectMetadata(Instant date) {
         _created = date;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
-        this(LocalDateTime.now());
+        this(Instant.now());
         _modified = _created;
     }
 
-    public ProjectMetadata(LocalDateTime created, LocalDateTime modified, String name) {
+    public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
         _modified = modified;
         _name = name;
@@ -150,7 +150,7 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public LocalDateTime getCreated() {
+    public Instant getCreated() {
         return _created;
     }
 
@@ -233,13 +233,13 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public LocalDateTime getModified() {
+    public Instant getModified() {
         return _modified;
     }
 
     @JsonIgnore
     public void updateModified() {
-        _modified = LocalDateTime.now();
+        _modified = Instant.now();
     }
 
     @JsonIgnore

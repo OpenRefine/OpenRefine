@@ -48,7 +48,7 @@ Refine.OpenProjectUI = function(elmt) {
       $("#project-name-input").trigger('focus').select();
     }
   }).on('keypress',function(evt) {
-    if (evt.keyCode == 13) {
+    if (evt.key == "Enter") {
       return self._onClickUploadFileButton(evt);
     }
   });
@@ -182,8 +182,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
   if (!projects.length) {
     $("#no-project-message").clone().show().appendTo(container);
   } else {
-    Refine.selectActionArea('open-project');
-    
     var projectsUl = $("<ul/>").attr('id', 'projectsUl').appendTo(container);
 
     var table = $(
@@ -265,6 +263,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     tags.map(function(tag){
         $("<span/>")
         .addClass("project-tag")
+        .attr("data-tag-name", tag)
         .text(tag)
         .appendTo(tagsCell);
         $(tr).addClass(tag);
@@ -362,6 +361,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
             data.map(function(tag){
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
+                .attr("data-tag-name", tag)
                 .text(tag)
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
@@ -371,6 +371,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
             data.split(",").map(function(tag){
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
+                .attr("data-tag-name", tag)
                 .text(tag)
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);

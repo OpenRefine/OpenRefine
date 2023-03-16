@@ -20,6 +20,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.TokenErrorException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.util.ParsingUtilities;
 
@@ -263,6 +264,21 @@ public class MediaFileUtils {
 
         @JsonIgnore
         private MediaInfoIdValue mid = null;
+
+        /**
+         * Checks that the upload was successful, and if not raise an exception
+         * 
+         * @throws MediaWikiApiErrorException
+         */
+        public void checkForErrors() throws MediaWikiApiErrorException {
+            if (!"Success".equals(result)) {
+                throw new MediaWikiApiErrorException(result,
+                        "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
+            }
+            if (filename == null) {
+                throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
+            }
+        }
 
         /**
          * Retrieves the Mid, either from the upload response or by issuing another call to obtain it from the filename

@@ -496,7 +496,8 @@ public class StandardReconConfig extends ReconConfig {
                         }
                     } else {
                         // TODO: better error reporting
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery());
+                        logger.warn(
+                                "Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n Response: " + o.toString());
                     }
 
                     if (recon != null) {

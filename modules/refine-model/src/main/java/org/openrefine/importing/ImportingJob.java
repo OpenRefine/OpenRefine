@@ -160,8 +160,8 @@ public class ImportingJob {
             JSONUtilities.safePut(progress, "message", message);
             JSONUtilities.safePut(progress, "percent", percent);
             Runtime runtime = Runtime.getRuntime();
-            JSONUtilities.safePut(progress, "memory", (runtime.totalMemory() - runtime.freeMemory()) / 1000000);
-            JSONUtilities.safePut(progress, "maxmemory", runtime.maxMemory() / 1000000);
+            JSONUtilities.safePut(progress, "memory", (runtime.totalMemory() - runtime.freeMemory()) / 1048576);
+            JSONUtilities.safePut(progress, "maxmemory", runtime.maxMemory() / 1048576);
         }
     }
 

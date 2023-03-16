@@ -60,19 +60,12 @@ jobs:
         ref: ${{ github.event.pull_request.head.ref }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-    - name: Restore dependency cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-            ${{ runner.os }}-maven-
-
     - name: Set up Java ${{ matrix.java }}
       uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
+        cache: 'maven'
 
     - name: Check Java linting
       id: java_linting
@@ -104,19 +97,12 @@ jobs:
         ref: ${{ github.event.pull_request.head.ref }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-    - name: Restore dependency cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-            ${{ runner.os }}-maven-
-
     - name: Set up Java 17
       uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: 17
+        cache: 'maven'
 
     - name: Check Java linting
       id: java_linting
@@ -144,11 +130,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v3.5.0
+        uses: actions/setup-node@v3.6.0
         with:
-          node-version: '12'
+          node-version: '14'
       - id: set-matrix
-        run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
+        run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
   ui_test:
@@ -167,27 +153,20 @@ jobs:
           echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
           echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
-      - name: Restore dependency cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 11
+          cache: 'maven'
 
       - name: Build OpenRefine
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v3.5.0
+        uses: actions/setup-node@v3.6.0
         with:
-          node-version: '12'
+          node-version: '14'
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v3

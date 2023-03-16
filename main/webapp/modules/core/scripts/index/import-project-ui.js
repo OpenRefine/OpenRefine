@@ -60,7 +60,3 @@ Refine.actionAreas.push({
   label: $.i18n('core-index-import/import-proj'),
   uiClass: Refine.ImportProjectUI
 });
-
-Refine.ImportProjectUI.prototype.resize = function() {
-
-};
