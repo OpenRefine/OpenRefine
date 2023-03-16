@@ -34,8 +34,9 @@
 }*/
 
 #savedConnectionSpan, .panel-heading {
-  font-size: 1.3em;
   font-weight: bold;
+  padding: 1em;
+  line-height: 2em;
 }
 
 .cleared {
