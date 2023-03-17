@@ -27,8 +27,6 @@
 
 package org.openrefine.process;
 
-import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
@@ -42,8 +40,8 @@ public class ProcessManagerTests {
     @BeforeMethod
     public void setUp() {
         processManager = new ProcessManager();
-        process1 = new LongRunningProcessTests.LongRunningProcessStub("some description");
-        process2 = new LongRunningProcessTests.LongRunningProcessStub("some other description");
+        process1 = new ProcessTests.ProcessStub("some description");
+        process2 = new ProcessTests.ProcessStub("some other description");
     }
 
     @Test
