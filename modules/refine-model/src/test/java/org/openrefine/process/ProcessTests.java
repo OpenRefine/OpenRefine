@@ -33,11 +33,11 @@ import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class LongRunningProcessTests {
+public class ProcessTests {
 
-    public static class LongRunningProcessStub extends LongRunningProcess {
+    public static class ProcessStub extends Process {
 
-        protected LongRunningProcessStub(String description) {
+        protected ProcessStub(String description) {
             super(description);
         }
 
@@ -54,13 +54,15 @@ public class LongRunningProcessTests {
 
     @Test
     public void serializeLongRunningProcess() {
-        LongRunningProcess process = new LongRunningProcessStub("some description");
+        Process process = new ProcessStub("some description");
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
                 + "\"id\":" + hashCode + ","
                 + "\"description\":\"some description\","
                 + "\"changeDataId\":{\"historyEntryId\":1234,\"subDirectory\":\"recon\"},"
                 + "\"status\":\"pending\","
+                + "\"done\": false,"
+                + "\"running\": false,"
                 + "\"progress\":0}", ParsingUtilities.defaultWriter);
     }
 }

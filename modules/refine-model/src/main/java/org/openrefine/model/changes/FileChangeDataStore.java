@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 import org.openrefine.model.Runner;
-import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
@@ -131,7 +130,7 @@ public class FileChangeDataStore implements ChangeDataStore {
         }
     }
 
-    protected static class ChangeDataStoringProcess<T> extends LongRunningProcess implements Runnable {
+    protected static class ChangeDataStoringProcess<T> extends Process implements Runnable {
 
         final Optional<ChangeData<T>> storedChangeData;
         final ChangeDataId changeDataId;

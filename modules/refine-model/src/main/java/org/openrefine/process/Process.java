@@ -36,23 +36,56 @@ package org.openrefine.process;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.changes.ChangeDataId;
 
 public abstract class Process {
 
+    @JsonProperty("description")
+    final protected String _description;
     @JsonIgnore
-    abstract public boolean isRunning();
-
+    protected ProcessManager _manager;
     @JsonIgnore
-    abstract public boolean isDone();
-
+    protected Thread _thread;
+    @JsonProperty("progress")
+    protected int _progress; // out of 100
     @JsonIgnore
-    abstract public HistoryEntry performImmediate() throws Exception;
+    protected boolean _canceled;
+    @JsonIgnore
+    protected ProgressReporter _reporter;
 
-    abstract public void startPerforming(ProcessManager manager);
+    public Process(String description) {
+        _description = description;
+        _reporter = new Reporter();
+    }
 
-    abstract public void cancel();
+    @JsonProperty("status")
+    public String getStatus() {
+        return _thread == null ? "pending" : (_thread.isAlive() ? "running" : "done");
+    }
+
+    public boolean isRunning() {
+        return _thread != null && _thread.isAlive();
+    }
+
+    public boolean isDone() {
+        return _thread != null && !_thread.isAlive();
+    }
+
+    public void startPerforming(ProcessManager manager) {
+        if (_thread == null) {
+            _manager = manager;
+
+            _thread = new Thread(getRunnable());
+            _thread.start();
+        }
+    }
+
+    public void cancel() {
+        _canceled = true;
+        if (_thread != null && _thread.isAlive()) {
+            _thread.interrupt();
+        }
+    }
 
     @JsonProperty("id")
     public long getId() {
@@ -61,4 +94,15 @@ public abstract class Process {
 
     @JsonProperty("changeDataId")
     abstract public ChangeDataId getChangeDataId();
+
+    abstract protected Runnable getRunnable();
+
+    protected class Reporter implements ProgressReporter {
+
+        @Override
+        public void reportProgress(int percentage) {
+            _progress = percentage;
+        }
+
+    }
 }
