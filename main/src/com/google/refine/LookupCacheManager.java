@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,10 +50,8 @@ public class LookupCacheManager {
     /**
      * Computes the ProjectLookup based on combination key, returns the cached one from the HashMap if already computed.
      *
-     * @param targetProject
-     *            the project to look up
-     * @param targetColumn
-     *            the column of the target project to look up
+     * @param targetProject the project to look up
+     * @param targetColumn  the column of the target project to look up
      * @return a {@link ProjectLookup} instance of the lookup result
      */
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
@@ -72,7 +70,7 @@ public class LookupCacheManager {
 
     public void flushLookupsInvolvingProject(long projectID) {
         synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext();) {
+            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<String, ProjectLookup> entry = it.next();
                 ProjectLookup lookup = entry.getValue();
                 if (lookup.targetProjectID == projectID) {
@@ -84,7 +82,7 @@ public class LookupCacheManager {
 
     public void flushLookupsInvolvingProjectColumn(long projectID, String columnName) {
         synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext();) {
+            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<String, ProjectLookup> entry = it.next();
                 ProjectLookup lookup = entry.getValue();
                 if (lookup.targetProjectID == projectID && lookup.targetColumnName.equals(columnName)) {
@@ -143,9 +141,11 @@ public class LookupCacheManager {
             this.targetProjectID = targetProjectID;
             this.targetColumnName = targetColumnName;
         }
+
         public HasFieldsListImpl getRows(Object value) {
             HasFieldsListImpl rows = new HasFieldsListImpl();
-            if (!ExpressionUtils.isNonBlankData(value)) return rows;
+            if (!ExpressionUtils.isNonBlankData(value))
+                return rows;
             String valueStr = value.toString();
             if (valueToRowIndices.containsKey(valueStr)) {
                 Project targetProject = ProjectManager.singleton.getProject(targetProjectID);
@@ -158,7 +158,7 @@ public class LookupCacheManager {
                     return rows;
                 }
             }
-            return rows ;
+            return rows;
         }
     }
 }

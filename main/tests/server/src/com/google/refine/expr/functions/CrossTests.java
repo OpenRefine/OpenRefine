@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018,2023 OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,19 +27,6 @@
 
 package com.google.refine.expr.functions;
 
-import static org.testng.Assert.assertEquals;
-
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
@@ -48,6 +35,18 @@ import com.google.refine.expr.WrappedRow;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Properties;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test cases for cross function.
@@ -230,7 +229,7 @@ public class CrossTests extends RefineTest {
 
     /**
      * Check that record field accessor works for a list of WrappedRecords.
-     *
+     * <p>
      * (Technically not a cross() test, but this is pretty much the only place they're used)
      */
     @Test
@@ -388,7 +387,7 @@ public class CrossTests extends RefineTest {
 
     /**
      * If no match, return null.
-     * 
+     * <p>
      * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, from the
      * "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0". It will still
      * end up with blank if the onError set so.
@@ -399,7 +398,6 @@ public class CrossTests extends RefineTest {
     }
 
     /**
-     * 
      * rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in
      * that project"
      */
