@@ -57,6 +57,7 @@ public class CrossTests extends RefineTest {
     private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
     private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
             DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    private HasFieldsListImpl rows = new HasFieldsListImpl();
 
     @Override
     @BeforeTest
@@ -259,7 +260,7 @@ public class CrossTests extends RefineTest {
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
-        Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "Anne", "My Address Book", "friend"), rows);
     }
 
     @Test
@@ -319,7 +320,7 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
-        Assert.assertNull(invoke("cross", "1600.0", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "1600.0", "My Address Book", "friend"), rows);
     }
 
     @Test
@@ -394,7 +395,7 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
-        Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "NON-EXIST", "My Address Book", "friend"), rows);
     }
 
     /**

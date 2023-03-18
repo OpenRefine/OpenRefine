@@ -27,9 +27,13 @@
 
 package com.google.refine.expr.functions;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class LengthTests {
 }
