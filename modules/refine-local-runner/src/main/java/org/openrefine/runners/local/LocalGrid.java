@@ -81,13 +81,15 @@ public class LocalGrid implements Grid {
             LocalRunner runner,
             ColumnModel columnModel,
             PairPLL<Long, IndexedRow> grid,
-            Map<String, OverlayModel> overlayModels) {
+            Map<String, OverlayModel> overlayModels,
+            long cachedRecordCount) {
         this.runner = runner;
         this.grid = grid;
         this.columnModel = columnModel;
         this.overlayModels = overlayModels;
         this.records = null;
         this.constructedFromRows = true;
+        this.cachedRecordCount = cachedRecordCount;
         if (grid.getPartitioner().isEmpty()) {
             throw new IllegalArgumentException("No partitioner supplied for the rows PLL");
         }
@@ -168,7 +170,7 @@ public class LocalGrid implements Grid {
     @Override
     public Grid withColumnModel(ColumnModel newColumnModel) {
         if (constructedFromRows) {
-            return new LocalGrid(runner, newColumnModel, grid, overlayModels);
+            return new LocalGrid(runner, newColumnModel, grid, overlayModels, cachedRecordCount);
         } else {
             return new LocalGrid(records, runner, newColumnModel, overlayModels, grid.count());
         }
@@ -493,7 +495,7 @@ public class LocalGrid implements Grid {
     @Override
     public Grid withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
         if (constructedFromRows) {
-            return new LocalGrid(runner, columnModel, grid, newOverlayModels);
+            return new LocalGrid(runner, columnModel, grid, newOverlayModels, cachedRecordCount);
         } else {
             return new LocalGrid(records, runner, columnModel, newOverlayModels, grid.count());
         }
@@ -557,7 +559,7 @@ public class LocalGrid implements Grid {
                     .zipWithIndex()
                     .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
                             "update row index after temporary sort");
-            return new LocalGrid(runner, columnModel, newRows, overlayModels);
+            return new LocalGrid(runner, columnModel, newRows, overlayModels, -1);
         }
     }
 
@@ -582,7 +584,7 @@ public class LocalGrid implements Grid {
                     .zipWithIndex()
                     .mapValues((newIndex, indexedRow) -> new IndexedRow(newIndex, indexedRow.getLogicalIndex(), indexedRow.getRow()),
                             "update row index after temporary sort");
-            return new LocalGrid(runner, columnModel, newRows, overlayModels);
+            return new LocalGrid(runner, columnModel, newRows, overlayModels, -1);
         }
     }
 
@@ -746,7 +748,7 @@ public class LocalGrid implements Grid {
                         new IndexedRow(tuple.getKey() - rowsToDrop, tuple.getValue().getRow())),
                         "adjust row ids after dropping rows")
                 .withPartitioner(partitioner);
-        return new LocalGrid(runner, columnModel, shifted, overlayModels);
+        return new LocalGrid(runner, columnModel, shifted, overlayModels, -1);
     }
 
     protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(
