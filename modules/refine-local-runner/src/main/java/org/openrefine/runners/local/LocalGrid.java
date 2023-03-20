@@ -65,6 +65,9 @@ public class LocalGrid implements Grid {
 
     // initialized lazily
     protected PairPLL<Long, Record> records;
+    // also initialized lazily: can be used to cache the number of records if it is known already
+    // (for instance if this grid was obtained from another one by applying an operation which preserves records)
+    protected long cachedRecordCount = -1;
 
     /**
      * Constructs a grid, supplying all required fields.
@@ -92,17 +95,13 @@ public class LocalGrid implements Grid {
 
     /**
      * Convenience constructor to construct a grid from a PLL of a slightly different type.
-     *
-     * @param runner
-     * @param grid
-     * @param columnModel
-     * @param overlayModels
      */
     public LocalGrid(
             LocalRunner runner,
             PairPLL<Long, Row> grid,
             ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels) {
+            Map<String, OverlayModel> overlayModels,
+            long cachedRecordCount) {
         this.runner = runner;
         if (grid.getPartitioner().isEmpty()) {
             throw new IllegalArgumentException("No partitioner supplied for the rows PLL");
@@ -114,6 +113,7 @@ public class LocalGrid implements Grid {
         this.overlayModels = overlayModels;
         this.records = null;
         this.constructedFromRows = true;
+        this.cachedRecordCount = cachedRecordCount;
     }
 
     /**
@@ -383,7 +383,11 @@ public class LocalGrid implements Grid {
 
     @Override
     public long recordCount() {
-        return records().count();
+        if (cachedRecordCount >= 0) {
+            return cachedRecordCount;
+        } else {
+            return cachedRecordCount = records().count();
+        }
     }
 
     @Override
@@ -422,7 +426,7 @@ public class LocalGrid implements Grid {
         metadata.columnModel = columnModel;
         metadata.overlayModels = overlayModels;
         metadata.rowCount = grid.hasCachedPartitionSizes() ? grid.count() : -1;
-        metadata.recordCount = records != null && records.hasCachedPartitionSizes() ? records.count() : -1;
+        metadata.recordCount = records != null && records.hasCachedPartitionSizes() ? records.count() : cachedRecordCount;
         return metadata;
     }
 
@@ -498,7 +502,7 @@ public class LocalGrid implements Grid {
     @Override
     public Grid mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.mapValues((i, r) -> mapper.call(r.getLogicalIndex(), r.getRow()), "apply RowMapper");
-        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels, mapper.preservesRecordStructure() ? cachedRecordCount : -1);
     }
 
     @Override
@@ -506,7 +510,7 @@ public class LocalGrid implements Grid {
         PairPLL<Long, Row> newGrid = grid.values()
                 .flatMap(tuple -> mapper.call(tuple.getLogicalIndex(), tuple.getRow()).stream(), "apply FlatRowMapper")
                 .zipWithIndex();
-        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, newColumnModel, overlayModels, -1);
     }
 
     @Override
@@ -518,7 +522,7 @@ public class LocalGrid implements Grid {
                 (s, tuple) -> Tuple2.of(tuple.getKey(), mapper.map(s, tuple.getValue().getLogicalIndex(), tuple.getValue().getRow())));
         PairPLL<Long, Row> paired = new PairPLL<>(newGrid, grid.getPartitioner());
 
-        return new LocalGrid(runner, paired, newColumnModel, overlayModels);
+        return new LocalGrid(runner, paired, newColumnModel, overlayModels, mapper.preservesRecordStructure() ? cachedRecordCount : -1);
     }
 
     @Override
@@ -534,7 +538,7 @@ public class LocalGrid implements Grid {
                     .values()
                     .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper, not preserving records")
                     .zipWithIndex();
-            return new LocalGrid(runner, grid, newColumnModel, overlayModels);
+            return new LocalGrid(runner, grid, newColumnModel, overlayModels, -1);
         }
     }
 
@@ -546,7 +550,7 @@ public class LocalGrid implements Grid {
                     .sort(rowSorter)
                     .map(IndexedRow::getRow, "apply IndexRow::getRow")
                     .zipWithIndex();
-            return new LocalGrid(runner, newRows, columnModel, overlayModels);
+            return new LocalGrid(runner, newRows, columnModel, overlayModels, -1);
         } else {
             PairPLL<Long, IndexedRow> newRows = indexedRows()
                     .sort(rowSorter)
@@ -567,7 +571,9 @@ public class LocalGrid implements Grid {
             PairPLL<Long, Row> newRows = sorted
                     .flatMap(record -> record.getRows().stream(), "record to rows")
                     .zipWithIndex();
-            return new LocalGrid(runner, newRows, columnModel, overlayModels);
+            // reordering records can change the number of records, if the first record does not have a non-blank value
+            // in the first cell of the key column, so we are not preserving any cached count
+            return new LocalGrid(runner, newRows, columnModel, overlayModels, -1);
         } else {
             PLL<IndexedRow> pll = sorted
                     .flatMap(record -> IteratorUtils.toList(record.getIndexedRows().iterator()).stream(),
@@ -587,7 +593,7 @@ public class LocalGrid implements Grid {
                 .filter(tuple -> !filter.filterRow(tuple.getLogicalIndex(), tuple.getRow()))
                 .zipWithIndex()
                 .mapValues((index, indexedRow) -> indexedRow.getRow(), "drop old row indices before row removal");
-        return new LocalGrid(runner, newGrid, columnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, columnModel, overlayModels, -1);
     }
 
     @Override
@@ -597,7 +603,7 @@ public class LocalGrid implements Grid {
                 .filter(record -> !filter.filterRecord(record))
                 .flatMap(record -> record.getRows().stream(), "record to rows")
                 .zipWithIndex();
-        return new LocalGrid(runner, newGrid, columnModel, overlayModels);
+        return new LocalGrid(runner, newGrid, columnModel, overlayModels, -1);
     }
 
     @Override
@@ -794,7 +800,8 @@ public class LocalGrid implements Grid {
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()), "apply row change data joiner");
-        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
+        // TODO rowJoiner.preservesRecordStructure() ? cachedRecordCount : -1
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
     }
 
     @Override
@@ -808,7 +815,7 @@ public class LocalGrid implements Grid {
                 .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream(),
                         "apply row change data joiner")
                 .zipWithIndex();
-        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
     }
 
     @Override
@@ -823,7 +830,7 @@ public class LocalGrid implements Grid {
                 .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
                         "apply record change data joiner")
                 .zipWithIndex();
-        return new LocalGrid(runner, joined, newColumnModel, overlayModels);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
     }
 
     @Override
@@ -842,7 +849,7 @@ public class LocalGrid implements Grid {
                         .concatenate(otherLocal.grid.values().map(IndexedRow::getRow, "drop old row indices"))
                         .zipWithIndex(),
                 merged,
-                mergedOverlayModels);
+                mergedOverlayModels, -1);
     }
 
     @Override
