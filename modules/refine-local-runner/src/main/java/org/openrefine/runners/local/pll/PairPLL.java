@@ -521,18 +521,38 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * PLL (the instance on which this method is called).
      */
     public <W> PairPLL<K, Tuple2<V, W>> innerJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
-        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, true);
-        return new PairPLL<K, Tuple2<V, W>>(joined, joined.getPartitioner());
+        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, OrderedJoinPLL.JoinType.INNER);
+        return new PairPLL<>(joined, joined.getPartitioner());
     }
 
     /**
      * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
-     * PairPLL with the outer join of both PLLs. This resulting PLL is partitioned with the same partitioner as the left
+     * PairPLL with the left join of both PLLs. This resulting PLL is partitioned with the same partitioner as the left
      * PLL (the instance on which this method is called).
      */
-    public <W> PairPLL<K, Tuple2<V, W>> outerJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
-        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, false);
-        return new PairPLL<K, Tuple2<V, W>>(joined, joined.getPartitioner());
+    public <W> PairPLL<K, Tuple2<V, W>> leftJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
+        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, OrderedJoinPLL.JoinType.LEFT);
+        return new PairPLL<>(joined, joined.getPartitioner());
+    }
+
+    /**
+     * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
+     * PairPLL with the right join of both PLLs. This resulting PLL is partitioned with the same partitioner as the left
+     * PLL (the instance on which this method is called).
+     */
+    public <W> PairPLL<K, Tuple2<V, W>> rightJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
+        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, OrderedJoinPLL.JoinType.RIGHT);
+        return new PairPLL<>(joined, joined.getPartitioner());
+    }
+
+    /**
+     * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
+     * PairPLL with the full (outer) join of both PLLs. This resulting PLL is partitioned with the same partitioner as
+     * the left PLL (the instance on which this method is called).
+     */
+    public <W> PairPLL<K, Tuple2<V, W>> fullJoinOrdered(PairPLL<K, W> other, Comparator<K> comparator) {
+        OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, OrderedJoinPLL.JoinType.FULL);
+        return new PairPLL<>(joined, joined.getPartitioner());
     }
 
 }

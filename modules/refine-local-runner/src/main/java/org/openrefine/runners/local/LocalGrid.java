@@ -626,7 +626,7 @@ public class LocalGrid implements Grid {
         } else {
             PairPLL<Long, T> incompletePLL = ((LocalChangeData<T>) incompleteChangeData.get()).getPLL();
             data = filteredGrid
-                    .outerJoinOrdered(incompletePLL, Comparator.naturalOrder())
+                    .leftJoinOrdered(incompletePLL, Comparator.naturalOrder())
                     .batchPartitions(rowMapper.getBatchSize())
                     .flatMap(rowBatch -> applyRowChangeDataMapperWithIncompleteData(rowMapper, rowBatch),
                             "apply row change data producer to missing rows")
@@ -697,7 +697,7 @@ public class LocalGrid implements Grid {
         } else {
             PairPLL<Long, T> incompletePLL = ((LocalChangeData<T>) incompleteChangeData.get()).getPLL();
             data = filteredRecords
-                    .outerJoinOrdered(incompletePLL, Comparator.naturalOrder())
+                    .leftJoinOrdered(incompletePLL, Comparator.naturalOrder())
                     .batchPartitions(recordMapper.getBatchSize())
                     .flatMap(batch -> applyRecordChangeDataMapperWithIncompleteData(recordMapper, batch), "apply record change data mapper")
                     .mapToPair(tuple -> tuple, "bureaucratic map to pair")
@@ -798,7 +798,7 @@ public class LocalGrid implements Grid {
             throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
-                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
+                .leftJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()), "apply row change data joiner");
         return new LocalGrid(runner, joined, newColumnModel, overlayModels, rowJoiner.preservesRecordStructure() ? cachedRecordCount : -1);
     }
@@ -810,7 +810,7 @@ public class LocalGrid implements Grid {
             throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
-                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
+                .leftJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream(),
                         "apply row change data joiner")
                 .zipWithIndex();
@@ -824,7 +824,7 @@ public class LocalGrid implements Grid {
             throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Tuple2<Record, T>> joinedRecords = records()
-                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder());
+                .leftJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder());
 
         if (recordJoiner.preservesRecordStructure()) {
             PairPLL<Long, Record> records = joinedRecords

@@ -11,9 +11,8 @@ import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
 
 /**
- * A PLL which represents the join of two others, assuming both are sorted by keys. Both inner and outer joins are
- * supported.
- * 
+ * A PLL which represents the join of two others, assuming both are sorted by keys. The types of joins supported are
+ * listed in {@link JoinType}. <br>
  * The partitions of this PLL are taken from the first PLL supplied (left). It is assumed that each key appears at most
  * once in each collection.
  * 
@@ -25,11 +24,21 @@ import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
  */
 public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
 
+    /**
+     * Type of join to perform (using SQL's terminology)
+     */
+    public enum JoinType {
+        INNER, // only include pairs where the key is present in both collections
+        LEFT, // include pairs where the key is missing in the right collection too
+        RIGHT, // include pairs where the key is missing in the left collection
+        FULL // include pairs where the key is missing in the left or right collection
+    };
+
     private final PairPLL<K, V> first;
     private final PairPLL<K, W> second;
     private final Comparator<K> comparator;
     private final List<JoinPartition> partitions;
-    private final boolean innerJoin;
+    private final JoinType joinType;
     private List<Optional<K>> firstKeys;
     private List<Optional<K>> upperBounds;
 
@@ -42,19 +51,19 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
      *            assumed to be sorted by keys
      * @param comparator
      *            the comparator for the common order of keys
-     * @param innerJoin
+     * @param joinType
      *            whether the join should be inner or outer
      */
     public OrderedJoinPLL(
             PairPLL<K, V> first,
             PairPLL<K, W> second,
             Comparator<K> comparator,
-            boolean innerJoin) {
+            JoinType joinType) {
         super(first.getContext(), "Ordered join");
         this.first = first;
         this.second = second;
         this.comparator = comparator;
-        this.innerJoin = innerJoin;
+        this.joinType = joinType;
         this.partitions = first.getPartitions().stream()
                 .map(p -> new JoinPartition(p.getIndex(), p))
                 .collect(Collectors.toList());
@@ -89,6 +98,19 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     @Override
+    public List<Long> getPartitionSizes() {
+        if (JoinType.LEFT.equals(joinType)) {
+            // for left joins we know that we have exactly as many elements as the first PLL,
+            // because we have the same partitioning as the left PLL and the elements in those
+            // partitions are preserved
+            return first.getPartitionSizes();
+        } else {
+            // for other types of joins that could be different - resort to counting
+            return super.getPartitionSizes();
+        }
+    }
+
+    @Override
     protected Stream<Tuple2<K, Tuple2<V, W>>> compute(Partition partition) {
         Stream<Tuple2<K, V>> firstStream = first.iterate(partition.getParent());
         Stream<Tuple2<K, W>> secondStream;
@@ -108,7 +130,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             upperBound = upperBounds.get(numPartitions() - 2 - partition.getIndex());
         }
         secondStream = second.streamBetweenKeys(lowerBound, upperBound, comparator);
-        return mergeOrderedStreams(firstStream, secondStream, comparator, innerJoin);
+        return mergeOrderedStreams(firstStream, secondStream, comparator, joinType);
     }
 
     /**
@@ -123,20 +145,18 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
      *            the second stream to join
      * @param comparator
      *            the comparator with respect to which both are sorted
-     * @param innerJoin
-     *            whether the join should be inner or outer
+     * @param joinType
+     *            the type of join to compute
      * @return
      */
     protected static <K, V, W> Stream<Tuple2<K, Tuple2<V, W>>> mergeOrderedStreams(
             Stream<Tuple2<K, V>> firstStream,
             Stream<Tuple2<K, W>> secondStream,
             Comparator<K> comparator,
-            boolean innerJoin) {
+            JoinType joinType) {
         Iterator<Tuple2<K, V>> firstIterator = firstStream.iterator();
         Iterator<Tuple2<K, W>> secondIterator = secondStream.iterator();
-        Iterator<Tuple2<K, Tuple2<V, W>>> joinedIterator = innerJoin
-                ? innerJoin(firstIterator, secondIterator, comparator)
-                : outerJoin(firstIterator, secondIterator, comparator);
+        Iterator<Tuple2<K, Tuple2<V, W>>> joinedIterator = joinStreams(firstIterator, secondIterator, comparator, joinType);
         return Streams.stream(joinedIterator)
                 .onClose(() -> {
                     firstStream.close();
@@ -144,68 +164,14 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                 });
     }
 
-    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> innerJoin(
+    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> joinStreams(
             Iterator<Tuple2<K, V>> firstIterator,
             Iterator<Tuple2<K, W>> secondIterator,
-            Comparator<K> comparator) {
-        return new Iterator<Tuple2<K, Tuple2<V, W>>>() {
-
-            Tuple2<K, V> lastSeenLeft = null;
-            Tuple2<K, W> lastSeenRight = null;
-            Tuple2<K, Tuple2<V, W>> nextTuple = null;
-
-            @Override
-            public boolean hasNext() {
-                fetchNextTuple();
-                return nextTuple != null;
-            }
-
-            private void fetchNextTuple() {
-                while ((nextTuple == null) &&
-                        (lastSeenLeft != null || firstIterator.hasNext()) &&
-                        (lastSeenRight != null || secondIterator.hasNext())) {
-                    if (lastSeenLeft == null) {
-                        lastSeenLeft = firstIterator.next();
-                    } else if (lastSeenRight == null) {
-                        lastSeenRight = secondIterator.next();
-                    } else if (lastSeenLeft.getKey().equals(lastSeenRight.getKey())) {
-                        nextTuple = Tuple2.of(lastSeenLeft.getKey(),
-                                Tuple2.of(lastSeenLeft.getValue(), lastSeenRight.getValue()));
-                        lastSeenLeft = null;
-                        lastSeenRight = null;
-                    } else if (comparator.compare(lastSeenLeft.getKey(), lastSeenRight.getKey()) > 0) {
-                        if (secondIterator.hasNext()) {
-                            lastSeenRight = secondIterator.next();
-                        } else {
-                            lastSeenRight = null;
-                        }
-                    } else {
-                        if (firstIterator.hasNext()) {
-                            lastSeenLeft = firstIterator.next();
-                        } else {
-                            lastSeenLeft = null;
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public Tuple2<K, Tuple2<V, W>> next() {
-                fetchNextTuple();
-                Tuple2<K, Tuple2<V, W>> toReturn = nextTuple;
-                nextTuple = null;
-                return toReturn;
-            }
-
-        };
-    }
-
-    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> outerJoin(
-            Iterator<Tuple2<K, V>> firstIterator,
-            Iterator<Tuple2<K, W>> secondIterator,
-            Comparator<K> comparator) {
-        return new Iterator<Tuple2<K, Tuple2<V, W>>>() {
+            Comparator<K> comparator,
+            JoinType joinType) {
+        boolean includeEmptyLeft = JoinType.RIGHT.equals(joinType) || JoinType.FULL.equals(joinType);
+        boolean includeEmptyRight = JoinType.LEFT.equals(joinType) || JoinType.FULL.equals(joinType);
+        return new Iterator<>() {
 
             Tuple2<K, V> lastSeenLeft = null;
             Tuple2<K, W> lastSeenRight = null;
@@ -219,7 +185,9 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
 
             private void fetchNextTuple() {
                 while ((nextTuple == null)
-                        && (lastSeenLeft != null || firstIterator.hasNext() || lastSeenRight != null || secondIterator.hasNext())) {
+                        && ((lastSeenLeft != null || firstIterator.hasNext()) || (lastSeenRight != null || secondIterator.hasNext()))
+                        && (lastSeenLeft != null || firstIterator.hasNext() || includeEmptyLeft)
+                        && (lastSeenRight != null || secondIterator.hasNext() || includeEmptyRight)) {
                     if (lastSeenLeft == null && firstIterator.hasNext()) {
                         lastSeenLeft = firstIterator.next();
                     } else if (lastSeenRight == null && secondIterator.hasNext()) {
@@ -235,16 +203,20 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                             lastSeenRight != null &&
                             comparator.compare(lastSeenLeft.getKey(), lastSeenRight.getKey()) > 0) ||
                             (lastSeenLeft == null && !firstIterator.hasNext())) {
-                        nextTuple = Tuple2.of(lastSeenRight.getKey(),
-                                Tuple2.of(null, lastSeenRight.getValue()));
+                        if (includeEmptyLeft) {
+                            nextTuple = Tuple2.of(lastSeenRight.getKey(),
+                                    Tuple2.of(null, lastSeenRight.getValue()));
+                        }
                         if (secondIterator.hasNext()) {
                             lastSeenRight = secondIterator.next();
                         } else {
                             lastSeenRight = null;
                         }
                     } else {
-                        nextTuple = Tuple2.of(lastSeenLeft.getKey(),
-                                Tuple2.of(lastSeenLeft.getValue(), null));
+                        if (includeEmptyRight) {
+                            nextTuple = Tuple2.of(lastSeenLeft.getKey(),
+                                    Tuple2.of(lastSeenLeft.getValue(), null));
+                        }
                         if (firstIterator.hasNext()) {
                             lastSeenLeft = firstIterator.next();
                         } else {

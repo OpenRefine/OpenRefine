@@ -72,7 +72,7 @@ public class OrderedJoinPLLTests extends PLLTestsBase {
                 parallelize(2, second)
                         .mapToPair(t -> t));
 
-        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.outerJoinOrdered(secondPLL, Comparator.naturalOrder());
+        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.fullJoinOrdered(secondPLL, Comparator.naturalOrder());
 
         Assert.assertEquals(joined.collect(),
                 Arrays.asList(
@@ -92,7 +92,7 @@ public class OrderedJoinPLLTests extends PLLTestsBase {
         PairPLL<Long, String> secondPLL = parallelize(2, second)
                 .mapToPair(t -> t);
 
-        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.outerJoinOrdered(secondPLL, Comparator.naturalOrder());
+        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.fullJoinOrdered(secondPLL, Comparator.naturalOrder());
 
         Assert.assertEquals(joined.collect(),
                 Arrays.asList(
@@ -112,7 +112,7 @@ public class OrderedJoinPLLTests extends PLLTestsBase {
         PairPLL<Long, String> secondPLL = parallelize(10, second)
                 .mapToPair(t -> t);
 
-        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.outerJoinOrdered(secondPLL, Comparator.naturalOrder());
+        PairPLL<Long, Tuple2<String, String>> joined = firstPLL.fullJoinOrdered(secondPLL, Comparator.naturalOrder());
 
         Assert.assertEquals(joined.collect(),
                 Arrays.asList(
@@ -266,14 +266,78 @@ public class OrderedJoinPLLTests extends PLLTestsBase {
                 }));
     }
 
+    @Test
+    public void testMergeLeftGenericStreams() {
+        assertStreamsEqual(
+                mergeLeft(
+                        seq(1, 3, 4, 7, 8),
+                        seq(2, 3, 5, 6, 7)),
+                joinedOuter(new Integer[][] {
+                        { 1, 1, null },
+                        { 3, 3, 3 },
+                        { 4, 4, null },
+                        { 7, 7, 7 },
+                        { 8, 8, null }
+                }));
+
+        assertStreamsEqual(
+                mergeLeft(
+                        seq(2, 3, 5, 6, 7),
+                        seq(1, 3, 4, 7, 8)),
+                joinedOuter(new Integer[][] {
+                        { 2, 2, null },
+                        { 3, 3, 3 },
+                        { 5, 5, null },
+                        { 6, 6, null },
+                        { 7, 7, 7 },
+                }));
+    }
+
+    @Test
+    public void testMergeRightGenericStreams() {
+        assertStreamsEqual(
+                mergeRight(
+                        seq(1, 3, 4, 7, 8),
+                        seq(2, 3, 5, 6, 7)),
+                joinedOuter(new Integer[][] {
+                        { 2, null, 2 },
+                        { 3, 3, 3 },
+                        { 5, null, 5 },
+                        { 6, null, 6 },
+                        { 7, 7, 7 },
+                }));
+
+        assertStreamsEqual(
+                mergeRight(
+                        seq(2, 3, 5, 6, 7),
+                        seq(1, 3, 4, 7, 8)),
+                joinedOuter(new Integer[][] {
+                        { 1, null, 1 },
+                        { 3, 3, 3 },
+                        { 4, null, 4 },
+                        { 7, 7, 7 },
+                        { 8, null, 8 }
+                }));
+    }
+
     protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeInner(Stream<Tuple2<Integer, Integer>> first,
             Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), true);
+        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.INNER);
+    }
+
+    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeLeft(Stream<Tuple2<Integer, Integer>> first,
+            Stream<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.LEFT);
+    }
+
+    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeRight(Stream<Tuple2<Integer, Integer>> first,
+            Stream<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.RIGHT);
     }
 
     protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeOuter(Stream<Tuple2<Integer, Integer>> first,
             Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), false);
+        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.FULL);
     }
 
     protected static <T> void assertStreamsEqual(Stream<T> actual, Stream<T> expected) {
