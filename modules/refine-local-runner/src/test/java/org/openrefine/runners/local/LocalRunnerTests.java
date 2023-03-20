@@ -97,6 +97,41 @@ public class LocalRunnerTests extends RunnerTestBase {
     }
 
     @Test
+    public void testRecordCountPreservation() {
+        Grid initial = createGrid(new String[] { "key", "values" },
+                new Serializable[][] {
+                        { "a", 1 },
+                        { null, 2 },
+                        { "b", 3 },
+                        { null, 4 },
+                        { null, 5 },
+                        { "c", 6 }
+                });
+
+        // compute the record count on the initial grid
+        Assert.assertEquals(initial.recordCount(), 3L);
+
+        RowMapper mapper = new RowMapper() {
+
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.withCell(1, new Cell("constant", null));
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+        };
+
+        // apply a row mapper that preserves records
+        LocalGrid mapped = (LocalGrid) initial.mapRows(mapper, initial.getColumnModel());
+
+        // check that the number of records is already cached and does not need recomputing
+        Assert.assertEquals(mapped.cachedRecordCount, 3L);
+    }
+
+    @Test
     public void testMemoryCostPrediction() throws Change.DoesNotApplyException {
         LocalGrid smallGrid = (LocalGrid) createGrid(new String[] { "foo" }, new Serializable[][] {});
 

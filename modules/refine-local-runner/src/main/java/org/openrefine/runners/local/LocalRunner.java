@@ -84,7 +84,7 @@ public class LocalRunner implements Runner {
                 .textFile(gridFile.getAbsolutePath(), GRID_ENCODING, false)
                 .mapToPair(s -> parseIndexedRow(s), "parse row from JSON");
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
-        return new LocalGrid(this, rows, metadata.columnModel, metadata.overlayModels);
+        return new LocalGrid(this, rows, metadata.columnModel, metadata.overlayModels, metadata.recordCount);
     }
 
     protected static Tuple2<Long, Row> parseIndexedRow(String source) {
@@ -102,7 +102,7 @@ public class LocalRunner implements Runner {
         // the call to zipWithIndex is efficient as the first PLL is in memory already
         PairPLL<Long, Row> pll = pllContext.parallelize(defaultParallelism, rows)
                 .zipWithIndex();
-        return new LocalGrid(this, pll, columnModel, overlayModels);
+        return new LocalGrid(this, pll, columnModel, overlayModels, -1);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class LocalRunner implements Runner {
                 this,
                 pll,
                 new ColumnModel(Collections.singletonList(new ColumnMetadata("Column"))),
-                Collections.emptyMap());
+                Collections.emptyMap(), -1);
     }
 
     @Override
