@@ -800,8 +800,7 @@ public class LocalGrid implements Grid {
         PairPLL<Long, Row> joined = grid
                 .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey().getRow(), tuple.getValue()), "apply row change data joiner");
-        // TODO rowJoiner.preservesRecordStructure() ? cachedRecordCount : -1
-        return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
+        return new LocalGrid(runner, joined, newColumnModel, overlayModels, rowJoiner.preservesRecordStructure() ? cachedRecordCount : -1);
     }
 
     @Override
@@ -821,16 +820,24 @@ public class LocalGrid implements Grid {
     @Override
     public <T> Grid join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
-        // TODO return records if the recordJoiner preserves their structure
         if (!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGrid can only be joined with a LocalChangeData");
         }
-        PairPLL<Long, Row> joined = records()
-                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
-                .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
-                        "apply record change data joiner")
-                .zipWithIndex();
-        return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
+        PairPLL<Long, Tuple2<Record, T>> joinedRecords = records()
+                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder());
+
+        if (recordJoiner.preservesRecordStructure()) {
+            PairPLL<Long, Record> records = joinedRecords
+                    .mapValues((recordId, tuple) -> new Record(recordId, recordJoiner.call(tuple.getKey(), tuple.getValue())),
+                            "apply record change data joiner with record boundaries preserved");
+            return new LocalGrid(records, runner, newColumnModel, overlayModels, rowCount());
+        } else {
+            PairPLL<Long, Row> joined = joinedRecords
+                    .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
+                            "apply record change data joiner")
+                    .zipWithIndex();
+            return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
+        }
     }
 
     @Override
