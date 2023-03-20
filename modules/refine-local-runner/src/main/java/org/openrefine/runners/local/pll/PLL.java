@@ -57,7 +57,7 @@ public abstract class PLL<T> {
     protected final String name;
 
     // cached list of counts of elements in each partition, initialized lazily
-    protected List<Long> cachedPartitionSizes;
+    private List<Long> cachedPartitionSizes;
     // cached contents of each partition, initialized on demand
     protected List<List<T>> cachedPartitions;
 
@@ -121,12 +121,18 @@ public abstract class PLL<T> {
 
     /**
      * @return the number of elements in each partition
+     * @apiNote subclasses should override {@link #computePartitionSizes()} if they can do this computation more
+     *          efficiently than by iterating over the partitions.
      */
-    public List<Long> getPartitionSizes() {
+    public final List<Long> getPartitionSizes() {
         if (cachedPartitionSizes == null) {
-            cachedPartitionSizes = runOnPartitionsWithoutInterruption(p -> iterate(p).count());
+            cachedPartitionSizes = computePartitionSizes();
         }
         return cachedPartitionSizes;
+    }
+
+    protected List<Long> computePartitionSizes() {
+        return runOnPartitionsWithoutInterruption(p -> iterate(p).count());
     }
 
     /**
@@ -328,11 +334,7 @@ public abstract class PLL<T> {
             BiFunction<Integer, Stream<T>, Stream<U>> map,
             String mapDescription,
             boolean preservesSizes) {
-        if (preservesSizes) {
-            return new MapPartitionsPLL<T, U>(this, map, mapDescription, cachedPartitionSizes);
-        } else {
-            return new MapPartitionsPLL<T, U>(this, map, mapDescription);
-        }
+        return new MapPartitionsPLL<T, U>(this, map, mapDescription, preservesSizes);
     }
 
     /**
@@ -485,14 +487,8 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> limitPartitions(long limit) {
-        List<Long> newCachedPartitionSizes = null;
-        if (cachedPartitionSizes != null) {
-            newCachedPartitionSizes = cachedPartitionSizes.stream()
-                    .map(size -> Math.min(size, limit))
-                    .collect(Collectors.toList());
-        }
         BiFunction<Integer, Stream<T>, Stream<T>> map = ((i, stream) -> stream.limit(limit));
-        return new MapPartitionsPLL<T, T>(this, map, String.format("Limit each partition to %d", limit), newCachedPartitionSizes);
+        return new MapPartitionsPLL<T, T>(this, map, String.format("Limit each partition to %d", limit));
     }
 
     /**
@@ -772,7 +768,14 @@ public abstract class PLL<T> {
      */
     public QueryTree getQueryTree() {
         QueryTree[] children = getParents().stream().map(PLL::getQueryTree).toArray(QueryTree[]::new);
-        return new QueryTree(id, name + (isCached() ? " [cached]" : ""), children);
+        List<String> flags = new ArrayList<>();
+        if (isCached()) {
+            flags.add("cached");
+        }
+        if (cachedPartitionSizes != null) {
+            flags.add("sizes");
+        }
+        return new QueryTree(id, name + (flags.isEmpty() ? "" : " [" + String.join(", ", flags) + "]"), children);
     }
 
     @Override

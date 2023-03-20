@@ -19,6 +19,7 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
 
     protected final PLL<U> parent;
     protected final BiFunction<Integer, Stream<U>, Stream<T>> mapFunction;
+    protected final boolean preservesSizes;
 
     /**
      * Constructs a PLL with partitions derived one-to-one from the parent.
@@ -34,6 +35,7 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
         super(parent.getContext(), "Map: " + mapFunctionDescription);
         this.parent = parent;
         this.mapFunction = mapFunction;
+        this.preservesSizes = false;
     }
 
     /**
@@ -45,18 +47,36 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
      *            the function to apply to each partition
      * @param mapFunctionDescription
      *            a short description of the map function for debugging purposes
-     * @param cachedPartitionSizes
-     *            the list of partition sizes, if known (otherwise null)
+     * @param preservesSizes
+     *            whether partition sizes are know to be the same as the parent's
      */
     protected MapPartitionsPLL(
             PLL<U> parent,
             BiFunction<Integer, Stream<U>, Stream<T>> mapFunction,
             String mapFunctionDescription,
-            List<Long> cachedPartitionSizes) {
+            boolean preservesSizes) {
         super(parent.getContext(), mapFunctionDescription);
         this.parent = parent;
         this.mapFunction = mapFunction;
-        this.cachedPartitionSizes = cachedPartitionSizes;
+        this.preservesSizes = preservesSizes;
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        if (preservesSizes) {
+            return parent.hasCachedPartitionSizes();
+        } else {
+            return super.hasCachedPartitionSizes();
+        }
+    }
+
+    @Override
+    public List<Long> computePartitionSizes() {
+        if (preservesSizes) {
+            return parent.getPartitionSizes();
+        } else {
+            return super.computePartitionSizes();
+        }
     }
 
     @Override

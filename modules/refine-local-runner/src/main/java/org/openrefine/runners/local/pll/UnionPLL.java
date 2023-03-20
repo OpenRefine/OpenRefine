@@ -42,11 +42,6 @@ public class UnionPLL<T> extends PLL<T> {
                 .stream()
                 .map(p -> new UnionPartition(p.getIndex() + firstPartitions.size(), false, p))
                 .collect(Collectors.toList()));
-        if (first.cachedPartitionSizes != null && second.cachedPartitionSizes != null) {
-            cachedPartitionSizes = new ArrayList<>(first.cachedPartitionSizes.size() + second.cachedPartitionSizes.size());
-            cachedPartitionSizes.addAll(first.cachedPartitionSizes);
-            cachedPartitionSizes.addAll(second.cachedPartitionSizes);
-        }
     }
 
     @Override
@@ -62,6 +57,19 @@ public class UnionPLL<T> extends PLL<T> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    protected List<Long> computePartitionSizes() {
+        List<Long> partitionSizes = new ArrayList<>(first.getPartitionSizes().size() + second.getPartitionSizes().size());
+        partitionSizes.addAll(first.getPartitionSizes());
+        partitionSizes.addAll(second.getPartitionSizes());
+        return partitionSizes;
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        return (first.hasCachedPartitionSizes() && second.hasCachedPartitionSizes()) || super.hasCachedPartitionSizes();
     }
 
     @Override

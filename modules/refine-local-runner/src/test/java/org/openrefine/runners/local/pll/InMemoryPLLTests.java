@@ -78,14 +78,14 @@ public class InMemoryPLLTests extends PLLTestsBase {
         PLL<Integer> toSort = parallelize(4, Arrays.asList(4, 2, 7, 9, 8, 1, 0, 5, 6, 3));
         PLL<Integer> sorted = toSort.sort(Comparator.naturalOrder());
         Assert.assertEquals(sorted.collect(), SUT.collect());
-        Assert.assertNotNull(sorted.cachedPartitionSizes);
+        Assert.assertTrue(sorted.hasCachedPartitionSizes());
     }
 
     @Test
     public void testZipWithIndex() {
         PairPLL<Long, Integer> indexed = SUT.zipWithIndex();
         Assert.assertTrue(indexed.getPartitioner().get() instanceof LongRangePartitioner);
-        Assert.assertNotNull(indexed.cachedPartitionSizes);
+        Assert.assertTrue(indexed.hasCachedPartitionSizes());
         Assert.assertEquals(indexed.collect(), Arrays.asList(
                 Tuple2.of(0L, 0),
                 Tuple2.of(1L, 1),

@@ -236,7 +236,7 @@ public class PairPLLTests extends PLLTestsBase {
         Assert.assertTrue(doublyIndexed.getPartitioner().get() instanceof RangePartitioner<?>);
         RangePartitioner<Long> partitioner = (RangePartitioner<Long>) doublyIndexed.getPartitioner().get();
         Assert.assertEquals(partitioner.getFirstKeys(), expectedFirstKeys);
-        Assert.assertNull(doublyIndexed.cachedPartitionSizes);
+        Assert.assertFalse(doublyIndexed.hasCachedPartitionSizes());
     }
 
     @Test
@@ -251,7 +251,8 @@ public class PairPLLTests extends PLLTestsBase {
         Assert.assertTrue(doublyIndexed.getPartitioner().get() instanceof RangePartitioner<?>);
         RangePartitioner<Long> partitioner = (RangePartitioner<Long>) doublyIndexed.getPartitioner().get();
         Assert.assertEquals(partitioner.getFirstKeys(), expectedFirstKeys);
-        Assert.assertEquals(doublyIndexed.cachedPartitionSizes, partitionSizes);
+        Assert.assertTrue(doublyIndexed.hasCachedPartitionSizes());
+        Assert.assertEquals(doublyIndexed.getPartitionSizes(), partitionSizes);
     }
 
     @Test
@@ -289,11 +290,13 @@ public class PairPLLTests extends PLLTestsBase {
     public void testWithCachedPartitionSizes() {
         PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
-        List<Long> partitionSizes = indexed.cachedPartitionSizes;
-        indexed.cachedPartitionSizes = null;
+        List<Long> partitionSizes = indexed.getPartitionSizes();
+        indexed = indexed.filter(tuple -> true); // spurious filter to remove partition sizes
 
+        Assert.assertFalse(indexed.hasCachedPartitionSizes());
         PairPLL<Long, Integer> indexedWithPartitionSizes = indexed.withCachedPartitionSizes(partitionSizes);
-        Assert.assertNotNull(indexedWithPartitionSizes.cachedPartitionSizes);
+        Assert.assertTrue(indexedWithPartitionSizes.hasCachedPartitionSizes());
+        Assert.assertEquals(indexedWithPartitionSizes.getPartitionSizes(), partitionSizes);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

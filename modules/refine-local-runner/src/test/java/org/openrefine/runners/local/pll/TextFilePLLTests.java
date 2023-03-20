@@ -115,7 +115,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testSaveWithoutCachedPartitionSizes() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // artificially discard partition sizes
-        pll.cachedPartitionSizes = null;
+        pll = pll.filter(x -> true);
 
         File tempFile = new File(tempDir, "progress-no-partition-sizes.txt");
 
@@ -129,7 +129,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testSaveWithCachedPartitionSizes() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // the sizes of the partitions are known
-        Assert.assertNotNull(pll.cachedPartitionSizes);
+        Assert.assertTrue(pll.hasCachedPartitionSizes());
 
         File tempFile = new File(tempDir, "progress-with-partition-sizes.txt");
 
@@ -143,7 +143,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testCacheWithProgressReporting() throws IOException {
         PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         // partition sizes are not known
-        Assert.assertNull(pll.cachedPartitionSizes);
+        Assert.assertFalse(pll.hasCachedPartitionSizes());
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
         pll.cache(Optional.of(progressReporter));
@@ -155,7 +155,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         pll.count();
         // partition sizes are known
-        Assert.assertNotNull(pll.cachedPartitionSizes);
+        Assert.assertTrue(pll.hasCachedPartitionSizes());
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
         pll.cache(Optional.of(progressReporter));
