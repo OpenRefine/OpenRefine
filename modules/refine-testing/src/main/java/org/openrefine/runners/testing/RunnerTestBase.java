@@ -1083,13 +1083,18 @@ public abstract class RunnerTestBase {
         changeData.get(1L);
     }
 
-    public static RowChangeDataJoiner<String> joiner = new RowChangeDataJoiner<String>() {
+    public static RowChangeDataJoiner<String> joiner = new RowChangeDataJoiner<>() {
 
         private static final long serialVersionUID = -21382677502256432L;
 
         @Override
         public Row call(long rowId, Row row, String changeData) {
             return row.withCell(1, new Cell(changeData, null));
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return true;
         }
 
     };
@@ -1234,13 +1239,18 @@ public abstract class RunnerTestBase {
         Assert.assertEquals(flatJoined.collectRows(), expected.collectRows());
     }
 
-    public static RecordChangeDataJoiner<String> recordJoiner = new RecordChangeDataJoiner<String>() {
+    public static RecordChangeDataJoiner<String> recordJoiner = new RecordChangeDataJoiner<>() {
 
         private static final long serialVersionUID = -4413769252252489169L;
 
         @Override
         public List<Row> call(Record record, String changeData) {
             return record.getRows().stream().map(row -> row.withCell(1, new Cell(changeData, null))).collect(Collectors.toList());
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return true;
         }
 
     };

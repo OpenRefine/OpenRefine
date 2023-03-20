@@ -182,6 +182,11 @@ public class DataExtensionChange extends EngineDependentChange {
             return newRows;
         }
 
+        @Override
+        public boolean preservesRecordStructure() {
+            return false;
+        }
+
     }
 
     public static class DataExtensionProducer implements RecordChangeDataProducer<RecordDataExtension> {

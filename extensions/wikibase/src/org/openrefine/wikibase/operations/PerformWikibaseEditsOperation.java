@@ -371,6 +371,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             return new Row(newCells, row.flagged, row.starred);
         }
 
+        @Override
+        public boolean preservesRecordStructure() {
+            return true; // existing blank cells are left blank
+        }
+
     }
 
     protected static class RowNewReconUpdateSerializer implements ChangeDataSerializer<RowEditingResults> {

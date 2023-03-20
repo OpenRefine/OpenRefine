@@ -18,5 +18,10 @@ public interface RowChangeDataJoiner<T> extends Serializable {
     /**
      * Given a row, its id and the pre-computed change data for this row, return the new row after the change.
      */
-    public Row call(long rowId, Row row, T changeData);
+    Row call(long rowId, Row row, T changeData);
+
+    /**
+     * Indicates whether this joiner is guaranteed to preserve the record boundaries on the grid it is applied to.
+     */
+    boolean preservesRecordStructure();
 }

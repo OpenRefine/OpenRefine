@@ -14,14 +14,14 @@ public class ColumnChangeByChangeDataTests {
 
     @Test
     public void testJoinerAdd() {
-        Joiner joiner = new Joiner(2, true);
+        Joiner joiner = new Joiner(2, true, true);
         Row row = joiner.call(4, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))), new Cell(3, null));
         Assert.assertEquals(row, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell(3, null))));
     }
 
     @Test
     public void testJoinerReplace() {
-        Joiner joiner = new Joiner(0, false);
+        Joiner joiner = new Joiner(0, false, true);
         Row row = joiner.call(4, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))), new Cell(3, null));
         Assert.assertEquals(row, new Row(Arrays.asList(new Cell(3, null), new Cell(2, null))));
     }
@@ -30,7 +30,7 @@ public class ColumnChangeByChangeDataTests {
     public void testJoinerReplaceNull() {
         // this behaviour is important to make sure reconciling only a subset of a column does not blank out
         // the cells outside the subset
-        Joiner joiner = new Joiner(0, false);
+        Joiner joiner = new Joiner(0, false, true);
         Row row = joiner.call(4, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))), null);
         Assert.assertEquals(row, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))));
     }

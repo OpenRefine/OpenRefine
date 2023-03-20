@@ -96,7 +96,7 @@ public abstract class ColumnChangeByChangeData implements Change {
                     .withReconConfig(baseColumnIndex, _reconConfig);
         }
 
-        Joiner joiner = new Joiner(newColumnIndex, _newColumnName != null);
+        Joiner joiner = new Joiner(newColumnIndex, _newColumnName != null, newColumnIndex > columnModel.getKeyColumnIndex());
 
         Grid joined;
         if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
@@ -159,10 +159,12 @@ public abstract class ColumnChangeByChangeData implements Change {
         private static final long serialVersionUID = 8332780210267820528L;
         private final int _columnIndex;
         private final boolean _add;
+        private final boolean _preservesRecords;
 
-        public Joiner(int columnIndex, boolean add) {
+        public Joiner(int columnIndex, boolean add, boolean preservesRecords) {
             _columnIndex = columnIndex;
             _add = add;
+            _preservesRecords = preservesRecords;
         }
 
         @Override
@@ -176,6 +178,11 @@ public abstract class ColumnChangeByChangeData implements Change {
                     return row;
                 }
             }
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return _preservesRecords;
         }
 
         @Override

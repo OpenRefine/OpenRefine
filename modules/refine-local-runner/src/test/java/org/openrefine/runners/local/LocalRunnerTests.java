@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,15 +18,13 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.*;
 import org.openrefine.runners.testing.RunnerTestBase;
 import org.openrefine.util.ParsingUtilities;
 
 /**
- * Tests for this datamodel implementation are taken from the standard test suite, in {@link RunnerTestBase}.
+ * Tests for this datamodel implementation are taken from the standard test suite, in {@link RunnerTestBase}. Some
+ * additional tests are provided here: those test some optimizations that are specific to the local runner.
  * 
  * @author Antonin Delpeuch
  *
@@ -129,6 +124,39 @@ public class LocalRunnerTests extends RunnerTestBase {
 
         // check that the number of records is already cached and does not need recomputing
         Assert.assertEquals(mapped.cachedRecordCount, 3L);
+    }
+
+    @Test
+    public void testRecordPreservationForChangeDataJoining() throws IOException {
+        Grid initial = createGrid(new String[] { "key", "values" },
+                new Serializable[][] {
+                        { "a", 1 },
+                        { null, 2 },
+                        { "b", 3 },
+                        { null, 4 },
+                        { null, 5 },
+                        { "c", 6 }
+                });
+
+        RecordChangeDataJoiner<String> joiner = new RecordChangeDataJoiner<>() {
+
+            @Override
+            public List<Row> call(Record record, String changeData) {
+                return record.getRows().stream()
+                        .map(r -> r.withCell(1, new Cell(changeData, null)))
+                        .collect(Collectors.toList());
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+        };
+
+        ChangeData<String> changeData = getDatamodelRunner().create(Arrays.asList(
+                new IndexedData(0L, "foo")));
+        LocalGrid joined = (LocalGrid) initial.join(changeData, joiner, initial.getColumnModel());
+        Assert.assertFalse(joined.constructedFromRows);
     }
 
     @Test
