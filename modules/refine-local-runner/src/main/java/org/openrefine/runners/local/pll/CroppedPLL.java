@@ -21,6 +21,7 @@ public class CroppedPLL<T> extends PLL<T> {
     protected final long itemsToDrop;
     protected final boolean atEnd;
     protected final List<CroppedPartition> partitions;
+    protected final List<Long> partitionSizes;
 
     /**
      * Constructs a cropped PLL by removing rows at the beginning or the end of a PLL.
@@ -46,7 +47,7 @@ public class CroppedPLL<T> extends PLL<T> {
                         + (atEnd ? "at the end" : "at the beginning"));
         pll = parent;
         Validate.notNull(newPartitionSizes, "Partition sizes must be provided");
-        cachedPartitionSizes = newPartitionSizes;
+        partitionSizes = newPartitionSizes;
         this.atEnd = atEnd;
         itemsToDrop = dropItems;
         partitions = new ArrayList<CroppedPartition>(parent.numPartitions() - partitionsToDrop);
@@ -77,6 +78,16 @@ public class CroppedPLL<T> extends PLL<T> {
     @Override
     public List<PLL<?>> getParents() {
         return Collections.singletonList(pll);
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        return true;
+    }
+
+    @Override
+    public List<Long> computePartitionSizes() {
+        return partitionSizes;
     }
 
     /**

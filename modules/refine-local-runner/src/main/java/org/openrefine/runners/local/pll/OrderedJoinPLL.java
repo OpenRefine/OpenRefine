@@ -59,7 +59,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             PairPLL<K, W> second,
             Comparator<K> comparator,
             JoinType joinType) {
-        super(first.getContext(), "Ordered join");
+        super(first.getContext(), String.format("Ordered join (%s)", joinType));
         this.first = first;
         this.second = second;
         this.comparator = comparator;
@@ -98,7 +98,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     @Override
-    public List<Long> getPartitionSizes() {
+    public List<Long> computePartitionSizes() {
         if (JoinType.LEFT.equals(joinType)) {
             // for left joins we know that we have exactly as many elements as the first PLL,
             // because we have the same partitioning as the left PLL and the elements in those
@@ -108,6 +108,11 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             // for other types of joins that could be different - resort to counting
             return super.getPartitionSizes();
         }
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        return (JoinType.LEFT.equals(joinType) && first.hasCachedPartitionSizes()) || super.hasCachedPartitionSizes();
     }
 
     @Override

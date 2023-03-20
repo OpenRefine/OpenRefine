@@ -37,7 +37,6 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         }
         this.partitioner = partitioner;
         this.pll = pll;
-        this.cachedPartitionSizes = pll.cachedPartitionSizes;
     }
 
     protected PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner, List<Long> partitionSizes) {
@@ -48,7 +47,6 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         }
         this.partitioner = partitioner;
         this.pll = partitionSizes == null ? pll : pll.withCachedPartitionSizes(partitionSizes);
-        this.cachedPartitionSizes = partitionSizes == null ? pll.cachedPartitionSizes : partitionSizes;
     }
 
     /**
@@ -60,13 +58,13 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     // bypass local cache and make sure we are hitting that of the upstream PLL
     @Override
-    public List<Long> getPartitionSizes() {
-        if (cachedPartitionSizes == null) {
-            cachedPartitionSizes = pll.getPartitionSizes();
-        } else if (cachedPartitionSizes != null && pll.cachedPartitionSizes == null) {
-            pll.cachedPartitionSizes = cachedPartitionSizes;
-        }
-        return cachedPartitionSizes;
+    public List<Long> computePartitionSizes() {
+        return pll.getPartitionSizes();
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        return pll.hasCachedPartitionSizes();
     }
 
     /**

@@ -142,6 +142,7 @@ public class GetModelsCommand extends Command {
         }
 
         Grid grid = project.getCurrentGrid();
+        logger.info(grid.toString());
         RecordModel recordModel = new RecordModel(grid.rowCount() > grid.recordCount());
 
         respondJSON(response, new ModelsResponse(

@@ -28,7 +28,6 @@ public class InMemoryPLL<T> extends PLL<T> {
         super(context, String.format("Load %d elements into %d partitions", elements.size(), nbPartitions));
         list = elements instanceof ArrayList ? (ArrayList<T>) elements : new ArrayList<T>(elements);
         partitions = createPartitions(list.size(), nbPartitions);
-        cachedPartitionSizes = partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
         cachedPartitions = partitions.stream()
                 .map(p -> list.subList(p.offset, p.offset + p.length))
                 .collect(Collectors.toList());
@@ -40,6 +39,16 @@ public class InMemoryPLL<T> extends PLL<T> {
 
         return list.subList(imPartition.offset, imPartition.offset + imPartition.length)
                 .stream();
+    }
+
+    @Override
+    protected List<Long> computePartitionSizes() {
+        return partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean hasCachedPartitionSizes() {
+        return true;
     }
 
     @Override

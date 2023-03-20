@@ -39,7 +39,7 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
         // cached yet
         List<Long> numElements = pll.getPartitionSizes().stream().limit(partitions.size() - 1).collect(Collectors.toList());
 
-        PLL<Tuple2<Long, T>> zippedPLL = new IndexedPLL<T>(pll, numElements);
+        PLL<Tuple2<Long, T>> zippedPLL = new IndexedPLL<T>(pll);
 
         long offset = 0;
         List<Long> firstKeys = new ArrayList<>(numElements.size());
@@ -54,12 +54,10 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
     private final List<IndexedPLL.IndexedPartition> partitions;
     private final PLL<T> parent;
 
-    protected IndexedPLL(PLL<T> parent, List<Long> numElements) {
+    protected IndexedPLL(PLL<T> parent) {
         super(parent.getContext(), "Add indices");
         this.parent = parent;
-        if (parent.numPartitions() > 0 && parent.numPartitions() > numElements.size() + 1) {
-            throw new IllegalArgumentException("Incompatible PLL partition and offset list sizes");
-        }
+        List<Long> numElements = parent.getPartitionSizes();
         List<? extends Partition> parentPartitions = parent.getPartitions();
         partitions = new ArrayList<>(parent.numPartitions());
         long offset = 0;
@@ -68,9 +66,6 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
             if (i != parent.numPartitions() - 1) {
                 offset += numElements.get(i);
             }
-        }
-        if (numElements.size() == parent.numPartitions()) {
-            cachedPartitionSizes = numElements;
         }
     }
 
