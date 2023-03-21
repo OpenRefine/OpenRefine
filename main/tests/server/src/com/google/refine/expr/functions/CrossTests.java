@@ -64,6 +64,8 @@ public class CrossTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
+    private HasFieldsListImpl rows;
+
     // dependencies
     Project projectGift;
     Project projectAddress;
@@ -74,7 +76,7 @@ public class CrossTests extends RefineTest {
     @BeforeMethod
     public void SetUp() {
         bindings = new Properties();
-
+        rows = new HasFieldsListImpl();
         String projectName = "My Address Book";
         String input = "friend,address\n"
                 + "john,120 Main St.\n"
@@ -259,7 +261,7 @@ public class CrossTests extends RefineTest {
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
-        Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "Anne", "My Address Book", "friend"), rows);
     }
 
     @Test
@@ -319,7 +321,7 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
-        Assert.assertNull(invoke("cross", "1600.0", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "1600.0", "My Address Book", "friend"), rows);
     }
 
     @Test
@@ -394,7 +396,7 @@ public class CrossTests extends RefineTest {
      */
     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
-        Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "NON-EXIST", "My Address Book", "friend"), rows);
     }
 
     /**
