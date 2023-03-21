@@ -120,9 +120,9 @@ public abstract class PLL<T> {
     }
 
     /**
-     * @return the number of elements in each partition
-     * @apiNote subclasses should override {@link #computePartitionSizes()} if they can do this computation more
-     *          efficiently than by iterating over the partitions.
+     * Returns the number of elements in each partition. See {@link #hasCachedPartitionSizes()} to check if those sizes
+     * are already computed. Subclasses should rather override {@link #computePartitionSizes()} if they can do this
+     * computation more efficiently than by iterating over the partitions.
      */
     public final List<Long> getPartitionSizes() {
         if (cachedPartitionSizes == null) {
