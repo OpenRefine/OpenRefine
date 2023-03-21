@@ -1,5 +1,5 @@
 @echo off
-rem Previous line hides the remarks from being displayed with the prompt for each line
+setlocal EnableDelayedExpansion
 
 rem Change current working directory to directory of the batch script
 cd %~dp0
@@ -60,12 +60,34 @@ goto :eof
 
 set OPTS=
 
-:endConfigReading
+rem Check for custom ini file
+
+set "REFINE_INI_PATH="
+set "FOUND_C="
+for %%A in (%*) do (
+    if defined FOUND_C (
+        set REFINE_INI_PATH=%%A
+        goto :readIniFile
+    ) else if "%%A"=="/c" (
+        set "FOUND_C=1"
+    )
+)
+
+:readIniFile
+rem --- Read ini file -----------------------------------------------
+if "!REFINE_INI_PATH!" == "" set REFINE_INI_PATH=refine.ini
+if not exist !REFINE_INI_PATH! (
+ echo Error: "!REFINE_INI_PATH!" does not exist.
+ exit /b 1
+)
+for /f "usebackq tokens=1,* delims== " %%a in (`type "!REFINE_INI_PATH!" ^| findstr /R /B /V "^# ^; ^$"`) do (
+    set "%%a=%%b"
+)
 														 
 rem --- Argument parsing --------------------------------------------
 
 :loop
-if "%~1"=="" goto readIniFile
+if "%~1"=="" goto checkVars
 if "%~1"=="/?" goto usage
 if "%~1"=="/h" goto usage
 if "%~1"=="/p" set "REFINE_PORT=%~2" & shift & shift & goto loop
@@ -77,24 +99,10 @@ if "%~1"=="/d" set "REFINE_DATA_DIR=%~2" & shift & shift & goto loop
 if "%~1"=="/debug" set "OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" & shift & goto loop
 if "%~1"=="/x" set "REFINE_EXTRA_OPTS=%~2" & shift & shift & goto loop
 if "%~1"=="/jmx" set "OPTS=%OPTS% -Dcom.sun.management.jmxremote" & shift & goto loop
-if "%~1"=="/c" set "REFINE_INI_PATH=%~2" & shift & shift & goto loop
+if "%~1"=="/c" shift & shift & goto loop
 if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & shift & goto loop
 
-:readIniFile
-
-rem --- Read ini file -----------------------------------------------
-
-if "%REFINE_INI_PATH%" == "" set REFINE_INI_PATH=refine.ini
-if not exist %REFINE_INI_PATH% (
-	echo The system cannot find the file %REFINE_INI_PATH%
-	exit /B 1
-)
-echo Using %REFINE_INI_PATH% for configuration
-for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
-    set %%a=%%b
-)
-
-:endArgumentParsing
+:checkVars
 
 rem --- Check JAVA_HOME ---------------------------------------------
 
