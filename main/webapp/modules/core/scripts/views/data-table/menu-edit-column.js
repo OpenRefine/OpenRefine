@@ -173,11 +173,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           delay: delay,
           onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
-          httpHeaders: elmts.setHttpHeadersContainer.find("input").serializeArray()
+          httpHeadersJson: elmts.setHttpHeadersContainer.find("input").serializeArray()
         },
-        { modelsChanged: true }
+        { modelsChanged: true },
+        {
+          onDone: function () {
+            dismiss();
+          }
+        }
       );
-      dismiss();
     });
   };
 
