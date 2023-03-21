@@ -57,12 +57,15 @@ public class CrossTests extends RefineTest {
     private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
     private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
             DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
+    
+     
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
+    
+    private HasFieldsListImpl rows;
 
     // dependencies
     Project projectGift;
@@ -74,6 +77,7 @@ public class CrossTests extends RefineTest {
     @BeforeMethod
     public void SetUp() {
         bindings = new Properties();
+        rows = new HasFieldsListImpl();
 
         String projectName = "My Address Book";
         String input = "friend,address\n"
@@ -257,11 +261,12 @@ public class CrossTests extends RefineTest {
         }
     }
 
+    
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
-        Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "Anne", "My Address Book", "friend"), rows);
     }
-
+    
     @Test
     public void crossFunctionDateTimeTest() throws Exception {
         Project project = (Project) bindings.get("project");
@@ -317,9 +322,10 @@ public class CrossTests extends RefineTest {
      * Two values will match if and only if they have the same string representation. In this case, "1600.0" doesn't
      * equal to "1600".
      */
-    @Test
+    
+     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
-        Assert.assertNull(invoke("cross", "1600.0", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "1600.0", "My Address Book", "friend"), rows);
     }
 
     @Test
@@ -392,9 +398,9 @@ public class CrossTests extends RefineTest {
      * "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0". It will still
      * end up with blank if the onError set so.
      */
-    @Test
+     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
-        Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "NON-EXIST", "My Address Book", "friend"), rows);
     }
 
     /**
