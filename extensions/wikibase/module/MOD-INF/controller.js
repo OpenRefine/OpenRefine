@@ -77,7 +77,7 @@ function init() {
         "scripts/wikibase-suggest.js",
         "scripts/schema-alignment.js",
         "scripts/wikidata-extension-manager.js",
-        "scripts/dialogs/manage-account-dialog.js",
+        "scripts/dialogs/manage-account-",
         "scripts/dialogs/perform-edits-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
