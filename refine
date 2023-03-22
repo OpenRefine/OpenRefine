@@ -466,7 +466,7 @@ run() {
             mvn_prepare
             build_prepare
             $MVN process-resources
-            $MVN compile test-compile
+            $MVN compile test-compile || exit
             echo ""
         fi
     fi
