@@ -228,14 +228,14 @@ if %JAVA_RELEASE% GTR 17 (
 )
 
 echo Getting Free Ram...
-for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
+for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
 (
 echo ----------------------- 
 echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
 echo JAVA_HOME = %JAVA_HOME%
 echo java release = %JAVA_RELEASE%
 echo java -version = %JAVA_VERSION%
-echo freeRam = %freeRam%
+echo freeRam = %freeRam% MB
 echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
