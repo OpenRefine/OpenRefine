@@ -96,13 +96,13 @@ public class ProcessManager {
     }
 
     public void onFailedProcess(Process p, Exception exception) {
-        List<Exception> exceptions = new LinkedList<Exception>();
-        exceptions.add(exception);
-        onFailedProcess(p, exceptions);
+        onFailedProcess(p, Collections.singletonList(exception));
     }
 
     public void onFailedProcess(Process p, List<Exception> exceptions) {
-        _latestExceptions = exceptions;
+        if (!p.isCanceled()) {
+            _latestExceptions = exceptions;
+        }
         _processes.remove(p);
         // Do not call update(); Just pause?
     }
