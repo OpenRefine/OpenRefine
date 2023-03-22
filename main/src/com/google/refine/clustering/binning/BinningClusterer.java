@@ -134,7 +134,7 @@ public class BinningClusterer extends Clusterer {
         Object[] _params;
         BinningParameters _parameters;
 
-        Map<String, Map<String, Integer>> _map = new HashMap<String, Map<String, Integer>>();
+        Map<String, Map<String, Integer>> _map = new TreeMap<String, Map<String, Integer>>();
 
         public BinningRowVisitor(Keyer k, BinningParameters parameters) {
             _keyer = k;
