@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.io.FileUtils;
 import org.openrefine.model.Runner;
@@ -119,6 +120,13 @@ public class FileChangeDataStore implements ChangeDataStore {
 
     @Override
     public void discardAll(long historyEntryId) {
+        // first, cancel any processes which are fetching change data in this directory
+        getProcessManager().getProcesses()
+                .stream()
+                .filter(p -> p.getChangeDataId().getHistoryEntryId() == historyEntryId)
+                .forEach(process -> process.cancel());
+
+        // then delete the directory and all subdirectories
         File file = historyEntryIdToFile(historyEntryId);
         if (file.exists()) {
             try {

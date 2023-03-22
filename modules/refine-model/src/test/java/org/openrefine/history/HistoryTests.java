@@ -55,6 +55,8 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.operations.Operation;
+import org.openrefine.process.ProcessManager;
+import org.openrefine.process.Process;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
