@@ -72,6 +72,10 @@ public abstract class Process {
         return _thread != null && !_thread.isAlive();
     }
 
+    public boolean isCanceled() {
+        return _canceled;
+    }
+
     public void startPerforming(ProcessManager manager) {
         if (_thread == null) {
             _manager = manager;
