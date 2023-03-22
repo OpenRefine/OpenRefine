@@ -21,6 +21,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Runner;
+import org.openrefine.process.Process;
 import org.openrefine.util.TestUtils;
 
 public class FileChangeDataStoreTests {
@@ -79,6 +80,17 @@ public class FileChangeDataStoreTests {
 
         Assert.assertTrue(SUT.needsRefreshing(456));
         Assert.assertEquals(returnedChangeData, changeData);
+    }
+
+    @Test
+    public void testDiscardAll() {
+        Process process = mock(Process.class);
+        when(process.getChangeDataId()).thenReturn(new ChangeDataId(456, "data"));
+        SUT.getProcessManager().queueProcess(process);
+
+        SUT.discardAll(456);
+
+        verify(process, times(1)).cancel();
     }
 
     // to ease mocking

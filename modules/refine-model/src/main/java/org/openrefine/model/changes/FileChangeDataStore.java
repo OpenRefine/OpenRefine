@@ -120,6 +120,13 @@ public class FileChangeDataStore implements ChangeDataStore {
 
     @Override
     public void discardAll(long historyEntryId) {
+        // first, cancel any processes which are fetching change data in this directory
+        getProcessManager().getProcesses()
+                .stream()
+                .filter(p -> p.getChangeDataId().getHistoryEntryId() == historyEntryId)
+                .forEach(process -> process.cancel());
+
+        // then delete the directory and all subdirectories
         File file = historyEntryIdToFile(historyEntryId);
         if (file.exists()) {
             try {

@@ -262,8 +262,6 @@ public class History {
             Change change) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
-            // cancel all processes which are fetching change data
-
             // uncache all the grids that we are removing
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
