@@ -42,7 +42,7 @@ function ReconStandardServicePanel(column, service, container) {
 
 ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
-  var dismissBusy = DialogSystem.showBusyReconciling();
+  var dismissBusy = self.showBusyReconciling();
 
   Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
@@ -346,7 +346,7 @@ ReconStandardServicePanel.prototype.start = function() {
   );
 };
 
-DialogSystem.showBusyReconciling = function(message) {
+ReconStandardServicePanel.prototype.showBusyReconciling = function(message) {
   var frame = document.getElementsByClassName("type-container")[0];
 
   var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
