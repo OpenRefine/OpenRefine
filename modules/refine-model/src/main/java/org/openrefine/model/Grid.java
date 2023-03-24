@@ -23,7 +23,7 @@ import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.SortingConfig;
 
 /**
@@ -302,14 +302,14 @@ public interface Grid {
     public void saveToFile(File file) throws IOException;
 
     /**
-     * Saves the grid to a specified directory, following OpenRefine's format for grid storage.
-     * 
+     * Saves the grid to a specified directory, in an asynchronous fashion.
+     *
      * @param file
      *            the directory where to save the grid
-     * @param progressReporter
-     *            reports the progress of the writing process
+     * @return a future which completes once the save is complete
+     * @see {@link #saveToFile(File)}
      */
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException;
+    public ProgressingFuture<Void> saveToFileAsync(File file);
 
     // Aggregations
 
@@ -583,13 +583,12 @@ public interface Grid {
     public boolean cache();
 
     /**
-     * Attempt to cache this grid in memory. If the grid is too big, this can fail.
+     * Attempt to cache this grid in memory, in an async way.
      * 
-     * @param progressReporter
-     *            callback to report the progress of the storage of the values
-     * @return whether the grid was actually cached in memory.
+     * @return a future to keep track of the status of the caching process. The future returns whether the caching
+     *         succeeded.
      */
-    public boolean cache(ProgressReporter progressReporter);
+    public ProgressingFuture<Boolean> cacheAsync();
 
     /**
      * Utility class to represent the outcome of a partial count: the number of records/rows processed, and how many of

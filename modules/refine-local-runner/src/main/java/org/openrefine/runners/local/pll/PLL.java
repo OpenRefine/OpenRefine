@@ -25,13 +25,16 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Streams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
+import org.openrefine.runners.local.pll.util.ProgressingFutureWrapper;
 import org.openrefine.runners.local.pll.util.QueryTree;
+import org.openrefine.runners.local.pll.util.TaskSignalling;
 
 /**
  * A Partitioned Lazy List (PLL) is a lazily-computed immutable container data structure to represent lists of elements.
@@ -139,7 +142,15 @@ public abstract class PLL<T> {
      * @return the list of all elements in the list, retrieved in memory.
      */
     public List<T> collect() {
-        List<List<T>> partitionLists = collectPartitions(Optional.empty());
+        List<List<T>> partitionLists = null;
+        try {
+            partitionLists = collectPartitionsAsync().get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new PLLExecutionError(e);
+        }
 
         return partitionLists.stream()
                 .flatMap(Collection::stream)
@@ -150,7 +161,15 @@ public abstract class PLL<T> {
      * @return the list of all elements in this collection, retrieved in an ArrayList
      */
     protected ArrayList<T> collectToArrayList() {
-        List<List<T>> partitionLists = collectPartitions(Optional.empty());
+        List<List<T>> partitionLists = null;
+        try {
+            partitionLists = collectPartitionsAsync().get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new PLLExecutionError(e);
+        }
         int size = partitionLists.stream().mapToInt(p -> p.size()).sum();
 
         return partitionLists.stream()
@@ -161,40 +180,28 @@ public abstract class PLL<T> {
     /**
      * Retrieves the contents of all partitions. This does not store them in the local cache, so two successive calls to
      * this method will enumerate the contents of the PLL twice.
-     * 
-     * @param progressReporter
-     *            reports the progress of computing the whole contents. If the sizes of the partitions are not known,
-     *            progress will jump from 0 to 100 directly
      */
-    protected List<List<T>> collectPartitions(Optional<ProgressReporter> progressReporter) {
+    protected ProgressingFuture<List<List<T>>> collectPartitionsAsync() {
         List<List<T>> results;
         if (cachedPartitions != null) {
-            results = cachedPartitions;
+            return ProgressingFutures.immediate(cachedPartitions);
         } else {
-            if (progressReporter.isPresent() && cachedPartitionSizes != null) {
-                ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), count());
-                results = runOnPartitionsWithoutInterruption(p -> concurrentReporter.wrapStream(
-                        iterate(p),
-                        100, // number of elements each thread reads before updating progress
-                        p.getIndex() * 5) // offset which depends on the partition index so that not all threads report
-                                          // progress at the same time
-                        .collect(Collectors.toList()));
-            } else {
-                results = runOnPartitionsWithoutInterruption(p -> iterate(p).collect(Collectors.toList()));
-            }
-        }
+            ProgressingFuture<List<List<T>>> future = runOnPartitionsAsync((partition, signalling) -> {
+                return signalling.wrapStream(iterate(partition), 100, partition.getIndex() * 5)
+                        .collect(Collectors.toList());
+            }, 0);
 
-        if (progressReporter.isPresent()) {
-            progressReporter.get().reportProgress(100);
+            return ProgressingFutures.transform(future,
+                    partitions -> {
+                        if (cachedPartitionSizes == null) {
+                            cachedPartitionSizes = partitions
+                                    .stream()
+                                    .map(l -> (long) l.size())
+                                    .collect(Collectors.toList());
+                        }
+                        return partitions;
+                    }, context.getExecutorService());
         }
-
-        if (cachedPartitionSizes == null) {
-            cachedPartitionSizes = results
-                    .stream()
-                    .map(l -> (long) l.size())
-                    .collect(Collectors.toList());
-        }
-        return results;
     }
 
     /**
@@ -539,8 +546,13 @@ public abstract class PLL<T> {
     /**
      * Loads the contents of all partitions in memory.
      */
-    public void cache(Optional<ProgressReporter> progressReporter) {
-        cachedPartitions = collectPartitions(progressReporter);
+    public ProgressingFuture<Void> cacheAsync() {
+        ProgressingFuture<List<List<T>>> partitionsFuture = collectPartitionsAsync();
+        return ProgressingFutures.transform(partitionsFuture,
+                partitions -> {
+                    cachedPartitions = partitions;
+                    return null;
+                }, context.getExecutorService());
     }
 
     /**
@@ -580,50 +592,48 @@ public abstract class PLL<T> {
 
     /**
      * Write the PLL to a directory, containing one file for each partition.
-     *
-     * @param progressReporter
-     *            optionally reports progress of the write operation
      */
-    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter, int maxConcurrency)
+    public void saveAsTextFile(String path, int maxConcurrency)
             throws IOException, InterruptedException {
+        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency);
+        try {
+            future.get();
+        } catch (ExecutionException e) {
+            throw new IOException(e.getCause());
+        }
+    }
+
+    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency) {
 
         File gridPath = new File(path);
         gridPath.mkdirs();
 
-        Optional<ConcurrentProgressReporter> concurrentProgressReporter = ((progressReporter.isPresent() && cachedPartitionSizes != null)
-                ? Optional.of(new ConcurrentProgressReporter(progressReporter.get(), count()))
-                : Optional.empty());
-
-        try {
-            runOnPartitions(p -> {
-                try {
-                    writePartition(p, gridPath, concurrentProgressReporter);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                return false;
-            }, maxConcurrency);
-        } catch (InterruptedException e) {
-            // if the operation was interrupted, we remove all the files we were writing
-            FileUtils.deleteDirectory(gridPath);
-            throw e;
-        }
-
-        // Write an empty file as success marker
-        File successMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
-        try (FileOutputStream fos = new FileOutputStream(successMarker)) {
-            Writer writer = new OutputStreamWriter(fos);
-            writer.close();
-        }
-
-        if (progressReporter.isPresent()) {
-            // to make sure we reach the end even if the partition sizes have not been computed yet
-            progressReporter.get().reportProgress(100);
-        }
-
+        ProgressingFuture<Void> future = ProgressingFutures.transform(
+                runOnPartitionsAsync((p, taskSignalling) -> {
+                    try {
+                        writePartition(p, gridPath, Optional.of(taskSignalling));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    return null;
+                }, maxConcurrency),
+                v -> {
+                    try {
+                        // Write an empty file as success marker
+                        File successMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
+                        try (FileOutputStream fos = new FileOutputStream(successMarker)) {
+                            Writer writer = new OutputStreamWriter(fos);
+                            writer.close();
+                        }
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    return null;
+                }, context.getExecutorService());
+        return future;
     }
 
-    protected void writePartition(Partition partition, File directory, Optional<ConcurrentProgressReporter> progressReporter)
+    protected void writePartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling)
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.getIndex());
         File partFile = new File(directory, filename);
@@ -634,8 +644,8 @@ public abstract class PLL<T> {
             gos = new GZIPOutputStream(fos, 512, true);
             Writer writer = new OutputStreamWriter(gos);
             Stream<T> stream = iterate(partition);
-            if (progressReporter.isPresent()) {
-                stream = progressReporter.get().wrapStream(stream, 10, partition.getIndex());
+            if (taskSignalling.isPresent()) {
+                stream = taskSignalling.get().wrapStream(stream, 10, partition.getIndex());
             }
             stream.forEachOrdered(row -> {
                 try {
@@ -673,6 +683,24 @@ public abstract class PLL<T> {
      */
     public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, int maxConcurrency) throws InterruptedException {
         return runOnPartitions(partitionFunction, getPartitions().stream(), maxConcurrency);
+    }
+
+    /**
+     * Runs a task in parallel on all partitions, asynchronously.
+     *
+     * @param <U>
+     *            return type of the function to be applied to all partitions
+     * @param partitionFunction
+     *            the function to be applied to all partitions
+     * @param maxConcurrency
+     *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
+     * @return
+     * @throws InterruptedException
+     */
+    public <U> ProgressingFuture<List<U>> runOnPartitionsAsync(
+            BiFunction<Partition, TaskSignalling, U> partitionFunction,
+            int maxConcurrency) {
+        return runOnPartitionsAsync(partitionFunction, getPartitions().stream(), maxConcurrency);
     }
 
     /**
@@ -729,6 +757,42 @@ public abstract class PLL<T> {
             listFuture.cancel(true);
             throw new PLLExecutionError(e);
         }
+    }
+
+    /**
+     * Run a task in parallel on a selection of partitions, asynchronously.
+     *
+     * @param <U>
+     *            return type of the function to be applied to all partitions
+     * @param partitionFunction
+     *            the function to be applied to all partitions
+     * @param partitions
+     *            the partitions to apply the function on
+     * @param maxConcurrency
+     *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
+     */
+    protected <U> ProgressingFuture<List<U>> runOnPartitionsAsync(
+            BiFunction<Partition, TaskSignalling, U> partitionFunction,
+            Stream<? extends Partition> partitions,
+            int maxConcurrency) {
+        // TODO honor maxConcurrency with a semaphore
+        if (maxConcurrency > 0 && maxConcurrency < numPartitions()) {
+            throw new NotImplementedException();
+        }
+
+        TaskSignalling taskSignalling = hasCachedPartitionSizes() ? new TaskSignalling(count()) : new TaskSignalling(-1);
+
+        List<ListenableFuture<U>> tasks = partitions
+                .map(partition -> context.getExecutorService().submit(() -> partitionFunction.apply(partition, taskSignalling)))
+                .collect(Collectors.toList());
+        ListenableFuture<List<U>> listFuture = Futures.transform(
+                Futures.allAsList(tasks),
+                lists -> {
+                    taskSignalling.setFullProgress();
+                    return lists;
+                },
+                context.getExecutorService());
+        return new ProgressingFutureWrapper<>(listFuture, taskSignalling, hasCachedPartitionSizes());
     }
 
     /**

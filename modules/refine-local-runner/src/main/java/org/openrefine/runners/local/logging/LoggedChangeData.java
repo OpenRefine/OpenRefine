@@ -9,7 +9,7 @@ import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 
 public class LoggedChangeData<T> implements ChangeData<T> {
 
@@ -45,17 +45,8 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
-            throws IOException, InterruptedException {
-        runner.exec("saveToFile", () -> {
-            try {
-                changeData.saveToFile(file, serializer, progressReporter);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer) {
+        return runner.exec("saveToFile", () -> changeData.saveToFileAsync(file, serializer));
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.SortingConfig;
 
 /**
@@ -188,16 +188,8 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException {
-        exec("saveToFile", () -> {
-            try {
-                grid.saveToFile(file, progressReporter);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public ProgressingFuture<Void> saveToFileAsync(File file) {
+        return exec("saveToFileAsync", () -> grid.saveToFileAsync(file));
     }
 
     @Override
@@ -326,8 +318,8 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public boolean cache(ProgressReporter progressReporter) {
-        return exec("cache", () -> grid.cache(progressReporter));
+    public ProgressingFuture<Boolean> cacheAsync() {
+        return exec("cacheAsync", () -> grid.cacheAsync());
     }
 
     @Override

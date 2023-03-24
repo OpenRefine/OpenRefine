@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.openrefine.model.Runner;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 
 public class FileChangeDataStore implements ChangeDataStore {
 
@@ -61,12 +63,12 @@ public class FileChangeDataStore implements ChangeDataStore {
         File file = idsToFile(changeDataId);
         file.mkdirs();
         try {
+            ProgressingFuture<Void> future = data.saveToFileAsync(file, serializer);
             if (progressReporter.isPresent()) {
-                data.saveToFile(file, serializer, progressReporter.get());
-            } else {
-                data.saveToFile(file, serializer);
+                future.onProgress(progressReporter.get());
             }
-        } catch (InterruptedException e) {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
             FileUtils.deleteDirectory(file);
             throw new IOException(e);
         }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -35,6 +36,7 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporterStub;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
@@ -443,11 +445,13 @@ public abstract class RunnerTestBase {
     }
 
     @Test
-    public void testRoundTripSerializationWithProgress() throws IOException, InterruptedException {
+    public void testRoundTripSerializationAsync() throws IOException, InterruptedException, ExecutionException {
         File tempFile = new File(tempDir, "testgrid_progress");
         ProgressReporterStub reporter = new ProgressReporterStub();
 
-        simpleGrid.saveToFile(tempFile, reporter);
+        ProgressingFuture<Void> future = simpleGrid.saveToFileAsync(tempFile);
+        future.onProgress(reporter);
+        future.get();
         if (SUT.supportsProgressReporting()) {
             Assert.assertEquals(reporter.getPercentage(), 100);
         }
@@ -913,11 +917,13 @@ public abstract class RunnerTestBase {
     }
 
     @Test
-    public void testSerializeChangeDataWithProgress() throws IOException, InterruptedException {
+    public void testSerializeChangeDataAsync() throws IOException, InterruptedException, ExecutionException {
         File tempFile = new File(tempDir, "test_change_data_with_progress");
         ProgressReporterStub progress = new ProgressReporterStub();
 
-        simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer, progress);
+        ProgressingFuture<Void> future = simpleChangeData.saveToFileAsync(new File(tempFile, "data"), stringSerializer);
+        future.onProgress(progress);
+        future.get();
         Assert.assertEquals(progress.getPercentage(), 100);
 
         ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
@@ -1404,10 +1410,12 @@ public abstract class RunnerTestBase {
     }
 
     @Test
-    public void testCachingWithProgress() {
+    public void testCachingAsync() throws ExecutionException, InterruptedException {
         ProgressReporterStub reporter = new ProgressReporterStub();
         Assert.assertFalse(simpleGrid.isCached());
-        simpleGrid.cache(reporter);
+        ProgressingFuture<Boolean> future = simpleGrid.cacheAsync();
+        future.onProgress(reporter);
+        future.get();
         Assert.assertTrue(simpleGrid.isCached());
         Assert.assertEquals(reporter.getPercentage(), 100);
     }

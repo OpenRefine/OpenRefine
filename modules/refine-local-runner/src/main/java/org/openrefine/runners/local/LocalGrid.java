@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -31,7 +32,8 @@ import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.RecordPLL;
@@ -398,29 +400,34 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException {
-        saveToFile(file, Optional.ofNullable(progressReporter));
+    public ProgressingFuture<Void> saveToFileAsync(File file) {
+        File metadataFile = new File(file, METADATA_PATH);
+        File gridFile = new File(file, GRID_PATH);
+
+        return ProgressingFutures.transform(grid
+                .values()
+                .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
+                .saveAsTextFileAsync(gridFile.getAbsolutePath(), 0),
+                v -> {
+                    try {
+                        ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    return null;
+                }, runner.getPLLContext().getExecutorService());
     }
 
     @Override
     public void saveToFile(File file) throws IOException {
         try {
-            saveToFile(file, Optional.empty());
+            saveToFileAsync(file).get();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new IOException("The operation was interrupted", e);
+        } catch (ExecutionException e) {
+            throw new IOException(e.getCause());
         }
-    }
-
-    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
-        File metadataFile = new File(file, METADATA_PATH);
-        File gridFile = new File(file, GRID_PATH);
-
-        grid
-                .values()
-                .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
-                .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter, 0);
-
-        ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
     }
 
     protected Metadata getMetadata() {
@@ -876,28 +883,29 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public boolean cache(ProgressReporter progressReporter) {
-        return cache(Optional.of(progressReporter));
-    }
-
-    @Override
-    public boolean cache() {
-        return cache(Optional.empty());
-    }
-
-    protected boolean cache(Optional<ProgressReporter> progressReporter) {
+    public ProgressingFuture<Boolean> cacheAsync() {
         if (!smallEnoughToCacheInMemory()) {
-            return false;
+            return ProgressingFutures.immediate(false);
         }
         if (constructedFromRows) {
             // if the grid was constructed from rows and the records were derived from that,
             // then cache the rows: the records will be directly derived from something cached, so they will be fast too
-            grid.cache(progressReporter);
-            return grid.isCached();
+            return ProgressingFutures.transform(grid.cacheAsync(), v -> isCached(), runner.getPLLContext().getExecutorService());
         } else {
             // otherwise, do the converse
-            records.cache(progressReporter);
-            return records.isCached();
+            return ProgressingFutures.transform(records.cacheAsync(), v -> isCached(), runner.getPLLContext().getExecutorService());
+        }
+    }
+
+    @Override
+    public boolean cache() {
+        try {
+            return cacheAsync().get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e.getCause());
         }
     }
 

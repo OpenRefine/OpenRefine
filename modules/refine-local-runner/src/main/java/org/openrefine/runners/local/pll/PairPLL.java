@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.runners.local.pll.partitioning.CroppedPartitioner;
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
@@ -504,8 +504,8 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * Prevent double caching from this PairPLL wrapper and the underlying PLL by defering the caching to the child.
      */
     @Override
-    public void cache(Optional<ProgressReporter> progressReporter) {
-        pll.cache(progressReporter);
+    public ProgressingFuture<Void> cacheAsync() {
+        return pll.cacheAsync();
     }
 
     @Override

@@ -19,7 +19,10 @@ import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.process.CompletedFuture;
+import org.openrefine.process.FailingFuture;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
@@ -230,15 +233,6 @@ public class TestingGrid implements Grid {
 
     @Override
     public void saveToFile(File file) throws IOException {
-        saveToFile(file, Optional.empty());
-    }
-
-    @Override
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
-        saveToFile(file, Optional.ofNullable(progressReporter));
-    }
-
-    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
         File gridPath = new File(file, Grid.GRID_PATH);
         File metadataPath = new File(file, Grid.METADATA_PATH);
 
@@ -251,10 +245,6 @@ public class TestingGrid implements Grid {
                 gos.write('\n');
             }
         }
-        if (progressReporter.isPresent()) {
-            // just for the sake of having a more incremental progress report
-            progressReporter.get().reportProgress(90);
-        }
 
         ParsingUtilities.saveWriter.writeValue(metadataPath, this);
 
@@ -263,9 +253,20 @@ public class TestingGrid implements Grid {
             Writer writer = new OutputStreamWriter(fosCompletion);
             writer.close();
         }
-        if (progressReporter.isPresent()) {
-            progressReporter.get().reportProgress(100);
+    }
+
+    @Override
+    public ProgressingFuture<Void> saveToFileAsync(File file) {
+        try {
+            saveToFile(file);
+        } catch (IOException e) {
+            return new FailingFuture<>(e);
         }
+        return new CompletedFuture<>(null);
+    }
+
+    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
+
     }
 
     @Override
@@ -676,10 +677,9 @@ public class TestingGrid implements Grid {
     }
 
     @Override
-    public boolean cache(ProgressReporter progressReporter) {
+    public ProgressingFuture<Boolean> cacheAsync() {
         isCached = true;
-        progressReporter.reportProgress(100);
-        return true;
+        return new CompletedFuture<Boolean>(true);
     }
 
     @Override

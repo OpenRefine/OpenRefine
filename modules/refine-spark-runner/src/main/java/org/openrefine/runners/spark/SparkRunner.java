@@ -8,10 +8,13 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -52,6 +55,9 @@ public class SparkRunner implements Runner {
     private JavaSparkContext context;
     private final int defaultParallelism;
     private final String sparkMasterURI;
+    // used to return futures required by the Grid and ChangeData interfaces
+    protected final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
+            Executors.newCachedThreadPool());;
 
     public SparkRunner(RunnerConfiguration configuration) {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);

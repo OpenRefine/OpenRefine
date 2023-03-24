@@ -7,17 +7,18 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
+import org.apache.commons.lang.NotImplementedException;
 
 import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.runners.local.pll.ConcurrentProgressReporter;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.PairPLL;
@@ -95,23 +96,24 @@ public class LocalChangeData<T> implements ChangeData<T> {
         return runner;
     }
 
-    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)
-            throws IOException, InterruptedException {
+    @Override
+    public ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer) {
 
         PLL<Tuple2<Long, T>> gridWithReporting;
-        boolean useNativeProgressReporting = progressReporter.isEmpty() || grid.hasCachedPartitionSizes()
-                || parentPartitionFirstIndices == null;
+        boolean useNativeProgressReporting = grid.hasCachedPartitionSizes() || parentPartitionFirstIndices == null;
         if (useNativeProgressReporting) {
             gridWithReporting = grid;
         } else {
+            throw new NotImplementedException("Progress reporting not implemented yet");
             // we need to report progress but we do not know the partition sizes of our changedata object.
             // so we approximate progress by looking at the row numbers and assuming that the changedata
             // is evenly spread on the entire grid.
-            ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), parentSize);
-            gridWithReporting = grid.mapPartitions(
-                    (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter),
-                    "wrap stream with progress reporting",
-                    true);
+            /*
+             * ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(),
+             * parentSize); gridWithReporting = grid.mapPartitions( (idx, stream) ->
+             * wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter),
+             * "wrap stream with progress reporting", true);
+             */
         }
         PLL<String> serialized = gridWithReporting.map(r -> {
             try {
@@ -121,23 +123,17 @@ public class LocalChangeData<T> implements ChangeData<T> {
             }
         }, "serialize");
 
-        if (useNativeProgressReporting) {
-            // this relies on the cached partition sizes in the change data grid
-            serialized
-                    .saveAsTextFile(file.getAbsolutePath(), progressReporter, maxConcurrency);
-        } else {
-            serialized.saveAsTextFile(file.getAbsolutePath(), Optional.empty(), maxConcurrency);
-            progressReporter.get().reportProgress(100);
-        }
+        return serialized
+                .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency);
     }
 
+    @Override
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException {
-        saveToFile(file, serializer, Optional.empty());
-    }
-
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
-            throws IOException, InterruptedException {
-        saveToFile(file, serializer, Optional.ofNullable(progressReporter));
+        try {
+            saveToFileAsync(file, serializer).get();
+        } catch (ExecutionException e) {
+            throw new IOException(e.getCause());
+        }
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.process.ProgressReporterStub;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.TestUtils;
 
 public class TextFilePLLTests extends PLLTestsBase {
@@ -87,7 +88,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testRoundTripSerialization() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         File tempFile = new File(tempDir, "roundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0);
 
         // check for presence of the _SUCCESS marker
         File successMarker = new File(tempFile, "_SUCCESS");
@@ -104,7 +105,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0);
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
@@ -112,7 +113,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
-    public void testSaveWithoutCachedPartitionSizes() throws IOException, InterruptedException {
+    public void testSaveWithoutCachedPartitionSizes() throws InterruptedException, ExecutionException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // artificially discard partition sizes
         pll = pll.filter(x -> true);
@@ -121,12 +122,14 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter), 0);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0);
+        future.onProgress(progressReporter);
+        future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
     @Test
-    public void testSaveWithCachedPartitionSizes() throws IOException, InterruptedException {
+    public void testSaveWithCachedPartitionSizes() throws InterruptedException, ExecutionException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // the sizes of the partitions are known
         Assert.assertTrue(pll.hasCachedPartitionSizes());
@@ -135,30 +138,37 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.of(progressReporter), 0);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0);
+        future.onProgress(progressReporter);
+        future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
     @Test
-    public void testCacheWithProgressReporting() throws IOException {
+    public void testCacheWithProgressReporting() throws IOException, ExecutionException, InterruptedException {
         PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         // partition sizes are not known
         Assert.assertFalse(pll.hasCachedPartitionSizes());
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
-        pll.cache(Optional.of(progressReporter));
+
+        ProgressingFuture<Void> future = pll.cacheAsync();
+        future.onProgress(progressReporter);
+        future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
     @Test
-    public void testCacheWithProgressReportingAndPrecomputedPartitionSizes() throws IOException {
+    public void testCacheWithProgressReportingAndPrecomputedPartitionSizes() throws IOException, ExecutionException, InterruptedException {
         PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         pll.count();
         // partition sizes are known
         Assert.assertTrue(pll.hasCachedPartitionSizes());
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
-        pll.cache(Optional.of(progressReporter));
+        ProgressingFuture<Void> future = pll.cacheAsync();
+        future.onProgress(progressReporter);
+        future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
     }
 
@@ -168,7 +178,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty(), 0);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0);
 
         // truncate various partitions at various sizes and remove the completion marker
         truncateFile(new File(tempFile, "part-00001.gz"), 1);

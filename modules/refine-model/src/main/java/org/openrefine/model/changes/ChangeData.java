@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.openrefine.model.Runner;
-import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 
 /**
  * Some external data, obtained by communicating with an external service or performing an expensive computation whose
@@ -44,17 +44,16 @@ public interface ChangeData<T> extends Iterable<IndexedData<T>> {
     void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException;
 
     /**
-     * Saves the change data to a specified directory, following OpenRefine's format for change data.
-     * 
+     * Saves the change data to a specified directory, following OpenRefine's format for change data, in an asynchronous
+     * way.
+     *
      * @param file
      *            the directory where to save the grid
      * @param serializer
      *            the serializer used to convert the items to strings
-     * @param progressReporter
-     *            callback to report the progress of the writing process
+     * @return a future which completes once the save is complete
      */
-    void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
-            throws IOException, InterruptedException;
+    ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer);
 
     /**
      * Whether the entire change data is available to be iterated on statically, without performing any new computation

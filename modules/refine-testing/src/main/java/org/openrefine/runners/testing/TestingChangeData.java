@@ -12,7 +12,10 @@ import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.process.CompletedFuture;
+import org.openrefine.process.FailingFuture;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 
 public class TestingChangeData<T> implements ChangeData<T> {
 
@@ -57,12 +60,19 @@ public class TestingChangeData<T> implements ChangeData<T> {
         }
     }
 
+    @Override
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
         saveToFile(file, serializer, Optional.empty());
     }
 
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
-        saveToFile(file, serializer, Optional.ofNullable(progressReporter));
+    @Override
+    public ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer) {
+        try {
+            saveToFile(file, serializer);
+        } catch (IOException e) {
+            return new FailingFuture<>(e);
+        }
+        return new CompletedFuture<>(null);
     }
 
     @Override
