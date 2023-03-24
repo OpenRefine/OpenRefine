@@ -42,7 +42,7 @@ function ReconStandardServicePanel(column, service, container) {
 
 ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
-  var dismissBusy = DialogSystem.showBusy();
+  var dismissBusy = self.showBusyReconciling();
 
   Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
@@ -106,7 +106,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.noType.on('click', function() {
     self._rewirePropertySuggests(null) // Clear any selected type
   });
-
+    self._populateProperties();
   this._guessTypes(function() {
     self._populatePanel();
     self._wireEvents();
@@ -188,7 +188,8 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
     this._elmts.typeInput.trigger('focus');
   }
-
+}
+  ReconStandardServicePanel.prototype._populateProperties = function () {
   /*
    *  Populate properties
    */
@@ -345,3 +346,13 @@ ReconStandardServicePanel.prototype.start = function() {
   );
 };
 
+ReconStandardServicePanel.prototype.showBusyReconciling = function(message) {
+  var frame = document.getElementsByClassName("type-container")[0];
+
+  var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
+  $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
+
+  return function() {
+    $(body).remove()
+  };
+};
