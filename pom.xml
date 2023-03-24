@@ -75,7 +75,7 @@
     <jackson.version>2.13.4</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.4</butterfly.version>
-    <slf4j.version>2.0.6</slf4j.version>
+    <slf4j.version>2.0.7</slf4j.version>
     <log4j.version>2.20.0</log4j.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
@@ -89,7 +89,7 @@
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.15</commons-codec.version>
-    <commons-compress.version>1.22</commons-compress.version>
+    <commons-compress.version>1.23.0</commons-compress.version>
     <velocity.version>1.5</velocity.version>
     <marc4j.version>2.9.2</marc4j.version>
     <jsoup.version>1.15.3</jsoup.version>

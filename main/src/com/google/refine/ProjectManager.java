@@ -130,10 +130,12 @@ public abstract class ProjectManager {
      */
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
         synchronized (this) {
+            // Row count is duplicated in metadata, so make sure it is up-to-date
+            projectMetadata.setRowCount(project.rows.size());
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
             if (_projectsTags == null)
-                _projectsTags = new HashMap<String, Integer>();
+                _projectsTags = new HashMap<>();
             String[] tags = projectMetadata.getTags();
             if (tags != null) {
                 for (String tag : tags) {
