@@ -328,8 +328,16 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public void setRowCount(int rowCount) {
-        this._rowCount = rowCount;
+        setRowCountInternal(rowCount);
         updateModified();
+    }
+
+    /**
+     * Set row count without updating the last modified time. Internal use only!
+     */
+    @JsonIgnore
+    public void setRowCountInternal(int rowCount) {
+        this._rowCount = rowCount;
     }
 
     @JsonIgnore
@@ -349,6 +357,7 @@ public class ProjectMetadata {
     @JsonIgnore
     public void setUserMetadata(ArrayNode userMetadata) {
         this._userMetadata = userMetadata;
+        updateModified();
     }
 
     private void updateUserMetadata(String metaName, String valueString) {
