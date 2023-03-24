@@ -16,6 +16,7 @@ import java.util.function.Function;
 import org.apache.commons.io.FileUtils;
 import org.openrefine.model.Runner;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -47,7 +48,8 @@ public class FileChangeDataStoreTests {
         changeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
         when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);
-        // when(changeData.saveToFile(any(), eq(serializer), any())).
+        VoidFuture future = mock(VoidFuture.class);
+        when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, dir);
     }
 
@@ -58,7 +60,7 @@ public class FileChangeDataStoreTests {
 
         SUT.store(changeData, changeDataId, serializer, Optional.empty());
 
-        verify(changeData, times(1)).saveToFile(any(), eq(serializer));
+        verify(changeData, times(1)).saveToFileAsync(any(), eq(serializer));
         Assert.assertTrue(new File(new File(dir, "123"), "data").exists());
         Assert.assertFalse(SUT.needsRefreshing(123));
         ChangeData<String> retrieved = SUT.retrieve(new ChangeDataId(123, "data"), serializer);
@@ -100,5 +102,9 @@ public class FileChangeDataStoreTests {
     private abstract static class MySerializer implements ChangeDataSerializer<String> {
 
         private static final long serialVersionUID = 8276627729632340969L;
+    }
+
+    private abstract static class VoidFuture implements ProgressingFuture<Void> {
+
     }
 }

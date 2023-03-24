@@ -8,12 +8,13 @@ import java.util.List;
 
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
 import org.openrefine.runners.spark.io.IOUtils;
 import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
-import org.openrefine.process.ProgressReporter;
 
 import scala.Tuple2;
 
@@ -82,12 +83,16 @@ public class SparkChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
-        saveToFile(file, serializer);
+    public ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer) {
         // TODO more granular progress reporting? this requires knowing the expected size of the RDD,
         // which should probably be passed when constructing the object (so that it can be inferred from
         // the parent Grid)
-        progressReporter.reportProgress(100);
+        return ProgressingFutures.fromListenableFuture(
+                runner.executorService.submit(() -> {
+                    saveToFile(file, serializer);
+                    return null;
+                }),
+                runner.executorService);
     }
 
     @Override

@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
 
 /**
  * A PLL which is created out of a regular Java collection. The collection is split into contiguous partitions which can
@@ -57,10 +59,8 @@ public class InMemoryPLL<T> extends PLL<T> {
     }
 
     @Override
-    public void cache(Optional<ProgressReporter> progressReporter) {
-        if (progressReporter.isPresent()) {
-            progressReporter.get().reportProgress(100);
-        }
+    public ProgressingFuture<Void> cacheAsync() {
+        return ProgressingFutures.immediate(null);
     }
 
     @Override

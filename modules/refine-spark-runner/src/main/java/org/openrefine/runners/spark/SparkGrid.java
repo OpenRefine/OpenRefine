@@ -25,6 +25,8 @@ import org.apache.spark.util.DoubleAccumulator;
 import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
 import org.openrefine.runners.spark.io.IOUtils;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
@@ -39,7 +41,6 @@ import org.openrefine.runners.spark.rdd.RecordRDD;
 import org.openrefine.runners.spark.rdd.ScanMapRDD;
 import org.openrefine.runners.spark.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
@@ -543,9 +544,13 @@ public class SparkGrid implements Grid {
     }
 
     @Override
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
-        saveToFile(file);
-        progressReporter.reportProgress(100);
+    public ProgressingFuture<Void> saveToFileAsync(File file) {
+        return ProgressingFutures.fromListenableFuture(
+                runner.executorService.submit(() -> {
+                    saveToFile(file);
+                    return null;
+                }),
+                runner.executorService);
     }
 
     protected static String serializeIndexedRow(Tuple2<Long, IndexedRow> indexedRow) throws JsonProcessingException {
@@ -1347,11 +1352,12 @@ public class SparkGrid implements Grid {
     }
 
     @Override
-    public boolean cache(ProgressReporter progressReporter) {
-        boolean isCached = cache();
-        // TODO more granular progress reporting?
-        progressReporter.reportProgress(100);
-        return isCached;
+    public ProgressingFuture<Boolean> cacheAsync() {
+        return ProgressingFutures.fromListenableFuture(
+                runner.executorService.submit(() -> {
+                    return cache();
+                }),
+                runner.executorService);
     }
 
 }

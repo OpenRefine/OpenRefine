@@ -4,8 +4,11 @@ package org.openrefine.runners.local.pll;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.function.Function;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.runners.local.pll.util.TaskSignalling;
 
 /**
  * An object holding the necessary context instances to manipulate partitioned lazy lists (PLL).
