@@ -337,7 +337,7 @@ ReconStandardServicePanel.prototype.start = function() {
         identifierSpace: this._service.identifierSpace,
         schemaSpace: this._service.schemaSpace,
         type: (type) ? { id: type.id, name: type.name } : null,
-        autoMatch: this._elmts.automatchCheck[0].checked,
+        autoMatch: JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true)),
         columnDetails: columnDetails,
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
       })
