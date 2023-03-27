@@ -111,7 +111,7 @@ echo You must set JAVA_HOME to point at your Java Development Kit installation
 echo.
 echo If you don't know how to do this, follow the instructions at
 echo.
-echo   http://bit.ly/1c2gkR
+echo   https://openrefine.org/docs/manual/installing#java
 echo.
 
 goto fail
