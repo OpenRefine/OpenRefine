@@ -86,7 +86,7 @@ public class TaskSignalling {
             return;
         }
         this.processedElements += processedElements;
-        setProgress((int) ((100 * processedElements) / elementsToProcess));
+        setProgress((int) ((100 * this.processedElements) / elementsToProcess));
     }
 
     /**

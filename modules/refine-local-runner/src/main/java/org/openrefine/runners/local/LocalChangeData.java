@@ -7,22 +7,21 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
-import org.apache.commons.lang.NotImplementedException;
 
 import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressingFuture;
-import org.openrefine.runners.local.pll.ConcurrentProgressReporter;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.Tuple2;
+import org.openrefine.runners.local.pll.util.ProgressingFutureWrapper;
+import org.openrefine.runners.local.pll.util.TaskSignalling;
 
 public class LocalChangeData<T> implements ChangeData<T> {
 
@@ -101,19 +100,18 @@ public class LocalChangeData<T> implements ChangeData<T> {
 
         PLL<Tuple2<Long, T>> gridWithReporting;
         boolean useNativeProgressReporting = grid.hasCachedPartitionSizes() || parentPartitionFirstIndices == null;
+        TaskSignalling taskSignalling = useNativeProgressReporting ? null : new TaskSignalling(parentSize);
+
         if (useNativeProgressReporting) {
             gridWithReporting = grid;
         } else {
-            throw new NotImplementedException("Progress reporting not implemented yet");
             // we need to report progress but we do not know the partition sizes of our changedata object.
             // so we approximate progress by looking at the row numbers and assuming that the changedata
             // is evenly spread on the entire grid.
-            /*
-             * ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(),
-             * parentSize); gridWithReporting = grid.mapPartitions( (idx, stream) ->
-             * wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter),
-             * "wrap stream with progress reporting", true);
-             */
+
+            gridWithReporting = grid.mapPartitions(
+                    (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, taskSignalling),
+                    "wrap stream with progress reporting", true);
         }
         PLL<String> serialized = gridWithReporting.map(r -> {
             try {
@@ -123,8 +121,14 @@ public class LocalChangeData<T> implements ChangeData<T> {
             }
         }, "serialize");
 
-        return serialized
+        ProgressingFuture<Void> future = serialized
                 .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency);
+        if (useNativeProgressReporting) {
+            return future;
+        } else {
+            // override the progress of the existing future with approximated progress from the iteration of the stream
+            return new ProgressingFutureWrapper<>(future, taskSignalling, true);
+        }
     }
 
     @Override
@@ -152,8 +156,8 @@ public class LocalChangeData<T> implements ChangeData<T> {
     protected static <T> Stream<Tuple2<Long, T>> wrapStreamWithProgressReporting(
             long startIdx,
             Stream<Tuple2<Long, T>> stream,
-            ConcurrentProgressReporter progressReporter) {
-        Iterator<Tuple2<Long, T>> iterator = new Iterator<Tuple2<Long, T>>() {
+            TaskSignalling taskSignalling) {
+        Iterator<Tuple2<Long, T>> iterator = new Iterator<>() {
 
             long lastSeen = startIdx;
             Iterator<Tuple2<Long, T>> parent = stream.iterator();
@@ -166,7 +170,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
             @Override
             public Tuple2<Long, T> next() {
                 Tuple2<Long, T> element = parent.next();
-                progressReporter.increment(element.getKey() - lastSeen);
+                taskSignalling.addProcessedElements(element.getKey() - lastSeen);
                 lastSeen = element.getKey();
                 return element;
             }

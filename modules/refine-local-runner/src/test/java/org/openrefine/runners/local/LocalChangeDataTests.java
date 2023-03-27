@@ -9,9 +9,8 @@ import java.util.stream.Stream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.process.ProgressReporterStub;
-import org.openrefine.runners.local.pll.ConcurrentProgressReporter;
 import org.openrefine.runners.local.pll.Tuple2;
+import org.openrefine.runners.local.pll.util.TaskSignalling;
 
 public class LocalChangeDataTests {
 
@@ -21,17 +20,16 @@ public class LocalChangeDataTests {
                 Tuple2.of(32L, 1),
                 Tuple2.of(45L, 2));
 
-        ProgressReporterStub reporter = new ProgressReporterStub();
-        ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(reporter, 100L);
-        Stream<Tuple2<Long, Integer>> stream = LocalChangeData.wrapStreamWithProgressReporting(30L, list.stream(), concurrentReporter);
+        TaskSignalling taskSignalling = new TaskSignalling(100L);
+        Stream<Tuple2<Long, Integer>> stream = LocalChangeData.wrapStreamWithProgressReporting(30L, list.stream(), taskSignalling);
 
         Iterator<Tuple2<Long, Integer>> iterator = stream.iterator();
 
-        Assert.assertEquals(reporter.getPercentage(), 0);
+        Assert.assertEquals(taskSignalling.getProgress(), 0);
         Assert.assertEquals(iterator.next(), Tuple2.of(32L, 1));
-        Assert.assertEquals(reporter.getPercentage(), 2);
+        Assert.assertEquals(taskSignalling.getProgress(), 2);
         Assert.assertEquals(iterator.next(), Tuple2.of(45L, 2));
-        Assert.assertEquals(reporter.getPercentage(), 15);
+        Assert.assertEquals(taskSignalling.getProgress(), 15);
         Assert.assertFalse(iterator.hasNext());
     }
 }

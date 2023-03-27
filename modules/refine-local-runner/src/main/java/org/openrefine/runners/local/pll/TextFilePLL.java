@@ -233,7 +233,11 @@ public class TextFilePLL extends PLL<String> {
             Stream<String> lineStream = Streams.stream(iterator)
                     .onClose(() -> {
                         try {
-                            lineReader.close();
+                            if (lineReader != null) {
+                                lineReader.close();
+                            } else {
+                                lineNumberReader.close();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
