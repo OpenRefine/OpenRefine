@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -25,7 +26,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Streams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Grid;
@@ -735,25 +735,12 @@ public abstract class PLL<T> {
     protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions,
             int maxConcurrency)
             throws InterruptedException {
-        if (maxConcurrency > 0 && maxConcurrency < numPartitions()) {
-            // since we have no easy way to control how many jobs are executed at the same time,
-            // we just resort to synchronous, sequential execution on all partitions in order
-            return partitions.sequential()
-                    .map(partition -> partitionFunction.apply(partition))
-                    .collect(Collectors.toList());
-        }
-        // otherwise we can run at least numPartitions jobs at the same time
-        List<ListenableFuture<U>> tasks = partitions
-                .map(partition -> context.getExecutorService().submit(() -> partitionFunction.apply(partition)))
-                .collect(Collectors.toList());
-        ListenableFuture<List<U>> listFuture = Futures.allAsList(tasks);
         try {
-            return listFuture.get();
-        } catch (InterruptedException e) {
-            listFuture.cancel(true);
-            throw e;
+            return runOnPartitionsAsync(
+                    (partition, signalling) -> partitionFunction.apply(partition),
+                    partitions,
+                    maxConcurrency).get();
         } catch (ExecutionException e) {
-            listFuture.cancel(true);
             throw new PLLExecutionError(e);
         }
     }
@@ -774,24 +761,48 @@ public abstract class PLL<T> {
             BiFunction<Partition, TaskSignalling, U> partitionFunction,
             Stream<? extends Partition> partitions,
             int maxConcurrency) {
-        // TODO honor maxConcurrency with a semaphore
-        if (maxConcurrency > 0 && maxConcurrency < numPartitions()) {
-            throw new NotImplementedException();
-        }
-
+        // Semaphore bounding the number of concurrently running tasks
         TaskSignalling taskSignalling = hasCachedPartitionSizes() ? new TaskSignalling(count()) : new TaskSignalling(-1);
 
-        List<ListenableFuture<U>> tasks = partitions
-                .map(partition -> context.getExecutorService().submit(() -> partitionFunction.apply(partition, taskSignalling)))
-                .collect(Collectors.toList());
-        ListenableFuture<List<U>> listFuture = Futures.transform(
-                Futures.allAsList(tasks),
+        ListenableFuture<List<U>> listFuture;
+        if (maxConcurrency == 1) {
+            // special case when maxConcurrency is one: we want to execute the tasks on each partition in sequential
+            // order
+            listFuture = context.getExecutorService().submit(() -> {
+                List<U> results = new ArrayList<>();
+                partitions.forEachOrdered(partition -> {
+                    results.add(partitionFunction.apply(partition, taskSignalling));
+                });
+                return results;
+            });
+        } else {
+            // if the concurrency is limited, we use a semaphore to limit the number of threads working on a task
+            // simultaneously
+            Semaphore semaphore = (maxConcurrency > 0 && maxConcurrency < numPartitions()) ? new Semaphore(maxConcurrency) : null;
+            List<ListenableFuture<U>> tasks = partitions
+                    .map(partition -> context.getExecutorService().submit(() -> {
+                        if (semaphore != null) {
+                            semaphore.acquire();
+                        }
+                        try {
+                            return partitionFunction.apply(partition, taskSignalling);
+                        } finally {
+                            if (semaphore != null) {
+                                semaphore.release();
+                            }
+                        }
+                    }))
+                    .collect(Collectors.toList());
+            listFuture = Futures.allAsList(tasks);
+        }
+        ListenableFuture<List<U>> futureWithProgress = Futures.transform(
+                listFuture,
                 lists -> {
                     taskSignalling.setFullProgress();
                     return lists;
                 },
                 context.getExecutorService());
-        return new ProgressingFutureWrapper<>(listFuture, taskSignalling, hasCachedPartitionSizes());
+        return new ProgressingFutureWrapper<>(futureWithProgress, taskSignalling, hasCachedPartitionSizes());
     }
 
     /**

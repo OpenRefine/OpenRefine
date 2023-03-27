@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -134,6 +136,17 @@ public class InMemoryPLLTests extends PLLTestsBase {
         Assert.assertEquals(noPartitions.count(), 0L);
         Assert.assertEquals(noPartitions.collect(), Collections.emptyList());
         Assert.assertFalse(noPartitions.stream().iterator().hasNext());
+    }
+
+    @Test
+    public void testSequentialEvaluation() throws InterruptedException {
+        // when running tasks on a PLL with a maximum concurrency of 1, the partitions should be treated in order
+        List<Integer> integerList = IntStream.range(0, 100)
+                .mapToObj(v -> v).collect(Collectors.toList());
+        InMemoryPLL<Integer> pll = new InMemoryPLL<>(context, integerList, 100);
+        AtomicLong counter = new AtomicLong(0L);
+        List<Integer> results = pll.runOnPartitions(p -> (int) counter.getAndIncrement(), pll.getPartitions().stream(), 1);
+        Assert.assertEquals(results, integerList);
     }
 
 }
