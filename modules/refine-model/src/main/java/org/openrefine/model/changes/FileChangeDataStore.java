@@ -12,6 +12,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.commons.io.FileUtils;
 import org.openrefine.model.Runner;
 import org.openrefine.process.Process;
@@ -72,6 +75,14 @@ public class FileChangeDataStore implements ChangeDataStore {
             FileUtils.deleteDirectory(file);
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public <T> ProgressingFuture<Void> storeAsync(ChangeData<T> data, ChangeDataId changeDataId,
+            ChangeDataSerializer<T> serializer) {
+        File file = idsToFile(changeDataId);
+        file.mkdirs();
+        return data.saveToFileAsync(file, serializer);
     }
 
     @Override
@@ -139,7 +150,7 @@ public class FileChangeDataStore implements ChangeDataStore {
         }
     }
 
-    protected static class ChangeDataStoringProcess<T> extends Process implements Runnable {
+    protected static class ChangeDataStoringProcess<T> extends Process {
 
         final Optional<ChangeData<T>> storedChangeData;
         final ChangeDataId changeDataId;
@@ -162,24 +173,16 @@ public class FileChangeDataStore implements ChangeDataStore {
         }
 
         @Override
-        protected Runnable getRunnable() {
-            return this;
+        protected ProgressingFuture<Void> getFuture() {
+            ChangeData<T> newChangeData = completionProcess.apply(storedChangeData);
+            ProgressingFuture<Void> future = changeDataStore.storeAsync(newChangeData, changeDataId, serializer);
+            future.onProgress(_reporter);
+            return future;
         }
 
         @Override
         public ChangeDataId getChangeDataId() {
             return changeDataId;
-        }
-
-        @Override
-        public void run() {
-            ChangeData<T> newChangeData = completionProcess.apply(storedChangeData);
-            try {
-                changeDataStore.store(newChangeData, changeDataId, serializer, Optional.of(_reporter));
-                _manager.onDoneProcess(this);
-            } catch (Exception e) {
-                _manager.onFailedProcess(this, e);
-            }
         }
     }
 

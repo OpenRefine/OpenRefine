@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 
 /**
  * Stores and retrieves {@link ChangeData} objects keyed by a pair: - the id of the change it belongs to - a string id
@@ -30,7 +31,6 @@ public interface ChangeDataStore {
      *            to serialize the data to a file, for instance
      * @param progressReporter
      *            reports the progress of the change data computation and serialization
-     * @param changeDataId
      * @throws IOException
      *             if serialization failed
      */
@@ -40,6 +40,24 @@ public interface ChangeDataStore {
             ChangeDataSerializer<T> serializer,
             Optional<ProgressReporter> progressReporter)
             throws IOException;
+
+    /**
+     * Asynchronously stores a {@link ChangeData}, which might imply explicitly computing all its values (if the store
+     * persists its changes).
+     *
+     * @param data
+     *            the data to store
+     * @param changeDataId
+     *            the id of the change data to store
+     * @param serializer
+     *            to serialize the data to a file, for instance
+     * @throws IOException
+     *             if serialization failed
+     */
+    public <T> ProgressingFuture<Void> storeAsync(
+            ChangeData<T> data,
+            ChangeDataId changeDataId,
+            ChangeDataSerializer<T> serializer);
 
     /**
      * Loads back a {@link ChangeData} that has been persisted before.

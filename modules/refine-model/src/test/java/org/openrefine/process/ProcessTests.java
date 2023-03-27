@@ -32,17 +32,26 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
+import java.util.concurrent.Callable;
+
 public class ProcessTests {
 
     public static class ProcessStub extends Process {
 
-        protected ProcessStub(String description) {
+        Callable<ProgressingFuture<Void>> future;
+
+        protected ProcessStub(String description, Callable<ProgressingFuture<Void>> future) {
             super(description);
+            this.future = future;
         }
 
         @Override
-        protected Runnable getRunnable() {
-            return null;
+        protected ProgressingFuture<Void> getFuture() {
+            try {
+                return future.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -53,7 +62,7 @@ public class ProcessTests {
 
     @Test
     public void serializeLongRunningProcess() {
-        Process process = new ProcessStub("some description");
+        Process process = new ProcessStub("some description", () -> null);
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
                 + "\"id\":" + hashCode + ","

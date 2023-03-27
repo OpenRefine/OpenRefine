@@ -36,8 +36,12 @@ package org.openrefine.process;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.openrefine.history.HistoryEntry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,7 +52,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProcessManager {
 
     @JsonIgnore
-    protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
+    protected List<Process> _processes = Collections.synchronizedList(new LinkedList<>());
+    @JsonIgnore
+    protected ListeningExecutorService _executorService = MoreExecutors.listeningDecorator(
+            Executors.newCachedThreadPool());
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
 
@@ -117,6 +124,22 @@ public class ProcessManager {
         }
         _processes.clear();
         _latestExceptions = null;
+    }
+
+    /**
+     * Gets the process with the given process id.
+     * 
+     * @throws IllegalArgumentException
+     *             if the process cannot be found
+     */
+    public Process getProcess(int processId) {
+        Optional<Process> processOptional = _processes.stream()
+                .filter(process -> process.getId() == processId)
+                .findFirst();
+        if (processOptional.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Process %d not found", processId));
+        }
+        return processOptional.get();
     }
 
     protected void update() {
