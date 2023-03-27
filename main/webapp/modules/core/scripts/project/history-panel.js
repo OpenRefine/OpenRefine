@@ -291,6 +291,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   
   elmts.applyButton.html($.i18n('core-buttons/perform-op'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  elmts.operationJsonButton.html($.i18n('core-buttons/upload'));
 
   var fixJson = function(json) {
     json = json.trim();
