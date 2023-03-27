@@ -62,6 +62,12 @@
       <version>7.6.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openrefine</groupId>
+      <artifactId>refine-testing</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <properties>

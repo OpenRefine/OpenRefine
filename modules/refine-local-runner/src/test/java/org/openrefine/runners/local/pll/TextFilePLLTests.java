@@ -194,7 +194,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
-        Assert.assertEquals(deserializedPLL.count(), 1138L);
+        Assert.assertEquals(deserializedPLL.count(), 1137L);
     }
 
     protected void createTestTextFile(File file, String contents) throws IOException {

@@ -8,6 +8,7 @@ import org.openrefine.expr.functions.ToNumber;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 import org.openrefine.runners.local.LocalRunner;
+import org.openrefine.runners.testing.TestingRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class GridSerializationBenchmark {
 
         @Setup(Level.Invocation)
         public void setUp() throws IOException {
-            runner = new LocalRunner();
+            runner = new TestingRunner(); // new LocalRunner();
             path = new File("benchmark/testgrid");
             tmpDir = new File("/tmp/orbenchmark");
             if (tmpDir.exists()) {
@@ -43,12 +44,13 @@ public class GridSerializationBenchmark {
             }
             tmpDir.mkdir();
             targetPath = new File(tmpDir, "grid");
-            grid = runner.loadGrid(path);
         }
 
         @TearDown(Level.Invocation)
         public void tearDown() {
-            ((LocalRunner) runner).getPLLContext().getExecutorService().shutdown();
+            if (runner instanceof LocalRunner) {
+                ((LocalRunner) runner).getPLLContext().getExecutorService().shutdown();
+            }
         }
     }
 
@@ -57,7 +59,8 @@ public class GridSerializationBenchmark {
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-    public void serializeGrid(GridSerializationBenchmark.ExecutionPlan plan, Blackhole blackhole) throws IOException {
-        plan.grid.saveToFile(plan.targetPath);
+    public void collectGrid(GridSerializationBenchmark.ExecutionPlan plan, Blackhole blackhole) throws IOException {
+        Grid grid = plan.runner.loadGrid(plan.path);
+        blackhole.consume(grid.collectRows());
     }
 }
