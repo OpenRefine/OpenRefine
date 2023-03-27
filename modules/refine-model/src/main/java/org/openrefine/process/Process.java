@@ -35,6 +35,8 @@ package org.openrefine.process;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 
 import org.openrefine.model.changes.ChangeDataId;
 
@@ -45,7 +47,7 @@ public abstract class Process {
     @JsonIgnore
     protected ProcessManager _manager;
     @JsonIgnore
-    protected Thread _thread;
+    protected ProgressingFuture<Void> _future;
     @JsonProperty("progress")
     protected int _progress; // out of 100
     @JsonIgnore
@@ -60,15 +62,15 @@ public abstract class Process {
 
     @JsonProperty("status")
     public String getStatus() {
-        return _thread == null ? "pending" : (_thread.isAlive() ? "running" : "done");
+        return _future == null ? "pending" : (!_future.isDone() ? "running" : "done");
     }
 
     public boolean isRunning() {
-        return _thread != null && _thread.isAlive();
+        return _future != null && !_future.isDone();
     }
 
     public boolean isDone() {
-        return _thread != null && !_thread.isAlive();
+        return _future != null && _future.isDone();
     }
 
     public boolean isCanceled() {
@@ -76,18 +78,51 @@ public abstract class Process {
     }
 
     public void startPerforming(ProcessManager manager) {
-        if (_thread == null) {
+        if (_future == null) {
             _manager = manager;
 
-            _thread = new Thread(getRunnable());
-            _thread.start();
+            _future = getFuture();
+            FutureCallback<Void> callback = new FutureCallback<>() {
+
+                @Override
+                public void onSuccess(Void result) {
+                    _manager.onDoneProcess(Process.this);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    if (t instanceof Exception) {
+                        _manager.onFailedProcess(Process.this, (Exception) t);
+                    }
+                }
+            };
+            Futures.addCallback(_future, callback, _manager._executorService);
         }
     }
 
     public void cancel() {
         _canceled = true;
-        if (_thread != null && _thread.isAlive()) {
-            _thread.interrupt();
+        if (_future != null) {
+            _future.cancel(true);
+        }
+    }
+
+    /**
+     * Pauses this process. This may or may not be actually respected by the underlying future as support depends on the
+     * runner.
+     */
+    public void pause() {
+        if (_future != null) {
+            _future.pause();
+        }
+    }
+
+    /**
+     * Resumes this process if it was paused.
+     */
+    public void resume() {
+        if (_future != null) {
+            _future.resume();
         }
     }
 
@@ -99,7 +134,7 @@ public abstract class Process {
     @JsonProperty("changeDataId")
     abstract public ChangeDataId getChangeDataId();
 
-    abstract protected Runnable getRunnable();
+    abstract protected ProgressingFuture<Void> getFuture();
 
     protected class Reporter implements ProgressReporter {
 

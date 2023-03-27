@@ -8,6 +8,8 @@ import java.util.function.Function;
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
+import org.openrefine.process.ProgressingFutures;
 
 /**
  * A {@link ChangeDataStore} which does not persist its change data, meaning that they do not have to be computed
@@ -41,6 +43,12 @@ public class LazyChangeDataStore implements ChangeDataStore {
     public <T> void store(ChangeData<T> data, ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         _changeData.put(idPairToString(changeDataId), data);
+    }
+
+    @Override
+    public <T> ProgressingFuture<Void> storeAsync(ChangeData<T> data, ChangeDataId changeDataId, ChangeDataSerializer<T> serializer) {
+        _changeData.put(idPairToString(changeDataId), data);
+        return ProgressingFutures.immediate(null);
     }
 
     @SuppressWarnings("unchecked")

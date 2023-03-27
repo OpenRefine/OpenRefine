@@ -41,25 +41,19 @@ public class ProcessManagerTests {
     @BeforeMethod
     public void setUp() {
         processManager = new ProcessManager();
-        process1 = new ProcessTests.ProcessStub("some description");
-        process2 = new ProcessTests.ProcessStub("some other description");
+        process1 = new ProcessTests.ProcessStub("some description",
+                () -> ProgressingFutures.exception(new IllegalArgumentException("unexpected error")));
+        process2 = new ProcessTests.ProcessStub("some other description",
+                () -> ProgressingFutures.immediate(null));
     }
 
     @Test
     public void serializeProcessManager() throws Exception {
         processManager.queueProcess(process1);
         processManager.queueProcess(process2);
-        processManager.onFailedProcess(process1, new IllegalArgumentException("unexpected error"));
-        // Wait for process to complete to avoid race where they serialize with
-        // different values for status: running vs done
-        int total = 0;
-        while (processManager.hasPending() && total < 1000) {
-            Thread.sleep(100);
-            total += 100;
-        }
-        String processJson = ParsingUtilities.defaultWriter.writeValueAsString(process2);
+
         TestUtils.isSerializedTo(processManager, "{"
-                + "\"processes\":[" + processJson + "],\n"
+                + "\"processes\":[],\n"
                 + "\"exceptions\":[{\"message\":\"unexpected error\"}]"
                 + "}", ParsingUtilities.defaultWriter);
     }
