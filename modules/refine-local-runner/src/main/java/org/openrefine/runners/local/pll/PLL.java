@@ -695,7 +695,6 @@ public abstract class PLL<T> {
      * @param maxConcurrency
      *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
      * @return
-     * @throws InterruptedException
      */
     public <U> ProgressingFuture<List<U>> runOnPartitionsAsync(
             BiFunction<Partition, TaskSignalling, U> partitionFunction,

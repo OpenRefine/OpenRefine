@@ -307,7 +307,6 @@ public interface Grid {
      * @param file
      *            the directory where to save the grid
      * @return a future which completes once the save is complete
-     * @see {@link #saveToFile(File)}
      */
     public ProgressingFuture<Void> saveToFileAsync(File file);
 

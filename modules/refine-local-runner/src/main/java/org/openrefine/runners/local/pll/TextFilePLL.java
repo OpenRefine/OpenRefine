@@ -7,10 +7,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 import com.google.common.collect.Streams;
 import com.google.common.io.CountingInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,15 +127,19 @@ public class TextFilePLL extends PLL<String> {
             if (textPartition.getStart() > 0L) {
                 channel.position(textPartition.start);
             }
-            InputStream bufferedIs = new BufferedInputStream(stream);
             CountingInputStream countingIs;
-            LineReader lineReader;
+
+            LineReader lineReader; // used when we need to keep track of exact consumption of bytes from the source
+                                   // stream
+            LineNumberReader lineNumberReader; // used when we do not need to keep track (faster)
+
             if (isGzipped(textPartition.getPath())) {
                 // if we decompress, we count the bytes before decompression (since that is how the file size was
                 // computed).
+                InputStream bufferedIs = new BufferedInputStream(stream);
                 countingIs = new CountingInputStream(bufferedIs);
                 try {
-                    bufferedIs = new GzipCompressorInputStream(bufferedIs);
+                    bufferedIs = new GZIPInputStream(countingIs);
                 } catch (IOException e) {
                     if (ignoreEarlyEOF) {
                         // this partition was truncated very early, in the Gzip header.
@@ -145,10 +149,12 @@ public class TextFilePLL extends PLL<String> {
                         throw e;
                     }
                 }
-                lineReader = new LineReader(bufferedIs, encoding);
+                lineReader = null;
+                lineNumberReader = new LineNumberReader(new InputStreamReader(bufferedIs, encoding));
             } else {
-                countingIs = new CountingInputStream(bufferedIs);
+                countingIs = new CountingInputStream(new BufferedInputStream(stream));
                 lineReader = new LineReader(countingIs, encoding);
+                lineNumberReader = null;
             }
 
             // if we are not reading from the first partition of the given file,
@@ -160,7 +166,7 @@ public class TextFilePLL extends PLL<String> {
                 lineReader.readLine();
             }
 
-            Iterator<String> iterator = new Iterator<String>() {
+            Iterator<String> iterator = new Iterator<>() {
 
                 boolean nextLineAttempted = false;
                 String nextLine = null;
@@ -172,9 +178,13 @@ public class TextFilePLL extends PLL<String> {
                 public boolean hasNext() {
                     long currentPosition;
                     try {
-                        currentPosition = textPartition.start + countingIs.getCount();
+                        currentPosition = textPartition.start + (countingIs == null ? 0 : countingIs.getCount());
                         if (!nextLineAttempted && currentPosition <= textPartition.getEnd()) {
-                            nextLine = lineReader.readLine();
+                            if (lineNumberReader != null) {
+                                nextLine = lineNumberReader.readLine();
+                            } else {
+                                nextLine = lineReader.readLine();
+                            }
                             nextLineAttempted = true;
                             lastOffsetSeen = currentPosition;
                         }

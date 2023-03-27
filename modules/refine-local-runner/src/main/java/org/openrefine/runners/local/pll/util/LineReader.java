@@ -12,15 +12,17 @@ import org.openrefine.runners.local.pll.TextFilePLL;
 /**
  * A class which reads line by line from an {@link java.io.InputStream}, making sure it only reads the bytes it needs to
  * complete the current line.
- * 
+ * <p>
  * This makes it possible to track at which byte offset each line starts, when used in combination with a
  * {@link com.google.common.io.CountingInputStream} (see {@link TextFilePLL}).
- * 
+ * <p>
  * This cannot be achieved with {@link java.io.InputStreamReader} and {@link java.io.LineNumberReader}, because
  * {@link java.io.InputStreamReader} can read more bytes than it needs to output characters.
- * 
+ * <p>
  * Like in {@link java.io.LineNumberReader}, a line is considered to be terminated by any one of a line feed ('\n'), a
  * carriage return ('\r'), or a carriage return followed immediately by a line feed.
+ * <p>
+ * TODO: this class is much less efficient than LineNumberReader. We should investigate why.
  * 
  * @author Antonin Delpeuch
  */
