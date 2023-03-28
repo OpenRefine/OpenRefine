@@ -79,8 +79,6 @@ function registerCommands() {
   RS.registerCommand(module, "get-models", new Packages.org.openrefine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.org.openrefine.commands.row.GetRowsCommand());
   RS.registerCommand(module, "get-processes", new Packages.org.openrefine.commands.history.GetProcessesCommand());
-  RS.registerCommand(module, "pause-process", new Packages.org.openrefine.commands.history.PauseProcessCommand());
-  RS.registerCommand(module, "resume-process", new Packages.org.openrefine.commands.history.ResumeProcessCommand());
   RS.registerCommand(module, "get-history", new Packages.org.openrefine.commands.history.GetHistoryCommand());
   RS.registerCommand(module, "get-operations", new Packages.org.openrefine.commands.history.GetOperationsCommand());
   RS.registerCommand(module, "get-columns-info", new Packages.org.openrefine.commands.column.GetColumnsInfoCommand());
@@ -89,6 +87,9 @@ function registerCommands() {
   RS.registerCommand(module, "undo-redo", new Packages.org.openrefine.commands.history.UndoRedoCommand());
   RS.registerCommand(module, "apply-operations", new Packages.org.openrefine.commands.history.ApplyOperationsCommand());
   RS.registerCommand(module, "cancel-processes", new Packages.org.openrefine.commands.history.CancelProcessesCommand());
+  RS.registerCommand(module, "cancel-process", new Packages.org.openrefine.commands.history.CancelProcessCommand());
+  RS.registerCommand(module, "pause-process", new Packages.org.openrefine.commands.history.PauseProcessCommand());
+  RS.registerCommand(module, "resume-process", new Packages.org.openrefine.commands.history.ResumeProcessCommand());
 
   RS.registerCommand(module, "compute-facets", new Packages.org.openrefine.commands.browsing.ComputeFacetsCommand());
   RS.registerCommand(module, "compute-clusters", new Packages.org.openrefine.commands.browsing.ComputeClustersCommand());

@@ -18,8 +18,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.time.Instant;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 import static org.testng.AssertJUnit.assertEquals;
 
 public class ResumeProcessCommandTests extends CommandTestBase {
@@ -65,6 +65,7 @@ public class ResumeProcessCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(process, times(1)).resume();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 

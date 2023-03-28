@@ -2,14 +2,13 @@
 package org.openrefine.commands.history;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openrefine.commands.CSRFTokenFactory;
-import org.openrefine.commands.Command;
-import org.openrefine.model.Project;
-import org.openrefine.ProjectMetadata;
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
+import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.process.ProcessManager;
+import org.openrefine.model.Project;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
@@ -18,13 +17,11 @@ import org.testng.annotations.Test;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.testng.AssertJUnit.assertEquals;
 
-public class PauseProcessCommandTests extends CommandTestBase {
+public class CancelProcessCommandTests extends CommandTestBase {
 
     long projectId = 1234L;
     int processId = 5678;
@@ -36,7 +33,7 @@ public class PauseProcessCommandTests extends CommandTestBase {
 
     @BeforeMethod
     public void setUpCommand() {
-        command = new PauseProcessCommand();
+        command = new CancelProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
         projectMetadata = mock(ProjectMetadata.class);
@@ -67,7 +64,7 @@ public class PauseProcessCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        verify(process, times(1)).pause();
+        verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 
