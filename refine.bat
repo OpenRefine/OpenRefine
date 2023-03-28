@@ -111,7 +111,7 @@ echo You must set JAVA_HOME to point at your Java Development Kit installation
 echo.
 echo If you don't know how to do this, follow the instructions at
 echo.
-echo   http://bit.ly/1c2gkR
+echo   https://openrefine.org/docs/manual/installing#java
 echo.
 
 goto fail
@@ -201,8 +201,16 @@ if ""%ACTION%"" == """" goto doRun
 :@EndCatch
 
 :doRun
-rem --- Log for troubleshooting ------------------------------------------
-set JAVA="%JAVA_HOME%/bin/java"
+rem --- Checking Java Version  ------------------------------------------
+set JAVA="%JAVA_HOME%\bin\java.exe"
+
+if not exist !JAVA! (
+    echo The specified path !JAVA! does not point to a valid Java Development Kit installation.
+    echo Please check that the path is correct and that a Java Development Kit is installed at that location.
+    echo   https://openrefine.org/docs/manual/installing#java
+    goto :fail
+)
+
 set JAVA_VERSION=""
 set JAVA_RELEASE=0
 for /f "tokens=3" %%g in ('^"%JAVA% -version 2^>^&1 ^| findstr /i "version"^"') do (
@@ -226,7 +234,7 @@ if %JAVA_RELEASE% LSS 11 (
 if %JAVA_RELEASE% GTR 17 (
     echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17.
 )
-
+rem --- Log for troubleshooting ------------------------------------------
 echo Getting Free Ram...
 for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
 (
