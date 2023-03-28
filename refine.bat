@@ -207,6 +207,7 @@ set JAVA="%JAVA_HOME%\bin\java.exe"
 if not exist !JAVA! (
     echo The specified path !JAVA! does not point to a valid Java Development Kit installation.
     echo Please check that the path is correct and that a Java Development Kit is installed at that location.
+    echo   https://openrefine.org/docs/manual/installing#java
     goto :fail
 )
 
