@@ -72,6 +72,7 @@ public class ProcessTests {
                 + "\"done\": false,"
                 + "\"running\": false,"
                 + "\"canceled\": false,"
+                + "\"paused\": false,"
                 + "\"progress\":0}", ParsingUtilities.defaultWriter);
     }
 }

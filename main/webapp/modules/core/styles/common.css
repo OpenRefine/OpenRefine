@@ -155,6 +155,10 @@ a img {
   border: 1px solid #000;
 }
 
+button:disabled {
+  color: #5b5b5b;
+}
+
 .button-primary, a.button-primary {
   font-weight: bold;
   padding: 1px 15px;
