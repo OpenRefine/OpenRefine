@@ -109,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #create-project-progress-bar-frame {
-  border: 1px solid var(--link-primary);
+  border: 1px solid var(--chrome-primary);
   padding: var(--padding-tighter);
   width: 300px;
 }
