@@ -51,8 +51,6 @@ public interface ChangeDataStore {
      *            the id of the change data to store
      * @param serializer
      *            to serialize the data to a file, for instance
-     * @throws IOException
-     *             if serialization failed
      */
     public <T> ProgressingFuture<Void> storeAsync(
             ChangeData<T> data,
