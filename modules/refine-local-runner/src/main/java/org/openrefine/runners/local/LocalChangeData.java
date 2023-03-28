@@ -164,6 +164,12 @@ public class LocalChangeData<T> implements ChangeData<T> {
 
             @Override
             public boolean hasNext() {
+                try {
+                    taskSignalling.yield();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
                 return parent.hasNext();
             }
 

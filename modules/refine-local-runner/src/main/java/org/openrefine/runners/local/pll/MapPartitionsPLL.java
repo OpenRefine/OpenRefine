@@ -63,16 +63,12 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
 
     @Override
     public boolean hasCachedPartitionSizes() {
-        if (preservesSizes) {
-            return parent.hasCachedPartitionSizes();
-        } else {
-            return super.hasCachedPartitionSizes();
-        }
+        return super.hasCachedPartitionSizes() || (preservesSizes && parent.hasCachedPartitionSizes());
     }
 
     @Override
     public List<Long> computePartitionSizes() {
-        if (preservesSizes) {
+        if (preservesSizes && parent.hasCachedPartitionSizes()) {
             return parent.getPartitionSizes();
         } else {
             return super.computePartitionSizes();
