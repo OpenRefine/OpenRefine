@@ -1096,6 +1096,8 @@ public class ImportingUtilities {
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
         pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
+        pm.setDescription(JSONUtilities.getString(optionObj, "projectDescription", ""));
+        pm.setCreator(JSONUtilities.getString(optionObj, "projectCreator", ""));
 
         String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
         if ("".equals(encoding)) {
