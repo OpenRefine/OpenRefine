@@ -31,8 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ProcessPanel(div) {
-  this._div = div;
+function ProcessPanel(notificationsContainer, processPanel) {
+  this._notificationsContainer = notificationsContainer;
+  this._processPanel = processPanel;
   this._timerID = null;
   this._processCount = 0;
 
@@ -40,10 +41,14 @@ function ProcessPanel(div) {
   this._onDones = [];
   this._latestHistoryEntry = null;
   
-  this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
-  this._elmts = DOM.bind(this._div);
+  this._notificationsContainer.html(DOM.loadHTML("core", "scripts/project/notifications-area.html"));
+  this._processPanel.html(DOM.loadHTML("core", "scripts/project/process-panel.html"));
+  this._elmts = DOM.bind(this._notificationsContainer);
+  this._panelElmts = DOM.bind(this._processPanel);
 
   this._elmts.undoLink.html($.i18n('core-project/undo'));
+  $('<p></p>').text($.i18n('core-processes/no-process'))
+        .appendTo(this._panelElmts.noProcessDiv);
   
   var self = this;
   $(window).on('keypress',function(evt) {
@@ -63,6 +68,80 @@ function ProcessPanel(div) {
 }
 
 ProcessPanel.prototype.resize = function() {
+};
+
+ProcessPanel.prototype._renderPanel = function(newData) {
+  var self = this;
+  if (newData.processes && newData.processes.length > 0) {
+    self._panelElmts.noProcessDiv.hide();
+    for (let process of newData.processes) {
+      var li = $('#process-' + process.id);
+      if (!li.length) {
+        li = $('<li></li>')
+            .attr('id', 'process-' + process.id)
+            .appendTo(self._panelElmts.processes);
+        var title = $('<div></div>')
+            .addClass('process-header')
+            .text(process.description)
+            .appendTo(li);
+        var processBody = $('<div></div>')
+            .addClass('process-body')
+            .appendTo(li);
+        var progressContainer = $('<div></div>')
+            .addClass('process-progress-container')
+            .appendTo(processBody);
+        var progressPercent = $('<span></span>')
+            .appendTo(progressContainer);
+        
+        var buttonsContainer = $('<div></div>')
+            .addClass('process-buttons-container')
+            .appendTo(processBody);
+        var pauseButton = $('<button></button>')
+            .addClass('button')
+            .addClass('pause-button')
+            .prop('type', 'button')
+            .appendTo(buttonsContainer);
+        var cancelButton = $('<button></button>')
+            .addClass('button')
+            .prop('type', 'button')
+            .text($.i18n('core-buttons/cancel'))
+            .appendTo(buttonsContainer);
+
+        pauseButton.on('click',
+          function (evt) {
+            pauseButton
+                .prop('disabled', true)
+                .addClass('disabled');
+            var paused = pauseButton.data('paused');
+            Refine.postCSRF(
+              paused ? "command/core/resume-process" : "command/core/pause-process",
+              {
+                project: theProject.id,
+                id: process.id
+              },
+              function(response) { 
+                pauseButton.prop('disabled', false).removeClass('disabled');
+                if (response.code === 'ok') {
+                  li.find('.pause-button')
+                      .data('paused', !process.paused)
+                      .text(!process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
+                }
+              },
+              "json");
+        });
+      }
+
+      li.find('.process-progress-container span')
+          .text($.i18n('core-project/percent-complete', process.progress));
+      li.find('.pause-button')
+          .data('paused', process.paused)
+          .text(process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
+
+    }
+  } else {
+    self._panelElmts.noProcessDiv.show();
+    self._panelElmts.processes.empty();
+  }
 };
 
 ProcessPanel.prototype.update = function(updateOptions, onDone) {
@@ -99,13 +178,13 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
   truncDescription = historyEntry.description.length > 250 ?
   	historyEntry.description.substring(0, 250) + " ..." : historyEntry.description  
 
-  this._div.stop(true, false);
+  this._notificationsContainer.stop(true, false);
   this._elmts.progressDiv.hide();
   this._elmts.undoDiv.show();
   this._elmts.undoDescription.text( truncDescription );
   this._elmts.undoLink.off().on('click',function() { self.undo(); });
   
-  this._div
+  this._notificationsContainer
     .fadeIn(200)
     .delay(10000)
     .fadeOut(200);
@@ -141,15 +220,20 @@ ProcessPanel.prototype._cancelAll = function() {
 };
 
 ProcessPanel.prototype._render = function(newData) {
+  this._renderNotifications(newData);
+  this._renderPanel(newData);
+}
+
+ProcessPanel.prototype._renderNotifications = function(newData) {
   var self = this;
   var newProcessMap = {};
   var processes = newData.processes;
 
-  this._div.stop(true, false);
+  this._notificationsContainer.stop(true, false);
 
   if (!processes.length) {
     Refine.setTitle();
-    this._div.fadeOut(200);
+    this._notificationsContainer.fadeOut(200);
   } else {
     this._elmts.undoDiv.hide();
     this._elmts.progressDiv.show();
@@ -181,7 +265,7 @@ ProcessPanel.prototype._render = function(newData) {
         $(this).text($.i18n('core-project/canceling')).off();
       });
     
-    this._div.fadeIn(200);
+    this._notificationsContainer.fadeIn(200);
   }
 
   if ((this._data) && this._data.processes.length > 0) {

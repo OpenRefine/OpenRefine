@@ -84,7 +84,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   left: var(--padding-normal);
 }
 
-.browsing-panel-help, .history-panel-help {
+.browsing-panel-help, .history-panel-help, .process-panel-no-process {
   margin: 1em;
   padding: 0 0 13px 0;
   background: var(--fill-primary);
@@ -93,7 +93,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-radius: var(--rounded-corners-radius);
 }
 
-.browsing-panel-help h1, .history-panel-help h1 {
+.browsing-panel-help h1, .history-panel-help h1, .process-panel-no-process h1 {
   margin: 10px;
   padding: 20px 0 0 10px;
   font-size: 1.15em;
@@ -102,7 +102,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background-size: 43px;
 }
 
-.browsing-panel-help p, .history-panel-help p {
+.browsing-panel-help p, .history-panel-help p, .process-panel-no-process p {
   padding: 7px 20px;
   line-height: 1.3;
 }

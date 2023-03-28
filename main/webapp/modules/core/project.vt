@@ -68,9 +68,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <ul>
             <li><a href="#refine-tabs-facets" id="or-proj-facFil"></a></li>
             <li><a href="#refine-tabs-history" bind="historyTabHeader" id="or-proj-undoRedo"></a></li>
+            <li><a href="#refine-tabs-process" bind="processTabHeader" id="or-proj-process"></a></li>
           </ul>
           <div id="refine-tabs-facets" bind="facetPanelDiv" id="facet-panel"></div>
           <div id="refine-tabs-history" bind="historyPanelDiv" id="history-panel"></div>
+          <div id="refine-tabs-process" bind="processPanelDiv" id="process-panel"></div>
         </div>
       </div>
       <div bind="rightPanelDiv" id="right-panel">
@@ -84,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </div>
         <div bind="viewPanelDiv" id="view-panel"></div>
       </div>
-      <div bind="processPanelDiv" id="notification-container"></div>
+      <div bind="notificationContainer" id="notification-container"></div>
     </div>
   </body>
 </html>

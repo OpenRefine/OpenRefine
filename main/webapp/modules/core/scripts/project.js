@@ -49,9 +49,9 @@ Refine.reportException = function(e) {
 };
 
 function resize() {
-  var leftPanelWidth = JSON.parse(Refine.getPreference("ui.browsing.facetsHistoryPanelWidth", 300));
+  var leftPanelWidth = JSON.parse(Refine.getPreference("ui.browsing.facetsHistoryPanelWidth", 350));
   if(typeof leftPanelWidth != "number" || leftPanelWidth < 200 || leftPanelWidth > 500) { 
-    leftPanelWidth = 300; 
+    leftPanelWidth = 350; 
   }
 
   var width = $(window).width();
@@ -81,7 +81,7 @@ function resize() {
   ui.viewPanelDiv.height((height - ui.toolPanelDiv.outerHeight() - rightPanelVPaddings) + "px");
 
   var processPanelWidth = 400;
-  ui.processPanelDiv
+  ui.notificationContainer
   .css("width", processPanelWidth + "px")
   .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
 }
@@ -123,6 +123,7 @@ function initializeUI(uiState) {
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $("#or-proj-facFil").text($.i18n('core-project/facet-filter'));
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
+  $("#or-proj-process").text($.i18n('core-project/processes'));
   $("#or-proj-ext").text($.i18n('core-project/extensions'));
 
   $('#project-name-button').on('click',Refine._renameProject);
@@ -155,7 +156,7 @@ function initializeUI(uiState) {
   
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
   ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
-  ui.processPanel = new ProcessPanel(ui.processPanelDiv);
+  ui.processPanel = new ProcessPanel(ui.notificationContainer, ui.processPanelDiv);
   ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 

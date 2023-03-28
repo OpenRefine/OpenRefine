@@ -73,6 +73,10 @@ public abstract class Process {
         return _future != null && _future.isDone();
     }
 
+    public boolean isPaused() {
+        return _future != null && _future.isPaused();
+    }
+
     public boolean isCanceled() {
         return _canceled;
     }
