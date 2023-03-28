@@ -80,10 +80,10 @@ function resize() {
 
   ui.viewPanelDiv.height((height - ui.toolPanelDiv.outerHeight() - rightPanelVPaddings) + "px");
 
-  var processPanelWidth = 400;
+  var notificationContainerWidth = 400;
   ui.notificationContainer
-  .css("width", processPanelWidth + "px")
-  .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
+  .css("width", notificationContainerWidth + "px")
+  .css("left", Math.floor((width - notificationContainerWidth) / 2) + "px");
 }
 
 function resizeTabs() {
@@ -156,7 +156,7 @@ function initializeUI(uiState) {
   
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
   ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
-  ui.processPanel = new ProcessPanel(ui.notificationContainer, ui.processPanelDiv);
+  ui.processPanel = new ProcessPanel(ui.notificationContainer, ui.processPanelDiv, ui.processTabHeader);
   ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 

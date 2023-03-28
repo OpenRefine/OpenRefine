@@ -1,8 +1,8 @@
 
 package org.openrefine.commands.history;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
@@ -67,6 +67,7 @@ public class PauseProcessCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(process, times(1)).pause();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 

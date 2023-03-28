@@ -31,9 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ProcessPanel(notificationsContainer, processPanel) {
+function ProcessPanel(notificationsContainer, processPanel, tabHeader) {
   this._notificationsContainer = notificationsContainer;
   this._processPanel = processPanel;
+  this._tabHeader = tabHeader;
   this._timerID = null;
   this._processCount = 0;
 
@@ -129,6 +130,26 @@ ProcessPanel.prototype._renderPanel = function(newData) {
               },
               "json");
         });
+
+        cancelButton.on('click',
+          function (evt) {
+            cancelButton
+                .prop('disabled', true)
+                .addClass('disabled');
+            Refine.postCSRF(
+              "command/core/cancel-process",
+              {
+                project: theProject.id,
+                id: process.id
+              },
+              function(response) { 
+                cancelButton.prop('disabled', false).removeClass('disabled');
+                if (response.code === 'ok') {
+                  li.remove();
+                }
+              },
+              "json");
+        });
       }
 
       li.find('.process-progress-container span')
@@ -141,6 +162,14 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   } else {
     self._panelElmts.noProcessDiv.show();
     self._panelElmts.processes.empty();
+  }
+  self._tabHeader.empty();
+  self._tabHeader.text($.i18n('core-project/processes')+' ');
+  if (newData.processes.length) {
+    $('<span></span>')
+        .text(newData.processes.length)
+        .addClass('count')
+        .appendTo(self._tabHeader);
   }
 };
 

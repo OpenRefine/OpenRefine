@@ -2,7 +2,6 @@
 package org.openrefine.commands.history;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ResumeProcessCommandTests extends CommandTestBase {
+public class CancelProcessCommandTests extends CommandTestBase {
 
     long projectId = 1234L;
     int processId = 5678;
@@ -36,7 +35,7 @@ public class ResumeProcessCommandTests extends CommandTestBase {
 
     @BeforeMethod
     public void setUpCommand() {
-        command = new ResumeProcessCommand();
+        command = new CancelProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
         projectMetadata = mock(ProjectMetadata.class);
@@ -48,7 +47,7 @@ public class ResumeProcessCommandTests extends CommandTestBase {
         when(project.getProcessManager()).thenReturn(processManager);
         process = mock(Process.class);
         when(processManager.getProcess(processId)).thenReturn(process);
-        when(processManager.getProcess(missingProcessId)).thenThrow(new IllegalArgumentException("process not found"));
+        when(processManager.getProcess(missingProcessId)).thenThrow(new IllegalArgumentException("missing"));
 
         ProjectManager.singleton.registerProject(project, projectMetadata);
     }
@@ -60,14 +59,14 @@ public class ResumeProcessCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testSuccessfulResume() throws ServletException, IOException {
+    public void testSuccessfulPause() throws ServletException, IOException {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         command.doPost(request, response);
 
-        verify(process, times(1)).resume();
+        verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 
