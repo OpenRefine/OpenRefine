@@ -673,15 +673,15 @@ public class LocalGrid implements Grid {
             throw new IllegalStateException(
                     String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), toCompute.size()));
         }
-        Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
+        Map<Long, Optional<T>> indexedChangeData = IntStream.range(0, toCompute.size())
                 .mapToObj(i -> i)
-                .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> changeData.get(i)));
+                .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> Optional.ofNullable(changeData.get(i))));
         return IntStream.range(0, rowBatch.size())
                 .mapToObj(i -> {
                     T preComputed = rowBatch.get(i).getValue().getValue();
                     long rowIndex = rowBatch.get(i).getKey();
                     if (preComputed == null) {
-                        preComputed = indexedChangeData.get(rowIndex);
+                        preComputed = indexedChangeData.get(rowIndex).orElse(null);
                     }
                     return Tuple2.of(rowIndex, preComputed);
                 });

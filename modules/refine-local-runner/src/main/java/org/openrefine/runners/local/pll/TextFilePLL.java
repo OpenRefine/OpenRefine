@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
 
 import com.google.common.collect.Streams;
 import com.google.common.io.CountingInputStream;
@@ -191,7 +192,7 @@ public class TextFilePLL extends PLL<String> {
                         if (nextLine == null && lastOffsetSeen > lastOffsetReported) {
                             reportProgress();
                         }
-                    } catch (EOFException e) {
+                    } catch (EOFException | ZipException e) {
                         if (ignoreEarlyEOF) {
                             nextLine = null;
                         } else {
