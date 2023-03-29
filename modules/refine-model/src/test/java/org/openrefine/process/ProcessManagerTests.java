@@ -27,10 +27,13 @@
 
 package org.openrefine.process;
 
+import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
 
 public class ProcessManagerTests {
 
@@ -41,19 +44,21 @@ public class ProcessManagerTests {
     public void setUp() {
         processManager = new ProcessManager();
         process1 = new ProcessTests.ProcessStub("some description",
+                new ChangeDataId(1234L, "recon"),
                 () -> ProgressingFutures.exception(new IllegalArgumentException("unexpected error")));
         process2 = new ProcessTests.ProcessStub("some other description",
+                new ChangeDataId(5678L, "urls"),
                 () -> ProgressingFutures.immediate(null));
     }
 
     @Test
     public void serializeProcessManager() throws Exception {
-        processManager.queueProcess(process1);
-        processManager.queueProcess(process2);
+        processManager._latestExceptions = Collections.singletonList(new IllegalArgumentException("unexpected error"));
 
         TestUtils.isSerializedTo(processManager, "{"
                 + "\"processes\":[],\n"
                 + "\"exceptions\":[{\"message\":\"unexpected error\"}]"
                 + "}", ParsingUtilities.defaultWriter);
     }
+
 }
