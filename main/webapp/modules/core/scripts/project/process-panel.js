@@ -73,10 +73,15 @@ ProcessPanel.prototype.resize = function() {
 
 ProcessPanel.prototype._renderPanel = function(newData) {
   var self = this;
+
+  // mark processes as stale to keep track of which ones we are updating
+  self._panelElmts.processes.find('li').addClass('stale-process');
+
   if (newData.processes && newData.processes.length > 0) {
     self._panelElmts.noProcessDiv.hide();
     for (let process of newData.processes) {
       var li = $('#process-' + process.id);
+      li.removeClass('stale-process');
       if (!li.length) {
         li = $('<li></li>')
             .attr('id', 'process-' + process.id)
@@ -91,29 +96,41 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         var progressContainer = $('<div></div>')
             .addClass('process-progress-container')
             .appendTo(processBody);
-        var progressPercent = $('<span></span>')
+        var spinner = $('<img />')
+            .addClass('notification-loader')
+            .attr('src', 'images/small-spinner.gif')
+            .attr('alt', $.i18n('core-processes/spinner-alt-text'))
             .appendTo(progressContainer);
-        
-        var buttonsContainer = $('<div></div>')
+        var progressPercent = $('<span></span>')
+            .addClass('progress-text')
+            .appendTo(progressContainer);
+        var progressBar = $('<div></div>')
+            .addClass('process-progress-bar')
+            .appendTo(progressContainer);
+        var progressBarInner = $('<div></div>')
+            .addClass('process-progress-bar-inner')
+            .appendTo(progressBar);
+                var buttonsContainer = $('<div></div>')
             .addClass('process-buttons-container')
             .appendTo(processBody);
         var pauseButton = $('<button></button>')
             .addClass('button')
             .addClass('pause-button')
-            .prop('type', 'button')
+            .attr('type', 'button')
             .appendTo(buttonsContainer);
         var cancelButton = $('<button></button>')
             .addClass('button')
-            .prop('type', 'button')
+            .attr('type', 'button')
             .text($.i18n('core-buttons/cancel'))
             .appendTo(buttonsContainer);
 
         pauseButton.on('click',
           function (evt) {
-            pauseButton
-                .prop('disabled', true)
+            let clicked = $(this);
+            clicked
+                .attr('disabled', true)
                 .addClass('disabled');
-            var paused = pauseButton.data('paused');
+            var paused = clicked.data('paused');
             Refine.postCSRF(
               paused ? "command/core/resume-process" : "command/core/pause-process",
               {
@@ -121,9 +138,9 @@ ProcessPanel.prototype._renderPanel = function(newData) {
                 id: process.id
               },
               function(response) { 
-                pauseButton.prop('disabled', false).removeClass('disabled');
+                clicked.attr('disabled', false).removeClass('disabled');
                 if (response.code === 'ok') {
-                  li.find('.pause-button')
+                  clicked
                       .data('paused', !process.paused)
                       .text(!process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
                 }
@@ -134,7 +151,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         cancelButton.on('click',
           function (evt) {
             cancelButton
-                .prop('disabled', true)
+                .attr('disabled', true)
                 .addClass('disabled');
             Refine.postCSRF(
               "command/core/cancel-process",
@@ -143,7 +160,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
                 id: process.id
               },
               function(response) { 
-                cancelButton.prop('disabled', false).removeClass('disabled');
+                cancelButton.attr('disabled', false).removeClass('disabled');
                 if (response.code === 'ok') {
                   li.remove();
                 }
@@ -157,12 +174,25 @@ ProcessPanel.prototype._renderPanel = function(newData) {
       li.find('.pause-button')
           .data('paused', process.paused)
           .text(process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
+      li.find('.process-progress-bar-inner')
+          .width(process.progress + '%');
+      let spinnerElement = li.find('.notification-loader');
+      if (!process.paused && process.running) {
+        spinnerElement.show();
+      } else {
+        spinnerElement.hide();
+      }
 
     }
   } else {
     self._panelElmts.noProcessDiv.show();
     self._panelElmts.processes.empty();
   }
+
+  // clean up any existing processes which do not exist anymore
+  self._panelElmts.processes.find('li.stale-process').remove();
+
+  // update the tab header
   self._tabHeader.empty();
   self._tabHeader.text($.i18n('core-project/processes')+' ');
   if (newData.processes.length) {
@@ -260,6 +290,7 @@ ProcessPanel.prototype._renderNotifications = function(newData) {
 
   this._notificationsContainer.stop(true, false);
 
+  /*
   if (!processes.length) {
     Refine.setTitle();
     this._notificationsContainer.fadeOut(200);
@@ -295,7 +326,7 @@ ProcessPanel.prototype._renderNotifications = function(newData) {
       });
     
     this._notificationsContainer.fadeIn(200);
-  }
+  } */
 
   if ((this._data) && this._data.processes.length > 0) {
     var oldProcesses = this._data.processes;
