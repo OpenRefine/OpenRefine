@@ -355,10 +355,6 @@ class ReconCellRenderer {
       { columnStatsChanged: columnStatsChanged },
       {
         onDone: function(o) {
-          if (o.cell.r) {
-            o.cell.r = o.pool.recons[o.cell.r];
-          }
-
           cellUI._dataTableView._updateCell(self._rowIndex, self._cellIndex, o.cell);
           cellUI._cell = o.cell;
           cellUI._render();
