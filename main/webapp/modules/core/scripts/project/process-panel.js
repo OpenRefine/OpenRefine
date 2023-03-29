@@ -288,46 +288,6 @@ ProcessPanel.prototype._renderNotifications = function(newData) {
   var newProcessMap = {};
   var processes = newData.processes;
 
-  this._notificationsContainer.stop(true, false);
-
-  /*
-  if (!processes.length) {
-    Refine.setTitle();
-    this._notificationsContainer.fadeOut(200);
-  } else {
-    this._elmts.undoDiv.hide();
-    this._elmts.progressDiv.show();
-    
-    for (var i = 0; i < processes.length; i++) {
-      var process = processes[i];
-      if (process.status != "pending") {
-        // TODO: We should be using formatting, not string concatenation here
-        Refine.setTitle($.i18n('core-project/percent-complete', process.progress));
-        this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text($.i18n('core-project/percent-complete', process.progress));
-      }
-      if ("onDone" in process) {
-        newProcessMap[process.id] = process;
-      }
-    }
-    
-    if (processes.length > 1) {
-      var pending = processes.length - 1;
-      this._elmts.countSpan.text($.i18n('core-project/other-processes', pending));
-    } else {
-      this._elmts.countSpan.empty();
-    }
-    this._elmts.cancelLink
-      .off()
-      .text($.i18n('core-project/cancel-all', processes.length))
-      .on('click',function() {
-        self._cancelAll();
-        $(this).text($.i18n('core-project/canceling')).off();
-      });
-    
-    this._notificationsContainer.fadeIn(200);
-  } */
-
   if ((this._data) && this._data.processes.length > 0) {
     var oldProcesses = this._data.processes;
     for (var i = 0; i < oldProcesses.length; i++) {
