@@ -138,7 +138,7 @@ HistoryPanel.prototype._render = function() {
         renderEntry(elmts.pastDiv, i + 1, entry, entry.id, true);
       }
 
-      renderEntry(elmts.nowDiv, this._data.position - 1, this._data.entries[this._data.position - 1], -1);
+      renderEntry(elmts.nowDiv, this._data.position, this._data.entries[this._data.position - 1], -1);
     }
 
     for (var i = this._data.position; i < this._data.entries.length; i++) {
