@@ -40,10 +40,12 @@ public class ProcessTests {
     public static class ProcessStub extends Process {
 
         Callable<ProgressingFuture<Void>> future;
+        ChangeDataId changeDataId;
 
-        protected ProcessStub(String description, Callable<ProgressingFuture<Void>> future) {
+        protected ProcessStub(String description, ChangeDataId changeDataId, Callable<ProgressingFuture<Void>> future) {
             super(description);
             this.future = future;
+            this.changeDataId = changeDataId;
         }
 
         @Override
@@ -57,13 +59,13 @@ public class ProcessTests {
 
         @Override
         public ChangeDataId getChangeDataId() {
-            return new ChangeDataId(1234L, "recon");
+            return changeDataId;
         }
     }
 
     @Test
     public void serializeLongRunningProcess() {
-        Process process = new ProcessStub("some description", () -> null);
+        Process process = new ProcessStub("some description", new ChangeDataId(1234L, "recon"), () -> null);
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
                 + "\"id\":" + hashCode + ","

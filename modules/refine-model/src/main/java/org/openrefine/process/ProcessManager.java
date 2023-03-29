@@ -47,6 +47,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import org.openrefine.model.changes.ChangeDataId;
+
 public class ProcessManager {
 
     @JsonIgnore
@@ -133,11 +135,23 @@ public class ProcessManager {
     public Process getProcess(int processId) {
         Optional<Process> processOptional = _processes.stream()
                 .filter(process -> process.getId() == processId)
-                .findFirst();
+                .findAny();
         if (processOptional.isEmpty()) {
             throw new IllegalArgumentException(String.format("Process %d not found", processId));
         }
         return processOptional.get();
+    }
+
+    /**
+     * Gets any process that is fetching the supplied change data.
+     * 
+     * @returns null if no such process can be found
+     */
+    public Process getProcess(ChangeDataId changeDataId) {
+        return _processes.stream()
+                .filter(process -> changeDataId.equals(process.getChangeDataId()))
+                .findAny()
+                .orElse(null);
     }
 
     protected void update() {

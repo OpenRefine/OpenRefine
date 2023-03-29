@@ -125,7 +125,12 @@ public class FileChangeDataStore implements ChangeDataStore {
 
     @Override
     public boolean needsRefreshing(long historyEntryId) {
-        return _toRefresh.stream().map(ChangeDataId::getHistoryEntryId).anyMatch(id -> id == historyEntryId);
+        return _toRefresh.stream()
+                .filter(changeDataId -> {
+                    Process process = processManager.getProcess(changeDataId);
+                    return process == null || process.isRunning() && !process.isPaused();
+                })
+                .map(ChangeDataId::getHistoryEntryId).anyMatch(id -> id == historyEntryId);
     }
 
     @Override

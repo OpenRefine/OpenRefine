@@ -32,6 +32,7 @@ public class FileChangeDataStoreTests {
     MySerializer serializer;
     File dir;
     FileChangeDataStore SUT;
+    VoidFuture future;
 
     @BeforeClass
     public void setUpDir() throws IOException {
@@ -49,7 +50,7 @@ public class FileChangeDataStoreTests {
         changeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
         when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);
-        VoidFuture future = mock(VoidFuture.class);
+        future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, dir);
     }
@@ -93,6 +94,38 @@ public class FileChangeDataStoreTests {
         SUT.discardAll(456);
 
         verify(process, times(1)).cancel();
+    }
+
+    @Test
+    public void testNeedsRefreshingNoProcess() {
+        // A history entry id for which we have no change data does not need refreshing
+        Assert.assertFalse(SUT.needsRefreshing(12345L));
+    }
+
+    @Test
+    public void testNeedsRefreshingRunningProcess() throws IOException {
+        when(changeData.isComplete()).thenReturn(false);
+        ChangeDataId changeDataId = new ChangeDataId(456L, "data");
+        Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
+
+        SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description");
+
+        // A history entry with a corresponding running process needs refreshing
+        Assert.assertTrue(SUT.needsRefreshing(456L));
+    }
+
+    @Test
+    public void testNeedsRefreshingPausedProcess() throws IOException {
+        when(changeData.isComplete()).thenReturn(false);
+        ChangeDataId changeDataId = new ChangeDataId(789L, "data");
+        Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
+
+        SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description");
+        // artificially pause the process
+        when(future.isPaused()).thenReturn(true);
+
+        // because the process is paused, we do not need to refresh
+        Assert.assertFalse(SUT.needsRefreshing(789L));
     }
 
     // to ease mocking
