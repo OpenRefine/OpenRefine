@@ -176,6 +176,11 @@ ProcessPanel.prototype._renderPanel = function(newData) {
           .text(process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
       li.find('.process-progress-bar-inner')
           .width(process.progress + '%');
+      if (process.running) {
+        li.find('.pause-button').show();
+      } else {
+        li.find('.pause-button').hide();
+      }
       let spinnerElement = li.find('.notification-loader');
       if (!process.paused && process.running) {
         spinnerElement.show();
