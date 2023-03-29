@@ -371,6 +371,7 @@
     "core-processes/no-process": "No running process",
     "core-processes/pause": "Pause",
     "core-processes/resume": "Resume",
+    "core-processes/spinner-alt-text": "Loading",
     "core-project/open": "Open",
     "core-project/permalink": "Permalink",
     "core-project/export": "Export",

@@ -67,3 +67,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   column-gap: 5px;
   justify-content: right;
 }
+
+.process-progress-bar {
+  width: 100%;
+  height: 1.8em;
+  border: 1px solid var(--chrome-primary);
+  padding: var(--padding-tighter);
+  margin: var(--padding-tight) 0;
+  box-sizing: border-box;
+  background: white;
+}
+
+.process-progress-bar-inner {
+  background: var(--chrome-primary);
+  height: 100%;
+}
