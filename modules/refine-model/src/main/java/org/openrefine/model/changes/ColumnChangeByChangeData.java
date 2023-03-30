@@ -3,6 +3,7 @@ package org.openrefine.model.changes;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.util.*;
 
 import org.openrefine.browsing.Engine;
@@ -105,7 +106,7 @@ public abstract class ColumnChangeByChangeData implements Change {
                 changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
                         partialChangeData -> getChangeDataRowBased(projectState, baseColumnIndex, context, partialChangeData));
             } catch (IOException e) {
-                throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
+                throw new UncheckedIOException(e);
             }
             joined = projectState.join(changeData, joiner, columnModel);
         } else {
@@ -114,7 +115,7 @@ public abstract class ColumnChangeByChangeData implements Change {
                 changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
                         partialChangeData -> getChangeDataRecordBased(projectState, baseColumnIndex, context, partialChangeData));
             } catch (IOException e) {
-                throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
+                throw new UncheckedIOException(e);
             }
             joined = projectState.join(changeData, joiner, columnModel);
         }

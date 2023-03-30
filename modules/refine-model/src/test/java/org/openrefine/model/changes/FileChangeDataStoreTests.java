@@ -29,18 +29,22 @@ public class FileChangeDataStoreTests {
     Runner runner;
     MyChangeData changeData;
     MySerializer serializer;
-    File dir;
+    File rootDir;
+    File changeDir;
+    File incompleteDir;
     FileChangeDataStore SUT;
     VoidFuture future;
 
     @BeforeClass
     public void setUpDir() throws IOException {
-        dir = TestUtils.createTempDirectory("changedatastore");
+        rootDir = TestUtils.createTempDirectory("changedatastore");
+        changeDir = new File(rootDir, "changes");
+        incompleteDir = new File(rootDir, "incomplete_changes");
     }
 
     @AfterClass
     public void removeDir() throws IOException {
-        FileUtils.deleteDirectory(dir);
+        FileUtils.deleteDirectory(changeDir);
     }
 
     @BeforeMethod
@@ -51,7 +55,7 @@ public class FileChangeDataStoreTests {
         when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);
         future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
-        SUT = new FileChangeDataStore(runner, dir);
+        SUT = new FileChangeDataStore(runner, changeDir, incompleteDir);
     }
 
     @Test
@@ -62,25 +66,25 @@ public class FileChangeDataStoreTests {
         SUT.store(changeData, changeDataId, serializer, Optional.empty());
 
         verify(changeData, times(1)).saveToFileAsync(any(), eq(serializer));
-        Assert.assertTrue(new File(new File(dir, "123"), "data").exists());
+        Assert.assertTrue(new File(new File(changeDir, "123"), "data").exists());
         Assert.assertFalse(SUT.needsRefreshing(123));
         ChangeData<String> retrieved = SUT.retrieve(new ChangeDataId(123, "data"), serializer);
         Assert.assertEquals(retrieved, changeData);
 
         SUT.discardAll(123);
 
-        Assert.assertFalse(new File(dir, "123").exists());
+        Assert.assertFalse(new File(changeDir, "123").exists());
     }
 
     @Test
     public void testRetrieveOrCompute() throws IOException {
-        ChangeDataId changeDataId = new ChangeDataId(456, "data");
+        ChangeDataId changeDataId = new ChangeDataId(198, "data");
         when(changeData.isComplete()).thenReturn(false);
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
         ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description");
 
-        Assert.assertTrue(SUT.needsRefreshing(456));
+        Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertEquals(returnedChangeData, changeData);
     }
 

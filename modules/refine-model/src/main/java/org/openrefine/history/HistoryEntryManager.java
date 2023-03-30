@@ -57,6 +57,7 @@ public class HistoryEntryManager {
     protected static final String INITIAL_GRID_SUBDIR = "initial";
     protected static final String METADATA_FILENAME = "history.json";
     protected static final String CHANGE_SUBDIR = "changes";
+    protected static final String INCOMPLETE_CHANGE_SUBDIR = "incomplete_changes";
     protected static final String GRID_CACHE_SUBDIR = "cache";
 
     /**
@@ -102,7 +103,7 @@ public class HistoryEntryManager {
      *            the root project directory
      */
     public ChangeDataStore getChangeDataStore(Runner runner, File projectDir) {
-        return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
+        return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR), new File(projectDir, INCOMPLETE_CHANGE_SUBDIR));
     }
 
     /**
