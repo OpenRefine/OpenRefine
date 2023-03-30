@@ -145,7 +145,7 @@ public class ProcessManager {
     /**
      * Gets any process that is fetching the supplied change data.
      * 
-     * @returns null if no such process can be found
+     * @return null if no such process can be found
      */
     public Process getProcess(ChangeDataId changeDataId) {
         return _processes.stream()

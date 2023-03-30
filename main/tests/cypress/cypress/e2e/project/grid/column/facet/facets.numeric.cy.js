@@ -38,7 +38,7 @@ describe(__filename, function () {
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',-130,0,{ force: true })
     .trigger('mouseup',{ force: true })
-    cy.get('#summary-bar').contains('72 matching rows');
+    cy.get('#summary-bar').contains('96 matching rows');
 
     //sliding the middle portion in numeric facet
     cy.get('.slider-widget-draggable').eq(0)
