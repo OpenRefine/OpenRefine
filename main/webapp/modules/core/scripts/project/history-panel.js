@@ -339,34 +339,21 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  $(document).ready(function() {
-    // Trigger the file input when the button is clicked
-    $('#upload-btn').click(function() {
-      $('#file-input').click();
-    });
-    
-    // Upload the file when the user selects it
-    $('#file-input').change(function() {
-      var file = $('#file-input')[0].files[0];
-      var formData = new FormData();
-      formData.append('file', file);
-      
-      $.ajax({
-        url: 'core-index-import/locate-files', // The URL of the script that handles the file upload
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-          // Handle the server's response
-          console.log(response);
-        },
-        error: function(jqXHR, textStatus, errorMessage) {
-          // Handle any errors that occur during the upload
-          console.log(errorMessage);
-        }
+  elmts.operationJsonButton.on('click', async function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json'; // optional file types
+    input.onchange = async function() {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData,
       });
-    });
+      console.log(response);
+    };
+    input.click();
   });
 
   var level = DialogSystem.showDialog(frame);
