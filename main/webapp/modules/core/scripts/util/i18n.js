@@ -34,5 +34,7 @@ I18NUtil.init = function (module) {
         }
     });
     $.i18n().load(dictionary, lang);
-    $.i18n({locale: lang});
+    if (module === 'core') {
+      $.i18n({locale: lang});
+    }
 }
