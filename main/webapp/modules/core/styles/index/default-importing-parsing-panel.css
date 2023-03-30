@@ -35,13 +35,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 1.12em;
   position: absolute;
   overflow: auto;
+  height: calc(100% - 42px - 300px);
+  width: 100%;
+}
+
+.default-importing-parsing-data-panel > .data-table {
+  overflow: auto;
 }
 
 .default-importing-progress-data-panel {
   position: absolute;
   overflow: auto;
   font-size: 200%;
-  padding: 3em;
+  width: 100%;
+  height: 100%;
+  padding-top: 3em;
   background: rgba(255, 255, 255, 0.7);
   text-align: center;
 }
@@ -49,6 +57,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .default-importing-parsing-control-panel {
   font-size: 1.3em;
   position: absolute;
+  top: calc(100% - 300px);
+  height: 295px;
+  width: 100%;
   overflow: auto;
   border-top: 5px solid var(--chrome-primary);
   background: var(--chrome-secondary);
