@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -29,6 +30,7 @@ public class FileChangeDataStoreTests {
 
     Runner runner;
     MyChangeData changeData;
+    MyChangeData emptyChangeData;
     MySerializer serializer;
     File rootDir;
     File changeDir;
@@ -52,8 +54,10 @@ public class FileChangeDataStoreTests {
     public void setUp() throws IOException {
         runner = mock(Runner.class);
         changeData = mock(MyChangeData.class);
+        emptyChangeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
-        when(runner.loadChangeData(any(), eq(serializer))).thenReturn(changeData);
+
+        when(runner.<String> create(Collections.emptyList())).thenReturn(emptyChangeData);
         future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, changeDir, incompleteDir);
@@ -62,6 +66,7 @@ public class FileChangeDataStoreTests {
     @Test
     public void testStoreRetrieveAndDelete() throws IOException, InterruptedException {
         ChangeDataId changeDataId = new ChangeDataId(123, "data");
+        when(runner.loadChangeData(eq(new File(changeDir, "123" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(true);
 
         SUT.store(changeData, changeDataId, serializer, Optional.empty());
@@ -80,13 +85,27 @@ public class FileChangeDataStoreTests {
     @Test
     public void testRetrieveOrCompute() throws IOException {
         ChangeDataId changeDataId = new ChangeDataId(198, "data");
+
+        // set up original change data to be recovered
+        File originalChangeDataLocation = new File(changeDir, "198" + File.separator + "data");
+        originalChangeDataLocation.mkdirs();
+        when(runner.loadChangeData(eq(originalChangeDataLocation), eq(serializer))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
-        Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
+
+        // set up new change data, moved to its temporary location
+        File newChangeDataLocation = new File(incompleteDir, "198" + File.separator + "data");
+        ChangeData<String> movedChangeData = mock(MyChangeData.class);
+        when(runner.loadChangeData(eq(newChangeDataLocation), eq(serializer))).thenReturn(movedChangeData);
+        when(movedChangeData.isComplete()).thenReturn(false);
+        when(movedChangeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
+
+        Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> oldChangeData.get());
 
         ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description");
 
         Assert.assertTrue(SUT.needsRefreshing(198));
-        Assert.assertEquals(returnedChangeData, changeData);
+        Assert.assertTrue(newChangeDataLocation.exists());
+        Assert.assertEquals(returnedChangeData, movedChangeData);
     }
 
     @Test
@@ -108,7 +127,9 @@ public class FileChangeDataStoreTests {
 
     @Test
     public void testNeedsRefreshingRunningProcess() throws IOException {
+        when(runner.loadChangeData(eq(new File(changeDir, "456" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
+
         ChangeDataId changeDataId = new ChangeDataId(456L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
@@ -120,6 +141,7 @@ public class FileChangeDataStoreTests {
 
     @Test
     public void testNeedsRefreshingPausedProcess() throws IOException {
+        when(runner.loadChangeData(eq(new File(changeDir, "789" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
         ChangeDataId changeDataId = new ChangeDataId(789L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);

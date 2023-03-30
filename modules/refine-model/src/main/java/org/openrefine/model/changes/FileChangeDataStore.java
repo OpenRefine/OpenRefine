@@ -140,7 +140,6 @@ public class FileChangeDataStore implements ChangeDataStore {
                 // move the existing change data to a temporary directory
                 incompleteDir = idsToFile(changeDataId, true);
                 logger.info("Recovering incomplete change data to temporary directory " + incompleteDir.toString());
-                recoveredChangeData = Optional.empty();
                 if (incompleteDir.exists()) {
                     FileUtils.deleteDirectory(incompleteDir);
                 }
