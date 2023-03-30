@@ -68,3 +68,7 @@ node_modules/
 
 # Ignore the node_modules folder as they are dependencies to be installed by end-user
 main/webapp/node_modules
+
+# Ignore .gitignore among extensions as it can be used to ignore custom extensions
+
+extensions/.gitignore

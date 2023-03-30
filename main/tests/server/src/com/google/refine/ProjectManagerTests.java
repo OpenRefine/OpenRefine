@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, 2022 Google Inc. & OpenRefine contributors
+Copyright 2010, 2023 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine;
 
 import java.time.Instant;
-
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+import com.google.refine.model.Row;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -52,6 +56,7 @@ import com.google.refine.process.ProcessManager;
 public class ProjectManagerTests extends RefineTest {
 
     private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
+    private static final int ROW_COUNT = 3;
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -65,14 +70,27 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void SetUp() {
+    public void SetUp() throws NoSuchFieldException, IllegalAccessException {
         pm = new ProjectManagerStub();
         SUT = spy(pm);
+
         project = mock(Project.class);
+        // Hack to override final declaration of "rows" field so that we can initialize
+        Field field = Project.class.getDeclaredField("rows");
+        field.setAccessible(true);
+        field.set(project, new ArrayList<>());
+        addRows(project);
+
         metadata = mock(ProjectMetadata.class);
         procmgr = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
+    }
+
+    private void addRows(Project p) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            p.rows.add(new Row(3));
+        }
     }
 
     @AfterMethod
@@ -90,6 +108,7 @@ public class ProjectManagerTests extends RefineTest {
 
         AssertProjectRegistered();
         verify(metadata, times(1)).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
 
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -115,6 +134,7 @@ public class ProjectManagerTests extends RefineTest {
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
         verify(metadata, times(1)).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
 
         // ensure end
         verifyNoMoreInteractions(project);
@@ -130,6 +150,7 @@ public class ProjectManagerTests extends RefineTest {
 
         // add a second project to the cache
         Project project2 = spy(new ProjectStub(2));
+        addRows(project2);
         ProjectMetadata metadata2 = mock(ProjectMetadata.class);
         whenGetSaveTimes(project2, metadata2, 10); // not modified since the last save but within 30 seconds flush limit
         registerProject(project2, metadata2);
@@ -157,6 +178,7 @@ public class ProjectManagerTests extends RefineTest {
 
         verify(metadata, atLeastOnce()).getModified();
         verify(metadata, atLeastOnce()).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
         verify(project, atLeastOnce()).getProcessManager();
         verify(project, atLeastOnce()).getLastSave();
         verify(project, times(1)).dispose();
@@ -178,6 +200,7 @@ public class ProjectManagerTests extends RefineTest {
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
         verify(metadata, times(1)).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -243,6 +266,7 @@ public class ProjectManagerTests extends RefineTest {
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);
         verify(meta, times(1)).getTags();
+        verify(meta).setRowCount(ROW_COUNT);
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);

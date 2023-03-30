@@ -281,8 +281,8 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals(project.rows.get(1).getCellValue(7), "1");
         assertEquals(project.rows.get(2).getCellValue(7), "2");
 
-        assertEquals(project.rows.get(1).getCellValue(8), "100.00%");
-        assertEquals(project.rows.get(2).getCellValue(8), "200.00%");
+        assertEquals(project.rows.get(1).getCellValue(8), String.format("%.2f", 100.0) + "%");
+        assertEquals(project.rows.get(2).getCellValue(8), String.format("%.2f", 200.0) + "%");
 
         assertEquals(project.rows.get(1).getCellValue(9), "0001");
         assertEquals(project.rows.get(2).getCellValue(9), "0002");
@@ -291,7 +291,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         assertEquals(project.rows.get(ROWS - 1).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
 
-        assertEquals(project.rows.get(ROWS - 1).getCellValue(12), "$1,234.56");
+        assertEquals(project.rows.get(ROWS - 1).getCellValue(12), "$" + NUMBER_FORMAT.format(1234.56));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");

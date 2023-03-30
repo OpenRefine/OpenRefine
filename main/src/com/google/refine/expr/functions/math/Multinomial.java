@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.math;
 
+import java.math.BigInteger;
 import java.util.Properties;
+
+import com.google.common.math.BigIntegerMath;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -49,17 +52,20 @@ public class Multinomial implements Function {
             return new EvalError(EvalErrorMessage.expects_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
         }
         int sum = 0;
-        int product = 1;
+        BigInteger product = BigInteger.ONE;
         for (int i = 0; i < args.length; i++) {
             if (!(args[i] instanceof Number)) {
-                // + " to be a number");
                 return new EvalError(EvalErrorMessage.expects_param_i_number(ControlFunctionRegistry.getFunctionName(this), i + 1));
             }
-            int num = ((Number) args[i]).intValue();
+            int num = ((Number) args[i]).intValue(); // int has plenty of dynamic range for input arguments
             sum += num;
-            product *= FactN.factorial(num, 1);
+            product = product.multiply(BigIntegerMath.factorial(num));
         }
-        return FactN.factorial(sum, 1) / product;
+        BigInteger result = BigIntegerMath.factorial(sum).divide(product);
+        if (result.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+            throw new ArithmeticException("Integer overflow computing multinomial");
+        }
+        return result.longValue();
     }
 
     @Override

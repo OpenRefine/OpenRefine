@@ -37,7 +37,9 @@ import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
 
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -76,7 +78,14 @@ public class ForRangeTests extends RefineTest {
 
     @Test
     public void testForRangeWithFloatingPointValues() throws ParsingException {
-        String test[] = { "forRange(0,0.6,0.1,v,v.toString('%.3f')).join(',')", "0.000,0.100,0.200,0.300,0.400,0.500" };
+        // the expected result of this test is computed dynamically because it depends on the system locale
+        // (number formatting is locale-dependent)
+        String expectedResult = String.join(",",
+                Arrays.asList(0.0, 0.1, 0.2, 0.3, 0.4, 0.5).stream()
+                        .map(v -> String.format("%.3f", v))
+                        .collect(Collectors.toList()));
+
+        String test[] = { "forRange(0,0.6,0.1,v,v.toString('%.3f')).join(',')", expectedResult };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);

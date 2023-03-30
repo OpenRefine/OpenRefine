@@ -48,6 +48,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
@@ -55,7 +56,7 @@ import com.google.refine.util.Pool;
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
  * tracked directly but through a history entry. The history entry stores only the metadata, while the change object
- * stores the actual data. Thus the history entries are much smaller and can be kept in memory, while the change objects
+ * stores the actual data, thus the history entries are much smaller and can be kept in memory, while the change objects
  * are only loaded into memory on demand.
  */
 public class History {
@@ -156,7 +157,11 @@ public class History {
     }
 
     protected void setModified() {
-        ProjectManager.singleton.getProjectMetadata(_projectID).updateModified();
+        // Refresh shadow copy of row count (and modified time as a side effect)
+        int rowCount = ProjectManager.singleton.getProject(_projectID).rows.size();
+        ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(_projectID);
+        projectMetadata.setRowCount(rowCount);
+        projectMetadata.updateModified(); // Redundant, but for safety in case setRowCount implementation changes
     }
 
     synchronized public List<HistoryEntry> getLastPastEntries(int count) {
@@ -261,8 +266,8 @@ public class History {
     }
 
     /*
-     * NOTE: this method is called from the autosave thread with the Project lock already held, so no other synchronized
-     * method here can aquire that Project lock or a deadlock will result.be careful of thread synchronization to avoid
+     * NOTE: This method is called from the autosave thread with the Project lock already held, so no other synchronized
+     * method here can acquire that lock or a deadlock will result. Be careful of thread synchronization to avoid
      * deadlocks.
      */
     synchronized public void save(Writer writer, Properties options) throws IOException {
