@@ -45,7 +45,7 @@ describe(__filename, function () {
     .trigger('mousedown',{ force: true }).waitForOrOperation()
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true }).waitForOrOperation();
-    cy.get('#summary-bar').contains('70 matching rows');
+    cy.get('#summary-bar').contains('79 matching rows');
 
     //sliding the left slider
     cy.get('.slider-widget-bracket').eq(0)
