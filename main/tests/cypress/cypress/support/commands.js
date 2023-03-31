@@ -103,15 +103,6 @@ Cypress.Commands.add('getFacetContainer', (facetName) => {
     .parentsUntil('.facets-container', { log: false });
 });
 
-Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
-  return cy
-    .get(
-      `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
-      { log: false }
-    )
-    .parentsUntil('.facets-container', { log: false });
-});
-
 /**
  * Edit a cell, for a given row index, a column name and a value
  */

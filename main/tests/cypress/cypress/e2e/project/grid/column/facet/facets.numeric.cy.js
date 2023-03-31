@@ -65,15 +65,15 @@ describe(__filename, function () {
 
     cy.get('.browsing-panel-indicator').should("not.be.visible")
 
-    cy.getNumericFacetContainer('Magnesium').find('#facet-0-numeric').click();
+    cy.getFacetContainer('Magnesium').find('#facet-0-numeric').click();
     cy.get('#summary-bar').contains('11 matching rows');
     cy.get('.browsing-panel-indicator').should("not.be.visible");
 
-    cy.getNumericFacetContainer('Magnesium').find('#facet-0-error').click();
+    cy.getFacetContainer('Magnesium').find('#facet-0-error').click();
     cy.get('#summary-bar').contains('0 matching rows');
     cy.get('.browsing-panel-indicator').should("not.be.visible");
 
-    cy.getNumericFacetContainer('Magnesium').contains('reset').click();
+    cy.getFacetContainer('Magnesium').contains('reset').click();
     cy.get('#summary-bar').contains('199 rows');
   });
 });
