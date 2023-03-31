@@ -93,7 +93,7 @@ class TextSearchFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -111,6 +111,9 @@ class TextSearchFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
+
     if (this._config.caseSensitive) {
       this._elmts.caseSensitiveCheckbox.prop('checked', true);
     }

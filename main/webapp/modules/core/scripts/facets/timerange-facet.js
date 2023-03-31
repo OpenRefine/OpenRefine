@@ -123,7 +123,7 @@ class TimeRangeFacet extends Facet{
     .empty()
     .show()
     .html(
-      '<div class="facet-title" bind="headerDiv">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
@@ -134,7 +134,7 @@ class TimeRangeFacet extends Facet{
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span bind="facetTitle"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -150,7 +150,10 @@ class TimeRangeFacet extends Facet{
     );
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.titleSpan.text(this._config.name);
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
+
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {

@@ -423,6 +423,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n("core-views/judgment", column.name),
+                  "i18n" : "core-views/judgment",
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -440,7 +441,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n('core-views/judg-actions2', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/judg-actions2",
+                  "columnName" : column.name,
                   "expression" : "cell.recon.judgmentAction"
                 }
             );
@@ -454,7 +456,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n('core-views/hist-entries', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/hist-entries",
+                  "columnName" : column.name,
                   "expression" : "cell.recon.judgmentHistoryEntry"
                 }
             );
@@ -469,7 +472,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "range", 
                 {
                   "name" : $.i18n('core-views/best-cand-score', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/best-cand-score",
+                  "columnName" : column.name,
                   "expression" : "cell.recon.best.score",
                   "mode" : "range"
                 },
@@ -486,7 +490,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n('core-views/best-cand-type-match', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/best-type-match",
+                  "columnName" : column.name,
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
                 {
@@ -503,7 +508,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n('core-views/best-cand-name', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/best-cand-name",
+                  "columnName" : column.name,
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
                 {
@@ -521,7 +527,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "range", 
                 {
                   "name" : $.i18n('core-views/best-cand-edit-dist', column.name),
-                  "columnName" : column.name, 
+                  "i18n" : "core-views/best-edit-dist",
+                  "columnName" : column.name,
                   "expression" : "cell.recon.features.nameLevenshtein",
                   "mode" : "range"
                 },
@@ -537,8 +544,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" :  $.i18n('core-views/best-cand-word-sim', column.name),
-                  "columnName" : column.name, 
+                  "name" : $.i18n('core-views/best-cand-word-sim', column.name),
+                  "i18n" : "core-views/best-word-sim",
+                  "columnName" : column.name,
                   "expression" : "cell.recon.features.nameWordDistance",
                   "mode" : "range"
                 },
@@ -556,6 +564,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 "list", 
                 {
                   "name" : $.i18n("core-views/best-cand-types", column.name),
+                  "i18n" : "core-views/best-type",
                   "columnName" : column.name,
                   "expression" : 'forNonBlank(cell.recon.best.type, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 }

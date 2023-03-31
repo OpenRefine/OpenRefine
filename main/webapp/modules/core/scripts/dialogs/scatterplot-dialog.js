@@ -172,6 +172,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             container.find("a").on('click',function() {
                 var options = {
                     "name" : $(this).attr("title"),
+                    "i18n" : "core-facets/scatterplot",
                     "cx" : $(this).attr("cx"), 
                     "cy" : $(this).attr("cy"), 
                     "l" : 150,

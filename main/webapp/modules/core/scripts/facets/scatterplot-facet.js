@@ -86,7 +86,7 @@ class ScatterplotFacet extends Facet {
     var facet_id = container.attr("id");
 
     this._div.empty().show().html(
-      '<div class="facet-title">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
@@ -96,7 +96,7 @@ class ScatterplotFacet extends Facet {
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -137,6 +137,9 @@ class ScatterplotFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
+
     this._elmts.removeButton.on('click',function() { self._remove(); });
     this._elmts.minimizeButton.on('click',function() { self._minimize(); });
     
