@@ -38,6 +38,8 @@ class Facet {
   	this._options = options || {};
   	this._minimizeState = false;
   	
+  	this._buildToolTipText();
+  	
   	Refine.showLeftPanel();
   };
 
