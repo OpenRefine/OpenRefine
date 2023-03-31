@@ -40,6 +40,7 @@ li.facet-container {
   display: block;
   clear: both;
   margin: 0 5px 7px;
+  cursor: text;
   background: var(--chrome-secondary);
   border: 1px solid var(--chrome-primary);
   border-radius: 7px;
@@ -53,6 +54,19 @@ li.facet-container {
   border-bottom: 1px solid var(--chrome-primary);
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
+}
+
+span.facet-title-span {
+  padding: 3px;
+  cursor: text;
+  border: 1px solid @chrome_primary;
+  border-top: 1px solid @chrome_primary;
+}
+
+span.facet-title-span:hover {
+  background: @fill_editable;
+  border: 1px solid #ccc;
+  border-top: 1px solid #aaa;
 }
 
 .facet-title-inverted {
