@@ -90,7 +90,7 @@ describe(__filename, function () {
 
   it('Renames a facet name', function () {
     cy.loadAndVisitProject('food.small');
-    cy.columnActionClick('a', ['Facet', 'Text facet']);
+    cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
     cy.window().then(win=>{
       const stub=cy.stub(win,'prompt');
