@@ -25,64 +25,39 @@ warn() {
 }
 
 usage() {
-    cat <<EOF
+cat <<EOF
 Usage: $0 [options] <action>
-where [options] include:
+Options
+    -c <path>                     Path to refine.ini file. Default: ./refine.ini.
+    -d <path>                     Path to the data directory. Default: OS dependent.
+    -H <host>                     Expected host header value (set to * to disable checks). Default: <interface>.
+    -h                            Print this message and exit.
+    -i <interface>                The network interface OpenRefine should bind to. Default: 127.0.0.1.
+    -m <memory>                   JVM min and max memory heap size. Default: 1400M.
+    -p <port>                     Port that OpenRefine will listen to. Default: 3333.
+    -v <level>                    Verbosity level [error,warn,info,debug,trace]. Default: info.
+    -w <path>                     Path to the webapp. Default: main/webapp.
+    -x <name=value>               Additional configuration parameters to pass to OpenRefine.
+    --debug                       Enable JVM debugging (on port 8000).
+    --jmx                         Enable JMX monitoring.
 
-  -h print this message and exit
-  
-  -p <port> the port that OpenRefine will listen to
-     default: 3333
-
-  -i <interface> the network interface OpenRefine should bind to
-     default: 127.0.0.1
-	 
-  -H <host> the expected value for the Host header (set to * to disable checks)
-     default: <interface>
-
-  -w <path> path to the webapp
-     default: main/webapp
-
-  -d <path> path to the data directory
-     default: OS dependent
-
-  -m <memory> max memory heap size to use
-     default: 1400M
-
-  -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
-     default: info
-
-  -x <name=value> additional configuration parameters to pass to OpenRefine
-     default: [none]
-
-  -c <path> path to refine.ini file
-     default: ./refine.ini
-  
-  --debug enable JVM debugging (on port 8000)
-       
-  --jmx enable JMX monitoring (for jconsole and jvisualvm)
-  
-and <action> is one of
-
-   build ............................... Build OpenRefine      
-   run ................................. Run OpenRefine [default]
-
-   test ................................ Run all OpenRefine tests
-   server_test ......................... Run only the server tests
-   extensions_test ..................... Run only the extensions tests
-   ui_tests ............................ Run only the UI tests
-
-   mac_dist <version> .................. Make MacOSX binary distribution
-   windows_dist <version> .............. Make Windows binary distribution
-   linux_dist <version> ................ Make Linux binary distribution
-   dist <version> ...................... Make all distributions
-
-   clean ............................... Clean compiled classes
-                
+Actions
+    build                         Build OpenRefine.
+    clean                         Clean compiled classes.
+    dist <version>                Make all distributions.
+    extensions_test               Run the extensions tests.
+    linux_dist <version>          Make Linux binary distribution.
+    mac_dist <version>            Make MacOSX binary distribution.
+    run                           Run OpenRefine [default].
+    server_test                   Run the server tests.
+    test                          Run all tests.
+    ui_tests                      Run the UI tests.
+    windows_dist <version>        Make Windows binary distribution.
 EOF
-    exit 1
+exit 1
 }
-                
+
+
 add_option() {
     if [ ! -z "$*" ] ; then
         OPTS+=("$@")
@@ -140,7 +115,7 @@ check_running() {
         fi    
         
         if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
+            error "OpenRefine isn't running on $URL. Maybe a proxy issue?"
         fi
     else
         RUNNING=""
@@ -466,10 +441,24 @@ run() {
             mvn_prepare
             build_prepare
             $MVN process-resources
-            $MVN compile test-compile
+            $MVN compile test-compile || exit
             echo ""
         fi
     fi
+
+freeRam=UNKNOWN
+if [ "$OS" = "macosx" ] ; then
+    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+elif [ "$OS" = "linux" ] ; then
+    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+fi
+
+echo "-------------------------------------------------------------------------------------------------"
+echo You have "$freeRam"M of free memory.
+echo Your current configuration is set to use $REFINE_MEMORY of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+echo "-------------------------------------------------------------------------------------------------"
 
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
@@ -636,20 +625,6 @@ if [ -z "$REFINE_MIN_MEMORY" ] ; then
     REFINE_MIN_MEMORY="256M"
 fi
 add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
-
-freeRam=UNKNOWN
-if [ "$OS" = "macosx" ] ; then
-    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
-elif [ "$OS" = "linux" ] ; then
-    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
-fi
-
-echo "-------------------------------------------------------------------------------------------------"
-echo You have "$freeRam"M of free memory.
-echo Your current configuration is set to use $REFINE_MEMORY of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
-echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"

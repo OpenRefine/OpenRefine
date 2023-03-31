@@ -75,16 +75,6 @@ public class TestUtils {
 
     /**
      * Assert that two JSON strings are equal as JSON objects.
-     *
-     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter order as the rest of the assert
-     *             methods{@link #assertEqualsAsJson(String, String)}
-     */
-    public static void assertEqualAsJson(String expected, String actual) {
-        assertEqualsAsJson(actual, expected);
-    }
-
-    /**
-     * Assert that two JSON strings are equal as JSON objects.
      */
     public static void assertEqualsAsJson(String actual, String expected) {
         try {

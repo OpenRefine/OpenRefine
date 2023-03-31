@@ -50,6 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   width: 100%;
   border-collapse: collapse;
   border-bottom: 1px solid var(--chrome-primary);
+  height: 100%;
 }
 
 #create-project-ui-source-selection-layout>tbody>tr>td {
@@ -108,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #create-project-progress-bar-frame {
-  border: 1px solid var(--link-primary);
+  border: 1px solid var(--chrome-primary);
   padding: var(--padding-tighter);
   width: 300px;
 }

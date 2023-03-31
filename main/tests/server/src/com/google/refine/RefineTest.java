@@ -178,8 +178,8 @@ public class RefineTest {
 
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
-        project.update();
         ProjectManager.singleton.registerProject(project, metadata);
+        project.update();
 
         projects.add(project);
         importingJobs.add(job);
