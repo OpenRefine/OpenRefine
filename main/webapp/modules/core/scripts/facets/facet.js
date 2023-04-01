@@ -59,9 +59,9 @@ class Facet {
     var newFacetToolTipText = "";
     
     if(Facet.references[curExpr]) {
-      var sourceText = Facet.references[curExpr].source;
+      var sourceText = Facet.references[curExpr].label;
       
-      sourceText = $.i18n('core-views/'+sourceText);
+      sourceText = $.i18n(sourceText);
       sourceText = "\n" + $.i18n('core-facets/source-tooltip', sourceText);
     }
     
