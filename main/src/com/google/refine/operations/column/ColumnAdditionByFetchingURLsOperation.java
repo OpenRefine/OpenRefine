@@ -73,7 +73,49 @@ import com.google.refine.operations.OnError;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.HttpClient;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
 
+public class FetchUrlsOperation {
+
+    private List<String> urls;
+    private String columnName;
+    private boolean fetchFinalUrlOnly;
+
+    public FetchUrlsOperation(List<String> urls, String columnName, boolean fetchFinalUrlOnly) {
+        this.urls = urls;
+        this.columnName = columnName;
+        this.fetchFinalUrlOnly = fetchFinalUrlOnly;
+    }
+
+    public void execute() {
+        for (String url : urls) {
+            try {
+                URL obj = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("HEAD");
+                con.setInstanceFollowRedirects(false);
+                int responseCode = con.getResponseCode();
+                if (responseCode >= 300 && responseCode < 400) { // Redirect
+                    String redirectUrl = con.getHeaderField("Location");
+                    if (fetchFinalUrlOnly) {
+                        url = redirectUrl;
+                    } else {
+                        url += " -> " + redirectUrl;
+                    }
+                }
+                // Fetch the content of the final URL using HTTP GET requests
+                // ...
+            } catch (Exception e) {
+                // Handle exceptions
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // ...
+}
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
 
     public static final class HttpHeader {
@@ -81,7 +123,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         @JsonProperty("name")
         final public String name;
         @JsonProperty("value")
-        final public String value;
+        final public String value; 
 
         @JsonCreator
         public HttpHeader(
@@ -90,6 +132,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             this.name = name;
             this.value = value;
         }
+
+    return options;
+}
     }
 
     final protected String _baseColumnName;
@@ -206,7 +251,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 getBriefDescription(null),
                 _cacheResponses);
     }
-
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
 
         final protected Project _project;
@@ -246,7 +290,49 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                 });
             }
         }
+        public class AddColumnByFetchingUrlsDialog extends JDialog {
 
+    // ...
+
+        public AddColumnByFetchingUrlsDialog(Frame owner, Project project) {
+        // ...
+
+        // Create a new checkbox for the "fetch final URL only" option
+        final JCheckBox fetchFinalUrlOnlyCheckBox = new JCheckBox("Fetch final URL only");
+
+        // Add the checkbox to the dialog
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panel.add(fetchFinalUrlOnlyCheckBox, BorderLayout.NORTH);
+        // ...
+
+        // Add the "OK" button with a listener to retrieve the value of the new option
+        final JButton okButton = new JButton("OK");
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the URLs and column name from the text fields
+                String[] urls = urlsTextArea.getText().trim().split("\n");
+                String columnName = columnNameTextField.getEditor().getItem().toString().trim();
+                if (columnName.isEmpty()) {
+                    columnName = newColumnNameTextField.getEditor().getItem().toString().trim();
+                }
+
+                // Get the value of the new option
+                boolean fetchFinalUrlOnly = fetchFinalUrlOnlyCheckBox.isSelected();
+
+                // Create a new operation with the new option
+                operation = new FetchUrlsOperation(urls, columnName, fetchFinalUrlOnly);
+
+                dispose();
+            }
+        });
+
+        // ...
+    }
+
+    // ...
+}
         @Override
         protected Runnable getRunnable() {
             return this;
