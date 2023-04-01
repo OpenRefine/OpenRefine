@@ -48,7 +48,53 @@ import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+package com.google.refine.batch;
 
+import java.util.List;
+
+import com.google.refine.model.Row;
+
+public abstract class RowVisitor {
+
+    private List<String> columnNames; // new field
+
+    public RowVisitor(List<String> columnNames) { // modified constructor
+        this.columnNames = columnNames;
+    }
+
+    public final void start(int projectID, int historyEntryID) throws Exception {
+        startProject(projectID, historyEntryID);
+    }
+
+    public final void end() throws Exception {
+        endProject();
+    }
+
+    protected abstract void startProject(int projectID, int historyEntryID) throws Exception;
+
+    protected abstract void endProject() throws Exception;
+
+    public abstract boolean visit(Row row) throws Exception;
+
+    public List<String> getColumnNames() { // new getter method
+        return columnNames;
+    }
+}
+public abstract class AbstractRowVisitor implements RowVisitor {
+    //...
+    protected List<String> columnNames; // add new variable
+
+    protected AbstractRowVisitor() {
+        //...
+        this.columnNames = new ArrayList<String>(); // initialize variable
+    }
+
+    //...
+
+    public List<String> getColumnNames() { // new getter method
+        return columnNames;
+    }
+}
 /**
  * Class representing a single Row which contains a list of {@link Cell}s. There may be multiple rows in a
  * {@link Record}.
