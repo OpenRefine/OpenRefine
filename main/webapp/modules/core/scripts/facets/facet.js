@@ -60,6 +60,8 @@ class Facet {
     
     if(Facet.references[curExpr]) {
       var sourceText = Facet.references[curExpr].source;
+      
+      sourceText = $.i18n('core-views/'+sourceText);
       sourceText = "\n" + $.i18n('core-facets/source-tooltip', sourceText);
     }
     
