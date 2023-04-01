@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "postinstall": "node copy-dependencies.js"
+    "postinstall": "node copy-dependencies.js",
+    "start": "node copy-dependencies.js"
   },
   "name": "open-refine-webapp",
   "type": "module",
