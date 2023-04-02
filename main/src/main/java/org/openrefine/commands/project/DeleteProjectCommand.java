@@ -61,14 +61,17 @@ public class DeleteProjectCommand extends Command {
             // Remove the project tags from the general map
             Map<String, Integer> allProjectTags = ProjectManager.singleton.getAllProjectTags();
             ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(projectID);
-            for (String tag : metadata.getTags()) {
-                if (allProjectTags.containsKey(tag)) {
-                    int occurrence = allProjectTags.get(tag);
+            String[] tags = metadata.getTags();
+            if (tags != null) {
+                for (String tag : tags) {
+                    if (allProjectTags.containsKey(tag)) {
+                        int occurrence = allProjectTags.get(tag);
 
-                    if (occurrence == 1)
-                        allProjectTags.remove(tag);
-                    else {
-                        allProjectTags.put(tag, occurrence - 1);
+                        if (occurrence == 1)
+                            allProjectTags.remove(tag);
+                        else {
+                            allProjectTags.put(tag, occurrence - 1);
+                        }
                     }
                 }
             }
