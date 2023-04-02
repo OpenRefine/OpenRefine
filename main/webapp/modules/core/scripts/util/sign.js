@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if (typeof window.Sign == 'undefined') {
   window.Sign = {
-    window_position: function() {
+    window_position: function () {
       var position = {};
 
-      if (typeof(window.innerWidth) == 'number') {
+      if (typeof (window.innerWidth) == 'number') {
         // Non-IE
         position.width = window.outerWidth;
         position.height = window.outerHeight;
@@ -53,7 +53,7 @@ if (typeof window.Sign == 'undefined') {
       return position;
     },
 
-    popup : function(url, width, height, windowname) {
+    popup: function (url, width, height, windowname) {
       width = width || 700;
       height = height || 500;
 
@@ -92,21 +92,21 @@ if (typeof window.Sign == 'undefined') {
       return window.open(url, windowname || "", params_list.join(","));
     },
 
-    signin : function(success, provider, check_authorization_url, width, height) {
+    signin: function (success, provider, check_authorization_url, width, height) {
       var newwin = window.Sign.popup("command/core/authorize/" + provider, width, height);
 
       if (newwin !== null) {
         newwin.opener = window;
       }
 
-      window.onauthorization = function() {
+      window.onauthorization = function () {
         if (typeof success == 'undefined') {
           window.location.reload();
         } else {
           $.ajax({
             url: check_authorization_url,
             dataType: "json",
-            success: function(data) {
+            success: function (data) {
               window.user = data;
               if (typeof success == 'function') success();
             }
@@ -121,10 +121,10 @@ if (typeof window.Sign == 'undefined') {
       return false;
     },
 
-    signout : function(success,provider) {
+    signout: function (success, provider) {
       $.ajax({
         url: "command/core/deauthorize/" + provider,
-        success: function() {
+        success: function () {
           if (typeof success == 'undefined') {
             window.location.reload();
           } else {

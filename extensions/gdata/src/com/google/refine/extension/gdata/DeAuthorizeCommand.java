@@ -74,4 +74,29 @@ public class DeAuthorizeCommand extends Command {
             respondException(response, e);
         }
     }
+    try {
+  // Make the API request to update the Wikidata item
+  const response = await fetch(apiUrl, requestOptions);
+  const data = await response.json();
+
+  // Check if the API response contains an error
+  if (data.error) {
+    // Log the API request and response for debugging purposes
+    console.error(`Wikidata API request: ${JSON.stringify(requestOptions)}`);
+    console.error(`Wikidata API response: ${JSON.stringify(data)}`);
+
+    // Throw an error with a more detailed error message
+    throw new Error(`Wikidata API error: ${data.error.code} - ${data.error.info}`);
+  }
+
+  // Handle the successful response
+  // ...
+} catch (error) {
+  // Log the error for debugging purposes
+  console.error(`Wikidata API error: ${error.message}`);
+
+  // Rethrow the error with a more detailed error message
+  throw new Error(`Failed to update Wikidata item: ${error.message}`);
+}
+
 }

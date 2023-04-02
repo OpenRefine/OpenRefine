@@ -446,6 +446,20 @@ run() {
         fi
     fi
 
+freeRam=UNKNOWN
+if [ "$OS" = "macosx" ] ; then
+    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+elif [ "$OS" = "linux" ] ; then
+    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+fi
+
+echo "-------------------------------------------------------------------------------------------------"
+echo You have "$freeRam"M of free memory.
+echo Your current configuration is set to use $REFINE_MEMORY of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+echo "-------------------------------------------------------------------------------------------------"
+
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
     fi
@@ -611,20 +625,6 @@ if [ -z "$REFINE_MIN_MEMORY" ] ; then
     REFINE_MIN_MEMORY="256M"
 fi
 add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
-
-freeRam=UNKNOWN
-if [ "$OS" = "macosx" ] ; then
-    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
-elif [ "$OS" = "linux" ] ; then
-    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
-fi
-
-echo "-------------------------------------------------------------------------------------------------"
-echo You have "$freeRam"M of free memory.
-echo Your current configuration is set to use $REFINE_MEMORY of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
-echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
