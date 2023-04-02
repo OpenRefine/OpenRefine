@@ -358,7 +358,14 @@
           <artifactId>localizer</artifactId>
           <version>${org-jvnet-localizer.version}</version>
       </dependency>
+      <dependency>
+          <groupId>com.google.http-client</groupId>
+          <artifactId>google-http-client</artifactId>
+          <version>1.41.0</version>
+     </dependency>
+
   </dependencies>
+  
 
   <!-- enabled to access our snapshots of Wikidata-Toolkit -->
   <repositories>

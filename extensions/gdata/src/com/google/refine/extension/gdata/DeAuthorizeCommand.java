@@ -42,6 +42,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.refine.commands.Command;
+import com.google.api.client.http.ByteArrayContent;
 
 public class DeAuthorizeCommand extends Command {
 
@@ -72,6 +73,40 @@ public class DeAuthorizeCommand extends Command {
             respond(response, "200 OK", "");
         } catch (Exception e) {
             respondException(response, e);
+        }
+        try {
+            // Make the API request to update the Wikidata item
+            String apiUrl = "https://www.wikidata.org/w/api.php?action=wbcreateclaim&format=json";
+            String claim = "{ \"mainsnak\": { \"snaktype\": \"value\", \"property\": \"P31\", \"datavalue\": { \"value\": { \"entity-type\": \"item\", \"id\": \"Q5\" }, \"type\": \"wikibase-entityid\" } }, \"type\": \"statement\", \"rank\": \"normal\" }";
+            String csrfToken = "1234567890abcdef"; // Replace with actual CSRF token
+
+            HttpRequestFactory factory = HTTP_TRANSPORT.createRequestFactory();
+            GenericUrl url = new GenericUrl(apiUrl);
+
+            HttpRequest rqst = factory.buildPostRequest(url, ByteArrayContent.fromString("application/json", claim));
+
+            // HttpRequest rqst = factory.buildPostRequest(url,
+            // ByteArrayClaim.fromString("application/json",claim);
+            rqst.getHeaders().setCookie("wikidatawikiSession=" + csrfToken);
+            HttpResponse resp = rqst.execute();
+
+            // Check if the API response contains an error
+            if (resp.getStatusCode() != 200) {
+                // Log the API request and response for debugging purposes
+                System.out.println("Wikidata API request: " + rqst.toString());
+                System.out.println("Wikidata API response: " + resp.parseAsString());
+                throw new RuntimeException(
+                        "Wikidata API error: " + resp.getStatusCode() + " - " + resp.getStatusMessage());
+            }
+
+            // Handle the successful response
+            // ...
+        } catch (Exception e) {
+            // Log the error for debugging purposes
+            e.printStackTrace();
+
+            // Rethrow the error with a more detailed error message
+            throw new RuntimeException("Failed to update Wikidata item: " + e.getMessage());
         }
     }
 }
