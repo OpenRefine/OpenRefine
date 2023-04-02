@@ -237,7 +237,7 @@ jobs:
     - name: Upload release asset for Windows (without Java)
       id: upload-release-asset-win
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
@@ -247,7 +247,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
@@ -257,7 +257,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.get_release_upload_url.outputs.tag_name }}.tar.gz
@@ -267,7 +267,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.get_release_upload_url.outputs.tag_name }}.dmg
