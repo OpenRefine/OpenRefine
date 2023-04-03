@@ -74,19 +74,6 @@ Refine.OpenProjectUI = function(elmt) {
   this._buildTagsAndFetchProjects();
 };
 
-Refine.OpenProjectUI.prototype.resize = function() {
-  var height = this._elmt.height();
-  var width = this._elmt.width();
-  var controlsHeight = this._elmts.workspaceControls.outerHeight();
-
-  this._elmts.projectsContainer
-  .css("height", (height - controlsHeight - DOM.getVPaddings(this._elmts.projectsContainer)) + "px");
-
-  this._elmts.workspaceControls
-  .css("bottom", "0px")
-  .css("width", (width - DOM.getHPaddings(this._elmts.workspaceControls)) + "px");
-};
-
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
   var self = this;
   $.getJSON(
@@ -132,7 +119,6 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
             dataType : 'json',
             success : function(data) {
                     self._renderProjects(data);
-                    self.resize();
             },
             data : {},
             async : false
