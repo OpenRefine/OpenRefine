@@ -10,5 +10,6 @@
     "wikibase-extension/manage-wikibase-account": "Gerir conta de Wikidata…",
     "wikibase-extension/import-wikibase-schema": "Importar esquema…",
     "wikibase-extension/edit-wikibase-schema": "Editar esquema de Wikidata",
-    "wikibase-extension/menu-label": "Wikidata"
+    "wikibase-extension/menu-label": "Wikidata",
+    "wikibase-extension/select-wikibase-instance": "Gerenciar instâncias Wikibase…"
 }
