@@ -39,24 +39,6 @@ Refine.OpenProjectUI = function(elmt) {
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
 
-  $("#project-file-input").on('change',function() {
-    if ($("#project-name-input")[0].value.length === 0) {
-      var fileName = this.files[0].fileName;
-      if (fileName) {
-        $("#project-name-input")[0].value = fileName.replace(/\.\w+/, "").replace(/[_\-]/g, " ");
-      }
-      $("#project-name-input").trigger('focus').select();
-    }
-  }).on('keypress',function(evt) {
-    if (evt.key == "Enter") {
-      return self._onClickUploadFileButton(evt);
-    }
-  });
-
-  $("#upload-file-button").on('click',function(evt) {
-    return self._onClickUploadFileButton(evt);
-  });
-
   $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
   $('#projects-workspace-open').on('click',function() {
     Refine.postCSRF(
@@ -297,36 +279,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
 Refine.OpenProjectUI.prototype._addTagFilter = function() {
     $("#tableBody").filterList();
-};
-
-Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
-  var projectName = $("#project-name-input")[0].value;
-  var dataURL = jQueryTrim($("#project-url-input")[0].value);
-  if (! jQueryTrim(projectName).length) {
-    window.alert($.i18n('core-index-open/warning-proj-name'));
-
-  } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {
-    window.alert($.i18n('core-index-open/warning-data-file'));
-
-  } else {
-    $("#file-upload-form").attr("action",
-        "command/core/create-project-from-upload?" + [
-          "url=" +                encodeURIComponent(dataURL),
-          "split-into-columns=" + $("#split-into-columns-input")[0].checked,
-          "separator=" +          $("#separator-input")[0].value,
-          "ignore=" +             $("#ignore-input")[0].value,
-          "header-lines=" +       $("#header-lines-input")[0].value,
-          "skip=" +               $("#skip-input")[0].value,
-          "limit=" +              $("#limit-input")[0].value,
-          "guess-value-type=" +   $("#guess-value-type-input")[0].checked,
-          "ignore-quotes=" +      $("#ignore-quotes-input")[0].checked
-        ].join("&"));
-
-    return true;
-  }
-
-  evt.preventDefault();
-  return false;
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
