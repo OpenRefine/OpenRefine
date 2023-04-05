@@ -33,7 +33,7 @@
     "core-index/delete": "削除",
     "core-index-create/almost-done": "ほぼ完了 …",
     "core-index-create/min-remaining": "$1 分程度かかります",
-    "core-index-create/create-proj": "新規プロジェクトを作成する",
+    "core-index-create/create-proj": "新規プロジェクト",
     "core-index-create/from": "データを取得する",
     "core-index-create/memory-usage": "メモリ使用量:",
     "core-index-create/question": "インポートしたデータからプロジェクトをつくります。",
@@ -91,7 +91,7 @@
     "core-index-open/rename": "名前変更",
     "core-index-open/new-title": "新しいプロジェクト名:",
     "core-index-open/del-body": "プロジェクトを削除してもよろしいですか?",
-    "core-index-open/open-proj": "既存プロジェクトを開く",
+    "core-index-open/open-proj": "既存プロジェクト",
     "core-index-open/contributors": "貢献者",
     "core-index-open/creator": "作成者",
     "core-index-open/browse": "作業ディレクトリを閲覧",
@@ -846,5 +846,6 @@
     "core-index-parser/row-separator-regex": "正規表現",
     "core-index-parser/row-separator": "行の区切り文字:",
     "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）",
-    "core-index-parser/force-text": "全セルをテキストとしてインポート"
+    "core-index-parser/force-text": "全セルをテキストとしてインポート",
+    "core-index/navigate-home": "ホーム画面へ案内"
 }
