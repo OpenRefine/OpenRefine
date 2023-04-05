@@ -411,7 +411,6 @@ function init() {
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",
       "styles/common.css",
-      "styles/pure.css",
       "styles/util/dialog.css",
       "styles/util/encoding.css",
       
