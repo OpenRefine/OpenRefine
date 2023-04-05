@@ -326,7 +326,6 @@
     "core-dialogs/choose-export-destination": "Please choose the destination for project export",
     "core-dialogs/export-to-local": "OpenRefine project archive to file",
     "core-dialogs/missing-bad-template": "Missing or bad template",
-    "core-facets/edit-facet-title": "Click to rename facet",
     "core-facets/column-tooltip": "Column: $1",
     "core-facets/expr-tooltip": "Expression:\n$1",
     "core-facets/source-tooltip": "Source:\n$1",
