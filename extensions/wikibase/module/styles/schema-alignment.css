@@ -49,7 +49,7 @@
 }
 
 .schema-alignment-dialog-entity-edits-area {
-  max-width: 100%;
+  max-width: 70em;
 }
 
 .schema-alignment-dialog-statements-area {
@@ -333,7 +333,7 @@ input[type="checkbox"].wbs-wikitext-override {
   margin-bottom: 5px;
   padding-right: 5px;
   padding: 10px;
-  border-bottom: solid #d3deff;
+  border-bottom: 1px solid #d3deff;
 }
 
 .wbs-statement-group {
