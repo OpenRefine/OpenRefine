@@ -60,7 +60,7 @@ goto :eof
 
 set OPTS=
 
-rem Check for custom ini file
+rem ----- Check for custom ini file /c option  --------------------------------
 
 set "REFINE_INI_PATH="
 set "FOUND_C="
@@ -74,7 +74,7 @@ for %%A in (%*) do (
 )
 
 :readIniFile
-rem --- Read ini file -----------------------------------------------
+rem --- Read ini file ---------------------------------------------------------
 if "!REFINE_INI_PATH!" == "" set REFINE_INI_PATH=refine.ini
 if not exist !REFINE_INI_PATH! (
  echo Error: "!REFINE_INI_PATH!" does not exist.
@@ -84,7 +84,7 @@ for /f "usebackq tokens=1,* delims== " %%a in (`type "!REFINE_INI_PATH!" ^| find
     set "%%a=%%b"
 )
 														 
-rem --- Argument parsing --------------------------------------------
+rem ----- Parse the command line args -----------------------------------------
 
 :loop
 if "%~1"=="" goto checkVars
@@ -104,7 +104,7 @@ if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & shift & goto loop
 
 :checkVars
 
-rem --- Check JAVA_HOME ---------------------------------------------
+rem --- Check JAVA_HOME -------------------------------------------------------
 
 if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
@@ -117,7 +117,7 @@ echo.
 goto fail
 :gotJavaHome			
 
-rem --- Fold in Environment Vars --------------------------------------------
+rem ----- Verify and Set Required Environment Variables -----------------------
 
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
 set JAVA_OPTIONS=
