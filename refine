@@ -564,6 +564,10 @@ if [ -z $REFINE_INI_PATH ]; then
   REFINE_INI_PATH=refine.ini
 fi
 
+if [ ! -f "$REFINE_INI_PATH" ]; then
+  error "$REFINE_INI_PATH is not a valid filename"
+fi
+
 echo "Using ${REFINE_INI_PATH} for configuration"
 load_configs $REFINE_INI_PATH
 
@@ -571,7 +575,7 @@ load_configs $REFINE_INI_PATH
 for ((i=0; i<${#args[@]}; i+=1)); do
   arg="${args[i]}"
   case "$arg" in
-    -h) echo 'blah'; usage;;
+    -h) usage;;
     -p) ((i+=1)); REFINE_PORT="${args[i]}"; continue;;
     -H) ((i+=1)); REFINE_HOST="${args[i]}"; continue;;
     -i) ((i+=1)); REFINE_INTERFACE="${args[i]}"; continue;;
@@ -587,7 +591,6 @@ for ((i=0; i<${#args[@]}; i+=1)); do
     *) ACTION="$arg"; break;;
   esac
 done
-
 
 if [ -z "$ACTION" ] ; then
     ACTION="run"
