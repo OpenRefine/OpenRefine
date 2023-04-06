@@ -132,7 +132,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 
-        Grid expectedState = createGrid(
+        Grid expectedState = createGridWithRecords(
                 new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
                         { "record1", "a", "c" },
@@ -147,7 +147,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                         { null, null, null }
                 });
 
-        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel());
+        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel().withHasRecords(true));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(rows, expectedState.collectRows());
     }
@@ -159,7 +159,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 
-        Grid expectedState = createGrid(
+        Grid expectedState = createGridWithRecords(
                 new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
                         { "record1", "a", "c" },
@@ -175,7 +175,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                         { null, null, null }
                 });
 
-        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel());
+        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel().withHasRecords(true));
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(rows, expectedState.collectRows());
     }

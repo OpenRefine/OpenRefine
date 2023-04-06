@@ -28,7 +28,8 @@ public class OpaqueSliceTests {
             "           \"originalName\" : \"bar\"\n" +
             "         } ],\n" +
             "         \"keyCellIndex\" : 0,\n" +
-            "         \"keyColumnName\" : \"foo\"\n" +
+            "         \"keyColumnName\" : \"foo\",\n" +
+            "         \"hasRecords\" : false\n" +
             "       },\n" +
             "       \"type\" : \"opaque\"\n" +
             "     }";

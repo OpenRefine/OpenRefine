@@ -55,7 +55,8 @@ public class ColumnModelTests {
                 "         \"originalName\" : \"b\"\n" +
                 "       } ],\n" +
                 "       \"keyCellIndex\" : 0,\n" +
-                "       \"keyColumnName\" : \"a\"\n" +
+                "       \"keyColumnName\" : \"a\",\n" +
+                "       \"hasRecords\": false\n" +
                 "     }";
         TestUtils.isSerializedTo(model, json, ParsingUtilities.defaultWriter);
     }
@@ -63,7 +64,8 @@ public class ColumnModelTests {
     @Test
     public void serializeColumnModelEmpty() {
         String json = "{"
-                + "\"columns\":[]"
+                + "\"columns\":[]," +
+                " \"hasRecords\": false"
                 + "}";
         ColumnModel m = new ColumnModel(Collections.emptyList());
         TestUtils.isSerializedTo(m, json, ParsingUtilities.defaultWriter);

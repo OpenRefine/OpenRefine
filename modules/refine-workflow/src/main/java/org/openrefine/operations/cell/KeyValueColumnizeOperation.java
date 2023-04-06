@@ -271,6 +271,7 @@ public class KeyValueColumnizeOperation implements Operation {
                 finalColumnModel = finalColumnModel.insertUnduplicatedColumn(
                         finalColumnModel.getColumns().size(), notesColumn);
             }
+            finalColumnModel = finalColumnModel.withHasRecords(true);
 
             // build the final grid of rows
             List<Row> finalRows = new ArrayList<>(newBaseRows.size());

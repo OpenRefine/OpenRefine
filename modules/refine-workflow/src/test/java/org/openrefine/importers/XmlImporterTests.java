@@ -82,7 +82,7 @@ public class XmlImporterTests extends ImporterTest {
     public void setUp() {
         super.setUp();
         SUT = new XmlImporter();
-        expectedGrid = createGrid(new String[] {
+        expectedGrid = createGridWithRecords(new String[] {
                 "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
                 { "1", "Author 1, The", "Book title 1", "2010-05-26" },
@@ -185,7 +185,7 @@ public class XmlImporterTests extends ImporterTest {
     public void testCanParseLineBreak() throws Exception {
         Grid grid = RunTest(getSampleWithLineBreak());
 
-        Grid expectedGrid = createGrid(new String[] {
+        Grid expectedGrid = createGridWithRecords(new String[] {
                 "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
                 { "1", "Author 1, The", "Book title 1", "2010-05-26" },
@@ -202,7 +202,7 @@ public class XmlImporterTests extends ImporterTest {
     public void testElementsWithVaryingStructure() throws Exception {
         Grid grid = RunTest(getSampleWithVaryingStructure());
 
-        Grid expected = createGrid(new String[] {
+        Grid expected = createGridWithRecords(new String[] {
                 "book - id", "book - author", "book - title", "book - publish_date", "book - genre"
         }, new Serializable[][] {
                 { "1", "Author 1, The", "Book title 1", "2010-05-26", null },

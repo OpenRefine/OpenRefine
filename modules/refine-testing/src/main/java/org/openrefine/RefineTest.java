@@ -196,6 +196,11 @@ public class RefineTest {
         return runner().create(model, toRows(cells), Collections.emptyMap());
     }
 
+    protected Grid createGridWithRecords(String[] columns, Serializable[][] rows) {
+        Grid grid = createGrid(columns, rows);
+        return grid.withColumnModel(grid.getColumnModel().withHasRecords(true));
+    }
+
     @Deprecated
     protected Project createProject(String projectName, String[] columns, Serializable[] rows) {
         Serializable[][] cells = new Serializable[rows.length / columns.length][];
