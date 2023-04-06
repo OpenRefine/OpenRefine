@@ -34,11 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,7 +58,8 @@ public class ColumnModel implements Serializable {
     @JsonProperty("columns")
     private final List<ColumnMetadata> _columns;
 
-    final private int _keyColumnIndex;
+    private final int _keyColumnIndex;
+    private final boolean _hasRecords;
 
     protected Map<String, Integer> _nameToPosition;
     protected List<String> _columnNames;
@@ -70,9 +67,11 @@ public class ColumnModel implements Serializable {
     @JsonCreator
     public ColumnModel(
             @JsonProperty("columns") List<ColumnMetadata> columns,
-            @JsonProperty("keyCellIndex") int keyColumnIndex) {
+            @JsonProperty("keyCellIndex") int keyColumnIndex,
+            @JsonProperty("hasRecords") boolean hasRecords) {
         this._columns = Collections.unmodifiableList(columns);
         _keyColumnIndex = keyColumnIndex;
+        _hasRecords = hasRecords;
         _nameToPosition = new HashMap<>();
         _columnNames = new ArrayList<String>();
         int index = 0;
@@ -88,7 +87,7 @@ public class ColumnModel implements Serializable {
     }
 
     public ColumnModel(List<ColumnMetadata> columns) {
-        this(columns, 0);
+        this(columns, 0, false);
     }
 
     /**
@@ -106,7 +105,7 @@ public class ColumnModel implements Serializable {
      *            the index of the column to use as a key
      */
     public ColumnModel withKeyColumnIndex(int keyColumnIndex) {
-        return new ColumnModel(_columns, keyColumnIndex);
+        return new ColumnModel(_columns, keyColumnIndex, _hasRecords);
     }
 
     /**
@@ -129,7 +128,7 @@ public class ColumnModel implements Serializable {
         newColumns.addAll(getColumns().subList(0, index));
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index + 1, getColumns().size()));
-        return new ColumnModel(newColumns);
+        return new ColumnModel(newColumns, _keyColumnIndex, _hasRecords);
     }
 
     /**
@@ -163,7 +162,7 @@ public class ColumnModel implements Serializable {
         newColumns.addAll(getColumns().subList(0, index));
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index, getColumns().size()));
-        return new ColumnModel(newColumns);
+        return new ColumnModel(newColumns, _keyColumnIndex, _hasRecords);
     }
 
     /**
@@ -186,7 +185,7 @@ public class ColumnModel implements Serializable {
         newColumns.addAll(getColumns().subList(0, index));
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index, getColumns().size()));
-        return new ColumnModel(newColumns);
+        return new ColumnModel(newColumns, _keyColumnIndex, _hasRecords);
     }
 
     /**
@@ -222,7 +221,7 @@ public class ColumnModel implements Serializable {
         List<ColumnMetadata> columns = getColumns();
         newColumns.addAll(columns.subList(0, index));
         newColumns.addAll(columns.subList(index + 1, columns.size()));
-        return new ColumnModel(newColumns);
+        return new ColumnModel(newColumns, _keyColumnIndex, _hasRecords);
     }
 
     /**
@@ -244,7 +243,7 @@ public class ColumnModel implements Serializable {
         for (int i = 0; i != _columns.size(); i++) {
             newColumns.add(_columns.get(i));
         }
-        return new ColumnModel(newColumns);
+        return new ColumnModel(newColumns, _keyColumnIndex, _hasRecords);
     }
 
     public String getUnduplicatedColumnName(String baseName) {
@@ -311,22 +310,37 @@ public class ColumnModel implements Serializable {
         return null;
     }
 
+    /**
+     * Returns whether the associated grid has an intentional records structure. This happens when the grid is produced
+     * by an importer or operation which introduces a record structure, which can be preserved by following operations.
+     */
+    @JsonProperty("hasRecords")
+    public boolean hasRecords() {
+        return _hasRecords;
+    }
+
+    /**
+     * Returns a copy of this column model with a different value for the {@link #hasRecords()} field.
+     */
+    public ColumnModel withHasRecords(boolean newHasRecords) {
+        return new ColumnModel(_columns, _keyColumnIndex, newHasRecords);
+    }
+
     public List<ColumnMetadata> getColumns() {
         return _columns;
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof ColumnModel)) {
-            return false;
-        }
-        ColumnModel otherModel = (ColumnModel) other;
-        return _columns.equals(otherModel.getColumns());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ColumnModel that = (ColumnModel) o;
+        return _keyColumnIndex == that._keyColumnIndex && _hasRecords == that._hasRecords && _columns.equals(that._columns);
     }
 
     @Override
     public int hashCode() {
-        return _columns.hashCode();
+        return Objects.hash(_columns, _keyColumnIndex, _hasRecords);
     }
 
     @Override

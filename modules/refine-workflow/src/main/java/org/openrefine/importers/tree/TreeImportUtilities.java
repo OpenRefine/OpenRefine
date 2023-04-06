@@ -117,7 +117,7 @@ public abstract class TreeImportUtilities {
             columnModel = createColumnsFromImport(columnModel, g, columnIndexTranslation);
         }
 
-        return columnModel;
+        return columnModel.withHasRecords(true);
     }
 
     @Deprecated

@@ -76,8 +76,6 @@ public class GetModelsCommand extends Command {
 
         @JsonProperty("columnModel")
         protected ColumnModel columnModel;
-        @JsonProperty("recordModel")
-        protected RecordModel recordModel;
         @JsonProperty("overlayModels")
         protected Map<String, OverlayModel> overlayModels;
         @JsonProperty("scripting")
@@ -87,25 +85,13 @@ public class GetModelsCommand extends Command {
 
         protected ModelsResponse(
                 ColumnModel columns,
-                RecordModel records,
                 Map<String, OverlayModel> overlays,
                 Map<String, LanguageInfo> languageInfos,
                 Map<String, HttpHeaderInfo> headers) {
             columnModel = columns;
-            recordModel = records;
             overlayModels = overlays;
             scripting = languageInfos;
             httpHeaders = headers;
-        }
-    }
-
-    protected static class RecordModel {
-
-        @JsonProperty("hasRecords")
-        protected final boolean hasRecords;
-
-        protected RecordModel(boolean hasRecords) {
-            this.hasRecords = hasRecords;
         }
     }
 
@@ -143,11 +129,9 @@ public class GetModelsCommand extends Command {
 
         Grid grid = project.getCurrentGrid();
         logger.info(grid.toString());
-        RecordModel recordModel = new RecordModel(grid.rowCount() > grid.recordCount());
 
         respondJSON(response, new ModelsResponse(
                 project.getColumnModel(),
-                recordModel,
                 project.getOverlayModels(),
                 prefixesMap,
                 headersMap));

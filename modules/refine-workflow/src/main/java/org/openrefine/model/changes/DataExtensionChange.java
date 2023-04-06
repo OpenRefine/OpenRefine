@@ -92,7 +92,7 @@ public class DataExtensionChange extends EngineDependentChange {
             throw new DoesNotApplyException(String.format("Unable to retrieve change data for data extension"));
         }
 
-        ColumnModel newColumnModel = projectState.getColumnModel();
+        ColumnModel newColumnModel = projectState.getColumnModel().withHasRecords(true);
         for (int i = 0; i != _columnNames.size(); i++) {
             newColumnModel = newColumnModel.insertUnduplicatedColumn(
                     _columnInsertIndex + i,

@@ -62,6 +62,7 @@ public class BlankDownTests extends RefineTest {
     }
 
     Grid toBlankDown;
+    Grid toBlankDownRecordKey;
     ListFacetConfig facet;
 
     @BeforeTest
@@ -73,6 +74,15 @@ public class BlankDownTests extends RefineTest {
                         { "e", "b", "f" },
                         { null, "g", "h" },
                         { null, "g", "i" }
+                });
+
+        toBlankDownRecordKey = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "a", "b" },
+                        { "e", "b" },
+                        { "e", "g" },
+                        { "e", "g" }
                 });
 
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
@@ -179,5 +189,26 @@ public class BlankDownTests extends RefineTest {
                 });
 
         assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testBlankDownRecordKey() throws DoesNotApplyException {
+        Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "foo").createChange();
+        Change.ChangeResult changeResult = change.apply(toBlankDownRecordKey, mock(ChangeContext.class));
+        Grid applied = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+
+        Grid expectedGrid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { null, "b" },
+                        { "e", "b" },
+                        { null, "g" },
+                        { null, "g" }
+                });
+        expectedGrid = expectedGrid.withColumnModel(expectedGrid.getColumnModel().withHasRecords(true));
+
+        assertGridEquals(applied, expectedGrid);
     }
 }

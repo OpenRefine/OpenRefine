@@ -82,6 +82,7 @@ public class FillDownTests extends RefineTest {
                         { null, "g", "h" },
                         { null, "", "i" }
                 });
+        toFillDown = toFillDown.withColumnModel(toFillDown.getColumnModel().withHasRecords(true));
 
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
         facet = new ListFacetConfig();
@@ -98,7 +99,7 @@ public class FillDownTests extends RefineTest {
 
         Grid applied = changeResult.getGrid();
 
-        Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expectedGrid = createGridWithRecords(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", "b", "d" },
@@ -119,7 +120,7 @@ public class FillDownTests extends RefineTest {
         Grid applied = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
-        Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expectedGrid = createGridWithRecords(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", "b", "d" },
@@ -143,7 +144,7 @@ public class FillDownTests extends RefineTest {
 
         Grid applied = changeResult.getGrid();
 
-        Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
+        Grid expected = createGridWithRecords(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
                         { "", null, "d" },
@@ -173,7 +174,29 @@ public class FillDownTests extends RefineTest {
                         { null, "g", "h" },
                         { null, "", "i" }
                 });
+        expected = expected.withColumnModel(expected.getColumnModel().withHasRecords(true));
 
         assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testFillDownRowsKeyColumn() throws DoesNotApplyException {
+        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "foo").createChange();
+        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+
+        Grid applied = changeResult.getGrid();
+
+        Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "a", null, "d" },
+                        { "e", null, "f" },
+                        { "e", "g", "h" },
+                        { "e", "", "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
     }
 }

@@ -550,6 +550,8 @@ public class ExtendDataOperationTests extends RefineTest {
             // Make sure all the values are reconciled
             ColumnModel columnModel = project.getCurrentGrid().getColumnModel();
             Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
+            // Make sure the grid is marked as having records
+            Assert.assertTrue(columnModel.hasRecords());
         }
     }
 

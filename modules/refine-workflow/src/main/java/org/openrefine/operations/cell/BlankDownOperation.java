@@ -119,6 +119,11 @@ public class BlankDownOperation extends EngineDependentOperation {
                                 RowMapper.IDENTITY),
                         model);
             }
+            // if we are blanking down the key column, this will likely create records
+            if (index == model.getKeyColumnIndex() && !model.hasRecords()) {
+                result = result.withColumnModel(result.getColumnModel().withHasRecords(true));
+            }
+
             return new ChangeResult(
                     result,
                     recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);

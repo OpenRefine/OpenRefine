@@ -191,7 +191,7 @@ public class MultiValuedCellSplitOperation implements Operation {
                 projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
             }
             return new ChangeResult(
-                    projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel),
+                    projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel.withHasRecords(true)),
                     GridPreservation.NO_ROW_PRESERVATION);
         }
 

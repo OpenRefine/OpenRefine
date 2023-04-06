@@ -108,7 +108,7 @@ public class JsonImporterTests extends ImporterTest {
     public void canParseSample() throws Exception {
         Grid grid = RunTest(getSample());
 
-        Grid expected = createGrid(new String[] {
+        Grid expected = createGridWithRecords(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
@@ -201,7 +201,7 @@ public class JsonImporterTests extends ImporterTest {
     public void canParseSampleWithDuplicateNestedElements() throws Exception {
         Grid grid = RunTest(getSampleWithDuplicateNestedElements());
 
-        Grid expected = createGrid(new String[] {
+        Grid expected = createGridWithRecords(new String[] {
                 "_ - id", "_ - title", "_ - publish_date", "_ - authors - _ - name"
         }, new Serializable[][] {
                 { 1L, "Book title 1", "2010-05-26", "Author 1, The" },
@@ -224,7 +224,7 @@ public class JsonImporterTests extends ImporterTest {
     public void testCanParseLineBreak() throws Exception {
         Grid grid = RunTest(getSampleWithLineBreak());
 
-        Grid expected = createGrid(new String[] {
+        Grid expected = createGridWithRecords(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
@@ -241,7 +241,7 @@ public class JsonImporterTests extends ImporterTest {
     public void testElementsWithVaryingStructure() throws Exception {
         Grid grid = RunTest(getSampleWithVaryingStructure());
 
-        Grid expected = createGrid(new String[] {
+        Grid expected = createGridWithRecords(new String[] {
                 "_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
         }, new Serializable[][] {
                 { 1L, "Author 1, The", "Book title 1", "2010-05-26", null },

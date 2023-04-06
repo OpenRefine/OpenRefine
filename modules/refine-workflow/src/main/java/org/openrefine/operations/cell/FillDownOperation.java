@@ -116,6 +116,10 @@ public class FillDownOperation extends EngineDependentOperation {
                                 RowMapper.IDENTITY),
                         model);
             }
+            // if we are filling down the first column, that is removing the records structure
+            if (!recordsPreserved && model.hasRecords()) {
+                result = result.withColumnModel(result.getColumnModel().withHasRecords(false));
+            }
             return new ChangeResult(result, recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
         }
 

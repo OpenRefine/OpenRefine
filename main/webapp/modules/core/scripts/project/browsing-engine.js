@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function BrowsingEngine(div, facetConfigs) {
   this._div = div;
-  this._mode = theProject.recordModel.hasRecords ? "record-based" : "row-based";
+  this._mode = theProject.columnModel.hasRecords ? "record-based" : "row-based";
 
   this._facets = [];
   this._defaultAggregationLimit = 1000;

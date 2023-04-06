@@ -163,6 +163,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
+        Assert.assertTrue(columnModel.hasRecords());
         int merchantCol = columnModel.getColumnIndexByName("merchant");
         int fruitCol = columnModel.getColumnIndexByName("fruit");
         int priceCol = columnModel.getColumnIndexByName("price");
@@ -203,6 +204,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
+        Assert.assertTrue(columnModel.hasRecords());
         Assert.assertEquals(columnModel.getColumnNames(),
                 Arrays.asList("merchant", "fruit", "price", "Notes : merchant", "Notes : fruit", "Notes : price"));
 
@@ -244,7 +246,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
         Grid applied = changeResult.getGrid();
 
-        Grid expected = createGrid(
+        Grid expected = createGridWithRecords(
                 new String[] { "wd", "merchant", "fruit", "price" },
                 new Serializable[][] {
                         { "34", "Katie", "apple", "1.2" },
