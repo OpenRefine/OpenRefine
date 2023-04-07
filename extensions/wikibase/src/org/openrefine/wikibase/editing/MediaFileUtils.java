@@ -4,11 +4,11 @@ package org.openrefine.wikibase.editing;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
@@ -20,6 +20,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.TokenErrorException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.ParsingUtilities;
 
@@ -173,6 +174,24 @@ public class MediaFileUtils {
     }
 
     /**
+     * Checks which of the provided page names already exist on the wiki.
+     *
+     * @param pageNames
+     *            the page names (including namespace prefix)
+     * @return
+     * @throws IOException
+     * @throws MediaWikiApiErrorException
+     */
+    public Set<String> checkIfPageNamesExist(List<String> pageNames) throws IOException, MediaWikiApiErrorException {
+        // the site IRI provided to the fetcher is not important because it will not be exposed to the user
+        WikibaseDataFetcher fetcher = new WikibaseDataFetcher(apiConnection, "http://some.site/iri");
+        return fetcher.getMediaInfoIdsByFileName(pageNames).entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Internal method, common to both local and remote file upload.
      * 
      * @param parameters
@@ -245,6 +264,21 @@ public class MediaFileUtils {
 
         @JsonIgnore
         private MediaInfoIdValue mid = null;
+
+        /**
+         * Checks that the upload was successful, and if not raise an exception
+         * 
+         * @throws MediaWikiApiErrorException
+         */
+        public void checkForErrors() throws MediaWikiApiErrorException {
+            if (!"Success".equals(result)) {
+                throw new MediaWikiApiErrorException(result,
+                        "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
+            }
+            if (filename == null) {
+                throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
+            }
+        }
 
         /**
          * Retrieves the Mid, either from the upload response or by issuing another call to obtain it from the filename

@@ -44,7 +44,7 @@ public class JacksonSerializationTest {
         try {
 
             String actualJson = ParsingUtilities.defaultWriter.writeValueAsString(pojo);
-            TestUtils.assertEqualAsJson(expectedJson, actualJson);
+            TestUtils.assertEqualsAsJson(actualJson, expectedJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             Assert.fail("Failed to serialize object");

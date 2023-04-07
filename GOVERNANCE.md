@@ -16,7 +16,7 @@ Users are community members who have a need for the project. Through their usage
 Users can help the project by:
 
 - Advertising and advocating for the project
-- Informing developers of strengths and weaknesses of the tool through the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
+- Informing developers of strengths and weaknesses of the tool through the [user discussion list](https://forum.openrefine.org/) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
 - Providing moral support (a ‘thank you’ goes a long way)
 - Writing tutorials
 
@@ -25,10 +25,10 @@ How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/do
 ### Contributors
 Contributors are users getting involved in the project more closely. Contributions can take many forms:
 
-- Supporting new users via the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
+- Supporting new users via the [user discussion list](https://forum.openrefine.org/c/support/12)
 - Submitting patches to fix bugs or add features via pull requests
 - Maintaining and improving the [website](https://openrefine.org/)
-- Writing and maintaining the [documentation](https://github.com/OpenRefine/OpenRefine/tree/master/docs)
+- Writing and maintaining the [documentation](https://github.com/OpenRefine/openrefine.org/tree/master/docs)
 
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
@@ -38,7 +38,7 @@ If you make regular contribution to OpenRefine, you will most likely become a Co
 Committers have earned enough trust from the community to review and merge pull requests.
 
 Therefore Committers:
-- Help contributors via the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev).
+- Help contributors via the [developer discussion list](https://forum.openrefine.org/c/dev/8).
 - Triage issues, pull requests and [projects](https://github.com/OpenRefine/OpenRefine/projects)
 - Have direct access to the code base to create new branches
 - Organize the wiki
@@ -47,7 +47,7 @@ Therefore Committers:
 
 #### How to become a Committer?  
 
-Be a contributor and be nominated as a Committer. Current Committers select and elect new Committers. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
+Be a contributor and be nominated as a Committer. Current Committers select and elect new Committers. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://forum.openrefine.org/c/dev/8)
 
 #### Current list of Committers
 The list is available here: https://github.com/orgs/OpenRefine/people.
@@ -114,7 +114,7 @@ The Project Director:
 * Assists in finding and secure new sources of funding
 * Supports the Advisory Committee in OpenRefine’s day-to-day operations.
 
-The current Project Director is [Sandra Fauconnier](https://github.com/trnstlntk).
+Currently OpenRefine has no project director
 
 ## Fiscal sponsorship: Code For Science and Society
 

@@ -427,7 +427,7 @@
     "core-index/license": "Licens",
     "core-index/homepage": "Hemsida",
     "core-index/image": "Bild",
-    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på <a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-dialogs/clusters-found": "<b>$1</b> {{plural:$1|kluster|kluster}} hittades",
     "core-index-parser/store-archive": "Lagra arkivfil",
     "core-index-import/warning-import-file": "Du måste ange en projektfil.",

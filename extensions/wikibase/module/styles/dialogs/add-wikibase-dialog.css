@@ -1,0 +1,17 @@
+.add-wikibase-dialog p {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.add-wikibase-dialog textarea {
+  width: 100%;
+  height: 160px;
+}
+
+.add-wikibase-dialog .invalid-manifest {
+  color: red;
+}
+
+.save-new-template-dialog-input-group select {
+  max-width: 100%;
+}

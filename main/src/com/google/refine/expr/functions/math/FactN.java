@@ -61,7 +61,7 @@ public class FactN implements Function {
 
     }
 
-    /*
+    /**
      * Calculates the factorial of an integer, i, for a decreasing step of n. e.g. A double factorial would have a step
      * of 2. Returns 1 for zero and negative integers.
      */

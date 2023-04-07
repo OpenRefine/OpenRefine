@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -57,17 +58,30 @@ public class Split implements Function {
                 Object preserve = args[2];
                 if (preserve instanceof Boolean) {
                     preserveAllTokens = ((Boolean) preserve);
+                } else {
+                    return new EvalError(
+                            EvalErrorMessage.expects_two_strings_as_string_regex_opt_bool(ControlFunctionRegistry.getFunctionName(this)));
                 }
             }
 
             if (v != null && split != null) {
                 String str = (v instanceof String ? (String) v : v.toString());
                 if (split instanceof String) {
-                    return preserveAllTokens ? StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split)
-                            : StringUtils.splitByWholeSeparator(str, (String) split);
+                    if (preserveAllTokens) {
+                        return StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split);
+                    } else {
+                        String[] pieces = StringUtils.splitByWholeSeparator(str, (String) split);
+                        if (pieces.length > 0 && pieces[pieces.length - 1].isEmpty()) { // Conditional in case Apache
+                                                                                        // fixes the bug
+                            return Arrays.copyOfRange(pieces, 0, pieces.length - 1);
+                        } else {
+                            return pieces;
+                        }
+                    }
                 } else if (split instanceof Pattern) {
-                    Pattern pattern = (Pattern) split;
-                    return pattern.split(str);
+                    final boolean finalPreserveAllTokens = preserveAllTokens;
+                    // Pattern.split() returns an empty token for a leading pattern match, which we filter
+                    return ((Pattern) split).splitAsStream(str).filter(c -> finalPreserveAllTokens || !c.isEmpty()).toArray(String[]::new);
                 }
             }
         }

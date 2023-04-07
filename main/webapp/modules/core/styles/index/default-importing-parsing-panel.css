@@ -1,0 +1,105 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.default-importing-parsing-data-panel {
+  font-size: 1.12em;
+  position: absolute;
+  overflow: auto;
+  height: calc(100% - 42px - 300px);
+  width: 100%;
+}
+
+.default-importing-parsing-data-panel > .data-table {
+  overflow: auto;
+}
+
+.default-importing-progress-data-panel {
+  position: absolute;
+  overflow: auto;
+  font-size: 200%;
+  width: 100%;
+  height: 100%;
+  padding-top: 3em;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.default-importing-parsing-control-panel {
+  font-size: 1.3em;
+  position: absolute;
+  top: calc(100% - 300px);
+  height: 295px;
+  width: 100%;
+  overflow: auto;
+  border-top: 5px solid var(--chrome-primary);
+  background: var(--chrome-secondary);
+}
+
+.default-importing-parsing-control-panel>table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td.default-importing-parsing-control-panel-formats {
+  padding: var(--padding-looser) 0;
+  width: 250px;
+}
+
+.default-importing-parsing-control-panel-formats-message {
+  margin-left: var(--padding-looser);
+  margin-bottom: var(--padding-looser);
+  padding: 0 var(--padding-normal);
+  font-size: 1.3em;
+}
+
+.default-importing-parsing-control-panel-format {
+  margin-left: var(--padding-looser);
+  padding: var(--padding-tight) var(--padding-normal);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: var(--link-primary);
+  cursor: pointer;
+}
+
+.default-importing-parsing-control-panel-format.selected {
+  background: var(--background-primary);
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+td.default-importing-parsing-control-panel-options-panel {
+  background: var(--background-primary);
+  padding: var(--padding-looser);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}

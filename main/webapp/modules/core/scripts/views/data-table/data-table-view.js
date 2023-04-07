@@ -510,21 +510,21 @@ DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
-  var keyDownCode = event.which;
+  var keyDownCode = evt.key;
   
-  if([38, 40].indexOf(keyDownCode) == -1) return;
+  if(['ArrowUp', 'ArrowDown'].indexOf(keyDownCode) == -1) return;
   if(self._refocusPageInput == true) return; 
 
   evt.preventDefault();
   this._refocusPageInput = true;
   
   var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
-  if(keyDownCode == 38) {  // Up arrow
+  if(keyDownCode == 'ArrowUp') {
     if(newPageValue <= 1) return;
     this._onClickPreviousPage(elmt, evt);
   }
     
-  if(keyDownCode == 40) {  // Down arrow
+  if(keyDownCode == 'ArrowDown') {
     if(newPageValue >= this._lastPageNumber) return;
     this._onClickNextPage(elmt, evt);
   }

@@ -1,0 +1,359 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+ul.facets-container {
+  margin: 0;
+  overflow: auto;
+}
+
+li.facet-container {
+  display: block;
+  clear: both;
+  margin: 0 5px 7px;
+  background: var(--chrome-secondary);
+  border: 1px solid var(--chrome-primary);
+  border-radius: 7px;
+}
+
+.facet-title {
+  padding: 3px 5px;
+  background: var(--chrome-primary);
+  font-weight: bold;
+  cursor: move;
+  border-bottom: 1px solid var(--chrome-primary);
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.facet-title-inverted {
+  background: #ffa500;
+  border-bottom: 1px solid #ffc04d;
+}
+
+a.facet-title-remove {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 2px 0 0 0;
+  text-decoration: none;
+  background-image: url(../../images/close-map.png);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+}
+
+a.facet-title-remove:hover {
+  background-position: -12px 0px;
+}
+
+li.facet-state-minimize {
+  height: 22px;
+  overflow: hidden;
+}
+
+a.facet-title-minimize {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 2px 0 0 0;
+  text-decoration: none;
+  background-image: url(../../images/minimize-map.png);
+  background-repeat: no-repeat;
+  background-position: -0px 0px;
+}
+
+a.facet-title-minimize:hover {
+  background-position: -12px 0px;
+}
+
+li.facet-state-minimize a.facet-title-minimize {
+  background-position: -24px 0px;
+}
+
+li.facet-state-minimize a.facet-title-minimize:hover {
+  background-position: -36px 0px;
+}
+
+.facet-expression {
+  padding: 3px 5px;
+  font-family: monospace;
+  background: var(--background-primary);
+  cursor: text;
+  border-bottom: 1px solid var(--chrome-primary);
+}
+
+.facet-expression:hover {
+  background: var(--fill-editable);
+}
+
+.facet-status {
+  font-size: 0.9em;
+  padding: 2px 5px;
+}
+
+.facet-controls {
+  position: relative;
+  font-size: 0.9em;
+  padding: 7px 3px;
+  background: var(--chrome-secondary);
+  border-bottom: 1px solid var(--chrome-primary);
+}
+
+.facet-controls-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.facet-body-message {
+  margin: 1em;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.facet-body-scrollable {
+  padding-bottom: 8px;
+  background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
+}
+
+.facet-body-inner {
+  background: var(--background-primary);
+}
+
+.facet-body-scrollable .facet-body-inner {
+  border-bottom: 1px solid var(--chrome-primary);
+}
+
+.facet-body.facet-body-scrollable .ui-resizable-s {
+  bottom: -5px;
+  height: 15px;
+}
+
+.facet-body-scrollable .facet-body-inner {
+  height: 100%;
+  overflow: auto;
+}
+
+.facet-body-controls {
+  font-size: 0.85em;
+  margin: 5px 0;
+}
+
+.facet-choice {
+  white-space: pre-wrap;
+  padding: 2px 5px;
+  clear: both;
+}
+
+.facet-choice:hover {
+  background: var(--fill-secondary);
+}
+
+.facet-choice-selected .facet-choice-label {
+  font-weight: bold;
+  color: #ff6a00;
+}
+
+.facet-mode-inverted .facet-choice-selected .facet-choice-label {
+  text-decoration: line-through;
+  color: var(--text-primary);
+}
+
+.facet-choice-link.facet-mode-inverted {
+  text-decoration: line-through;
+  color: var(--text-primary);
+}
+
+.facet-choice-count, .facet-range-choice-count {
+  padding-left: 5px;
+  font-size: 0.85em;
+  color: var(--light-grey);
+}
+
+a.facet-choice-link {
+  float: right;
+  padding-left: 5px;
+  font-size: 0.85em;
+  color: var(--link-secondary);
+  font-weight: normal;
+}
+
+img.facet-choice-link {
+  text-align: baseline;
+  cursor: pointer;
+  margin-left: 2px;
+  float: right;
+}
+
+.facet-range-body {
+  padding: 5px;
+}
+
+.facet-range-message {
+  color: var(--text-tertiary);
+}
+
+.facet-range-histogram {
+  overflow: hidden;
+}
+
+.facet-range-status {
+  margin: 0 0 3px 0;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.facet-range-choices {
+  padding: 5px 0 30px 0;
+}
+
+.facet-range-item {
+  float: left;
+  text-align: left;
+  padding: 0 4px;
+}
+
+.facet-range-choice-label {
+  font-size: 0.85em;
+}
+
+.facet-range-choice-count {
+  margin: -2px 0 0 16px;
+}
+
+
+.facet-text-body {
+  padding: 5px;
+}
+
+.facet-scatterplot-plot-container {
+  margin: 5px 0px 5px 5px;
+  border: 1px solid #bbb;
+}
+
+.facet-scatterplot-plot {
+  position: relative;
+}
+
+.facet-scatterplot-image {
+  position: absolute;
+}
+
+.facet-scatterplot-body td {
+  vertical-align: middle;
+}
+
+.facet-scatterplot-selectors-container .scatterplot-selectors {
+  text-align: center;
+}
+
+.facet-scatterplot-selectors-container .scatterplot-export-plot {
+  font-size: 95%;
+  margin-top: 3em;
+}
+
+.facet-scatterplot-selectors-container .scatterplot-selectors .buttonset {
+  margin: 0.4em 0em;
+}
+
+.scatterplot-selectors .ui-button-text-only .ui-button-text {
+  font-size: 90%;
+  padding: 0.0em 0.4em 0.1em 0.3em;
+}
+
+.scatterplot-selectors .buttonset {
+  margin: 0px;
+}
+
+.scatterplot-selectors .buttonset .ui-corner-top {
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+}
+
+.scatterplot-selectors .buttonset .ui-corner-bottom {
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+.scatterplot-selectors .buttonset .ui-corner-right {
+  border-top-right-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+.scatterplot-selectors .buttonset .ui-corner-left {
+  border-top-left-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+}
+
+.scatterplot-selectors .scatterplot-dim-selector label {
+  width: 32px;
+  height: 16px;
+  padding: 0px;
+}
+
+.scatterplot-selectors .scatterplot-rot-selector label {
+  width: 22px;
+  height: 18px;
+  padding: 0px;
+  background-image: url("../../images/scatterplot-icons.png");
+}
+
+.scatterplot-selectors .scatterplot-rot-selector label.rot-ccw-label {
+  background-position: -5px -5px;
+}
+
+.scatterplot-selectors .scatterplot-rot-selector label.rot-none-label {
+  background-position: -28px -4px;
+}
+
+.scatterplot-selectors .scatterplot-rot-selector label.rot-cw-label {
+  background-position: -48px -3px;
+}
+
+.scatterplot-selectors .scatterplot-dot-selector label {
+  width: 22px;
+  height: 18px;
+  padding: 0px;
+  background-image: url("../../images/scatterplot-icons.png");
+}
+
+.scatterplot-selectors .scatterplot-dot-selector label.dot-small-label {
+  background-position: -5px -25px;
+}
+
+.scatterplot-selectors .scatterplot-dot-selector label.dot-regular-label {
+  background-position: -27px -25px;
+}
+
+.scatterplot-selectors .scatterplot-dot-selector label.dot-big-label {
+  background-position: -48px -25px;
+}

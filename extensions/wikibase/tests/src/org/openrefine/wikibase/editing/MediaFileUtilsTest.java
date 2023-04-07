@@ -8,14 +8,14 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.openrefine.wikibase.editing.MediaFileUtils.MediaUploadResponse;
@@ -45,6 +45,21 @@ public class MediaFileUtilsTest {
             + "        \"oldrevid\": 371705,\n"
             + "        \"newrevid\": 371707,\n"
             + "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
+            + "    }\n"
+            + "}";
+
+    private static final String successfulEditResponseNoFilename = "{\n"
+            + "    \"edit\": {\n"
+            + "        \"result\": \"Success\",\n"
+            + "        \"contentmodel\": \"wikitext\",\n"
+            + "        \"oldrevid\": 371705,\n"
+            + "        \"newrevid\": 371707,\n"
+            + "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
+            + "    }\n"
+            + "}";
+    private static final String unsuccessfulEditResponse = "{\n"
+            + "    \"edit\": {\n"
+            + "        \"result\": \"InvalidMediaFile\"\n"
             + "    }\n"
             + "}";
 
@@ -249,6 +264,59 @@ public class MediaFileUtilsTest {
         tokenParams.put("type", "csrf");
         inOrder.verify(connection, times(1)).sendJsonRequest("POST", tokenParams);
         inOrder.verify(connection, times(1)).sendJsonRequest("POST", uploadParams);
+    }
+
+    @Test
+    public void testCheckIfPageNamesExist() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("action", "query");
+        queryParams.put("titles", "File:Does_not_exist|File:Does_exist");
+        String pageQuery = "{" +
+                "\"query\":{" +
+                "    \"normalized\": [" +
+                "           {\"from\":\"File:Does_not_exist\",\"to\":\"File:Does not exist\"}," +
+                "           {\"from\":\"File:Does_exist\",\"to\":\"File:Does exist\"}" +
+                "    ]," +
+                "    \"pages\": {" +
+                "       \"-1\": {" +
+                "          \"ns\": 4," +
+                "          \"title\": \"File:Does not exist\"," +
+                "          \"missing\": \"\"" +
+                "       }," +
+                "       \"132\": {" +
+                "           \"ns\": 4," +
+                "           \"title\": \"File:Does exist\"," +
+                "           \"pageid\": 132" +
+                "       }" +
+                "    }" +
+                "  }" +
+                "}";
+        JsonNode jsonResponse = ParsingUtilities.mapper.readTree(pageQuery);
+
+        when(connection.sendJsonRequest("POST", queryParams)).thenReturn(jsonResponse);
+
+        MediaFileUtils SUT = new MediaFileUtils(connection);
+
+        Set<String> existing = SUT.checkIfPageNamesExist(Arrays.asList("Does_not_exist", "Does_exist"));
+
+        assertEquals(existing, Collections.singleton("Does_exist"));
+    }
+
+    @Test
+    public void testUploadError() throws JsonProcessingException {
+        MediaFileUtils.MediaUploadResponse response = ParsingUtilities.mapper.readValue(unsuccessfulEditResponse,
+                MediaUploadResponse.class);
+
+        assertThrows(MediaWikiApiErrorException.class, () -> response.checkForErrors());
+    }
+
+    @Test
+    public void testUploadSuccessNoFilename() throws JsonProcessingException {
+        MediaFileUtils.MediaUploadResponse response = ParsingUtilities.mapper.readValue(successfulEditResponseNoFilename,
+                MediaUploadResponse.class);
+
+        assertThrows(MediaWikiApiErrorException.class, () -> response.checkForErrors());
     }
 
     protected void mockCsrfCall(ApiConnection connection) throws IOException, MediaWikiApiErrorException {

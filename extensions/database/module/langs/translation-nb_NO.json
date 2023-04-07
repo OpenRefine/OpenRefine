@@ -47,5 +47,11 @@
     "database-source/form-validation-failure": "Nytt tilkoblingsskjema ugyldig!",
     "database-parsing/worksheet": "Regneark",
     "database-source/databaseHostPlaceholder": "Skriv inn databasetjener eller IP",
-    "database-source/connectionNamePlaceholder": "Skriv inn nytt tilkoblingsnavn"
+    "database-source/connectionNamePlaceholder": "Skriv inn nytt tilkoblingsnavn",
+    "database-source/databasePortPlaceholder": "Skriv inn databaseport, f.eks. 3306",
+    "database-import/importer-name": "Database",
+    "database-source/databaseUserPlaceholder": "Skriv inn databasebrukeren",
+    "database-source/databaseNamePlaceholder": "Skriv inn navnet på databasen",
+    "database-source/connectionNameDefaultValue": "Nytt_tilkoblingsnavn",
+    "database-source/databasePasswordPlaceholder": "Skriv inn databasepassordet"
 }

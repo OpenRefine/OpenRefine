@@ -1,0 +1,65 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+:root {
+  --text-primary: black;
+  --text-secondary: #222;
+  --text-tertiary: #777;
+  --text-quarternary: #444;
+  --link-primary: #11c;
+  --link-secondary: #4272db;
+  --chrome-primary: #bcf;
+  --chrome-secondary: #e3e9ff;
+  --background-primary: #fff;
+  --fill-primary: #ebeef8;
+  --fill-secondary: #f2f2f2;
+  --fill-editable: #ffffd6;
+  --selected-primary: #68e;
+  --green-primary: #282;
+  --green-secondary: #3d3;
+  --notification-primary: #fe8;
+  --faint-grey: #ddd;
+  --light-grey: #999;
+  --dialog-frame: #3a5774;
+  --dialog-border: #c1d9ff;
+  --dialog-header: #e0edfe;
+  --dialog-footer: #eee;
+
+  --padding-tighter: 3px;
+  --padding-tight: 5px;
+  --padding-normal: 7px;
+  --padding-loose: 10px;
+  --padding-looser: 15px;
+
+  --rounded-corners-radius: 5px;
+}

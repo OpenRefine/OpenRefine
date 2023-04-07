@@ -477,7 +477,7 @@ public class StandardReconConfig extends ReconConfig {
                         }
                     } else {
                         // TODO: better error reporting
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o.toString());
                     }
 
                     if (recon != null) {

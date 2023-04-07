@@ -6,7 +6,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
-import org.apache.commons.lang.StringUtils;
+import com.google.refine.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -25,13 +25,23 @@ public class ReplaceEach implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {
-            if (args[0] instanceof String && args[1] instanceof String[] && (args[2] instanceof String[] || args[2] instanceof String)) {
-                String str = (String) args[0];
-                String[] search = (String[]) args[1], replace;
+            if (args[0] instanceof String && args[1] instanceof Object[] && (args[2] instanceof Object[] || args[2] instanceof String)) {
+                String[] searchArgs = new String[((Object[]) args[1]).length];
+                Object[] originalSearchArgs = (Object[]) args[1];
+                for (var i = 0; i < searchArgs.length; i++) {
+                    searchArgs[i] = StringUtils.toString(originalSearchArgs[i]);
+                }
+                String[] search = searchArgs, replace;
+
                 if (args[2] instanceof String) {
                     replace = new String[] { (String) args[2] };
                 } else {
-                    replace = (String[]) args[2];
+                    String[] replaceArgs = new String[((Object[]) args[2]).length];
+                    Object[] originalReplaceArgs = (Object[]) args[2];
+                    for (var i = 0; i < replaceArgs.length; i++) {
+                        replaceArgs[i] = StringUtils.toString(originalReplaceArgs[i]);
+                    }
+                    replace = replaceArgs;
                 }
 
                 // Check that the search array is greater than or equal to the replace array in length
@@ -45,7 +55,7 @@ public class ReplaceEach implements Function {
                     }
 
                     // replace each occurrence of search with corresponding element in replace
-                    return StringUtils.replaceEachRepeatedly(str, search, replace);
+                    return org.apache.commons.lang.StringUtils.replaceEachRepeatedly((String) args[0], search, replace);
                 } else {
                     // replacements must be equal to or less than the number of search strings.");
                     return new EvalError(
@@ -54,7 +64,8 @@ public class ReplaceEach implements Function {
             }
         }
         // strings to replace, array of replacement strings");
-        return new EvalError(EvalErrorMessage.str_replace_replacements_equal_to_searches(ControlFunctionRegistry.getFunctionName(this)));
+        return new EvalError(
+                EvalErrorMessage.str_replace_expects_one_string_two_arrays_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override

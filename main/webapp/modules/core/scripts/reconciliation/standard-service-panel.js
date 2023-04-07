@@ -42,7 +42,7 @@ function ReconStandardServicePanel(column, service, container) {
 
 ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
-  var dismissBusy = DialogSystem.showBusy();
+  var dismissBusy = self.showBusyReconciling();
 
   Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
@@ -87,7 +87,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   var self = this;
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
-  
+  this._elmts.automatchCheck[0].checked=JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true));
   this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
@@ -103,6 +103,10 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
 
+  this._elmts.noType.on('click', function() {
+    self._rewirePropertySuggests(null) // Clear any selected type
+  });
+    self._populateProperties();
   this._guessTypes(function() {
     self._populatePanel();
     self._wireEvents();
@@ -184,7 +188,8 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
     this._elmts.typeInput.trigger('focus');
   }
-
+}
+  ReconStandardServicePanel.prototype._populateProperties = function () {
   /*
    *  Populate properties
    */
@@ -283,7 +288,7 @@ ReconStandardServicePanel.prototype.start = function() {
   var choices = this._panel.find('input[name="type-choice"]:checked');
   var include = this._panel.find('input[name="include"]');
   if (choices !== null && choices.length > 0) {
-    if (choices[0].value == '-') {
+    if (choices[0].value == '-') { // TODO: This is the signal value for "no type", but don't think it's used anymore
       type = null;
     } else if (choices[0].value != "") {
       type = {
@@ -341,3 +346,13 @@ ReconStandardServicePanel.prototype.start = function() {
   );
 };
 
+ReconStandardServicePanel.prototype.showBusyReconciling = function(message) {
+  var frame = document.getElementsByClassName("type-container")[0];
+
+  var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
+  $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
+
+  return function() {
+    $(body).remove()
+  };
+};
