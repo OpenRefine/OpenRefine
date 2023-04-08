@@ -108,6 +108,10 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   });
 
   this._guessTypes(function() {
+      //refresh register service 
+  ReconciliationManager.registerStandardService(this._service.url, function(index) {
+    ReconDialog.prototype._refresh(index);
+  });
     self._populatePanel();
     self._wireEvents();
   });
