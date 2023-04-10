@@ -85,9 +85,9 @@ DataTableView.prototype.update = function(onDone, preservePage) {
   var paginationOptions = { start: 0 };
   if (preservePage) {
     if (theProject.rowModel.start !== undefined) {
-      paginationOptions.start = theProject.rowModel.start;
+      paginationOptions = { start: theProject.rowModel.start };
     } else {
-      paginationOptions.end = theProject.rowModel.end;
+      paginationOptions = { end: theProject.rowModel.end };
     }
   }
   this._showRows(paginationOptions, onDone);
