@@ -14,6 +14,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.util.CloseableIterator;
+
 public class RecordTests {
 
     List<Row> rows;
@@ -71,7 +73,7 @@ public class RecordTests {
 
     protected List<Record> groupRows(Row... rows) {
         Iterator<IndexedRow> indexedRows = IntStream.range(0, rows.length).mapToObj(i -> new IndexedRow(i, rows[i])).iterator();
-        Iterator<Record> records = Record.groupIntoRecords(indexedRows, 0, true, Collections.emptyList());
+        Iterator<Record> records = Record.groupIntoRecords(CloseableIterator.wrapping(indexedRows), 0, true, Collections.emptyList());
         List<Record> list = new ArrayList<>();
         while (records.hasNext()) {
             list.add(records.next());

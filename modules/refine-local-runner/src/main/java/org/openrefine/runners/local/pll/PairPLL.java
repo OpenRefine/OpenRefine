@@ -5,13 +5,16 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import io.vavr.Value;
+import io.vavr.collection.Array;
 
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.runners.local.pll.partitioning.CroppedPartitioner;
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.util.QueryTree;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Adds additional methods for PLLs of keyed collections. The supplied Partitioner determines in which partition an
@@ -39,7 +42,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         this.pll = pll;
     }
 
-    protected PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner, List<Long> partitionSizes) {
+    protected PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner, Array<Long> partitionSizes) {
         super(pll.getContext(), pll.name);
         if (partitioner.isPresent() && partitioner.get().numPartitions() != pll.numPartitions()) {
             throw new IllegalArgumentException(
@@ -58,7 +61,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     // bypass local cache and make sure we are hitting that of the upstream PLL
     @Override
-    public List<Long> computePartitionSizes() {
+    public Array<Long> computePartitionSizes() {
         return pll.getPartitionSizes();
     }
 
@@ -110,13 +113,14 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @param key
      * @return
      */
-    public List<V> get(K key) {
+    public Array<V> get(K key) {
         if (partitioner.isPresent()) {
             int partitionId = partitioner.get().getPartition(key);
             Partition partition = getPartitions().get(partitionId);
-            Stream<Tuple2<K, V>> stream = iterate(partition);
-            return stream.filter(tuple -> key.equals(tuple.getKey()))
-                    .map(Tuple2::getValue).collect(Collectors.toList());
+            try (CloseableIterator<Tuple2<K, V>> iterator = iterate(partition)) {
+                return iterator.filter(tuple -> key.equals(tuple.getKey()))
+                        .map(Tuple2::getValue).toArray();
+            }
         } else {
             return filter(tuple -> key.equals(tuple.getKey())).values().collect();
         }
@@ -135,9 +139,10 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @return
      */
     public List<Tuple2<K, V>> getRangeAfter(K from, int limit, Comparator<K> comparator) {
-        Stream<Tuple2<K, V>> stream = streamFromKey(from, comparator);
-        return stream
-                .limit(limit).collect(Collectors.toList());
+        try (CloseableIterator<Tuple2<K, V>> stream = streamFromKey(from, comparator)) {
+            return stream
+                    .take(limit).collect(Collectors.toList());
+        }
     }
 
     /**
@@ -156,10 +161,9 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *         in reverse
      */
     public List<Tuple2<K, V>> getRangeBefore(K upperBound, int limit, Comparator<K> comparator) {
-        Stream<Tuple2<K, V>> stream;
         if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
             // we resort to simple scanning of all partitions
-            return gatherElementsBefore(upperBound, limit, stream(), comparator);
+            return gatherElementsBefore(upperBound, limit, iterator(), comparator);
         } else {
             // we can use the partitioner to locate the partition to end at
             int endPartition = partitioner.get().getPartition(upperBound);
@@ -182,7 +186,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @param stream
      *            the stream to take the elements from, which is assumed to be in increasing order
      */
-    protected static <K, V> List<Tuple2<K, V>> gatherElementsBefore(K upperBound, int limit, Stream<Tuple2<K, V>> stream,
+    protected static <K, V> List<Tuple2<K, V>> gatherElementsBefore(K upperBound, int limit, CloseableIterator<Tuple2<K, V>> stream,
             Comparator<K> comparator) {
         Deque<Tuple2<K, V>> lastElements = new ArrayDeque<>(limit);
         stream.takeWhile(tuple -> comparator.compare(upperBound, tuple.getKey()) > 0)
@@ -202,7 +206,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the keys to look up
      * @return the list of elements in the order they appear in the PLL
      */
-    public List<Tuple2<K, V>> getByKeys(Set<K> keys) {
+    public Array<Tuple2<K, V>> getByKeys(Set<K> keys) {
         if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
             return this.filter(t -> keys.contains(t.getKey())).collect();
         } else {
@@ -224,20 +228,20 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
             }
 
             // Stream in each partition where we could find any of the supplied keys
-            List<List<Tuple2<K, V>>> partitionResults = runOnPartitionsWithoutInterruption(
+            Array<List<Tuple2<K, V>>> partitionResults = runOnPartitionsWithoutInterruption(
                     partition -> {
                         long max = maxKey.get(partition.getIndex());
-                        return iterate(partition)
-                                .takeWhile(tuple -> (long) tuple.getKey() <= max)
-                                .filter(tuple -> longKeys.contains(tuple.getKey()))
-                                .collect(Collectors.toList());
+                        try (CloseableIterator<Tuple2<K, V>> iterator = iterate(partition)) {
+                            return iterator
+                                    .takeWhile(tuple -> (long) tuple.getKey() <= max)
+                                    .filter(tuple -> longKeys.contains(tuple.getKey()))
+                                    .collect(Collectors.toList());
+                        }
                     },
-                    getPartitions().stream()
+                    getPartitions().iterator()
                             .filter(partition -> maxKey.containsKey(partition.getIndex())));
 
-            return partitionResults.stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+            return partitionResults.flatMap(l -> l);
         }
     }
 
@@ -251,17 +255,17 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the order used to compare the keys
      * @return a streams which starts on the first element whose key is greater or equal to the provided one
      */
-    public Stream<Tuple2<K, V>> streamFromKey(K from, Comparator<K> comparator) {
-        Stream<Tuple2<K, V>> stream;
+    public CloseableIterator<Tuple2<K, V>> streamFromKey(K from, Comparator<K> comparator) {
+        CloseableIterator<Tuple2<K, V>> iterator;
         if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
             // we resort to simple scanning of all partitions
-            stream = stream();
+            iterator = iterator();
         } else {
             // we can use the partitioner to locate the partition to start from
             int startingPartition = partitioner.get().getPartition(from);
-            stream = streamFromPartition(startingPartition);
+            iterator = iterateFromPartition(startingPartition);
         }
-        return stream.dropWhile(tuple -> comparator.compare(from, tuple.getKey()) > 0);
+        return iterator.dropWhile(tuple -> comparator.compare(from, tuple.getKey()) > 0);
     }
 
     /**
@@ -273,8 +277,8 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the order used to compare the keys
      * @return
      */
-    public Stream<Tuple2<K, V>> streamUpToKey(K upTo, Comparator<K> comparator) {
-        return stream().takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
+    public CloseableIterator<Tuple2<K, V>> streamUpToKey(K upTo, Comparator<K> comparator) {
+        return iterator().takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
     }
 
     /**
@@ -289,7 +293,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the order used to compare the keys
      * @return
      */
-    public Stream<Tuple2<K, V>> streamBetweenKeys(K from, K upTo, Comparator<K> comparator) {
+    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(K from, K upTo, Comparator<K> comparator) {
         return streamFromKey(from, comparator)
                 .takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
     }
@@ -303,9 +307,9 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @param comparator
      * @return
      */
-    public Stream<Tuple2<K, V>> streamBetweenKeys(Optional<K> from, Optional<K> upTo, Comparator<K> comparator) {
+    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(Optional<K> from, Optional<K> upTo, Comparator<K> comparator) {
         if (from.isEmpty() && upTo.isEmpty()) {
-            return stream();
+            return iterator();
         } else if (from.isEmpty() && upTo.isPresent()) {
             return streamUpToKey(upTo.get(), comparator);
         } else if (from.isPresent() && upTo.isEmpty()) {
@@ -368,18 +372,18 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     }
 
     @Override
-    protected Stream<Tuple2<K, V>> compute(Partition partition) {
+    protected CloseableIterator<Tuple2<K, V>> compute(Partition partition) {
         return pll.compute(partition);
     }
 
     @Override
-    public Stream<Tuple2<K, V>> iterate(Partition partition) {
+    public CloseableIterator<Tuple2<K, V>> iterate(Partition partition) {
         // Overridden to ensure we are only caching this PLL once, in the parent PLL
         return pll.iterate(partition);
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return pll.getPartitions();
     }
 
@@ -408,9 +412,12 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
             return pairPLL;
         }
         PLL<Long> keys = pairPLL.keys();
-        List<Long> firstKeys = keys.runOnPartitionsWithoutInterruption(p -> keys.iterate(p).findFirst())
-                .stream()
-                .map(optional -> optional.isPresent() ? optional.get() : null)
+        List<Long> firstKeys = keys.runOnPartitionsWithoutInterruption(p -> {
+            try (CloseableIterator<Long> iterator = keys.iterate(p)) {
+                return iterator.headOption();
+            }
+        })
+                .map(Value::getOrNull)
                 .collect(Collectors.toList());
         Partitioner<Long> partitioner = new LongRangePartitioner(keys.numPartitions(), firstKeys.subList(1, keys.numPartitions()));
         if (totalRowCount >= 0) {
@@ -427,7 +434,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
                 }
             }
             Collections.reverse(partitionSizes);
-            return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner), partitionSizes);
+            return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner), Array.ofAll(partitionSizes));
         } else {
             return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner));
         }
@@ -445,10 +452,13 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
             return pairPLL;
         }
         PLL<Long> keys = pairPLL.keys();
-        List<Long> firstKeys = keys.runOnPartitionsWithoutInterruption(p -> keys.iterate(p).findFirst())
-                .stream()
-                .map(optional -> optional.isEmpty() ? null : optional.get())
-                .skip(1)
+        List<Long> firstKeys = keys.runOnPartitionsWithoutInterruption(p -> {
+            try (CloseableIterator<Long> iterator = keys.iterate(p)) {
+                return iterator.headOption();
+            }
+        })
+                .map(optional -> optional.getOrNull())
+                .drop(1)
                 .collect(Collectors.toList());
         Partitioner<Long> partitioner = new LongRangePartitioner(keys.numPartitions(), firstKeys);
         return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner));
@@ -468,7 +478,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     /**
      * Returns a copy of this PairPLL with the given partition sizes, when they are externally known.
      */
-    public PairPLL<K, V> withCachedPartitionSizes(List<Long> newCachedPartitionSizes) {
+    public PairPLL<K, V> withCachedPartitionSizes(Array<Long> newCachedPartitionSizes) {
         return new PairPLL<K, V>(pll, partitioner, newCachedPartitionSizes);
     }
 

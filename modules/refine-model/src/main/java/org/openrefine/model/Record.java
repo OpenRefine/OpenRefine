@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A list of consecutive rows where only the first row has a non-blank value in the record key column (normally, the
@@ -177,7 +178,7 @@ public class Record implements Serializable {
 
     /**
      * Groups a stream of indexed rows into a stream of records.
-     * 
+     *
      * @param parentIter
      *            the iterator of rows. They are supposed to be in their original order, meaning that all their
      *            {@link IndexedRow#getOriginalIndex()} is null.
@@ -189,13 +190,13 @@ public class Record implements Serializable {
      *            additional rows to read once the stream is consumed
      * @return a stream of records
      */
-    public static Iterator<Record> groupIntoRecords(
-            Iterator<IndexedRow> parentIter,
+    public static CloseableIterator<Record> groupIntoRecords(
+            CloseableIterator<IndexedRow> parentIter,
             int keyCellIndex,
             boolean ignoreFirstRows,
             List<Row> additionalRows) {
 
-        return new Iterator<Record>() {
+        return new CloseableIterator<Record>() {
 
             IndexedRow fetchedRowTuple = null;
             Record nextRecord = null;
@@ -249,6 +250,10 @@ public class Record implements Serializable {
                 nextRecord = rows.isEmpty() ? null : new Record(startRowId, originalStartRowId, rows);
             }
 
+            @Override
+            public void close() {
+                parentIter.close();
+            }
         };
     }
 }

@@ -6,18 +6,18 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
-import com.google.common.collect.Streams;
 import com.google.common.io.CountingInputStream;
+import io.vavr.collection.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.Runner;
 import org.openrefine.runners.local.pll.util.LineReader;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL whose contents are read from a set of text files. The text files are partitioned using a method similar to that
@@ -118,7 +118,7 @@ public class TextFilePLL extends PLL<String> {
     }
 
     @Override
-    protected Stream<String> compute(Partition partition) {
+    protected CloseableIterator<String> compute(Partition partition) {
         TextFilePartition textPartition = (TextFilePartition) partition;
 
         int reportBatchSize = 64;
@@ -167,13 +167,14 @@ public class TextFilePLL extends PLL<String> {
                 lineReader.readLine();
             }
 
-            Iterator<String> iterator = new Iterator<>() {
+            CloseableIterator<String> iterator = new CloseableIterator<>() {
 
                 boolean nextLineAttempted = false;
                 String nextLine = null;
                 long lastOffsetReported = -1;
                 long lastOffsetSeen = -1;
                 int lastReport = 0;
+                boolean closed = false;
 
                 @Override
                 public boolean hasNext() {
@@ -230,9 +231,9 @@ public class TextFilePLL extends PLL<String> {
                     }
                 }
 
-            };
-            Stream<String> lineStream = Streams.stream(iterator)
-                    .onClose(() -> {
+                @Override
+                public void close() {
+                    if (!closed) {
                         try {
                             if (lineReader != null) {
                                 lineReader.close();
@@ -240,19 +241,23 @@ public class TextFilePLL extends PLL<String> {
                                 lineNumberReader.close();
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            throw new UncheckedIOException(e);
+                        } finally {
+                            closed = true;
                         }
-                    });
-            return lineStream;
+                    }
+                }
+            };
+            return iterator;
         } catch (IOException e) {
             e.printStackTrace();
-            return Stream.empty();
+            return CloseableIterator.empty();
         }
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
-        return partitions;
+    public Array<? extends Partition> getPartitions() {
+        return Array.ofAll(partitions);
     }
 
     @Override

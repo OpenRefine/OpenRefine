@@ -27,6 +27,7 @@ import scala.reflect.ClassTag;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A RDD of Records which is efficiently computed from the corresponding RDD of indexed rows. Rows are grouped into
@@ -136,7 +137,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
                 JavaConverters.asJavaIterator(parentIter),
                 Tuple2::_2);
         java.util.Iterator<Record> records = Record.groupIntoRecords(
-                indexedRows,
+                CloseableIterator.wrapping(indexedRows),
                 keyCellIndex,
                 recordPartition.index() != 0,
                 recordPartition.additionalRows);

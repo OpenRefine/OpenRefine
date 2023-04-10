@@ -1,16 +1,9 @@
 
 package org.openrefine.runners.local.pll;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -19,13 +12,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Streams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import io.vavr.collection.Array;
+import io.vavr.collection.Iterator;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Grid;
@@ -35,6 +27,7 @@ import org.openrefine.process.ProgressingFutures;
 import org.openrefine.runners.local.pll.util.ProgressingFutureWrapper;
 import org.openrefine.runners.local.pll.util.QueryTree;
 import org.openrefine.runners.local.pll.util.TaskSignalling;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A Partitioned Lazy List (PLL) is a lazily-computed immutable container data structure to represent lists of elements.
@@ -60,9 +53,9 @@ public abstract class PLL<T> {
     protected final String name;
 
     // cached list of counts of elements in each partition, initialized lazily
-    private List<Long> cachedPartitionSizes;
+    private Array<Long> cachedPartitionSizes;
     // cached contents of each partition, initialized on demand
-    protected List<List<T>> cachedPartitions;
+    protected Array<Array<T>> cachedPartitions;
 
     public PLL(PLLContext context, String name) {
         Validate.notNull(context);
@@ -74,15 +67,16 @@ public abstract class PLL<T> {
     }
 
     /**
-     * Iterate over the elements of the given partition. This is the method that should implemented by subclasses. As
+     * Iterate over the elements of the given partition. This is the method that should be implemented by subclasses. As
      * this method forces computation, ignoring any caching, consumers should not call it directly but rather use
-     * {@link #iterate(Partition)}.
+     * {@link #iterate(Partition)}. Once the iterator is not needed anymore, it should be closed. This makes it possible
+     * to release the underlying resources supporting it, such as open files or sockets.
      * 
      * @param partition
      *            the partition to iterate over
      * @return
      */
-    protected abstract Stream<T> compute(Partition partition);
+    protected abstract CloseableIterator<T> compute(Partition partition);
 
     /**
      * @return the number of partitions in this list
@@ -94,7 +88,7 @@ public abstract class PLL<T> {
     /**
      * @return the partitions in this list
      */
-    public abstract List<? extends Partition> getPartitions();
+    public abstract Array<? extends Partition> getPartitions();
 
     /**
      * Iterate over the elements of the given partition. If the contents of this PLL have been cached, this will iterate
@@ -104,9 +98,9 @@ public abstract class PLL<T> {
      *            the partition to iterate over
      * @return
      */
-    public Stream<T> iterate(Partition partition) {
+    public CloseableIterator<T> iterate(Partition partition) {
         if (cachedPartitions != null) {
-            return cachedPartitions.get(partition.getIndex()).stream();
+            return CloseableIterator.wrapping(cachedPartitions.get(partition.getIndex()).iterator());
         } else {
             return compute(partition);
         }
@@ -117,9 +111,7 @@ public abstract class PLL<T> {
      */
     public long count() {
         return getPartitionSizes()
-                .stream()
-                .mapToLong(Long::longValue)
-                .sum();
+                .sum().longValue();
     }
 
     /**
@@ -127,22 +119,26 @@ public abstract class PLL<T> {
      * are already computed. Subclasses should rather override {@link #computePartitionSizes()} if they can do this
      * computation more efficiently than by iterating over the partitions.
      */
-    public final List<Long> getPartitionSizes() {
+    public final Array<Long> getPartitionSizes() {
         if (cachedPartitionSizes == null) {
             cachedPartitionSizes = computePartitionSizes();
         }
         return cachedPartitionSizes;
     }
 
-    protected List<Long> computePartitionSizes() {
-        return runOnPartitionsWithoutInterruption(p -> iterate(p).count());
+    protected Array<Long> computePartitionSizes() {
+        return runOnPartitionsWithoutInterruption(p -> {
+            try (CloseableIterator<T> iterator = iterate(p)) {
+                return (long) iterator.size();
+            }
+        });
     }
 
     /**
      * @return the list of all elements in the list, retrieved in memory.
      */
-    public List<T> collect() {
-        List<List<T>> partitionLists = null;
+    public Array<T> collect() {
+        Array<Array<T>> partitionLists = null;
         try {
             partitionLists = collectPartitionsAsync().get();
         } catch (InterruptedException e) {
@@ -152,52 +148,29 @@ public abstract class PLL<T> {
             throw new PLLExecutionError(e);
         }
 
-        return partitionLists.stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * @return the list of all elements in this collection, retrieved in an ArrayList
-     */
-    protected ArrayList<T> collectToArrayList() {
-        List<List<T>> partitionLists = null;
-        try {
-            partitionLists = collectPartitionsAsync().get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new PLLExecutionError(e);
-        }
-        int size = partitionLists.stream().mapToInt(p -> p.size()).sum();
-
-        return partitionLists.stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(() -> new ArrayList<T>(size)));
+        return partitionLists.flatMap(t -> t);
     }
 
     /**
      * Retrieves the contents of all partitions. This does not store them in the local cache, so two successive calls to
      * this method will enumerate the contents of the PLL twice.
      */
-    protected ProgressingFuture<List<List<T>>> collectPartitionsAsync() {
-        List<List<T>> results;
+    protected ProgressingFuture<Array<Array<T>>> collectPartitionsAsync() {
+        Array<Array<T>> results;
         if (cachedPartitions != null) {
             return ProgressingFutures.immediate(cachedPartitions);
         } else {
-            ProgressingFuture<List<List<T>>> future = runOnPartitionsAsync((partition, signalling) -> {
-                return signalling.wrapStream(iterate(partition), 100, partition.getIndex() * 5)
-                        .collect(Collectors.toList());
+            ProgressingFuture<Array<Array<T>>> future = runOnPartitionsAsync((partition, signalling) -> {
+                try (CloseableIterator<T> iterator = signalling.wrapStream(iterate(partition), 100, partition.getIndex() * 5)) {
+                    return Array.ofAll(iterator);
+                }
             }, 0);
 
             return ProgressingFutures.transform(future,
                     partitions -> {
                         if (cachedPartitionSizes == null) {
                             cachedPartitionSizes = partitions
-                                    .stream()
-                                    .map(l -> (long) l.size())
-                                    .collect(Collectors.toList());
+                                    .map(l -> (long) l.size());
                         }
                         return partitions;
                     }, context.getExecutorService());
@@ -207,8 +180,8 @@ public abstract class PLL<T> {
     /**
      * Returns an iterator over the list
      */
-    public Stream<T> stream() {
-        return streamFromPartition(0);
+    public CloseableIterator<T> iterator() {
+        return iterateFromPartition(0);
     }
 
     /**
@@ -218,14 +191,14 @@ public abstract class PLL<T> {
      *            the index of the partition to start enumerating from
      * @return
      */
-    protected Stream<T> streamFromPartition(int partitionId) {
-        Stream<? extends Partition> partitions = getPartitions().stream().skip(partitionId);
+    protected CloseableIterator<T> iterateFromPartition(int partitionId) {
+        CloseableIterator<? extends Partition> partitions = CloseableIterator.wrapping(getPartitions().iterator().drop(partitionId));
         if (cachedPartitions != null) {
-            return partitions
-                    .flatMap(p -> cachedPartitions.get(p.getIndex()).stream());
+            return CloseableIterator.wrapping(partitions
+                    .flatMap(p -> cachedPartitions.get(p.getIndex())));
         } else {
             return partitions
-                    .flatMap(p -> iterate(p));
+                    .flatMapCloseable(this::iterate);
         }
     }
 
@@ -237,18 +210,22 @@ public abstract class PLL<T> {
             // by doing this we avoid any enumeration from the partitions
             return count() == 0;
         } else {
-            return !stream().iterator().hasNext();
+            try (CloseableIterator<T> iterator = iterator()) {
+                return !iterator.hasNext();
+            }
         }
     }
 
     /**
      * Returns the n first elements of the list (or less if there are less elements in the list).
      */
-    public List<T> take(int num) {
+    public io.vavr.collection.List<T> take(int num) {
         if (num < 0) {
             throw new IllegalArgumentException("The number of elements to take must be non-negative");
         }
-        return stream().limit(num).collect(Collectors.toList());
+        try (CloseableIterator<T> iterator = iterator()) {
+            return iterator.take(num).toList();
+        }
     }
 
     /**
@@ -264,12 +241,12 @@ public abstract class PLL<T> {
      * @return the aggregated value over the entire list
      */
     public <U> U aggregate(U initialValue, BiFunction<U, T, U> map, BiFunction<U, U, U> combine) {
-        List<U> states = runOnPartitionsWithoutInterruption(partition -> aggregateStream(initialValue, map, combine, iterate(partition)));
-        return aggregateStream(initialValue, combine, combine, states.stream());
-    }
-
-    private static <U, T> U aggregateStream(U initialValue, BiFunction<U, T, U> map, BiFunction<U, U, U> combine, Stream<T> iterator) {
-        return iterator.reduce(initialValue, (u, t) -> map.apply(u, t), (u1, u2) -> combine.apply(u1, u2));
+        Array<U> states = runOnPartitionsWithoutInterruption(partition -> {
+            try (CloseableIterator<T> iterator = iterate(partition)) {
+                return iterator.foldLeft(initialValue, map);
+            }
+        });
+        return states.fold(initialValue, combine);
     }
 
     // PLL derivations
@@ -286,7 +263,8 @@ public abstract class PLL<T> {
      * @return
      */
     public <U> PLL<U> map(Function<T, U> mapFunction, String mapDescription) {
-        BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, parentIterator) -> parentIterator.map(mapFunction));
+        BiFunction<Integer, CloseableIterator<T>, CloseableIterator<U>> partitionMap = ((i, parentIterator) -> parentIterator
+                .map(mapFunction));
         return mapPartitions(partitionMap, "Map: " + mapDescription, true);
     }
 
@@ -299,8 +277,9 @@ public abstract class PLL<T> {
      * @param mapFunction
      * @return
      */
-    public <U> PLL<U> flatMap(Function<T, Stream<U>> mapFunction, String mapDescription) {
-        BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, parentStream) -> parentStream.flatMap(mapFunction));
+    public <U> PLL<U> flatMap(Function<T, CloseableIterator<U>> mapFunction, String mapDescription) {
+        BiFunction<Integer, CloseableIterator<T>, CloseableIterator<U>> partitionMap = ((i, parentStream) -> parentStream
+                .flatMapCloseable(mapFunction));
         return mapPartitions(partitionMap, "FlatMap: " + mapDescription, false);
     }
 
@@ -313,16 +292,9 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<List<T>> batchPartitions(int batchSize) {
-        return mapPartitions((i, parentStream) -> batchStream(parentStream, batchSize),
+        return mapPartitions((i, parentStream) -> parentStream.grouped(batchSize).map(seq -> seq.toJavaList()),
                 String.format("Group into batches of %d elements", batchSize),
                 batchSize == 1);
-    }
-
-    protected static <T> Stream<List<T>> batchStream(Stream<T> stream, int batchSize) {
-        Iterator<T> parentIterator = stream.iterator();
-        Iterator<List<T>> iterator = Iterators.partition(parentIterator, batchSize);
-        return Streams.stream(iterator)
-                .onClose(() -> stream.close());
     }
 
     /**
@@ -338,7 +310,7 @@ public abstract class PLL<T> {
      * @return
      */
     public <U> PLL<U> mapPartitions(
-            BiFunction<Integer, Stream<T>, Stream<U>> map,
+            BiFunction<Integer, CloseableIterator<T>, CloseableIterator<U>> map,
             String mapDescription,
             boolean preservesSizes) {
         return new MapPartitionsPLL<T, U>(this, map, mapDescription, preservesSizes);
@@ -346,7 +318,7 @@ public abstract class PLL<T> {
 
     /**
      * Applies a map function on the list, such that the map function is able to keep a state from one element to the
-     * other. This state is required to be combineable with an associative and unital function.
+     * other. This state is required to be combinable with an associative and unital function.
      * 
      * @param <S>
      *            the type of the state kept by the mapper
@@ -364,11 +336,15 @@ public abstract class PLL<T> {
      */
     public <S, U> PLL<U> scanMap(S initialState, Function<T, S> feed, BiFunction<S, S, S> combine, BiFunction<S, T, U> map) {
         // Compute the initial states at the beginning of each partition
-        List<? extends Partition> partitions = getPartitions();
-        List<S> partitionStates = runOnPartitionsWithoutInterruption(partition -> aggregateStream(
-                initialState,
-                (s, t) -> combine.apply(s, feed.apply(t)), combine, iterate(partition)),
-                partitions.stream().limit(partitions.size() - 1));
+        Array<? extends Partition> partitions = getPartitions();
+        Function<Partition, S> partitionFunction = partition -> {
+            try (CloseableIterator<T> iterator = iterate(partition)) {
+                return iterator.foldLeft(initialState,
+                        (state, element) -> combine.apply(state, feed.apply(element)));
+            }
+        };
+        Array<S> partitionStates = runOnPartitionsWithoutInterruption(partitionFunction,
+                partitions.take(partitions.size() - 1).iterator());
         List<S> initialStates = new ArrayList<>(numPartitions());
         S currentState = initialState;
         for (int i = 0; i != numPartitions(); i++) {
@@ -378,19 +354,19 @@ public abstract class PLL<T> {
             }
         }
 
-        BiFunction<Integer, Stream<T>, Stream<U>> partitionMap = ((i, stream) -> scanMapStream(stream, initialStates.get(i), feed, combine,
+        BiFunction<Integer, CloseableIterator<T>, CloseableIterator<U>> partitionMap = ((i, stream) -> scanMapStream(stream,
+                initialStates.get(i), feed, combine,
                 map));
         return mapPartitions(partitionMap, "scan map", true);
     }
 
-    protected static <T, S, U> Stream<U> scanMapStream(
-            Stream<T> stream,
+    protected static <T, S, U> CloseableIterator<U> scanMapStream(
+            CloseableIterator<T> iterator,
             S initialState,
             Function<T, S> feed,
             BiFunction<S, S, S> combine,
             BiFunction<S, T, U> map) {
-        Iterator<T> iterator = stream.iterator();
-        return Streams.stream(new Iterator<U>() {
+        return new CloseableIterator<U>() {
 
             private S currentState = initialState;
 
@@ -407,7 +383,12 @@ public abstract class PLL<T> {
                 return result;
             }
 
-        });
+            @Override
+            public void close() {
+                iterator.close();
+            }
+
+        };
     }
 
     /**
@@ -419,8 +400,7 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> filter(Predicate<? super T> filterPredicate) {
-        BiFunction<Integer, Stream<T>, Stream<T>> partitionMap = ((i, parentIterator) -> parentIterator.filter(filterPredicate));
-        return mapPartitions(partitionMap, "filter", false);
+        return mapPartitions((i, parentIterator) -> parentIterator.filter(filterPredicate), "filter", false);
     }
 
     /**
@@ -469,7 +449,7 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> sort(Comparator<T> comparator) {
-        List<T> sorted = collectToArrayList();
+        List<T> sorted = collect().toJavaList();
         sorted.sort(comparator);
         return new InMemoryPLL<T>(context, sorted, numPartitions());
     }
@@ -494,8 +474,8 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> limitPartitions(long limit) {
-        BiFunction<Integer, Stream<T>, Stream<T>> map = ((i, stream) -> stream.limit(limit));
-        return new MapPartitionsPLL<T, T>(this, map, String.format("Limit each partition to %d", limit));
+        return new MapPartitionsPLL<T, T>(this, (i, iterator) -> iterator.take((int) limit),
+                String.format("Limit each partition to %d", limit));
     }
 
     /**
@@ -506,18 +486,18 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> dropFirstElements(long n) {
-        List<Long> partitionSizes = getPartitionSizes();
+        Array<Long> partitionSizes = getPartitionSizes();
         long remainingToSkip = n;
         int partitionsToSkip = 0;
         while (partitionsToSkip < numPartitions() && partitionSizes.get(partitionsToSkip) < remainingToSkip) {
             remainingToSkip -= partitionSizes.get(partitionsToSkip);
             partitionsToSkip++;
         }
-        List<Long> newPartitionSizes = new ArrayList<>(partitionSizes.subList(partitionsToSkip, partitionSizes.size()));
+        List<Long> newPartitionSizes = partitionSizes.drop(partitionsToSkip).toJavaList();
         if (!newPartitionSizes.isEmpty()) {
             newPartitionSizes.set(0, newPartitionSizes.get(0) - remainingToSkip);
         }
-        return new CroppedPLL<T>(this, newPartitionSizes, partitionsToSkip, remainingToSkip, false);
+        return new CroppedPLL<T>(this, Array.ofAll(newPartitionSizes), partitionsToSkip, remainingToSkip, false);
     }
 
     /**
@@ -527,18 +507,18 @@ public abstract class PLL<T> {
      *            the number of elements to remove at the end
      */
     public PLL<T> dropLastElements(long n) {
-        List<Long> partitionSizes = getPartitionSizes();
+        Array<Long> partitionSizes = getPartitionSizes();
         long remainingToSkip = n;
         int partitionsToSkip = 0;
         while (partitionsToSkip < partitionSizes.size() && partitionSizes.get(numPartitions() - 1 - partitionsToSkip) < remainingToSkip) {
             remainingToSkip -= partitionSizes.get(numPartitions() - 1 - partitionsToSkip);
             partitionsToSkip++;
         }
-        List<Long> newPartitionSizes = new ArrayList<>(partitionSizes.subList(0, partitionSizes.size() - partitionsToSkip));
+        List<Long> newPartitionSizes = partitionSizes.dropRight(partitionsToSkip).toJavaList();
         if (!newPartitionSizes.isEmpty()) {
             newPartitionSizes.set(newPartitionSizes.size() - 1, newPartitionSizes.get(newPartitionSizes.size() - 1) - remainingToSkip);
         }
-        return new CroppedPLL<T>(this, newPartitionSizes, partitionsToSkip, remainingToSkip, true);
+        return new CroppedPLL<T>(this, Array.ofAll(newPartitionSizes), partitionsToSkip, remainingToSkip, true);
     }
 
     // Memory management
@@ -547,7 +527,7 @@ public abstract class PLL<T> {
      * Loads the contents of all partitions in memory.
      */
     public ProgressingFuture<Void> cacheAsync() {
-        ProgressingFuture<List<List<T>>> partitionsFuture = collectPartitionsAsync();
+        ProgressingFuture<Array<Array<T>>> partitionsFuture = collectPartitionsAsync();
         return ProgressingFutures.transform(partitionsFuture,
                 partitions -> {
                     cachedPartitions = partitions;
@@ -582,7 +562,7 @@ public abstract class PLL<T> {
      * @param partitionSizes
      * @return
      */
-    public PLL<T> withCachedPartitionSizes(List<Long> partitionSizes) {
+    public PLL<T> withCachedPartitionSizes(Array<Long> partitionSizes) {
         Validate.isTrue(partitionSizes.size() == numPartitions());
         cachedPartitionSizes = partitionSizes;
         return this;
@@ -637,17 +617,17 @@ public abstract class PLL<T> {
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.getIndex());
         File partFile = new File(directory, filename);
-        FileOutputStream fos = null;
-        GZIPOutputStream gos = null;
-        try {
-            fos = new FileOutputStream(partFile);
-            gos = new GZIPOutputStream(fos, 512, true);
-            Writer writer = new OutputStreamWriter(gos);
-            Stream<T> stream = iterate(partition);
+        try (FileOutputStream fos = new FileOutputStream(partFile);
+                GZIPOutputStream gos = new GZIPOutputStream(fos, 512, true);
+                Writer writer = new OutputStreamWriter(gos);
+                CloseableIterator<T> iterator = iterate(partition)) {
+
+            // no need to close finalIterator because it just delegates its closing to iterator
+            CloseableIterator<T> finalIterator = iterator;
             if (taskSignalling.isPresent()) {
-                stream = taskSignalling.get().wrapStream(stream, 10, partition.getIndex());
+                finalIterator = taskSignalling.get().wrapStream(iterator, 10, partition.getIndex());
             }
-            stream.forEachOrdered(row -> {
+            finalIterator.forEach(row -> {
                 try {
                     writer.write(row.toString());
                     writer.write('\n');
@@ -656,14 +636,6 @@ public abstract class PLL<T> {
                     throw new UncheckedIOException(e);
                 }
             });
-            writer.close();
-        } finally {
-            if (gos != null) {
-                gos.close();
-            }
-            if (fos != null) {
-                fos.close();
-            }
         }
     }
 
@@ -681,8 +653,8 @@ public abstract class PLL<T> {
      * @return
      * @throws InterruptedException
      */
-    public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, int maxConcurrency) throws InterruptedException {
-        return runOnPartitions(partitionFunction, getPartitions().stream(), maxConcurrency);
+    public <U> Array<U> runOnPartitions(Function<Partition, U> partitionFunction, int maxConcurrency) throws InterruptedException {
+        return runOnPartitions(partitionFunction, getPartitions().iterator(), maxConcurrency);
     }
 
     /**
@@ -696,10 +668,10 @@ public abstract class PLL<T> {
      *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
      * @return
      */
-    public <U> ProgressingFuture<List<U>> runOnPartitionsAsync(
+    public <U> ProgressingFuture<Array<U>> runOnPartitionsAsync(
             BiFunction<Partition, TaskSignalling, U> partitionFunction,
             int maxConcurrency) {
-        return runOnPartitionsAsync(partitionFunction, getPartitions().stream(), maxConcurrency);
+        return runOnPartitionsAsync(partitionFunction, getPartitions().iterator(), maxConcurrency);
     }
 
     /**
@@ -710,7 +682,7 @@ public abstract class PLL<T> {
      * @param partitionFunction
      * @return
      */
-    public <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction) {
+    public <U> Array<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction) {
         try {
             return runOnPartitions(partitionFunction, 0);
         } catch (InterruptedException e) {
@@ -732,7 +704,8 @@ public abstract class PLL<T> {
      * @return
      * @throws InterruptedException
      */
-    protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions,
+    protected <U> Array<U> runOnPartitions(Function<Partition, U> partitionFunction,
+            io.vavr.collection.Iterator<? extends Partition> partitions,
             int maxConcurrency)
             throws InterruptedException {
         try {
@@ -757,9 +730,9 @@ public abstract class PLL<T> {
      * @param maxConcurrency
      *            the maximum number of tasks to run in parallel. Set to 0 for no limit.
      */
-    protected <U> ProgressingFuture<List<U>> runOnPartitionsAsync(
+    protected <U> ProgressingFuture<Array<U>> runOnPartitionsAsync(
             BiFunction<Partition, TaskSignalling, U> partitionFunction,
-            Stream<? extends Partition> partitions,
+            io.vavr.collection.Iterator<? extends Partition> partitions,
             int maxConcurrency) {
         // Semaphore bounding the number of concurrently running tasks
         TaskSignalling taskSignalling = hasCachedPartitionSizes() ? new TaskSignalling(count()) : new TaskSignalling(-1);
@@ -770,7 +743,7 @@ public abstract class PLL<T> {
             // order
             listFuture = context.getExecutorService().submit(() -> {
                 List<U> results = new ArrayList<>();
-                partitions.forEachOrdered(partition -> {
+                partitions.forEach(partition -> {
                     results.add(partitionFunction.apply(partition, taskSignalling));
                 });
                 return results;
@@ -795,22 +768,22 @@ public abstract class PLL<T> {
                     .collect(Collectors.toList());
             listFuture = Futures.allAsList(tasks);
         }
-        ListenableFuture<List<U>> futureWithProgress = Futures.transform(
+        ListenableFuture<Array<U>> futureWithProgress = Futures.transform(
                 listFuture,
                 lists -> {
                     taskSignalling.setFullProgress();
-                    return lists;
+                    return Array.ofAll(lists);
                 },
                 context.getExecutorService());
         return new ProgressingFutureWrapper<>(futureWithProgress, taskSignalling, hasCachedPartitionSizes());
     }
 
     /**
-     * Same as {@link #runOnPartitions(Function, Stream, int)} but wrapping any {@link InterruptedException} as an
+     * Same as {@link #runOnPartitions(Function, Iterator, int)} but wrapping any {@link InterruptedException} as an
      * unchecked {@link PLLExecutionError}.
      */
-    protected <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction,
-            Stream<? extends Partition> partitions) {
+    protected <U> Array<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction,
+            Iterator<? extends Partition> partitions) {
         try {
             return runOnPartitions(partitionFunction, partitions, 0);
         } catch (InterruptedException e) {

@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Streams;
+import io.vavr.collection.Array;
 
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL of records efficiently computed from the underlying PLL of rows.
@@ -23,7 +22,7 @@ import org.openrefine.model.Row;
 public class RecordPLL extends PLL<Tuple2<Long, Record>> {
 
     private final PairPLL<Long, IndexedRow> parent;
-    private List<RecordPartition> partitions;
+    private Array<RecordPartition> partitions;
     protected final int keyColumnIndex;
 
     /**
@@ -51,14 +50,14 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     public RecordPLL(PairPLL<Long, IndexedRow> grid, int keyColumnIndex) {
         super(grid.getContext(), "Group into records");
         this.keyColumnIndex = keyColumnIndex;
-        List<? extends Partition> parentPartitions = grid.getPartitions();
-        Stream<? extends Partition> lastPartitions = parentPartitions.stream().skip(1L);
+        Array<? extends Partition> parentPartitions = grid.getPartitions();
+        io.vavr.collection.Iterator<? extends Partition> lastPartitions = parentPartitions.drop(1).iterator();
         PLL<IndexedRow> indexedRows = grid.values();
-        List<RecordEnd> recordEnds = indexedRows
+        Array<RecordEnd> recordEnds = indexedRows
                 .runOnPartitionsWithoutInterruption(partition -> extractRecordEnd(indexedRows.iterate(partition), keyColumnIndex),
                         lastPartitions);
         parent = grid;
-        partitions = new ArrayList<>(parentPartitions.size());
+        List<RecordPartition> partitions = new ArrayList<>(parentPartitions.size());
         for (int i = 0; i != parentPartitions.size(); i++) {
             List<Row> additionalRows = Collections.emptyList();
             if (i < parentPartitions.size() - 1 && !(i > 0 && recordEnds.get(i - 1).partitionExhausted)) {
@@ -76,47 +75,46 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
             }
             partitions.add(new RecordPartition(i, additionalRows, parentPartitions.get(i)));
         }
+        this.partitions = Array.ofAll(partitions);
     }
 
-    protected static RecordEnd extractRecordEnd(Stream<IndexedRow> rows, int keyColumnIndex) {
-        // We cannot use Stream.takeWhile here because we need to know if we have reached the end of the stream
-        List<Row> end = new ArrayList<>();
-        Iterator<IndexedRow> iterator = rows.iterator();
-        IndexedRow lastTuple = null;
-        while (iterator.hasNext()) {
-            lastTuple = iterator.next();
-            if (!lastTuple.getRow().isCellBlank(keyColumnIndex)) {
-                break;
+    protected static RecordEnd extractRecordEnd(CloseableIterator<IndexedRow> iterator, int keyColumnIndex) {
+        try (iterator) {
+            // We cannot use Stream.takeWhile here because we need to know if we have reached the end of the stream
+            List<Row> end = new ArrayList<>();
+            IndexedRow lastTuple = null;
+            while (iterator.hasNext()) {
+                lastTuple = iterator.next();
+                if (!lastTuple.getRow().isCellBlank(keyColumnIndex)) {
+                    break;
+                }
+                end.add(lastTuple.getRow());
             }
-            end.add(lastTuple.getRow());
+            return new RecordEnd(end, lastTuple == null || lastTuple.getRow().isCellBlank(keyColumnIndex));
         }
-        return new RecordEnd(end, lastTuple == null || lastTuple.getRow().isCellBlank(keyColumnIndex));
     }
 
-    protected static Stream<Tuple2<Long, Record>> groupIntoRecords(
-            Stream<IndexedRow> stream,
+    protected static CloseableIterator<Tuple2<Long, Record>> groupIntoRecords(
+            CloseableIterator<IndexedRow> indexedRows,
             int keyCellIndex,
             boolean ignoreFirstRows,
             List<Row> additionalRows) {
-        Iterator<IndexedRow> indexedRows = stream.iterator();
-        Iterator<Record> recordIterator = Record.groupIntoRecords(indexedRows, keyCellIndex, ignoreFirstRows, additionalRows);
-        Iterator<Tuple2<Long, Record>> indexedRecords = Iterators.transform(recordIterator,
+        CloseableIterator<Record> recordIterator = Record.groupIntoRecords(indexedRows, keyCellIndex, ignoreFirstRows, additionalRows);
+        return recordIterator.map(
                 record -> Tuple2.of(record.getStartRowId(), record));
-        return Streams.stream(indexedRecords).onClose(() -> stream.close());
     }
 
     @Override
-    protected Stream<Tuple2<Long, Record>> compute(Partition partition) {
+    protected CloseableIterator<Tuple2<Long, Record>> compute(Partition partition) {
         RecordPartition recordPartition = (RecordPartition) partition;
-        Stream<IndexedRow> rows = parent.iterate(recordPartition.getParent())
+        CloseableIterator<IndexedRow> rows = parent.iterate(recordPartition.getParent())
                 .map(Tuple2::getValue);
-        Stream<Tuple2<Long, Record>> records = groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0,
+        return groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0,
                 recordPartition.additionalRows);
-        return records;
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return partitions;
     }
 

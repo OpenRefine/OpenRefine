@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import io.vavr.collection.Iterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import org.openrefine.util.CloseableIterator;
 
 public class OrderedJoinPLLTests extends PLLTestsBase {
 
@@ -320,41 +322,41 @@ public class OrderedJoinPLLTests extends PLLTestsBase {
                 }));
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeInner(Stream<Tuple2<Integer, Integer>> first,
-            Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.INNER);
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeInner(CloseableIterator<Tuple2<Integer, Integer>> first,
+            CloseableIterator<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.joinStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.INNER);
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeLeft(Stream<Tuple2<Integer, Integer>> first,
-            Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.LEFT);
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeLeft(CloseableIterator<Tuple2<Integer, Integer>> first,
+            CloseableIterator<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.joinStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.LEFT);
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeRight(Stream<Tuple2<Integer, Integer>> first,
-            Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.RIGHT);
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeRight(CloseableIterator<Tuple2<Integer, Integer>> first,
+            CloseableIterator<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.joinStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.RIGHT);
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeOuter(Stream<Tuple2<Integer, Integer>> first,
-            Stream<Tuple2<Integer, Integer>> second) {
-        return OrderedJoinPLL.mergeOrderedStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.FULL);
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> mergeOuter(CloseableIterator<Tuple2<Integer, Integer>> first,
+            CloseableIterator<Tuple2<Integer, Integer>> second) {
+        return OrderedJoinPLL.joinStreams(first, second, Comparator.<Integer> naturalOrder(), OrderedJoinPLL.JoinType.FULL);
     }
 
-    protected static <T> void assertStreamsEqual(Stream<T> actual, Stream<T> expected) {
+    protected static <T> void assertStreamsEqual(CloseableIterator<T> actual, CloseableIterator<T> expected) {
         Assert.assertEquals(
                 actual.collect(Collectors.toList()),
                 expected.collect(Collectors.toList()));
     }
 
-    protected Stream<Tuple2<Integer, Integer>> seq(Integer... elements) {
-        return Arrays.asList(elements).stream().map(i -> Tuple2.of(i, i));
+    protected CloseableIterator<Tuple2<Integer, Integer>> seq(Integer... elements) {
+        return CloseableIterator.wrapping(Iterator.of(elements).map(i -> Tuple2.of(i, i)));
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> joinedInner(Integer... elements) {
-        return Arrays.asList(elements).stream().map(i -> Tuple2.of(i, Tuple2.of(i, i)));
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> joinedInner(Integer... elements) {
+        return CloseableIterator.wrapping(Iterator.of(elements).map(i -> Tuple2.of(i, Tuple2.of(i, i))));
     }
 
-    protected Stream<Tuple2<Integer, Tuple2<Integer, Integer>>> joinedOuter(Integer[]... elements) {
-        return Arrays.asList(elements).stream().map(i -> Tuple2.of(i[0], Tuple2.of(i[1], i[2])));
+    protected CloseableIterator<Tuple2<Integer, Tuple2<Integer, Integer>>> joinedOuter(Integer[]... elements) {
+        return CloseableIterator.wrapping(Iterator.of(elements).map(i -> Tuple2.of(i[0], Tuple2.of(i[1], i[2]))));
     }
 }

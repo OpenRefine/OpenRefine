@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Streams;
+import io.vavr.collection.Array;
 
 import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
@@ -22,6 +21,7 @@ import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.runners.local.pll.util.ProgressingFutureWrapper;
 import org.openrefine.runners.local.pll.util.TaskSignalling;
+import org.openrefine.util.CloseableIterator;
 
 public class LocalChangeData<T> implements ChangeData<T> {
 
@@ -48,7 +48,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     public LocalChangeData(
             LocalRunner runner,
             PairPLL<Long, T> grid,
-            List<Long> parentPartitionSizes,
+            Array<Long> parentPartitionSizes,
             Callable<Boolean> complete,
             int maxConcurrency) {
         this.runner = runner;
@@ -74,13 +74,13 @@ public class LocalChangeData<T> implements ChangeData<T> {
         return grid
                 .filter(tuple -> tuple.getValue() != null)
                 .map(tuple -> new IndexedData<T>(tuple.getKey(), tuple.getValue()), "wrap as IndexedData")
-                .stream()
+                .iterator()
                 .iterator();
     }
 
     @Override
     public T get(long rowId) {
-        List<T> rows = grid.get(rowId);
+        Array<T> rows = grid.get(rowId);
         if (rows.size() == 0) {
             return null;
         } else if (rows.size() > 1) {
@@ -105,10 +105,9 @@ public class LocalChangeData<T> implements ChangeData<T> {
         if (useNativeProgressReporting) {
             gridWithReporting = grid;
         } else {
-            // we need to report progress but we do not know the partition sizes of our changedata object.
+            // we need to report progress, but we do not know the partition sizes of our changedata object.
             // so we approximate progress by looking at the row numbers and assuming that the changedata
             // is evenly spread on the entire grid.
-
             gridWithReporting = grid.mapPartitions(
                     (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, taskSignalling),
                     "wrap stream with progress reporting", true);
@@ -153,14 +152,14 @@ public class LocalChangeData<T> implements ChangeData<T> {
         return grid;
     }
 
-    protected static <T> Stream<Tuple2<Long, T>> wrapStreamWithProgressReporting(
+    protected static <T> CloseableIterator<Tuple2<Long, T>> wrapStreamWithProgressReporting(
             long startIdx,
-            Stream<Tuple2<Long, T>> stream,
+            CloseableIterator<Tuple2<Long, T>> iterator,
             TaskSignalling taskSignalling) {
-        Iterator<Tuple2<Long, T>> iterator = new Iterator<>() {
+        return new CloseableIterator<>() {
 
             long lastSeen = startIdx;
-            Iterator<Tuple2<Long, T>> parent = stream.iterator();
+            Iterator<Tuple2<Long, T>> parent = iterator.iterator();
 
             @Override
             public boolean hasNext() {
@@ -181,8 +180,12 @@ public class LocalChangeData<T> implements ChangeData<T> {
                 return element;
             }
 
+            @Override
+            public void close() {
+                iterator.close();
+            }
+
         };
-        return Streams.stream(iterator).onClose(() -> stream.close());
     }
 
 }

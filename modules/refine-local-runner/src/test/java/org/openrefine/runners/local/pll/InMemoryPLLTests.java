@@ -9,11 +9,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import io.vavr.collection.Array;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
+import org.openrefine.util.CloseableIterator;
 
 public class InMemoryPLLTests extends PLLTestsBase {
 
@@ -42,8 +44,8 @@ public class InMemoryPLLTests extends PLLTestsBase {
 
     @Test
     public void testIterate() {
-        Assert.assertEquals(SUT.stream().collect(Collectors.toList()), list);
-        Assert.assertFalse(emptySUT.stream().iterator().hasNext());
+        Assert.assertEquals(SUT.iterator().collect(Collectors.toList()), list);
+        Assert.assertFalse(emptySUT.iterator().iterator().hasNext());
     }
 
     @Test
@@ -135,7 +137,7 @@ public class InMemoryPLLTests extends PLLTestsBase {
         InMemoryPLL<Integer> noPartitions = new InMemoryPLL<Integer>(context, Collections.emptyList(), 0);
         Assert.assertEquals(noPartitions.count(), 0L);
         Assert.assertEquals(noPartitions.collect(), Collections.emptyList());
-        Assert.assertFalse(noPartitions.stream().iterator().hasNext());
+        Assert.assertFalse(noPartitions.iterator().iterator().hasNext());
     }
 
     @Test
@@ -145,7 +147,8 @@ public class InMemoryPLLTests extends PLLTestsBase {
                 .mapToObj(v -> v).collect(Collectors.toList());
         InMemoryPLL<Integer> pll = new InMemoryPLL<>(context, integerList, 100);
         AtomicLong counter = new AtomicLong(0L);
-        List<Integer> results = pll.runOnPartitions(p -> (int) counter.getAndIncrement(), pll.getPartitions().stream(), 1);
+        Array<Integer> results = pll.runOnPartitions(p -> (int) counter.getAndIncrement(),
+                CloseableIterator.wrapping(pll.getPartitions().iterator()), 1);
         Assert.assertEquals(results, integerList);
     }
 

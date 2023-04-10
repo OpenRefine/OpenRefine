@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.vavr.collection.Array;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.PartitionerTestUtils;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.util.CloseableIterator;
 
 public class PairPLLTests extends PLLTestsBase {
 
@@ -242,7 +244,7 @@ public class PairPLLTests extends PLLTestsBase {
     @Test
     public void testAssumeIndexedNoPartitionerCount() {
         PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4, 5));
-        List<Long> partitionSizes = list.getPartitionSizes();
+        Array<Long> partitionSizes = list.getPartitionSizes();
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
         List<Optional<Long>> expectedFirstKeys = ((RangePartitioner<Long>) indexed.getPartitioner().get()).getFirstKeys();
         indexed = indexed.withPartitioner(Optional.empty());
@@ -290,7 +292,7 @@ public class PairPLLTests extends PLLTestsBase {
     public void testWithCachedPartitionSizes() {
         PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
-        List<Long> partitionSizes = indexed.getPartitionSizes();
+        Array<Long> partitionSizes = indexed.getPartitionSizes();
         indexed = indexed.filter(tuple -> true); // spurious filter to remove partition sizes
 
         Assert.assertFalse(indexed.hasCachedPartitionSizes());
@@ -303,7 +305,7 @@ public class PairPLLTests extends PLLTestsBase {
     public void testWithInvalidCachedPartitionSizes() {
         PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
-        indexed.withCachedPartitionSizes(Arrays.asList(2L, 3L));
+        indexed.withCachedPartitionSizes(Array.of(2L, 3L));
     }
 
     @Test
@@ -337,13 +339,13 @@ public class PairPLLTests extends PLLTestsBase {
                 Tuple2.of(6L, 16),
                 Tuple2.of(8L, 18));
 
-        Assert.assertEquals(PairPLL.gatherElementsBefore(5L, 2, list.stream(), Comparator.naturalOrder()),
+        Assert.assertEquals(PairPLL.gatherElementsBefore(5L, 2, CloseableIterator.wrapping(list.iterator()), Comparator.naturalOrder()),
                 list.subList(1, 3));
-        Assert.assertEquals(PairPLL.gatherElementsBefore(13L, 2, list.stream(), Comparator.naturalOrder()),
+        Assert.assertEquals(PairPLL.gatherElementsBefore(13L, 2, CloseableIterator.wrapping(list.iterator()), Comparator.naturalOrder()),
                 list.subList(3, 5));
-        Assert.assertEquals(PairPLL.gatherElementsBefore(1L, 2, list.stream(), Comparator.naturalOrder()),
+        Assert.assertEquals(PairPLL.gatherElementsBefore(1L, 2, CloseableIterator.wrapping(list.iterator()), Comparator.naturalOrder()),
                 list.subList(0, 1));
-        Assert.assertEquals(PairPLL.gatherElementsBefore(10L, 20, list.stream(), Comparator.naturalOrder()),
+        Assert.assertEquals(PairPLL.gatherElementsBefore(10L, 20, CloseableIterator.wrapping(list.iterator()), Comparator.naturalOrder()),
                 list);
     }
 }

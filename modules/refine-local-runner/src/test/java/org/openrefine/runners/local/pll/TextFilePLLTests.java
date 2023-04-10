@@ -59,7 +59,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         // this text file is too small to be split
         Assert.assertEquals(pll.getPartitions().size(), 1);
 
-        List<String> elements = pll.collect();
+        List<String> elements = pll.collect().toJavaList();
         Assert.assertEquals(elements, Arrays.asList("foo", "bar", "baz"));
         // Iterate a second time
         Assert.assertEquals(elements, Arrays.asList("foo", "bar", "baz"));

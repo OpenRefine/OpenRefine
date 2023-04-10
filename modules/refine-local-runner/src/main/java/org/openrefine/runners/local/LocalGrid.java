@@ -14,12 +14,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.commons.collections.IteratorUtils;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
@@ -44,6 +41,7 @@ import org.openrefine.runners.local.pll.util.QueryTree;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -143,7 +141,7 @@ public class LocalGrid implements Grid {
             throw new IllegalArgumentException("Missing partitioner for records PLL");
         }
         this.grid = PairPLL.assumeIndexed(records.values()
-                .flatMap(record -> StreamSupport.stream(record.getIndexedRows().spliterator(), false), "flatten records to rows")
+                .flatMap(record -> CloseableIterator.wrapping(record.getIndexedRows().iterator()), "flatten records to rows")
                 .mapToPair(indexedRow -> Tuple2.of(indexedRow.getIndex(), indexedRow), "to pair"), rowCount);
         this.constructedFromRows = false;
     }
@@ -233,11 +231,11 @@ public class LocalGrid implements Grid {
 
     @Override
     public List<IndexedRow> getRows(List<Long> rowIndices) {
-        Map<Long, IndexedRow> results = grid.getByKeys(rowIndices.stream().collect(Collectors.toSet()))
-                .stream()
-                .collect(Collectors.toMap(t -> t.getKey(), t -> t.getValue()));
+        io.vavr.collection.Map<Long, IndexedRow> results = grid.getByKeys(rowIndices.stream().collect(Collectors.toSet()))
+                .toMap(t -> new io.vavr.Tuple2(t.getKey(), t.getValue()));
+
         return rowIndices.stream()
-                .map(i -> results.get(i))
+                .map(i -> results.get(i).getOrNull())
                 .collect(Collectors.toList());
     }
 
@@ -251,7 +249,7 @@ public class LocalGrid implements Grid {
                         .filter(tuple -> filter.filterRow(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()))
                         .values();
                 return filteredRows
-                        .stream()
+                        .iterator()
                         .iterator();
             }
 
@@ -282,12 +280,12 @@ public class LocalGrid implements Grid {
 
     @Override
     public List<IndexedRow> collectRows() {
-        return grid.values().collect();
+        return grid.values().collect().toJavaList();
     }
 
     @Override
     public Record getRecord(long id) {
-        List<Record> rows = records().get(id);
+        List<Record> rows = records().get(id).toJavaList();
         if (rows.size() == 0) {
             throw new IllegalArgumentException(String.format("Record id %d not found", id));
         } else if (rows.size() > 1) {
@@ -345,7 +343,7 @@ public class LocalGrid implements Grid {
                 PLL<Record> records = records().values();
                 return records
                         .filter(tuple -> filter.filterRecord(tuple))
-                        .stream()
+                        .iterator()
                         .iterator();
             }
 
@@ -377,7 +375,7 @@ public class LocalGrid implements Grid {
 
     @Override
     public List<Record> collectRecords() {
-        return records().values().collect();
+        return records().values().collect().toJavaList();
     }
 
     @Override
@@ -517,7 +515,8 @@ public class LocalGrid implements Grid {
     @Override
     public Grid flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.values()
-                .flatMap(tuple -> mapper.call(tuple.getLogicalIndex(), tuple.getRow()).stream(), "apply FlatRowMapper")
+                .flatMap(tuple -> CloseableIterator.wrapping(
+                        mapper.call(tuple.getLogicalIndex(), tuple.getRow()).iterator()), "apply FlatRowMapper")
                 .zipWithIndex();
         return new LocalGrid(runner, newGrid, newColumnModel, overlayModels, -1);
     }
@@ -545,7 +544,8 @@ public class LocalGrid implements Grid {
         } else {
             PairPLL<Long, Row> grid = records()
                     .values()
-                    .flatMap(record -> mapper.call(record).stream(), "apply RecordMapper, not preserving records")
+                    .flatMap(record -> CloseableIterator.wrapping(mapper.call(record).iterator()),
+                            "apply RecordMapper, not preserving records")
                     .zipWithIndex();
             return new LocalGrid(runner, grid, newColumnModel, overlayModels, -1);
         }
@@ -578,14 +578,14 @@ public class LocalGrid implements Grid {
                 .sort(recordSorter);
         if (permanent) {
             PairPLL<Long, Row> newRows = sorted
-                    .flatMap(record -> record.getRows().stream(), "record to rows")
+                    .flatMap(record -> CloseableIterator.wrapping(record.getRows().iterator()), "record to rows")
                     .zipWithIndex();
             // reordering records can change the number of records, if the first record does not have a non-blank value
             // in the first cell of the key column, so we are not preserving any cached count
             return new LocalGrid(runner, newRows, columnModel, overlayModels, -1);
         } else {
             PLL<IndexedRow> pll = sorted
-                    .flatMap(record -> IteratorUtils.toList(record.getIndexedRows().iterator()).stream(),
+                    .flatMap(record -> CloseableIterator.wrapping(record.getIndexedRows().iterator()),
                             "record to indexed rows");
             PairPLL<Long, IndexedRow> newRows = pll
                     .zipWithIndex()
@@ -610,7 +610,7 @@ public class LocalGrid implements Grid {
         PairPLL<Long, Row> newGrid = records()
                 .values()
                 .filter(record -> !filter.filterRecord(record))
-                .flatMap(record -> record.getRows().stream(), "record to rows")
+                .flatMap(record -> CloseableIterator.wrapping(record.getRows().iterator()), "record to rows")
                 .zipWithIndex();
         return new LocalGrid(runner, newGrid, columnModel, overlayModels, -1);
     }
@@ -650,18 +650,19 @@ public class LocalGrid implements Grid {
                 rowMapper.getMaxConcurrency());
     }
 
-    protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
+    protected static <T> CloseableIterator<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
             List<IndexedRow> rowBatch) {
         List<T> changeData = rowMapper.callRowBatch(rowBatch);
         if (changeData.size() != rowBatch.size()) {
             throw new IllegalStateException(
                     String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), rowBatch.size()));
         }
-        return IntStream.range(0, rowBatch.size())
-                .mapToObj(i -> new Tuple2<Long, T>(rowBatch.get(i).getIndex(), changeData.get(i)));
+        return CloseableIterator.wrapping(
+                io.vavr.collection.Iterator.range(0, rowBatch.size())
+                        .map(i -> new Tuple2<Long, T>(rowBatch.get(i).getIndex(), changeData.get(i))));
     }
 
-    protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapperWithIncompleteData(
+    protected static <T> CloseableIterator<Tuple2<Long, T>> applyRowChangeDataMapperWithIncompleteData(
             RowChangeDataProducer<T> rowMapper,
             List<Tuple2<Long, Tuple2<IndexedRow, T>>> rowBatch) {
         List<IndexedRow> toCompute = rowBatch.stream()
@@ -676,15 +677,15 @@ public class LocalGrid implements Grid {
         Map<Long, Optional<T>> indexedChangeData = IntStream.range(0, toCompute.size())
                 .mapToObj(i -> i)
                 .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> Optional.ofNullable(changeData.get(i))));
-        return IntStream.range(0, rowBatch.size())
-                .mapToObj(i -> {
+        return CloseableIterator.wrapping(io.vavr.collection.Iterator.range(0, rowBatch.size())
+                .map(i -> {
                     T preComputed = rowBatch.get(i).getValue().getValue();
                     long rowIndex = rowBatch.get(i).getKey();
                     if (preComputed == null) {
                         preComputed = indexedChangeData.get(rowIndex).orElse(null);
                     }
                     return Tuple2.of(rowIndex, preComputed);
-                });
+                }));
     }
 
     @Override
@@ -758,7 +759,7 @@ public class LocalGrid implements Grid {
         return new LocalGrid(runner, columnModel, shifted, overlayModels, -1);
     }
 
-    protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(
+    protected static <T> CloseableIterator<Tuple2<Long, T>> applyRecordChangeDataMapper(
             RecordChangeDataProducer<T> recordMapper,
             List<Tuple2<Long, Record>> recordBatch) {
         List<T> changeData = recordMapper.callRecordBatch(
@@ -769,11 +770,12 @@ public class LocalGrid implements Grid {
             throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records",
                     changeData.size(), recordBatch.size()));
         }
-        return IntStream.range(0, recordBatch.size())
-                .mapToObj(i -> new Tuple2<Long, T>(recordBatch.get(i).getKey(), changeData.get(i)));
+        return CloseableIterator.wrapping(
+                io.vavr.collection.Iterator.range(0, recordBatch.size())
+                        .map(i -> new Tuple2<Long, T>(recordBatch.get(i).getKey(), changeData.get(i))));
     }
 
-    protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapperWithIncompleteData(
+    protected static <T> CloseableIterator<Tuple2<Long, T>> applyRecordChangeDataMapperWithIncompleteData(
             RecordChangeDataProducer<T> recordMapper,
             List<Tuple2<Long, Tuple2<Record, T>>> recordBatch) {
         List<Record> toCompute = recordBatch.stream()
@@ -789,15 +791,15 @@ public class LocalGrid implements Grid {
         Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
                 .mapToObj(i -> i)
                 .collect(Collectors.toMap(i -> toCompute.get(i).getStartRowId(), i -> changeData.get(i)));
-        return IntStream.range(0, recordBatch.size())
-                .mapToObj(i -> {
+        return CloseableIterator.wrapping(io.vavr.collection.Iterator.range(0, recordBatch.size())
+                .map(i -> {
                     T preComputed = recordBatch.get(i).getValue().getValue();
                     long rowIndex = recordBatch.get(i).getKey();
                     if (preComputed == null) {
                         preComputed = indexedChangeData.get(rowIndex);
                     }
                     return Tuple2.of(rowIndex, preComputed);
-                });
+                }));
     }
 
     @Override
@@ -820,7 +822,8 @@ public class LocalGrid implements Grid {
         }
         PairPLL<Long, Row> joined = grid
                 .leftJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
-                .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).stream(),
+                .flatMap(tuple -> CloseableIterator.wrapping(
+                        rowJoiner.call(tuple.getKey(), tuple.getValue().getKey().getRow(), tuple.getValue().getValue()).iterator()),
                         "apply row change data joiner")
                 .zipWithIndex();
         return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);
@@ -842,7 +845,8 @@ public class LocalGrid implements Grid {
             return new LocalGrid(records, runner, newColumnModel, overlayModels, rowCount());
         } else {
             PairPLL<Long, Row> joined = joinedRecords
-                    .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream(),
+                    .flatMap(tuple -> CloseableIterator.wrapping(
+                            recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).iterator()),
                             "apply record change data joiner")
                     .zipWithIndex();
             return new LocalGrid(runner, joined, newColumnModel, overlayModels, -1);

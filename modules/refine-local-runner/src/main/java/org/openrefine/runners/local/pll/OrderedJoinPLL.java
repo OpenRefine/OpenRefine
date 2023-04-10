@@ -2,13 +2,12 @@
 package org.openrefine.runners.local.pll;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Streams;
+import io.vavr.collection.Array;
 
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL which represents the join of two others, assuming both are sorted by keys. The types of joins supported are
@@ -37,10 +36,10 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     private final PairPLL<K, V> first;
     private final PairPLL<K, W> second;
     private final Comparator<K> comparator;
-    private final List<JoinPartition> partitions;
+    private final Array<JoinPartition> partitions;
     private final JoinType joinType;
-    private List<Optional<K>> firstKeys;
-    private List<Optional<K>> upperBounds;
+    private Array<Optional<K>> firstKeys;
+    private Array<Optional<K>> upperBounds;
 
     /**
      * Constructs a PLL representing the join of two others
@@ -64,32 +63,32 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
         this.second = second;
         this.comparator = comparator;
         this.joinType = joinType;
-        this.partitions = first.getPartitions().stream()
-                .map(p -> new JoinPartition(p.getIndex(), p))
-                .collect(Collectors.toList());
+        this.partitions = first.getPartitions()
+                .map(p -> new JoinPartition(p.getIndex(), p));
 
         // Compute the first key in each partition but the first one
         if (getPartitioner().isPresent() && getPartitioner().get() instanceof RangePartitioner<?>) {
             RangePartitioner<K> partitioner = (RangePartitioner<K>) getPartitioner().get();
-            firstKeys = (List<Optional<K>>) partitioner.getFirstKeys();
+            firstKeys = Array.ofAll((List<Optional<K>>) partitioner.getFirstKeys());
         } else {
-            firstKeys = first.runOnPartitionsWithoutInterruption(partition -> first.iterate(partition)
-                    .map(tuple -> tuple.getKey())
-                    .findFirst())
-                    .stream()
-                    .skip(1)
-                    .collect(Collectors.toList());
+            firstKeys = first.runOnPartitionsWithoutInterruption(partition -> {
+                try (CloseableIterator<Tuple2<K, V>> iterator = first.iterate(partition)) {
+                    return iterator.map(Tuple2::getKey)
+                            .headOption().toJavaOptional();
+                }
+            })
+                    .drop(1);
         }
         // Compute the upper bound of each partition but the last one,
         // which is the first key of the first non-empty partition after it.
         // The list is created in reverse order.
-        upperBounds = new ArrayList<>(firstKeys.size());
+        upperBounds = Array.empty();
         Optional<K> lastKeySeen = Optional.empty();
         for (int i = firstKeys.size() - 1; i >= 0; i--) {
             if (firstKeys.get(i).isPresent()) {
                 lastKeySeen = firstKeys.get(i);
             }
-            upperBounds.add(lastKeySeen);
+            upperBounds = upperBounds.append(lastKeySeen);
         }
     }
 
@@ -98,7 +97,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     @Override
-    public List<Long> computePartitionSizes() {
+    public Array<Long> computePartitionSizes() {
         if (JoinType.LEFT.equals(joinType)) {
             // for left joins we know that we have exactly as many elements as the first PLL,
             // because we have the same partitioning as the left PLL and the elements in those
@@ -116,9 +115,9 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     @Override
-    protected Stream<Tuple2<K, Tuple2<V, W>>> compute(Partition partition) {
-        Stream<Tuple2<K, V>> firstStream = first.iterate(partition.getParent());
-        Stream<Tuple2<K, W>> secondStream;
+    protected CloseableIterator<Tuple2<K, Tuple2<V, W>>> compute(Partition partition) {
+        CloseableIterator<Tuple2<K, V>> firstStream = first.iterate(partition.getParent());
+        CloseableIterator<Tuple2<K, W>> secondStream;
         Optional<K> lowerBound = Optional.empty();
         Optional<K> upperBound = Optional.empty();
         if (partition.getIndex() > 0) {
@@ -128,25 +127,22 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                 // We skip it: for an inner join, the result is clearly empty,
                 // and for an outer join the corresponding elements on the right-hand side
                 // are added to the joins of the neighbouring partitions.
-                return Stream.empty();
+                return CloseableIterator.empty();
             }
         }
         if (partition.getIndex() < numPartitions() - 1) {
             upperBound = upperBounds.get(numPartitions() - 2 - partition.getIndex());
         }
         secondStream = second.streamBetweenKeys(lowerBound, upperBound, comparator);
-        return mergeOrderedStreams(firstStream, secondStream, comparator, joinType);
+        return joinStreams(firstStream, secondStream, comparator, joinType);
     }
 
     /**
      * Merges two key-ordered streams where each key is guaranteed to appear at most once in each stream.
-     * 
-     * @param <K>
-     * @param <V>
-     * @param <W>
-     * @param firstStream
+     *
+     * @param firstIterator
      *            the first stream to join
-     * @param secondStream
+     * @param secondIterator
      *            the second stream to join
      * @param comparator
      *            the comparator with respect to which both are sorted
@@ -154,29 +150,14 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
      *            the type of join to compute
      * @return
      */
-    protected static <K, V, W> Stream<Tuple2<K, Tuple2<V, W>>> mergeOrderedStreams(
-            Stream<Tuple2<K, V>> firstStream,
-            Stream<Tuple2<K, W>> secondStream,
-            Comparator<K> comparator,
-            JoinType joinType) {
-        Iterator<Tuple2<K, V>> firstIterator = firstStream.iterator();
-        Iterator<Tuple2<K, W>> secondIterator = secondStream.iterator();
-        Iterator<Tuple2<K, Tuple2<V, W>>> joinedIterator = joinStreams(firstIterator, secondIterator, comparator, joinType);
-        return Streams.stream(joinedIterator)
-                .onClose(() -> {
-                    firstStream.close();
-                    secondStream.close();
-                });
-    }
-
-    private static <K, V, W> Iterator<Tuple2<K, Tuple2<V, W>>> joinStreams(
-            Iterator<Tuple2<K, V>> firstIterator,
-            Iterator<Tuple2<K, W>> secondIterator,
+    protected static <K, V, W> CloseableIterator<Tuple2<K, Tuple2<V, W>>> joinStreams(
+            CloseableIterator<Tuple2<K, V>> firstIterator,
+            CloseableIterator<Tuple2<K, W>> secondIterator,
             Comparator<K> comparator,
             JoinType joinType) {
         boolean includeEmptyLeft = JoinType.RIGHT.equals(joinType) || JoinType.FULL.equals(joinType);
         boolean includeEmptyRight = JoinType.LEFT.equals(joinType) || JoinType.FULL.equals(joinType);
-        return new Iterator<>() {
+        return new CloseableIterator<>() {
 
             Tuple2<K, V> lastSeenLeft = null;
             Tuple2<K, W> lastSeenRight = null;
@@ -240,11 +221,17 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
                 return toReturn;
             }
 
+            @Override
+            public void close() {
+                firstIterator.close();
+                secondIterator.close();
+            }
+
         };
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return partitions;
     }
 

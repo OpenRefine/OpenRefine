@@ -1,29 +1,24 @@
 
 package org.openrefine.runners.local;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.runners.local.pll.util.TaskSignalling;
+import org.openrefine.util.CloseableIterator;
 
 public class LocalChangeDataTests {
 
     @Test
     public void testWrapStreamWithProgressReporting() {
-        List<Tuple2<Long, Integer>> list = Arrays.asList(
+        CloseableIterator<Tuple2<Long, Integer>> sourceIterator = CloseableIterator.of(
                 Tuple2.of(32L, 1),
                 Tuple2.of(45L, 2));
 
         TaskSignalling taskSignalling = new TaskSignalling(100L);
-        Stream<Tuple2<Long, Integer>> stream = LocalChangeData.wrapStreamWithProgressReporting(30L, list.stream(), taskSignalling);
-
-        Iterator<Tuple2<Long, Integer>> iterator = stream.iterator();
+        CloseableIterator<Tuple2<Long, Integer>> iterator = LocalChangeData.wrapStreamWithProgressReporting(30L, sourceIterator,
+                taskSignalling);
 
         Assert.assertEquals(taskSignalling.getProgress(), 0);
         Assert.assertEquals(iterator.next(), Tuple2.of(32L, 1));

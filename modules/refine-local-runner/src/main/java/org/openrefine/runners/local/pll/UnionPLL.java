@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import io.vavr.collection.Array;
+
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL which represents the concatenation of two others.
@@ -32,20 +35,19 @@ public class UnionPLL<T> extends PLL<T> {
         super(first.getContext(), "Union");
         this.first = first;
         this.second = second;
-        List<? extends Partition> firstPartitions = first.getPartitions(), secondPartitions = second.getPartitions();
+        Array<? extends Partition> firstPartitions = first.getPartitions();
+        Array<? extends Partition> secondPartitions = second.getPartitions();
         partitions = new ArrayList<>(firstPartitions.size() + secondPartitions.size());
         partitions.addAll(firstPartitions
-                .stream()
                 .map(p -> new UnionPartition(p.getIndex(), true, p))
                 .collect(Collectors.toList()));
         partitions.addAll(secondPartitions
-                .stream()
                 .map(p -> new UnionPartition(p.getIndex() + firstPartitions.size(), false, p))
                 .collect(Collectors.toList()));
     }
 
     @Override
-    protected Stream<T> compute(Partition partition) {
+    protected CloseableIterator<T> compute(Partition partition) {
         UnionPartition unionPartition = (UnionPartition) partition;
         if (unionPartition.left) {
             return first.compute(unionPartition.parent);
@@ -55,16 +57,13 @@ public class UnionPLL<T> extends PLL<T> {
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
-        return partitions;
+    public Array<? extends Partition> getPartitions() {
+        return Array.ofAll(partitions);
     }
 
     @Override
-    protected List<Long> computePartitionSizes() {
-        List<Long> partitionSizes = new ArrayList<>(first.getPartitionSizes().size() + second.getPartitionSizes().size());
-        partitionSizes.addAll(first.getPartitionSizes());
-        partitionSizes.addAll(second.getPartitionSizes());
-        return partitionSizes;
+    protected Array<Long> computePartitionSizes() {
+        return first.getPartitionSizes().appendAll(second.getPartitionSizes());
     }
 
     @Override

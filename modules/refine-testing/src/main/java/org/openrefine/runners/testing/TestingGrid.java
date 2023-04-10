@@ -10,7 +10,6 @@ import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Iterators;
-import org.apache.commons.collections.IteratorUtils;
 import org.testng.Assert;
 
 import org.openrefine.browsing.facets.RecordAggregator;
@@ -26,6 +25,7 @@ import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -66,7 +66,9 @@ public class TestingGrid implements Grid {
     }
 
     public static List<Record> groupRowsIntoRecords(List<IndexedRow> rows, int keyCellIndex) {
-        return IteratorUtils.toList(Record.groupIntoRecords(rows.iterator(), keyCellIndex, false, Collections.emptyList()));
+        return Record.groupIntoRecords(
+                CloseableIterator.wrapping(rows.iterator()), keyCellIndex, false, Collections.emptyList())
+                .toJavaList();
     }
 
     @Override

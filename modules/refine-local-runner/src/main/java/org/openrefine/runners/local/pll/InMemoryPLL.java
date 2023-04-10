@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import io.vavr.collection.Array;
 
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.process.ProgressingFutures;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL which is created out of a regular Java collection. The collection is split into contiguous partitions which can
@@ -22,28 +23,27 @@ import org.openrefine.process.ProgressingFutures;
 public class InMemoryPLL<T> extends PLL<T> {
 
     protected final ArrayList<T> list;
-    protected final List<InMemoryPartition> partitions;
+    protected final Array<InMemoryPartition> partitions;
 
     public InMemoryPLL(PLLContext context, Collection<T> elements, int nbPartitions) {
         super(context, String.format("Load %d elements into %d partitions", elements.size(), nbPartitions));
         list = elements instanceof ArrayList ? (ArrayList<T>) elements : new ArrayList<T>(elements);
         partitions = createPartitions(list.size(), nbPartitions);
-        cachedPartitions = partitions.stream()
-                .map(p -> list.subList(p.offset, p.offset + p.length))
-                .collect(Collectors.toList());
+        cachedPartitions = partitions
+                .map(p -> Array.ofAll(list.subList(p.offset, p.offset + p.length)));
     }
 
     @Override
-    public Stream<T> compute(Partition partition) {
+    public CloseableIterator<T> compute(Partition partition) {
         InMemoryPartition imPartition = (InMemoryPartition) partition;
 
-        return list.subList(imPartition.offset, imPartition.offset + imPartition.length)
-                .stream();
+        return CloseableIterator.wrapping(list.subList(imPartition.offset, imPartition.offset + imPartition.length)
+                .iterator());
     }
 
     @Override
-    protected List<Long> computePartitionSizes() {
-        return partitions.stream().map(p -> (long) p.length).collect(Collectors.toList());
+    protected Array<Long> computePartitionSizes() {
+        return partitions.map(p -> (long) p.length);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class InMemoryPLL<T> extends PLL<T> {
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return partitions;
     }
 
@@ -106,13 +106,13 @@ public class InMemoryPLL<T> extends PLL<T> {
      * @param nbPartitions
      * @return
      */
-    protected static List<InMemoryPartition> createPartitions(int size, int nbPartitions) {
+    protected static Array<InMemoryPartition> createPartitions(int size, int nbPartitions) {
         if (nbPartitions < 0) {
             throw new IllegalArgumentException("The number of partitions cannot be negative");
         }
         if (nbPartitions == 0) {
             if (size == 0) {
-                return Collections.emptyList();
+                return Array.empty();
             } else {
                 throw new IllegalArgumentException("At least one partition is required to represent a non-empty list");
             }
@@ -130,7 +130,7 @@ public class InMemoryPLL<T> extends PLL<T> {
             partitions.add(new InMemoryPartition(i, offset, currentPartitionSize));
             offset += currentPartitionSize;
         }
-        return partitions;
+        return Array.ofAll(partitions);
     }
 
 }

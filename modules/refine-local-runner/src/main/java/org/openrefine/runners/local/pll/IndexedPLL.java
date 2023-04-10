@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Streams;
+import io.vavr.collection.Array;
 
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL indexed in sequential order. For each entry, the key is the index of the element in the list. This comes with a
@@ -33,11 +32,11 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
      */
     public static <T> PairPLL<Long, T> index(PLL<T> pll) {
         // Compute the number of elements per partition
-        List<? extends Partition> partitions = pll.getPartitions();
+        Array<? extends Partition> partitions = pll.getPartitions();
 
         // compute the number of elements, which might explicitly enumerate each partition if these counts have not been
         // cached yet
-        List<Long> numElements = pll.getPartitionSizes().stream().limit(partitions.size() - 1).collect(Collectors.toList());
+        Array<Long> numElements = pll.getPartitionSizes().take(partitions.size() - 1);
 
         PLL<Tuple2<Long, T>> zippedPLL = new IndexedPLL<T>(pll);
 
@@ -51,33 +50,34 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
         return new PairPLL<Long, T>(zippedPLL, Optional.of(partitioner), pll.getPartitionSizes());
     }
 
-    private final List<IndexedPLL.IndexedPartition> partitions;
+    private final Array<IndexedPLL.IndexedPartition> partitions;
     private final PLL<T> parent;
 
     protected IndexedPLL(PLL<T> parent) {
         super(parent.getContext(), "Add indices");
         this.parent = parent;
-        List<Long> numElements = parent.getPartitionSizes();
-        List<? extends Partition> parentPartitions = parent.getPartitions();
-        partitions = new ArrayList<>(parent.numPartitions());
+        Array<Long> numElements = parent.getPartitionSizes();
+        Array<? extends Partition> parentPartitions = parent.getPartitions();
+        List<IndexedPLL.IndexedPartition> partitionsList = new ArrayList<>(parent.numPartitions());
         long offset = 0;
         for (int i = 0; i != parent.numPartitions(); i++) {
-            partitions.add(new IndexedPartition(i, offset, parentPartitions.get(i)));
+            partitionsList.add(new IndexedPartition(i, offset, parentPartitions.get(i)));
             if (i != parent.numPartitions() - 1) {
                 offset += numElements.get(i);
             }
         }
+        partitions = Array.ofAll(partitionsList);
     }
 
     @Override
-    protected Stream<Tuple2<Long, T>> compute(Partition partition) {
+    protected CloseableIterator<Tuple2<Long, T>> compute(Partition partition) {
         IndexedPartition indexedPartition = (IndexedPartition) partition;
-        Stream<T> upstream = parent.compute(indexedPartition.parent);
-        return Streams.mapWithIndex(upstream, (t, i) -> Tuple2.of(indexedPartition.offset + i, t));
+        CloseableIterator<T> upstream = parent.compute(indexedPartition.parent);
+        return upstream.zipWithIndex((t, i) -> Tuple2.of(indexedPartition.offset + i, t));
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return partitions;
     }
 

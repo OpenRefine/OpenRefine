@@ -4,7 +4,10 @@ package org.openrefine.runners.local.pll;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
+
+import io.vavr.collection.Array;
+
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL obtained by transforming each partition independently. The supplied function takes two arguments: the first is
@@ -18,7 +21,7 @@ import java.util.stream.Stream;
 public class MapPartitionsPLL<U, T> extends PLL<T> {
 
     protected final PLL<U> parent;
-    protected final BiFunction<Integer, Stream<U>, Stream<T>> mapFunction;
+    protected final BiFunction<Integer, CloseableIterator<U>, CloseableIterator<T>> mapFunction;
     protected final boolean preservesSizes;
 
     /**
@@ -31,7 +34,8 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
      * @param mapFunctionDescription
      *            a short description of the map function for debugging purposes
      */
-    public MapPartitionsPLL(PLL<U> parent, BiFunction<Integer, Stream<U>, Stream<T>> mapFunction, String mapFunctionDescription) {
+    public MapPartitionsPLL(PLL<U> parent, BiFunction<Integer, CloseableIterator<U>, CloseableIterator<T>> mapFunction,
+            String mapFunctionDescription) {
         super(parent.getContext(), "Map: " + mapFunctionDescription);
         this.parent = parent;
         this.mapFunction = mapFunction;
@@ -52,7 +56,7 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
      */
     protected MapPartitionsPLL(
             PLL<U> parent,
-            BiFunction<Integer, Stream<U>, Stream<T>> mapFunction,
+            BiFunction<Integer, CloseableIterator<U>, CloseableIterator<T>> mapFunction,
             String mapFunctionDescription,
             boolean preservesSizes) {
         super(parent.getContext(), mapFunctionDescription);
@@ -67,7 +71,7 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
     }
 
     @Override
-    public List<Long> computePartitionSizes() {
+    public Array<Long> computePartitionSizes() {
         if (preservesSizes && parent.hasCachedPartitionSizes()) {
             return parent.getPartitionSizes();
         } else {
@@ -76,13 +80,13 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
     }
 
     @Override
-    public Stream<T> compute(Partition partition) {
-        Stream<U> parentIterator = parent.iterate(partition);
+    public CloseableIterator<T> compute(Partition partition) {
+        CloseableIterator<U> parentIterator = parent.iterate(partition);
         return mapFunction.apply(partition.getIndex(), parentIterator);
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return parent.getPartitions();
     }
 

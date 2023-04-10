@@ -4,9 +4,11 @@ package org.openrefine.runners.local.pll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
+import io.vavr.collection.Array;
 import org.apache.commons.lang3.Validate;
+
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A PLL obtained by removing some rows at the beginning or the end of a PLL.
@@ -20,8 +22,8 @@ public class CroppedPLL<T> extends PLL<T> {
     protected final PLL<T> pll;
     protected final long itemsToDrop;
     protected final boolean atEnd;
-    protected final List<CroppedPartition> partitions;
-    protected final List<Long> partitionSizes;
+    protected final Array<CroppedPartition> partitions;
+    protected final Array<Long> partitionSizes;
 
     /**
      * Constructs a cropped PLL by removing rows at the beginning or the end of a PLL.
@@ -38,7 +40,7 @@ public class CroppedPLL<T> extends PLL<T> {
      *            false if the partitions and items should be dropped at the beginning, true if at the end
      */
     public CroppedPLL(PLL<T> parent,
-            List<Long> newPartitionSizes,
+            Array<Long> newPartitionSizes,
             int partitionsToDrop,
             long dropItems,
             boolean atEnd) {
@@ -50,28 +52,29 @@ public class CroppedPLL<T> extends PLL<T> {
         partitionSizes = newPartitionSizes;
         this.atEnd = atEnd;
         itemsToDrop = dropItems;
-        partitions = new ArrayList<CroppedPartition>(parent.numPartitions() - partitionsToDrop);
+        List<CroppedPartition> partitionsList = new ArrayList<>(parent.numPartitions() - partitionsToDrop);
         for (Partition upstreamPartition : parent.getPartitions()) {
             if ((atEnd || upstreamPartition.getIndex() >= partitionsToDrop)
                     && (!atEnd || upstreamPartition.getIndex() < parent.numPartitions() - partitionsToDrop)) {
-                partitions.add(new CroppedPartition(partitions.size(), upstreamPartition));
+                partitionsList.add(new CroppedPartition(partitionsList.size(), upstreamPartition));
             }
         }
+        partitions = Array.ofAll(partitionsList);
     }
 
     @Override
-    protected Stream<T> compute(Partition partition) {
+    protected CloseableIterator<T> compute(Partition partition) {
         if (!atEnd && partition.getIndex() == 0 && itemsToDrop > 0) {
-            return pll.compute(partition.getParent()).skip(itemsToDrop);
+            return pll.compute(partition.getParent()).drop((int) itemsToDrop);
         } else if (atEnd && partition.getIndex() == numPartitions() - 1 && itemsToDrop > 0) {
-            return pll.compute(partition.getParent()).limit(getPartitionSizes().get(numPartitions() - 1));
+            return pll.compute(partition.getParent()).take(getPartitionSizes().get(numPartitions() - 1).intValue());
         } else {
             return pll.compute(partition.getParent());
         }
     }
 
     @Override
-    public List<? extends Partition> getPartitions() {
+    public Array<? extends Partition> getPartitions() {
         return partitions;
     }
 
@@ -86,7 +89,7 @@ public class CroppedPLL<T> extends PLL<T> {
     }
 
     @Override
-    public List<Long> computePartitionSizes() {
+    public Array<Long> computePartitionSizes() {
         return partitionSizes;
     }
 
