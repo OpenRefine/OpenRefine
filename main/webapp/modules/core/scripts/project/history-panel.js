@@ -345,13 +345,12 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     input.accept = '.json'; // optional file types
     input.onchange = async function() {
       const file = input.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch("/upload", {
-        method: "POST",
-        body: formData,
-      });
-      console.log(response);
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fileContent = e.target.result;
+        console.log(fileContent);
+      };
+      reader.readAsText(file);
     };
     input.click();
   });
