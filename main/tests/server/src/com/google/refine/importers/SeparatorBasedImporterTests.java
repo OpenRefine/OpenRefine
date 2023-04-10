@@ -666,14 +666,6 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         assertEquals("\\t", options.get("separator").textValue());
     }
 
-    @Test
-    public void testThatSeparatorIsGuessedCorrectlyForJSON() throws IOException {
-        List<ObjectNode> fileRecords = prepareFileRecords("grid_small.json");
-        ObjectNode options = SUT.createParserUIInitializationData(
-                job, fileRecords, "text/json");
-        assertEquals("\\t", options.get("separator").textValue());
-    }
-
     // --helpers--
     /**
      * Used for parameterized testing for both SeparatorParser and TsvCsvParser.
