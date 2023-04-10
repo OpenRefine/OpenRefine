@@ -646,6 +646,11 @@ public class WikitextImporter extends ReaderImporter {
             return row;
         }
 
+        @Override
+        public void close() throws IOException {
+            // does nothing
+        }
+
         private void reconcileToQids(String wikiBaseUrl, StandardReconConfig cfg) {
             if ("null".equals(wikiBaseUrl)) {
                 return; // TODO: more thorough URL validation instead

@@ -67,6 +67,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -140,30 +141,33 @@ abstract public class CustomizableTabularExporterUtilities {
             serializer.addRow(cells, true);
         }
 
-        for (IndexedRow indexedRow : grid.reorderRows(sortingConfig, false).iterateRows(engine.combinedRowFilters())) {
-            List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
-            int nonNullCount = 0;
+        try (CloseableIterator<IndexedRow> iterator = grid.reorderRows(sortingConfig, false)
+                .iterateRows(engine.combinedRowFilters())) {
+            for (IndexedRow indexedRow : iterator) {
+                List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+                int nonNullCount = 0;
 
-            for (String columnName : columnNames) {
-                int columnIndex = columnModel.getColumnIndexByName(columnName);
-                CellFormatter formatter = columnNameToFormatter.get(columnName);
-                CellData cellData = formatter.format(
-                        columnModel.getColumnByIndex(columnIndex),
-                        indexedRow.getRow().getCell(columnIndex));
+                for (String columnName : columnNames) {
+                    int columnIndex = columnModel.getColumnIndexByName(columnName);
+                    CellFormatter formatter = columnNameToFormatter.get(columnName);
+                    CellData cellData = formatter.format(
+                            columnModel.getColumnByIndex(columnIndex),
+                            indexedRow.getRow().getCell(columnIndex));
 
-                cells.add(cellData);
-                if (cellData != null) {
-                    nonNullCount++;
+                    cells.add(cellData);
+                    if (cellData != null) {
+                        nonNullCount++;
+                    }
                 }
-            }
 
-            if (nonNullCount > 0 || outputEmptyRows) {
-                serializer.addRow(cells, false);
-                rowCount++;
-            }
+                if (nonNullCount > 0 || outputEmptyRows) {
+                    serializer.addRow(cells, false);
+                    rowCount++;
+                }
 
-            if (limit > 0 && rowCount >= limit) {
-                break;
+                if (limit > 0 && rowCount >= limit) {
+                    break;
+                }
             }
         }
 

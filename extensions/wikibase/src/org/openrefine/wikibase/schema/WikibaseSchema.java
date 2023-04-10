@@ -43,6 +43,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.qa.QAWarningStore;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
@@ -198,7 +199,9 @@ public class WikibaseSchema implements OverlayModel {
         if (!validated) {
             throw new IllegalStateException("The schema has not been validated before being evaluated");
         }
-        return evaluate(grid.getColumnModel(), grid.iterateRows(engine.combinedRowFilters()), warningStore);
+        try (CloseableIterator<IndexedRow> rowsIterator = grid.iterateRows(engine.combinedRowFilters())) {
+            return evaluate(grid.getColumnModel(), rowsIterator, warningStore);
+        }
     }
 
     /**

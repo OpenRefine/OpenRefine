@@ -25,6 +25,7 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow.
@@ -144,12 +145,8 @@ public interface Grid {
      * Iterate over rows matched by a filter, in the order determined by a sorting configuration. This might not require
      * loading all rows in memory at once, but might be less efficient than {@link #collectRows()} if all rows are to be
      * stored in memory downstream.
-     * <p>
-     * TODO users of this method might actually be required to iterate up to the end of the iterator to avoid resource
-     * leaks with some implementations. This should be clarified by the interface. Consider exposing a closeable
-     * iterable instead.
      */
-    public Iterable<IndexedRow> iterateRows(RowFilter filter);
+    public CloseableIterator<IndexedRow> iterateRows(RowFilter filter);
 
     /**
      * Count the number of rows which match a given filter.
@@ -247,7 +244,7 @@ public interface Grid {
      * Iterate over records matched by a filter. This might not require loading all records in memory at once, but might
      * be less efficient than {@link #collectRecords()} if all records are to be stored in memory downstream.
      */
-    public Iterable<Record> iterateRecords(RecordFilter filter);
+    public CloseableIterator<Record> iterateRecords(RecordFilter filter);
 
     /**
      * Return the number of records which are filtered by this filter.
@@ -657,16 +654,9 @@ public interface Grid {
         @JsonProperty("columnModel")
         public ColumnModel columnModel;
 
+        /* for UnknownOverlayModel, which needs to read its own id */
         @JsonProperty("overlayModels")
-        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "overlayModelType", visible = true) // for
-                                                                                                                                     // UnknownOverlayModel,
-                                                                                                                                     // which
-                                                                                                                                     // needs
-                                                                                                                                     // to
-                                                                                                                                     // read
-                                                                                                                                     // its
-                                                                                                                                     // own
-                                                                                                                                     // id
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "overlayModelType", visible = true)
         @JsonTypeIdResolver(OverlayModelResolver.class)
         public Map<String, OverlayModel> overlayModels;
 

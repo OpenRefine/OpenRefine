@@ -69,6 +69,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.Runner;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.JSONUtilities;
 
 public class SeparatorBasedImporter extends LineBasedImporterBase {
@@ -185,9 +186,9 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
 
         final CSVParser parser = getCSVParser(options);
 
-        Iterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW).iterator();
+        CloseableIterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW).iterator();
 
-        TableDataReader dataReader = new TableDataReader() {
+        return new TableDataReader() {
 
             boolean usedColumnNames = false;
 
@@ -205,9 +206,12 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
                     }
                 }
             }
-        };
 
-        return dataReader;
+            @Override
+            public void close() {
+                lines.close();
+            }
+        };
     }
 
     static protected ArrayList<Object> getCells(String line, CSVParser parser, Iterator<IndexedRow> lines)

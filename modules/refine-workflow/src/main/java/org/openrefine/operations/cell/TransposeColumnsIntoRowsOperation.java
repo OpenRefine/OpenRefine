@@ -56,6 +56,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.util.CloseableIterator;
 
 public class TransposeColumnsIntoRowsOperation implements Operation {
 
@@ -272,81 +273,83 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
             }
 
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
-                Row oldRow = indexedRow.getRow();
-                RowBuilder firstNewRow = RowBuilder.create(newColumns.size());
-                int firstNewRowIndex = newRows.size();
+            try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
+                for (IndexedRow indexedRow : iterator) {
+                    Row oldRow = indexedRow.getRow();
+                    RowBuilder firstNewRow = RowBuilder.create(newColumns.size());
+                    int firstNewRowIndex = newRows.size();
 
-                newRows.add(firstNewRow);
+                    newRows.add(firstNewRow);
 
-                int transposedCells = 0;
-                for (int c = 0; c < oldColumns.size(); c++) {
-                    ColumnMetadata column = oldColumns.get(c);
-                    Cell cell = oldRow.getCell(c);
+                    int transposedCells = 0;
+                    for (int c = 0; c < oldColumns.size(); c++) {
+                        ColumnMetadata column = oldColumns.get(c);
+                        Cell cell = oldRow.getCell(c);
 
-                    if (c < startColumnIndex) {
-                        firstNewRow.withCell(c, cell);
-                    } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
-                        if (_combinedColumnName != null) {
-                            Cell newCell;
-                            if (cell == null || cell.value == null) {
-                                if (_prependColumnName && !_ignoreBlankCells) {
-                                    newCell = new Cell(column.getName() + _separator, null);
+                        if (c < startColumnIndex) {
+                            firstNewRow.withCell(c, cell);
+                        } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
+                            if (_combinedColumnName != null) {
+                                Cell newCell;
+                                if (cell == null || cell.value == null) {
+                                    if (_prependColumnName && !_ignoreBlankCells) {
+                                        newCell = new Cell(column.getName() + _separator, null);
+                                    } else {
+                                        continue;
+                                    }
+                                } else if (_prependColumnName) {
+                                    newCell = new Cell(column.getName() + _separator + cell.value, null);
                                 } else {
+                                    newCell = cell;
+                                }
+
+                                RowBuilder rowToModify;
+                                if (transposedCells == 0) {
+                                    rowToModify = firstNewRow;
+                                } else {
+                                    rowToModify = RowBuilder.create(newColumns.size());
+                                    newRows.add(rowToModify);
+                                }
+                                rowToModify.withCell(startColumnIndex, newCell);
+
+                                transposedCells++;
+                            } else {
+                                if (_ignoreBlankCells && (cell == null || cell.value == null)) {
                                     continue;
                                 }
-                            } else if (_prependColumnName) {
-                                newCell = new Cell(column.getName() + _separator + cell.value, null);
-                            } else {
-                                newCell = cell;
+
+                                RowBuilder rowToModify;
+                                if (transposedCells == 0) {
+                                    rowToModify = firstNewRow;
+                                } else {
+                                    rowToModify = RowBuilder.create(newColumns.size());
+                                    newRows.add(rowToModify);
+                                }
+                                rowToModify.withCell(startColumnIndex, new Cell(column.getName(), null));
+                                rowToModify.withCell(startColumnIndex + 1, cell);
+
+                                transposedCells++;
                             }
 
-                            RowBuilder rowToModify;
-                            if (transposedCells == 0) {
-                                rowToModify = firstNewRow;
-                            } else {
-                                rowToModify = RowBuilder.create(newColumns.size());
-                                newRows.add(rowToModify);
-                            }
-                            rowToModify.withCell(startColumnIndex, newCell);
-
-                            transposedCells++;
                         } else {
-                            if (_ignoreBlankCells && (cell == null || cell.value == null)) {
-                                continue;
-                            }
-
-                            RowBuilder rowToModify;
-                            if (transposedCells == 0) {
-                                rowToModify = firstNewRow;
-                            } else {
-                                rowToModify = RowBuilder.create(newColumns.size());
-                                newRows.add(rowToModify);
-                            }
-                            rowToModify.withCell(startColumnIndex, new Cell(column.getName(), null));
-                            rowToModify.withCell(startColumnIndex + 1, cell);
-
-                            transposedCells++;
+                            firstNewRow.withCell(
+                                    c - columnCount + (_combinedColumnName != null ? 1 : 2),
+                                    cell);
                         }
-
-                    } else {
-                        firstNewRow.withCell(
-                                c - columnCount + (_combinedColumnName != null ? 1 : 2),
-                                cell);
                     }
-                }
 
-                if (_fillDown) {
-                    for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
-                        RowBuilder newRow = newRows.get(r2);
-                        for (int c = 0; c < newColumns.size(); c++) {
-                            if (c < startColumnIndex ||
-                                    (_combinedColumnName != null ? c > startColumnIndex : c > startColumnIndex + 1)) {
-                                int cellIndex = c;
+                    if (_fillDown) {
+                        for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
+                            RowBuilder newRow = newRows.get(r2);
+                            for (int c = 0; c < newColumns.size(); c++) {
+                                if (c < startColumnIndex ||
+                                        (_combinedColumnName != null ? c > startColumnIndex : c > startColumnIndex + 1)) {
+                                    int cellIndex = c;
 
-                                Cell cellToCopy = firstNewRow.getCell(cellIndex);
-                                if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
-                                    newRow.withCell(cellIndex, cellToCopy);
+                                    Cell cellToCopy = firstNewRow.getCell(cellIndex);
+                                    if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
+                                        newRow.withCell(cellIndex, cellToCopy);
+                                    }
                                 }
                             }
                         }

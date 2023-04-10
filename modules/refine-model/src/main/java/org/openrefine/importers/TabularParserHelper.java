@@ -57,9 +57,12 @@ import org.openrefine.util.JSONUtilities;
 
 public class TabularParserHelper {
 
-    static public interface TableDataReader {
+    static public interface TableDataReader extends AutoCloseable {
 
         public List<Object> getNextRowOfCells() throws IOException;
+
+        @Override
+        public void close() throws IOException;
     }
 
     public ObjectNode createParserUIInitializationData(ObjectNode options) {

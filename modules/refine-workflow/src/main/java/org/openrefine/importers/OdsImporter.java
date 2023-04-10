@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,6 +177,11 @@ public class OdsImporter extends InputStreamImporter {
                     }
                     // Right truncate null cells
                     return cells.subList(0, maxCol + 1);
+                }
+
+                @Override
+                public void close() throws IOException {
+                    // does nothing
                 }
             };
 

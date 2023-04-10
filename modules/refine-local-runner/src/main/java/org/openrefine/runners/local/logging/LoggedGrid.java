@@ -17,6 +17,7 @@ import org.openrefine.model.changes.*;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * A grid which wraps another one, adding logging to keep track of the timing of each operation.
@@ -97,7 +98,7 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
+    public CloseableIterator<IndexedRow> iterateRows(RowFilter filter) {
         return exec("iterateRows", () -> grid.iterateRows(filter));
     }
 
@@ -142,7 +143,7 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
+    public CloseableIterator<Record> iterateRecords(RecordFilter filter) {
         return exec("iterateRecords", () -> grid.iterateRecords(filter));
     }
 

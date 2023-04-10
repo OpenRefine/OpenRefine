@@ -53,6 +53,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.util.CloseableIterator;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {
 
@@ -119,28 +120,30 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
             int nbNewColumns = newColumns.getColumns().size();
             RowBuilder firstNewRow = null;
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
-                long r = indexedRow.getIndex();
-                int r2 = (int) (r % (long) _rowCount);
+            try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
+                for (IndexedRow indexedRow : iterator) {
+                    long r = indexedRow.getIndex();
+                    int r2 = (int) (r % (long) _rowCount);
 
-                RowBuilder newRow = RowBuilder.create(nbNewColumns);
-                newRows.add(newRow);
-                if (r2 == 0) {
-                    firstNewRow = newRow;
-                }
+                    RowBuilder newRow = RowBuilder.create(nbNewColumns);
+                    newRows.add(newRow);
+                    if (r2 == 0) {
+                        firstNewRow = newRow;
+                    }
 
-                Row oldRow = indexedRow.getRow();
+                    Row oldRow = indexedRow.getRow();
 
-                for (int c = 0; c < oldColumns.size(); c++) {
-                    Cell cell = oldRow.getCell(c);
+                    for (int c = 0; c < oldColumns.size(); c++) {
+                        Cell cell = oldRow.getCell(c);
 
-                    if (cell != null && cell.value != null) {
-                        if (c == columnIndex) {
-                            firstNewRow.withCell(columnIndex + r2, cell);
-                        } else if (c < columnIndex) {
-                            newRow.withCell(c, cell);
-                        } else {
-                            newRow.withCell(c + _rowCount - 1, cell);
+                        if (cell != null && cell.value != null) {
+                            if (c == columnIndex) {
+                                firstNewRow.withCell(columnIndex + r2, cell);
+                            } else if (c < columnIndex) {
+                                newRow.withCell(c, cell);
+                            } else {
+                                newRow.withCell(c + _rowCount - 1, cell);
+                            }
                         }
                     }
                 }

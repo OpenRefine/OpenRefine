@@ -140,6 +140,11 @@ public class DBQueryResultImportReader implements TableDataReader {
 
     }
 
+    @Override
+    public void close() throws IOException {
+        // does nothing
+    }
+
     /**
      * @param startRow
      * @return

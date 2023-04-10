@@ -40,6 +40,7 @@ import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.TestUtils;
 
 /**
@@ -284,12 +285,13 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testIterateRowsFilter() {
-        Iterator<IndexedRow> indexedRows = simpleGrid.iterateRows(myRowFilter).iterator();
-        Assert.assertTrue(indexedRows.hasNext());
-        Assert.assertEquals(indexedRows.next(), new IndexedRow(0L, expectedRows.get(0)));
-        Assert.assertTrue(indexedRows.hasNext());
-        Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, expectedRows.get(2)));
-        Assert.assertTrue(indexedRows.hasNext());
+        try (CloseableIterator<IndexedRow> indexedRows = simpleGrid.iterateRows(myRowFilter)) {
+            Assert.assertTrue(indexedRows.hasNext());
+            Assert.assertEquals(indexedRows.next(), new IndexedRow(0L, expectedRows.get(0)));
+            Assert.assertTrue(indexedRows.hasNext());
+            Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, expectedRows.get(2)));
+            Assert.assertTrue(indexedRows.hasNext());
+        }
     }
 
     @Test
@@ -392,10 +394,11 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testIterateRecordsFilter() {
-        Iterator<Record> records = simpleGrid.iterateRecords(myRecordFilter).iterator();
-        Assert.assertTrue(records.hasNext());
-        Assert.assertEquals(records.next(), expectedRecords.get(1));
-        Assert.assertFalse(records.hasNext());
+        try (CloseableIterator<Record> records = simpleGrid.iterateRecords(myRecordFilter).iterator()) {
+            Assert.assertTrue(records.hasNext());
+            Assert.assertEquals(records.next(), expectedRecords.get(1));
+            Assert.assertFalse(records.hasNext());
+        }
     }
 
     @Test
@@ -770,7 +773,9 @@ public abstract class RunnerTestBase {
 
         Assert.assertEquals(reordered.getRow(0L), expectedRows.get(0).getRow());
         Assert.assertEquals(reordered.collectRows(), expectedRows);
-        Assert.assertEquals(IteratorUtils.toList(reordered.iterateRows(RowFilter.ANY_ROW).iterator()), expectedRows);
+        try (CloseableIterator<IndexedRow> reorderedIterator = reordered.iterateRows(RowFilter.ANY_ROW)) {
+            Assert.assertEquals(IteratorUtils.toList(reorderedIterator), expectedRows);
+        }
 
         Assert.assertEquals(reordered.getRowsAfter(0L, 2), expectedRows.subList(0, 2));
         // this assertion checks that the row id used for filtering is the original one, not the new one
@@ -814,7 +819,9 @@ public abstract class RunnerTestBase {
         Assert.assertEquals(reordered.getRecord(2L), expectedRecords.get(1));
         Assert.assertEquals(reordered.collectRows(), expectedRows);
         Assert.assertEquals(reordered.collectRecords(), expectedRecords);
-        Assert.assertEquals(IteratorUtils.toList(reordered.iterateRecords(RecordFilter.ANY_RECORD).iterator()), expectedRecords);
+        try (CloseableIterator<Record> recordIterator = reordered.iterateRecords(RecordFilter.ANY_RECORD).iterator()) {
+            Assert.assertEquals(IteratorUtils.toList(recordIterator), expectedRecords);
+        }
 
         Assert.assertEquals(reordered.getRecordsAfter(2L, 2), expectedRecords.subList(1, 3));
         Assert.assertEquals(reordered.getRecordsBefore(2L, 2), expectedRecords.subList(0, 1));

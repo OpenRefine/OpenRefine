@@ -59,6 +59,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 
 public class EngineTests {
 
@@ -173,10 +174,11 @@ public class EngineTests {
     @Test
     public void testGetMatchingRows() {
         @SuppressWarnings("unchecked")
-        Iterable<IndexedRow> mockIterable = mock(Iterable.class);
-        when(initialState.iterateRows(Mockito.any())).thenReturn(mockIterable);
+        CloseableIterator<IndexedRow> mockIterator = mock(CloseableIteratorIndexedRows.class);
+        when(initialState.iterateRows(Mockito.any())).thenReturn(mockIterator);
 
-        Assert.assertEquals(engine.getMatchingRows(SortingConfig.NO_SORTING), mockIterable);
+        // cast to Object to force referential equality for testing purposes
+        Assert.assertEquals((Object) engine.getMatchingRows(SortingConfig.NO_SORTING), mockIterator);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -184,4 +186,7 @@ public class EngineTests {
         engine.getMatchingRecords(SortingConfig.NO_SORTING);
     }
 
+    private static interface CloseableIteratorIndexedRows extends CloseableIterator<IndexedRow> {
+
+    }
 }

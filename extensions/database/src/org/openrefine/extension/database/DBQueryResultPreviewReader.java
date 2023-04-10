@@ -124,6 +124,11 @@ public class DBQueryResultPreviewReader implements TableDataReader {
 
     }
 
+    @Override
+    public void close() throws IOException {
+        // does nothing
+    }
+
     /**
      * 
      * @param startRow

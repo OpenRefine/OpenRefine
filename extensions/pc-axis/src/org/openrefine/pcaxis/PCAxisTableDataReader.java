@@ -81,6 +81,11 @@ public class PCAxisTableDataReader implements TableDataReader {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        // does nothing
+    }
+
     private List<Object> parseMetadataPrologueForColumnNames() throws IOException {
         _dimensions = new LinkedList<Dimension>();
 

@@ -220,6 +220,11 @@ public class ExcelImporter extends InputStreamImporter {
                     }
                     return cells;
                 }
+
+                @Override
+                public void close() throws IOException {
+                    // does nothing
+                }
             };
 
             // TODO: Do we need to preserve the original filename? Take first piece before #?

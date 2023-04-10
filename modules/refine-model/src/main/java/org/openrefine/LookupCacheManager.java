@@ -15,6 +15,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.LookupException;
 
 /**
@@ -95,13 +96,15 @@ public class LookupCacheManager {
             }
 
             // We can't use for-each here, because we'll need the row index when creating WrappedRow
-            for (IndexedRow indexedRow : grid.iterateRows(RowFilter.ANY_ROW)) {
-                Row targetRow = indexedRow.getRow();
-                Object value = targetRow.getCellValue(targetColumnIndex);
-                if (ExpressionUtils.isNonBlankData(value)) {
-                    String valueStr = value.toString();
-                    valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
-                    valueToRowIndices.get(valueStr).add(indexedRow.getIndex());
+            try (CloseableIterator<IndexedRow> indexedRows = grid.iterateRows(RowFilter.ANY_ROW)) {
+                for (IndexedRow indexedRow : indexedRows) {
+                    Row targetRow = indexedRow.getRow();
+                    Object value = targetRow.getCellValue(targetColumnIndex);
+                    if (ExpressionUtils.isNonBlankData(value)) {
+                        String valueStr = value.toString();
+                        valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
+                        valueToRowIndices.get(valueStr).add(indexedRow.getIndex());
+                    }
                 }
             }
         }

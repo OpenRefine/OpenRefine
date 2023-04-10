@@ -240,20 +240,11 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
-        return new Iterable<IndexedRow>() {
-
-            @Override
-            public Iterator<IndexedRow> iterator() {
-                PLL<IndexedRow> filteredRows = grid
-                        .filter(tuple -> filter.filterRow(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()))
-                        .values();
-                return filteredRows
-                        .iterator()
-                        .iterator();
-            }
-
-        };
+    public CloseableIterator<IndexedRow> iterateRows(RowFilter filter) {
+        return grid
+                .filter(tuple -> filter.filterRow(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()))
+                .values()
+                .iterator();
     }
 
     @Override
@@ -335,19 +326,11 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
-        return new Iterable<Record>() {
-
-            @Override
-            public Iterator<Record> iterator() {
-                PLL<Record> records = records().values();
-                return records
-                        .filter(tuple -> filter.filterRecord(tuple))
-                        .iterator()
-                        .iterator();
-            }
-
-        };
+    public CloseableIterator<Record> iterateRecords(RecordFilter filter) {
+        PLL<Record> records = records().values();
+        return records
+                .filter(tuple -> filter.filterRecord(tuple))
+                .iterator();
     }
 
     @Override
