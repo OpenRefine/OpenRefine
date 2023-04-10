@@ -1,13 +1,12 @@
 
 package org.openrefine.runners.local.pll.util;
 
-import com.google.common.collect.Streams;
 import org.openrefine.process.ProgressReporter;
+import org.openrefine.util.CloseableIterator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Utility class for a future and the underlying thread to communicate about pause and resume actions from the user, as
@@ -118,8 +117,8 @@ public class TaskSignalling {
      *            the offset at which to start in the above batch
      * @return
      */
-    public <T> Stream<T> wrapStream(Stream<T> stream, int reportBatchSize, int reportOffset) {
-        Iterator<T> iterator = new Iterator<T>() {
+    public <T> CloseableIterator<T> wrapStream(CloseableIterator<T> stream, int reportBatchSize, int reportOffset) {
+        CloseableIterator<T> iterator = new CloseableIterator<T>() {
 
             Iterator<T> parent = stream.iterator();
             int seen = 0;
@@ -151,8 +150,12 @@ public class TaskSignalling {
                 return element;
             }
 
+            @Override
+            public void close() {
+                stream.close();
+            }
         };
-        return Streams.stream(iterator).onClose(() -> stream.close());
+        return iterator;
     }
 
 }

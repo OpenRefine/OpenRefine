@@ -3,9 +3,9 @@ package org.openrefine.runners.local;
 
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.runners.local.pll.Tuple2;
+import org.openrefine.util.CloseableIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.openrefine.runners.local.LocalGrid.applyRowChangeDataMapperWithIncompleteData;
 
@@ -36,7 +35,7 @@ public class LocalGridTests {
                 Tuple2.of(3L, "foo"),
                 Tuple2.of(4L, null));
 
-        Stream<Tuple2<Long, String>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch);
+        CloseableIterator<Tuple2<Long, String>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch);
 
         List<Tuple2<Long, String>> collected = result.collect(Collectors.toList());
         Assert.assertEquals(collected, expected);

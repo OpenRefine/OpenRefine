@@ -19,6 +19,7 @@ import org.openrefine.model.Row;
 
 import com.google.common.collect.Iterators;
 
+import org.openrefine.util.CloseableIterator;
 import scala.Function2;
 import scala.Option;
 import scala.Tuple2;
@@ -137,7 +138,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
                 JavaConverters.asJavaIterator(parentIter),
                 Tuple2::_2);
         java.util.Iterator<Record> records = Record.groupIntoRecords(
-                indexedRows,
+                CloseableIterator.wrapping(indexedRows),
                 keyCellIndex,
                 recordPartition.index() != 0,
                 recordPartition.additionalRows);

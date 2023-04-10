@@ -17,6 +17,7 @@ import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 
@@ -65,7 +66,9 @@ public class TestingGrid implements Grid {
     }
 
     public static List<Record> groupRowsIntoRecords(List<IndexedRow> rows, int keyCellIndex) {
-        return IteratorUtils.toList(Record.groupIntoRecords(rows.iterator(), keyCellIndex, false, Collections.emptyList()));
+        return Record.groupIntoRecords(
+                CloseableIterator.wrapping(rows.iterator()), keyCellIndex, false, Collections.emptyList())
+                .toJavaList();
     }
 
     @Override
