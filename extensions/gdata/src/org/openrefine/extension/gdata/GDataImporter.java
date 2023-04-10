@@ -193,6 +193,11 @@ public class GDataImporter {
             }
         }
 
+        @Override
+        public void close() throws IOException {
+            // does nothing
+        }
+
         List<List<Object>> getRowsOfCells(
                 Sheets service,
                 String spreadsheetId,

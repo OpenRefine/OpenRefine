@@ -60,6 +60,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Faceted browsing engine. Given a {@link Grid} and facet configurations, it can be used to compute facet statistics
@@ -172,7 +173,7 @@ public class Engine {
      *            in which order to iterate over rows
      */
     @JsonIgnore
-    public Iterable<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
+    public CloseableIterator<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
         Grid sorted = _state;
         if (!sortingConfig.getCriteria().isEmpty()) {
             // TODO refactor this so that we are not re-sorting the grid at every request, but cache it instead?
@@ -185,33 +186,8 @@ public class Engine {
         if (Mode.RowBased.equals(getMode())) {
             return sorted.iterateRows(combinedRowFilters());
         } else {
-            Iterable<Record> records = sorted.iterateRecords(combinedRecordFilters());
-            return new Iterable<IndexedRow>() {
-
-                @Override
-                public Iterator<IndexedRow> iterator() {
-                    Iterator<Record> recordIterator = records.iterator();
-                    return new Iterator<IndexedRow>() {
-
-                        private Iterator<IndexedRow> currentRecord = null;
-
-                        @Override
-                        public boolean hasNext() {
-                            return (currentRecord != null && currentRecord.hasNext()) || recordIterator.hasNext();
-                        }
-
-                        @Override
-                        public IndexedRow next() {
-                            if (currentRecord == null || !currentRecord.hasNext()) {
-                                currentRecord = recordIterator.next().getIndexedRows().iterator();
-                            }
-                            return currentRecord.next();
-                        }
-
-                    };
-                }
-
-            };
+            CloseableIterator<Record> recordsIterator = sorted.iterateRecords(combinedRecordFilters());
+            return recordsIterator.flatMapCloseable(r -> CloseableIterator.wrapping(r.getIndexedRows().iterator()));
         }
     }
 
@@ -223,7 +199,7 @@ public class Engine {
      *            in which order to iterate over records
      */
     @JsonIgnore
-    public Iterable<Record> getMatchingRecords(SortingConfig sortingConfig) {
+    public CloseableIterator<Record> getMatchingRecords(SortingConfig sortingConfig) {
         if (Mode.RowBased.equals(getMode())) {
             throw new IllegalStateException("Cannot iterate over records in rows mode");
         }

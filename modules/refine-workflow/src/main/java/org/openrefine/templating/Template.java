@@ -46,6 +46,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.CloseableIterator;
 
 public class Template {
 
@@ -71,45 +72,51 @@ public class Template {
         _separator = separator;
     }
 
-    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+    public void writeRows(CloseableIterator<IndexedRow> rows, Writer writer, ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels,
             int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
         }
         long total = 0;
-        for (IndexedRow indexedRow : rows) {
-            if (limit > 0 && total >= limit) {
-                break;
-            }
+        try (rows) {
+            for (IndexedRow indexedRow : rows) {
+                if (limit > 0 && total >= limit) {
+                    break;
+                }
 
-            internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, null);
-            total++;
+                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, null);
+                total++;
+            }
         }
         if (_suffix != null) {
             writer.write(_suffix);
         }
     }
 
-    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+    public void writeRecords(CloseableIterator<Record> records, Writer writer, ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels,
             int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
         }
         long total = 0;
-        for (Record record : records) {
-            if (limit > 0 && total >= limit) {
-                break;
-            }
-            bindings.put("recordIndex", record.getStartRowId());
-            for (IndexedRow indexedRow : record.getIndexedRows()) {
+        try (records) {
+            for (Record record : records) {
                 if (limit > 0 && total >= limit) {
                     break;
                 }
-                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, record);
-                bindings.remove("recordIndex");
-                total++;
+                bindings.put("recordIndex", record.getStartRowId());
+                for (IndexedRow indexedRow : record.getIndexedRows()) {
+                    if (limit > 0 && total >= limit) {
+                        break;
+                    }
+                    internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, record);
+                    bindings.remove("recordIndex");
+                    total++;
+                }
             }
         }
         if (_suffix != null) {

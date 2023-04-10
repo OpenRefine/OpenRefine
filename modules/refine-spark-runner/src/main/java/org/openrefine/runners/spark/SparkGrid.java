@@ -44,6 +44,7 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.runners.spark.util.RDDUtils;
 
@@ -302,19 +303,12 @@ public class SparkGrid implements Grid {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
+    public CloseableIterator<IndexedRow> iterateRows(RowFilter filter) {
         JavaRDD<IndexedRow> filtered = grid
                 .filter(wrapRowFilter(filter))
                 .values();
 
-        return new Iterable<IndexedRow>() {
-
-            @Override
-            public Iterator<IndexedRow> iterator() {
-                return filtered.toLocalIterator();
-            }
-
-        };
+        return CloseableIterator.wrapping(filtered.toLocalIterator());
     }
 
     @Override
@@ -447,19 +441,13 @@ public class SparkGrid implements Grid {
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
+    public CloseableIterator<Record> iterateRecords(RecordFilter filter) {
         JavaRDD<Record> filtered = getRecords()
                 .filter(wrapRecordFilter(filter))
                 .values();
-        return new Iterable<Record>() {
 
-            @Override
-            public Iterator<Record> iterator() {
-                return filtered
-                        .toLocalIterator();
-            }
-
-        };
+        return CloseableIterator.wrapping(filtered
+                .toLocalIterator());
     }
 
     @Override

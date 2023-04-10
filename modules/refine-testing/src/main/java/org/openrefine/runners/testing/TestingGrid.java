@@ -3,7 +3,6 @@ package org.openrefine.runners.testing;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Iterators;
-import org.apache.commons.collections.IteratorUtils;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Record;
@@ -410,33 +409,19 @@ public class TestingGrid implements Grid {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
-        return new Iterable<IndexedRow>() {
-
-            @Override
-            public Iterator<IndexedRow> iterator() {
-                return indexedRows
-                        .stream()
-                        .filter(ir -> filter.filterRow(ir.getLogicalIndex(), ir.getRow()))
-                        .iterator();
-            }
-
-        };
+    public CloseableIterator<IndexedRow> iterateRows(RowFilter filter) {
+        return CloseableIterator.wrapping(indexedRows
+                .stream()
+                .filter(ir -> filter.filterRow(ir.getLogicalIndex(), ir.getRow()))
+                .iterator());
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
-        return new Iterable<Record>() {
-
-            @Override
-            public Iterator<Record> iterator() {
-                return records
-                        .stream()
-                        .filter(r -> filter.filterRecord(r))
-                        .iterator();
-            }
-
-        };
+    public CloseableIterator<Record> iterateRecords(RecordFilter filter) {
+        return CloseableIterator.wrapping(records
+                .stream()
+                .filter(filter::filterRecord)
+                .iterator());
     }
 
     @Override
