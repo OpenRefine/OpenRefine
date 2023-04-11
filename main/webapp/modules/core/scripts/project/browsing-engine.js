@@ -198,6 +198,9 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
          if (facet.facet.checkInitialHeight) {
            facet.facet.checkInitialHeight();
          }
+         if (facet.facet instanceof RangeFacet) {
+           facet.facet.render();
+         }
        }
      }
   });
