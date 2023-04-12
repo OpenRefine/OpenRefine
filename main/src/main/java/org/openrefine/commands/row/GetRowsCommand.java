@@ -54,7 +54,6 @@ import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.Grid;
-import org.openrefine.model.Grid.ApproxCount;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -64,11 +63,13 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
- * Retrieves rows from a project (or importing job).
- *
- * Those rows can be requested as either: - the batch of rows starting at a given index (included), up to a certain size
- * - the batch of rows ending at a given index (excluded), again up to a given size. Filters (defined by facets) and the
- * row/record mode toggle can also be provided.
+ * Retrieves rows from a project (or importing job). <br/>
+ * Those rows can be requested as either:
+ * <ul>
+ * <li>the batch of rows starting at a given index (included), up to a certain size</li>
+ * <li>the batch of rows ending at a given index (excluded), again up to a given size.</li>
+ * </ul>
+ * Filters (defined by facets), sorting options and the row/record mode toggle can also be provided.
  */
 public class GetRowsCommand extends Command {
 
@@ -93,8 +94,6 @@ public class GetRowsCommand extends Command {
         @JsonProperty("k")
         protected final long paginationIndex;
 
-        // TODO add indices for pagination purposes
-
         protected WrappedRow(Row rowOrRecord, long rowIndex, Long recordIndex, long paginationIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
@@ -115,27 +114,6 @@ public class GetRowsCommand extends Command {
          */
         @JsonProperty("rows")
         protected final List<WrappedRow> rows;
-        /**
-         * Number of rows selected by the current filter, possibly capped by the engine configuration.
-         */
-        @JsonProperty("filtered")
-        protected final long filtered;
-        /**
-         * Number of rows on which the facets were actually checked. Can be less than "total" if the engine
-         * configuration capped the number of rows to process.
-         */
-        @JsonProperty("processed")
-        protected final long processed;
-        /**
-         * Total number of rows/records in the unfiltered grid
-         */
-        @JsonProperty("total")
-        protected final long totalCount;
-        /**
-         * Total number of rows in the unfiltered grid (needed to provide a link to the last page)
-         */
-        @JsonProperty("totalRows")
-        protected final long totalRows;
 
         @JsonProperty("start")
         @JsonInclude(Include.NON_NULL)
@@ -159,14 +137,9 @@ public class GetRowsCommand extends Command {
         @JsonInclude(Include.NON_NULL)
         protected final Long nextPageId;
 
-        protected JsonResult(Mode mode, List<WrappedRow> rows, long filtered,
-                long processed, long totalCount, long totalRows, long start, long end, int limit, Long previousPageId, Long nextPageId) {
+        protected JsonResult(Mode mode, List<WrappedRow> rows, long start, long end, int limit, Long previousPageId, Long nextPageId) {
             this.mode = mode;
             this.rows = rows;
-            this.filtered = filtered;
-            this.processed = processed;
-            this.totalCount = totalCount;
-            this.totalRows = totalRows;
             this.start = start == -1 ? null : start;
             this.end = end == -1 ? null : end;
             this.limit = Math.min(rows.size(), limit);
@@ -247,14 +220,10 @@ public class GetRowsCommand extends Command {
                 return;
             }
 
-            long filtered;
-            long processed;
-            long totalCount;
             List<WrappedRow> wrappedRows;
 
             EngineConfig engineConfig = engine.getConfig();
             if (engine.getMode() == Mode.RowBased) {
-                totalCount = entireGrid.rowCount();
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
                 Grid sortedGrid = entireGrid;
                 if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
@@ -272,23 +241,7 @@ public class GetRowsCommand extends Command {
                 wrappedRows = rows.stream()
                         .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getLogicalIndex(), null, tuple.getIndex()))
                         .collect(Collectors.toList());
-                if (engineConfig.isNeutral()) {
-                    filtered = totalCount;
-                    processed = totalCount;
-                } else {
-                    // still using the unsorted grid for performance considerations
-                    if (engineConfig.getAggregationLimit() == null) {
-                        filtered = entireGrid.countMatchingRows(combinedRowFilters);
-                        processed = totalCount;
-                    } else {
-                        ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters,
-                                engineConfig.getAggregationLimit());
-                        filtered = approxCount.getMatched();
-                        processed = approxCount.getProcessed();
-                    }
-                }
             } else {
-                totalCount = entireGrid.recordCount();
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
                 Grid sortedGrid = entireGrid;
                 if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
@@ -305,22 +258,6 @@ public class GetRowsCommand extends Command {
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())
                         .collect(Collectors.toList());
-
-                if (engineConfig.isNeutral()) {
-                    filtered = totalCount;
-                    processed = totalCount;
-                } else {
-                    // still using the unsorted grid for performance considerations
-                    if (engineConfig.getAggregationLimit() == null) {
-                        filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
-                        processed = totalCount;
-                    } else {
-                        ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters,
-                                engineConfig.getAggregationLimit());
-                        filtered = approxCount.getMatched();
-                        processed = approxCount.getProcessed();
-                    }
-                }
             }
 
             // Compute the indices of the previous and next pages
@@ -340,14 +277,9 @@ public class GetRowsCommand extends Command {
                 nextPageId = end;
             }
 
-            // metadata refresh for row mode and record mode
-            if (project.getMetadata() != null) {
-                project.getMetadata().setRowCount(totalCount);
-            }
-
             JsonResult result = new JsonResult(engine.getMode(),
-                    wrappedRows, filtered, processed,
-                    totalCount, entireGrid.rowCount(), start, end, limit, previousPageId, nextPageId);
+                    wrappedRows, start, end,
+                    limit, previousPageId, nextPageId);
 
             respondJSON(response, result);
         } catch (Exception e) {

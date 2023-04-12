@@ -286,6 +286,7 @@ BrowsingEngine.prototype.update = function(onDone) {
         }
         return;
       }
+      theProject.engineStats = data;
       var facetData = data.facets;
 
       for (var i = 0; i < facetData.length; i++) {

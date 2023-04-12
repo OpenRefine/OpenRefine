@@ -42,18 +42,21 @@ SummaryBar.prototype._initializeUI = function() {
 
 SummaryBar.prototype.updateResultCount = function() {
   var summaryText;
-  var units = theProject.rowModel.mode == "row-based" ? $.i18n('core-views/rows') : $.i18n('core-views/records');
-  var rowModel = theProject.rowModel;
-  if (rowModel.filtered == rowModel.total) {
-    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-rows' : 'core-views/total-records', rowModel.total.toLocaleString('en-US'));
-  } else if (rowModel.processed == rowModel.total) {
-    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-matching-rows' : 'core-views/total-matching-records', rowModel.filtered.toLocaleString('en-US'), rowModel.total.toLocaleString('en-US'));
+  var engineStats = theProject.engineStats || {};
+  var mode = engineStats['engine-mode'];
+  var locale = $.i18n().locale;
+  if (mode === undefined) {
+    summaryText = ''; // TODO we could have a loading indicator?
+  } else if (engineStats.filteredCount == engineStats.totalCount || engineStats.facets.length === 0) {
+    summaryText = $.i18n(mode == "row-based" ? 'core-views/total-rows' : 'core-views/total-records', engineStats.totalCount.toLocaleString(locale));
+  } else if (engineStats.aggregatedCount == engineStats.totalRows) {
+    summaryText = $.i18n(mode == "row-based" ? 'core-views/total-matching-rows' : 'core-views/total-matching-records', engineStats.filteredCount.toLocaleString(locale), engineStats.totalCount.toLocaleString(locale));
   } else {
     var percentage = 100;
-    if (rowModel.processed > 0) {
-        percentage = Math.round(1000 * rowModel.filtered / rowModel.processed) / 10;
+    if (engineStats.aggregatedCount > 0) {
+        percentage = Math.round(1000 * engineStats.filteredCount / engineStats.aggregatedCount) / 10;
     }
-    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/approx-matching-rows' : 'core-views/approx-matching-records', percentage.toLocaleString('en-US'), rowModel.total);
+    summaryText = $.i18n(mode == "row-based" ? 'core-views/approx-matching-rows' : 'core-views/approx-matching-records', percentage.toLocaleString(locale), engineStats.totalCount.toLocaleString(locale));
   }
 
   $('<span>').html(summaryText).appendTo(this._div.empty());

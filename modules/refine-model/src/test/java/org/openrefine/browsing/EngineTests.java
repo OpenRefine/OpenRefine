@@ -112,6 +112,8 @@ public class EngineTests {
         when((FacetAggregator<FacetStateStub>) facetAll.getAggregator()).thenReturn(new FacetAggregatorStub(noFilter));
         when(initialState.aggregateRows(Mockito.any(), Mockito.any())).thenReturn(allRowsState);
         when(initialState.aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(partialStateWrapped);
+        when(initialState.rowCount()).thenReturn(123L);
+        when(initialState.recordCount()).thenReturn(100L);
 
         List<FacetConfig> facetConfigs = Arrays.asList(
                 facetConfigA, facetConfigAll);
@@ -169,6 +171,14 @@ public class EngineTests {
     public void testLimitReached() {
         Assert.assertFalse(engine.limitReached());
         Assert.assertTrue(enginePartial.limitReached());
+    }
+
+    @Test
+    public void testGetTotals() {
+        Assert.assertEquals(engine.getTotalRows(), 123L);
+        Assert.assertEquals(enginePartial.getTotalRows(), 123L);
+        Assert.assertEquals(engine.getTotalCount(), 123L);
+        Assert.assertEquals(enginePartial.getTotalCount(), 123L);
     }
 
     @Test

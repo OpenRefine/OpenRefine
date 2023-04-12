@@ -197,11 +197,19 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  var minRowInputSize = 20 + (8* theProject.rowModel.total.toString().length);
+  // the engineStats might not be available yet at this point,
+  // but we only need it for the total number of rows, to size the
+  // input field appropriately, so the exact value is not critical
+  var totalRows = 1000;
+  if (theProject.engineStats) {
+    totalRows = theProject.engineStats.totalRows;
+  }
+
+  var minRowInputSize = 20 + (8* totalRows.toString().length);
   var minRowInput = $('<input type="number">')
     .attr("id", "viewpanel-paging-current-min-row")
     .attr("min", 1)
-    .attr("max", theProject.rowModel.total)
+    .attr("max", totalRows)
     .css("width", minRowInputSize)
     .val(minRowId + 1)
     .on('change', function(evt) { self._onChangeMinRow(this, evt); })
@@ -464,18 +472,22 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows({end: theProject.rowModel.totalRows});
+  this._showRows({end: theProject.engineStats.totalRows});
 };
 
 DataTableView.prototype._onChangeMinRow = function(elmt, evt) {
   var input = $('#viewpanel-paging-current-min-row');
   var newMinRow = input.val();
+  var totalRows = undefined;
+  if (theProject.engineStats) {
+    totalRows = theProject.engineStats.totalRows;
+  }
   if (newMinRow <= 0) {
     newMinRow = 1;
     input.val(newMinRow);
-  } else if (newMinRow > theProject.rowModel.total) {
-    newMinRow = theProject.rowModel.total;
-    input.val(theProject.rowModel.total);
+  } else if (totalRows !== undefined && newMinRow > totalRows) {
+    newMinRow = totalRows;
+    input.val(totalRows);
   }
   this._showRows({start: newMinRow - 1});
 };
