@@ -69,7 +69,7 @@ public class HistoryEntryManager {
     public void save(History history, File dir) throws IOException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
-        // Save the initial grid if does not exist yet (it is immutable)
+        // Save the initial grid if it does not exist yet (it is immutable)
         if (!gridFile.exists()) {
             history.getInitialGrid().saveToFile(gridFile);
         }

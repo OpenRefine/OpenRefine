@@ -388,7 +388,7 @@ public class LocalGrid implements Grid {
         return ProgressingFutures.transform(grid
                 .values()
                 .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
-                .saveAsTextFileAsync(gridFile.getAbsolutePath(), 0),
+                .saveAsTextFileAsync(gridFile.getAbsolutePath(), runner.defaultParallelism),
                 v -> {
                     try {
                         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
@@ -401,9 +401,11 @@ public class LocalGrid implements Grid {
 
     @Override
     public void saveToFile(File file) throws IOException {
+        ProgressingFuture<Void> future = saveToFileAsync(file);
         try {
-            saveToFileAsync(file).get();
+            future.get();
         } catch (InterruptedException e) {
+            future.cancel(true);
             Thread.currentThread().interrupt();
             throw new IOException("The operation was interrupted", e);
         } catch (ExecutionException e) {
