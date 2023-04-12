@@ -71,7 +71,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testJsonOutputRowsStart() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -94,10 +93,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 5\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -110,7 +106,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testJsonOutputRowsStartWithNoNextPage() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -133,10 +128,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 5\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -149,7 +141,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testJsonOutputRowsEnd() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -163,10 +154,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
                 "       \"previousPageId\": 1,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 5\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -179,7 +167,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testJsonOutputRowsEndWithNoPreviousPage() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {" +
@@ -202,10 +189,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 5\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -218,7 +202,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testAggregationLimitRowsNoFacet() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -233,10 +216,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 5\n" +
+                "       \"nextPageId\": 1\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
@@ -256,7 +236,6 @@ public class GetRowsCommandTest extends CommandTestBase {
                 + "\"aggregationLimit\":2}";
 
         String rowJson = "{\n" +
-                "       \"filtered\" : 1,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -271,10 +250,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1,\n" +
-                "       \"total\" : 5,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 2\n" +
+                "       \"nextPageId\": 1\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);
@@ -288,7 +264,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testJsonOutputRecords() throws ServletException, IOException {
         String recordJson = "{\n" +
-                "       \"filtered\" : 3,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -312,10 +287,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 3,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 3\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -328,7 +300,6 @@ public class GetRowsCommandTest extends CommandTestBase {
     @Test
     public void testAggregationLimitRecordsNoFacet() throws ServletException, IOException {
         String recordJson = "{\n" +
-                "       \"filtered\" : 3,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -352,10 +323,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 3,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 3\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
@@ -375,7 +343,6 @@ public class GetRowsCommandTest extends CommandTestBase {
                 + "\"aggregationLimit\":2}";
 
         String recordJson = "{\n" +
-                "       \"filtered\" : 2,\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"rows\" : [ {\n" +
@@ -399,10 +366,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
-                "       \"total\" : 3,\n" +
-                "       \"totalRows\" : 5,\n" +
-                "       \"processed\": 2\n" +
+                "       \"nextPageId\": 2\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);

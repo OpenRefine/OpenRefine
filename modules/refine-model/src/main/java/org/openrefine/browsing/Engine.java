@@ -62,6 +62,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import org.openrefine.util.CloseableIterator;
 
+import static org.openrefine.browsing.Engine.Mode.RowBased;
+
 /**
  * Faceted browsing engine. Given a {@link Grid} and facet configurations, it can be used to compute facet statistics
  * and obtain a filtered view of the grid according to the facets. <br>
@@ -86,11 +88,11 @@ public class Engine {
     protected PartialAggregation<AllFacetsState> _facetsState;
 
     static public String modeToString(Mode mode) {
-        return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
+        return mode == RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
     }
 
     static public Mode stringToMode(String s) {
-        return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
+        return MODE_ROW_BASED.equals(s) ? RowBased : Mode.RecordBased;
     }
 
     public Engine(Grid state, EngineConfig config) {
@@ -150,6 +152,30 @@ public class Engine {
         return getFacetsState().getState().getColumnStats();
     }
 
+    /**
+     * Total number of rows/records in the unfiltered grid
+     */
+    @JsonProperty("totalCount")
+    public long getTotalCount() {
+        if (RowBased.equals(_config.getMode())) {
+            return _state.rowCount();
+        } else {
+            return _state.recordCount();
+        }
+    }
+
+    /**
+     * Total number of rows in the unfiltered grid (needed to provide a link to the last page)
+     */
+    @JsonProperty("totalRows")
+    public long getTotalRows() {
+        return _state.rowCount();
+    }
+
+    /**
+     * Number of rows on which the facets were actually checked. Can be less than {@link #getTotalCount()} if the engine
+     * configuration capped the number of rows to process.
+     */
     @JsonProperty("aggregatedCount")
     public long getAggregatedCount() {
         return getFacetsState().getProcessed();
@@ -177,13 +203,13 @@ public class Engine {
         Grid sorted = _state;
         if (!sortingConfig.getCriteria().isEmpty()) {
             // TODO refactor this so that we are not re-sorting the grid at every request, but cache it instead?
-            if (Mode.RowBased.equals(getMode())) {
+            if (RowBased.equals(getMode())) {
                 sorted = _state.reorderRows(sortingConfig, false);
             } else {
                 sorted = _state.reorderRecords(sortingConfig, false);
             }
         }
-        if (Mode.RowBased.equals(getMode())) {
+        if (RowBased.equals(getMode())) {
             return sorted.iterateRows(combinedRowFilters());
         } else {
             CloseableIterator<Record> recordsIterator = sorted.iterateRecords(combinedRecordFilters());
@@ -200,7 +226,7 @@ public class Engine {
      */
     @JsonIgnore
     public CloseableIterator<Record> getMatchingRecords(SortingConfig sortingConfig) {
-        if (Mode.RowBased.equals(getMode())) {
+        if (RowBased.equals(getMode())) {
             throw new IllegalStateException("Cannot iterate over records in rows mode");
         }
         // TODO refactor this so that we are not resorting the grid at each request, but cache it instead?
