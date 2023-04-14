@@ -10,9 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -22,7 +20,6 @@ import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
-import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +157,7 @@ public class FileChangeDataStore implements ChangeDataStore {
                     incompleteDir));
             _toRefresh.add(changeDataId);
         }
-        return returnedChangeData.orElse(_runner.create(Collections.emptyList()));
+        return returnedChangeData.orElse(_runner.changeDataFromList(Collections.emptyList()));
     }
 
     @Override

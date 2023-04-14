@@ -573,30 +573,101 @@ public abstract class PLL<T> {
     /**
      * Write the PLL to a directory, containing one file for each partition.
      */
-    public void saveAsTextFile(String path, int maxConcurrency)
+    public void saveAsTextFile(String path, int maxConcurrency, boolean repartition)
             throws IOException, InterruptedException {
-        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency);
+        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency, repartition);
         try {
             future.get();
         } catch (ExecutionException e) {
             throw new IOException(e.getCause());
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            throw e;
         }
     }
 
-    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency) {
+    /**
+     * The plan of a new partition, with the boundaries defined by start and end.
+     */
+    private static class PlannedPartition {
+
+        public long start;
+        public long end;
+        public int index;
+
+        PlannedPartition(long start, long end, int index) {
+            this.start = start;
+            this.end = end;
+            this.index = index;
+        }
+    }
+
+    /**
+     * Write the PLL to a directory, writing one file per partition, in an asynchronous way.
+     * 
+     * @param path
+     *            the directory to which to write the PLL
+     * @param maxConcurrency
+     *            the maximum number of partitions to write concurrently
+     * @param repartition
+     *            whether to re-arrange partitions to make them more balanced (merging small partitions together,
+     *            splitting large partitions into smaller ones).
+     * @return a future for the saving process, which supports progress reporting and pausing.
+     */
+    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition) {
 
         File gridPath = new File(path);
         gridPath.mkdirs();
 
-        ProgressingFuture<Void> future = ProgressingFutures.transform(
-                runOnPartitionsAsync((p, taskSignalling) -> {
+        ProgressingFuture<Array<Void>> partitionWritingFuture;
+        if (repartition) {
+            // Plan how to repartition the PLL
+            long totalCount = count();
+            List<PlannedPartition> partitions = new ArrayList<>();
+            if (totalCount < context.getMinSplitRowCount() * context.getDefaultParallelism()) {
+                // a single split
+                partitions.add(new PlannedPartition(0L, totalCount, 0));
+            } else {
+                // defaultParallelism many splits, unless that makes splits too big
+                long splitSize = Math.min((totalCount / context.getDefaultParallelism()) + 1, context.getMaxSplitRowCount());
+                int numSplits = (int) (totalCount / splitSize);
+                if (numSplits * splitSize < totalCount) {
+                    numSplits++;
+                }
+                for (int i = 0; i != numSplits; i++) {
+                    partitions.add(new PlannedPartition(splitSize * i, Math.min(splitSize * (i + 1), totalCount), i));
+                }
+            }
+
+            // Iterate sequentially over the whole PLL.
+            TaskSignalling taskSignalling = new TaskSignalling(count());
+            partitionWritingFuture = new ProgressingFutureWrapper<>(context.getExecutorService().submit(() -> {
+                try (CloseableIterator<T> fullIterator = iterator()) {
                     try {
-                        writePartition(p, gridPath, Optional.of(taskSignalling));
+                        for (PlannedPartition plannedPartition : partitions) {
+                            writePlannedPartition(plannedPartition, gridPath, fullIterator, Optional.of(taskSignalling));
+                        }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
-                    return null;
-                }, maxConcurrency),
+                    Void result = null;
+                    return Array.of(result);
+                }
+            }), taskSignalling, true);
+        } else {
+            partitionWritingFuture = runOnPartitionsAsync((p, taskSignalling) -> {
+                try {
+                    writeOriginalPartition(p, gridPath, Optional.of(taskSignalling));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return null;
+            }, maxConcurrency);
+        }
+
+        // after writing the partitions, add the completion marker
+        ProgressingFuture<Void> future = ProgressingFutures.transform(
+                partitionWritingFuture,
                 v -> {
                     try {
                         // Write an empty file as success marker
@@ -613,19 +684,34 @@ public abstract class PLL<T> {
         return future;
     }
 
-    protected void writePartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling)
+    protected void writeOriginalPartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling)
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.getIndex());
         File partFile = new File(directory, filename);
+        writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling);
+    }
+
+    protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> fullIterator,
+            Optional<TaskSignalling> taskSignalling)
+            throws IOException {
+        String filename = String.format("part-%05d.gz", partition.index);
+        File partFile = new File(directory, filename);
+        // we should not close the parent (full) iterator once we are done because we might need it for other partitions
+        CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(fullIterator.take((int) (partition.end - partition.start)));
+        writePartition(partition.index, limitedIterator, partFile, taskSignalling);
+    }
+
+    protected void writePartition(int partitionIndex, CloseableIterator<T> iterator, File partFile, Optional<TaskSignalling> taskSignalling)
+            throws IOException {
         try (FileOutputStream fos = new FileOutputStream(partFile);
                 GZIPOutputStream gos = new GZIPOutputStream(fos, 512, true);
                 Writer writer = new OutputStreamWriter(gos);
-                CloseableIterator<T> iterator = iterate(partition)) {
+                iterator) {
 
             // no need to close finalIterator because it just delegates its closing to iterator
             CloseableIterator<T> finalIterator = iterator;
             if (taskSignalling.isPresent()) {
-                finalIterator = taskSignalling.get().wrapStream(iterator, 10, partition.getIndex());
+                finalIterator = taskSignalling.get().wrapStream(iterator, 10, partitionIndex);
             }
             finalIterator.forEach(row -> {
                 try {

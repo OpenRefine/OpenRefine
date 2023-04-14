@@ -7,6 +7,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.CloseableIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,8 +111,14 @@ public class LoggedRunner implements Runner {
     }
 
     @Override
-    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
-        return wrap(exec("create", () -> runner.create(columnModel, rows, overlayModels)));
+    public Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+        return wrap(exec("gridFromList", () -> runner.gridFromList(columnModel, rows, overlayModels)));
+    }
+
+    @Override
+    public Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
+            long rowCount) {
+        return wrap(exec("gridFromIterable", () -> runner.gridFromIterable(columnModel, rows, overlayModels, rowCount)));
     }
 
     @Override
@@ -145,8 +152,13 @@ public class LoggedRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
-        return wrap(exec("create", () -> runner.create(changeData)));
+    public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
+        return wrap(exec("changeDataFromList", () -> runner.changeDataFromList(changeData)));
+    }
+
+    @Override
+    public <T> ChangeData<T> changeDataFromIterable(CloseableIterable<IndexedData<T>> iterable, long itemCount) {
+        return wrap(exec("changeDataFromIterable", () -> runner.changeDataFromIterable(iterable, itemCount)));
     }
 
     @Override
