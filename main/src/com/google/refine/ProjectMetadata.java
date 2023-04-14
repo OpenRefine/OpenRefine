@@ -382,6 +382,7 @@ public class ProjectMetadata {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
+            throw new RuntimeException(e);
         }
     }
 }
