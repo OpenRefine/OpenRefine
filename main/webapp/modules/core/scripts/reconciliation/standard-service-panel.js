@@ -89,6 +89,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts = DOM.bind(this._panel);
   
   this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
+  this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
   this._elmts.or_proc_againstType.html($.i18n('core-recon/against-type'));
@@ -98,7 +99,10 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
-
+  fetch(this._service.url)
+  .then(response => response.json())
+  .then(apiData => this._elmts.documentationLink.attr("href",apiData.documentation));
+  //this._elmts.documentationLink.attr("href",this._service.url);
   this._elmts.againstType.on('change', function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
