@@ -193,7 +193,7 @@ public class RefineTest {
             }
         }
 
-        return runner().create(model, toRows(cells), Collections.emptyMap());
+        return runner().gridFromList(model, toRows(cells), Collections.emptyMap());
     }
 
     protected Grid createGridWithRecords(String[] columns, Serializable[][] rows) {

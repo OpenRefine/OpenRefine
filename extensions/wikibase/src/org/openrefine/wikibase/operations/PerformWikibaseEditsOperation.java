@@ -182,7 +182,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     String mediaWikiApiEndpoint = schema.getMediaWikiApiEndpoint();
                     if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
                         // TODO find a way to signal to the user that they should re-login
-                        return existingChangeData.orElse(projectState.getRunner().create(Collections.emptyList()));
+                        return existingChangeData.orElse(projectState.getRunner().changeDataFromList(Collections.emptyList()));
                     }
                     ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 

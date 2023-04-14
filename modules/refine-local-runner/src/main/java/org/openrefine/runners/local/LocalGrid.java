@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -388,7 +387,7 @@ public class LocalGrid implements Grid {
         return ProgressingFutures.transform(grid
                 .values()
                 .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
-                .saveAsTextFileAsync(gridFile.getAbsolutePath(), runner.defaultParallelism),
+                .saveAsTextFileAsync(gridFile.getAbsolutePath(), runner.defaultParallelism, true),
                 v -> {
                     try {
                         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());

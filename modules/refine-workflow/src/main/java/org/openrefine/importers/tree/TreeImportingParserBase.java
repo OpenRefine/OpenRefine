@@ -111,7 +111,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             List<Cell> cells = columnIndexTranslation.stream().map(idx -> row.getCell(idx)).collect(Collectors.toList());
             reordered.add(new Row(cells));
         }
-        return runner.create(columnModel, reordered, Collections.emptyMap());
+        return runner.gridFromList(columnModel, reordered, Collections.emptyMap());
     }
 
     public void parseOneFile(

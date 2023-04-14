@@ -40,6 +40,7 @@ import org.openrefine.process.ProgressingFuture;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
+import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.TestUtils;
 
@@ -92,7 +93,7 @@ public abstract class RunnerTestBase {
         for (int i = 0; i != cells.length; i++) {
             rows.add(new Row(Arrays.asList(cells[i])));
         }
-        return SUT.create(cm, rows, Collections.emptyMap());
+        return SUT.gridFromList(cm, rows, Collections.emptyMap());
     }
 
     protected Grid createGrid(String[] columnNames, Serializable[][] cellValues) {
@@ -111,7 +112,7 @@ public abstract class RunnerTestBase {
     }
 
     protected <T extends Serializable> ChangeData<T> createChangeData(@SuppressWarnings("unchecked") IndexedData<T>... data) {
-        return SUT.create(Arrays.asList(data));
+        return SUT.changeDataFromList(Arrays.asList(data));
     }
 
     @SuppressWarnings("unchecked")
@@ -479,7 +480,7 @@ public abstract class RunnerTestBase {
                 "http://my.service/space", "http://my.service/schema", "batch", 0);
         Cell cell = new Cell("value", recon);
         List<Row> rows = Arrays.asList(new Row(Arrays.asList(cell)));
-        Grid grid = SUT.create(columnModel, rows, Collections.emptyMap());
+        Grid grid = SUT.gridFromList(columnModel, rows, Collections.emptyMap());
 
         File tempFile = new File(tempDir, "testgrid_recon");
         grid.saveToFile(tempFile);
@@ -1425,6 +1426,33 @@ public abstract class RunnerTestBase {
         future.get();
         Assert.assertTrue(simpleGrid.isCached());
         Assert.assertEquals(reporter.getPercentage(), 100);
+    }
+
+    @Test
+    public void testLoadGridFromIterable() throws IOException {
+        CloseableIterable<Row> iterable = CloseableIterable.of(simpleGrid
+                .collectRows()
+                .stream()
+                .map(IndexedRow::getRow)
+                .collect(Collectors.toList()));
+
+        Grid grid = getDatamodelRunner()
+                .gridFromIterable(simpleGrid.getColumnModel(), iterable, Collections.emptyMap(), -1L);
+
+        assertGridEquals(grid, simpleGrid);
+    }
+
+    @Test
+    public void testLoadChangeDataFromIterable() throws IOException {
+        List<IndexedData<String>> indexedData = Arrays.asList(new IndexedData<String>(0L, "first"),
+                new IndexedData<String>(2L, "third"),
+                new IndexedData<String>(3L, null));
+        CloseableIterable<IndexedData<String>> iterable = CloseableIterable.of(indexedData);
+
+        ChangeData<String> changeData = getDatamodelRunner()
+                .changeDataFromIterable(iterable, -1L);
+
+        Assert.assertEquals(changeData.get(0L), "first");
     }
 
     /**

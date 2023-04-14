@@ -158,7 +158,7 @@ public class FileChangeDataStore implements ChangeDataStore {
                     incompleteDir));
             _toRefresh.add(changeDataId);
         }
-        return returnedChangeData.orElse(_runner.create(Collections.emptyList()));
+        return returnedChangeData.orElse(_runner.changeDataFromList(Collections.emptyList()));
     }
 
     @Override

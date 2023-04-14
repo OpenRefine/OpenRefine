@@ -109,7 +109,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         ChangeContext context = mock(ChangeContext.class);
         PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
                 Collections.singletonMap(1234L, "Q789"), Collections.emptyList());
-        ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().create(
+        ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().changeDataFromList(
                 Collections.singletonList(new IndexedData<PerformWikibaseEditsOperation.RowEditingResults>(0L, rowNewReconUpdate)));
 
         when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),

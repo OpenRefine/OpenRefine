@@ -25,7 +25,7 @@ public class PLLTestsBase {
             context = new PLLContext(
                     MoreExecutors.listeningDecorator(
                             Executors.newCachedThreadPool()),
-                    4, 128L, 1024L);
+                    4, 128L, 1024L, 4L, 10L);
         }
     }
 

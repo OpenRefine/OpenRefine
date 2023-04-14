@@ -12,6 +12,8 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.CloseableIterable;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Encapsulates the context required to implement, read and execute operations on {@link Grid} objects.
@@ -35,7 +37,7 @@ public interface Runner {
      * @throws IOException
      *             when loading the grid failed
      */
-    public Grid loadGrid(File path) throws IOException;
+    Grid loadGrid(File path) throws IOException;
 
     /**
      * Loads a {@link ChangeData} serialized at a given location.
@@ -45,12 +47,28 @@ public interface Runner {
      * @throws IOException
      *             when loading the grid failed
      */
-    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
+    <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
 
     /**
      * Creates a {@link Grid} from an in-memory list of rows, which will be numbered from 0 to length-1.
      */
-    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels);
+    Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels);
+
+    /**
+     * Creates a {@link Grid} from an iterable collection of rows. By default, this just gathers the iterable in a list
+     * and delegates to {@link #gridFromList(ColumnModel, List, Map)}, but implementations may implement a different
+     * approach which delays the loading of the collection in memory.
+     * 
+     * @param rowCount
+     *            if the number of rows is known, supply it in this parameter as it might improve efficiency. Otherwise,
+     *            set to -1.
+     */
+    default Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
+            long rowCount) {
+        try (CloseableIterator<Row> iterator = rows.iterator()) {
+            return gridFromList(columnModel, iterator.toJavaList(), overlayModels);
+        }
+    }
 
     /**
      * Loads a text file as a {@link Grid} with a single column named "Column" and whose contents are the lines in the
@@ -59,7 +77,7 @@ public interface Runner {
      * @param encoding
      *            TODO
      */
-    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException;
+    Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException;
 
     /**
      * Loads a text file as a {@link Grid} with a single column named "Column" and whose contents are the lines in the
@@ -72,16 +90,30 @@ public interface Runner {
      * @param limit
      *            the maximum number of lines to read
      */
-    public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException;
+    Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException;
 
     /**
      * Creates a {@link ChangeData} from an in-memory list of indexed data. The list is required to be sorted.
      */
-    public <T> ChangeData<T> create(List<IndexedData<T>> changeData);
+    <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData);
+
+    /**
+     * Creates a {@link ChangeData} from an iterable. By default, this just gathers the iterable in a list and delegates
+     * to {@link #changeDataFromList(List)}, but implementations may implement a different approach which delays the
+     * loading of the collection in memory.
+     * 
+     * @param itemCount
+     *            if the number of items is known, supply it here, otherwise set this parameter to -1.
+     */
+    default <T> ChangeData<T> changeDataFromIterable(CloseableIterable<IndexedData<T>> iterable, long itemCount) {
+        try (CloseableIterator<IndexedData<T>> iterator = iterable.iterator()) {
+            return changeDataFromList(iterator.toJavaList());
+        }
+    }
 
     /**
      * Indicates whether this implementation supports progress reporting. If not, progress objects will be left
      * untouched when passed to methods in this interface.
      */
-    public boolean supportsProgressReporting();
+    boolean supportsProgressReporting();
 }

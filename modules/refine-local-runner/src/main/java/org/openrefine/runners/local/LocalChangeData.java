@@ -120,8 +120,10 @@ public class LocalChangeData<T> implements ChangeData<T> {
             }
         }, "serialize");
 
+        // we do not want to repartition while saving because the partitions should ideally correspond exactly
+        // to those of the parent grid, for efficient joining.
         ProgressingFuture<Void> future = serialized
-                .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency);
+                .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency, false);
         if (useNativeProgressReporting) {
             return future;
         } else {

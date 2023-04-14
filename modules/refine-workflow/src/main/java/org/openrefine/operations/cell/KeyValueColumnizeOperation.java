@@ -289,7 +289,7 @@ public class KeyValueColumnizeOperation implements Operation {
             }
 
             return new ChangeResult(
-                    projectState.getRunner().create(finalColumnModel, finalRows, projectState.getOverlayModels()),
+                    projectState.getRunner().gridFromList(finalColumnModel, finalRows, projectState.getOverlayModels()),
                     GridPreservation.NO_ROW_PRESERVATION);
         }
 

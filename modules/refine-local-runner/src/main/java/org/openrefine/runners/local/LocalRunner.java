@@ -30,8 +30,14 @@ import org.openrefine.runners.local.pll.PLLContext;
 import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.TextFilePLL;
 import org.openrefine.runners.local.pll.Tuple2;
+import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.ParsingUtilities;
 
+/**
+ * The default implementation of the {@link Runner} interface. It is optimized for local (single machine) use, with
+ * Grids and ChangeData being read off disk lazily. Those objects can be partitioned, allowing for concurrent processing
+ * via threads.
+ */
 @JsonIgnoreType
 public class LocalRunner implements Runner {
 
@@ -46,6 +52,8 @@ public class LocalRunner implements Runner {
     protected int defaultParallelism;
     protected long minSplitSize;
     protected long maxSplitSize;
+    protected long minSplitRowCount;
+    protected long maxSplitRowCount;
 
     // Caching cost estimation parameters
 
@@ -58,12 +66,14 @@ public class LocalRunner implements Runner {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
+        minSplitRowCount = configuration.getLongParameter("minSplitRowCount", 32L);
+        maxSplitRowCount = configuration.getLongParameter("maxSplitRowCount", 15384L);
         reconciledCellCost = configuration.getIntParameter("reconciledCellCost", 146);
         unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", 78);
 
         pllContext = new PLLContext(MoreExecutors.listeningDecorator(
                 Executors.newCachedThreadPool()),
-                defaultParallelism, minSplitSize, maxSplitSize);
+                defaultParallelism, minSplitSize, maxSplitSize, minSplitRowCount, maxSplitRowCount);
     }
 
     public LocalRunner() {
@@ -98,9 +108,18 @@ public class LocalRunner implements Runner {
     }
 
     @Override
-    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         // the call to zipWithIndex is efficient as the first PLL is in memory already
         PairPLL<Long, Row> pll = pllContext.parallelize(defaultParallelism, rows)
+                .zipWithIndex();
+        return new LocalGrid(this, pll, columnModel, overlayModels, -1);
+    }
+
+    @Override
+    public Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
+            long rowCount) {
+        // the call to zipWithIndex is free because the PLL has a single partition
+        PairPLL<Long, Row> pll = pllContext.singlePartitionPLL(rows, rowCount)
                 .zipWithIndex();
         return new LocalGrid(this, pll, columnModel, overlayModels, -1);
     }
@@ -164,7 +183,7 @@ public class LocalRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
         // We do this filtering on the list itself rather than on the PLL
         // so that the PLL has known partition sizes
         List<IndexedData<T>> withoutNulls = changeData
@@ -178,6 +197,14 @@ public class LocalRunner implements Runner {
         pll = PairPLL.assumeSorted(pll);
         // no need for parent partition sizes, since pll has cached ones
         return new LocalChangeData<T>(this, pll, null, () -> true, 0);
+    }
+
+    @Override
+    public <T> ChangeData<T> changeDataFromIterable(CloseableIterable<IndexedData<T>> iterable, long itemCount) {
+        // the call to zipWithIndex is free because the PLL has a single partition
+        PairPLL<Long, T> pll = pllContext.singlePartitionPLL(iterable, itemCount)
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
+        return new LocalChangeData<>(this, pll, null, () -> true, 0);
     }
 
     @Override

@@ -103,7 +103,7 @@ public class SparkRunner implements Runner {
     }
 
     @Override
-    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         List<Tuple2<Long, Row>> tuples = IntStream.range(0, rows.size())
                 .mapToObj(i -> new Tuple2<Long, Row>((long) i, rows.get(i)))
                 .collect(Collectors.toList());
@@ -172,7 +172,7 @@ public class SparkRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
         List<Tuple2<Long, T>> tuples = changeData.stream()
                 .filter(id -> id.getData() != null)
                 .map(i -> new Tuple2<Long, T>(i.getId(), i.getData()))

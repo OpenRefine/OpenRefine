@@ -134,7 +134,7 @@ public class RdfTripleImporter extends ReaderImporter {
                 .flatMap(entry -> entry.getValue().toRows(columns).stream())
                 .collect(Collectors.toList());
 
-        return runner.create(columnModel, rows, Collections.emptyMap());
+        return runner.gridFromList(columnModel, rows, Collections.emptyMap());
     }
 
     private class EntityRecord {

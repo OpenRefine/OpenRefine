@@ -131,7 +131,7 @@ public class LegacyProjectImporter extends InputStreamImporter {
         List<Row> rows = grid.stream().map(r -> r.toRow(pool)).collect(Collectors.toList());
 
         // form the final grid
-        return runner.create(columnModel, rows, overlayModels);
+        return runner.gridFromList(columnModel, rows, overlayModels);
     }
 
     protected ColumnModel loadColumnModel(LineNumberReader reader) throws IOException {

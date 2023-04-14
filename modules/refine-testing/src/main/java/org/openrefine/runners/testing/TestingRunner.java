@@ -180,12 +180,12 @@ public class TestingRunner implements Runner {
     }
 
     @Override
-    public Grid create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+    public Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         return new TestingGrid(columnModel, rows, overlayModels);
     }
 
     @Override
-    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
         return new TestingChangeData<T>(changeData.stream()
                 .filter(id -> id.getData() != null)
                 .collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));

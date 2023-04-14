@@ -362,7 +362,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
                     .collect(Collectors.toList());
             ColumnModel newColumnModel = new ColumnModel(newColumns);
             return new ChangeResult(
-                    projectState.getRunner().create(newColumnModel, rows, projectState.getOverlayModels()),
+                    projectState.getRunner().gridFromList(newColumnModel, rows, projectState.getOverlayModels()),
                     GridPreservation.NO_ROW_PRESERVATION);
         }
 

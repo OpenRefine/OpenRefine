@@ -57,7 +57,7 @@ public class FileChangeDataStoreTests {
         emptyChangeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
 
-        when(runner.<String> create(Collections.emptyList())).thenReturn(emptyChangeData);
+        when(runner.<String> changeDataFromList(Collections.emptyList())).thenReturn(emptyChangeData);
         future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, changeDir, incompleteDir);
