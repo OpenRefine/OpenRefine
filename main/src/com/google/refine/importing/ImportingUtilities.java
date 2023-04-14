@@ -472,6 +472,7 @@ public class ImportingUtilities {
         String pathWithWSeparator = FilenameUtils.separatorsToWindows(path);
         String separator = String.format("\\%c",File.separatorChar);
         String[] paths = pathWithWSeparator.split(separator);
+        // TESTING COMMIT
         for(String p : paths){
             if (p.equals("")){
                 continue;
