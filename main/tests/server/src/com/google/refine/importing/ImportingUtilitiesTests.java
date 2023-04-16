@@ -123,6 +123,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String urlPath = "/a/b:c/dummy:test";
         String urlPathFixed = "\\a\\b-c\\dummy-test";
         String result = ImportingUtilities.normalizePath(urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
             Assert.assertEquals(urlPathFixed, result);
         } else {
@@ -137,6 +138,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String urlPath = "\\a\\b:c\\dummy:test";
         String urlPathFixed = "\\a\\b-c\\dummy-test";
         String result = ImportingUtilities.normalizePath(urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
             Assert.assertEquals(urlPathFixed, result);
         } else {
