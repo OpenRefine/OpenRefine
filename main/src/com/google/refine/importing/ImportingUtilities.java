@@ -459,10 +459,12 @@ public class ImportingUtilities {
 
     /**
      * Replace the illegal character with '-' in the path in Windows
-     * @param path: file path
+     * 
+     * @param path:
+     *            file path
      * @return the replaced path or original path if the OS is not Windows
      */
-    public static String normalizePath(String path){
+    public static String normalizePath(String path) {
         FileSystem currentFileSystem = FileSystem.getCurrent();
         if (currentFileSystem != FileSystem.WINDOWS) {
             return path;
@@ -470,15 +472,14 @@ public class ImportingUtilities {
         // normalize the file name if the current system is windows
         String normalizedLocalName = "";
         String pathWithWSeparator = FilenameUtils.separatorsToWindows(path);
-        String separator = String.format("\\%c",File.separatorChar);
+        String separator = String.format("\\%c", File.separatorChar);
         String[] paths = pathWithWSeparator.split(separator);
-        // TESTING COMMIT
-        for(String p : paths){
-            if (p.equals("")){
+        for (String p : paths) {
+            if (p.equals("")) {
                 continue;
             }
-            p = currentFileSystem.toLegalFileName(p,'-');
-            normalizedLocalName += String.format("%c%s",File.separatorChar, p);
+            p = currentFileSystem.toLegalFileName(p, '-');
+            normalizedLocalName += String.format("%c%s", File.separatorChar, p);
         }
         return normalizedLocalName;
     }
