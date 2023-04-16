@@ -80,6 +80,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.model.changes.LazyGridCache;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.util.HttpClient;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -881,8 +882,9 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
 
                 ProjectManager.singleton.registerProject(newProject, pm);
+                ProgressReporter progressReporter = ImporterUtilities.createProgressReporterForProjectSave(job);
                 try {
-                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId);
+                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId, progressReporter);
                     job.setProjectID(newProject.getId());
                     job.setState("created-project");
                 } catch (IOException e) {

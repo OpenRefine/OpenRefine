@@ -2,6 +2,7 @@
 package org.openrefine.importers;
 
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -43,6 +44,6 @@ public abstract class InputStreamImporter extends ImportingParserBase {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            InputStream inputStream, long limit, ObjectNode options) throws Exception;
+            Supplier<InputStream> inputStream, long limit, ObjectNode options) throws Exception;
 
 }

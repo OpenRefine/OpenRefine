@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -47,7 +48,8 @@ public class LegacyProjectImporter extends InputStreamImporter {
 
     @Override
     public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+            String archiveFileName, Supplier<InputStream> inputStreamSupplier, long limit, ObjectNode options) throws Exception {
+        InputStream inputStream = inputStreamSupplier.get();
         // open the project archive
         if (!fileSource.endsWith(".tar")) {
             inputStream = new GZIPInputStream(inputStream);

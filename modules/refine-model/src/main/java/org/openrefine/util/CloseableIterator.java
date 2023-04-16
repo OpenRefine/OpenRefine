@@ -166,6 +166,18 @@ public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
         };
     }
 
+    /**
+     * Consumes the iterator by splitting it into chunks of the desired length. The returned iterators are not closeable
+     * so the parent iterator should be closed directly. Also, the iterators returned should be consumed in the order
+     * they are returned if the chunks are intended to be contiguous.
+     *
+     * @param lengths
+     *            the lengths of the desired chunks
+     */
+    default Iterator<Iterator<T>> chop(Iterator<Integer> lengths) {
+        return lengths.map(Iterator.super::take);
+    }
+
     @Override
     default CloseableIterator<T> intersperse(T element) {
         return new Wrapper<T>(Iterator.super.intersperse(element), this);

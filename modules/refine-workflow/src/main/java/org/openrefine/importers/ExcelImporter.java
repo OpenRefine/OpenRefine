@@ -41,6 +41,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -139,15 +140,20 @@ public class ExcelImporter extends InputStreamImporter {
 
     @Override
     public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job,
-            String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+            String fileSource, String archiveFileName, Supplier<InputStream> inputStreamSupplier, long limit, ObjectNode options)
+            throws Exception {
+        InputStream inputStream = inputStreamSupplier.get();
         Workbook wb;
+        InputStream bufferedInputStream;
         if (!inputStream.markSupported()) {
-            inputStream = new BufferedInputStream(inputStream);
+            bufferedInputStream = new BufferedInputStream(inputStream);
+        } else {
+            bufferedInputStream = inputStream;
         }
 
-        try {
-            wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ? new XSSFWorkbook(inputStream)
-                    : new HSSFWorkbook(new POIFSFileSystem(inputStream));
+        try (bufferedInputStream) {
+            wb = FileMagic.valueOf(bufferedInputStream) == FileMagic.OOXML ? new XSSFWorkbook(bufferedInputStream)
+                    : new HSSFWorkbook(new POIFSFileSystem(bufferedInputStream));
         } catch (IOException e) {
             throw new ImportException(
                     "Attempted to parse as an Excel file but failed. " +

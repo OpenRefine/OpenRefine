@@ -6,6 +6,7 @@ import static org.testng.Assert.*;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -46,7 +47,7 @@ public class OdsImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.ods");
+        Supplier<InputStream> stream = () -> this.getClass().getClassLoader().getResourceAsStream("importers/sample.ods");
 
         Grid grid = parseOneFile(SUT, stream);
 
@@ -71,7 +72,7 @@ public class OdsImporterTests extends ImporterTest {
         options.put("limit", 5);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/films.ods");
+        Supplier<InputStream> stream = () -> this.getClass().getClassLoader().getResourceAsStream("importers/films.ods");
         Grid grid = parseOneFile(SUT, stream);
 
         List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
@@ -102,7 +103,7 @@ public class OdsImporterTests extends ImporterTest {
         options.put("limit", 5);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = ClassLoader.getSystemResourceAsStream("importers/NoData_NoSpreadsheet.ods");
+        Supplier<InputStream> stream = () -> ClassLoader.getSystemResourceAsStream("importers/NoData_NoSpreadsheet.ods");
 
         try {
             parseOneFile(SUT, stream);

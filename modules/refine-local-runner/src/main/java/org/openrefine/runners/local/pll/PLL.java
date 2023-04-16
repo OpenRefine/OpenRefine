@@ -644,8 +644,12 @@ public abstract class PLL<T> {
             partitionWritingFuture = new ProgressingFutureWrapper<>(context.getExecutorService().submit(() -> {
                 try (CloseableIterator<T> fullIterator = iterator()) {
                     try {
+                        Iterator<Integer> partitionSizes = Array.ofAll(partitions)
+                                .iterator()
+                                .map(partition -> (int) (partition.end - partition.start));
+                        Iterator<Iterator<T>> partitionChunks = fullIterator.chop(partitionSizes);
                         for (PlannedPartition plannedPartition : partitions) {
-                            writePlannedPartition(plannedPartition, gridPath, fullIterator, Optional.of(taskSignalling));
+                            writePlannedPartition(plannedPartition, gridPath, partitionChunks.next(), Optional.of(taskSignalling));
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -691,13 +695,12 @@ public abstract class PLL<T> {
         writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling);
     }
 
-    protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> fullIterator,
+    protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> choppedIterator,
             Optional<TaskSignalling> taskSignalling)
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.index);
         File partFile = new File(directory, filename);
-        // we should not close the parent (full) iterator once we are done because we might need it for other partitions
-        CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(fullIterator.take((int) (partition.end - partition.start)));
+        CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(choppedIterator);
         writePartition(partition.index, limitedIterator, partFile, taskSignalling);
     }
 

@@ -33,15 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,29 +42,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Grid;
-import org.openrefine.model.IndexedRow;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowMapper;
-import org.openrefine.model.Runner;
+import org.openrefine.model.*;
+import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.JSONUtilities;
 
-public class SeparatorBasedImporter extends LineBasedImporterBase {
+public class SeparatorBasedImporter extends ReaderImporter {
 
     private final TabularParserHelper tabularParserHelper;
 
@@ -99,74 +85,27 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
-            throws Exception {
-        boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
-
-        // the default 'multiLine' setting is set to true for backwards-compatibility
-        // although the UI now proposes 'false' by default for performance reasons (similarly to Spark)
-        boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
-
-        // If we use quotes, then a line of the original file does not necessarily correspond
-        // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
-        // We resort to loading the whole file in memory.
-        if (processQuotes && multiLine) {
-            Charset charset = Charset.defaultCharset();
-            String encoding = JSONUtilities.getString(options, "encoding", null);
-            if (encoding != null) {
-                charset = Charset.forName(encoding);
-            }
-            Grid lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, charset, limit)
-                    : runner.loadTextFile(sparkURI, progress, charset);
-            TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
-            return tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
-        } else {
-            // otherwise, go for the efficient route, using line-based parsing
-            return super.parseOneFile(runner, metadata, job, fileSource, archiveFileName, sparkURI, limit, options, progress);
-        }
-    }
-
-    // Only used when no escape character is set
-    @Override
-    protected RowMapper getRowMapper(ObjectNode options) {
-        return new RowParser(options);
-    }
-
-    protected static CSVParser getCSVParser(ObjectNode options) {
-        return (new RowParser(options)).getCSVParser();
-    }
-
-    protected static CSVParser getCSVParser(String sep, boolean processQuotes, boolean strictQuotes, String quoteCharacter) {
+    public Grid parseOneFile(
+            Runner runner,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            String archiveFileName,
+            Supplier<Reader> reader, long limit, ObjectNode options) throws Exception {
+        String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
             sep = "\\t";
         }
         sep = StringEscapeUtils.unescapeJava(sep);
+        boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
+        boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
+        boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
 
-        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
-        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
-            quote = quoteCharacter.trim().charAt(0);
-        }
-
-        return new CSVParser(
-                sep,
-                quote,
-                (char) 0, // we don't want escape processing
-                strictQuotes,
-                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                !processQuotes);
-    }
-
-    public TableDataReader createTableDataReader(
-            ProjectMetadata metadata,
-            ImportingJob job,
-            Grid grid,
-            ObjectNode options) {
-        List<Object> retrievedColumnNames = null;
+        List<String> retrievedColumnNames = null;
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
             if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<Object>();
+                retrievedColumnNames = new ArrayList<>();
                 for (String s : strings) {
                     s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
@@ -174,44 +113,103 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
                     }
                 }
 
-                if (!retrievedColumnNames.isEmpty()) {
-                    JSONUtilities.safePut(options, "headerLines", 1);
-                } else {
+                if (retrievedColumnNames.isEmpty()) {
                     retrievedColumnNames = null;
                 }
             }
         }
 
-        final List<Object> columnNames = retrievedColumnNames;
+        final List<String> columnNames = retrievedColumnNames;
 
-        final CSVParser parser = getCSVParser(options);
+        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
+        if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
+            quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
+        }
 
-        CloseableIterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW).iterator();
+        final CSVParser parser = new CSVParser(
+                sep,
+                quote,
+                (char) 0, // we don't want escape processing
+                strictQuotes,
+                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                !processQuotes);
 
-        return new TableDataReader() {
+        CloseableIterable<Row> rowIterable = () -> {
+            Reader freshReader = reader.get();
+            final LineNumberReader lnReader = new LineNumberReader(freshReader);
+            return new CloseableIterator<Row>() {
 
-            boolean usedColumnNames = false;
+                Row nextRow = null;
 
-            @Override
-            public List<Object> getNextRowOfCells() throws IOException {
-                if (columnNames != null && !usedColumnNames) {
-                    usedColumnNames = true;
-                    return columnNames;
-                } else {
-                    if (!lines.hasNext()) {
-                        return null;
-                    } else {
-                        String line = (String) lines.next().getRow().getCellValue(0);
-                        return getCells(line, parser, lines);
+                @Override
+                public boolean hasNext() {
+                    prepareNextRow();
+                    return nextRow != null;
+                }
+
+                @Override
+                public Row next() {
+                    prepareNextRow();
+                    Row row = nextRow;
+                    nextRow = null;
+                    return row;
+                }
+
+                public void prepareNextRow() {
+                    if (nextRow != null) {
+                        return;
+                    }
+                    nextRow = null;
+                    try {
+                        List<String> cells = new ArrayList<>();
+                        String line;
+                        while ((line = lnReader.readLine()) != null) {
+                            cells.addAll(Arrays.asList(parser.parseLineMulti(line)));
+                            if (parser.isPending() && !multiLine) {
+                                // if each line of the file should correspond to a row, but the parsing of this
+                                // row is not finished because of an earlier quote character, we artificially
+                                // complete the row by feeding the CSV parser the required escape character
+                                cells.addAll(Arrays.asList(parser.parseLineMulti(quoteCharacter)));
+                            }
+                            if (!parser.isPending()) {
+                                break;
+                            }
+                        }
+                        if (line != null || !cells.isEmpty()) {
+                            nextRow = new Row(cells.stream().map(str -> new Cell(str, null)).collect(Collectors.toList()));
+                        }
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
                     }
                 }
-            }
 
-            @Override
-            public void close() {
-                lines.close();
-            }
+                @Override
+                public void close() {
+                    try {
+                        freshReader.close();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }
+            };
         };
+
+        Grid grid = tabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
+        if (retrievedColumnNames != null) {
+            ColumnModel columnModel = grid.getColumnModel();
+            List<ColumnMetadata> columns = new ArrayList<>(columnModel.getColumns().size());
+            for (String columnName : retrievedColumnNames) {
+                if (columns.size() < columnModel.getColumns().size()) {
+                    columns.add(new ColumnMetadata(columnName));
+                }
+            }
+            while (columns.size() < columnModel.getColumns().size()) {
+                columns.add(columnModel.getColumnByIndex(columns.size()));
+            }
+            grid = grid.withColumnModel(new ColumnModel(columns));
+        }
+        return grid;
     }
 
     static protected ArrayList<Object> getCells(String line, CSVParser parser, Iterator<IndexedRow> lines)
@@ -258,62 +256,6 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
 
     static public Separator guessSeparator(File file, String encoding) {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
-    }
-
-    /**
-     * Row mapper used to split lines when parsing without quote handling or without multi-line support
-     */
-    static protected class RowParser implements RowMapper {
-
-        private static final long serialVersionUID = -3376815677470571001L;
-
-        private final String _sep;
-        private final boolean _processQuotes;
-        private final boolean _strictQuotes;
-        private final String _quoteCharacter;
-
-        protected RowParser(ObjectNode options) {
-            _sep = JSONUtilities.getString(options, "separator", "\\t");
-            _processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
-            _strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
-            _quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
-        }
-
-        // transient cache to ensure serializability
-        private transient CSVParser _csvParser = null;
-
-        protected CSVParser getCSVParser() {
-            if (_csvParser != null) {
-                return _csvParser;
-            }
-            _csvParser = SeparatorBasedImporter.getCSVParser(_sep, _processQuotes, _strictQuotes, _quoteCharacter);
-            return _csvParser;
-        }
-
-        @Override
-        public Row call(long rowId, Row row) {
-            CSVParser parser = getCSVParser();
-            String[] cellStrings;
-            try {
-                if (_processQuotes) {
-                    cellStrings = parser.parseLineMulti((String) row.getCellValue(0));
-                    if (parser.isPending()) {
-                        // the last cell value was unterminated
-                        // we retrieve the cell content by artificially parsing a line containing an escape character
-                        // only
-                        String[] remainingCell = parser.parseLineMulti(_quoteCharacter);
-                        cellStrings = ArrayUtils.addAll(cellStrings, remainingCell);
-                    }
-                } else {
-                    cellStrings = parser.parseLine((String) row.getCellValue(0));
-                }
-            } catch (IOException e) {
-                // this can only happen when a quoted cell is unterminated:
-                // we have reached the end of the line without a terminating quote character
-                throw new IllegalStateException(e);
-            }
-            return new Row(Arrays.asList(cellStrings).stream().map(s -> new Cell(s, null)).collect(Collectors.toList()));
-        }
     }
 
     // TODO: Move this to the CSV project?

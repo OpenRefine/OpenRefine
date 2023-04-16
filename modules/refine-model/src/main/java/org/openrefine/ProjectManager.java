@@ -58,6 +58,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.ParsingUtilities;
 
@@ -182,7 +183,7 @@ public abstract class ProjectManager {
     /**
      * Saves a project and its metadata to the data store
      */
-    public void ensureProjectSaved(long id) {
+    public void ensureProjectSaved(long id, ProgressReporter progressReporter) {
         synchronized (this) {
             ProjectMetadata metadata = this.getProjectMetadata(id);
             if (metadata != null) {
@@ -196,7 +197,7 @@ public abstract class ProjectManager {
             Project project = _projects.get(id);
             if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
                 try {
-                    saveProject(project);
+                    saveProject(project, progressReporter);
                 } catch (Exception e) {
                     logger.error("Error saving project ", e);
                 }
@@ -211,8 +212,9 @@ public abstract class ProjectManager {
      *
      * @param id
      *            the project id to load
+     * @param progressReporter
      */
-    public abstract void reloadProjectFromWorkspace(long id) throws IOException;
+    public abstract void reloadProjectFromWorkspace(long id, ProgressReporter progressReporter) throws IOException;
 
     /**
      * Save project metadata to the data store
@@ -222,7 +224,7 @@ public abstract class ProjectManager {
     /**
      * Save project to the data store
      */
-    protected abstract void saveProject(Project project) throws IOException;
+    protected abstract void saveProject(Project project, ProgressReporter progressReporter) throws IOException;
 
     /**
      * Save workspace and all projects to data store
@@ -303,7 +305,7 @@ public abstract class ProjectManager {
                     break;
                 }
                 try {
-                    saveProject(record.project);
+                    saveProject(record.project, null);
                 } catch (Exception e) {
                     logger.error("Error when saving projects. Attempting to free memory", e);
                     // In case we're running low on memory, free as much as we can

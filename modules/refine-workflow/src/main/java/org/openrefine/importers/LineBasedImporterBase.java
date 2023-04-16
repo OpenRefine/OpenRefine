@@ -300,6 +300,7 @@ public abstract class LineBasedImporterBase extends URIImporter {
 
         private MultiFileReadingProgress parent;
         private int factor;
+        private boolean ended;
 
         protected ScaledProgress(MultiFileReadingProgress parent, int factor) {
             this.parent = parent;
@@ -313,12 +314,14 @@ public abstract class LineBasedImporterBase extends URIImporter {
 
         @Override
         public void readingFile(String fileSource, long bytesRead) {
-            parent.readingFile(fileSource, bytesRead / factor);
+            if (!ended) {
+                parent.readingFile(fileSource, bytesRead / factor);
+            }
         }
 
         @Override
-        public void endFile(String fileSource, long bytesRead) {
-            parent.endFile(fileSource, bytesRead / factor);
+        public void endFiles() {
+            ended = true;
         }
     }
 

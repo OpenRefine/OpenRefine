@@ -558,7 +558,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         // create input
         String input = "data1" + sep + "data2" + sep + "data3\n";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]", multiLine);
+        prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]", multiLine);
         Grid state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);

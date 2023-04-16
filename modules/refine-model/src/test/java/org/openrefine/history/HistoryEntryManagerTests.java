@@ -26,6 +26,8 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.operations.UnknownOperation;
+import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.TestUtils;
 
 public class HistoryEntryManagerTests {
@@ -34,6 +36,7 @@ public class HistoryEntryManagerTests {
     History history;
     Runner runner;
     GridCache gridStore;
+    ProgressingFuture<Void> saveFuture;
 
     static RowMapper mapper = mock(RowMapper.class);
 
@@ -59,6 +62,7 @@ public class HistoryEntryManagerTests {
     @BeforeMethod
     public void setUp() throws IOException, DoesNotApplyException {
         runner = mock(Runner.class);
+        saveFuture = mock(VoidFuture.class);
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("a"),
                 new ColumnMetadata("b"),
@@ -69,6 +73,7 @@ public class HistoryEntryManagerTests {
         Grid secondState = mock(Grid.class);
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
         when(grid.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
+        when(grid.saveToFileAsync(Mockito.any())).thenReturn(saveFuture);
         Change change = new MyChange();
         gridStore = mock(GridCache.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
@@ -80,7 +85,7 @@ public class HistoryEntryManagerTests {
     @Test
     public void testSaveAndLoadHistory() throws IOException, DoesNotApplyException {
         File tempFile = TestUtils.createTempDirectory("testhistory");
-        sut.save(history, tempFile);
+        sut.save(history, tempFile, mock(ProgressReporter.class));
 
         History recovered = sut.load(runner, tempFile, 34983L);
         Assert.assertEquals(recovered.getPosition(), 1);
@@ -88,4 +93,8 @@ public class HistoryEntryManagerTests {
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);
     }
 
+    // for mocking purposes
+    protected interface VoidFuture extends ProgressingFuture<Void> {
+
+    }
 }

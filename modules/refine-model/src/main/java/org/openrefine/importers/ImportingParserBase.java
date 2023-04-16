@@ -33,11 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -93,6 +92,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                 break;
             }
         }
+        progress.endFiles();
         return mergeGrids(grids);
     }
 
@@ -133,32 +133,32 @@ abstract public class ImportingParserBase implements ImportingParser {
                     fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
         } else {
             final File file = fileRecord.getFile(job.getRawDataDir());
-            try {
-                InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+            Supplier<InputStream> inputStream = () -> {
                 try {
-                    if (this instanceof InputStreamImporter) {
-                        return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
-                                limit, options);
-                    } else {
-                        String commonEncoding = JSONUtilities.getString(options, "encoding", null);
-                        if (commonEncoding != null && commonEncoding.isEmpty()) {
-                            commonEncoding = null;
-                        }
-
-                        Reader reader = ImporterUtilities.getReaderFromStream(
-                                inputStream, fileRecord, commonEncoding);
-
-                        return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
-                                options);
-                    }
-                } finally {
-                    inputStream.close();
+                    return ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+                } catch (FileNotFoundException e) {
+                    throw new UncheckedIOException(e);
                 }
-            } finally {
-                progress.endFile(fileSource, file.length());
+            };
+            if (this instanceof InputStreamImporter) {
+                return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
+                        limit, options);
+            } else {
+                String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+                String finalEncoding;
+                if (commonEncoding != null && commonEncoding.isEmpty()) {
+                    finalEncoding = null;
+                } else {
+                    finalEncoding = commonEncoding;
+                }
+
+                Supplier<Reader> reader = () -> ImporterUtilities.getReaderFromStream(
+                        inputStream.get(), fileRecord, finalEncoding);
+
+                return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
+                        options);
             }
         }
-
     }
 
     private void pushImportingOptions(ProjectMetadata metadata, String fileSource, String archiveFileName, ObjectNode options) {

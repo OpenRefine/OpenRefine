@@ -57,7 +57,8 @@ public class ExportProjectCommand extends Command {
 
         try {
             Project project = getProject(request);
-            ProjectManager.singleton.ensureProjectSaved(project.getId());
+            // TODO not sure why this is needed?
+            ProjectManager.singleton.ensureProjectSaved(project.getId(), null);
 
             response.setHeader("Content-Type", "application/x-gzip");
 

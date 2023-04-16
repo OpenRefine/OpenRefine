@@ -36,12 +36,7 @@ package org.openrefine.importers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Duration;
@@ -49,6 +44,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -131,7 +127,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = new FileInputStream(xlsFile);
+        Supplier<InputStream> stream = openFile(xlsFile);
 
         Grid grid = null;
         try {
@@ -175,6 +171,16 @@ public class ExcelImporterTests extends ImporterTest {
 
     }
 
+    private Supplier<InputStream> openFile(File file) {
+        return () -> {
+            try {
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
     @Test
     public void readXlsx() throws IOException {
 
@@ -189,7 +195,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = new FileInputStream(xlsxFile);
+        Supplier<InputStream> stream = openFile(xlsxFile);
 
         Grid grid = null;
         try {
@@ -236,7 +242,7 @@ public class ExcelImporterTests extends ImporterTest {
 
     @Test(expectedExceptions = Exception.class)
     public void readExcel95() throws Exception {
-        InputStream stream = ClassLoader.getSystemResourceAsStream("importers/excel95.xls");
+        Supplier<InputStream> stream = () -> ClassLoader.getSystemResourceAsStream("importers/excel95.xls");
 
         parseOneFile(SUT, stream);
     }
@@ -255,7 +261,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("storeBlankCellsAsNulls", true);
         options.put("forceText", true);
 
-        InputStream stream = new FileInputStream(xlsxFile);
+        Supplier<InputStream> stream = openFile(xlsxFile);
 
         Grid grid = parseOneFile(SUT, stream);
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
@@ -305,7 +311,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = ClassLoader.getSystemResourceAsStream("dates.xls");
+        Supplier<InputStream> stream = () -> ClassLoader.getSystemResourceAsStream("dates.xls");
 
         Grid grid = parseOneFile(SUT, stream);
 
@@ -334,7 +340,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
+        Supplier<InputStream> stream = openFile(xlsFileWithMultiSheets);
 
         Grid grid = parseOneFile(SUT, stream);
 
@@ -377,7 +383,7 @@ public class ExcelImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
+        Supplier<InputStream> stream = openFile(xlsxFileWithMultiSheets);
 
         Grid grid = parseOneFile(SUT, stream);
 

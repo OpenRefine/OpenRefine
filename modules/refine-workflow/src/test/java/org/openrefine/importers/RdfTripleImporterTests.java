@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
+import java.io.Reader;
 import java.io.StringReader;
+import java.util.function.Supplier;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -67,9 +69,9 @@ public class RdfTripleImporterTests extends ImporterTest {
     @Test(enabled = false)
     public void canParseSingleLineTriple() throws Exception {
         String sampleRdf = "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.blood_on_the_tracks>.";
-        StringReader reader = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
-        Grid grid = parseOneFile(SUT, reader);
+        Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
 
@@ -89,7 +91,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.under_the_red_sky>.\n"
                 +
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.bringing_it_all_back_home>.";
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
         Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
@@ -124,7 +126,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.genre> <http://rdf.mybase.com/ns/en.folk_rock>.\n"
                 +
                 "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.bringing_it_all_back_home>.";
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
         Grid grid = parseOneFile(SUT, input);
 
         ColumnModel columnModel = grid.getColumnModel();
@@ -152,7 +154,7 @@ public class RdfTripleImporterTests extends ImporterTest {
     @Test
     public void canParseTripleWithValue() throws Exception {
         String sampleRdf = "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/common.topic.alias>\"Robert Zimmerman\"@en.";
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         Grid grid = parseOneFile(SUT, input);
@@ -186,7 +188,8 @@ public class RdfTripleImporterTests extends ImporterTest {
                 + "  </rdf:Description>\n"
                 + "</rdf:RDF>\n";
 
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.RDFXML);
         Grid grid = parseOneFile(SUT, input);
 
@@ -214,7 +217,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "p:hasEmail              <mailto:fred@example.com>;\n" +
                 "m:attending     <http://meetings.example.com/cal#m1> .\n";
 
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         Grid grid = parseOneFile(SUT, input);
@@ -242,7 +245,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "p:hasEmail              <mailto:fred@example.com>;\n" +
                 "m:attending     <http://meetings.example.com/cal#m1> .\n";
 
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         Grid grid = parseOneFile(SUT, input);
@@ -268,7 +271,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
                 "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
 
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
         Grid grid = parseOneFile(SUT, input);
@@ -295,7 +298,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "                               ex:professor [ ex:fullName \"Alice Carol\" ;\n" +
                 "                                              ex:homePage <http://example.net/alice-carol> ] .";
 
-        StringReader input = new StringReader(sampleRdf);
+        Supplier<Reader> input = () -> new StringReader(sampleRdf);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         Grid grid = parseOneFile(SUT, input);
@@ -340,8 +343,7 @@ public class RdfTripleImporterTests extends ImporterTest {
                 "    \"@id\": \"mailto:fred@example.com\"\n " +
                 "  }\n " +
                 "}";
-
-        StringReader input = new StringReader(sampleJsonld);
+        Supplier<Reader> input = () -> new StringReader(sampleJsonld);
 
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
         Grid grid = parseOneFile(SUT, input);

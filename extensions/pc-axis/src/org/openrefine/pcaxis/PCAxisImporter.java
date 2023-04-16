@@ -37,6 +37,7 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -76,8 +77,8 @@ public class PCAxisImporter extends ReaderImporter {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            Reader reader, long limit, ObjectNode options) throws Exception {
-        LineNumberReader lnReader = new LineNumberReader(reader);
+            Supplier<Reader> reader, long limit, ObjectNode options) throws Exception {
+        LineNumberReader lnReader = new LineNumberReader(reader.get());
         List<Exception> exceptions = new ArrayList<>();
         TableDataReader dataReader = new PCAxisTableDataReader(lnReader, exceptions);
 

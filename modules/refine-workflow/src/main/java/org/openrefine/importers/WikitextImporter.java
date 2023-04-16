@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -698,14 +699,14 @@ public class WikitextImporter extends ReaderImporter {
 
     @Override
     public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, Reader reader, long limit, ObjectNode options) throws Exception {
+            String archiveFileName, Supplier<Reader> reader, long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
 
         // Encoding validation
         WikitextEncodingValidator v = new WikitextEncodingValidator();
 
-        String wikitext = CharStreams.toString(reader);
+        String wikitext = CharStreams.toString(reader.get());
         String title = "Page title";
         ValidatedWikitext validated = v.validate(parserConfig, wikitext, title);
 

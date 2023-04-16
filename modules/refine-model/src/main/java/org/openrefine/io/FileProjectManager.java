@@ -66,6 +66,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.util.LocaleUtils;
 import org.openrefine.util.ParsingUtilities;
 
@@ -266,12 +267,12 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveProject(Project project) throws IOException {
+    protected void saveProject(Project project, ProgressReporter progressReporter) throws IOException {
         synchronized (project) {
             long id = project.getId();
             File dir = getProjectDir(id);
 
-            _historyEntryManager.save(project.getHistory(), dir);
+            _historyEntryManager.save(project.getHistory(), dir, progressReporter);
 
             logger.info("Saved project '{}'", id);
         }
@@ -529,8 +530,8 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public void reloadProjectFromWorkspace(long id) throws IOException {
-        ensureProjectSaved(id);
+    public void reloadProjectFromWorkspace(long id, ProgressReporter progressReporter) throws IOException {
+        ensureProjectSaved(id, progressReporter);
         synchronized (this) {
             Project project = _projects.get(id);
             if (project != null) {

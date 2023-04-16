@@ -36,6 +36,7 @@ package org.openrefine.history;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,6 +47,8 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.FileChangeDataStore;
 import org.openrefine.model.changes.FileGridCache;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.process.ProgressReporter;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -62,16 +65,28 @@ public class HistoryEntryManager {
 
     /**
      * Saves the history and the initial grid to a directory.
-     * 
+     *
      * @param dir
      *            the directory where the history should be saved.
+     * @param progressReporter
      */
-    public void save(History history, File dir) throws IOException {
+    public void save(History history, File dir, ProgressReporter progressReporter) throws IOException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Save the initial grid if it does not exist yet (it is immutable)
         if (!gridFile.exists()) {
-            history.getInitialGrid().saveToFile(gridFile);
+            ProgressingFuture<Void> future = history.getInitialGrid().saveToFileAsync(gridFile);
+            if (progressReporter != null) {
+                future.onProgress(progressReporter);
+            }
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                future.cancel(true);
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
         Metadata metadata = new Metadata();
         metadata.entries = history.getEntries();

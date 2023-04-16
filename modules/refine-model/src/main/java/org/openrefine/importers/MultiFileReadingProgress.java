@@ -17,7 +17,9 @@ public interface MultiFileReadingProgress {
     public void readingFile(String fileSource, long bytesRead);
 
     /**
-     * Called at the end of reading of a file
+     * Called at the end of reading all files in the importing job. This is to ensure that subsequent reads (for
+     * instance when saving the project in the workspace) do not impact the progress, as the progress of that step is
+     * handled separately.
      */
-    public void endFile(String fileSource, long bytesRead);
+    public void endFiles();
 }

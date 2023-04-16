@@ -61,6 +61,21 @@ public class CloseableIteratorTests {
     }
 
     @Test
+    public void testChop() {
+        CloseableIterator<Integer> parent = CloseableIterator.wrapping(List.of(0, 1, 2, 3, 4, 5, 6, 7).iterator());
+        Iterator<Iterator<Integer>> chopped = parent.chop(List.of(2, 3, 4).iterator());
+
+        try (parent) {
+            assertTrue(chopped.hasNext());
+            assertEquals(chopped.next().toList(), List.of(0, 1));
+            assertTrue(chopped.hasNext());
+            assertEquals(chopped.next().toList(), List.of(2, 3, 4));
+            assertTrue(chopped.hasNext());
+            assertEquals(chopped.next().toList(), List.of(5, 6, 7));
+        }
+    }
+
+    @Test
     public void testIntersperse() throws Exception {
         CloseableIterator<Integer> derived = iterator.intersperse(4);
         derived.close();

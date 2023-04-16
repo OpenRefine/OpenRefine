@@ -68,7 +68,7 @@ public class TabularParserHelper {
     }
 
     public ObjectNode createParserUIInitializationData(ObjectNode options) {
-        JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
+        JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
 
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
@@ -101,9 +101,9 @@ public class TabularParserHelper {
      */
     public Grid parseOneFile(Runner runner, String fileSource, String archiveFileName, CloseableIterable<Row> dataReader,
             long limit, ObjectNode options) {
-        int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
-        int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
-        int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);
+        int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", 0), 0);
+        int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 1), 0);
+        int skipDataLines = Math.max(JSONUtilities.getInt(options, "skipDataLines", 0), 0);
         long limit2 = JSONUtilities.getLong(options, "limit", -1);
         if (limit > 0) {
             if (limit2 > 0) {
@@ -123,7 +123,7 @@ public class TabularParserHelper {
 
         List<String> columnNames = new ArrayList<String>();
 
-        try (CloseableIterator<Row> headerRows = dataReader.iterator().take(headerLines)) {
+        try (CloseableIterator<Row> headerRows = dataReader.iterator().drop(ignoreLines).take(headerLines)) {
             for (Row headerRow : headerRows) {
                 List<Cell> cells = headerRow.getCells();
                 for (int c = 0; c != cells.size(); c++) {
@@ -136,8 +136,10 @@ public class TabularParserHelper {
         ColumnModel columnModel = ImporterUtilities.setupColumns(columnNames);
 
         CloseableIterable<Row> dataRows = dataReader
-                .drop(headerLines + skipDataLines)
-                .take((int) limit2);
+                .drop(ignoreLines + headerLines + skipDataLines);
+        if (limit2 >= 0) {
+            dataRows = dataRows.take((int) limit2);
+        }
 
         // post process each row to parse cell values and ensure all rows have the expected number of cells
         dataRows = dataRows.map(row -> {
@@ -184,11 +186,13 @@ public class TabularParserHelper {
         }
 
         // add any necessary columns in the column model and rows, so that they all have the same number of columns
-        columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, maxColumns - 1);
+        while (columnModel.getColumns().size() < maxColumns) {
+            columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, columnModel.getColumns().size());
+        }
         int finalColumnCount = columnModel.getColumns().size();
         dataRows = dataRows.map(row -> row.padWithNull(finalColumnCount));
 
-        Grid grid = runner.gridFromIterable(columnModel, dataRows, Collections.emptyMap(), finalColumnCount);
+        Grid grid = runner.gridFromIterable(columnModel, dataRows, Collections.emptyMap(), rowCount);
         if (includeFileSources) {
             grid = prependColumn("File", fileSource, grid);
         }

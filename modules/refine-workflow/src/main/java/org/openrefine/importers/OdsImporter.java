@@ -36,6 +36,7 @@ package org.openrefine.importers;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -115,9 +116,9 @@ public class OdsImporter extends InputStreamImporter {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            InputStream inputStream, long limit, ObjectNode options) throws Exception {
+            Supplier<InputStream> inputStreamSupplier, long limit, ObjectNode options) throws Exception {
         OdfDocument odfDoc;
-        try {
+        try (InputStream inputStream = inputStreamSupplier.get()) {
             odfDoc = OdfDocument.loadDocument(inputStream);
         } catch (Exception e) { // Ugh! could they throw any wider exception?
             throw e;

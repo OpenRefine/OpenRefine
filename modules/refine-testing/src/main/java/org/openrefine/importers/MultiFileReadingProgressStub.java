@@ -19,7 +19,8 @@ public class MultiFileReadingProgressStub implements MultiFileReadingProgress {
     }
 
     @Override
-    public void endFile(String fileSource, long bytesRead) {
-        readingFile(fileSource, bytesRead);
+    public void endFiles() {
+
     }
+
 }

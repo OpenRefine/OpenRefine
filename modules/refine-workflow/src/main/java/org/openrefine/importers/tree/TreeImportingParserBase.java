@@ -129,23 +129,19 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         final String archiveFileName = fileRecord.getArchiveFileName();
 
         progress.startFile(fileSource);
+        InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
         try {
-            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
-            try {
-                parseOneFile(allocator, rows, metadata, job, fileSource, archiveFileName, inputStream,
-                        rootColumnGroup, limit, options);
+            parseOneFile(allocator, rows, metadata, job, fileSource, archiveFileName, inputStream,
+                    rootColumnGroup, limit, options);
 
-                ObjectNode fileOptions = options.deepCopy();
-                JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
-                JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
-                // TODO: This will save a separate copy for each file in the import, but they're
-                // going to be mostly the same
-                metadata.appendImportOptionMetadata(fileOptions);
-            } finally {
-                inputStream.close();
-            }
+            ObjectNode fileOptions = options.deepCopy();
+            JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
+            JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
+            // TODO: This will save a separate copy for each file in the import, but they're
+            // going to be mostly the same
+            metadata.appendImportOptionMetadata(fileOptions);
         } finally {
-            progress.endFile(fileSource, file.length());
+            inputStream.close();
         }
     }
 

@@ -33,16 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,6 +57,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TrackingInputStream;
@@ -162,6 +154,17 @@ public class ImporterUtilities {
 
     }
 
+    /**
+     * A proxy for reporting the progress of reading individual files back into the global progress of an importing job.
+     * The importing process is split into two stages:
+     * <ul>
+     * <li>the initial reading of the files required to create the corresponding {@link Grid};</li>
+     * <li>the saving of the concatenated grids into the workspace.</li>
+     * </ul>
+     * We consider that the first phase accounts for the first 50% of progress and the saving phase accounts for the
+     * second 50% of the global progress. In the first phase, progress is measured by bytes read from the original
+     * files. In the second phase, progress is measured by proportion of rows saved (over the total number of rows).
+     */
     static public MultiFileReadingProgress createMultiFileReadingProgress(
             final ImportingJob job,
             List<ImportingFileRecord> fileRecords) {
@@ -173,11 +176,21 @@ public class ImporterUtilities {
         final long totalSize2 = totalSize;
         return new MultiFileReadingProgress() {
 
-            long totalBytesRead = 0;
+            long totalBytesRead = 0L;
+            String lastFileSource = null;
+            long lastBytesRead = 0L;
+            boolean batchEnded = false;
 
             void setProgress(String fileSource, long bytesRead) {
-                job.setProgress(totalSize2 == 0 ? -1 : (int) (100 * (totalBytesRead + bytesRead) / totalSize2),
-                        "Reading " + fileSource);
+                if (!batchEnded) {
+                    if (lastFileSource != null && !lastFileSource.equals(fileSource)) {
+                        totalBytesRead += lastBytesRead;
+                    }
+                    job.setProgress(totalSize2 == 0 ? -1 : (int) (50 * (totalBytesRead + bytesRead) / totalSize2),
+                            "Reading " + fileSource);
+                    lastBytesRead = bytesRead;
+                    lastFileSource = fileSource;
+                }
             }
 
             @Override
@@ -191,8 +204,21 @@ public class ImporterUtilities {
             }
 
             @Override
-            public void endFile(String fileSource, long bytesRead) {
-                totalBytesRead += bytesRead;
+            public void endFiles() {
+                batchEnded = true;
+            }
+        };
+    }
+
+    /**
+     * Creates a progress reporter for the second phase of project import: saving the project in the workspace.
+     */
+    static public ProgressReporter createProgressReporterForProjectSave(final ImportingJob job) {
+        return new ProgressReporter() {
+
+            @Override
+            public void reportProgress(int percentage) {
+                job.setProgress(50 + percentage / 2, "Saving project in the workspace");
             }
         };
     }
@@ -211,6 +237,11 @@ public class ImporterUtilities {
                 progress.readingFile(fileSource, this.bytesRead);
 
                 return l;
+            }
+
+            @Override
+            public void close() throws IOException {
+                super.close();
             }
         };
     }

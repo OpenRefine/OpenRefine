@@ -67,7 +67,7 @@ public class LocalRunner implements Runner {
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
         minSplitRowCount = configuration.getLongParameter("minSplitRowCount", 32L);
-        maxSplitRowCount = configuration.getLongParameter("maxSplitRowCount", 15384L);
+        maxSplitRowCount = configuration.getLongParameter("maxSplitRowCount", 61536L);
         reconciledCellCost = configuration.getIntParameter("reconciledCellCost", 146);
         unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", 78);
 

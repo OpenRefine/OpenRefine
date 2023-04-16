@@ -41,6 +41,7 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.ByteStreams;
@@ -109,11 +110,11 @@ public class ImporterTest extends RefineTest {
         options = null;
     }
 
-    protected Grid parseOneFile(ReaderImporter parser, Reader reader) throws Exception {
+    protected Grid parseOneFile(ReaderImporter parser, Supplier<Reader> reader) throws Exception {
         return parseOneFile(parser, reader, options);
     }
 
-    protected Grid parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
+    protected Grid parseOneFile(ReaderImporter parser, Supplier<Reader> reader, ObjectNode options) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -123,7 +124,7 @@ public class ImporterTest extends RefineTest {
                 reader, -1, options);
     }
 
-    protected Grid parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
+    protected Grid parseOneFile(InputStreamImporter parser, Supplier<InputStream> inputStream) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -133,7 +134,7 @@ public class ImporterTest extends RefineTest {
                 inputStream, -1, options);
     }
 
-    protected Grid parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
+    protected Grid parseOneFile(InputStreamImporter parser, Supplier<InputStream> inputStream, ObjectNode options) throws Exception {
         return parser.parseOneFile(
                 runner,
                 metadata,
@@ -170,7 +171,7 @@ public class ImporterTest extends RefineTest {
 
     protected Grid parseOneString(ImportingParser parser, String contents, ObjectNode options) throws Exception {
         if (parser instanceof ReaderImporter) {
-            StringReader reader = new StringReader(contents);
+            Supplier<Reader> reader = () -> new StringReader(contents);
             return parseOneFile((ReaderImporter) parser, reader, options);
         }
         File tempFile = new File(importerTestDir, Long.toString((new Random()).nextLong(), 16).replace("-", ""));

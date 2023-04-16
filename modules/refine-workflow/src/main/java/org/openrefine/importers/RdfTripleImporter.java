@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -75,10 +76,10 @@ public class RdfTripleImporter extends ReaderImporter {
 
     @Override
     public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, Reader input, long limit, ObjectNode options) throws Exception {
+            String archiveFileName, Supplier<Reader> readerSupplier, long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
-
+        Reader input = readerSupplier.get();
         switch (mode) {
             // TODO: The standard lang name is "N-TRIPLE"
             // we may need to switch if we change packagings
