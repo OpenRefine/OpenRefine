@@ -48,6 +48,7 @@ import org.mockito.Mockito;
 import org.openrefine.model.Project;
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
+import org.openrefine.process.ProgressReporter;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -67,6 +68,7 @@ public class ProjectManagerTests {
     Project project;
     ProjectMetadata metadata;
     ProcessManager procmgr;
+    ProgressReporter progressReporter;
 
     @BeforeMethod
     public void SetUp() {
@@ -76,6 +78,7 @@ public class ProjectManagerTests {
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
         procmgr = mock(ProcessManager.class);
+        progressReporter = mock(ProgressReporter.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(project.getId()).thenReturn(1234L);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
@@ -110,7 +113,7 @@ public class ProjectManagerTests {
         registerProject();
 
         // run test
-        SUT.ensureProjectSaved(project.getId());
+        SUT.ensureProjectSaved(project.getId(), progressReporter);
 
         // assert and verify
         AssertProjectRegistered();
@@ -121,7 +124,7 @@ public class ProjectManagerTests {
             Assert.fail();
         }
         this.verifySaveTimeCompared(1);
-        verify(SUT, times(1)).saveProject(project);
+        verify(SUT, times(1)).saveProject(project, progressReporter);
         verify(metadata, times(1)).getTags();
         verify(project, atLeast(1)).getId();
 
@@ -168,7 +171,7 @@ public class ProjectManagerTests {
         verify(metadata, atLeastOnce()).getTags();
         verify(project, atLeastOnce()).getProcessManager();
         verify(project, atLeastOnce()).getLastSave();
-        verify(SUT, never()).saveProject(project);
+        verify(SUT, never()).saveProject(project, progressReporter);
         Assert.assertNull(SUT.getProject(0));
         verify(project, atLeast(1)).getId();
         verify(project, times(1)).dispose();
@@ -252,7 +255,7 @@ public class ProjectManagerTests {
     protected void verifySaved(Project proj, ProjectMetadata meta) {
         verify(meta, times(1)).getModified();
         verify(proj, times(2)).getLastSave();
-        verify(SUT, times(1)).saveProject(proj);
+        verify(SUT, times(1)).saveProject(eq(proj), any());
         verify(meta, times(1)).getTags();
         verify(proj, atLeast(1)).getId();
 

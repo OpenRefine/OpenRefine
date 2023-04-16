@@ -341,7 +341,7 @@ public class WikitextImporterTests extends ImporterTest {
     // --helpers--
 
     private Grid parse(String wikitext) throws Exception {
-        return parseOneFile(importer, new StringReader(wikitext));
+        return parseOneFile(importer, () -> new StringReader(wikitext));
     }
 
     private void prepareOptions(

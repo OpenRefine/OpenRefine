@@ -4,6 +4,7 @@ package org.openrefine.importers;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
@@ -41,7 +42,8 @@ public class LegacyProjectImporterTests extends ImporterTest {
 
     @Test
     public void testLoadLegacyProject() throws Exception {
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/legacy-openrefine-project.tar.gz");
+        Supplier<InputStream> stream = () -> this.getClass().getClassLoader()
+                .getResourceAsStream("importers/legacy-openrefine-project.tar.gz");
 
         Grid grid = parseOneFile(SUT, stream);
 

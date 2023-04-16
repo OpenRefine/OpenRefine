@@ -44,6 +44,7 @@ import org.openrefine.model.changes.GridCache;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.LazyGridCache;
 import org.openrefine.model.changes.LazyChangeDataStore;
+import org.openrefine.process.ProgressReporter;
 
 /**
  * Stub used to avoid saves and stub HistoryEntryManager
@@ -92,7 +93,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void saveProject(Project project) {
+    public void saveProject(Project project, ProgressReporter reporter) {
         // empty
     }
 
@@ -118,7 +119,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void reloadProjectFromWorkspace(long id) throws IOException {
+    public void reloadProjectFromWorkspace(long id, ProgressReporter progressReporter) throws IOException {
         // empty
     }
 

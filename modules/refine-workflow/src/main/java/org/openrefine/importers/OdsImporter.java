@@ -36,7 +36,7 @@ package org.openrefine.importers;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -49,9 +49,6 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
-import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -119,9 +116,9 @@ public class OdsImporter extends InputStreamImporter {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            InputStream inputStream, long limit, ObjectNode options) throws Exception {
+            Supplier<InputStream> inputStreamSupplier, long limit, ObjectNode options) throws Exception {
         OdfDocument odfDoc;
-        try {
+        try (InputStream inputStream = inputStreamSupplier.get()) {
             odfDoc = OdfDocument.loadDocument(inputStream);
         } catch (Exception e) { // Ugh! could they throw any wider exception?
             throw e;
