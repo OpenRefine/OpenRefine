@@ -347,14 +347,17 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = function(e) {
-        const fileContent = e.target.result;
-        console.log(fileContent);
+        const fileContent = JSON.parse(e.target.result);
+        const textAreaElement = document.querySelector('#textareaId')
+        if (textAreaElement) {
+          textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
+
+        }
       };
       reader.readAsText(file);
     };
     input.click();
-  });
-
+});
   var level = DialogSystem.showDialog(frame);
 
   elmts.textarea.trigger('focus');
