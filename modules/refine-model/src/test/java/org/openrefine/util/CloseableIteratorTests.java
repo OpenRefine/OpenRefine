@@ -7,6 +7,7 @@ import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -27,7 +28,7 @@ public class CloseableIteratorTests {
     CloseableIterator<Integer> iterator;
     CloseableIterator<Integer> iterator2;
 
-    @BeforeTest
+    @BeforeMethod
     public void setUp() {
         source = mock(IteratorInt.class);
         closeable = mock(AutoCloseable.class);

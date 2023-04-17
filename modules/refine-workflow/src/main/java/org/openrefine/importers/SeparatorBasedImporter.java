@@ -58,7 +58,6 @@ import org.openrefine.util.JSONUtilities;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import au.com.bytecode.opencsv.CSVParser;
-import xtc.parser.Column;
 
 public class SeparatorBasedImporter extends ReaderImporter {
 
@@ -93,7 +92,9 @@ public class SeparatorBasedImporter extends ReaderImporter {
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            Supplier<Reader> reader, long limit, ObjectNode options) throws Exception {
+            Supplier<Reader> reader,
+            long limit,
+            ObjectNode options) throws Exception {
         String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
             sep = "\\t";

@@ -237,7 +237,7 @@ public class Record implements Serializable {
                 while (parentIter.hasNext()) {
                     fetchedRowTuple = parentIter.next();
                     Row row = fetchedRowTuple.getRow();
-                    if (Record.isRecordStart(row, keyCellIndex)) {
+                    if (row.getCells().size() <= keyCellIndex || Record.isRecordStart(row, keyCellIndex)) {
                         break;
                     }
                     rows.add(row);

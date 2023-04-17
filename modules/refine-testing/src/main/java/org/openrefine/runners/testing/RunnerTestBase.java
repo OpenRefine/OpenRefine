@@ -1434,7 +1434,7 @@ public abstract class RunnerTestBase {
                 .collect(Collectors.toList()));
 
         Grid grid = getDatamodelRunner()
-                .gridFromIterable(simpleGrid.getColumnModel(), iterable, Collections.emptyMap(), -1L);
+                .gridFromIterable(simpleGrid.getColumnModel(), iterable, Collections.emptyMap(), -1L, -1L);
 
         assertGridEquals(grid, simpleGrid);
     }
