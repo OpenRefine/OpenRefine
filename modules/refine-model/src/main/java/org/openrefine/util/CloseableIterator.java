@@ -98,6 +98,9 @@ public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
 
         @Override
         public boolean hasNext() {
+            if (closed) {
+                return false;
+            }
             boolean hasNext = iterator.hasNext();
             try {
                 return hasNext;
@@ -358,7 +361,7 @@ public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
     }
 
     default CloseableIterator<T> orElse(CloseableIterator<T> other) {
-        return isEmpty() ? other : this;
+        return new Wrapper<>(isEmpty() ? other : this, List.of(this, other));
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import com.google.common.io.CountingInputStream;
+import org.apache.commons.lang.Validate;
 import org.testng.Assert;
 
 import org.openrefine.importers.MultiFileReadingProgress;
@@ -17,6 +18,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -182,6 +184,20 @@ public class TestingRunner implements Runner {
     @Override
     public Grid gridFromList(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         return new TestingGrid(columnModel, rows, overlayModels);
+    }
+
+    @Override
+    public Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
+            long rowCount, long recordCount) {
+        Grid grid = Runner.super.gridFromIterable(columnModel, rows, overlayModels, rowCount, recordCount);
+        // check that the cached row and record counts that were supplied match the reality
+        if (rowCount != -1L) {
+            Validate.isTrue(rowCount == grid.rowCount(), "Inconsistent cached row count supplied");
+        }
+        if (recordCount != -1L) {
+            Validate.isTrue(recordCount == grid.recordCount(), "Inconsistent cached record count supplied");
+        }
+        return grid;
     }
 
     @Override

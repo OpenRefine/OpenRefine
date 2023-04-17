@@ -71,6 +71,23 @@ public class RecordTests {
         Assert.assertEquals(records, expected);
     }
 
+    @Test
+    public void testGroupEmptyRowsIntoRecords() {
+        // by convention, empty rows form a record on their own.
+        List<Record> records = groupRows(
+                row(),
+                row(),
+                row());
+
+        List<Record> expected = Arrays.asList(
+                record(0L, row()),
+                record(1L, row()),
+
+                record(2L, row()));
+
+        Assert.assertEquals(records, expected);
+    }
+
     protected List<Record> groupRows(Row... rows) {
         Iterator<IndexedRow> indexedRows = IntStream.range(0, rows.length).mapToObj(i -> new IndexedRow(i, rows[i])).iterator();
         Iterator<Record> records = Record.groupIntoRecords(CloseableIterator.wrapping(indexedRows), 0, true, Collections.emptyList());

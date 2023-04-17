@@ -809,6 +809,20 @@ public class LocalGrid implements Grid {
         ColumnModel merged = columnModel.merge(other.getColumnModel());
         Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
         mergedOverlayModels.putAll(overlayModels);
+
+        // compute the record count of the new grid if it can directly be inferred from the
+        // existing cached counts.
+        long recordCount = -1L;
+        if (cachedRecordCount != -1L && otherLocal.cachedRecordCount != -1L &&
+                columnModel.getKeyColumnIndex() == other.getColumnModel().getKeyColumnIndex()) {
+            // a record in the first grid might continue over from the first to the second grid,
+            // if the first record in the second grid does not start with a record start marker.
+            recordCount = cachedRecordCount + otherLocal.cachedRecordCount;
+            if (cachedRecordCount != 0L && otherLocal.cachedRecordCount != 0L &&
+                    !Record.isRecordStart(otherLocal.getRow(0L), merged.getKeyColumnIndex())) {
+                recordCount -= 1L;
+            }
+        }
         return new LocalGrid(
                 runner,
                 grid.values()
@@ -816,7 +830,7 @@ public class LocalGrid implements Grid {
                         .concatenate(otherLocal.grid.values().map(IndexedRow::getRow, "drop old row indices"))
                         .zipWithIndex(),
                 merged,
-                mergedOverlayModels, -1);
+                mergedOverlayModels, recordCount);
     }
 
     @Override

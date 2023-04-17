@@ -117,11 +117,11 @@ public class LocalRunner implements Runner {
 
     @Override
     public Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
-            long rowCount) {
+            long rowCount, long recordCount) {
         // the call to zipWithIndex is free because the PLL has a single partition
         PairPLL<Long, Row> pll = pllContext.singlePartitionPLL(rows, rowCount)
                 .zipWithIndex();
-        return new LocalGrid(this, pll, columnModel, overlayModels, -1);
+        return new LocalGrid(this, pll, columnModel, overlayModels, recordCount);
     }
 
     @Override

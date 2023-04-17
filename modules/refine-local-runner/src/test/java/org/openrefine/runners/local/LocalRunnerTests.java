@@ -236,4 +236,57 @@ public class LocalRunnerTests extends RunnerTestBase {
         Assert.assertEquals(result.getProcessed(), 32L);
     }
 
+    @Test
+    public void testUnionWithCachedRecordCount() {
+        Grid first = createGrid(new String[] { "key", "values" },
+                new Serializable[][] {
+                        { "a", 1 },
+                        { null, 2 },
+                        { "b", 3 },
+                        { null, 4 },
+                        { null, 5 },
+                        { "c", 6 }
+                });
+        // manually cache the record count
+        Assert.assertEquals(first.recordCount(), 3L);
+        Assert.assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
+        Grid second = createGrid(new String[] { "key", "values" },
+                new Serializable[][] {
+                        { "", 1 },
+                        { null, 2 },
+                        { "b", 3 },
+                        { null, 4 },
+                        { null, 5 },
+                        { "c", 6 }
+                });
+        // manually cache the record count for this one too
+        Assert.assertEquals(second.recordCount(), 3L);
+        Assert.assertEquals(((LocalGrid) second).cachedRecordCount, 3L);
+
+        Grid concatenated = first.concatenate(second);
+        // the record count is already cached for the concatenation of both grids,
+        // but is not equal to the sum because the last record of the first grid
+        // extends to the second one.
+        Assert.assertEquals(((LocalGrid) concatenated).cachedRecordCount, 5L);
+    }
+
+    @Test
+    public void testUnionWithCachedRecordCountExactSum() {
+        Grid first = createGrid(new String[] { "key", "values" },
+                new Serializable[][] {
+                        { "a", 1 },
+                        { null, 2 },
+                        { "b", 3 },
+                        { null, 4 },
+                        { null, 5 },
+                        { "c", 6 }
+                });
+        // manually cache the record count
+        Assert.assertEquals(first.recordCount(), 3L);
+        Assert.assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
+
+        Grid concatenated = first.concatenate(first);
+        Assert.assertEquals(((LocalGrid) concatenated).cachedRecordCount, 6L);
+    }
+
 }

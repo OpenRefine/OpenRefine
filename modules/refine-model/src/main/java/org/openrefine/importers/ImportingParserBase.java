@@ -119,7 +119,8 @@ abstract public class ImportingParserBase implements ImportingParser {
             ImportingJob job,
             ImportingFileRecord fileRecord,
             long limit,
-            ObjectNode options, final MultiFileReadingProgress progress) throws Exception {
+            ObjectNode options,
+            final MultiFileReadingProgress progress) throws Exception {
 
         String fileSource = fileRecord.getFileSource();
         String archiveFileName = fileRecord.getArchiveFileName();

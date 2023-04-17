@@ -176,11 +176,8 @@ public class ImporterTest extends RefineTest {
         }
         File tempFile = new File(importerTestDir, Long.toString((new Random()).nextLong(), 16).replace("-", ""));
         try {
-            Writer writer = new FileWriter(tempFile);
-            try {
+            try (Writer writer = new FileWriter(tempFile)) {
                 writer.write(contents);
-            } finally {
-                writer.close();
             }
             return parseOneFile(parser, tempFile, options);
         } finally {

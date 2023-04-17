@@ -118,8 +118,8 @@ public class LoggedRunner implements Runner {
 
     @Override
     public Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
-            long rowCount) {
-        return wrap(exec("gridFromIterable", () -> runner.gridFromIterable(columnModel, rows, overlayModels, rowCount)));
+            long rowCount, long recordCount) {
+        return wrap(exec("gridFromIterable", () -> runner.gridFromIterable(columnModel, rows, overlayModels, rowCount, recordCount)));
     }
 
     @Override

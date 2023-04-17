@@ -58,13 +58,16 @@ public interface Runner {
      * Creates a {@link Grid} from an iterable collection of rows. By default, this just gathers the iterable in a list
      * and delegates to {@link #gridFromList(ColumnModel, List, Map)}, but implementations may implement a different
      * approach which delays the loading of the collection in memory.
-     * 
+     *
      * @param rowCount
      *            if the number of rows is known, supply it in this parameter as it might improve efficiency. Otherwise,
      *            set to -1.
+     * @param recordCount
+     *            if the number of records is known, supply it in this parameter as it might improve efficiency.
+     *            Otherwise, set to -1.
      */
     default Grid gridFromIterable(ColumnModel columnModel, CloseableIterable<Row> rows, Map<String, OverlayModel> overlayModels,
-            long rowCount) {
+            long rowCount, long recordCount) {
         try (CloseableIterator<Row> iterator = rows.iterator()) {
             return gridFromList(columnModel, iterator.toJavaList(), overlayModels);
         }

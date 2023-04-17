@@ -46,13 +46,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
-import org.openrefine.model.Runner;
+import org.openrefine.model.*;
+import org.openrefine.model.Record;
 import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.JSONUtilities;
@@ -175,12 +170,23 @@ public class TabularParserHelper {
                     .filter(row -> row.getCells().stream().allMatch(cell -> cell != null && ExpressionUtils.isNonBlankData(cell.value)));
         }
 
-        // count the maximum number of columns and how many rows we have
+        // Count the maximum number of columns and how many rows we have.
+        // Also take this opportunity to count records, since that can be done in the
+        // same pass and can be useful to have cached already.
+        int keyCellIndex = 0; // the key cell index is not configurable during the import stage
         int maxColumns = 0;
         long rowCount = 0;
-        try (CloseableIterator<Row> iterator = dataRows.iterator()) {
-            for (Row row : iterator) {
-                maxColumns = Math.max(maxColumns, row.getCells().size());
+        long recordCount = 0;
+        CloseableIterator<IndexedRow> rowsIterator = dataRows.iterator()
+                .zipWithIndex()
+                .map(tuple -> new IndexedRow((long) tuple._2, tuple._1));
+        // we do not use Record.groupIntoRecords because that would load potentially large records in memory
+        try (rowsIterator) {
+            for (IndexedRow indexedRow : rowsIterator) {
+                if (indexedRow.getIndex() == 0L || Record.isRecordStart(indexedRow.getRow(), columnModel.getKeyColumnIndex())) {
+                    recordCount++;
+                }
+                maxColumns = Math.max(maxColumns, indexedRow.getRow().getCells().size());
                 rowCount++;
             }
         }
@@ -192,7 +198,7 @@ public class TabularParserHelper {
         int finalColumnCount = columnModel.getColumns().size();
         dataRows = dataRows.map(row -> row.padWithNull(finalColumnCount));
 
-        Grid grid = runner.gridFromIterable(columnModel, dataRows, Collections.emptyMap(), rowCount);
+        Grid grid = runner.gridFromIterable(columnModel, dataRows, Collections.emptyMap(), rowCount, recordCount);
         if (includeFileSources) {
             grid = prependColumn("File", fileSource, grid);
         }
