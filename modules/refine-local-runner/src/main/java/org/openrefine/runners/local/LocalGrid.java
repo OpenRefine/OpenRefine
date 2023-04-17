@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -253,19 +254,10 @@ public class LocalGrid implements Grid {
 
     @Override
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
-        long partitionLimit = limit / grid.numPartitions();
-        ApproxCount initialState = new ApproxCount(0, 0, partitionLimit == 0);
-        return grid
-                .limitPartitions(partitionLimit)
-                .aggregate(initialState,
-                        (ac, tuple) -> new ApproxCount(
-                                ac.getProcessed() + 1,
-                                ac.getMatched() + (filter.filterRow(tuple.getValue().getLogicalIndex(), tuple.getValue().getRow()) ? 1 : 0),
-                                ac.limitReached() || ac.getProcessed() + 1 == partitionLimit),
-                        (ac1, ac2) -> new ApproxCount(
-                                ac1.getProcessed() + ac2.getProcessed(),
-                                ac1.getMatched() + ac2.getMatched(),
-                                ac1.limitReached() || ac2.limitReached()));
+        PartialAggregation<Long> partialAggregation = sample(indexedRows(), limit, 0L,
+                (matching, indexedRow) -> matching + (filter.filterRow(indexedRow.getLogicalIndex(), indexedRow.getRow()) ? 1 : 0),
+                (a, b) -> a + b);
+        return new ApproxCount(partialAggregation.getProcessed(), partialAggregation.getState(), partialAggregation.limitReached());
     }
 
     @Override
@@ -339,20 +331,11 @@ public class LocalGrid implements Grid {
 
     @Override
     public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
-        PairPLL<Long, Record> records = records();
-        long partitionLimit = limit / records.numPartitions();
-        ApproxCount initialState = new ApproxCount(0, 0, partitionLimit == 0);
-        return records
-                .limitPartitions(partitionLimit)
-                .aggregate(initialState,
-                        (ac, tuple) -> new ApproxCount(
-                                ac.getProcessed() + 1,
-                                ac.getMatched() + (filter.filterRecord(tuple.getValue()) ? 1 : 0),
-                                ac.limitReached() || (ac.getProcessed() + 1 == partitionLimit)),
-                        (ac1, ac2) -> new ApproxCount(
-                                ac1.getProcessed() + ac2.getProcessed(),
-                                ac1.getMatched() + ac2.getMatched(),
-                                ac1.limitReached() || ac2.limitReached()));
+        PLL<Record> records = records().values();
+        PartialAggregation<Long> partialAggregation = sample(records, limit, 0L,
+                (matching, record) -> matching + (filter.filterRecord(record) ? 1 : 0),
+                (a, b) -> a + b);
+        return new ApproxCount(partialAggregation.getProcessed(), partialAggregation.getState(), partialAggregation.limitReached());
     }
 
     @Override
@@ -435,50 +418,30 @@ public class LocalGrid implements Grid {
                 .values()
                 .aggregate(initialState,
                         (s, t) -> aggregator.withRow(s, t.getLogicalIndex(), t.getRow()),
-                        (s1, s2) -> aggregator.sum(s1, s2));
+                        aggregator::sum);
     }
 
     @Override
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
         return records().aggregate(initialState,
                 (s, t) -> aggregator.withRecord(s, t.getValue()),
-                (s1, s2) -> aggregator.sum(s1, s2));
+                aggregator::sum);
     }
 
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
-        long partitionLimit = maxRows / grid.numPartitions();
-        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
-        return grid
-                .limitPartitions(partitionLimit)
-                .values()
-                .aggregate(initialPartialState,
-                        (s, t) -> new PartialAggregation<T>(
-                                aggregator.withRow(s.getState(), t.getLogicalIndex(), t.getRow()),
-                                s.getProcessed() + 1,
-                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
-                        (s1, s2) -> new PartialAggregation<T>(
-                                aggregator.sum(s1.getState(), s2.getState()),
-                                s1.getProcessed() + s2.getProcessed(),
-                                s1.limitReached() || s2.limitReached()));
+        return sample(indexedRows(), maxRows, initialState,
+                (state, indexedRow) -> aggregator.withRow(state, indexedRow.getLogicalIndex(), indexedRow.getRow()),
+                aggregator::sum);
     }
 
     @Override
     public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords) {
-        long partitionLimit = maxRecords / grid.numPartitions();
-        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
-        return records()
-                .limitPartitions(partitionLimit)
-                .aggregate(initialPartialState,
-                        (s, t) -> new PartialAggregation<T>(
-                                aggregator.withRecord(s.getState(), t.getValue()),
-                                s.getProcessed() + 1,
-                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
-                        (s1, s2) -> new PartialAggregation<T>(
-                                aggregator.sum(s1.getState(), s2.getState()),
-                                s1.getProcessed() + s2.getProcessed(),
-                                s1.limitReached() || s2.limitReached()));
+        PLL<Record> records = records().values();
+        return sample(records, maxRecords, initialState,
+                aggregator::withRecord,
+                aggregator::sum);
     }
 
     @Override
@@ -912,6 +875,52 @@ public class LocalGrid implements Grid {
         Runtime runtime = Runtime.getRuntime();
         long freeMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
         return freeMemory > predictedMemorySize;
+    }
+
+    /**
+     * Compute how many partitions and how many elements in those partitions we should process, if we want to get a
+     * sample of the given size. This will generally result in using all partitions and dividing the sample size by that
+     * number of partitions, but if there are many partitions we might not want to use them all (for instance, if there
+     * are more partitions than the desired sample size).
+     *
+     * @param sampleSize
+     *            the number of elements we want to process in total
+     * @return a tuple, where the first component is the number of partitions and the second one is the number of
+     *         elements in each of those partitions.
+     */
+    protected <T, U extends Serializable> PartialAggregation<U> sample(PLL<T> source, long sampleSize, U initialValue,
+            BiFunction<U, T, U> fold, BiFunction<U, U, U> combine) {
+        if (sampleSize <= 0) {
+            return new PartialAggregation(initialValue, 0, true);
+        }
+
+        // we want to pick our samples from at most twice as many partitions as we have
+        // processors, so that we have enough to max out the computing power but do not
+        // open too many files either.
+        // TODO this could be configurable: to get a more uniformly sampled set of rows,
+        // the user could want to set that to a higher value.
+        int maxPartitions = runner.defaultParallelism * 2;
+        int samplingPartitions = Math.max(1, Math.min(maxPartitions, source.getPartitions().size()));
+        PLL<T> samplingPLL = source;
+        if (samplingPartitions < source.getPartitions().size()) {
+            // spread the sampling partitions evenly in the source partitions
+            int step = Math.max(source.getPartitions().size() / samplingPartitions, 1);
+            List<Integer> partitionIndices = IntStream
+                    .range(0, samplingPartitions).mapToObj(i -> step * i)
+                    .collect(Collectors.toList());
+            samplingPLL = source.retainPartitions(partitionIndices);
+        }
+        long partitionLimit = Math.max(sampleSize / samplingPartitions, 1L);
+        return samplingPLL.limitPartitions(partitionLimit)
+                .aggregate(new PartialAggregation<>(initialValue, 0, false),
+                        (s, t) -> new PartialAggregation<U>(
+                                fold.apply(s.getState(), t),
+                                s.getProcessed() + 1,
+                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
+                        (s1, s2) -> new PartialAggregation<>(
+                                combine.apply(s1.getState(), s2.getState()),
+                                s1.getProcessed() + s2.getProcessed(),
+                                s1.limitReached() || s2.limitReached()));
     }
 
     @Override

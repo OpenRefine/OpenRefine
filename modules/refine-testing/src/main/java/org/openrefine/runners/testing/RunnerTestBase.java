@@ -319,7 +319,7 @@ public abstract class RunnerTestBase {
     @Test
     public void testCountMatchingRecordsApproxIntermediate() {
         // the way the datamodel implementation selects rows is unspecified.
-        // it can also filter slightly less than the limit
+        // it can also filter slightly less or more than the limit
         ApproxCount count = simpleGrid.countMatchingRecordsApprox(myRecordFilter, 2);
         Assert.assertTrue(count.getMatched() <= count.getProcessed());
         Assert.assertTrue(count.getProcessed() <= 2);
@@ -429,7 +429,7 @@ public abstract class RunnerTestBase {
         // it can also filter slightly less than the limit
         ApproxCount count = simpleGrid.countMatchingRowsApprox(myRowFilter, 2);
         Assert.assertTrue(count.getMatched() <= count.getProcessed());
-        Assert.assertTrue(count.getProcessed() <= 2);
+        Assert.assertTrue(count.getProcessed() > 0);
     }
 
     @Test
@@ -605,9 +605,8 @@ public abstract class RunnerTestBase {
     public void testAggregateRowsApproxPartialResult() {
         RowCounter aggregator = new RowCounter();
         PartialAggregation<BoxedLong> partialResult = simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 2L);
-        Assert.assertTrue(partialResult.getState().value <= 2L);
-        Assert.assertTrue(partialResult.limitReached());
-        Assert.assertTrue(partialResult.getProcessed() <= 2L);
+        Assert.assertTrue(partialResult.getState().value > 0);
+        Assert.assertTrue(partialResult.getProcessed() > 0);
     }
 
     @Test
@@ -623,9 +622,8 @@ public abstract class RunnerTestBase {
     public void testAggregateRecordsApproxPartialResult() {
         RowCounter aggregator = new RowCounter();
         PartialAggregation<BoxedLong> partialResult = gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 2L);
-        Assert.assertTrue(partialResult.getState().value <= 2L);
-        Assert.assertTrue(partialResult.limitReached());
-        Assert.assertTrue(partialResult.getProcessed() <= 2L);
+        Assert.assertTrue(partialResult.getState().value > 0);
+        Assert.assertTrue(partialResult.getProcessed() > 0);
     }
 
     @Test

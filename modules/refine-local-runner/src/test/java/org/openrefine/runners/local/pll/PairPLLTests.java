@@ -348,4 +348,19 @@ public class PairPLLTests extends PLLTestsBase {
         Assert.assertEquals(PairPLL.gatherElementsBefore(10L, 20, CloseableIterator.wrapping(list.iterator()), Comparator.naturalOrder()),
                 list);
     }
+
+    @Test
+    public void testRetainPartitions() {
+        List<Tuple2<Integer, String>> list = Arrays.asList(
+                Tuple2.of(1, "foo"),
+                Tuple2.of(3, "bar"),
+                Tuple2.of(2, "baz"),
+                Tuple2.of(4, "hey"));
+
+        PLL<Tuple2<Integer, String>> pll = new InMemoryPLL<Tuple2<Integer, String>>(context, list, 2);
+        PairPLL<Integer, String> pairPLL = new PairPLL<>(pll, Optional.empty());
+
+        PairPLL<Integer, String> dropped = pairPLL.retainPartitions(Collections.singletonList(1));
+        Assert.assertEquals(dropped.collect(), list.subList(2, 4));
+    }
 }

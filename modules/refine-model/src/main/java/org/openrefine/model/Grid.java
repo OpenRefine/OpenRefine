@@ -158,7 +158,7 @@ public interface Grid {
     public long countMatchingRows(RowFilter filter);
 
     /**
-     * Return the number of rows matching the given row filter, but by processing at most a fixed number of row.
+     * Return the number of rows matching the given row filter, but by processing about at most a fixed number of row.
      * 
      * @param filter
      *            counts the number of records on which it returns true
@@ -256,7 +256,7 @@ public interface Grid {
     public long countMatchingRecords(RecordFilter filter);
 
     /**
-     * Return the number of records matching the given record filter, but by processing at most a fixed number of
+     * Return the number of records matching the given record filter, but by processing about at most a fixed number of
      * records.
      * 
      * @param filter
@@ -320,14 +320,14 @@ public interface Grid {
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
 
     /**
-     * Computes the result of a row aggregator on the grid, reading at most a fixed number of rows. The rows read should
-     * be deterministic for a given implementation.
+     * Computes the result of a row aggregator on the grid, reading about at most a fixed number of rows. The rows read
+     * should be deterministic for a given implementation.
      */
     public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows);
 
     /**
-     * Computes the result of a row aggregator on the grid, reading at most a fixed number of records. The records read
-     * should be deterministic for a given implementation.
+     * Computes the result of a row aggregator on the grid, reading about at most a fixed number of records. The records
+     * read should be deterministic for a given implementation.
      */
     public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords);

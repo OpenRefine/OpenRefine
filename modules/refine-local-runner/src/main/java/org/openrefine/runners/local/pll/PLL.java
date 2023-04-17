@@ -479,6 +479,17 @@ public abstract class PLL<T> {
     }
 
     /**
+     * Only retain partitions designated by the given list of indices. The other partitions are dropped from the PLL.
+     * The partitions in the resulting PLL are ordered according to the list of indices supplied.
+     *
+     * @param partitionIds
+     *            the indices of the partitions to retain
+     */
+    public PLL<T> retainPartitions(List<Integer> partitionIds) {
+        return new DropPartitionsPLL<T>(this, partitionIds);
+    }
+
+    /**
      * Drops the first n elements at the beginning of the collection.
      * 
      * @param n

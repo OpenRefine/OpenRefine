@@ -329,6 +329,12 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         return new PairPLL<K, V>(pll.limitPartitions(limit), partitioner);
     }
 
+    @Override
+    public PairPLL<K, V> retainPartitions(List<Integer> partitionIndices) {
+        // we could derive a new partitioner in some cases, but so far we would not have any use for it
+        return new PairPLL<>(pll.retainPartitions(partitionIndices), Optional.empty());
+    }
+
     /**
      * Drops the first n elements at the beginning of the collection. This also adapts any partitioner to work on the
      * cropped collection.

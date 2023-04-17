@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,6 +20,7 @@ import org.testng.annotations.Test;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
+import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.testing.RunnerTestBase;
 import org.openrefine.util.ParsingUtilities;
 
@@ -34,6 +36,7 @@ public class LocalRunnerTests extends RunnerTestBase {
     @Override
     public Runner getDatamodelRunner() throws IOException {
         Map<String, String> map = new HashMap<>();
+        map.put("defaultParallelism", "4");
         // these values are purposely very low for testing purposes,
         // so that we can check the partitioning strategy without using large files
         map.put("minSplitSize", "128");
@@ -204,6 +207,33 @@ public class LocalRunnerTests extends RunnerTestBase {
         Assert.assertFalse(changeData.isComplete());
         Assert.assertEquals(changeData.get(34L), indexedDataList.get(0).getData());
         Assert.assertNull(changeData.get(56L));
+    }
+
+    @Test
+    public void testSampleOnManyPartitions() throws IOException {
+        LocalRunner runner = (LocalRunner) getDatamodelRunner();
+        Assert.assertEquals(runner.defaultParallelism, 4);
+
+        /*
+         * When a PLL has many partitions (here, 16), we do not want to sample from every single partition because it
+         * would mean opening a lot of files to only process few rows in it.
+         * 
+         * In this toy example we only open 8 of them, equally spread in the collection, and process 4 rows in each of
+         * them.
+         */
+
+        PLL<IndexedRow> longPLL = runner.getPLLContext().parallelize(16, IntStream.range(0, 128)
+                .mapToObj(i -> new IndexedRow((long) i, new Row(List.of(new Cell(i, null))))).collect(Collectors.toList()));
+        ColumnModel columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
+        LocalGrid localGrid = new LocalGrid(runner, columnModel, longPLL.zipWithIndex(), Map.of(), 64L);
+        Grid.PartialAggregation<String> result = localGrid.sample(longPLL, 32L, "",
+                (s, row) -> String.format("%s_%d", s, (int) row.getRow().getCellValue(0)),
+                (s1, s2) -> String.format("%s/%s", s1, s2));
+
+        Assert.assertEquals(result.getState(),
+                "/_0_1_2_3/_16_17_18_19/_32_33_34_35/_48_49_50_51/_64_65_66_67/_80_81_82_83/_96_97_98_99/_112_113_114_115");
+        Assert.assertTrue(result.limitReached());
+        Assert.assertEquals(result.getProcessed(), 32L);
     }
 
 }

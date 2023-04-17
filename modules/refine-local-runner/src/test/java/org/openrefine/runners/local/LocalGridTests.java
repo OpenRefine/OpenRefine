@@ -11,12 +11,15 @@ import java.util.stream.Collectors;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.IndexedRow;
-import org.openrefine.model.Row;
+import org.openrefine.model.*;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.util.CloseableIterator;
 
+/*
+ * Most of the tests for LocalGrid are actually done in LocalRunnerTests as part of the general
+ * test suite for runners. The test cases here are only about the specific behaviour of the local runner.
+ */
 public class LocalGridTests {
 
     @Test
