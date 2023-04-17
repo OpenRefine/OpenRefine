@@ -137,6 +137,10 @@ public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
         return new Wrapper<>(Iterator.ofAll(ts), List.empty());
     }
 
+    static <T> CloseableIterator<T> wrapping(java.util.Iterator<? extends T> iterator, AutoCloseable closeable) {
+        return new Wrapper(Iterator.ofAll(iterator), closeable);
+    }
+
     @Override
     default <R> CloseableIterator<R> collect(PartialFunction<? super T, ? extends R> partialFunction) {
         return new Wrapper<>(Iterator.super.collect(partialFunction), this);

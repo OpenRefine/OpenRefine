@@ -30,14 +30,7 @@ package org.openrefine.importers;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -144,21 +137,8 @@ public class ImporterTest extends RefineTest {
                 inputStream, -1, options);
     }
 
-    protected Grid parseOneFile(URIImporter parser, String sparkURI) throws Exception {
-        return parser.parseOneFile(
-                runner,
-                metadata,
-                job,
-                "file-source",
-                "archive-file-name",
-                sparkURI,
-                -1,
-                options, mock(MultiFileReadingProgress.class));
-    }
-
     protected Grid parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {
         ImportingFileRecord importingRecord = mock(ImportingFileRecord.class);
-        when(importingRecord.getDerivedSparkURI(Mockito.any())).thenReturn(file.getAbsolutePath());
         when(importingRecord.getFile(Mockito.any())).thenReturn(file);
         when(importingRecord.getArchiveFileName()).thenReturn("archive-file-name");
         when(importingRecord.getFileSource()).thenReturn("file-source");

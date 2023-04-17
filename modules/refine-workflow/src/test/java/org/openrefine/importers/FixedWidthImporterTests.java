@@ -68,8 +68,6 @@ public class FixedWidthImporterTests extends ImporterTest {
     // ---------------------read tests------------------------
     @Test
     public void readFixedWidth() throws Exception {
-        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
-
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -88,7 +86,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneString(SUT, "NDB_NoShrt_DescWater\nTooShort\n");
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
@@ -106,8 +104,6 @@ public class FixedWidthImporterTests extends ImporterTest {
 
     @Test
     public void readNoColumnNames() throws Exception {
-        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\nTooShort\n");
-
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -120,7 +116,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneString(SUT, "NDB_NoShrt_DescWater\nTooShort\n");
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
@@ -138,8 +134,6 @@ public class FixedWidthImporterTests extends ImporterTest {
 
     @Test
     public void readColumnHeader() throws Exception {
-        File testFile = TestUtils.createTempFile("my_dataset.txt", "NDB_NoShrt_DescWater\n012345green....00342\n");
-
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
@@ -152,7 +146,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         options.put("limit", -1);
         options.put("storeBlankCellsAsNulls", true);
 
-        Grid result = parseOneFile(SUT, testFile.getAbsolutePath());
+        Grid result = parseOneString(SUT, "NDB_NoShrt_DescWater\n012345green....00342\n");
 
         List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 1);
@@ -163,4 +157,5 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("NDB_No", "Shrt_Desc", "Water"));
     }
+
 }

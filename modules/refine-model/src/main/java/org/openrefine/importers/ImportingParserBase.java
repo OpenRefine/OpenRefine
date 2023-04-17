@@ -129,36 +129,31 @@ abstract public class ImportingParserBase implements ImportingParser {
         ObjectNode optionsCopy = options.deepCopy();
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
 
-        if (this instanceof URIImporter) {
-            return ((URIImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName,
-                    fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
-        } else {
-            final File file = fileRecord.getFile(job.getRawDataDir());
-            Supplier<InputStream> inputStream = () -> {
-                try {
-                    return ImporterUtilities.openAndTrackFile(fileSource, file, progress);
-                } catch (FileNotFoundException e) {
-                    throw new UncheckedIOException(e);
-                }
-            };
-            if (this instanceof InputStreamImporter) {
-                return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
-                        limit, options);
-            } else {
-                String commonEncoding = JSONUtilities.getString(options, "encoding", null);
-                String finalEncoding;
-                if (commonEncoding != null && commonEncoding.isEmpty()) {
-                    finalEncoding = null;
-                } else {
-                    finalEncoding = commonEncoding;
-                }
-
-                Supplier<Reader> reader = () -> ImporterUtilities.getReaderFromStream(
-                        inputStream.get(), fileRecord, finalEncoding);
-
-                return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
-                        options);
+        final File file = fileRecord.getFile(job.getRawDataDir());
+        Supplier<InputStream> inputStream = () -> {
+            try {
+                return ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+            } catch (FileNotFoundException e) {
+                throw new UncheckedIOException(e);
             }
+        };
+        if (this instanceof InputStreamImporter) {
+            return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
+                    limit, options);
+        } else {
+            String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+            String finalEncoding;
+            if (commonEncoding != null && commonEncoding.isEmpty()) {
+                finalEncoding = null;
+            } else {
+                finalEncoding = commonEncoding;
+            }
+
+            Supplier<Reader> reader = () -> ImporterUtilities.getReaderFromStream(
+                    inputStream.get(), fileRecord, finalEncoding);
+
+            return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
+                    options);
         }
     }
 

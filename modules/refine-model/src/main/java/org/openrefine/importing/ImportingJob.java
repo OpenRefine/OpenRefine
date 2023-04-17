@@ -111,8 +111,6 @@ public class ImportingJob {
         public int downloadCount = 0;
         @JsonProperty("clipboardCount")
         public int clipboardCount = 0;
-        @JsonProperty("sparkCount")
-        public int sparkCount = 0;
     }
 
     public ImportingJob(long id, File dir) {
