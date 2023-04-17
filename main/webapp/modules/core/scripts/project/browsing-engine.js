@@ -197,7 +197,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
        for (let facet of this._facets) {
          if (facet.facet.render) {
            facet.facet.render();
-         } else if (facet.facet instanceof ListFacet) {
+         } else if (facet.facet.checkInitialHeight) {
            facet.facet.checkInitialHeight();
          }
        }
