@@ -360,7 +360,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
       reader.readAsText(file);
     };
     input.click();
-});
+  });
   var level = DialogSystem.showDialog(frame);
 
   elmts.textarea.trigger('focus');
