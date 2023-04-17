@@ -27,32 +27,25 @@
 
 package org.openrefine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
-import org.openrefine.model.Runner;
+import org.openrefine.model.*;
+import org.openrefine.util.CloseableIterable;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-public class FixedWidthImporter extends LineBasedImporterBase {
+public class FixedWidthImporter extends ReaderImporter {
 
     @Override
     public ObjectNode createParserUIInitializationData(
@@ -78,36 +71,6 @@ public class FixedWidthImporter extends LineBasedImporterBase {
             JSONUtilities.safePut(options, "guessCellValueTypes", false);
         }
         return options;
-    }
-
-    @Override
-    public RowMapper getRowMapper(ObjectNode options) {
-        final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
-
-        return parseCells(columnWidths);
-    }
-
-    static private RowMapper parseCells(int[] widths) {
-        return new RowMapper() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Row call(long rowId, Row row) {
-                String line = (String) row.getCellValue(0);
-                List<Cell> cellValues = getCells(line, widths)
-                        .stream()
-                        .map(v -> new Cell(v, null))
-                        .collect(Collectors.toList());
-                return new Row(cellValues);
-            }
-
-            @Override
-            public boolean preservesRecordStructure() {
-                return false;
-            }
-
-        };
     }
 
     /**
@@ -218,12 +181,64 @@ public class FixedWidthImporter extends LineBasedImporterBase {
                 reader.close();
                 is.close();
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    @Override
+    public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+            Supplier<Reader> reader, long limit, ObjectNode options) throws Exception {
+        final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
+
+        CloseableIterable<Row> rowIterable = () -> {
+            LineNumberReader lnReader = new LineNumberReader(reader.get());
+            return new CloseableIterator<Row>() {
+
+                Row row = null;
+
+                @Override
+                public boolean hasNext() {
+                    prepareRow();
+                    return row != null;
+                }
+
+                @Override
+                public Row next() {
+                    prepareRow();
+                    Row toReturn = row;
+                    row = null;
+                    return toReturn;
+
+                }
+
+                public void prepareRow() {
+                    if (row == null) {
+                        String line = null;
+                        try {
+                            line = lnReader.readLine();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                        if (line != null) {
+                            row = new Row(getCells(line, columnWidths)
+                                    .stream().map(s -> new Cell(s, null)).collect(Collectors.toList()));
+                        }
+                    }
+                }
+
+                @Override
+                public void close() {
+                    try {
+                        lnReader.close();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }
+            };
+        };
+
+        return TabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
+    }
 }

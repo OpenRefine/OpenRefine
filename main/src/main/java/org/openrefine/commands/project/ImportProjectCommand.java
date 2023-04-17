@@ -230,7 +230,6 @@ public class ImportProjectCommand extends Command {
 
             // Add the ImportingFileRecord to the job
             ImportingFileRecord fileRecord = new ImportingFileRecord(
-                    null, // sparkURI
                     ImportingUtilities.getRelativePath(targetFile, job.getRawDataDir()), // location
                     filename, // fileName
                     size, // size

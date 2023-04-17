@@ -15,7 +15,7 @@ import org.openrefine.util.ParsingUtilities;
 
 public class LineBasedImporterTests extends ImporterTest {
 
-    LineBasedImporterBase SUT;
+    LineBasedImporter SUT;
 
     @BeforeMethod
     public void setUpImporter() {
@@ -99,8 +99,7 @@ public class LineBasedImporterTests extends ImporterTest {
                 new Serializable[][] {
                         { "data1" },
                         { "data2" },
-                        { "data3" },
-                        { "data4" }
+                        { "data3\rdata4" }
                 });
 
         assertGridEquals(parsed, expected);
@@ -108,7 +107,7 @@ public class LineBasedImporterTests extends ImporterTest {
 
     // Antonin, 2023-03: test disabled since the functionality is not supported in 4.0
     // TODO: re-implement it
-    @Test(dataProvider = "LineBasedImporter-Separators", enabled = false)
+    @Test(dataProvider = "LineBasedImporter-Separators")
     public void readLineData(String pattern, String sep) throws Exception {
         String input = "dataa,datab,datac,datad".replace(",", sep);
 

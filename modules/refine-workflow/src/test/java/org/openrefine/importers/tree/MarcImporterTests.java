@@ -81,7 +81,7 @@ public class MarcImporterTests extends ImporterTest {
         File copy = saveInputStreamToImporterTestDir(inputStream);
 
         List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
-                new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
+                new ImportingFileRecord(copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
         // NOTE: This has the side effect of creating sample.mrc.xml
         parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 
@@ -107,7 +107,7 @@ public class MarcImporterTests extends ImporterTest {
         File copy = saveInputStreamToImporterTestDir(inputStream);
 
         List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
-                new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
+                new ImportingFileRecord(copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
         // NOTE: This has the side effect of creating scriblio.mrc.xml
         parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 

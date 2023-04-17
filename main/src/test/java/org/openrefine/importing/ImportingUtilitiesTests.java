@@ -325,7 +325,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         List<ImportingFileRecord> fileRecords = new ArrayList<>();
         ImportingFileRecord fileRecord = new ImportingFileRecord(
-                null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed", null, null, "UTF-8", null, null, null);
+                tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed", null, null, "UTF-8", null, null, null);
 
         assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
         assertEquals(fileRecords.size(), 2);
@@ -402,7 +402,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         };
 
         ImportingFileRecord fileRecord = new ImportingFileRecord(
-                null, tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed",
+                tmp.getName(), filename, 0L, "upload", "application/x-zip-compressed",
                 null, null, null, "UTF-8", null, null);
         List<ImportingFileRecord> fileRecords = Collections.singletonList(fileRecord);
         RetrievalRecord retrievalRecord = new RetrievalRecord();

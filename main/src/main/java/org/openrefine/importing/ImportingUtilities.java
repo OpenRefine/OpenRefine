@@ -166,7 +166,6 @@ public class ImportingUtilities {
         int uploadCount = 0;
         int downloadCount = 0;
         int archiveCount = 0;
-        int sparkCount = 0;
 
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
@@ -233,7 +232,6 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     ImportingFileRecord fileRecord = new ImportingFileRecord(
-                            null, // sparkURI
                             getRelativePath(file, rawDataDir), // location
                             "(clipboard)", // fileName
                             saveStreamToFile(stream, file, null), // size
@@ -250,27 +248,6 @@ public class ImportingUtilities {
 
                     clipboardCount++;
 
-                } else if ("spark".equals(name)) {
-                    String urlString = Streams.asString(stream);
-                    String filename = extractFilenameFromSparkURI(urlString);
-
-                    ImportingFileRecord fileRecord = new ImportingFileRecord(
-                            urlString, // sparkURI
-                            null, // location
-                            filename, // fileName
-                            0, // size
-                            "spark", // origin
-                            null, // declaredMimeType
-                            null, // mimeType
-                            null, // URL
-                            null, // encoding
-                            null, // declaredEncoding
-                            null, // format
-                            null // archiveFileName
-                    );
-                    fileRecords.add(fileRecord);
-
-                    sparkCount++;
                 } else if ("download".equals(name)) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
@@ -280,7 +257,6 @@ public class ImportingUtilities {
                     }
 
                     ImportingFileRecord fileRecord = new ImportingFileRecord(
-                            null, // sparkURI
                             null, // location
                             null, // fileName
                             0, // size
@@ -386,7 +362,6 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     ImportingFileRecord fileRecord = new ImportingFileRecord(
-                            null, // sparkURI
                             getRelativePath(file, rawDataDir), // location
                             fileName, // fileName
                             saveStreamToFile(stream, file, null), // size
@@ -420,7 +395,6 @@ public class ImportingUtilities {
         retrievalRecord.downloadCount = downloadCount;
         retrievalRecord.clipboardCount = clipboardCount;
         retrievalRecord.archiveCount = archiveCount;
-        retrievalRecord.sparkCount = sparkCount;
     }
 
     /**
@@ -677,7 +651,6 @@ public class ImportingUtilities {
                         progress.setProgress("Extracting " + fileName2, -1);
 
                         ImportingFileRecord fileRecord2 = new ImportingFileRecord(
-                                null, // sparkURI
                                 getRelativePath(file2, rawDataDir), // location
                                 fileName2, // fileName
                                 saveStreamToFile(tis, file2, null), // size
@@ -709,7 +682,6 @@ public class ImportingUtilities {
                     progress.setProgress("Extracting " + fileName2, -1);
 
                     ImportingFileRecord fileRecord2 = new ImportingFileRecord(
-                            null, // sparkURI
                             getRelativePath(file2, rawDataDir), // location
                             fileName2, // fileName
                             saveStreamToFile(zis, file2, null), // size

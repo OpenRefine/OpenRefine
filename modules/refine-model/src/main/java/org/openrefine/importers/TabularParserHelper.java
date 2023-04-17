@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
@@ -94,7 +95,7 @@ public class TabularParserHelper {
      * @param options
      *            a map of parsing options
      */
-    public Grid parseOneFile(Runner runner, String fileSource, String archiveFileName, CloseableIterable<Row> dataReader,
+    public static Grid parseOneFile(Runner runner, String fileSource, String archiveFileName, CloseableIterable<Row> dataReader,
             long limit, ObjectNode options) {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", 0), 0);
         int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 1), 0);
@@ -115,6 +116,24 @@ public class TabularParserHelper {
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         boolean includeArchiveFileName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
+
+        List<String> retrievedColumnNames = null;
+        if (options.has("columnNames")) {
+            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
+            if (strings.length > 0) {
+                retrievedColumnNames = new ArrayList<>();
+                for (String s : strings) {
+                    s = CharMatcher.whitespace().trimFrom(s);
+                    if (!s.isEmpty()) {
+                        retrievedColumnNames.add(s);
+                    }
+                }
+
+                if (retrievedColumnNames.isEmpty()) {
+                    retrievedColumnNames = null;
+                }
+            }
+        }
 
         List<String> columnNames = new ArrayList<String>();
 
@@ -199,6 +218,19 @@ public class TabularParserHelper {
         dataRows = dataRows.map(row -> row.padWithNull(finalColumnCount));
 
         Grid grid = runner.gridFromIterable(columnModel, dataRows, Collections.emptyMap(), rowCount, recordCount);
+        if (retrievedColumnNames != null) {
+            ColumnModel parsedColumnModel = grid.getColumnModel();
+            List<ColumnMetadata> columns = new ArrayList<>(parsedColumnModel.getColumns().size());
+            for (String columnName : retrievedColumnNames) {
+                if (columns.size() < parsedColumnModel.getColumns().size()) {
+                    columns.add(new ColumnMetadata(columnName));
+                }
+            }
+            while (columns.size() < parsedColumnModel.getColumns().size()) {
+                columns.add(parsedColumnModel.getColumnByIndex(columns.size()));
+            }
+            grid = grid.withColumnModel(new ColumnModel(columns));
+        }
         if (includeFileSources) {
             grid = prependColumn("File", fileSource, grid);
         }

@@ -103,26 +103,6 @@ public class SeparatorBasedImporter extends ReaderImporter {
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
         boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
 
-        List<String> retrievedColumnNames = null;
-        if (options.has("columnNames")) {
-            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-            if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<>();
-                for (String s : strings) {
-                    s = CharMatcher.whitespace().trimFrom(s);
-                    if (!s.isEmpty()) {
-                        retrievedColumnNames.add(s);
-                    }
-                }
-
-                if (retrievedColumnNames.isEmpty()) {
-                    retrievedColumnNames = null;
-                }
-            }
-        }
-
-        final List<String> columnNames = retrievedColumnNames;
-
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
@@ -197,21 +177,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
             };
         };
 
-        Grid grid = tabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
-        if (retrievedColumnNames != null) {
-            ColumnModel columnModel = grid.getColumnModel();
-            List<ColumnMetadata> columns = new ArrayList<>(columnModel.getColumns().size());
-            for (String columnName : retrievedColumnNames) {
-                if (columns.size() < columnModel.getColumns().size()) {
-                    columns.add(new ColumnMetadata(columnName));
-                }
-            }
-            while (columns.size() < columnModel.getColumns().size()) {
-                columns.add(columnModel.getColumnByIndex(columns.size()));
-            }
-            grid = grid.withColumnModel(new ColumnModel(columns));
-        }
-        return grid;
+        return tabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
     }
 
     static protected ArrayList<Object> getCells(String line, CSVParser parser, Iterator<IndexedRow> lines)

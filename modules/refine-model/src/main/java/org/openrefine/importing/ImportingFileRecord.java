@@ -2,8 +2,6 @@
 package org.openrefine.importing;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,7 +18,6 @@ public class ImportingFileRecord {
 
     private final static Logger logger = LoggerFactory.getLogger(ImportingFileRecord.class);
 
-    private final String _sparkURI;
     private String _location;
     private String _fileName;
     private long _size;
@@ -35,7 +32,6 @@ public class ImportingFileRecord {
 
     @JsonCreator
     public ImportingFileRecord(
-            @JsonProperty("sparkURI") String sparkURI,
             @JsonProperty("location") String location,
             @JsonProperty("fileName") String fileName,
             @JsonProperty("size") long size,
@@ -47,7 +43,6 @@ public class ImportingFileRecord {
             @JsonProperty("declaredEncoding") String declaredEncoding,
             @JsonProperty("format") String format,
             @JsonProperty("archiveFileName") String archiveFileName) {
-        _sparkURI = sparkURI;
         _location = location == null ? "" : location;
         _fileName = fileName;
         _size = size;
@@ -59,11 +54,6 @@ public class ImportingFileRecord {
         _declaredEncoding = declaredEncoding;
         _format = format;
         _archiveFileName = archiveFileName;
-    }
-
-    @JsonProperty("sparkURI")
-    public String getSparkURI() {
-        return _sparkURI;
     }
 
     @JsonProperty("location")
@@ -128,42 +118,20 @@ public class ImportingFileRecord {
     public String getFileSource() {
         if (_url != null) {
             return _url;
-        } else if (_sparkURI != null) {
-            return _sparkURI;
         } else {
             return _fileName != null ? _fileName : "unknown";
         }
     }
 
     /**
-     * Returns a path to the file stored in the raw data directory corresponding to this file record. This is not
-     * applicable to file records pointing to a Spark URI.
+     * Returns a path to the file stored in the raw data directory corresponding to this file record.
      * 
      * @param rawDataDir
      *            the directory where the files pertaining to the corresponding importing job are stored.
      */
     @JsonIgnore
     public File getFile(File rawDataDir) {
-        if (_sparkURI != null || _location.isEmpty()) {
-            throw new IllegalArgumentException("File record is not stored locally in the import directory");
-        }
         return new File(rawDataDir, _location);
-    }
-
-    /**
-     * Returns either a path to the locally stored file or the remote Spark URI, to read the file from a Spark-based
-     * importer.
-     * 
-     * @param rawDataDir
-     *            the directory where the files pertaining to the corresponding importing job are stored.
-     */
-    public String getDerivedSparkURI(File rawDataDir) {
-        if (_sparkURI == null) {
-            File file = getFile(rawDataDir);
-            return file.getAbsolutePath();
-        } else {
-            return _sparkURI;
-        }
     }
 
     /**
@@ -177,16 +145,8 @@ public class ImportingFileRecord {
         if (_size > 0) {
             return _size;
         }
-        if (_sparkURI == null) {
-            File localFile = getFile(rawDataDir);
-            _size = localFile.length();
-        } else {
-            try {
-                _size = Files.size(new File(_sparkURI).toPath());
-            } catch (IOException e) {
-                _size = 0;
-            }
-        }
+        File localFile = getFile(rawDataDir);
+        _size = localFile.length();
         return _size;
     }
 
