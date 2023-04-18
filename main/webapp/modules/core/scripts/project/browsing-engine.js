@@ -195,7 +195,9 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
      let activeTabId = ui.newTab.children('a').attr("href");
      if (activeTabId === '#refine-tabs-facets') {
        for (let facet of this._facets) {
-         if (facet.facet.checkInitialHeight) {
+         if (facet.facet.render) {
+           facet.facet.render();
+         } else if (facet.facet.checkInitialHeight) {
            facet.facet.checkInitialHeight();
          }
        }
