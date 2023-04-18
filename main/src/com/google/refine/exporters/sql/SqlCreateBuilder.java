@@ -53,10 +53,6 @@ public class SqlCreateBuilder {
 
     }
 
-    public static String addQuotes(String columnName) {
-        return "\"" + columnName.replace("\"", "\"\"") + "\"";
-    }
-
     public String getCreateSQL() {
         if (logger.isDebugEnabled()) {
             logger.debug("Create SQL with columns: {}", columns);
@@ -86,9 +82,9 @@ public class SqlCreateBuilder {
                 if (name != null) {
                     if (trimColNames) {
                         String trimmedCol = name.replaceAll("[^a-zA-Z0-9_]", "_");
-                        createSB.append(addQuotes(trimmedCol) + " ");
+                        createSB.append(trimmedCol + " ");
                     } else {
-                        createSB.append(addQuotes(name) + " ");
+                        createSB.append(name + " ");
                     }
 
                     if (type.equals(SqlData.SQL_TYPE_VARCHAR)) {
