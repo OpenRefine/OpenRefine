@@ -127,7 +127,7 @@
           <socketTimeout>10000</socketTimeout>
           <connectTimeout>10000</connectTimeout>
           <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
-          <licensesConfigFile>${project-basedir}/manual_licenses.xml</licensesConfigFile>
+          <licensesConfigFile>${basedir}/manual_licenses.xml</licensesConfigFile>
         </configuration>
         <executions>
           <execution>
