@@ -37,20 +37,33 @@ Refine.ImportProjectUI = function(elmt) {
   Refine.wrapCSRF(function(token) {
      $('#project-upload-form').attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
   });
-  
+
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
-  this._elmts.projectButton.on('click', function(e) {	
-    if(document.getElementById("project-tar-file-input").value === "" ){	
+  this._elmts.projectButton.on('click', function(e) {
+    let urlInput = document.getElementById("project-url-input")
+    let fileInput = document.getElementById("project-tar-file-input")
+
+    if(fileInput.value === "" && urlInput.value === "" ){
      alert($.i18n('core-index-import/warning-import-file'));
     }
-    else{
-     document.getElementById("import-project-button").type = "submit";
-     }
+    else if( fileInput.value !== ""){
+      document.getElementById("import-project-button").type = "submit";
+    }
+    else if( urlInput.value !== ""){
+      if (URL.looksLikeUrl(urlInput.value)) {
+        //Todo: download and pass the file maybe like:
+        // fileinput.value = fetch(urlInput.value) ...
+        // document.getElementById("import-project-button").type = "submit";
+      } else {
+        alert($.i18n('core-index-import/warning-import-url'));
+      }
+    }
   });
 
   $('#or-import-locate').text($.i18n('core-index-import/locate'));
   $('#or-import-file').text($.i18n('core-index-import/file'));
+  $('#or-import-url').text($.i18n('core-index-import/or'));
   $('#or-import-rename').text($.i18n('core-index-import/rename'));
   $('#import-project-button').val($.i18n('core-buttons/import-proj'));
 };
