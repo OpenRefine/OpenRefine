@@ -99,10 +99,23 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
-  fetch(this._service.url)
+// Hide the documentation link initially
+this._elmts.documentationLink.css("visibility", "hidden");
+for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
+  if (ReconciliationManager.standardServices[i] ===this._service) {
+    fetch(ReconciliationManager.standardServices[i].url)
   .then(response => response.json())
-  .then(apiData => this._elmts.documentationLink.attr("href",apiData.documentation));
-  //this._elmts.documentationLink.attr("href",this._service.url);
+  .then(apiData => {
+    if(apiData.documentation) {
+      this._elmts.documentationLink.attr("href", apiData.documentation);
+      // Show the documentation link if documentation is available
+      this._elmts.documentationLink.css("visibility", "visible");
+    } 
+  });
+    break;
+  }
+}
+
   this._elmts.againstType.on('change', function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
