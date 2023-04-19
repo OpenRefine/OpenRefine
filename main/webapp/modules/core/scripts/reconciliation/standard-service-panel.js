@@ -100,7 +100,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
 // Hide the documentation link initially
-this._elmts.documentationLink.css("visibility", "hidden");
+this._elmts.documentationLink.css("display", "none");
 for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
   if (ReconciliationManager.standardServices[i] ===this._service) {
     fetch(ReconciliationManager.standardServices[i].url)
@@ -109,7 +109,7 @@ for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
     if(apiData.documentation) {
       this._elmts.documentationLink.attr("href", apiData.documentation);
       // Show the documentation link if documentation is available
-      this._elmts.documentationLink.css("visibility", "visible");
+      this._elmts.documentationLink.css("display", "block");
     } 
   });
     break;
