@@ -300,6 +300,8 @@ BrowsingEngine.prototype.update = function(onDone) {
         }
       }
 
+      ui.summaryBar.updateResultCount();
+
       self._elmts.indicator.css("display", "none");
       self._elmts.errors.css("display", "none");
       if (self._facets.length > 0) {
