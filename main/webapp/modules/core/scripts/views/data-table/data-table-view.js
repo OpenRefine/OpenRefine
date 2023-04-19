@@ -119,8 +119,6 @@ DataTableView.prototype.render = function() {
   );
   var elmts = DOM.bind(html);
 
-  ui.summaryBar.updateResultCount();
-
   var renderBrowsingModeLink = function(label, value) {
     var a = $('<a href="javascript:{}"></a>')
     .addClass("viewPanel-browsingModes-mode")
