@@ -79,7 +79,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
         JSONUtilities.safePut(options, "trimStrings", true);
-        JSONUtilities.safePut(options, "multiLine", false);
+        JSONUtilities.safePut(options, "multiLine", true);
 
         return options;
     }
