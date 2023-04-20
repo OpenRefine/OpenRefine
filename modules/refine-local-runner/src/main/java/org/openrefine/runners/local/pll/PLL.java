@@ -2,6 +2,7 @@
 package org.openrefine.runners.local.pll;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -598,9 +599,9 @@ public abstract class PLL<T> {
     /**
      * Write the PLL to a directory, containing one file for each partition.
      */
-    public void saveAsTextFile(String path, int maxConcurrency, boolean repartition)
+    public void saveAsTextFile(String path, int maxConcurrency, boolean repartition, boolean flushRegularly)
             throws IOException, InterruptedException {
-        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency, repartition);
+        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency, repartition, flushRegularly);
         try {
             future.get();
         } catch (ExecutionException e) {
@@ -629,7 +630,7 @@ public abstract class PLL<T> {
 
     /**
      * Write the PLL to a directory, writing one file per partition, in an asynchronous way.
-     * 
+     *
      * @param path
      *            the directory to which to write the PLL
      * @param maxConcurrency
@@ -637,9 +638,12 @@ public abstract class PLL<T> {
      * @param repartition
      *            whether to re-arrange partitions to make them more balanced (merging small partitions together,
      *            splitting large partitions into smaller ones).
+     * @param flushRegularly
+     *            whether the file should be written to disk often (at the cost of a lower compression ratio, and more
+     *            disk writes)
      * @return a future for the saving process, which supports progress reporting and pausing.
      */
-    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition) {
+    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition, boolean flushRegularly) {
 
         File gridPath = new File(path);
         gridPath.mkdirs();
@@ -674,7 +678,8 @@ public abstract class PLL<T> {
                                 .map(partition -> (int) (partition.end - partition.start));
                         Iterator<Iterator<T>> partitionChunks = fullIterator.chop(partitionSizes);
                         for (PlannedPartition plannedPartition : partitions) {
-                            writePlannedPartition(plannedPartition, gridPath, partitionChunks.next(), Optional.of(taskSignalling));
+                            writePlannedPartition(plannedPartition, gridPath, partitionChunks.next(), Optional.of(taskSignalling),
+                                    flushRegularly);
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -686,7 +691,7 @@ public abstract class PLL<T> {
         } else {
             partitionWritingFuture = runOnPartitionsAsync((p, taskSignalling) -> {
                 try {
-                    writeOriginalPartition(p, gridPath, Optional.of(taskSignalling));
+                    writeOriginalPartition(p, gridPath, Optional.of(taskSignalling), flushRegularly);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -713,26 +718,28 @@ public abstract class PLL<T> {
         return future;
     }
 
-    protected void writeOriginalPartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling)
+    protected void writeOriginalPartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling,
+            boolean flushRegularly)
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.getIndex());
         File partFile = new File(directory, filename);
-        writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling);
+        writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling, flushRegularly);
     }
 
     protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> choppedIterator,
-            Optional<TaskSignalling> taskSignalling)
+            Optional<TaskSignalling> taskSignalling, boolean flushRegularly)
             throws IOException {
         String filename = String.format("part-%05d.gz", partition.index);
         File partFile = new File(directory, filename);
         CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(choppedIterator);
-        writePartition(partition.index, limitedIterator, partFile, taskSignalling);
+        writePartition(partition.index, limitedIterator, partFile, taskSignalling, flushRegularly);
     }
 
-    protected void writePartition(int partitionIndex, CloseableIterator<T> iterator, File partFile, Optional<TaskSignalling> taskSignalling)
+    protected void writePartition(int partitionIndex, CloseableIterator<T> iterator, File partFile, Optional<TaskSignalling> taskSignalling,
+            boolean flushRegularly)
             throws IOException {
         try (FileOutputStream fos = new FileOutputStream(partFile);
-                GZIPOutputStream gos = new GZIPOutputStream(fos, 512, true);
+                GZIPOutputStream gos = new GZIPOutputStream(fos, 512, flushRegularly);
                 Writer writer = new OutputStreamWriter(gos);
                 iterator) {
 
@@ -741,11 +748,15 @@ public abstract class PLL<T> {
             if (taskSignalling.isPresent()) {
                 finalIterator = taskSignalling.get().wrapStream(iterator, 10, partitionIndex);
             }
-            finalIterator.forEach(row -> {
+            LastFlush lastFlush = new LastFlush();
+            finalIterator.zipWithIndex().forEach(tuple -> {
                 try {
-                    writer.write(row.toString());
+                    writer.write(tuple._1.toString());
                     writer.write('\n');
-                    writer.flush();
+                    if (flushRegularly && lastFlush.isOlderThan(1000)) {
+                        writer.flush();
+                        lastFlush.update();
+                    }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -753,7 +764,25 @@ public abstract class PLL<T> {
         }
     }
 
-    // Internal functions
+    // Internal functions and helpers
+
+    /* Helper to flush output streams after some interval */
+    protected static class LastFlush {
+
+        Instant instant;
+
+        public LastFlush() {
+            update();
+        }
+
+        public void update() {
+            instant = Instant.now();
+        }
+
+        public boolean isOlderThan(long milliseconds) {
+            return instant.plusMillis(milliseconds).isAfter(Instant.now());
+        }
+    }
 
     /**
      * Runs a task in parallel on all partitions.
