@@ -93,24 +93,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             }
         }
         progress.endFiles();
-        return mergeGrids(grids);
-    }
-
-    /**
-     * Merges grids of individual files into one single grid.
-     * 
-     * @param grids
-     *            a list of grids returned by the importers
-     */
-    protected Grid mergeGrids(List<Grid> grids) {
-        if (grids.isEmpty()) {
-            throw new IllegalArgumentException("No grids provided");
-        }
-        Grid current = grids.get(0);
-        for (int i = 1; i != grids.size(); i++) {
-            current = ImporterUtilities.mergeGrids(current, grids.get(i));
-        }
-        return current;
+        return ImporterUtilities.mergeGrids(grids);
     }
 
     public Grid parseOneFile(
