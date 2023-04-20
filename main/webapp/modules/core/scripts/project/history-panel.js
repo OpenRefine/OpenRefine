@@ -288,10 +288,34 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   
   elmts.dialogHeader.html($.i18n('core-project/apply-operation'));
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
+
+  elmts.operationJsonButton.on('click', async function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json'; // optional file types
+    input.onchange = async function() {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fileContent = JSON.parse(e.target.result);
+        const textAreaElement = document.querySelector('#textareaId')
+        if (textAreaElement) {
+          textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
+
+        }
+      };
+      reader.addEventListener('error', function() {
+        alert('Error : Failed to read file');
+    });
+      reader.readAsText(file);
+    };
+    input.click();
+  });
+  
   
   elmts.applyButton.html($.i18n('core-buttons/perform-op'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  elmts.operationJsonButton.html($.i18n('core-buttons/upload'));
+  elmts.operationJsonButton.html($.i18n('core-buttons/select'));
 
   var fixJson = function(json) {
     json = json.trim();
@@ -339,28 +363,6 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.operationJsonButton.on('click', async function() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json'; // optional file types
-    input.onchange = async function() {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const fileContent = JSON.parse(e.target.result);
-        const textAreaElement = document.querySelector('#textareaId')
-        if (textAreaElement) {
-          textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
-
-        }
-      };
-      reader.addEventListener('error', function() {
-        alert('Error : Failed to read file');
-    });
-      reader.readAsText(file);
-    };
-    input.click();
-  });
   var level = DialogSystem.showDialog(frame);
 
   elmts.textarea.trigger('focus');
