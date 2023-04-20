@@ -147,9 +147,11 @@ public class DefaultImportingController implements ImportingController {
         job.setFileSelection(fileSelectionArray);
 
         String bestFormat = job.getCommonFormatForSelectedFiles();
-        bestFormat = job.guessBetterFormat(bestFormat);
+        if (bestFormat != null) {
+            bestFormat = job.guessBetterFormat(bestFormat);
 
-        job.rerankFormats(bestFormat);
+            job.rerankFormats(bestFormat);
+        }
 
         replyWithJobData(request, response, job);
         job.touch();
