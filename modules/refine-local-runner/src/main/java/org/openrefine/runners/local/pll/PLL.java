@@ -3,6 +3,7 @@ package org.openrefine.runners.local.pll;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -460,10 +461,23 @@ public abstract class PLL<T> {
      * 
      * @param other
      *            the list of elements to add at the end of this one
-     * @return
      */
     public PLL<T> concatenate(PLL<T> other) {
-        return new UnionPLL<T>(this, other);
+        return new UnionPLL<T>(Arrays.asList(this, other));
+    }
+
+    /**
+     * Concatenates other PLLs at the end of this one, resulting in a new PLL. The new PLL has the union of the
+     * partitions of all original PLLs as partition set.
+     *
+     * @param others
+     *            the list of PLLs to add at the end of this one
+     */
+    public PLL<T> concatenate(List<PLL<T>> others) {
+        List<PLL<T>> fullList = new ArrayList<>(others.size() + 1);
+        fullList.add(this);
+        fullList.addAll(others);
+        return new UnionPLL<T>(fullList);
     }
 
     /**

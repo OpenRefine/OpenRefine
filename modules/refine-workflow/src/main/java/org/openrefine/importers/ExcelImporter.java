@@ -244,7 +244,7 @@ public class ExcelImporter extends InputStreamImporter {
                     dataReader, limit, options));
         }
 
-        return mergeGrids(grids);
+        return ImporterUtilities.mergeGrids(grids);
     }
 
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, boolean forceText) {

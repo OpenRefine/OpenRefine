@@ -2,7 +2,6 @@
 package org.openrefine.runners.local.pll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,7 @@ import io.vavr.collection.Array;
 import org.openrefine.util.CloseableIterator;
 
 /**
- * A PLL which represents the concatenation of two others.
+ * A PLL which represents the concatenation of a sequence of other PLLs
  * 
  * @author Antonin Delpeuch
  *
@@ -19,41 +18,35 @@ import org.openrefine.util.CloseableIterator;
  */
 public class UnionPLL<T> extends PLL<T> {
 
-    private final PLL<T> first;
-    private final PLL<T> second;
+    private final List<PLL<T>> parents;
     private final List<Partition> partitions;
 
     /**
      * Constructor.
      * 
-     * @param first
-     *            the PLL whose elements should come first
-     * @param second
-     *            the PLL whose elements should come last
+     * @param parents
+     *            the PLLs whose elements should be concatenated, in that order. The list must be non-empty.
      */
-    public UnionPLL(PLL<T> first, PLL<T> second) {
-        super(first.getContext(), "Union");
-        this.first = first;
-        this.second = second;
-        Array<? extends Partition> firstPartitions = first.getPartitions();
-        Array<? extends Partition> secondPartitions = second.getPartitions();
-        partitions = new ArrayList<>(firstPartitions.size() + secondPartitions.size());
-        partitions.addAll(firstPartitions
-                .map(p -> new UnionPartition(p.getIndex(), true, p))
-                .collect(Collectors.toList()));
-        partitions.addAll(secondPartitions
-                .map(p -> new UnionPartition(p.getIndex() + firstPartitions.size(), false, p))
-                .collect(Collectors.toList()));
+    public UnionPLL(List<PLL<T>> parents) {
+        super(parents.get(0).getContext(), "Union");
+        this.parents = parents;
+
+        partitions = new ArrayList<>();
+        int index = 0;
+        for (PLL<T> parent : parents) {
+            int finalIndex = index;
+            partitions.addAll(parent.getPartitions()
+                    .map(p -> new UnionPartition(p.getIndex(), finalIndex, p))
+                    .collect(Collectors.toList()));
+            index++;
+        }
     }
 
     @Override
     protected CloseableIterator<T> compute(Partition partition) {
         UnionPartition unionPartition = (UnionPartition) partition;
-        if (unionPartition.left) {
-            return first.compute(unionPartition.parent);
-        } else {
-            return second.compute(unionPartition.parent);
-        }
+        PLL<T> parent = parents.get(unionPartition.parentIndex);
+        return parent.compute(unionPartition.parent);
     }
 
     @Override
@@ -63,28 +56,32 @@ public class UnionPLL<T> extends PLL<T> {
 
     @Override
     protected Array<Long> computePartitionSizes() {
-        return first.getPartitionSizes().appendAll(second.getPartitionSizes());
+        Array<Long> partitionSizes = Array.empty();
+        for (PLL<T> parent : parents) {
+            partitionSizes = partitionSizes.appendAll(parent.getPartitionSizes());
+        }
+        return partitionSizes;
     }
 
     @Override
     public boolean hasCachedPartitionSizes() {
-        return (first.hasCachedPartitionSizes() && second.hasCachedPartitionSizes()) || super.hasCachedPartitionSizes();
+        return parents.stream().allMatch(PLL::hasCachedPartitionSizes) || super.hasCachedPartitionSizes();
     }
 
     @Override
     public List<PLL<?>> getParents() {
-        return Arrays.asList(first, second);
+        return new ArrayList<>(parents);
     }
 
     protected static class UnionPartition implements Partition {
 
         protected final int index;
-        protected final boolean left;
+        protected final int parentIndex;
         protected final Partition parent;
 
-        protected UnionPartition(int index, boolean left, Partition parent) {
+        protected UnionPartition(int index, int parentIndex, Partition parent) {
             this.index = index;
-            this.left = left;
+            this.parentIndex = parentIndex;
             this.parent = parent;
         }
 

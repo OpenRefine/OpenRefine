@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -129,7 +130,7 @@ public class ImporterUtilitiesTests extends RefineTest {
                         { 7, null, 8 }
                 });
 
-        Grid merged = ImporterUtilities.mergeGrids(grid1, grid2);
+        Grid merged = ImporterUtilities.mergeGrids(Arrays.asList(grid1, grid2));
         Assert.assertEquals(merged.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(merged.collectRows(), expected.collectRows());
     }

@@ -195,7 +195,7 @@ public class OdsImporter extends InputStreamImporter {
                     dataReader, limit, options));
         }
 
-        return mergeGrids(grids);
+        return ImporterUtilities.mergeGrids(grids);
     }
 
     static protected Serializable extractCellValue(OdfTableCell cell) {

@@ -552,12 +552,30 @@ public interface Grid {
      * models of this grid have priority over the others.
      * <p>
      * The two grids are required to have the same number of columns.
-     * 
+     *
      * @param other
      *            the grid to concatenate to this one
      * @return a new grid, union of the two
      */
     public Grid concatenate(Grid other);
+
+    /**
+     * Concatenates this with other grids, in the given order. This is a variant of {@link #concatenate(Grid)} which
+     * implementations can override to make more efficient than making repeated calls to {@link #concatenate(Grid)}
+     * (which is the default implementation).
+     *
+     * @param otherGrids
+     *            the list of other grids to concatenate with this one.
+     * @return a new grid, union of all those grids
+     */
+    public default Grid concatenate(List<Grid> otherGrids) {
+        if (otherGrids.isEmpty()) {
+            return this;
+        } else {
+            return concatenate(otherGrids.subList(0, otherGrids.size() - 1))
+                    .concatenate(otherGrids.get(otherGrids.size() - 1));
+        }
+    }
 
     // Memory management
 

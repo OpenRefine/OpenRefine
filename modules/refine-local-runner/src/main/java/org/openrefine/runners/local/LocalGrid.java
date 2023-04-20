@@ -5,11 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -158,7 +154,7 @@ public class LocalGrid implements Grid {
     }
 
     @Override
-    public Runner getRunner() {
+    public LocalRunner getRunner() {
         return runner;
     }
 
@@ -802,34 +798,57 @@ public class LocalGrid implements Grid {
 
     @Override
     public Grid concatenate(Grid other) {
-        if (!(other instanceof LocalGrid)) {
+        return concatenate(Collections.singletonList(other));
+    }
+
+    @Override
+    public Grid concatenate(List<Grid> otherGrids) {
+        List<Grid> fullList = new ArrayList<>(otherGrids.size() + 1);
+        fullList.add(this);
+        fullList.addAll(otherGrids);
+        return concatenateGridList(fullList);
+    }
+
+    protected static Grid concatenateGridList(List<Grid> grids) {
+        if (grids.isEmpty()) {
+            throw new IllegalArgumentException("Concatenating an empty list of grids");
+        }
+        if (!grids.stream().allMatch(grid -> grid instanceof LocalGrid)) {
             throw new IllegalArgumentException("Concatenating grids from incompatible runners");
         }
-        LocalGrid otherLocal = (LocalGrid) other;
-        ColumnModel merged = columnModel.merge(other.getColumnModel());
-        Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
-        mergedOverlayModels.putAll(overlayModels);
 
-        // compute the record count of the new grid if it can directly be inferred from the
-        // existing cached counts.
-        long recordCount = -1L;
-        if (cachedRecordCount != -1L && otherLocal.cachedRecordCount != -1L &&
-                columnModel.getKeyColumnIndex() == other.getColumnModel().getKeyColumnIndex()) {
-            // a record in the first grid might continue over from the first to the second grid,
-            // if the first record in the second grid does not start with a record start marker.
-            recordCount = cachedRecordCount + otherLocal.cachedRecordCount;
-            if (cachedRecordCount != 0L && otherLocal.cachedRecordCount != 0L &&
-                    !Record.isRecordStart(otherLocal.getRow(0L), merged.getKeyColumnIndex())) {
-                recordCount -= 1L;
+        List<LocalGrid> localGrids = grids.stream().map(grid -> (LocalGrid) grid).collect(Collectors.toList());
+        ColumnModel mergedColumnModel = grids.get(0).getColumnModel();
+        Map<String, OverlayModel> mergedOverlayModels = new HashMap<>();
+        List<PLL<Row>> plls = new ArrayList<>(grids.size());
+        long recordCount = 0L;
+        for (LocalGrid grid : localGrids) {
+            mergedColumnModel = mergedColumnModel.merge(grid.getColumnModel());
+            mergedOverlayModels.putAll(grid.getOverlayModels());
+            // compute the record count of the new grid if it can directly be inferred from the
+            // existing cached counts.
+            if (recordCount != -1L) {
+                if (grid.cachedRecordCount == -1L) {
+                    recordCount = -1L;
+                } else {
+                    // a record in the first grid might continue over from the first to the second grid,
+                    // if the first record in the second grid does not start with a record start marker.
+                    if (recordCount != 0L && grid.cachedRecordCount != 0L &&
+                            !Record.isRecordStart(grid.getRow(0L), mergedColumnModel.getKeyColumnIndex())) {
+                        recordCount -= 1L;
+                    }
+                    recordCount += grid.cachedRecordCount;
+                }
             }
+            PLL<Row> currentRows = grid.indexedRows().map(IndexedRow::getRow, "drop old row indices before concatenation");
+            plls.add(currentRows);
         }
+
+        PLL<Row> rows = plls.get(0).concatenate(plls.subList(1, plls.size()));
         return new LocalGrid(
-                runner,
-                grid.values()
-                        .map(IndexedRow::getRow, "drop old row indices")
-                        .concatenate(otherLocal.grid.values().map(IndexedRow::getRow, "drop old row indices"))
-                        .zipWithIndex(),
-                merged,
+                localGrids.get(0).getRunner(),
+                rows.zipWithIndex(),
+                mergedColumnModel,
                 mergedOverlayModels, recordCount);
     }
 

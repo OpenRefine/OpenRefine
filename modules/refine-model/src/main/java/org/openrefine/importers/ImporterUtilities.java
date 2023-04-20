@@ -35,7 +35,6 @@ package org.openrefine.importers;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -337,48 +336,48 @@ public class ImporterUtilities {
      * Given two grids with potentially different columns, unify the two into a single grid by adding columns of the
      * second grid which are not present in the first at the end.
      */
-    protected static Grid mergeGrids(Grid state1, Grid state2) {
-        Map<Integer, Integer> positions = new HashMap<>();
-        List<ColumnMetadata> mergedColumns = new ArrayList<>(state1.getColumnModel().getColumns());
-        List<ColumnMetadata> columns2 = state2.getColumnModel().getColumns();
-        ColumnModel columnModel1 = state1.getColumnModel();
-        for (int i = 0; i != columns2.size(); i++) {
-            String columnName = columns2.get(i).getName();
-            int position = columnModel1.getColumnIndexByName(columnName);
-            if (position == -1) {
-                position = mergedColumns.size();
-                mergedColumns.add(columns2.get(i));
-            } else {
-                mergedColumns.set(position, mergedColumns.get(position));
-            }
-            positions.put(i, position);
+    protected static Grid mergeGrids(List<Grid> grids) {
+        if (grids.isEmpty()) {
+            throw new IllegalArgumentException("Impossible to merge an empty list of grids");
+        } else if (grids.size() == 1) {
+            return grids.get(0);
         }
-        ColumnModel mergedColumnModel = new ColumnModel(mergedColumns);
 
-        int origSizeState1 = columnModel1.getColumns().size();
-        Grid translatedState1 = state1.mapRows(translateFirstGrid(origSizeState1, mergedColumns.size() - origSizeState1),
-                mergedColumnModel);
-        Grid translatedState2 = state2.mapRows(translateSecondGrid(mergedColumns.size(), positions), mergedColumnModel);
-        return translatedState1.concatenate(translatedState2);
-    }
+        // first, compute for each grid a reordering of columns,
+        // such that all grids can be mapped to a unified column model.
+        List<Map<Integer, Integer>> columnMappings = new ArrayList<>();
+        List<ColumnMetadata> currentColumns = new ArrayList<>();
+        Map<String, Integer> columnNameToIndex = new HashMap<>();
 
-    private static RowMapper translateFirstGrid(int oldColumns, int additionalColumns) {
-        List<Cell> nullCells = Arrays.asList(new Cell[additionalColumns]);
-        return new RowMapper() {
-
-            private static final long serialVersionUID = 7085491437207390723L;
-
-            @Override
-            public Row call(long rowId, Row row) {
-                return row.insertCells(oldColumns, nullCells);
+        for (Grid grid : grids) {
+            List<ColumnMetadata> originalColumns = grid.getColumnModel().getColumns();
+            Map<Integer, Integer> reordering = new HashMap<>();
+            for (int i = 0; i != originalColumns.size(); i++) {
+                ColumnMetadata column = originalColumns.get(i);
+                String columnName = column.getName();
+                Integer currentIndex = columnNameToIndex.get(columnName);
+                if (currentIndex == null) {
+                    currentIndex = currentColumns.size();
+                    currentColumns.add(column);
+                    columnNameToIndex.put(column.getName(), currentIndex);
+                }
+                reordering.put(currentIndex, i);
             }
+            columnMappings.add(reordering);
+        }
 
-            @Override
-            public boolean preservesRecordStructure() {
-                return false;
-            }
+        // Compute the new common column model of all grids after reordering their columns
+        ColumnModel unifiedColumnModel = new ColumnModel(currentColumns);
 
-        };
+        // Map each grid to the new column model
+        List<Grid> finalGrids = new ArrayList<>();
+        for (int i = 0; i != grids.size(); i++) {
+            Grid originalGrid = grids.get(i);
+            Map<Integer, Integer> mapping = columnMappings.get(i);
+            finalGrids.add(originalGrid.mapRows(translateSecondGrid(unifiedColumnModel.getColumns().size(), mapping), unifiedColumnModel));
+        }
+        Grid finalGrid = finalGrids.get(0).concatenate(finalGrids.subList(1, finalGrids.size()));
+        return finalGrid;
     }
 
     private static RowMapper translateSecondGrid(int nbColumns, Map<Integer, Integer> positions) {
@@ -388,9 +387,10 @@ public class ImporterUtilities {
 
             @Override
             public Row call(long rowId, Row row) {
-                List<Cell> cells = Arrays.asList(new Cell[nbColumns]);
-                for (int i = 0; i != row.getCells().size(); i++) {
-                    cells.set(positions.get(i), row.getCell(i));
+                List<Cell> cells = new ArrayList<>(nbColumns);
+                for (int i = 0; i != nbColumns; i++) {
+                    Integer mappedIndex = positions.get(i);
+                    cells.add(mappedIndex == null ? null : row.getCell(mappedIndex));
                 }
                 return new Row(cells, row.flagged, row.starred);
             }

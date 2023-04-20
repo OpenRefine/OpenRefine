@@ -373,10 +373,6 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         return new PairPLL<K, V>(croppedPLL, newPartitioner);
     }
 
-    public PairPLL<K, V> concatenate(PairPLL<K, V> other) {
-        return new PairPLL<K, V>(pll.concatenate(other), Optional.empty());
-    }
-
     @Override
     protected CloseableIterator<Tuple2<K, V>> compute(Partition partition) {
         return pll.compute(partition);

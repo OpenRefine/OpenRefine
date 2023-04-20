@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
@@ -300,7 +301,13 @@ public class LoggedGrid implements Grid {
 
     @Override
     public Grid concatenate(Grid other) {
-        return wrap(grid.concatenate(((LoggedGrid) other).grid));
+        return wrap(exec("concatenate (binary)", () -> grid.concatenate(((LoggedGrid) other).grid)));
+    }
+
+    @Override
+    public Grid concatenate(List<Grid> others) {
+        return wrap(exec(String.format("concatenate (list of %d)", others.size()),
+                () -> grid.concatenate(others.stream().map(other -> ((LoggedGrid) other).grid).collect(Collectors.toList()))));
     }
 
     @Override
