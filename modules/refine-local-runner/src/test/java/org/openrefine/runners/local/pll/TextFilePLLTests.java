@@ -89,7 +89,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testRoundTripSerialization() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         File tempFile = new File(tempDir, "roundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
 
         // check for presence of the _SUCCESS marker
         File successMarker = new File(tempFile, "_SUCCESS");
@@ -106,7 +106,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
@@ -123,7 +123,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
         future.onProgress(progressReporter);
         future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
@@ -139,7 +139,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
         future.onProgress(progressReporter);
         future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
@@ -161,7 +161,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, true);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, true, false);
         future.onProgress(progressReporter);
         future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
@@ -205,7 +205,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
 
         // truncate various partitions at various sizes and remove the completion marker
         truncateFile(new File(tempFile, "part-00001.gz"), 1);
