@@ -40,6 +40,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
+import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -127,10 +128,11 @@ public class RowRemovalOperationTests extends RefineTest {
         checkRowCounts(5, 4);
 
         EngineDependentOperation op = new RowRemovalOperation(engine_config);
-        op.createProcess(project, options).performImmediate();
+        HistoryEntry historyEntry = op.createProcess(project, options).performImmediate();
         checkRowCounts(1, 0);
 
-        // TODO: Add undo/revert test
+        historyEntry.revert(project);
+        checkRowCounts(5, 4);
     }
 
     class CountVerificationRowVisitor implements RowVisitor {
