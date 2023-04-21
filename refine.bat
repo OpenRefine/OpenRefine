@@ -160,12 +160,12 @@ set REFINE_WEBAPP=main\webapp
 set OPTS=%OPTS% -Drefine.webapp=%REFINE_WEBAPP%
 
 for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
-echo "-------------------------------------------------------------------------------------------------"
+echo -------------------------------------------------------------------------------------------------
 echo You have %freeRam%M of free memory.
 echo Your current configuration is set to use %REFINE_MEMORY% of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
 echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
-echo "-------------------------------------------------------------------------------------------------"
+echo -------------------------------------------------------------------------------------------------
 
 if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
