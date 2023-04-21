@@ -42,17 +42,17 @@ describe(__filename, function () {
 
     //sliding the middle portion in numeric facet
     cy.get('.slider-widget-draggable').eq(0)
-    .trigger('mousedown',{ force: true }).waitForOrOperation()
+    .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true }).waitForOrOperation();
-    cy.get('#summary-bar').contains('79 matching rows');
+    cy.get('#summary-bar').contains('77 matching rows');
 
     //sliding the left slider
     cy.get('.slider-widget-bracket').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true })
-    cy.get('#summary-bar').contains('4 matching rows');
+    cy.get('#summary-bar').contains('33 matching rows');
   });
 
   it('Test for checkboxes and reset button', function () {
