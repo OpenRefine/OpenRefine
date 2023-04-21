@@ -731,7 +731,7 @@ case "$ACTION" in
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
   dist) dist $1;;
-  *) usage; ;;
+  *) echo "Unknown Refine command called \"$ACTION\", type \"./refine -h\" for proper usage.";;
 esac
 
 # ----------- end of file --------------------
