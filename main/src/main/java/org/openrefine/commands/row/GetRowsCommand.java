@@ -63,8 +63,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
- * Retrieves rows from a project (or importing job). <br/>
- * Those rows can be requested as either:
+ * Retrieves rows from a project (or importing job). Those rows can be requested as either:
  * <ul>
  * <li>the batch of rows starting at a given index (included), up to a certain size</li>
  * <li>the batch of rows ending at a given index (excluded), again up to a given size.</li>

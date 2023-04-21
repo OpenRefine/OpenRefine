@@ -2,11 +2,14 @@
 package org.openrefine.importers;
 
 import java.io.Reader;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importing.EncodingGuesser;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
@@ -17,6 +20,14 @@ import org.openrefine.model.Runner;
  *
  */
 public abstract class ReaderImporter extends ImportingParserBase {
+
+    @Override
+    public ObjectNode createParserUIInitializationData(Runner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
+        return options;
+    }
 
     /**
      * Parses one file, read from a {@link Reader} object, into a Grid.
