@@ -147,7 +147,11 @@
       <artifactId>vavr</artifactId>
       <version>0.10.4</version>
     </dependency>
-
+    <dependency>
+      <groupId>com.github.albfernandez</groupId>
+      <artifactId>juniversalchardet</artifactId>
+      <version>${juniversalchardet.version}</version>
+    </dependency>
 
     <!-- test dependencies -->
 

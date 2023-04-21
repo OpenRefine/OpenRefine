@@ -233,11 +233,6 @@
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.github.albfernandez</groupId>
-      <artifactId>juniversalchardet</artifactId>
-      <version>${juniversalchardet.version}</version>
-    </dependency>
 
     <!-- test dependencies -->
 
