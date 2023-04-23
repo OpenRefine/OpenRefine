@@ -171,7 +171,7 @@ public class Row implements HasFields, Serializable {
     @JsonProperty("cells")
     public List<Cell> getCells() {
         return cells.stream()
-                .map(c -> c.value == null && c.recon == null ? null : c)
+                .map(c -> Cell.NULL.equals(c) ? null : c)
                 .collect(Collectors.toList());
     }
 

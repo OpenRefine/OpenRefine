@@ -43,6 +43,8 @@ function DataTableView(div) {
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
   this._shownulls = false;
+  this._autoUpdateTimeout = undefined;
+  this._lastRequestedPagination = undefined;
 
   this._showRows({start: 0});
 }
@@ -198,7 +200,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   // the engineStats might not be available yet at this point,
   // but we only need it for the total number of rows, to size the
   // input field appropriately, so the exact value is not critical
-  var totalRows = 1000;
+  var totalRows = 2000;
   if (theProject.engineStats) {
     totalRows = theProject.engineStats.totalRows;
   }
@@ -448,13 +450,33 @@ DataTableView.prototype._renderTableHeader = function(tableHeader) {
 
 DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
+  self._lastRequestedPagination = paginationOptions;
+  self._cancelAutoUpdate();
   Refine.fetchRows(paginationOptions, this._pageSize, function() {
-    self.render();
+    if (self._lastRequestedPagination == paginationOptions) {
+      self.render();
+    }
+
+    // schedule some follow-up update if the grid has incomplete cells
+    if (theProject.rowModel.hasPendingCells) {
+      self._cancelAutoUpdate();
+      self._autoUpdateTimeout = setTimeout(function() {
+        self._showRows(self._lastRequestedPagination);
+      }, 2000);
+    }
 
     if (onDone) {
       onDone();
     }
   }, this._sorting);
+};
+
+DataTableView.prototype._cancelAutoUpdate = function(elmt, evt) {
+  var self = this;
+  if (self._autoUpdateTimeout !== undefined) {
+    clearTimeout(self._autoUpdateTimeout);
+    self._autoUpdateTimeout = undefined;
+  }
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {

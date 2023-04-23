@@ -93,7 +93,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -128,7 +129,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -154,7 +156,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
                 "       \"previousPageId\": 1,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -189,7 +192,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -216,7 +220,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1\n" +
+                "       \"nextPageId\": 1,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
@@ -250,7 +255,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1\n" +
+                "       \"nextPageId\": 1,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);
@@ -287,7 +293,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -323,7 +330,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
@@ -366,7 +374,8 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2\n" +
+                "       \"nextPageId\": 2,\n" +
+                "       \"hasPendingCells\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn(engineConfig);

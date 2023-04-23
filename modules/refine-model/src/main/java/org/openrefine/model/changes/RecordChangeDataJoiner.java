@@ -20,7 +20,7 @@ public interface RecordChangeDataJoiner<T> extends Serializable {
      * Given a record and the pre-computed change data for this record, return the new rows in the record after the
      * change.
      */
-    List<Row> call(Record record, T changeData);
+    List<Row> call(Record record, IndexedData<T> indexedData);
 
     /**
      * Indicates whether this joiner is guaranteed to preserve the record boundaries on the grid it is applied to.

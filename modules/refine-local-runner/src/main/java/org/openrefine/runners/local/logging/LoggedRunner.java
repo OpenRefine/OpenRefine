@@ -162,6 +162,11 @@ public class LoggedRunner implements Runner {
     }
 
     @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return wrap(exec("emptyChangeData", () -> runner.emptyChangeData()));
+    }
+
+    @Override
     public boolean supportsProgressReporting() {
         return runner.supportsProgressReporting();
     }

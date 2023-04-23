@@ -137,6 +137,9 @@ public class GetRowsCommand extends Command {
         @JsonInclude(Include.NON_NULL)
         protected final Long nextPageId;
 
+        @JsonProperty("hasPendingCells")
+        protected final boolean hasPendingCells;
+
         protected JsonResult(Mode mode, List<WrappedRow> rows, long start, long end, int limit, Long previousPageId, Long nextPageId) {
             this.mode = mode;
             this.rows = rows;
@@ -145,6 +148,8 @@ public class GetRowsCommand extends Command {
             this.limit = Math.min(rows.size(), limit);
             this.previousPageId = previousPageId;
             this.nextPageId = nextPageId;
+            this.hasPendingCells = rows.stream().anyMatch(
+                    wrappedRow -> wrappedRow.row.getCells().stream().anyMatch(cell -> cell != null && cell.isPending()));
         }
     }
 
@@ -230,7 +235,6 @@ public class GetRowsCommand extends Command {
                     // TODO cache this appropriately
                     sortedGrid = entireGrid.reorderRows(sortingConfig, false);
                 }
-                logger.info(sortedGrid.toString());
                 List<IndexedRow> rows;
                 if (start != -1L) {
                     rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);

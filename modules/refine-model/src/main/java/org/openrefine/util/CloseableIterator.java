@@ -129,6 +129,10 @@ public interface CloseableIterator<T> extends Iterator<T>, AutoCloseable {
         return new Wrapper(Iterator.empty(), List.empty());
     }
 
+    static CloseableIterator<Long> from(long start) {
+        return new Wrapper(Iterator.from(start), List.empty());
+    }
+
     static <T> CloseableIterator<T> wrapping(Iterator<? extends T> ts) {
         return new Wrapper(ts, List.empty());
     }

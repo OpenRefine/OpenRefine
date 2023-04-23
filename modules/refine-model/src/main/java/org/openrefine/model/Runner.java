@@ -115,6 +115,11 @@ public interface Runner {
     }
 
     /**
+     * Creates an empty change data object of a given type, marked as incomplete.
+     */
+    <T> ChangeData<T> emptyChangeData();
+
+    /**
      * Indicates whether this implementation supports progress reporting. If not, progress objects will be left
      * untouched when passed to methods in this interface.
      */
