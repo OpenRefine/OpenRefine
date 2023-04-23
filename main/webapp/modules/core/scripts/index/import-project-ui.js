@@ -33,32 +33,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Refine.ImportProjectUI = function(elmt) {
   elmt.html(DOM.loadHTML("core", "scripts/index/import-project-ui.html"));
-
   Refine.wrapCSRF(function(token) {
      $('#project-upload-form').attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
+     $('#project-upload-form-url').attr('action', "command/core/import-project-url?" + $.param({ csrf_token: token}));
   });
 
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
   this._elmts.projectButton.on('click', function(e) {
-    let urlInput = document.getElementById("project-url-input")
+
     let fileInput = document.getElementById("project-tar-file-input")
 
-    if(fileInput.value === "" && urlInput.value === "" ){
+    if(fileInput.value === ""){
      alert($.i18n('core-index-import/warning-import-file'));
-    }
-    else if( fileInput.value !== ""){
+    } else {
       document.getElementById("import-project-button").type = "submit";
     }
-    else if( urlInput.value !== ""){
+  });
+
+  this._elmts.projectButtonURL.on('click', function(e) {
+    Refine.wrapCSRF(function(token) {
+    });
+
+    let urlInput = document.getElementById("project-url-input");
+
+    if(urlInput.value === ""){
+      alert($.i18n('core-index-import/warning-import-file'));
+    } else {
       if (URL.looksLikeUrl(urlInput.value)) {
-        //Todo: download and pass the file maybe like:
-        // fileinput.value = fetch(urlInput.value) ...
-        // document.getElementById("import-project-button").type = "submit";
+        document.getElementById("import-project-button-url").type = "submit";
       } else {
         alert($.i18n('core-index-import/warning-import-url'));
       }
     }
+
   });
 
   $('#or-import-locate').text($.i18n('core-index-import/locate'));
@@ -66,6 +74,7 @@ Refine.ImportProjectUI = function(elmt) {
   $('#or-import-url').text($.i18n('core-index-import/or'));
   $('#or-import-rename').text($.i18n('core-index-import/rename'));
   $('#import-project-button').val($.i18n('core-buttons/import-proj'));
+  $('#import-project-button-url').val($.i18n('core-buttons/import-proj-url'));
 };
 
 Refine.actionAreas.push({

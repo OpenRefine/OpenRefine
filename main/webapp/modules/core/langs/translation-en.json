@@ -792,6 +792,7 @@
     "core-buttons/cancel": "Cancel",
     "core-buttons/ok": "&nbsp;&nbsp;OK&nbsp;&nbsp;",
     "core-buttons/import-proj": "Import project",
+    "core-buttons/import-proj-url": "Import project",
     "core-buttons/apply-all": "Apply all",
     "core-buttons/select-all": "Select all",
     "core-buttons/deselect-all": "Deselect all",

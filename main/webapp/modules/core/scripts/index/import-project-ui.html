@@ -7,15 +7,23 @@
       <td><input type="file" id="project-tar-file-input" name="project-file"/></td>
     </tr>
     <tr>
-      <td><label for="project-url-input" id="or-import-url"></label></td>
-      <td><input type="text" id="project-url-input" name="project-url"/></td>
-    </tr>
-    <tr>
       <td><label for="project-name-input" id="or-import-rename"></label></td>
       <td><input type="text" spellcheck="false" size="25" id="project-name-input" name="project-name" /></td></tr>
     <tr>
       <td></td>
       <td><input type="button" id="import-project-button" class="button button-primary" bind="projectButton"/></td>
+    </tr>
+  </table></div>
+</form>
+
+<form id="project-upload-form-url" method="post" enctype="multipart/form-data" action="command/core/import-project-url" accept-charset="UTF-8">
+  <div class="grid-layout layout-normal"><table>
+    <tr>
+      <td><label for="project-url-input" id="or-import-url"></label></td>
+      <td><input type="text" id="project-url-input" name="project-url"/></td>
+    </tr>
+      <td></td>
+      <td><input type="button" id="import-project-button-url" class="button button-primary" bind="projectButtonURL"/></td>
     </tr>
   </table></div>
 </form>

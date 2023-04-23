@@ -35,3 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: var(--padding-loose);
   font-size: 1.3em;
 }
+
+#project-upload-form-url {
+  padding: var(--padding-loose);
+  font-size: 1.3em;
+}
