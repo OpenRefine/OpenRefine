@@ -43,12 +43,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Grid;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 import org.openrefine.model.changes.DataExtensionChange.DataExtensionJoiner;
 import org.openrefine.model.changes.DataExtensionChange.DataExtensionSerializer;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
@@ -117,7 +113,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
         DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
 
-        List<Row> rows = joiner.call(record, recordDataExtension);
+        List<Row> rows = joiner.call(record, new IndexedData<>(record.getStartRowId(), recordDataExtension));
 
         Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
                 new Serializable[][] {
@@ -141,7 +137,7 @@ public class DataExtensionChangeTest extends RefineTest {
 
         DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
 
-        List<Row> rows = joiner.call(record, null);
+        List<Row> rows = joiner.call(record, new IndexedData<RecordDataExtension>(0L, null));
 
         Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
                 new Serializable[][] {
@@ -149,7 +145,30 @@ public class DataExtensionChangeTest extends RefineTest {
                         { null, "3", null }
                 });
         List<Row> expectedRows = expectedState.collectRows()
-                .stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+                .stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testJoinerOnPendingRow() {
+        Grid state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, new IndexedData<RecordDataExtension>(0L));
+
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", Cell.PENDING_NULL },
+                        { null, "3", Cell.PENDING_NULL }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows, expectedRows);
     }
 

@@ -12,6 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.*;
+import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.util.CloseableIterator;
@@ -32,16 +33,16 @@ public class LocalGridTests {
                 return null;
             }
         };
-        List<Tuple2<Long, Tuple2<IndexedRow, String>>> batch = Arrays.asList(
-                Tuple2.of(3L, Tuple2.of(new IndexedRow(3L, new Row(Collections.singletonList(null))), "foo")),
-                Tuple2.of(4L, Tuple2.of(new IndexedRow(4L, new Row(Collections.singletonList(null))), null)));
-        List<Tuple2<Long, String>> expected = Arrays.asList(
-                Tuple2.of(3L, "foo"),
-                Tuple2.of(4L, null));
+        List<Tuple2<Long, Tuple2<IndexedRow, IndexedData<String>>>> batch = Arrays.asList(
+                Tuple2.of(3L, Tuple2.of(new IndexedRow(3L, new Row(Collections.singletonList(null))), new IndexedData<>(3L, "foo"))),
+                Tuple2.of(4L, Tuple2.of(new IndexedRow(4L, new Row(Collections.singletonList(null))), new IndexedData<>(4L, null))));
+        List<Tuple2<Long, IndexedData<String>>> expected = Arrays.asList(
+                Tuple2.of(3L, new IndexedData<>(3L, "foo")),
+                Tuple2.of(4L, new IndexedData<>(4L, null)));
 
-        CloseableIterator<Tuple2<Long, String>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch);
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch);
 
-        List<Tuple2<Long, String>> collected = result.collect(Collectors.toList());
+        List<Tuple2<Long, IndexedData<String>>> collected = result.collect(Collectors.toList());
         Assert.assertEquals(collected, expected);
     }
 }

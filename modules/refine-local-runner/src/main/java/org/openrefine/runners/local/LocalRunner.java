@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -30,7 +27,9 @@ import org.openrefine.runners.local.pll.PLLContext;
 import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.TextFilePLL;
 import org.openrefine.runners.local.pll.Tuple2;
+import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.util.CloseableIterable;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -130,7 +129,7 @@ public class LocalRunner implements Runner {
         File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
         Callable<Boolean> isComplete = () -> completionMarker.exists();
         boolean alreadyComplete = completionMarker.exists();
-        PairPLL<Long, T> pll = pllContext
+        PairPLL<Long, IndexedData<T>> pll = pllContext
                 .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete)
                 .map(line -> {
                     try {
@@ -145,10 +144,84 @@ public class LocalRunner implements Runner {
                 }, "deserialize")
                 .mapPartitions((index, partition) -> partition.takeWhile(indexedData -> indexedData != null),
                         "filter out incomplete records", false)
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
 
+        if (!alreadyComplete) {
+            // we know the partitioner is present because we just sorted the pll above
+            LongRangePartitioner partitioner = (LongRangePartitioner) pll.getPartitioner().get();
+            // Compute up to which index we should fill up the PLL with pending records
+            List<Optional<Long>> firstKeys = partitioner.getFirstKeys();
+            List<Long> upperBounds = incompleteUpperBounds(firstKeys);
+            pll = pll.mapPartitions((idx, iterator) -> fillWithIncompleteIndexedData(iterator, idx == 0 ? 0L : -1L, upperBounds.get(idx)),
+                    "add pending records to change data", false)
+                    .mapToPair(tuple -> tuple, "bureaucratic map to pair")
+                    .withPartitioner(Optional.of(partitioner));
+        }
+
         return new LocalChangeData<T>(this, pll, null, isComplete, 0);
+    }
+
+    /**
+     * Given a list of first keys found in the last (n-1) partitions, where n is the total number of partitions of a
+     * ChangeData object, compute a list of size n which contains for each partition up to which upper bound it should
+     * be filled up with pending change data objects.
+     */
+    protected static List<Long> incompleteUpperBounds(List<Optional<Long>> firstKeys) {
+        List<Long> upperBounds = new ArrayList<>(firstKeys.size());
+        upperBounds.add(Long.MAX_VALUE); // the last partition is always unbounded
+        long lastBound = Long.MAX_VALUE;
+        for (int i = firstKeys.size() - 1; i >= 0; i--) {
+            Optional<Long> firstKey = firstKeys.get(i);
+            if (firstKey.isPresent()) {
+                lastBound = firstKey.get();
+            }
+            upperBounds.add(lastBound);
+        }
+        Collections.reverse(upperBounds);
+        return upperBounds;
+    }
+
+    /**
+     * Utility function used to pad a stream of elements read from an incomplete change data with "virtual", pending
+     * IndexedData elements to represent those which may be computed later.
+     *
+     * @param upperBound
+     *            a strict upper bound on the indices to enumerate, or Long.MAX_VALUE if unbounded
+     */
+    protected static <T> CloseableIterator<Tuple2<Long, IndexedData<T>>> fillWithIncompleteIndexedData(
+            CloseableIterator<Tuple2<Long, IndexedData<T>>> originalIterator, long initialIndex, long upperBound) {
+        return new CloseableIterator<>() {
+
+            long nextIndex = initialIndex;
+
+            @Override
+            public boolean hasNext() {
+                // if the parent iterator is empty, then we cannot extrapolate with pending elements because
+                // we have not seen any element.
+                // Otherwise, we are generating an infinite stream, so we always have a next element.
+                return originalIterator.hasNext() || (nextIndex != -1L && nextIndex < upperBound);
+            }
+
+            @Override
+            public Tuple2<Long, IndexedData<T>> next() {
+                if (originalIterator.hasNext()) {
+                    Tuple2<Long, IndexedData<T>> next = originalIterator.next();
+                    nextIndex = next.getKey() + 1;
+                    return next;
+                } else if (nextIndex != -1L && nextIndex < upperBound) {
+                    IndexedData<T> pendingIndexedData = new IndexedData<>(nextIndex++);
+                    return Tuple2.of(pendingIndexedData.getId(), pendingIndexedData);
+                } else {
+                    throw new IllegalStateException("Calling next() whereas hasNext() is false");
+                }
+            }
+
+            @Override
+            public void close() {
+                originalIterator.close();
+            }
+        };
     }
 
     @Override
@@ -191,9 +264,9 @@ public class LocalRunner implements Runner {
                 .filter(id -> id.getData() != null)
                 .collect(Collectors.toList());
 
-        PairPLL<Long, T> pll = pllContext
+        PairPLL<Long, IndexedData<T>> pll = pllContext
                 .parallelize(defaultParallelism, withoutNulls)
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
         // no need for parent partition sizes, since pll has cached ones
         return new LocalChangeData<T>(this, pll, null, () -> true, 0);
@@ -201,10 +274,21 @@ public class LocalRunner implements Runner {
 
     @Override
     public <T> ChangeData<T> changeDataFromIterable(CloseableIterable<IndexedData<T>> iterable, long itemCount) {
+        return changeDataFromIterable(iterable, itemCount, true);
+    }
+
+    protected <T> ChangeData<T> changeDataFromIterable(CloseableIterable<IndexedData<T>> iterable, long itemCount, boolean isComplete) {
         // the call to zipWithIndex is free because the PLL has a single partition
-        PairPLL<Long, T> pll = pllContext.singlePartitionPLL(iterable, itemCount)
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()), "indexed data to Tuple2");
-        return new LocalChangeData<>(this, pll, null, () -> true, 0);
+        PairPLL<Long, IndexedData<T>> pll = pllContext.singlePartitionPLL(iterable, itemCount)
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData), "indexed data to Tuple2");
+        pll = PairPLL.assumeSorted(pll);
+        return new LocalChangeData<>(this, pll, null, () -> isComplete, 0);
+    }
+
+    @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        CloseableIterable<IndexedData<T>> iterable = () -> CloseableIterator.from(0L).map(idx -> new IndexedData<>(idx));
+        return changeDataFromIterable(iterable, -1L, false);
     }
 
     @Override

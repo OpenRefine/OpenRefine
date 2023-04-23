@@ -49,12 +49,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.*;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.RowChangeDataJoiner;
-import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.model.changes.*;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -342,14 +337,18 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         private static final long serialVersionUID = -1042195464154951531L;
 
         @Override
-        public Row call(long rowId, Row row, RowEditingResults changeData) {
-            if (changeData == null) {
+        public Row call(Row row, IndexedData<RowEditingResults> indexedData) {
+            RowEditingResults changeData = indexedData.getData();
+            if (changeData == null && !indexedData.isPending()) {
                 return row;
             }
             List<Cell> newCells = row.getCells().stream()
                     .map(cell -> {
                         if (cell != null && cell.recon != null && Judgment.New.equals(cell.recon.judgment)) {
                             long id = cell.recon.id;
+                            if (indexedData.isPending()) {
+                                return new Cell(cell.value, cell.recon, true);
+                            }
                             String entityId = changeData.getNewEntities().get(id);
                             if (entityId == null) {
                                 return cell;

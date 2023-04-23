@@ -1,8 +1,8 @@
 
 package org.openrefine.runners.local;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.openrefine.runners.local.LocalRunner.fillWithIncompleteIndexedData;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,7 +21,9 @@ import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
 import org.openrefine.runners.local.pll.PLL;
+import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.runners.testing.RunnerTestBase;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -107,7 +109,7 @@ public class LocalRunnerTests extends RunnerTestBase {
                 });
 
         // compute the record count on the initial grid
-        Assert.assertEquals(initial.recordCount(), 3L);
+        assertEquals(initial.recordCount(), 3L);
 
         RowMapper mapper = new RowMapper() {
 
@@ -126,7 +128,7 @@ public class LocalRunnerTests extends RunnerTestBase {
         LocalGrid mapped = (LocalGrid) initial.mapRows(mapper, initial.getColumnModel());
 
         // check that the number of records is already cached and does not need recomputing
-        Assert.assertEquals(mapped.cachedRecordCount, 3L);
+        assertEquals(mapped.cachedRecordCount, 3L);
     }
 
     @Test
@@ -144,9 +146,9 @@ public class LocalRunnerTests extends RunnerTestBase {
         RecordChangeDataJoiner<String> joiner = new RecordChangeDataJoiner<>() {
 
             @Override
-            public List<Row> call(Record record, String changeData) {
+            public List<Row> call(Record record, IndexedData<String> changeData) {
                 return record.getRows().stream()
-                        .map(r -> r.withCell(1, new Cell(changeData, null)))
+                        .map(r -> r.withCell(1, new Cell(changeData.getData(), null, changeData.isPending())))
                         .collect(Collectors.toList());
             }
 
@@ -205,14 +207,14 @@ public class LocalRunnerTests extends RunnerTestBase {
         ChangeData<JsonNode> changeData = getDatamodelRunner().loadChangeData(tempFile, serializer);
 
         Assert.assertFalse(changeData.isComplete());
-        Assert.assertEquals(changeData.get(34L), indexedDataList.get(0).getData());
-        Assert.assertNull(changeData.get(56L));
+        assertEquals(changeData.get(34L), indexedDataList.get(0));
+        assertEquals(changeData.get(56L), new IndexedData<>(56L));
     }
 
     @Test
     public void testSampleOnManyPartitions() throws IOException {
         LocalRunner runner = (LocalRunner) getDatamodelRunner();
-        Assert.assertEquals(runner.defaultParallelism, 4);
+        assertEquals(runner.defaultParallelism, 4);
 
         /*
          * When a PLL has many partitions (here, 16), we do not want to sample from every single partition because it
@@ -230,10 +232,10 @@ public class LocalRunnerTests extends RunnerTestBase {
                 (s, row) -> String.format("%s_%d", s, (int) row.getRow().getCellValue(0)),
                 (s1, s2) -> String.format("%s/%s", s1, s2));
 
-        Assert.assertEquals(result.getState(),
+        assertEquals(result.getState(),
                 "/_0_1_2_3/_16_17_18_19/_32_33_34_35/_48_49_50_51/_64_65_66_67/_80_81_82_83/_96_97_98_99/_112_113_114_115");
         Assert.assertTrue(result.limitReached());
-        Assert.assertEquals(result.getProcessed(), 32L);
+        assertEquals(result.getProcessed(), 32L);
     }
 
     @Test
@@ -248,8 +250,8 @@ public class LocalRunnerTests extends RunnerTestBase {
                         { "c", 6 }
                 });
         // manually cache the record count
-        Assert.assertEquals(first.recordCount(), 3L);
-        Assert.assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
+        assertEquals(first.recordCount(), 3L);
+        assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
         Grid second = createGrid(new String[] { "key", "values" },
                 new Serializable[][] {
                         { "", 1 },
@@ -260,14 +262,14 @@ public class LocalRunnerTests extends RunnerTestBase {
                         { "c", 6 }
                 });
         // manually cache the record count for this one too
-        Assert.assertEquals(second.recordCount(), 3L);
-        Assert.assertEquals(((LocalGrid) second).cachedRecordCount, 3L);
+        assertEquals(second.recordCount(), 3L);
+        assertEquals(((LocalGrid) second).cachedRecordCount, 3L);
 
         Grid concatenated = first.concatenate(second);
         // the record count is already cached for the concatenation of both grids,
         // but is not equal to the sum because the last record of the first grid
         // extends to the second one.
-        Assert.assertEquals(((LocalGrid) concatenated).cachedRecordCount, 5L);
+        assertEquals(((LocalGrid) concatenated).cachedRecordCount, 5L);
     }
 
     @Test
@@ -282,11 +284,77 @@ public class LocalRunnerTests extends RunnerTestBase {
                         { "c", 6 }
                 });
         // manually cache the record count
-        Assert.assertEquals(first.recordCount(), 3L);
-        Assert.assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
+        assertEquals(first.recordCount(), 3L);
+        assertEquals(((LocalGrid) first).cachedRecordCount, 3L);
 
         Grid concatenated = first.concatenate(first);
-        Assert.assertEquals(((LocalGrid) concatenated).cachedRecordCount, 6L);
+        assertEquals(((LocalGrid) concatenated).cachedRecordCount, 6L);
+    }
+
+    @Test
+    public void testFillWithIncompleteChangeData() {
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> iterator = CloseableIterator.of(
+                Tuple2.of(3L, new IndexedData<String>(3L, "foo")),
+                Tuple2.of(5L, new IndexedData<String>(5L, "bar")));
+        try (iterator) {
+            CloseableIterator<Tuple2<Long, IndexedData<String>>> filled = fillWithIncompleteIndexedData(iterator, -1L, 8L);
+            try (filled) {
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(3L, new IndexedData<String>(3L, "foo")));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(5L, new IndexedData<String>(5L, "bar")));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(6L, new IndexedData<String>(6L)));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(7L, new IndexedData<String>(7L)));
+                Assert.assertFalse(filled.hasNext());
+            }
+        }
+    }
+
+    @Test
+    public void testFillWithIncompleteChangeDataEmpty() {
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> iterator = CloseableIterator.empty();
+        try (iterator) {
+            CloseableIterator<Tuple2<Long, IndexedData<String>>> filled = fillWithIncompleteIndexedData(iterator, -1L, 10L);
+            try (filled) {
+                Assert.assertFalse(filled.hasNext());
+            }
+        }
+    }
+
+    @Test
+    public void testFillWithIncompleteChangeDataEmptyInitialPartition() {
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> iterator = CloseableIterator.empty();
+        try (iterator) {
+            CloseableIterator<Tuple2<Long, IndexedData<String>>> filled = fillWithIncompleteIndexedData(iterator, 0L, Long.MAX_VALUE);
+            try (filled) {
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(0L, new IndexedData<String>(0L)));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(1L, new IndexedData<String>(1L)));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(2L, new IndexedData<String>(2L)));
+                Assert.assertTrue(filled.hasNext());
+                assertEquals(filled.next(), Tuple2.of(3L, new IndexedData<String>(3L)));
+            }
+        }
+    }
+
+    @Test
+    public void testGenerateUpperBoundsFromFirstIndices() {
+        List<Optional<Long>> firstIndices = Arrays.asList(
+                Optional.empty(),
+                Optional.of(5L),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(34L),
+                Optional.of(78L));
+
+        List<Long> expected = Arrays.asList(
+                5L, 5L, 34L, 34L, 34L, 78L, Long.MAX_VALUE);
+
+        assertEquals(LocalRunner.incompleteUpperBounds(firstIndices), expected);
     }
 
 }

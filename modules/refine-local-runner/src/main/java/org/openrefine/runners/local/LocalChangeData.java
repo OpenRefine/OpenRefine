@@ -26,7 +26,7 @@ import org.openrefine.util.CloseableIterator;
 public class LocalChangeData<T> implements ChangeData<T> {
 
     private final LocalRunner runner;
-    private final PairPLL<Long, T> grid;
+    private final PairPLL<Long, IndexedData<T>> grid;
     private final List<Long> parentPartitionFirstIndices;
     private final Long parentSize;
     private final Callable<Boolean> complete;
@@ -47,13 +47,16 @@ public class LocalChangeData<T> implements ChangeData<T> {
      */
     public LocalChangeData(
             LocalRunner runner,
-            PairPLL<Long, T> grid,
+            PairPLL<Long, IndexedData<T>> grid,
             Array<Long> parentPartitionSizes,
             Callable<Boolean> complete,
             int maxConcurrency) {
         this.runner = runner;
         this.grid = grid;
-        this.complete = complete;
+        this.complete = complete; // TODO should just be a boolean, because if it's not complete when creating it we
+        // should not assume that it gets complete later on (if we have empty/missing partitions when creating it they
+        // will
+        // not appear afterwards).
         this.maxConcurrency = maxConcurrency;
         if (parentPartitionSizes == null) {
             parentPartitionFirstIndices = null;
@@ -72,17 +75,15 @@ public class LocalChangeData<T> implements ChangeData<T> {
     @Override
     public Iterator<IndexedData<T>> iterator() {
         return grid
-                .filter(tuple -> tuple.getValue() != null)
-                .map(tuple -> new IndexedData<T>(tuple.getKey(), tuple.getValue()), "wrap as IndexedData")
-                .iterator()
+                .values()
                 .iterator();
     }
 
     @Override
-    public T get(long rowId) {
-        Array<T> rows = grid.get(rowId);
+    public IndexedData<T> get(long rowId) {
+        Array<IndexedData<T>> rows = grid.get(rowId);
         if (rows.size() == 0) {
-            return null;
+            return isComplete() ? new IndexedData<>(rowId, null) : new IndexedData<>(rowId);
         } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d change data elements at index %d", rows.size(), rowId));
         } else {
@@ -98,7 +99,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     @Override
     public ProgressingFuture<Void> saveToFileAsync(File file, ChangeDataSerializer<T> serializer) {
 
-        PLL<Tuple2<Long, T>> gridWithReporting;
+        PLL<Tuple2<Long, IndexedData<T>>> gridWithReporting;
         boolean useNativeProgressReporting = grid.hasCachedPartitionSizes() || parentPartitionFirstIndices == null;
         TaskSignalling taskSignalling = useNativeProgressReporting ? null : new TaskSignalling(parentSize);
 
@@ -112,13 +113,15 @@ public class LocalChangeData<T> implements ChangeData<T> {
                     (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, taskSignalling),
                     "wrap stream with progress reporting", true);
         }
-        PLL<String> serialized = gridWithReporting.map(r -> {
-            try {
-                return (new IndexedData<T>(r.getKey(), r.getValue()).writeAsString(serializer));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }, "serialize");
+        PLL<String> serialized = gridWithReporting
+                .filter(tuple -> tuple.getValue().getData() != null)
+                .map(r -> {
+                    try {
+                        return r.getValue().writeAsString(serializer);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }, "serialize");
 
         // we do not want to repartition while saving because the partitions should ideally correspond exactly
         // to those of the parent grid, for efficient joining.
@@ -150,7 +153,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
         }
     }
 
-    public PairPLL<Long, T> getPLL() {
+    public PairPLL<Long, IndexedData<T>> getPLL() {
         return grid;
     }
 
@@ -161,7 +164,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
         return new CloseableIterator<>() {
 
             long lastSeen = startIdx;
-            Iterator<Tuple2<Long, T>> parent = iterator.iterator();
+            final Iterator<Tuple2<Long, T>> parent = iterator.iterator();
 
             @Override
             public boolean hasNext() {

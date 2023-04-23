@@ -36,12 +36,7 @@ import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.RecordChangeDataJoiner;
-import org.openrefine.model.changes.RecordChangeDataProducer;
-import org.openrefine.model.changes.RowChangeDataFlatJoiner;
-import org.openrefine.model.changes.RowChangeDataJoiner;
-import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.model.changes.*;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.process.ProgressingFutures;
@@ -60,6 +55,8 @@ import org.openrefine.util.ParsingUtilities;
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow. This might only
  * contain a subset of the rows if a filter has been applied.
+ *
+ * TODO: reimplement join operations so that they respect RDD order (which is sadly not the case)
  */
 @JsonIgnoreType
 public class SparkGrid implements Grid {
@@ -1038,14 +1035,14 @@ public class SparkGrid implements Grid {
         };
     }
 
-    private static <T> Function2<Long, IndexedRow, T> rowMap(RowChangeDataProducer<T> mapper) {
-        return new Function2<Long, IndexedRow, T>() {
+    private static <T> Function2<Long, IndexedRow, IndexedData<T>> rowMap(RowChangeDataProducer<T> mapper) {
+        return new Function2<>() {
 
             private static final long serialVersionUID = 429225090136968798L;
 
             @Override
-            public T call(Long id, IndexedRow row) throws Exception {
-                return mapper.call(row.getLogicalIndex(), row.getRow());
+            public IndexedData<T> call(Long id, IndexedRow row) throws Exception {
+                return new IndexedData<>(id, mapper.call(row.getLogicalIndex(), row.getRow()));
             }
         };
     }
@@ -1053,7 +1050,7 @@ public class SparkGrid implements Grid {
     @Override
     public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper,
             java.util.Optional<ChangeData<T>> incompleteChangeData) {
-        JavaPairRDD<Long, T> data;
+        JavaPairRDD<Long, IndexedData<T>> data;
         JavaPairRDD<Long, IndexedRow> filteredGrid = grid.filter(wrapRowFilter(filter));
         if (incompleteChangeData.isEmpty()) {
             if (rowMapper.getBatchSize() == 1) {
@@ -1064,23 +1061,26 @@ public class SparkGrid implements Grid {
                 data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
             }
         } else {
-            JavaPairRDD<Long, T> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
-            data = RDDUtils.partitionWiseBatching(filteredGrid.leftOuterJoin(incompleteRDD).values(),
+            JavaPairRDD<Long, IndexedData<T>> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
+            JavaRDD<Tuple2<IndexedRow, Optional<IndexedData<T>>>> values = filteredGrid.leftOuterJoin(incompleteRDD).values();
+            List<Tuple2<IndexedRow, Optional<IndexedData<T>>>> collected = values.collect();
+            data = RDDUtils.partitionWiseBatching(values,
                     rowMapper.getBatchSize())
                     .flatMapToPair(wrapRowChangeDataProducer(rowMapper));
         }
 
-        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, true);
     }
 
-    protected static <T> PairFlatMapFunction<List<Tuple2<IndexedRow, Optional<T>>>, Long, T> wrapRowChangeDataProducer(
+    protected static <T> PairFlatMapFunction<List<Tuple2<IndexedRow, Optional<IndexedData<T>>>>, Long, IndexedData<T>> wrapRowChangeDataProducer(
             RowChangeDataProducer<T> rowMapper) {
-        return new PairFlatMapFunction<List<Tuple2<IndexedRow, Optional<T>>>, Long, T>() {
+        return new PairFlatMapFunction<>() {
 
             @Override
-            public Iterator<Tuple2<Long, T>> call(List<Tuple2<IndexedRow, Optional<T>>> tuple2s) throws Exception {
+            public Iterator<Tuple2<Long, IndexedData<T>>> call(List<Tuple2<IndexedRow, Optional<IndexedData<T>>>> tuple2s)
+                    throws Exception {
                 List<IndexedRow> toCompute = tuple2s.stream()
-                        .filter(tuple -> !tuple._2.isPresent())
+                        .filter(tuple -> !tuple._2.isPresent() || tuple._2.get().isPending())
                         .map(tuple -> tuple._1)
                         .collect(Collectors.toList());
                 List<T> changeData = rowMapper.callRowBatch(toCompute);
@@ -1089,14 +1089,15 @@ public class SparkGrid implements Grid {
                             String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(),
                                     toCompute.size()));
                 }
-                Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
-                        .mapToObj(i -> i)
-                        .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(), i -> changeData.get(i)));
+                Map<Long, IndexedData<T>> indexedChangeData = IntStream.range(0, toCompute.size())
+                        .boxed()
+                        .collect(Collectors.toMap(i -> toCompute.get(i).getIndex(),
+                                i -> new IndexedData<>(toCompute.get(i).getIndex(), changeData.get(i))));
                 return IntStream.range(0, tuple2s.size())
                         .mapToObj(i -> {
-                            T preComputed = tuple2s.get(i)._2.orNull();
+                            IndexedData<T> preComputed = tuple2s.get(i)._2.orNull();
                             long rowIndex = tuple2s.get(i)._1.getIndex();
-                            if (preComputed == null) {
+                            if (preComputed == null || preComputed.isPending()) {
                                 preComputed = indexedChangeData.get(rowIndex);
                             }
                             return Tuple2.apply(rowIndex, preComputed);
@@ -1105,34 +1106,34 @@ public class SparkGrid implements Grid {
         };
     }
 
-    private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
-        return new FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>>() {
+    private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, IndexedData<T>>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
+        return new FlatMapFunction<>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<Tuple2<Long, T>> call(List<IndexedRow> rows) throws Exception {
+            public Iterator<Tuple2<Long, IndexedData<T>>> call(List<IndexedRow> rows) throws Exception {
                 List<T> results = rowMapper.callRowBatch(rows);
                 if (rows.size() != results.size()) {
                     throw new IllegalStateException(
                             String.format("Change data producer returned %d results on a batch of %d rows", results.size(), rows.size()));
                 }
                 return IntStream.range(0, rows.size())
-                        .mapToObj(i -> new Tuple2<Long, T>(rows.get(i).getIndex(), results.get(i)))
+                        .mapToObj(i -> new Tuple2<>(rows.get(i).getIndex(), new IndexedData<>(rows.get(i).getIndex(), results.get(i))))
                         .iterator();
             }
 
         };
     }
 
-    private static <T> Function2<Long, Record, T> recordMap(RecordChangeDataProducer<T> mapper) {
-        return new Function2<Long, Record, T>() {
+    private static <T> Function2<Long, Record, IndexedData<T>> recordMap(RecordChangeDataProducer<T> mapper) {
+        return new Function2<>() {
 
             private static final long serialVersionUID = -4886309570396715048L;
 
             @Override
-            public T call(Long id, Record record) throws Exception {
-                return mapper.call(record);
+            public IndexedData<T> call(Long id, Record record) throws Exception {
+                return new IndexedData<>(id, mapper.call(record));
             }
         };
     }
@@ -1140,7 +1141,7 @@ public class SparkGrid implements Grid {
     @Override
     public <T> ChangeData<T> mapRecords(RecordFilter filter,
             RecordChangeDataProducer<T> recordMapper, java.util.Optional<ChangeData<T>> incompleteChangeData) {
-        JavaPairRDD<Long, T> data;
+        JavaPairRDD<Long, IndexedData<T>> data;
         JavaPairRDD<Long, Record> filteredGrid = getRecords().filter(wrapRecordFilter(filter));
         if (incompleteChangeData.isEmpty()) {
             if (recordMapper.getBatchSize() == 1) {
@@ -1150,43 +1151,47 @@ public class SparkGrid implements Grid {
                 data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
             }
         } else {
-            JavaPairRDD<Long, T> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
+            JavaPairRDD<Long, IndexedData<T>> incompleteRDD = ((SparkChangeData<T>) incompleteChangeData.get()).getData();
             data = RDDUtils.partitionWiseBatching(filteredGrid.leftOuterJoin(incompleteRDD).values(),
                     recordMapper.getBatchSize())
                     .flatMapToPair(wrapRecordChangeDataProducer(recordMapper));
         }
 
-        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, false);
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner, true);
     }
 
-    private static <T> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
-        return new FlatMapFunction<List<Record>, Tuple2<Long, T>>() {
+    private static <T> FlatMapFunction<List<Record>, Tuple2<Long, IndexedData<T>>> batchedRecordMap(
+            RecordChangeDataProducer<T> recordMapper) {
+        return new FlatMapFunction<>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<Tuple2<Long, T>> call(List<Record> records) throws Exception {
+            public Iterator<Tuple2<Long, IndexedData<T>>> call(List<Record> records) throws Exception {
                 List<T> results = recordMapper.callRecordBatch(records);
                 if (records.size() != results.size()) {
                     throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records",
                             results.size(), records.size()));
                 }
                 return IntStream.range(0, records.size())
-                        .mapToObj(i -> new Tuple2<Long, T>(records.get(i).getStartRowId(), results.get(i)))
+                        .mapToObj(i -> {
+                            long startRowId = records.get(i).getStartRowId();
+                            return new Tuple2<>(startRowId, new IndexedData<>(startRowId, results.get(i)));
+                        })
                         .iterator();
             }
 
         };
     }
 
-    protected static <T> PairFlatMapFunction<List<Tuple2<Record, Optional<T>>>, Long, T> wrapRecordChangeDataProducer(
+    protected static <T> PairFlatMapFunction<List<Tuple2<Record, Optional<IndexedData<T>>>>, Long, IndexedData<T>> wrapRecordChangeDataProducer(
             RecordChangeDataProducer<T> rowMapper) {
-        return new PairFlatMapFunction<List<Tuple2<Record, Optional<T>>>, Long, T>() {
+        return new PairFlatMapFunction<>() {
 
             @Override
-            public Iterator<Tuple2<Long, T>> call(List<Tuple2<Record, Optional<T>>> tuple2s) throws Exception {
+            public Iterator<Tuple2<Long, IndexedData<T>>> call(List<Tuple2<Record, Optional<IndexedData<T>>>> tuple2s) throws Exception {
                 List<Record> toCompute = tuple2s.stream()
-                        .filter(tuple -> !tuple._2.isPresent())
+                        .filter(tuple -> !tuple._2.isPresent() || tuple._2.get().isPending())
                         .map(tuple -> tuple._1)
                         .collect(Collectors.toList());
                 List<T> changeData = rowMapper.callRecordBatch(toCompute);
@@ -1195,14 +1200,15 @@ public class SparkGrid implements Grid {
                             String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(),
                                     toCompute.size()));
                 }
-                Map<Long, T> indexedChangeData = IntStream.range(0, toCompute.size())
-                        .mapToObj(i -> i)
-                        .collect(Collectors.toMap(i -> toCompute.get(i).getStartRowId(), i -> changeData.get(i)));
+                Map<Long, IndexedData<T>> indexedChangeData = IntStream.range(0, toCompute.size())
+                        .boxed()
+                        .collect(Collectors.toMap(i -> toCompute.get(i).getStartRowId(),
+                                i -> new IndexedData<>(toCompute.get(i).getStartRowId(), changeData.get(i))));
                 return IntStream.range(0, tuple2s.size())
                         .mapToObj(i -> {
-                            T preComputed = tuple2s.get(i)._2.orNull();
+                            IndexedData<T> preComputed = tuple2s.get(i)._2.orNull();
                             long rowIndex = tuple2s.get(i)._1.getStartRowId();
-                            if (preComputed == null) {
+                            if (preComputed == null || preComputed.isPending()) {
                                 preComputed = indexedChangeData.get(rowIndex);
                             }
                             return Tuple2.apply(rowIndex, preComputed);
@@ -1221,22 +1227,23 @@ public class SparkGrid implements Grid {
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
-        JavaPairRDD<Long, Tuple2<IndexedRow, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
+        JavaPairRDD<Long, Tuple2<IndexedRow, Optional<IndexedData<T>>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, IndexedRow> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapJoiner(rowJoiner));
 
         return new SparkGrid(newGrid, newColumnModel, overlayModels, runner);
     }
 
-    private static <T> Function2<Long, Tuple2<IndexedRow, Optional<T>>, IndexedRow> wrapJoiner(RowChangeDataJoiner<T> joiner) {
+    private static <T> Function2<Long, Tuple2<IndexedRow, Optional<IndexedData<T>>>, IndexedRow> wrapJoiner(RowChangeDataJoiner<T> joiner) {
 
-        return new Function2<Long, Tuple2<IndexedRow, Optional<T>>, IndexedRow>() {
+        return new Function2<>() {
 
             private static final long serialVersionUID = 3976239801526423806L;
 
             @Override
-            public IndexedRow call(Long id, Tuple2<IndexedRow, Optional<T>> tuple) throws Exception {
+            public IndexedRow call(Long id, Tuple2<IndexedRow, Optional<IndexedData<T>>> tuple) throws Exception {
+                IndexedData<T> indexedData = tuple._2.or(new IndexedData<>(id, null));
                 return new IndexedRow(id, tuple._1.getOriginalIndex(),
-                        joiner.call(tuple._1.getLogicalIndex(), tuple._1.getRow(), tuple._2.or(null)));
+                        joiner.call(tuple._1.getRow(), indexedData));
             }
         };
     }
@@ -1251,21 +1258,23 @@ public class SparkGrid implements Grid {
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
-        JavaPairRDD<Long, Tuple2<IndexedRow, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
+        JavaPairRDD<Long, Tuple2<IndexedRow, Optional<IndexedData<T>>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, List<Row>> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapFlatJoiner(rowJoiner));
-        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.values().flatMap(l -> l.iterator()));
+        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.values().flatMap(List::iterator));
         return new SparkGrid(newColumnModel, flattened, overlayModels, runner);
     }
 
-    private static <T> Function2<Long, Tuple2<IndexedRow, Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
+    private static <T> Function2<Long, Tuple2<IndexedRow, Optional<IndexedData<T>>>, List<Row>> wrapFlatJoiner(
+            RowChangeDataFlatJoiner<T> joiner) {
 
-        return new Function2<Long, Tuple2<IndexedRow, Optional<T>>, List<Row>>() {
+        return new Function2<>() {
 
             private static final long serialVersionUID = 3976239801526423806L;
 
             @Override
-            public List<Row> call(Long id, Tuple2<IndexedRow, Optional<T>> tuple) throws Exception {
-                return joiner.call(tuple._1.getLogicalIndex(), tuple._1.getRow(), tuple._2.or(null));
+            public List<Row> call(Long id, Tuple2<IndexedRow, Optional<IndexedData<T>>> tuple) throws Exception {
+                IndexedData<T> indexedData = tuple._2.or(new IndexedData<T>(id, null));
+                return joiner.call(tuple._1.getRow(), indexedData);
             }
         };
     }
@@ -1280,20 +1289,23 @@ public class SparkGrid implements Grid {
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
         // and there could be spurious shuffles if the partitioners differ slightly.
         // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
-        JavaPairRDD<Long, Tuple2<Record, Optional<T>>> join = getRecords().leftOuterJoin(sparkChangeData.getData()).sortByKey();
+        JavaPairRDD<Long, Tuple2<Record, Optional<IndexedData<T>>>> join = getRecords().leftOuterJoin(sparkChangeData.getData())
+                .sortByKey();
         JavaRDD<List<Row>> newGrid = join.map(wrapRecordJoiner(recordJoiner));
-        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.flatMap(l -> l.iterator()));
+        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.flatMap(List::iterator));
         return new SparkGrid(newColumnModel, flattened, overlayModels, runner);
     }
 
-    private static <T> Function<Tuple2<Long, Tuple2<Record, Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
-        return new Function<Tuple2<Long, Tuple2<Record, Optional<T>>>, List<Row>>() {
+    private static <T> Function<Tuple2<Long, Tuple2<Record, Optional<IndexedData<T>>>>, List<Row>> wrapRecordJoiner(
+            RecordChangeDataJoiner<T> joiner) {
+        return new Function<>() {
 
             private static final long serialVersionUID = -8170813739798353133L;
 
             @Override
-            public List<Row> call(Tuple2<Long, Tuple2<Record, Optional<T>>> tuple) throws Exception {
-                return joiner.call(tuple._2._1, tuple._2._2.orNull());
+            public List<Row> call(Tuple2<Long, Tuple2<Record, Optional<IndexedData<T>>>> tuple) throws Exception {
+                IndexedData<T> indexedData = tuple._2._2.or(new IndexedData<T>(tuple._1, null));
+                return joiner.call(tuple._2._1, indexedData);
             }
 
         };

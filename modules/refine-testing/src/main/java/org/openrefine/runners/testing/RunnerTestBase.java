@@ -912,10 +912,10 @@ public abstract class RunnerTestBase {
         ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
 
         Assert.assertNotNull(loaded.getRunner());
-        Assert.assertEquals(loaded.get(0L), "first");
-        Assert.assertNull(loaded.get(1L)); // not included in changedata
-        Assert.assertEquals(loaded.get(2L), "third");
-        Assert.assertNull(loaded.get(3L)); // null from creation
+        Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
+        Assert.assertEquals(loaded.get(1L), new IndexedData<>(1L, null)); // not included in changedata
+        Assert.assertEquals(loaded.get(2L), new IndexedData<>(2L, "third"));
+        Assert.assertEquals(loaded.get(3L), new IndexedData<>(3L, null)); // null from creation
 
         // the change data was loaded from a file with a completion marker, so it is complete
         Assert.assertTrue(new File(tempFile, "data/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
@@ -935,10 +935,10 @@ public abstract class RunnerTestBase {
         ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
 
         Assert.assertNotNull(loaded.getRunner());
-        Assert.assertEquals(loaded.get(0L), "first");
-        Assert.assertNull(loaded.get(1L)); // not included in changedata
-        Assert.assertEquals(loaded.get(2L), "third");
-        Assert.assertNull(loaded.get(3L)); // null from creation
+        Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
+        Assert.assertEquals(loaded.get(1L), new IndexedData<>(1L, null)); // not included in changedata
+        Assert.assertEquals(loaded.get(2L), new IndexedData<>(2L, "third"));
+        Assert.assertEquals(loaded.get(3L), new IndexedData<>(3L, null)); // null from creation
 
         // the change data was loaded from a file with a completion marker, so it is complete
         Assert.assertTrue(new File(tempFile, "data/" + Runner.COMPLETION_MARKER_FILE_NAME).exists());
@@ -954,10 +954,10 @@ public abstract class RunnerTestBase {
         ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
 
         Assert.assertNotNull(loaded.getRunner());
-        Assert.assertEquals(loaded.get(0L), "first");
-        Assert.assertNull(loaded.get(1L));
-        Assert.assertEquals(loaded.get(2L), "third");
-        Assert.assertNull(loaded.get(3L));
+        Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
+        Assert.assertEquals(loaded.get(1L), new IndexedData<>(1L, null));
+        Assert.assertEquals(loaded.get(2L), new IndexedData<>(2L, "third"));
+        Assert.assertEquals(loaded.get(3L), new IndexedData<>(3L, null));
     }
 
     @Test
@@ -986,8 +986,8 @@ public abstract class RunnerTestBase {
     public void testGenerateRowChangeData() {
         ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper, Optional.empty());
 
-        Assert.assertEquals(changeData.get(0L), "b_concat");
-        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
+        Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, "b_concat"));
+        Assert.assertEquals(changeData.get(1L), new IndexedData<>(1L, null)); // because it is excluded by the facet
     }
 
     @Test
@@ -1002,17 +1002,21 @@ public abstract class RunnerTestBase {
 
         // reload the now properly incomplete change data
         incomplete = SUT.loadChangeData(tempFile, stringSerializer);
+        Assert.assertFalse(incomplete.isComplete());
+
+        // check that it returns incomplete IndexedData objects for unseen keys
+        Assert.assertEquals(incomplete.get(2L), new IndexedData<>(2L));
+        Assert.assertEquals(incomplete.get(3L), new IndexedData<>(3L));
 
         // complete it with more rows
-
         ChangeData<String> complete = simpleGrid.mapRows(RowFilter.ANY_ROW, countingChangeMapper, Optional.of(incomplete));
 
         // the first two rows were computed by the first mapper
-        Assert.assertEquals(complete.get(0L), "b_concat");
-        Assert.assertEquals(complete.get(1L), "1_concat");
+        Assert.assertEquals(complete.get(0L), new IndexedData<>(0L, "b_concat"));
+        Assert.assertEquals(complete.get(1L), new IndexedData<>(1L, "1_concat"));
         // the last two are computed by the last mapper
-        Assert.assertEquals(complete.get(2L), "true_concat_v2");
-        Assert.assertEquals(complete.get(3L), "123123123123_concat_v2");
+        Assert.assertEquals(complete.get(2L), new IndexedData<>(2L, "true_concat_v2"));
+        Assert.assertEquals(complete.get(3L), new IndexedData<>(3L, "123123123123_concat_v2"));
     }
 
     protected static RowFilter firstTwoRows = new RowFilter() {
@@ -1062,8 +1066,8 @@ public abstract class RunnerTestBase {
     public void testGenerateBatchedChangeData() {
         ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, batchedChangeMapper, Optional.empty());
 
-        Assert.assertEquals(changeData.get(0L), ",b");
-        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
+        Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, ",b"));
+        Assert.assertEquals(changeData.get(1L), new IndexedData<>(1L, null)); // because it is excluded by the facet
     }
 
     public static RowChangeDataProducer<String> faultyBatchedChangeMapper = new RowChangeDataProducer<String>() {
@@ -1100,8 +1104,8 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -21382677502256432L;
 
         @Override
-        public Row call(long rowId, Row row, String changeData) {
-            return row.withCell(1, new Cell(changeData, null));
+        public Row call(Row row, IndexedData<String> indexedData) {
+            return row.withCell(1, new Cell(indexedData.getData(), null, indexedData.isPending()));
         }
 
         @Override
@@ -1130,9 +1134,10 @@ public abstract class RunnerTestBase {
     public void testGenerateRecordChangeData() {
         ChangeData<String> changeData = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, recordChangeMapper, Optional.empty());
 
-        Assert.assertEquals(changeData.get(0L), "b1");
-        Assert.assertNull(changeData.get(1L)); // because it is not a record start position
-        Assert.assertEquals(changeData.get(2L), "true123123123123");
+        Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, "b1"));
+        Assert.assertEquals(changeData.get(1L), new IndexedData<>(1L, null)); // because it is not a record start
+                                                                              // position
+        Assert.assertEquals(changeData.get(2L), new IndexedData<>(2L, "true123123123123"));
     }
 
     protected static RecordFilter firstRecord = new RecordFilter() {
@@ -1170,9 +1175,9 @@ public abstract class RunnerTestBase {
         ChangeData<String> complete = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, countingRecordChangeMapper, Optional.of(incomplete));
 
         // the first record was computed by the first mapper
-        Assert.assertEquals(complete.get(0L), "b1");
+        Assert.assertEquals(complete.get(0L), new IndexedData<>(0L, "b1"));
         // the second by the last mapper
-        Assert.assertEquals(complete.get(2L), "true123123123123_v2");
+        Assert.assertEquals(complete.get(2L), new IndexedData(2L, "true123123123123_v2"));
     }
 
     public static RecordChangeDataProducer<String> faultyBatchedRecordChangeMapper = new RecordChangeDataProducer<String>() {
@@ -1224,8 +1229,8 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -60939353562371888L;
 
         @Override
-        public List<Row> call(long rowId, Row row, String changeData) {
-            Row newRow = row.withCell(1, new Cell(changeData, null));
+        public List<Row> call(Row row, IndexedData<String> indexedData) {
+            Row newRow = row.withCell(1, new Cell(indexedData.getData(), null, indexedData.isPending()));
             return Arrays.asList(row, newRow);
         }
 
@@ -1256,8 +1261,10 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -4413769252252489169L;
 
         @Override
-        public List<Row> call(Record record, String changeData) {
-            return record.getRows().stream().map(row -> row.withCell(1, new Cell(changeData, null))).collect(Collectors.toList());
+        public List<Row> call(Record record, IndexedData<String> changeData) {
+            return record.getRows().stream()
+                    .map(row -> row.withCell(1, new Cell(changeData.getData(), null, changeData.isPending())))
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -1450,7 +1457,15 @@ public abstract class RunnerTestBase {
         ChangeData<String> changeData = getDatamodelRunner()
                 .changeDataFromIterable(iterable, -1L);
 
-        Assert.assertEquals(changeData.get(0L), "first");
+        Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, "first"));
+    }
+
+    @Test
+    public void testEmptyChangeData() throws IOException {
+        ChangeData<String> changeData = getDatamodelRunner().emptyChangeData();
+
+        Assert.assertFalse(changeData.isComplete());
+        Assert.assertEquals(changeData.get(3L), new IndexedData<String>(3L));
     }
 
     /**

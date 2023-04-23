@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.vavr.collection.Array;
+import io.vavr.collection.Iterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,6 +19,7 @@ import org.testng.annotations.Test;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.PartitionerTestUtils;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 
 public class PairPLLTests extends PLLTestsBase {
@@ -362,5 +364,26 @@ public class PairPLLTests extends PLLTestsBase {
 
         PairPLL<Integer, String> dropped = pairPLL.retainPartitions(Collections.singletonList(1));
         Assert.assertEquals(dropped.collect(), list.subList(2, 4));
+    }
+
+    @Test
+    public void testGetUsingSortedPLL() {
+        // we create an infinite PLL containing elements for all integers
+        CloseableIterable<Tuple2<Long, String>> iterable = () -> CloseableIterator.wrapping(
+                Iterator.from(0L).map(idx -> Tuple2.of(idx, "foo")));
+        PairPLL<Long, String> pll = context.singlePartitionPLL(iterable, -1L)
+                .mapToPair(tuple -> tuple);
+
+        // we know it is sorted, so we mark it as such
+        pll = PairPLL.assumeSorted(pll);
+
+        // We can fetch a prefix of the stream without problem
+        List<Tuple2<Long, String>> firstFew = pll.getRangeAfter(0L, 2, Comparator.naturalOrder());
+        Assert.assertEquals(firstFew, Array.of(Tuple2.of(0L, "foo"), Tuple2.of(1L, "foo")));
+
+        // But we can do more! Because it is sorted, we can actually look up elements in it: the search will stop as
+        // soon as we encounter a key that is greater than the one looked up.
+        Array<String> actual = pll.get(4L);
+        Assert.assertEquals(actual, Array.of("foo"));
     }
 }

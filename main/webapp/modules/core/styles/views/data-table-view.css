@@ -78,11 +78,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table td {
   border-bottom: 0.02rem dotted #ddd;
   border-right: 0.02rem solid #ddd;
+  position: relative;
 }
 
 .data-table-header td, .data-table-header th {
   border-bottom: 0.02rem dotted var(--chrome-primary);
   border-right: 0.02rem solid var(--chrome-primary);
+}
+
+.data-table td .waiting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--fill-primary);
+  background-image: url("../../images/small-spinner.gif");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 table {

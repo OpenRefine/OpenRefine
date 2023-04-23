@@ -96,6 +96,7 @@ public abstract class Process {
                 @Override
                 public void onFailure(Throwable t) {
                     if (t instanceof Exception) {
+                        t.printStackTrace();
                         _manager.onFailedProcess(Process.this, (Exception) t);
                     }
                 }

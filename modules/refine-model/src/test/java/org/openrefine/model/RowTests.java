@@ -66,6 +66,15 @@ public class RowTests {
     }
 
     @Test
+    public void serializePendingCell() {
+        Row row = new Row(Arrays.asList(Cell.PENDING_NULL));
+        TestUtils.isSerializedTo(
+                row,
+                "{\"flagged\":false,\"starred\":false,\"cells\":[{\"p\":true}]}",
+                ParsingUtilities.defaultWriter);
+    }
+
+    @Test
     public void serializeRowTest() throws Exception {
 
         String reconJson = "{\"id\":1533649346002675326,"

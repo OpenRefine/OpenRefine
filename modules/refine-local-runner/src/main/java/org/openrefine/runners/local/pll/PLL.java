@@ -780,7 +780,7 @@ public abstract class PLL<T> {
         }
 
         public boolean isOlderThan(long milliseconds) {
-            return instant.plusMillis(milliseconds).isAfter(Instant.now());
+            return instant.plusMillis(milliseconds).isBefore(Instant.now());
         }
     }
 

@@ -27,8 +27,7 @@
 
 package org.openrefine.model;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.*;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -166,5 +165,19 @@ public class CellTests {
         Cell c = new Cell(fi, null);
         String json = "{\"v\":\"Infinity\"}";
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void serializePendingCell() {
+        Cell c = new Cell("foo", null, true);
+        String json = "{\"v\":\"foo\",\"p\":true}";
+        TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testEqualsPendingCell() {
+        assertFalse(Cell.NULL.equals(Cell.PENDING_NULL));
+        assertFalse(Cell.PENDING_NULL.equals(Cell.NULL));
+        assertTrue(Cell.NULL.equals(null));
     }
 }

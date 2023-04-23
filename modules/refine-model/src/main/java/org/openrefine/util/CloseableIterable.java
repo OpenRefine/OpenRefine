@@ -19,6 +19,10 @@ public interface CloseableIterable<T> {
         return new Wrapper(iterable);
     }
 
+    static <T> CloseableIterable<T> empty() {
+        return of(CloseableIterator::empty);
+    }
+
     default CloseableIterable<T> drop(int n) {
         return () -> this.iterator().drop(n);
     }

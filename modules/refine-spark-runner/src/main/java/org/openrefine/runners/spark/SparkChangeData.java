@@ -27,7 +27,7 @@ import org.openrefine.runners.spark.io.IOUtils;
  */
 public class SparkChangeData<T> implements ChangeData<T> {
 
-    private final JavaPairRDD<Long, T> data;
+    private final JavaPairRDD<Long, IndexedData<T>> data;
     private final SparkRunner runner;
     private final boolean complete;
 
@@ -42,26 +42,27 @@ public class SparkChangeData<T> implements ChangeData<T> {
      *            whether the RDD is loaded from a cached location and is fully computed, in which case using it will
      *            not trigger any new actual computation
      */
-    public SparkChangeData(JavaPairRDD<Long, T> data, SparkRunner runner, boolean isComplete) {
+    public SparkChangeData(JavaPairRDD<Long, IndexedData<T>> data, SparkRunner runner, boolean isComplete) {
         this.data = data;
         this.runner = runner;
         this.complete = isComplete;
     }
 
-    public JavaPairRDD<Long, T> getData() {
+    public JavaPairRDD<Long, IndexedData<T>> getData() {
         return data;
     }
 
     @Override
     public Iterator<IndexedData<T>> iterator() {
-        return data.map(tuple -> new IndexedData<T>(tuple._1, tuple._2)).toLocalIterator();
+        return data.values().toLocalIterator();
     }
 
     @Override
-    public T get(long rowId) {
-        List<T> rows = data.lookup(rowId);
+    public IndexedData<T> get(long rowId) {
+        List<IndexedData<T>> rows = data
+                .lookup(rowId);
         if (rows.size() == 0) {
-            return null;
+            return isComplete() ? new IndexedData<>(rowId, null) : new IndexedData<>(rowId);
         } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d change data elements at index %d", rows.size(), rowId));
         } else {
@@ -100,9 +101,9 @@ public class SparkChangeData<T> implements ChangeData<T> {
         return complete;
     }
 
-    protected static <T> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data) throws IOException {
-        String serialized = (new IndexedData<T>(data._1, data._2)).writeAsString(serializer);
-        return serialized;
+    protected static <T> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, IndexedData<T>> data)
+            throws IOException {
+        return (data._2).writeAsString(serializer);
     }
 
 }

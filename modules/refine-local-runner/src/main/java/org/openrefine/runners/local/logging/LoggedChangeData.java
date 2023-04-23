@@ -22,7 +22,7 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public T get(long rowId) {
+    public IndexedData<T> get(long rowId) {
         return runner.exec("get", () -> changeData.get(rowId));
     }
 

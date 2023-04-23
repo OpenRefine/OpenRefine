@@ -40,6 +40,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,22 +57,43 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
+/**
+ * A cell in the project grid. It can store data in two fields:
+ * <ul>
+ * <li>value: the main value of the cell</li>
+ * <li>recon: reconciliation information associated with the cell, which is null when the cell is not reconciled</li>
+ * </ul>
+ *
+ * In addition, the {@link #isPending()} flag can be set to indicate that this cell is being computed by an operation
+ * and therefore its value will change in the near future. This is helpful to render partial results of operartions
+ * before they complete.
+ */
 public class Cell implements HasFields, Serializable {
 
     private static final long serialVersionUID = 6587215646810559731L;
 
     public static Cell NULL = new Cell(null, null);
+    public static Cell PENDING_NULL = new Cell(null, null, true);
 
     @JsonIgnore
     final public Serializable value;
     @JsonIgnore
     final public Recon recon;
+    @JsonIgnore
+    final public boolean pending;
 
     private static final Logger logger = LoggerFactory.getLogger(Cell.class);
 
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
+        this.pending = false;
+    }
+
+    public Cell(Serializable value, Recon recon, boolean pending) {
+        this.value = value;
+        this.recon = recon;
+        this.pending = pending;
     }
 
     @Override
@@ -145,6 +167,16 @@ public class Cell implements HasFields, Serializable {
         return recon;
     }
 
+    @JsonProperty("p")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean isPendingJson() {
+        return pending ? true : null;
+    }
+
+    public boolean isPending() {
+        return pending;
+    }
+
     public void save(Writer writer) {
         try {
             ParsingUtilities.saveWriter.writeValue(writer, this);
@@ -162,39 +194,39 @@ public class Cell implements HasFields, Serializable {
             @JsonProperty("v") Object value,
             @JsonProperty("t") String type,
             @JsonProperty("r") Recon recon,
-            @JsonProperty("e") String error) {
+            @JsonProperty("e") String error,
+            @JsonProperty("p") Boolean pending) {
         if ("date".equals(type)) {
             value = ParsingUtilities.stringToDate((String) value);
         }
         if (error != null) {
             value = new EvalError(error);
         }
-        return new Cell((Serializable) value, recon);
+        return new Cell((Serializable) value, recon, pending != null ? pending : false);
     }
 
     @Override
     public String toString() {
-        if (recon == null) {
+        if (pending) {
+            return "[Cell (pending)]";
+        } else if (recon == null) {
             return StringUtils.toString(value);
         } else {
-            return String.format("[Cell \"%s\" %s]", StringUtils.toString(value), recon.toString());
+            return String.format("[Cell \"%s\" %s]", StringUtils.toString(value), recon);
         }
     }
 
     @Override
     public boolean equals(Object other) {
         if (other == null) {
-            return value == null;
+            return value == null && !pending;
         }
-        if (!(other instanceof Cell) || other == null) {
+        if (!(other instanceof Cell)) {
             return false;
         }
         Cell otherCell = (Cell) other;
-        if (value == null) {
-            return otherCell.value == null;
-        }
-        return (value.equals(otherCell.value)
-                && ((recon == null && otherCell.recon == null) || (recon != null && recon.equals(otherCell.recon))));
-
+        return (Objects.equals(value, otherCell.value) &&
+                Objects.equals(recon, otherCell.recon) &&
+                pending == otherCell.pending);
     }
 }

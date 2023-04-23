@@ -13,6 +13,7 @@ import org.openrefine.process.ProgressingFuture;
 import org.openrefine.runners.local.pll.partitioning.CroppedPartitioner;
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
+import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
 import org.openrefine.runners.local.pll.util.QueryTree;
 import org.openrefine.util.CloseableIterator;
 
@@ -108,17 +109,22 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
 
     /**
      * Returns the list of elements of the PLL indexed by the given key. This operation will be more efficient if a
-     * partitioner is available, making it possible to scan the relevant partition only.
-     * 
-     * @param key
-     * @return
+     * partitioner is available, making it possible to scan the relevant partition only. Furthermore, if the PLL is
+     * known to be sorted (which happens when it bears a {@link RangePartitioner}), then we only scan the relevant
+     * partition up to the given key and do not scan the greater keys.
      */
     public Array<V> get(K key) {
         if (partitioner.isPresent()) {
             int partitionId = partitioner.get().getPartition(key);
             Partition partition = getPartitions().get(partitionId);
             try (CloseableIterator<Tuple2<K, V>> iterator = iterate(partition)) {
-                return iterator.filter(tuple -> key.equals(tuple.getKey()))
+                CloseableIterator<Tuple2<K, V>> restrictedIterator = iterator;
+                if (partitioner.get() instanceof RangePartitioner) {
+                    Comparator<K> comparator = ((RangePartitioner<K>) partitioner.get()).getComparator();
+                    restrictedIterator = iterator.takeUntil(tuple -> comparator.compare(tuple.getKey(), key) > 0);
+                }
+                return restrictedIterator
+                        .filter(tuple -> key.equals(tuple.getKey()))
                         .map(Tuple2::getValue).toArray();
             }
         } else {

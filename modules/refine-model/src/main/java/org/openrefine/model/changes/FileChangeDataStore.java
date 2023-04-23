@@ -3,7 +3,6 @@ package org.openrefine.model.changes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -158,7 +157,7 @@ public class FileChangeDataStore implements ChangeDataStore {
                     incompleteDir));
             _toRefresh.add(changeDataId);
         }
-        return returnedChangeData.orElse(_runner.changeDataFromList(Collections.emptyList()));
+        return returnedChangeData.orElse(_runner.emptyChangeData());
     }
 
     @Override

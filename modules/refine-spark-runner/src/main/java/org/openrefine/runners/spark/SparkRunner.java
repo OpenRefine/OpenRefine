@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -20,6 +18,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.io.CompressionCodec;
 import org.apache.spark.io.SnappyCompressionCodec;
@@ -141,18 +140,18 @@ public class SparkRunner implements Runner {
          * The text files corresponding to each partition are read in the correct order thanks to our dedicated file
          * system OrderedLocalFileSystem. https://issues.apache.org/jira/browse/SPARK-5300
          */
-        JavaPairRDD<Long, T> data = context.textFile(path.getAbsolutePath())
+        JavaPairRDD<Long, IndexedData<T>> data = context.textFile(path.getAbsolutePath())
                 .map(line -> IndexedData.<T> read(line, serializer))
-                .keyBy(p -> p.getId())
-                .mapValues(p -> p.getData())
+                .keyBy(IndexedData::getId)
                 .persist(StorageLevel.MEMORY_ONLY());
 
-        return new SparkChangeData<T>(data, this, true);
+        File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
+        return new SparkChangeData<T>(data, this, completionMarker.exists());
     }
 
     protected static <T> Function<String, Tuple2<Long, T>> parseIndexedData(Type expectedType) {
 
-        return new Function<String, Tuple2<Long, T>>() {
+        return new Function<>() {
 
             private static final long serialVersionUID = 3635263442656462809L;
 
@@ -171,14 +170,52 @@ public class SparkRunner implements Runner {
         };
     }
 
+    protected static <T> FlatMapFunction<Iterator<IndexedData<T>>, IndexedData<T>> completePartition() {
+        return new FlatMapFunction<>() {
+
+            @Override
+            public Iterator<IndexedData<T>> call(Iterator<IndexedData<T>> indexedDataIterator) throws Exception {
+                return new Iterator<>() {
+
+                    long nextId = 0L;
+
+                    @Override
+                    public boolean hasNext() {
+                        return true;
+                    }
+
+                    @Override
+                    public IndexedData<T> next() {
+                        if (indexedDataIterator.hasNext()) {
+                            IndexedData<T> next = indexedDataIterator.next();
+                            nextId = next.getId() + 1;
+                            return next;
+                        } else {
+                            return new IndexedData<>(nextId++);
+                        }
+                    }
+                };
+            }
+        };
+    }
+
     @Override
     public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
-        List<Tuple2<Long, T>> tuples = changeData.stream()
+        return changeDataFromList(changeData, true);
+    }
+
+    protected <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData, boolean isComplete) {
+        List<Tuple2<Long, IndexedData<T>>> tuples = changeData.stream()
                 .filter(id -> id.getData() != null)
-                .map(i -> new Tuple2<Long, T>(i.getId(), i.getData()))
+                .map(i -> new Tuple2<>(i.getId(), i))
                 .collect(Collectors.toList());
-        JavaPairRDD<Long, T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
-        return new SparkChangeData<T>(rdd, this, true);
+        JavaPairRDD<Long, IndexedData<T>> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
+        return new SparkChangeData<T>(rdd, this, isComplete);
+    }
+
+    @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return changeDataFromList(Collections.emptyList(), false);
     }
 
     @Override

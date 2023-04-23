@@ -62,11 +62,18 @@ public class RangePartitioner<T> implements Partitioner<T> {
         return numPartitions;
     }
 
+    /**
+     * List of (n-1) values, where n is the number of partitions. The first element of the list is the first key value
+     * in the second partition. If a partition is empty, no value is returned.
+     */
     public List<Optional<T>> getFirstKeys() {
         return firstKeys
                 .stream()
-                .map(o -> o == null ? Optional.<T> empty() : Optional.of(o))
+                .map(Optional::ofNullable)
                 .collect(Collectors.toList());
     }
 
+    public Comparator<T> getComparator() {
+        return comparator;
+    }
 }

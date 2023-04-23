@@ -516,27 +516,27 @@ public class TestingGrid implements Grid {
         RowChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(rowMapper);
         RowFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
-        Map<Long, T> changeData = new HashMap<>();
+        Map<Long, IndexedData<T>> changeData = new HashMap<>();
         Stream<IndexedRow> filteredRows = indexedRows.stream()
                 .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow()));
 
         // add data from any previously computed change data
         if (incompleteChangeData.isPresent()) {
             filteredRows.forEach(ir -> {
-                T precomputed = incompleteChangeData.get().get(ir.getIndex());
-                if (precomputed != null) {
+                IndexedData<T> precomputed = incompleteChangeData.get().get(ir.getIndex());
+                if (precomputed != null && !precomputed.isPending()) {
                     changeData.put(ir.getIndex(), precomputed);
                 }
             });
             filteredRows = indexedRows.stream()
                     .filter(ir -> deserializedFilter.filterRow(ir.getIndex(), ir.getRow())
-                            && incompleteChangeData.get().get(ir.getIndex()) == null);
+                            && incompleteChangeData.get().get(ir.getIndex()).isPending());
         }
 
         // compute missing change data items
         if (deserializedMapper.getBatchSize() == 1) {
             filteredRows.forEach(ir -> {
-                changeData.put(ir.getIndex(), deserializedMapper.call(ir.getIndex(), ir.getRow()));
+                changeData.put(ir.getIndex(), new IndexedData<>(ir.getIndex(), deserializedMapper.call(ir.getIndex(), ir.getRow())));
             });
         } else {
             Iterator<List<IndexedRow>> batches = Iterators.partition(filteredRows.iterator(), deserializedMapper.getBatchSize());
@@ -548,11 +548,12 @@ public class TestingGrid implements Grid {
                             String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
                 for (int i = 0; i != batch.size(); i++) {
-                    changeData.put(batch.get(i).getIndex(), results.get(i));
+                    long index = batch.get(i).getIndex();
+                    changeData.put(index, new IndexedData<>(index, results.get(i)));
                 }
             }
         }
-        return new TestingChangeData<T>(changeData);
+        return new TestingChangeData<T>(changeData, true);
     }
 
     @Override
@@ -563,24 +564,25 @@ public class TestingGrid implements Grid {
         RecordChangeDataProducer<T> deserializedMapper = TestingRunner.serializeAndDeserialize(recordMapper);
         RecordFilter deserializedFilter = TestingRunner.serializeAndDeserialize(filter);
 
-        Map<Long, T> changeData = new HashMap<>();
+        Map<Long, IndexedData<T>> changeData = new HashMap<>();
         Stream<Record> filteredRecords = records.stream()
                 .filter(ir -> deserializedFilter.filterRecord(ir));
 
         // add data from any previously computed change data
         if (incompleteChangeData.isPresent()) {
             filteredRecords.forEach(ir -> {
-                T precomputed = incompleteChangeData.get().get(ir.getStartRowId());
-                if (precomputed != null) {
+                IndexedData<T> precomputed = incompleteChangeData.get().get(ir.getStartRowId());
+                if (precomputed != null && !precomputed.isPending()) {
                     changeData.put(ir.getStartRowId(), precomputed);
                 }
             });
             filteredRecords = records.stream()
-                    .filter(ir -> deserializedFilter.filterRecord(ir) && incompleteChangeData.get().get(ir.getStartRowId()) == null);
+                    .filter(ir -> deserializedFilter.filterRecord(ir) && incompleteChangeData.get().get(ir.getStartRowId()).isPending());
         }
 
         if (deserializedMapper.getBatchSize() == 1) {
-            filteredRecords.forEach(record -> changeData.put(record.getStartRowId(), deserializedMapper.call(record)));
+            filteredRecords.forEach(record -> changeData.put(record.getStartRowId(),
+                    new IndexedData<>(record.getStartRowId(), deserializedMapper.call(record))));
         } else {
             Iterator<List<Record>> batches = Iterators.partition(filteredRecords.iterator(), deserializedMapper.getBatchSize());
             while (batches.hasNext()) {
@@ -591,11 +593,11 @@ public class TestingGrid implements Grid {
                             String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
                 for (int i = 0; i != batch.size(); i++) {
-                    changeData.put(batch.get(i).getStartRowId(), results.get(i));
+                    changeData.put(batch.get(i).getStartRowId(), new IndexedData<>(batch.get(i).getStartRowId(), results.get(i)));
                 }
             }
         }
-        return new TestingChangeData<T>(changeData);
+        return new TestingChangeData<>(changeData, true);
     }
 
     @Override
@@ -607,7 +609,7 @@ public class TestingGrid implements Grid {
 
         List<Row> newRows = indexedRows
                 .stream()
-                .map(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())))
+                .map(ir -> deserializedJoiner.call(ir.getRow(), changeData.get(ir.getIndex())))
                 .collect(Collectors.toList());
         return new TestingGrid(newColumnModel, newRows, overlayModels);
     }
@@ -621,7 +623,13 @@ public class TestingGrid implements Grid {
 
         List<Row> newRows = indexedRows
                 .stream()
-                .flatMap(ir -> deserializedJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())).stream())
+                .flatMap(ir -> {
+                    IndexedData<T> indexedData = changeData.get(ir.getIndex());
+                    return deserializedJoiner.call(
+                            ir.getRow(),
+                            indexedData != null ? indexedData : new IndexedData<>(ir.getIndex()))
+                            .stream();
+                })
                 .collect(Collectors.toList());
         return new TestingGrid(newColumnModel, newRows, overlayModels);
     }

@@ -128,17 +128,13 @@ public class TestingRunner implements Runner {
 
     @Override
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
-        Map<Long, T> data = new HashMap<>();
+        Map<Long, IndexedData<T>> data = new HashMap<>();
         List<File> files = sortedListFiles(path);
         for (File partitionFile : files) {
             if (partitionFile.getName().startsWith("part")) {
-                LineNumberReader ln = null;
-                GZIPInputStream gis = null;
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(partitionFile);
-                    gis = new GZIPInputStream(fis);
-                    ln = new LineNumberReader(new InputStreamReader(gis));
+                try (FileInputStream fis = new FileInputStream(partitionFile);
+                        GZIPInputStream gis = new GZIPInputStream(fis);
+                        LineNumberReader ln = new LineNumberReader(new InputStreamReader(gis))) {
                     Iterator<String> iterator = ln.lines().iterator();
                     while (iterator.hasNext()) {
                         String line = iterator.next().trim();
@@ -146,22 +142,13 @@ public class TestingRunner implements Runner {
                             break;
                         }
                         IndexedData<T> indexedData = IndexedData.read(line, serializer);
-                        data.put(indexedData.getId(), indexedData.getData());
-                    }
-                } finally {
-                    if (ln != null) {
-                        ln.close();
-                    }
-                    if (gis != null) {
-                        gis.close();
-                    }
-                    if (fis != null) {
-                        fis.close();
+                        data.put(indexedData.getId(), indexedData);
                     }
                 }
             }
         }
-        return new TestingChangeData<T>(data);
+        File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
+        return new TestingChangeData<T>(data, completionMarker.exists());
     }
 
     private List<File> sortedListFiles(File directory) throws IOException {
@@ -203,8 +190,13 @@ public class TestingRunner implements Runner {
     @Override
     public <T> ChangeData<T> changeDataFromList(List<IndexedData<T>> changeData) {
         return new TestingChangeData<T>(changeData.stream()
-                .filter(id -> id.getData() != null)
-                .collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));
+                .filter(id -> id.getData() != null || id.isPending())
+                .collect(Collectors.toMap(IndexedData::getId, x -> x)), true);
+    }
+
+    @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return new TestingChangeData<>(((TestingChangeData<T>) changeDataFromList(Collections.emptyList())).data, false);
     }
 
     @Override

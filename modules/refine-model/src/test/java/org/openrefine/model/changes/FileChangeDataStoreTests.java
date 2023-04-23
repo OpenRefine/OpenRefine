@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -57,7 +56,7 @@ public class FileChangeDataStoreTests {
         emptyChangeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
 
-        when(runner.<String> changeDataFromList(Collections.emptyList())).thenReturn(emptyChangeData);
+        when(runner.<String> emptyChangeData()).thenReturn(emptyChangeData);
         future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, changeDir, incompleteDir);

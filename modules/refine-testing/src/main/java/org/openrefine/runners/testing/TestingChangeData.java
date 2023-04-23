@@ -19,15 +19,25 @@ import org.openrefine.process.ProgressingFuture;
 
 public class TestingChangeData<T> implements ChangeData<T> {
 
-    private Map<Long, T> data;
+    protected Map<Long, IndexedData<T>> data;
+    protected boolean isComplete;
 
-    public TestingChangeData(Map<Long, T> data) {
+    public TestingChangeData(Map<Long, IndexedData<T>> data, boolean isComplete) {
         this.data = data;
+        this.isComplete = isComplete;
     }
 
     @Override
-    public T get(long rowId) {
-        return data.get(rowId);
+    public IndexedData<T> get(long rowId) {
+        if (data.containsKey(rowId)) {
+            return data.get(rowId);
+        } else {
+            if (isComplete()) {
+                return new IndexedData<>(rowId, null);
+            } else {
+                return new IndexedData<>(rowId);
+            }
+        }
     }
 
     @Override
@@ -77,7 +87,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     @Override
     public boolean isComplete() {
-        return true;
+        return isComplete;
     }
 
     @Override
@@ -85,7 +95,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
         List<IndexedData<T>> indexed = data
                 .entrySet()
                 .stream()
-                .map(e -> new IndexedData<T>(e.getKey(), e.getValue()))
+                .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
         indexed.sort(new Comparator<IndexedData<T>>() {
 

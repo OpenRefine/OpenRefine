@@ -20,13 +20,13 @@ import org.openrefine.process.ProgressingFuture;
 public interface ChangeData<T> extends Iterable<IndexedData<T>> {
 
     /**
-     * Returns the change data at a given row.
-     * 
+     * Returns the change data at a given row. The data encapsulated in this {@link IndexedData} may be null, but not
+     * the return value of this function itself.
+     *
      * @param rowId
      *            the 0-based row index
-     * @return null if there is no such change data for the given row id
      */
-    T get(long rowId);
+    IndexedData<T> get(long rowId);
 
     /**
      * The runner which was used to create this change data.

@@ -147,7 +147,8 @@ public class DataExtensionChange extends EngineDependentChange {
         }
 
         @Override
-        public List<Row> call(Record record, RecordDataExtension changeData) {
+        public List<Row> call(Record record, IndexedData<RecordDataExtension> indexedData) {
+            RecordDataExtension changeData = indexedData.getData();
             List<Row> newRows = new ArrayList<>();
             List<Row> oldRows = record.getRows();
             // the changeData object can be null, for instance on rows excluded by facets
@@ -158,7 +159,8 @@ public class DataExtensionChange extends EngineDependentChange {
                 long rowId = record.getStartRowId() + i;
                 DataExtension extension = extensions.get(rowId);
                 if (extension == null || extension.data.isEmpty()) {
-                    newRows.add(row.insertCells(columnInsertId, Collections.nCopies(nbInsertedColumns, null)));
+                    newRows.add(row.insertCells(columnInsertId,
+                            Collections.nCopies(nbInsertedColumns, indexedData.isPending() ? Cell.PENDING_NULL : null)));
                     continue;
                 }
 

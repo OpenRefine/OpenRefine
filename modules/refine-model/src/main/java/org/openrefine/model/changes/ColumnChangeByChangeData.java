@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -169,10 +170,21 @@ public abstract class ColumnChangeByChangeData implements Change {
         }
 
         @Override
-        public Row call(long rowId, Row row, Cell cell) {
+        public Row call(Row row, IndexedData<Cell> indexedData) {
+            Cell cell = indexedData.getData();
             if (_add) {
+                if (indexedData.isPending()) {
+                    cell = new Cell(null, null, true);
+                }
                 return row.insertCell(_columnIndex, cell);
             } else {
+                if (indexedData.isPending()) {
+                    Cell currentCell = row.getCell(_columnIndex);
+                    cell = new Cell(
+                            currentCell == null ? null : currentCell.value,
+                            currentCell == null ? null : currentCell.recon,
+                            true);
+                }
                 if (cell != null) {
                     return row.withCell(_columnIndex, cell);
                 } else {
@@ -187,15 +199,25 @@ public abstract class ColumnChangeByChangeData implements Change {
         }
 
         @Override
-        public List<Row> call(Record record, List<Cell> changeData) {
+        public List<Row> call(Record record, IndexedData<List<Cell>> indexedData) {
+            List<Cell> changeData = indexedData.getData();
             List<Row> rows = record.getRows();
+            if (changeData == null) {
+                if (indexedData.isPending()) {
+                    changeData = rows.stream().map(row -> Cell.PENDING_NULL).collect(Collectors.toList());
+                } else {
+                    return rows;
+                }
+            }
             List<Row> result = new ArrayList<>(rows.size());
             if (rows.size() != changeData.size()) {
                 throw new IllegalArgumentException(
                         String.format("Change data and record do not have the same size at row %d", record.getStartRowId()));
             }
             for (int i = 0; i != rows.size(); i++) {
-                result.add(call(record.getStartRowId() + i, rows.get(i), changeData.get(i)));
+                long rowId = record.getStartRowId() + i;
+                result.add(call(rows.get(i),
+                        indexedData.isPending() ? new IndexedData<>(rowId) : new IndexedData<>(rowId, changeData.get(i))));
             }
             return result;
         }

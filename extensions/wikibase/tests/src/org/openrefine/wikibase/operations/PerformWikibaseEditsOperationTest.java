@@ -27,6 +27,7 @@ package org.openrefine.wikibase.operations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -57,9 +58,46 @@ import org.openrefine.wikibase.testing.TestingData;
 
 public class PerformWikibaseEditsOperationTest extends OperationTest {
 
+    ReconConfig reconConfig;
+    ColumnModel columnModel;
+    WikibaseSchema schema;
+    Map<String, OverlayModel> overlayModels;
+    Grid grid;
+    PerformWikibaseEditsOperation operation;
+    Change change;
+    ChangeContext context;
+
     @BeforeMethod
     public void registerOperation() {
         registerOperation("perform-wikibase-edits", PerformWikibaseEditsOperation.class);
+    }
+
+    @BeforeMethod
+    public void setUpDependencies() {
+        reconConfig = mock(ReconConfig.class);
+        columnModel = new ColumnModel(
+                Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
+                        new ColumnMetadata("bar")));
+        schema = new WikibaseSchema(
+                Collections.emptyList(),
+                null,
+                "http://site.iri",
+                Collections.singletonMap("item", "http://site.iri"),
+                "https://mediawiki.endpoint");
+        overlayModels = Collections.singletonMap("wikibaseSchema", schema);
+        grid = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
+                })
+                .withColumnModel(columnModel)
+                .withOverlayModels(overlayModels);
+
+        operation = new PerformWikibaseEditsOperation(
+                EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag");
+
+        change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange("ab3892def", operation);
+        context = mock(ChangeContext.class);
     }
 
     @Override
@@ -82,35 +120,10 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Test
     public void testChange()
             throws Exception {
-
-        ReconConfig reconConfig = mock(ReconConfig.class);
-        ColumnModel columnModel = new ColumnModel(
-                Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
-                        new ColumnMetadata("bar")));
-        WikibaseSchema schema = new WikibaseSchema(
-                Collections.emptyList(),
-                null,
-                "http://site.iri",
-                Collections.singletonMap("item", "http://site.iri"),
-                "https://mediawiki.endpoint");
-        Map<String, OverlayModel> overlayModels = Collections.singletonMap("wikibaseSchema", schema);
-        Grid grid = createGrid(
-                new String[] { "foo", "bar" },
-                new Serializable[][] {
-                        { TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
-                })
-                .withColumnModel(columnModel)
-                .withOverlayModels(overlayModels);
-
-        PerformWikibaseEditsOperation operation = new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag");
-
-        Change change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange("ab3892def", operation);
-        ChangeContext context = mock(ChangeContext.class);
         PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
                 Collections.singletonMap(1234L, "Q789"), Collections.emptyList());
         ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().changeDataFromList(
-                Collections.singletonList(new IndexedData<PerformWikibaseEditsOperation.RowEditingResults>(0L, rowNewReconUpdate)));
+                Collections.singletonList(new IndexedData<>(0L, rowNewReconUpdate)));
 
         when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
                 Mockito.any(), Mockito.any()))
@@ -123,6 +136,24 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
         assertEquals(row.getCell(0).recon.match.id, "Q789");
+    }
+
+    @Test
+    public void testPendingChange()
+            throws Exception {
+        ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().emptyChangeData();
+
+        when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
+                Mockito.any(), Mockito.any()))
+                .thenReturn(changeData);
+
+        Change.ChangeResult changeResult = change.apply(grid, context);
+        assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Row row = applied.getRow(0L);
+        assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.New);
+        assertTrue(row.getCell(0).isPending());
     }
 
 }

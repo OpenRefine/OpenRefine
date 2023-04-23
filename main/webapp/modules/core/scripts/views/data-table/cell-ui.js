@@ -91,6 +91,11 @@ DataTableCellUI.prototype._render = function() {
   }
 
   this._td.appendChild(divContent);
+
+  // if cell content is pending, display waiting spinner
+  if (cell && cell.p) {
+    $('<div></div>').addClass('waiting').appendTo(this._td);
+  }
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {
