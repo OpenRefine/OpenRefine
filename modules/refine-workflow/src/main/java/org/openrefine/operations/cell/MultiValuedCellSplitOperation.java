@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -214,6 +215,17 @@ public class MultiValuedCellSplitOperation implements Operation {
                 List<Row> newRows = new ArrayList<>(origRows.size());
                 int rowSize = 0;
 
+                // first, check if there is any pending cell in the column
+                boolean pending = origRows.stream()
+                        .anyMatch(row -> row.isCellPending(columnIdx));
+                if (pending) {
+                    // if there is any, we just mark the entire column as pending.
+                    return origRows.stream()
+                            .map(row -> row.withCell(columnIdx, Cell.PENDING_NULL))
+                            .collect(Collectors.toList());
+                }
+
+                // otherwise, the column is complete
                 for (int i = 0; i != origRows.size(); i++) {
                     Row row = origRows.get(i);
                     rowSize = row.getCells().size();
@@ -253,7 +265,7 @@ public class MultiValuedCellSplitOperation implements Operation {
                     }
                 }
 
-                //  Exhaust any remaining splits at the end
+                // Exhaust any remaining splits at the end
                 for (String splitValue : splits) {
                     Row newRow = new Row(Collections.nCopies(rowSize, (Cell) null));
                     newRows.add(newRow.withCell(columnIdx, new Cell(splitValue, null)));

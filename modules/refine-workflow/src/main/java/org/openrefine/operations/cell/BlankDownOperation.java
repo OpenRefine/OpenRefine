@@ -178,7 +178,7 @@ public class BlankDownOperation extends EngineDependentOperation {
 
             @Override
             public Cell combine(Cell left, Cell right) {
-                if (right != null && right.value == null) {
+                if (right != null && right.value == null && !right.isPending()) {
                     // Cell.NULL is used as sentinel, for rows that are skipped by facets.
                     // null cells are simply represented by right == null
                     return left;
@@ -195,7 +195,9 @@ public class BlankDownOperation extends EngineDependentOperation {
             @Override
             public Row map(Cell lastCell, long rowId, Row row) {
                 Serializable cellValue = row.getCellValue(columnIndex);
-                if (ExpressionUtils.isNonBlankData(cellValue)
+                if (lastCell != null & lastCell.isPending()) {
+                    return row.withCell(columnIndex, Cell.PENDING_NULL);
+                } else if (ExpressionUtils.isNonBlankData(cellValue)
                         && lastCell != null
                         && cellValue.equals(lastCell.getValue())) {
                     return row.withCell(columnIndex, null);

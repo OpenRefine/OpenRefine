@@ -144,9 +144,13 @@ public class MultiValuedCellJoinOperation implements Operation {
 
                 // Join the non-blank cell values
                 StringBuffer sb = new StringBuffer();
-                for (int i = 0; i != rows.size(); i++) {
+                boolean pendingCellFound = false;
+                for (int i = 0; i != rows.size() && !pendingCellFound; i++) {
                     Object value = rows.get(i).getCellValue(columnIdx);
-                    if (ExpressionUtils.isNonBlankData(value)) {
+                    if (rows.get(i).isCellPending(columnIdx)) {
+                        pendingCellFound = true;
+
+                    } else if (ExpressionUtils.isNonBlankData(value)) {
                         if (sb.length() > 0) {
                             sb.append(separator);
                         }
@@ -156,8 +160,8 @@ public class MultiValuedCellJoinOperation implements Operation {
 
                 // Compute the new rows
                 List<Row> newRows = new ArrayList<>(rows.size());
-                String joined = sb.toString();
-                newRows.add(rows.get(0).withCell(columnIdx, new Cell(joined.isEmpty() ? null : joined, null)));
+                String joined = pendingCellFound ? "" : sb.toString();
+                newRows.add(rows.get(0).withCell(columnIdx, new Cell(joined.isEmpty() ? null : joined, null, pendingCellFound)));
                 for (int i = 1; i < rows.size(); i++) {
                     Row row = rows.get(i).withCell(columnIdx, null);
                     // Only add rows if they are not entirely blank after removing the joined value

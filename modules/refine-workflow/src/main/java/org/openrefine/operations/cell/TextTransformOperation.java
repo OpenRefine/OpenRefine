@@ -159,9 +159,14 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                 Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
-                Object oldValue = cell != null ? cell.value : null;
                 Properties bindings = new Properties();
                 ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell, overlayModels);
+                if (ExpressionUtils.dependsOnPendingValues(eval, columnName, columnModel, row, record)) {
+                    return row.withCell(columnIndex, new Cell(
+                            cell != null ? cell.value : null,
+                            cell != null ? cell.recon : null,
+                            true));
+                }
 
                 Object o = eval.evaluate(bindings);
                 if (o == null) {

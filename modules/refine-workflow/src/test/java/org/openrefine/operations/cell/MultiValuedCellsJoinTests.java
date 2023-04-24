@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
@@ -137,6 +138,35 @@ public class MultiValuedCellsJoinTests extends RefineTest {
                         { "record2", "", null },
                         { null, "g", null },
                         { null, null, null }
+                });
+
+        Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
+        List<IndexedRow> rows = state.collectRows();
+        List<IndexedRow> expectedRows = expected.collectRows();
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testPendingCells() throws DoesNotApplyException, ParsingException {
+        Grid withPendingCells = createGrid(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "b" },
+                        { null, Cell.PENDING_NULL, "d" },
+                        { "record2", "", "f" },
+                        { null, "g", "" },
+                });
+
+        Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
+        Change.ChangeResult changeResult = SUT.apply(withPendingCells, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid state = changeResult.getGrid();
+
+        Grid expected = createGrid(new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", Cell.PENDING_NULL, "b" },
+                        { null, null, "d" },
+                        { "record2", "g", "f" }
                 });
 
         Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());

@@ -33,10 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Record;
+import org.openrefine.model.Row;
 
 public class ExpressionUtilsTests {
 
@@ -60,5 +71,28 @@ public class ExpressionUtilsTests {
         Assert.assertFalse(ExpressionUtils.sameValue(1, 2));
         Assert.assertFalse(ExpressionUtils.sameValue(1, 1.0));
         Assert.assertFalse(ExpressionUtils.sameValue(true, false));
+    }
+
+    @Test
+    public void testDependsOnPendingValuesRow() {
+        Evaluable evaluable = mock(Evaluable.class);
+        when(evaluable.getColumnDependencies("foo")).thenReturn(Collections.singleton("foo"));
+        ColumnModel columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar")));
+
+        Row row = new Row(Arrays.asList(new Cell("a", null), Cell.PENDING_NULL));
+
+        Assert.assertFalse(ExpressionUtils.dependsOnPendingValues(evaluable, "foo", columnModel, row, null));
+    }
+
+    @Test
+    public void testDependsOnPendingValuesRecord() {
+        Evaluable evaluable = mock(Evaluable.class);
+        when(evaluable.getColumnDependencies("foo")).thenReturn(null);
+        ColumnModel columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar")));
+
+        Row row = new Row(Arrays.asList(new Cell("a", null), Cell.PENDING_NULL));
+        Record record = new Record(4L, Arrays.asList(row));
+
+        Assert.assertTrue(ExpressionUtils.dependsOnPendingValues(evaluable, "foo", columnModel, row, record));
     }
 }

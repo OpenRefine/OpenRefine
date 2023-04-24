@@ -45,6 +45,7 @@ import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -210,5 +211,34 @@ public class BlankDownTests extends RefineTest {
         expectedGrid = expectedGrid.withColumnModel(expectedGrid.getColumnModel().withHasRecords(true));
 
         assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testBlankDownRowsPendingCells() throws DoesNotApplyException {
+        Grid withPendingCells = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", Cell.PENDING_NULL, "d" },
+                        { "e", "b", "f" },
+                        { null, "b", "h" },
+                        { null, Cell.PENDING_NULL, "i" }
+                });
+        Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+        Change.ChangeResult changeResult = change.apply(withPendingCells, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
+
+        Grid expectedResult = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", Cell.PENDING_NULL, "d" },
+                        { "e", Cell.PENDING_NULL, "f" },
+                        { null, null, "h" },
+                        { null, Cell.PENDING_NULL, "i" }
+                });
+
+        assertGridEquals(applied, expectedResult);
     }
 }

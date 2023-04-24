@@ -33,13 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.grel.ast;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.functions.Get;
 import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
 
@@ -99,6 +97,13 @@ public class FunctionCallExpr implements GrelExpr {
 
     @Override
     public final Set<String> getColumnDependencies(String baseColumn) {
+        // special case to handle "get(cells, "foo")" which only depends on the "foo" column
+        // even though the cells variable has a greater reach
+        if (_function instanceof Get && _args.length == 2 && (new VariableExpr("cells")).equals(_args[0]) &&
+                _args[1] != null && _args[1] instanceof LiteralExpr) {
+            String columnName = ((LiteralExpr) _args[1])._value.toString();
+            return Collections.singleton(columnName);
+        }
         if (_function instanceof PureFunction) {
             Set<String> dependencies = new HashSet<>();
             for (GrelExpr ev : _args) {

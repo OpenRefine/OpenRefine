@@ -16,6 +16,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
@@ -87,6 +88,41 @@ public class TextTransformTests extends RefineTest {
                         { "v1", "v1_a", "d" },
                         { "v3", "v3_a", "f" },
                         { "", "_a", "g" },
+                        { "", "_b", "h" },
+                        { new EvalError("error"), null, "i" },
+                        { "v1", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testTransformColumnInRowsModeWithPendingCells() throws DoesNotApplyException {
+        Grid pendingGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", Cell.PENDING_NULL },
+                        { "v3", Cell.PENDING_NULL, "f" },
+                        { Cell.PENDING_NULL, "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+        Change change = new TextTransformOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).createChange();
+
+        Change.ChangeResult changeResult = change.apply(pendingGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "v1_a", Cell.PENDING_NULL },
+                        { "v3", Cell.PENDING_NULL, "f" },
+                        { Cell.PENDING_NULL, new Cell("a", null, true), "g" },
                         { "", "_b", "h" },
                         { new EvalError("error"), null, "i" },
                         { "v1", "v1_b", "j" }

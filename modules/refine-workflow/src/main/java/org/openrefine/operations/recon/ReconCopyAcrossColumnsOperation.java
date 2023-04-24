@@ -121,8 +121,6 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
         Map<Serializable, Recon> cellValueToRecon = projectState.aggregateRows(getAggregator(columnIndex, judgments),
                 ImmutableMap.<Serializable, Recon> of());
 
-        // TODO update the ReconStats of the target columns?
-
         // Apply the map in the target columns
         return getRowMapper(targetColumnIndices, cellValueToRecon, _applyToJudgedCells);
     }

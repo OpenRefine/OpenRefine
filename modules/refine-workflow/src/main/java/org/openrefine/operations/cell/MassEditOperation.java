@@ -211,6 +211,9 @@ public class MassEditOperation extends EngineDependentOperation {
 
                 Properties bindings = ExpressionUtils.createBindings();
                 ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels);
+                if (ExpressionUtils.dependsOnPendingValues(evaluable, columnName, columnModel, row, record)) {
+                    return row.withCell(columnIdx, Cell.PENDING_NULL);
+                }
 
                 Object v = evaluable.evaluate(bindings);
                 if (ExpressionUtils.isError(v)) {

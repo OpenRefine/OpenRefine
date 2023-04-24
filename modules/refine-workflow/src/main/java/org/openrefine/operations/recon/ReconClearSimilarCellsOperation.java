@@ -95,7 +95,7 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
 
                     if (_similarValue.equals(value)) {
-                        Cell newCell = new Cell(cell.value, null);
+                        Cell newCell = new Cell(cell.value, null, cell.isPending());
                         return row.withCell(cellIndex, newCell);
                     }
                 }

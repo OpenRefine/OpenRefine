@@ -43,6 +43,7 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
@@ -114,6 +115,38 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "", "b", "_b", "h" },
                         { new EvalError("error"), "a", null, "i" },
                         { "v1", "b", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testAddColumnRowsModePendingCell() throws DoesNotApplyException, ParsingException {
+        Grid pendingGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { Cell.PENDING_NULL, "a", "d" },
+                        { "v3", Cell.PENDING_NULL, "f" },
+                        { "", "a", Cell.PENDING_NULL },
+                        { "", "b", "h" }
+                });
+        Change change = new ColumnAdditionOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2).createChange();
+
+        Change.ChangeResult changeResult = change.apply(pendingGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { Cell.PENDING_NULL, "a", Cell.PENDING_NULL, "d" },
+                        { "v3", Cell.PENDING_NULL, Cell.PENDING_NULL, "f" },
+                        { "", "a", "_a", Cell.PENDING_NULL },
+                        { "", "b", "_b", "h" }
                 });
         assertGridEquals(applied, expected);
     }

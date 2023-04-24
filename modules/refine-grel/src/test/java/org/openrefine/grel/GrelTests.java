@@ -213,6 +213,7 @@ public class GrelTests {
                 { "1", "" },
                 { "cells.foo", "foo" },
                 { "value + ' ' + cells.foo.value", "base,foo" },
+                { "cells[\"foo\"].value+'_'+value", "base,foo" },
                 { "parseHtml(value.trim())", "base" },
                 { "cells", null },
                 { "facetCount(value, 'value', 'col')", null },
@@ -225,7 +226,9 @@ public class GrelTests {
             Set<String> expected = test[1] == null ? null
                     : Arrays.asList(test[1].split(",")).stream()
                             .filter(s -> !s.isEmpty()).collect(Collectors.toSet());
-            Assert.assertEquals(eval.getColumnDependencies(baseColumn), expected, "for expression: " + test[0]);
+            Set<String> columnDependencies = eval.getColumnDependencies(baseColumn);
+            Assert.assertEquals(columnDependencies, expected,
+                    "for expression: " + test[0] + ", expected " + expected + " but got " + columnDependencies);
         }
     }
 

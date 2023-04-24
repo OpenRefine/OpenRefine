@@ -9,6 +9,9 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 
+/**
+ * A change which updates the flag or star field of a single row in the project.
+ */
 public class StarFlagChange implements Change {
 
     @JsonProperty("rowId")

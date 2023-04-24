@@ -90,7 +90,7 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.cells.get(columnIndex);
-                if (cell != null && cell.recon != null) {
+                if (cell != null && cell.recon != null && !cell.isPending()) {
                     ReconCandidate candidate = cell.recon.getBestCandidate();
                     if (candidate != null) {
                         Recon newRecon = cell.recon.dup(historyEntryId)

@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
@@ -146,6 +147,40 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                         { null, "h", "" },
                         { null, "i", "j" },
                         { null, null, null }
+                });
+
+        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel().withHasRecords(true));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(rows, expectedState.collectRows());
+    }
+
+    @Test
+    public void testPendingCells() throws DoesNotApplyException, ParsingException {
+        Grid pendingGrid = createGrid(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a||b", "c" },
+                        { null, Cell.PENDING_NULL, "e" },
+                        { null, 12, "f" },
+                        { "record2", "", "g" },
+                        { null, "h|i", "" },
+                        { null, null, "j" }
+                });
+
+        Change SUT = new MultiValuedCellSplitOperation("foo", "key", "|", false).createChange();
+        Change.ChangeResult changeResult = SUT.apply(pendingGrid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
+
+        Grid expectedState = createGridWithRecords(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", Cell.PENDING_NULL, "c" },
+                        { null, Cell.PENDING_NULL, "e" },
+                        { null, Cell.PENDING_NULL, "f" },
+                        { "record2", "", "g" },
+                        { null, "h", "" },
+                        { null, "i", "j" }
                 });
 
         Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel().withHasRecords(true));

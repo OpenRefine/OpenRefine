@@ -45,6 +45,7 @@ import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -70,6 +71,7 @@ public class FillDownTests extends RefineTest {
     }
 
     Grid toFillDown;
+    Grid withPendingCells;
     ListFacetConfig facet;
 
     @BeforeTest
@@ -83,6 +85,15 @@ public class FillDownTests extends RefineTest {
                         { null, "", "i" }
                 });
         toFillDown = toFillDown.withColumnModel(toFillDown.getColumnModel().withHasRecords(true));
+        withPendingCells = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", Cell.PENDING_NULL, "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+        withPendingCells = withPendingCells.withColumnModel(withPendingCells.getColumnModel().withHasRecords(true));
 
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
         facet = new ListFacetConfig();
@@ -195,6 +206,48 @@ public class FillDownTests extends RefineTest {
                         { "e", null, "f" },
                         { "e", "g", "h" },
                         { "e", "", "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testFillDownRowsPendingCells() throws DoesNotApplyException {
+        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+        Change.ChangeResult changeResult = change.apply(withPendingCells, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
+
+        Grid expectedGrid = createGridWithRecords(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", Cell.PENDING_NULL, "c" },
+                        { "", Cell.PENDING_NULL, "d" },
+                        { "e", Cell.PENDING_NULL, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testFillDownRecordsPendingCells() throws DoesNotApplyException {
+        Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
+        Change.ChangeResult changeResult = change.apply(withPendingCells, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
+
+        Grid expectedGrid = createGridWithRecords(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", Cell.PENDING_NULL, "c" },
+                        { "", Cell.PENDING_NULL, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
                 });
 
         assertGridEquals(applied, expectedGrid);

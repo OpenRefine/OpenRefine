@@ -125,7 +125,7 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null) {
+                if (cell != null && !cell.isPending()) {
                     Recon newRecon = cell.recon != null ? cell.recon.dup(historyEntryId)
                             : new Recon(
                                     historyEntryId,

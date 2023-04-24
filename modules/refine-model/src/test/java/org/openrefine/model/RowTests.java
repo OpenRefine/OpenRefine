@@ -161,4 +161,12 @@ public class RowTests {
 
         row.padWithNull(1);
     }
+
+    @Test
+    public void testIsPending() {
+        Row row = new Row(Arrays.asList(new Cell("hello", null), null, Cell.PENDING_NULL));
+        Assert.assertTrue(row.isCellPending(2));
+        Assert.assertFalse(row.isCellPending(1));
+        Assert.assertFalse(row.isCellPending(0));
+    }
 }

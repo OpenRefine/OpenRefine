@@ -50,6 +50,7 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -243,6 +244,27 @@ public class MassOperationTests extends RefineTest {
         Row row4 = applied.getRow(5);
         Assert.assertEquals(row4.getCellValue(0), "v1");
         Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testRowsModePendingCells() throws ParsingException, DoesNotApplyException {
+        Grid grid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v1", "b" },
+                        { Cell.PENDING_NULL, "a" },
+                        { null, "c" }
+                });
+
+        Change change = new MassEditOperation(EngineConfig.ALL_ROWS, "foo", "grel:value", editsWithFromBlank).createChange();
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+
+        Grid expectedGrid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v2", "b" },
+                        { Cell.PENDING_NULL, "a" },
+                        { "hey", "c" }
+                });
+        assertGridEquals(changeResult.getGrid(), expectedGrid);
     }
 
 }

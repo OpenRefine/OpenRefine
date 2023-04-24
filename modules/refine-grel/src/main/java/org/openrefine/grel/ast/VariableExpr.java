@@ -38,8 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openrefine.expr.Evaluable;
-
 /**
  * An abstract syntax tree node encapsulating the retrieval of a variable's content.
  */
@@ -68,7 +66,7 @@ public class VariableExpr implements GrelExpr {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
     @Override
