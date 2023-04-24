@@ -3,6 +3,7 @@ const glob = require('glob');
 // Those specs paths are glob patterns
 const groups = [
   {
+    group: "Project",
     specs: [
       'cypress/e2e/create-project/**/*.cy.js',
       'cypress/e2e/extensions/**/*.cy.js',
@@ -14,6 +15,7 @@ const groups = [
     ],
   },
   {
+    group: "Column"
     specs: [
       'cypress/e2e/project/grid/all-column/**/*.cy.js',
       'cypress/e2e/project/grid/column/*.cy.js',
@@ -21,12 +23,14 @@ const groups = [
     ],
   },
   {
+    group: "Facet"
     specs: [
       'cypress/e2e/project/grid/column/edit-column/**/*.cy.js',
       'cypress/e2e/project/grid/column/facet/**/*.cy.js',
     ],
   },
   {
+    group: "Reconcile
     specs: [
       'cypress/e2e/project/grid/column/reconcile/**/*.cy.js',
       'cypress/e2e/project/grid/column/transpose/**/*.cy.js',
@@ -34,6 +38,7 @@ const groups = [
     ],
   },
   {
+    group: "Misc"
     specs: [
       'cypress/e2e/project/grid/misc/**/*.cy.js',
       'cypress/e2e/project/grid/row/**/*.cy.js',
@@ -41,6 +46,7 @@ const groups = [
     ],
   },
   {
+    group: "Undo"
     specs: [
       'cypress/e2e/project/project-header/**/*.cy.js',
       'cypress/e2e/project/undo_redo/**/*.cy.js',
