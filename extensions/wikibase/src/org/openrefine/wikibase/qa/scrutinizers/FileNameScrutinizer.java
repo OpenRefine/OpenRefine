@@ -90,9 +90,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
                     issue.setProperty("max_length", Integer.toString(maxFileNameBytes));
                     addIssue(issue);
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            } catch (UnsupportedEncodingException e) {}
 
             // Invalid characters
             Matcher matcher = forbiddenFileNameChars.matcher(fileName);
