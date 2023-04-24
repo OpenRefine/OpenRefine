@@ -70,7 +70,7 @@ jobs:
     - name: Check Java linting
       id: java_linting
       run: |
-        mvn compile formatter:validate javadoc:javadoc -Ddoclint=all
+        mvn -B compile formatter:validate javadoc:javadoc -Ddoclint=all
 
     - name: Configure connections to databases
       id: configure_db_connections
@@ -86,7 +86,7 @@ jobs:
         PGPASSWORD: postgres
 
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
 
   windows_server_tests:
     runs-on: windows-latest
@@ -107,7 +107,7 @@ jobs:
     - name: Check Java linting
       id: java_linting
       run: |
-        mvn formatter:validate
+        mvn -B formatter:validate
 
     - name: Adapt PATH for Hadoop binaries
       id: path_hadoop_binaries
@@ -115,7 +115,7 @@ jobs:
         "${{ github.workspace }}\modules\refine-spark-runner\hadoop\bin" >> $GITHUB_PATH
 
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
       env:
         HADOOP_HOME: ${{ github.workspace }}\modules\refine-spark-runner\hadoop
         HADOOP_HOME_BIN: ${{ github.workspace }}\modules\refine-spark-runner\hadoop\bin

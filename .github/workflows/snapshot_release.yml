@@ -160,13 +160,13 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
 
     - name: Generate dist files
-      run: mvn -pl=-benchmark package -DskipTests=true
+      run: mvn -B -pl=-benchmark package -DskipTests=true
 
   mac_test_and_deploy:
     runs-on: macos-12
@@ -212,13 +212,13 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test
-      run: mvn test
+      run: mvn -B test
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Package and upload to OSSRH
       run: |
-        mvn -pl=-benchmark package deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
+        mvn -B -pl=-benchmark package deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
