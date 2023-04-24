@@ -180,7 +180,8 @@ public class SqlInsertBuilder {
         }
 
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = columns.stream().map(col -> SqlCreateBuilder.addQuotes(col.replaceAll("[^a-zA-Z0-9_]", "_"))).collect(Collectors.joining(","));
+        String colNamesWithSep = columns.stream().map(col -> SqlCreateBuilder.addQuotes(col.replaceAll("[^a-zA-Z0-9_]", "_")))
+                .collect(Collectors.joining(","));
         if (!trimColNames) {
             colNamesWithSep = columns.stream().map(col -> SqlCreateBuilder.addQuotes(col)).collect(Collectors.joining(","));
         }
