@@ -387,6 +387,6 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public void setLastSave() {
-        lastSave = LocalDateTime.now();
+        lastSave = Instant.now();
     }
 }
