@@ -174,6 +174,7 @@ public class Cell implements HasFields, Serializable {
         return pending ? true : null;
     }
 
+    @JsonIgnore
     public boolean isPending() {
         return pending;
     }

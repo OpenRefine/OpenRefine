@@ -10,6 +10,9 @@ import org.openrefine.model.RowMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * A change which updates the flag or star field of a single row in the project.
+ */
 public class StarFlagChange implements Change {
 
     @JsonProperty("rowId")

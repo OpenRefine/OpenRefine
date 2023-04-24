@@ -68,7 +68,7 @@ public class VariableExpr implements GrelExpr {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
     @Override

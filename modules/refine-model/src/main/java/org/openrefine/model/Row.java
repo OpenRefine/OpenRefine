@@ -126,7 +126,7 @@ public class Row implements HasFields, Serializable {
     public Cell getCell(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
-            if (cell != null && cell.value != null) {
+            if (cell != null && (cell.value != null || cell.pending)) {
                 return cell;
             } else {
                 return null;
@@ -146,8 +146,19 @@ public class Row implements HasFields, Serializable {
         return null;
     }
 
+    /**
+     * Whether the cell at the given index is null or consists only of whitespace.
+     */
     public boolean isCellBlank(int cellIndex) {
-        return isValueBlank(getCellValue(cellIndex));
+        return isValueBlank(getCellValue(cellIndex)) && !isCellPending(cellIndex);
+    }
+
+    /**
+     * Whether the cell at the given index is being computed and should not be treated as a definitive value.
+     */
+    public boolean isCellPending(int cellIndex) {
+        Cell cell = getCell(cellIndex);
+        return cell != null && cell.isPending();
     }
 
     protected boolean isValueBlank(Object value) {

@@ -129,6 +129,44 @@ public class ExpressionUtils {
         }
     }
 
+    /**
+     * Checks if the given expression relies on any pending cells in the given evaluation context. If so, the result of
+     * its evaluation should be considered pending as well. This is meant to be an over-approximation: this method might
+     * return true even if the expression can actually be evaluated without relying on any pending cells. This happens
+     * for instance if the evaluable does not expose column dependencies and the evaluation context contains any pending
+     * cell.
+     *
+     * @param evaluable
+     *            the evaluable to evaluate
+     */
+    static public boolean dependsOnPendingValues(Evaluable evaluable, String baseColumnName, ColumnModel columnModel, Row row,
+            Record record) {
+        Set<Integer> columnIndicesWithPendingValues = new HashSet<>();
+        if (record != null) {
+            for (Row recordRow : record.getRows()) {
+                extractColumnsWithPendingCells(recordRow, columnIndicesWithPendingValues);
+            }
+        } else {
+            // we know that this row is part of the supplied record, if it is supplied
+            extractColumnsWithPendingCells(row, columnIndicesWithPendingValues);
+        }
+        Set<String> columnDependencies = evaluable.getColumnDependencies(baseColumnName);
+        if (columnDependencies == null) {
+            return !columnIndicesWithPendingValues.isEmpty();
+        } else {
+            return columnDependencies.stream().map(columnModel::getColumnIndexByName)
+                    .anyMatch(columnIndicesWithPendingValues::contains);
+        }
+    }
+
+    static private void extractColumnsWithPendingCells(Row row, Set<Integer> set) {
+        for (int i = 0; i != row.cells.size(); i++) {
+            if (row.isCellPending(i)) {
+                set.add(i);
+            }
+        }
+    }
+
     static public boolean isError(Object o) {
         return o instanceof EvalError;
     }

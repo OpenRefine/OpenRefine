@@ -177,7 +177,7 @@ public class FillDownOperation extends EngineDependentOperation {
 
             @Override
             public Cell combine(Cell left, Cell right) {
-                if (right != null && ExpressionUtils.isNonBlankData(right.getValue())) {
+                if (right != null && (ExpressionUtils.isNonBlankData(right.getValue()) || right.isPending())) {
                     return right;
                 } else {
                     return left;
@@ -191,7 +191,7 @@ public class FillDownOperation extends EngineDependentOperation {
 
             @Override
             public Row map(Cell lastNonBlankCell, long rowId, Row row) {
-                if (!ExpressionUtils.isNonBlankData(row.getCellValue(columnIndex))) {
+                if (row.isCellBlank(columnIndex)) {
                     return row.withCell(columnIndex, lastNonBlankCell);
                 } else {
                     return row;

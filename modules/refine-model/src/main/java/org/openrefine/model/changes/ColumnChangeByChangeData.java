@@ -250,6 +250,11 @@ public abstract class ColumnChangeByChangeData implements Change {
                 Properties bindings = new Properties();
                 ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels);
                 bindings.put("project_id", projectId);
+                // this should only happen when we are actually called by a row mapper and
+                // not within the context of change data production
+                if (ExpressionUtils.dependsOnPendingValues(eval, baseColumnName, columnModel, row, record)) {
+                    return Cell.PENDING_NULL;
+                }
 
                 Object o = eval.evaluate(bindings);
                 if (o != null) {

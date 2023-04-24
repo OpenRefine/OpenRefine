@@ -111,7 +111,7 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value) && !cell.isPending()) {
                     String id = cell.value.toString();
                     if (id.startsWith(identifierSpace)) {
                         id = id.substring(identifierSpace.length());

@@ -161,7 +161,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
             @Override
             public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value) && !cell.isPending()) {
                     Recon recon = reconConfig.createNewRecon(historyEntryId)
                             .withJudgment(Judgment.New)
                             .withJudgmentAction("mass");
