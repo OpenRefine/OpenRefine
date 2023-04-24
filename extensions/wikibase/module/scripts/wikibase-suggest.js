@@ -61,7 +61,8 @@
             search: query,
             type: entity_type,
             format: 'json',
-            origin: '*'
+            origin: '*',
+            uselang: o.language
           };
 
           if (cursor) {
