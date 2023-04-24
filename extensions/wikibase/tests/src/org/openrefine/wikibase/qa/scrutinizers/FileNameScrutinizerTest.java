@@ -67,7 +67,57 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(FileNameScrutinizer.fileNameTooLongType);
     }
 
-    @Test
+    @Test() // Vertical bars should be allowed
+    public void testInvalidCharactersInFilenameTab() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Tabs (\t) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test() // Vertical bars should be allowed
+    public void testInvalidCharactersInFilenameNewLine() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("New lines (\n) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test() // Vertical bars should be allowed
+    public void testInvalidCharactersInFilenameCarriageReturn() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Carriage returns (\r) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test() // Vertical bars should be allowed
+    public void testInvalidCharactersInFilenameFormFeed() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Form feeds (\f) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test() // Vertical bars should be allowed
+    public void testInvalidCharactersInFilenameBackspace() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Backspaces (\b) are not allowed.png")
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test(enabled = false) // Vertical bars should be allowed
     public void testInvalidCharactersInFilenameVerticalBar() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("vertical bars (|) are not allowed.png")
@@ -77,7 +127,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
     }
 
-    @Test
+    @Test(enabled = false) // HTML escaped entities should be allowed
     public void testInvalidCharactersInFilenameHTMLEscaped() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("HTML escaped entities such as &nbsp; are not allowed.png")
