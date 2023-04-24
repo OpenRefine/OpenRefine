@@ -64,6 +64,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
   RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
+  RS.registerCommand(module, "import-project-url", new Packages.com.google.refine.commands.project.ImportProjectURLCommand());
   RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
   RS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
 
