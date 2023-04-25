@@ -51,7 +51,7 @@ Actions
     run                           Run OpenRefine [default].
     server_test                   Run the server tests.
     test                          Run all tests.
-    e2e_tests                      Run the UI tests.
+    e2e_tests                      Run the e2e tests.
     windows_dist <version>        Make Windows binary distribution.
 EOF
 exit 1
