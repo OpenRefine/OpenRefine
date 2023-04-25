@@ -130,7 +130,7 @@ jobs:
         env:
           browsers: chrome
   e2e_test:
-    name: ${{ matrix.group }}
+    name: ${{ needs.prepare_e2e_test_matrix.outputs.matrix.group }}
     needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
     strategy:
