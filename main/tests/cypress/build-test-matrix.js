@@ -30,7 +30,7 @@ const groups = [
     ],
   },
   {
-    group: "Reconcile,
+    group: "Reconcile",
     specs: [
       'cypress/e2e/project/grid/column/reconcile/**/*.cy.js',
       'cypress/e2e/project/grid/column/transpose/**/*.cy.js',
