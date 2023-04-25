@@ -29,7 +29,7 @@ jobs:
         env:
           browsers: chrome
   e2e_test:
-    name: ${{ matrix.specs.group }}
+    name: e2e_test ${{ matrix.specs.group }}
     needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
     strategy:
