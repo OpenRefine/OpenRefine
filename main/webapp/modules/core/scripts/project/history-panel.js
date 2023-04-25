@@ -290,11 +290,10 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
 
   elmts.operationJsonButton.on('click', async function() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json'; // optional file types
-    input.onchange = async function() {
-      const file = input.files[0];
+    const fileInput = document.querySelector('#file-input');
+    fileInput.accept = '.json'; // optional file types
+    fileInput.onchange = async function() {
+      const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = function(e) {
         const fileContent = JSON.parse(e.target.result);
@@ -305,11 +304,11 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
         }
       };
       reader.addEventListener('error', function() {
-        alert('Error : Failed to read file');
+        alert('Error: Failed to read file');
     });
       reader.readAsText(file);
     };
-    input.click();
+    fileInput.click();
   });
   
   
