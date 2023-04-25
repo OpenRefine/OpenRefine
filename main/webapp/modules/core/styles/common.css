@@ -64,6 +64,7 @@ table {
 
 input, select {
   vertical-align: middle;
+  margin-bottom: 8px;
 }
 
 body {
