@@ -130,7 +130,7 @@ jobs:
         env:
           browsers: chrome
   e2e_test:
-    name: ${{ needs.prepare_e2e_test_matrix.outputs.matrix.group }}
+    name: ${{ matrix.specs.group }}
     needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
     strategy:
@@ -189,5 +189,5 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_SPECS: ${{ matrix.specs }}
-          CYPRESS_GROUP: ${{ matrix.group }}
+          CYPRESS_SPECS: ${{ matrix.specs.paths }}
+          CYPRESS_GROUP: ${{ matrix.specs.group }}

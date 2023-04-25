@@ -55,7 +55,12 @@ const groups = [
   },
 ];
 
-const mergedGroups = groups.map((group) => group.specs.join(','));
+const mergedGroups = groups.map((group) => {
+  return {
+    paths: group.specs.join(','),
+    group: group.group
+  }
+});
 
 // step1 ,find files matched by existing groups
 const matchedFiles = [];
@@ -80,7 +85,11 @@ for (const file of allSpecFiles) {
 }
 
 if (missedFiles.length) {
-  mergedGroups.push(missedFiles.join(','));
+  let missingPaths = missedFiles.join(',');
+  mergedGroups.push( {
+    paths: missingPaths,
+    group: 'Missing'
+  });
 }
 
 const browsers = process.env.browsers.split(',');
