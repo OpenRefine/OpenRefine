@@ -64,7 +64,6 @@ table {
 
 input, select {
   vertical-align: middle;
-  margin-bottom: 8px;
 }
 
 body {
@@ -346,6 +345,10 @@ a img {
 
 #body-info li {
   margin: 0.4em;
+}
+
+#file-input {
+  margin-bottom: 8px;
 }
 
 input[type="checkbox"], input[type="radio"], select {

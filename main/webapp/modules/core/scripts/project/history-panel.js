@@ -291,8 +291,8 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
 
   elmts.operationJsonButton.on('click', async function() {
-    const fileInput = document.getElementById('file-input');
-    //const fileInput = elmts.file_input.upload_json;
+    //const fileInput = document.getElementById('file-input');
+    const fileInput = elmts.operationJsonButton[0];
     fileInput.accept = '.json';
     fileInput.onchange = async function() {
       const file = fileInput.files[0];
