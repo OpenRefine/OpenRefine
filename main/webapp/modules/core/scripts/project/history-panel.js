@@ -197,6 +197,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
 
   elmts.dialogHeader.html($.i18n('core-project/extract-history'));
   elmts.textarea.attr('aria-label',$.i18n('core-project/operation-history-json'))
+  //elmts.fileInput.attr('aria-label',$.i18n('core-project/upload-json'))
   elmts.or_proj_extractSave.html($.i18n('core-project/extract-save'));
   elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
   elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
@@ -290,17 +291,17 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
 
   elmts.operationJsonButton.on('click', async function() {
-    const fileInput = document.querySelector('#file-input');
-    fileInput.accept = '.json'; // optional file types
+    const fileInput = document.getElementById('file-input');
+    //const fileInput = elmts.file_input.upload_json;
+    fileInput.accept = '.json';
     fileInput.onchange = async function() {
       const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = function(e) {
         const fileContent = JSON.parse(e.target.result);
-        const textAreaElement = document.querySelector('#textareaId')
+        const textAreaElement = elmts.textarea[0];
         if (textAreaElement) {
           textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
-
         }
       };
       reader.addEventListener('error', function() {
