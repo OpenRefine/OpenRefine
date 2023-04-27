@@ -33,7 +33,7 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_MARIADB_PORT) String mariaDbPort, @Optional(DEFAULT_MARIADB_USER) String mariaDbUser,
             @Optional(DEFAULT_MARIADB_PASSWORD) String mariaDbPassword, @Optional(DEFAULT_TEST_TABLE) String mariaDbTestTable) {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mariaDbHost);

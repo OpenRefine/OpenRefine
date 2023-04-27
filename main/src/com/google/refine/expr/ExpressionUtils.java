@@ -142,6 +142,11 @@ public class ExpressionUtils {
             return ((ArrayNode) v).toString();
         } else if (v instanceof ObjectNode) {
             return ((ObjectNode) v).toString();
+        } else if (v instanceof List) {
+            return isStorable(v) ? (Serializable) v : new EvalError(
+                  "Stored Error: Your expression created an Array."
+                + "Only Number, String, Boolean, OffsetDateTime can be stored in a cell."
+                + "HINT: try appending to your expression: .join(', ') to store as a String.");
         } else {
             return isStorable(v) ? (Serializable) v : new EvalError(v.getClass().getSimpleName() + " value not storable");
         }
