@@ -65,8 +65,6 @@ import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Configurations;
-
 /**
  * Main class for Refine server application. Starts an instance of the Jetty HTTP server / servlet container (inner
  * class Refine Server).
