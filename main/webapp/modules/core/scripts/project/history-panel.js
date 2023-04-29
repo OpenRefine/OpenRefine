@@ -303,7 +303,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
         }
       };
       reader.addEventListener('error', function() {
-        alert('Error: Failed to read file');
+        alert($.i18n('Error: Failed to read file'));
     });
       reader.readAsText(file);
     };
