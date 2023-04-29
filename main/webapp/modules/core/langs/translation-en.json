@@ -148,7 +148,7 @@
     "core-index-parser/load-at-most": "Load at most",
     "core-index-parser/parse-cell": "Attempt to parse cell<br>text into numbers",
     "core-index-parser/store-blank": "Store blank rows",
-    "core-index-parser/multi-line": "Rows can spread on multiple lines",
+    "core-index-parser/multi-line": "Cells can contain new lines",
     "core-index-parser/store-nulls": "Store blank cells as nulls",
     "core-index-parser/blank-spanning-cells": "Pad cells spanning over multiple rows or columns with nulls",
     "core-index-parser/include-raw-templates": "Include templates and images as raw wikicode",
