@@ -35,7 +35,6 @@ package com.google.refine.model;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +42,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 

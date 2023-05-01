@@ -1,16 +1,10 @@
 
 package com.google.refine.jython;
 
-import java.io.File;
 import java.util.Properties;
-
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.HasFields;
 import org.python.core.*;
-import org.python.util.PythonInterpreter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.model.Cell;
