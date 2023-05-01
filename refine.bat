@@ -159,6 +159,14 @@ set REFINE_WEBAPP=main\webapp
 :gotWebApp
 set OPTS=%OPTS% -Drefine.webapp=%REFINE_WEBAPP%
 
+for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
+echo -------------------------------------------------------------------------------------------------
+echo You have %freeRam%M of free memory.
+echo Your current configuration is set to use %REFINE_MEMORY% of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+echo -------------------------------------------------------------------------------------------------
+
 if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
@@ -186,7 +194,6 @@ rem ----- Respond to the action ------------------------------------------------
 
 set ACTION=%1
 setlocal
-%@Try%
 if ""%ACTION%"" == ""build"" goto doMvn
 if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
@@ -194,11 +201,8 @@ if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
 if ""%ACTION%"" == """" goto doRun
-%@EndTry%
-:@Catch
   echo Unknown Refine command called "%1", type "refine /?" for proper usage.
   exit /B 1
-:@EndCatch
 
 :doRun
 rem --- Checking Java Version  ------------------------------------------
@@ -234,19 +238,6 @@ if %JAVA_RELEASE% LSS 11 (
 if %JAVA_RELEASE% GTR 17 (
     echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17.
 )
-rem --- Log for troubleshooting ------------------------------------------
-echo Getting Free Ram...
-for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
-(
-echo ----------------------- 
-echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
-echo JAVA_HOME = %JAVA_HOME%
-echo java release = %JAVA_RELEASE%
-echo java -version = %JAVA_VERSION%
-echo freeRam = %freeRam% MB
-echo REFINE_MEMORY = %REFINE_MEMORY%
-echo ----------------------- 
-) > support.log
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 %JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine

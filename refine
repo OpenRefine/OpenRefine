@@ -51,7 +51,7 @@ Actions
     run                           Run OpenRefine [default].
     server_test                   Run the server tests.
     test                          Run all tests.
-    ui_tests                      Run the UI tests.
+    e2e_tests                      Run the e2e tests.
     windows_dist <version>        Make Windows binary distribution.
 EOF
 exit 1
@@ -347,7 +347,7 @@ test() {
 }
 
 
-ui_tests() {
+e2e_tests() {
     get_revision
 
     CYPRESS_RECORD=0
@@ -720,7 +720,7 @@ case "$ACTION" in
   clean) do_mvn clean;;
   test) test $1;;
   tests) test $1;;
-  ui_tests) ui_tests;;    
+  e2e_tests) e2e_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
@@ -730,7 +730,7 @@ case "$ACTION" in
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
   dist) dist $1;;
-  *) usage; ;;
+  *) echo "Unknown Refine command called \"$ACTION\", type \"./refine -h\" for proper usage.";;
 esac
 
 # ----------- end of file --------------------
