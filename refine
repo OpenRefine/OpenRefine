@@ -582,7 +582,6 @@ for ((i=0; i<${#args[@]}; i+=1)); do
     -w) ((i+=1)); REFINE_WEBAPP="${args[i]}"; continue;;
     -d) ((i+=1)); REFINE_DATA_DIR="${args[i]}"; continue;;
     -m) ((i+=1)); REFINE_MEMORY="${args[i]}"; REFINE_MIN_MEMORY="${args[i]}"; continue;;
-    -k) ((i+=1)); REFINE_GOOGLE_API_KEY="${args[i]}"; continue;;
     -v) ((i+=1)); REFINE_VERBOSITY="${args[i]}"; continue;;
     -x) ((i+=1)); REFINE_EXTRA_OPTS="${args[i]}"; continue;;
     --debug) add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
