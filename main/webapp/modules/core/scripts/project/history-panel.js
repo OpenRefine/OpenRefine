@@ -303,7 +303,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
             textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
           }
         } catch (error) {
-            window.alert($.i18n('core-project/json-invalid')+".");
+            window.alert($.i18n('core-project/json-invalid'));
           }
       };
       reader.readAsText(file);
