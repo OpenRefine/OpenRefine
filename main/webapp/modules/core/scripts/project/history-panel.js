@@ -296,15 +296,18 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
       const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = function(e) {
-        const fileContent = JSON.parse(e.target.result);
-        const textAreaElement = elmts.textarea[0];
-        if (textAreaElement) {
-          textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
+        try {
+          const fileContent = JSON.parse(e.target.result);
+          const textAreaElement = elmts.textarea[0];
+          if (textAreaElement) {
+            textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
+          }
+        } catch (error) {
+          {
+            window.alert($.i18n('core-index-import/warning-data-file'));
+          }
         }
       };
-      reader.addEventListener('error', function() {
-        alert($.i18n('Error: Failed to read file'));
-    });
       reader.readAsText(file);
     };
     fileInput.click();
