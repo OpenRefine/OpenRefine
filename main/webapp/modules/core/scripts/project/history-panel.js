@@ -303,10 +303,8 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
             textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
           }
         } catch (error) {
-          {
             window.alert($.i18n('core-index-import/warning-data-file'));
           }
-        }
       };
       reader.readAsText(file);
     };
