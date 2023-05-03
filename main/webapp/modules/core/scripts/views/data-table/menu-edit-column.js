@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
-  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, furtherOperations) {
+  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, furtherOperations, onDone) {
 	    Refine.postOperations(
 	      [{
 	        op: "core/text-transform",
@@ -43,7 +43,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 	        repeatCount: repeatCount,
                 expression
 	      }].concat(furtherOperations),
-	      { cellsChanged: true }
+	      { cellsChanged: true },
+              { onDone: onDone }
 	    );
 	  };
 	  
@@ -366,9 +367,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       Refine.postOperation(
         config,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
   }; 
   
@@ -467,7 +468,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError: onError,
             expression
           }].concat(deleteColumns()),
-          { modelsChanged: true }
+          { modelsChanged: true },
+          { onDone: dismiss }
         );
       } 
       else {
@@ -477,7 +479,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError,
             repeat,
             repeatCount,
-            deleteColumns());
+            deleteColumns(),
+            dismiss);
       }
     };
     // core of doJoinColumn
@@ -550,7 +553,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       });
     elmts.okButton.on('click',function() {
       transform();
-      dismiss();
     });
     elmts.cancelButton.on('click',function() {
       dismiss();

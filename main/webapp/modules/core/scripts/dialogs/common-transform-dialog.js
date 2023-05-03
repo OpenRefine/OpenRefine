@@ -90,7 +90,6 @@ commonTransformDialog.prototype._createDialog = function(expression,label) {
 
     this._elmts.okButton.on('click',function() {
       self._commit(expression);
-      self._dismiss();
     });
     this._elmts.cancelButton.on('click',function() {
       self._dismiss();
@@ -106,6 +105,7 @@ commonTransformDialog.prototype._dismiss = function() {
 
 
 commonTransformDialog.prototype._commit = function(expression) {
+      var self = this;
       var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
       Refine.postOperation(
         {
@@ -116,7 +116,8 @@ commonTransformDialog.prototype._commit = function(expression) {
           repeat: repeat,
           repeatCount: repeatCount
         },
-        { cellsChanged: true }
+        { cellsChanged: true },
+        { onDone: function() { self._dismiss(); } }
       );
   };
 

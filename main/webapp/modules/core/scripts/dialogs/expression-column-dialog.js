@@ -1,18 +1,3 @@
-
-var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
-    Refine.postOperation(
-      {
-        op: "core/text-transform",
-        columnName: columnName, 
-        expression: expression, 
-        onError: onError,
-        repeat: repeat,
-        repeatCount: repeatCount
-      },
-      { cellsChanged: true }
-    );
-};
-
 function ExpressionColumnDialog(expression, onError, repeat, repeatCount) {
   this._expression = expression;
   this._onError = onError;
@@ -85,20 +70,28 @@ ExpressionColumnDialog.prototype._dismiss = function() {
 
 
 ExpressionColumnDialog.prototype._transform = function() {
-  this._postSelect();
-  this._dismiss();
-};
-
-ExpressionColumnDialog.prototype._postSelect = function() {
-	var self = this;
-	this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').each(function() {
+  var self = this;
+  var operationList = [];
+  this._elmts.columnList.find('.custom-tabular-exporter-dialog-column').each(function() {
     if ($(this).find('input[type="checkbox"]')[0].checked) {
       var name = this.getAttribute('column');
-      // alert("doTextTransform on: " + name + "; expression: " + self._expression);
-	  doTextTransform(name, self._expression, self._onError, self._repeat, self._repeatCount)
+      operationList.push(
+        {
+            op: "core/text-transform",
+            columnName: columnName, 
+            expression: expression, 
+            onError: onError,
+            repeat: repeat,
+            repeatCount: repeatCount
+        }
+      );
     }
   });
-  
+  Refine.postOperations(
+    operationList,
+    { cellsChanged: true },
+    { onDone: function() { self._dismiss(); } }
+  );
 };
 
 

@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
-  var doTextTransform = function(expression, onError, repeat, repeatCount) {
+  var doTextTransform = function(expression, onError, repeat, repeatCount, onDone) {
     Refine.postOperation(
       {
         op: "core/text-transform",
@@ -42,7 +42,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         repeatCount: repeatCount,
         expression: expression
       },
-      { cellsChanged: true }
+      { cellsChanged: true },
+      { onDone: onDone }
     );
   };
 
@@ -72,9 +73,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         previewWidget.getExpression(true),
         $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
         elmts.repeatCheckbox[0].checked,
-        elmts.repeatCountInput[0].value
+        elmts.repeatCountInput[0].value,
+        dismiss
       );
-      dismiss();
     });
 
     var o = DataTableView.sampleVisibleRows();
@@ -95,23 +96,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     });
   };
 
-  var doFillDown = function() {
+  var doFillDown = function(onDone) {
     Refine.postOperation(
       {
         op: "core/fill-down",
         columnName: column.name
       },
-      { modelsChanged: true }
+      { modelsChanged: true },
+      { onDone: onDone }
     );
   };
 
-  var doBlankDown = function() {
+  var doBlankDown = function(onDone) {
     Refine.postOperation(
       {
         op: "core/blank-down",
         columnName: column.name
       },
-      { modelsChanged: true }
+      { modelsChanged: true },
+      { onDone: onDone }
     );
   };
 
@@ -281,8 +284,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         text_to_find = '"'+text_to_find+'"';
       }
       expression = 'value.replace('+text_to_find+',"'+replacement_text+'")';
-      doTextTransform(expression, "keep-original", false, "");
-      dismiss();
+      doTextTransform(expression, "keep-original", false, "", dismiss);
     });
   };
 
@@ -380,10 +382,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       Refine.postOperation(
         config,
-        { rowsChanged: true }
+        { rowsChanged: true },
+        { onDone: dismiss }
       );
-
-      dismiss();
     });
   };
 
@@ -695,9 +696,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       Refine.postOperation(
         config,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
 
     var valueColumnIndex = -1;

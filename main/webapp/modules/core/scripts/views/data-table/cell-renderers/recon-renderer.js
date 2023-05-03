@@ -145,11 +145,11 @@ class ReconCellRenderer {
     this.doJudgment("none", {}, {}, rowIndex, cellIndex, cell, cellUI);
   }
 
-  doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI) {
-    this.doJudgment("new", {}, {}, rowIndex, cellIndex, cell, cellUI);
+  doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI, onDone) {
+    this.doJudgment("new", {}, {}, rowIndex, cellIndex, cell, cellUI, onDone);
   }
 
-  doClearOneCell(rowIndex, cellIndex, cellUI) {
+  doClearOneCell(rowIndex, cellIndex, cellUI, onDone) {
     self.postProcessOneCell(
       "recon-clear-one-cell",
       {},
@@ -158,35 +158,37 @@ class ReconCellRenderer {
         cell: cellIndex
       },
       true,
-      cellUI
+      cellUI,
+      onDone
     );
   }
 
-  doMatchNewTopicToSimilarCells(cellIndex, cell) {
-    this.doJudgmentForSimilarCells("new", { shareNewTopics: true }, cellIndex, cell);
+  doMatchNewTopicToSimilarCells(cellIndex, cell, onDone) {
+    this.doJudgmentForSimilarCells("new", { shareNewTopics: true }, cellIndex, cell, onDone);
   };
 
-  doClearSimilarCells(cell, cellIndex) {
+  doClearSimilarCells(cell, cellIndex, onDone) {
     this.postProcessSeveralCells(
       { 
         op: "core/recon-clear-similar-cells",
         columnName: Refine.cellIndexToColumn(cellIndex).name,
         similarValue: cell.v
       },
-      true
+      true,
+      onDone
     );
   }
 
-  doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI) {
+  doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI, onDone) {
     this.doJudgment("matched", {}, {
       id : candidate.id,
       name: candidate.name,
       score: candidate.score,
       types: candidate.types.join(",")
-    }, rowIndex, cellIndex, cell, cellUI);
+    }, rowIndex, cellIndex, cell, cellUI, onDone);
   }
 
-  doMatchTopicToSimilarCells(candidate, cellIndex, cell) {
+  doMatchTopicToSimilarCells(candidate, cellIndex, cell, onDone) {
     this.doJudgmentForSimilarCells("matched", {
       match: {
         id: candidate.id,
@@ -194,10 +196,10 @@ class ReconCellRenderer {
         score: candidate.score,
         types: candidate.types
       }
-    }, cellIndex, cell);
+    }, cellIndex, cell, onDone);
   }
 
-  doJudgment(judgment, params, bodyParams, rowIndex, cellIndex, cell, cellUI) {
+  doJudgment(judgment, params, bodyParams, rowIndex, cellIndex, cell, cellUI, onDone) {
     this.postProcessOneCell(
       "recon-judge-one-cell",
       params || {},
@@ -209,11 +211,12 @@ class ReconCellRenderer {
         schemaSpace: (cell.r) ? cell.r.schemaSpace : null
       }),
       true,
-      cellUI
+      cellUI,
+      onDone
     );
   }
 
-  doJudgmentForSimilarCells(judgment, params, cellIndex, cell) {
+  doJudgmentForSimilarCells(judgment, params, cellIndex, cell, onDone) {
     this.postProcessSeveralCells(
       $.extend(params || {}, {
         op: "core/recon-judge-similar-cells",
@@ -223,7 +226,8 @@ class ReconCellRenderer {
         identifierSpace: (cell.r) ? cell.r.identifierSpace : null,
             schemaSpace: (cell.r) ? cell.r.schemaSpace : null
       }),
-      true
+      true,
+      onDone
     );
   }
 
@@ -277,7 +281,7 @@ class ReconCellRenderer {
             similarValue: cell.v,
             columnName: Refine.cellIndexToColumn(cellIndex).name
           };
-          self.postProcessSeveralCells(params, true);
+          self.postProcessSeveralCells(params, true, dismiss);
         } else {
           var params = {
             judgment: "matched",
@@ -288,27 +292,23 @@ class ReconCellRenderer {
           params.row = rowIndex;
           params.cell = cellIndex;
 
-          self.postProcessOneCell("recon-judge-one-cell", {}, params, true, cellUI);
+          self.postProcessOneCell("recon-judge-one-cell", {}, params, true, cellUI, dismiss);
         }
-
-        dismiss();
       }
     };
     var commitNew = function() {
       if (elmts.radioSimilar[0].checked) {
-        self.doMatchNewTopicToSimilarCells(cellIndex, cell);
+        self.doMatchNewTopicToSimilarCells(cellIndex, cell, dismiss);
       } else {
-        self.doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI);
+        self.doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI, dismiss);
       }
-      dismiss();
     };
     var commitClear = function() {
       if (elmts.radioSimilar[0].checked) {
-        self.doClearSimilarCells(cell, cellIndex);
+        self.doClearSimilarCells(cell, cellIndex, dismiss);
       } else {
-        self.doClearOneCell(rowIndex, cellIndex, cellUI);
+        self.doClearOneCell(rowIndex, cellIndex, cellUI, dismiss);
       }
-      dismiss();
     };
 
     elmts.okButton.on('click',commit);
@@ -345,7 +345,7 @@ class ReconCellRenderer {
 
   }
 
-  postProcessOneCell(command, params, bodyParams, columnStatsChanged, cellUI) {
+  postProcessOneCell(command, params, bodyParams, columnStatsChanged, cellUI, onDone) {
     var self = this;
 
     Refine.postCoreProcess(
@@ -358,16 +358,20 @@ class ReconCellRenderer {
           cellUI._dataTableView._updateCell(self._rowIndex, self._cellIndex, o.cell);
           cellUI._cell = o.cell;
           cellUI._render();
+          if (onDone) {
+            onDone();
+          }
         }
       }
     );
   }
 
-  postProcessSeveralCells(operation, columnStatsChanged) {
+  postProcessSeveralCells(operation, columnStatsChanged, onDone) {
     
     Refine.postOperation(
       operation,
-      { cellsChanged: true, columnStatsChanged: columnStatsChanged }
+      { cellsChanged: true, columnStatsChanged: columnStatsChanged },
+      { onDone: onDone }
     );
   }
 
@@ -411,12 +415,10 @@ class ReconCellRenderer {
       elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
       elmts.matchButton.on('click',function() {
-          self.doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI);
-          dismissMenu();
+          self.doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI, dismissMenu);
       });
       elmts.matchSimilarButton.on('click',function() {
-          self.doMatchTopicToSimilarCells(candidate, cellIndex, cell);
-          dismissMenu();
+          self.doMatchTopicToSimilarCells(candidate, cellIndex, cell, dismissMenu);
       });
       elmts.cancelButton.on('click',function() {
           dismissMenu();

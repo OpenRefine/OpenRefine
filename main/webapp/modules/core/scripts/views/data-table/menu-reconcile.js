@@ -148,10 +148,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             identifierSpace: service.identifierSpace,
             schemaSpace: service.schemaSpace
         },
-        { cellsChanged: true, columnStatsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true },
+        { onDone: function() { DialogSystem.dismissUntil(level - 1); } }
         );
-
-        DialogSystem.dismissUntil(level - 1);
     });
 
     $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
