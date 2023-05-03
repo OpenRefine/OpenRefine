@@ -393,6 +393,9 @@ public class History {
         return gridPreservation;
     }
 
+    /**
+     * Given an history entry id, return the id of the preceding history entry, or -1 if there is none.
+     */
     synchronized public long getPrecedingEntryID(long entryID) {
         if (entryID == 0) {
             return -1;
@@ -406,15 +409,11 @@ public class History {
         }
     }
 
-    protected HistoryEntry getEntry(long entryID) {
-        try {
-            return _entries.get(entryIndex(entryID));
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    protected int entryIndex(long entryID) {
+    /**
+     * Return the position of the history entry with the supplied id, or throws {@link IllegalArgumentException} if that
+     * id cannot be found.
+     */
+    public int entryIndex(long entryID) {
         for (int i = 0; i < _entries.size(); i++) {
             if (_entries.get(i).getId() == entryID) {
                 return i;
@@ -423,8 +422,17 @@ public class History {
         throw new IllegalArgumentException(String.format("History entry with id %d not found", entryID));
     }
 
+    protected HistoryEntry getEntry(long entryID) {
+        try {
+            return _entries.get(entryIndex(entryID));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
         return (Class<? extends Change>) RefineModel.getClass(className);
     }
+
 }

@@ -17,7 +17,10 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
+import org.openrefine.history.History;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
@@ -32,6 +35,7 @@ public class CancelProcessCommandTests extends CommandTestBase {
     ProjectMetadata projectMetadata;
     ProcessManager processManager;
     Process process;
+    History history;
 
     @BeforeMethod
     public void setUpCommand() {
@@ -46,8 +50,13 @@ public class CancelProcessCommandTests extends CommandTestBase {
         processManager = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(processManager);
         process = mock(Process.class);
+        when(process.getChangeDataId()).thenReturn(new ChangeDataId(1234L, "data"));
         when(processManager.getProcess(processId)).thenReturn(process);
         when(processManager.getProcess(missingProcessId)).thenThrow(new IllegalArgumentException("missing"));
+        history = mock(History.class);
+        when(project.getHistory()).thenReturn(history);
+        when(history.entryIndex(1234L)).thenReturn(3);
+        when(history.getPrecedingEntryID(1234L)).thenReturn(5678L);
 
         ProjectManager.singleton.registerProject(project, projectMetadata);
     }
@@ -59,15 +68,33 @@ public class CancelProcessCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testSuccessfulPause() throws ServletException, IOException {
+    public void testSuccessfulCancel() throws ServletException, IOException, Change.DoesNotApplyException {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
+        when(history.getPosition()).thenReturn(1);
+
         command.doPost(request, response);
 
+        verify(history, times(0)).undoRedo(5678L);
         verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
+    }
+
+    @Test
+    public void testCancelAndUndo() throws ServletException, IOException, Change.DoesNotApplyException {
+        when(request.getParameter("project")).thenReturn(Long.toString(projectId));
+        when(request.getParameter("id")).thenReturn(Integer.toString(processId));
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
+        when(history.getPosition()).thenReturn(5);
+
+        command.doPost(request, response);
+
+        verify(history, times(1)).undoRedo(5678L);
+        verify(process, times(1)).cancel();
+        TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\",\"newHistoryEntryId\":5678}");
     }
 
     @Test

@@ -7,9 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.commands.Command;
+import org.openrefine.history.History;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 
@@ -22,6 +24,17 @@ public class CancelProcessCommand extends Command {
 
         @JsonProperty("code")
         public String code = "ok";
+
+        /**
+         * if the position in the history changed, this holds the new history entry id. Otherwise, it is null.
+         */
+        @JsonProperty("newHistoryEntryId")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public Long newHistoryEntryId = null;
+
+        public Response(Long historyEntryId) {
+            newHistoryEntryId = historyEntryId;
+        }
     }
 
     @Override
@@ -36,15 +49,23 @@ public class CancelProcessCommand extends Command {
 
         try {
             Project project = getProject(request);
+            Long newHistoryEntryId = null;
 
             try {
                 int processIdInt = Integer.parseInt(processId);
                 Process process = project.getProcessManager().getProcess(processIdInt);
+                long historyEntryId = process.getChangeDataId().getHistoryEntryId();
+                History history = project.getHistory();
+                if (history.getPosition() >= history.entryIndex(historyEntryId) + 1) {
+                    long precedingEntryID = history.getPrecedingEntryID(historyEntryId);
+                    newHistoryEntryId = Math.max(precedingEntryID, 0L);
+                    history.undoRedo(newHistoryEntryId);
+                }
                 process.cancel();
             } catch (IllegalArgumentException e) {
                 respondException(response, e);
             }
-            respondJSON(response, new Response());
+            respondJSON(response, new Response(newHistoryEntryId));
         } catch (Exception e) {
             respondException(response, e);
         }

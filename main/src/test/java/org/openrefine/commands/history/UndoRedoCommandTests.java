@@ -64,10 +64,23 @@ public class UndoRedoCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testUndo() throws ServletException, IOException {
+    public void testLastDoneId() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("lastDoneID")).thenReturn("1234");
+
+        command.doPost(request, response);
+
+        ObjectNode jsonResponse = (ObjectNode) ParsingUtilities.mapper.readTree(writer.toString());
+        Assert.assertEquals(jsonResponse.get("code").asText(), "ok");
+        Assert.assertEquals(jsonResponse.get("gridPreservation").asText(), "preserves-rows");
+    }
+
+    @Test
+    public void testUndoId() throws ServletException, IOException {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
+        when(request.getParameter("undoID")).thenReturn("5678");
 
         command.doPost(request, response);
 

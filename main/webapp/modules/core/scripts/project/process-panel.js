@@ -164,6 +164,9 @@ ProcessPanel.prototype._renderPanel = function(newData) {
                 if (response.code === 'ok') {
                   li.remove();
                 }
+                if (response.newHistoryEntryId !== undefined) {
+                  Refine.update({ everythingChanged: true });
+                }
               },
               "json");
         });
