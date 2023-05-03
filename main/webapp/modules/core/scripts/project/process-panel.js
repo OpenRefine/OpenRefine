@@ -76,6 +76,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
 
   // mark processes as stale to keep track of which ones we are updating
   self._panelElmts.processes.find('li').addClass('stale-process');
+  let newProcessFound = false;
 
   if (newData.processes && newData.processes.length > 0) {
     self._panelElmts.noProcessDiv.hide();
@@ -83,6 +84,8 @@ ProcessPanel.prototype._renderPanel = function(newData) {
       var li = $('#process-' + process.id);
       li.removeClass('stale-process');
       if (!li.length) {
+        // this process is new, we create the UI for it
+        newProcessFound = true;
         li = $('<li></li>')
             .attr('id', 'process-' + process.id)
             .appendTo(self._panelElmts.processes);
@@ -208,6 +211,11 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         .text(newData.processes.length)
         .addClass('count')
         .appendTo(self._tabHeader);
+  }
+
+  // if some processes are new, we focus the view to this tab
+  if (newProcessFound) {
+    Refine.activateLeftPanelTab('process');
   }
 };
 
