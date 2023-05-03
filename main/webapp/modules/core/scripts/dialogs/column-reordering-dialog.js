@@ -86,6 +86,7 @@ ColumnReorderingDialog.prototype._dismiss = function() {
 };
 
 ColumnReorderingDialog.prototype._commit = function() {
+    var self = this;
     var columnNames = this._elmts.columnContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
     
     Refine.postOperation(
@@ -93,8 +94,7 @@ ColumnReorderingDialog.prototype._commit = function() {
           op: "core/column-reorder",
           "columnNames" : columnNames
         }, 
-        { modelsChanged: true, includeEngine: false }
+        { modelsChanged: true, includeEngine: false },
+        { onDone: function() { self._dismiss(); } }
     );
-    
-    this._dismiss();
 };

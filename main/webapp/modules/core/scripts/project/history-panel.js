@@ -332,9 +332,12 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
 
     Refine.postOperations(json,
         { everythingChanged: true, includeEngine: false },
-        {});
+        { onDone: function() {
+           DialogSystem.dismissUntil(level - 1);
+          }
+        }
+    );
 
-    DialogSystem.dismissUntil(level - 1);
   });
 
   elmts.cancelButton.on('click',function() {

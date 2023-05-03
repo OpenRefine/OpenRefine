@@ -1015,7 +1015,7 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
   MenuSystem.createAndShowStandardMenu(items, elmt, { horizontal: false });
 };
 
-var doAllFillDown = function() {
+var doAllFillDown = function(onDone) {
   var operations = [];
   for(var i = theProject.columnModel.columns.length - 1; i >= 0; i--) {
     operations.push({
@@ -1025,11 +1025,12 @@ var doAllFillDown = function() {
   }
   Refine.postOperations(
       operations,
-      {modelsChanged: true},
+      { modelsChanged: true},
+      { onDone: onDone }
   );
 };
 
-var doAllBlankDown = function() {
+var doAllBlankDown = function(onDone) {
   var operations = [];
   for(var i = 0; i < theProject.columnModel.columns.length; i++) {
     operations.push({
@@ -1039,7 +1040,8 @@ var doAllBlankDown = function() {
   }
   Refine.postOperations(
       operations,
-      {modelsChanged: true},
+      { modelsChanged: true },
+      { onDone: onDone }
   );
 };
 
@@ -1084,7 +1086,7 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
 
 //This function takes a function as a parameter and creates a dialog window
 //If the ok button is pressed, the function is executed
-//If the cancel button is pressed instead, the window is dismissed and the function is not executed
+//If the cancel button is pressed instead, the window isdismissed and the function is not executed
 DataTableView.prototype._createPendingSortWarningDialog = function(func) {
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/warn-of-pending-sort.html"));
   var elmts = DOM.bind(frame);
@@ -1102,8 +1104,7 @@ DataTableView.prototype._createPendingSortWarningDialog = function(func) {
   });
 
   elmts.okButton.on('click', function () {
-     func();
-     dismiss();
+     func(dismiss);
   });
 
 };
