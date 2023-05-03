@@ -182,6 +182,18 @@ Refine.showLeftPanel = function() {
   resizeAll();
 };
 
+Refine.activateLeftPanelTab = function(tab) {
+  var index = 0;
+  if (tab === 'facets') {
+    index = 0;
+  } else if (tab === 'undoRedo') {
+    index = 1;
+  } else if (tab === 'process') {
+    index = 2;
+  }
+  ui.leftPanelTabs.tabs({ active: index });
+};
+
 Refine.setTitle = function(status) {
   var title = theProject.metadata.name + " - OpenRefine";
   if (status) {
