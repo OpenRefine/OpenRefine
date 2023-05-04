@@ -104,7 +104,7 @@ public class FileChangeDataStoreTests {
 
         Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertTrue(newChangeDataLocation.exists());
-        Assert.assertEquals(returnedChangeData, movedChangeData);
+        Assert.assertEquals(returnedChangeData, emptyChangeData);
     }
 
     @Test

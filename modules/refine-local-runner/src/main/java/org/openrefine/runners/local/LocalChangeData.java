@@ -73,7 +73,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Iterator<IndexedData<T>> iterator() {
+    public CloseableIterator<IndexedData<T>> iterator() {
         return grid
                 .values()
                 .iterator();

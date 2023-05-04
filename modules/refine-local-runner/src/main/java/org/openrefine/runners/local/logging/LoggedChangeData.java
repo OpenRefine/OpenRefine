@@ -6,6 +6,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressingFuture;
+import org.openrefine.util.CloseableIterator;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class LoggedChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Iterator<IndexedData<T>> iterator() {
+    public CloseableIterator<IndexedData<T>> iterator() {
         return runner.exec("iterator", () -> changeData.iterator());
     }
 }

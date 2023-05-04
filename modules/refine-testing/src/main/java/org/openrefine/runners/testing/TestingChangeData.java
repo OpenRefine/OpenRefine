@@ -10,10 +10,10 @@ import org.openrefine.process.CompletedFuture;
 import org.openrefine.process.FailingFuture;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
+import org.openrefine.util.CloseableIterator;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
 public class TestingChangeData<T> implements ChangeData<T> {
@@ -52,8 +52,9 @@ public class TestingChangeData<T> implements ChangeData<T> {
         File partFile = new File(file, "part-00000.gz");
         try (FileOutputStream fos = new FileOutputStream(partFile);
                 GZIPOutputStream gos = new GZIPOutputStream(fos);
-                OutputStreamWriter writer = new OutputStreamWriter(gos);) {
-            for (IndexedData<T> row : this) {
+                OutputStreamWriter writer = new OutputStreamWriter(gos);
+                CloseableIterator<IndexedData<T>> iterator = iterator()) {
+            for (IndexedData<T> row : iterator) {
                 row.write(writer, serializer);
             }
         }
@@ -90,7 +91,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Iterator<IndexedData<T>> iterator() {
+    public CloseableIterator<IndexedData<T>> iterator() {
         List<IndexedData<T>> indexed = new ArrayList<>(data
                 .values());
         indexed.sort(new Comparator<IndexedData<T>>() {
@@ -101,7 +102,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
             }
 
         });
-        Iterator<IndexedData<T>> originalIterator = indexed.iterator();
+        CloseableIterator<IndexedData<T>> originalIterator = CloseableIterator.wrapping(indexed.iterator());
         if (isComplete) {
             return originalIterator;
         } else {

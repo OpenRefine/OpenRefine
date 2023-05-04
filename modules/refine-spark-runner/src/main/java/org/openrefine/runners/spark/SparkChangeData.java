@@ -17,6 +17,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 
+import org.openrefine.util.CloseableIterator;
 import scala.Tuple2;
 
 /**
@@ -54,8 +55,8 @@ public class SparkChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Iterator<IndexedData<T>> iterator() {
-        Iterator<IndexedData<T>> originalIterator = data.values().toLocalIterator();
+    public CloseableIterator<IndexedData<T>> iterator() {
+        CloseableIterator<IndexedData<T>> originalIterator = CloseableIterator.wrapping(data.values().toLocalIterator());
         if (isComplete()) {
             return originalIterator;
         } else {

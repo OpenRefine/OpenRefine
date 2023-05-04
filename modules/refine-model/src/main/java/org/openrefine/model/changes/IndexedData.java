@@ -1,6 +1,8 @@
 
 package org.openrefine.model.changes;
 
+import org.openrefine.util.CloseableIterator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -79,8 +81,8 @@ public class IndexedData<T> implements Serializable {
      * after the original stream ends. Those pending indexed data instances have indices which follow the last index
      * seen in the original stream.
      */
-    public static <T> Iterator<IndexedData<T>> completeIterator(Iterator<IndexedData<T>> originalIterator) {
-        return new Iterator<>() {
+    public static <T> CloseableIterator<IndexedData<T>> completeIterator(CloseableIterator<IndexedData<T>> originalIterator) {
+        return new CloseableIterator<>() {
 
             long nextIndex = 0L;
 
@@ -98,6 +100,11 @@ public class IndexedData<T> implements Serializable {
                 } else {
                     return new IndexedData<>(nextIndex++);
                 }
+            }
+
+            @Override
+            public void close() {
+                originalIterator.close();
             }
         };
     }
