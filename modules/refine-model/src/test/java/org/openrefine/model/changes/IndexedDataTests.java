@@ -7,6 +7,8 @@ import java.util.stream.IntStream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.util.CloseableIterator;
+
 public class IndexedDataTests {
 
     @Test
@@ -27,7 +29,8 @@ public class IndexedDataTests {
                 .mapToObj(i -> new IndexedData<>(i, Integer.toString(i)))
                 .iterator();
 
-        Iterator<IndexedData<String>> completed = IndexedData.completeIterator(originalIterator);
+        CloseableIterator<IndexedData<String>> completed = IndexedData.completeIterator(
+                CloseableIterator.wrapping(originalIterator));
         Assert.assertTrue(completed.hasNext());
         Assert.assertEquals(completed.next(), new IndexedData<>(0, "0"));
         Assert.assertTrue(completed.hasNext());

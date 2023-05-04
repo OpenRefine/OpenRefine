@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressingFuture;
+import org.openrefine.util.CloseableIterable;
 
 /**
  * Some external data, obtained by communicating with an external service or performing an expensive computation whose
@@ -17,7 +18,7 @@ import org.openrefine.process.ProgressingFuture;
  * @param <T>
  *            the type of data to store for each row. It should be serializable with Jackson.
  */
-public interface ChangeData<T> extends Iterable<IndexedData<T>> {
+public interface ChangeData<T> extends CloseableIterable<IndexedData<T>> {
 
     /**
      * Returns the change data at a given row. The data encapsulated in this {@link IndexedData} may be null, but not

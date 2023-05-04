@@ -5,8 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Objects;
+
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Helper class to represent an item in the map from row ids to change values in the context of a {@link ChangeData}
@@ -79,8 +80,8 @@ public class IndexedData<T> implements Serializable {
      * after the original stream ends. Those pending indexed data instances have indices which follow the last index
      * seen in the original stream.
      */
-    public static <T> Iterator<IndexedData<T>> completeIterator(Iterator<IndexedData<T>> originalIterator) {
-        return new Iterator<>() {
+    public static <T> CloseableIterator<IndexedData<T>> completeIterator(CloseableIterator<IndexedData<T>> originalIterator) {
+        return new CloseableIterator<>() {
 
             long nextIndex = 0L;
 
@@ -98,6 +99,11 @@ public class IndexedData<T> implements Serializable {
                 } else {
                     return new IndexedData<>(nextIndex++);
                 }
+            }
+
+            @Override
+            public void close() {
+                originalIterator.close();
             }
         };
     }

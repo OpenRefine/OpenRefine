@@ -39,6 +39,7 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.runners.spark.io.OrderedLocalFileSystem;
 import org.openrefine.runners.spark.util.RDDUtils;
+import org.openrefine.util.CloseableIterator;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -175,7 +176,7 @@ public class SparkRunner implements Runner {
 
             @Override
             public Iterator<IndexedData<T>> call(Iterator<IndexedData<T>> indexedDataIterator) throws Exception {
-                return IndexedData.completeIterator(indexedDataIterator);
+                return IndexedData.completeIterator(CloseableIterator.wrapping(indexedDataIterator));
             }
         };
     }

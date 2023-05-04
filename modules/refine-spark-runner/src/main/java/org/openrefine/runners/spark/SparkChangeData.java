@@ -3,7 +3,6 @@ package org.openrefine.runners.spark;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.hadoop.io.compress.GzipCodec;
@@ -17,6 +16,7 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.process.ProgressingFutures;
 import org.openrefine.runners.spark.io.IOUtils;
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Stores change data in a rowid-indexed RDD.
@@ -53,8 +53,8 @@ public class SparkChangeData<T> implements ChangeData<T> {
     }
 
     @Override
-    public Iterator<IndexedData<T>> iterator() {
-        Iterator<IndexedData<T>> originalIterator = data.values().toLocalIterator();
+    public CloseableIterator<IndexedData<T>> iterator() {
+        CloseableIterator<IndexedData<T>> originalIterator = CloseableIterator.wrapping(data.values().toLocalIterator());
         if (isComplete()) {
             return originalIterator;
         } else {
