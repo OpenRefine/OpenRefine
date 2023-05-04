@@ -148,15 +148,21 @@ public class LocalRunner implements Runner {
         pll = PairPLL.assumeSorted(pll);
 
         if (!alreadyComplete) {
-            // we know the partitioner is present because we just sorted the pll above
-            LongRangePartitioner partitioner = (LongRangePartitioner) pll.getPartitioner().get();
-            // Compute up to which index we should fill up the PLL with pending records
-            List<Optional<Long>> firstKeys = partitioner.getFirstKeys();
-            List<Long> upperBounds = incompleteUpperBounds(firstKeys);
-            pll = pll.mapPartitions((idx, iterator) -> fillWithIncompleteIndexedData(iterator, idx == 0 ? 0L : -1L, upperBounds.get(idx)),
-                    "add pending records to change data", false)
-                    .mapToPair(tuple -> tuple, "bureaucratic map to pair")
-                    .withPartitioner(Optional.of(partitioner));
+            if (pll.getPartitions().isEmpty()) {
+                return emptyChangeData();
+            } else {
+                // we know the partitioner is present because we just sorted the pll above
+                LongRangePartitioner partitioner = (LongRangePartitioner) pll.getPartitioner().get();
+                // Compute up to which index we should fill up the PLL with pending records
+                List<Optional<Long>> firstKeys = partitioner.getFirstKeys();
+                List<Long> upperBounds = incompleteUpperBounds(firstKeys);
+                pll = pll
+                        .mapPartitions(
+                                (idx, iterator) -> fillWithIncompleteIndexedData(iterator, idx == 0 ? 0L : -1L, upperBounds.get(idx)),
+                                "add pending records to change data", false)
+                        .mapToPair(tuple -> tuple, "bureaucratic map to pair")
+                        .withPartitioner(Optional.of(partitioner));
+            }
         }
 
         return new LocalChangeData<T>(this, pll, null, isComplete, 0);

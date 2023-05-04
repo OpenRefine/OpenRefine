@@ -3,7 +3,6 @@ package org.openrefine.runners.testing;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -92,11 +91,8 @@ public class TestingChangeData<T> implements ChangeData<T> {
 
     @Override
     public Iterator<IndexedData<T>> iterator() {
-        List<IndexedData<T>> indexed = data
-                .entrySet()
-                .stream()
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
+        List<IndexedData<T>> indexed = new ArrayList<>(data
+                .values());
         indexed.sort(new Comparator<IndexedData<T>>() {
 
             @Override
@@ -105,7 +101,12 @@ public class TestingChangeData<T> implements ChangeData<T> {
             }
 
         });
-        return indexed.iterator();
+        Iterator<IndexedData<T>> originalIterator = indexed.iterator();
+        if (isComplete) {
+            return originalIterator;
+        } else {
+            return IndexedData.completeIterator(originalIterator);
+        }
     }
 
 }

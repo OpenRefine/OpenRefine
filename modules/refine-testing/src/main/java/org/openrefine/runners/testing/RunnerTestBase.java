@@ -991,6 +991,19 @@ public abstract class RunnerTestBase {
     }
 
     @Test
+    public void testLoadEmptyChangeData() throws IOException {
+        File tempDir = TestUtils.createTempDirectory("empty_change_data");
+
+        ChangeData<String> empty = SUT.loadChangeData(tempDir, stringSerializer);
+        Assert.assertFalse(empty.isComplete());
+
+        Assert.assertEquals(empty.get(0L), new IndexedData<>(0L));
+        Iterator<IndexedData<String>> iterator = empty.iterator();
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertEquals(iterator.next(), new IndexedData<>(0L));
+    }
+
+    @Test
     public void testComputeChangeDataFromIncompleteState() throws IOException, InterruptedException {
         ChangeData<String> incomplete = simpleGrid.mapRows(firstTwoRows, concatChangeMapper, Optional.empty());
         File tempFile = TestUtils.createTempDirectory("test_row_based_change_data_from_incomplete");

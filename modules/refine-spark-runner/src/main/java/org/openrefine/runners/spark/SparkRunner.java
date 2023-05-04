@@ -175,26 +175,7 @@ public class SparkRunner implements Runner {
 
             @Override
             public Iterator<IndexedData<T>> call(Iterator<IndexedData<T>> indexedDataIterator) throws Exception {
-                return new Iterator<>() {
-
-                    long nextId = 0L;
-
-                    @Override
-                    public boolean hasNext() {
-                        return true;
-                    }
-
-                    @Override
-                    public IndexedData<T> next() {
-                        if (indexedDataIterator.hasNext()) {
-                            IndexedData<T> next = indexedDataIterator.next();
-                            nextId = next.getId() + 1;
-                            return next;
-                        } else {
-                            return new IndexedData<>(nextId++);
-                        }
-                    }
-                };
+                return IndexedData.completeIterator(indexedDataIterator);
             }
         };
     }

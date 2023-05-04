@@ -54,7 +54,12 @@ public class SparkChangeData<T> implements ChangeData<T> {
 
     @Override
     public Iterator<IndexedData<T>> iterator() {
-        return data.values().toLocalIterator();
+        Iterator<IndexedData<T>> originalIterator = data.values().toLocalIterator();
+        if (isComplete()) {
+            return originalIterator;
+        } else {
+            return IndexedData.completeIterator(originalIterator);
+        }
     }
 
     @Override

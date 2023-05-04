@@ -126,7 +126,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     @Override
     protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable) {
         return new ColumnChangeByChangeData(
-                "eval",
+                changeDataId,
                 _baseColumnName,
                 null,
                 _engineConfig,

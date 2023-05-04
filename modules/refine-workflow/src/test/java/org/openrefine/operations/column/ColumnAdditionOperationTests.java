@@ -29,7 +29,9 @@ package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -46,9 +48,9 @@ import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
+import org.openrefine.model.Runner;
+import org.openrefine.model.changes.*;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
-import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -226,5 +228,40 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "v1", "b", 2L, "j" }
                 });
         assertGridEquals(project.getCurrentGrid(), expected);
+    }
+
+    @Test
+    public void testIncompleteChangeData() throws ParsingException, IOException, DoesNotApplyException {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        Runner runner = initialState.getRunner();
+        ChangeData<Cell> incompleteChangeData = runner.emptyChangeData();
+        ChangeDataSerializer<Cell> serializer = mock(MySerializer.class);
+        long historyEntryId = 138908L;
+        project.getHistory().getChangeDataStore().store(
+                incompleteChangeData, new ChangeDataId(historyEntryId, "eval"), serializer, Optional.empty());
+        project.getHistory().addEntry(historyEntryId, "operation", operation, operation.createChange());
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", Cell.PENDING_NULL, "d" },
+                        { "v3", "a", Cell.PENDING_NULL, "f" },
+                        { "", "a", Cell.PENDING_NULL, "g" },
+                        { "", "b", Cell.PENDING_NULL, "h" },
+                        { new EvalError("error"), "a", Cell.PENDING_NULL, "i" },
+                        { "v1", "b", Cell.PENDING_NULL, "j" }
+                });
+        assertGridEquals(project.getCurrentGrid(), expected);
+    }
+
+    private abstract class MySerializer implements ChangeDataSerializer<Cell> {
+
     }
 }

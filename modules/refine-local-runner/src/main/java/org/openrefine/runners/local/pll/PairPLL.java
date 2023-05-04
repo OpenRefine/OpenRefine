@@ -114,6 +114,9 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * partition up to the given key and do not scan the greater keys.
      */
     public Array<V> get(K key) {
+        if (getPartitions().isEmpty()) {
+            return Array.empty();
+        }
         if (partitioner.isPresent()) {
             int partitionId = partitioner.get().getPartition(key);
             Partition partition = getPartitions().get(partitionId);

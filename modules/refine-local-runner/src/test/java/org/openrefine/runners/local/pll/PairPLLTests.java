@@ -26,6 +26,7 @@ public class PairPLLTests extends PLLTestsBase {
 
     PairPLL<Integer, String> SUT;
     PairPLL<Integer, String> noPartitionerSUT;
+    PairPLL<Integer, String> noPartitionsSUT;
 
     @BeforeClass
     public void setUpPLL() {
@@ -52,6 +53,25 @@ public class PairPLLTests extends PLLTestsBase {
         PLL<Tuple2<Integer, String>> pll = new InMemoryPLL<Tuple2<Integer, String>>(context, list, 2);
         SUT = new PairPLL<Integer, String>(pll, Optional.of(partitioner));
         noPartitionerSUT = new PairPLL<Integer, String>(pll, Optional.empty());
+
+        PLL<Tuple2<Integer, String>> emptyPLL = new PLL<>(context, "empty PLL") {
+
+            @Override
+            protected CloseableIterator<Tuple2<Integer, String>> compute(Partition partition) {
+                throw new IllegalArgumentException("This PLL has no partitions");
+            }
+
+            @Override
+            public Array<? extends Partition> getPartitions() {
+                return Array.empty();
+            }
+
+            @Override
+            public List<PLL<?>> getParents() {
+                return Collections.emptyList();
+            }
+        };
+        noPartitionsSUT = new PairPLL<>(emptyPLL, Optional.empty());
     }
 
     @Test
@@ -62,11 +82,13 @@ public class PairPLLTests extends PLLTestsBase {
     @Test
     public void testKeys() {
         Assert.assertEquals(SUT.keys().collect(), Arrays.asList(1, 3, 2, 4));
+        Assert.assertEquals(noPartitionsSUT.keys().collect(), Collections.emptyList());
     }
 
     @Test
     public void testValues() {
         Assert.assertEquals(SUT.values().collect(), Arrays.asList("foo", "bar", "baz", "hey"));
+        Assert.assertEquals(noPartitionsSUT.values().collect(), Collections.emptyList());
     }
 
     @Test
@@ -78,11 +100,13 @@ public class PairPLLTests extends PLLTestsBase {
     @Test
     public void testGetPartitioner() {
         Assert.assertTrue(SUT.getPartitioner().isPresent());
+        Assert.assertFalse(noPartitionsSUT.getPartitioner().isPresent());
     }
 
     @Test
     public void testGet() {
         Assert.assertEquals(SUT.get(2), Collections.singletonList("baz"));
+        Assert.assertEquals(noPartitionsSUT.get(2), Collections.emptyList());
     }
 
     @Test
