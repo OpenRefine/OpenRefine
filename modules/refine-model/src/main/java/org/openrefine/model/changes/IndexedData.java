@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -71,6 +72,34 @@ public class IndexedData<T> implements Serializable {
         long id = Long.valueOf(line.substring(0, index));
         T data = serializer.deserialize(line.substring(index + 1, line.length()));
         return new IndexedData<T>(id, data);
+    }
+
+    /**
+     * Completes an iterator over a set of indexed data, by appending an infinite stream of pending indexed data objects
+     * after the original stream ends. Those pending indexed data instances have indices which follow the last index
+     * seen in the original stream.
+     */
+    public static <T> Iterator<IndexedData<T>> completeIterator(Iterator<IndexedData<T>> originalIterator) {
+        return new Iterator<>() {
+
+            long nextIndex = 0L;
+
+            @Override
+            public boolean hasNext() {
+                return true;
+            }
+
+            @Override
+            public IndexedData<T> next() {
+                if (originalIterator.hasNext()) {
+                    IndexedData<T> next = originalIterator.next();
+                    nextIndex = next.getId() + 1;
+                    return next;
+                } else {
+                    return new IndexedData<>(nextIndex++);
+                }
+            }
+        };
     }
 
     @Override
