@@ -36,7 +36,7 @@ function BrowsingEngine(div, facetConfigs) {
   this._mode = theProject.columnModel.hasRecords ? "record-based" : "row-based";
 
   this._facets = [];
-  this._defaultAggregationLimit = 1000;
+  this._defaultAggregationLimit = 10000;
   this._aggregationLimit = this._defaultAggregationLimit;
   this._aggregationLimitEnabled = true;
   this._initializeUI();
@@ -134,7 +134,7 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.resetLink.on('click', function() { self.reset(); });
   this._elmts.removeLink.on('click', function() { self.remove(); });
 
-  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
+  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit for facets: ' : 'Record limit for facets: '); // TODO i18n
   this._elmts.aggregationLimitInput.val(this._aggregationLimit);
   this._elmts.aggregationLimitInput.on('change', function() {
     self._aggregationLimit = self._elmts.aggregationLimitInput.val();
@@ -261,7 +261,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 BrowsingEngine.prototype.update = function(onDone) {
   var self = this;
 
-  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
+  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit for facets: ' : 'Record limit for facets: '); // TODO i18n
 
   if (self._facets.length > 0) {
     // set up waiting UI
