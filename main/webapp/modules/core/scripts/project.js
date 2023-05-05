@@ -433,6 +433,12 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
             latestHistoryEntry = operationResult.historyEntry;
             updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestHistoryEntry.gridPreservation !== 'no-row-preservation';
             updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestHistoryEntry.gridPreservation === 'preserves-records'; 
+            if (latestHistoryEntry.createdFacets) {
+              for (let facetConfig of latestHistoryEntry.createdFacets) {
+                let facetType = facetConfig.type;
+                ui.browsingEngine.addFacet(facetType.indexOf('/') != -1 ? facetType.split('/')[1] : facetType, facetConfig, {});
+              }
+            }
           }
         }
         if (latestHistoryEntry) {

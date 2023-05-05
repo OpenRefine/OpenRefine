@@ -36,7 +36,10 @@ package org.openrefine.history;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
 
+import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
@@ -166,4 +169,21 @@ public class HistoryEntry {
         return gridPreservation;
     }
 
+    @JsonProperty("createdFacets")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public List<FacetConfig> getCreatedFacets() {
+        return change != null ? change.getCreatedFacets() : Collections.emptyList();
+    }
+
+    /**
+     * Introduced for https://github.com/FasterXML/jackson-databind/issues/2692
+     * 
+     * @param facetConfigs
+     *            ignored
+     */
+    @JsonProperty("createdFacets")
+    @Deprecated
+    public void setCreatedFacets(List<FacetConfig> facetConfigs) {
+        // does nothing
+    }
 }

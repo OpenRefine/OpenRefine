@@ -65,7 +65,7 @@ public class RangeFacetTests extends RefineTest {
             "        }";
 
     public static String configWithoutBoundsJson = "{"
-            + "\"type\":\"range\","
+            + "\"type\":\"core/range\","
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
             + "\"columnName\":\"my column\","
@@ -191,6 +191,12 @@ public class RangeFacetTests extends RefineTest {
     public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void serializeRangeFacetConfigWithoutBounds() throws JsonParseException, JsonMappingException, IOException {
+        RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
+        TestUtils.isSerializedTo(config, configWithoutBoundsJson, ParsingUtilities.defaultWriter);
     }
 
     @Test
