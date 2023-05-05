@@ -38,6 +38,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.util.ExpressionBasedRowEvaluable;
@@ -70,9 +71,9 @@ public class RangeFacet implements Facet {
         @JsonProperty("columnName")
         protected String _columnName; // column to base expression on, if any
 
-        @JsonProperty(FROM)
+        @JsonIgnore
         protected double _from; // the numeric selection
-        @JsonProperty(TO)
+        @JsonIgnore
         protected double _to;
 
         @JsonProperty("selectNumeric")
@@ -167,6 +168,26 @@ public class RangeFacet implements Facet {
         @Override
         public boolean isNeutral() {
             return !_selected;
+        }
+
+        @JsonProperty(FROM)
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public Double getFromForJson() {
+            if (_selected) {
+                return _from;
+            } else {
+                return null;
+            }
+        }
+
+        @JsonProperty(TO)
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public Double getToForJson() {
+            if (_selected) {
+                return _to;
+            } else {
+                return null;
+            }
         }
     }
 

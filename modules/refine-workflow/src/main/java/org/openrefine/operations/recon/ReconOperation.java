@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -51,7 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.FacetConfig;
+import org.openrefine.browsing.facets.ListFacet;
+import org.openrefine.browsing.facets.RangeFacet;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.IndexedRow;
@@ -105,6 +105,29 @@ public class ReconOperation extends EngineDependentOperation {
                         changeContext.getHistoryEntryId(),
                         columnModel);
             }
+
+            @Override
+            public List<FacetConfig> getCreatedFacets() {
+                ListFacet.ListFacetConfig judgmentFacet = new ListFacet.ListFacetConfig(
+                        _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name(),
+                        "grel:forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))",
+                        _columnName);
+
+                RangeFacet.RangeFacetConfig scoreFacet = new RangeFacet.RangeFacetConfig(
+                        _columnName + ": " + OpenRefineMessage.recon_operation_score_facet_name(),
+                        "grel:cell.recon.best.score",
+                        _columnName,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+
+                return Arrays.asList(
+                        judgmentFacet,
+                        scoreFacet);
+            }
         };
     }
 
@@ -122,19 +145,6 @@ public class ReconOperation extends EngineDependentOperation {
     public String getColumnName() {
         return _columnName;
     }
-
-    // TODO: migrate those to the frontend.
-    /*
-     * protected final String _addJudgmentFacetJson = "{\n" + "  \"action\" : \"createFacet\",\n" +
-     * "  \"facetConfig\" : {\n" + "  \"columnName\" : \"" + _columnName + "\",\n" +
-     * "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
-     * + "    \"name\" : \"" + _columnName + ": judgment\"\n" + "    },\n" + "    \"facetOptions\" : {\n" +
-     * "      \"scroll\" : false\n" + "    },\n" + "    \"facetType\" : \"list\"\n" + " }"; protected final String
-     * _addScoreFacetJson = "{\n" + "  \"action\" : \"createFacet\",\n" + "  \"facetConfig\" : {\n" +
-     * "    \"columnName\" : \"" + _columnName + "\",\n" + "    \"expression\" : \"cell.recon.best.score\",\n" +
-     * "    \"mode\" : \"range\",\n" + "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" +
-     * "         },\n" + "         \"facetType\" : \"range\"\n" + "}";
-     */
 
     protected static class ReconChangeDataProducer extends RowInRecordChangeDataProducer<Cell> {
 

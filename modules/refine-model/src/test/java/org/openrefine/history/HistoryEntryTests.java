@@ -30,14 +30,22 @@ package org.openrefine.history;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
+import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetConfig;
+import org.openrefine.browsing.facets.FacetConfigResolver;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Runner;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -69,6 +77,22 @@ public class HistoryEntryTests {
             "  },\n" +
             "  \"time\" : \"2018-08-07T09:06:37Z\"\n" +
             "}";
+
+    public static final String historyEntryWithCreatedFacets = "    {\n" +
+            "      \"id\": 1683271793411,\n" +
+            "      \"description\": \"some operation\",\n" +
+            "      \"change\": {" +
+            "           \"type\": \"" + ChangeStubWithFacets.class.getCanonicalName() + "\"" +
+            "       },\n" +
+            "      \"operation\":null,\n" +
+            "      \"gridPreservation\": \"preserves-rows\",\n" +
+            "      \"time\": \"2023-05-05T07:27:41Z\",\n" +
+            "      \"createdFacets\": [\n" +
+            "        {\n" +
+            "          \"type\": \"core/myfacet\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }";
 
     @BeforeTest
     public void register() {
@@ -103,5 +127,41 @@ public class HistoryEntryTests {
         // Unknown operations are serialized back as they were parsed
         HistoryEntry entry = HistoryEntry.load(unknownOperationJson);
         TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
+    }
+
+    @Test
+    public void deserializeCreatedFacets() throws IOException {
+        // for https://github.com/FasterXML/jackson-databind/issues/2692
+        FacetConfigResolver.registerFacetConfig("core", "myfacet", MyFacetConfig.class);
+        HistoryEntry entry = HistoryEntry.load(historyEntryWithCreatedFacets);
+        TestUtils.isSerializedTo(entry, historyEntryWithCreatedFacets, ParsingUtilities.saveWriter);
+    }
+
+    protected static class MyFacetConfig implements FacetConfig {
+
+        @Override
+        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public Set<String> getColumnDependencies() {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean isNeutral() {
+            return true;
+        }
+
+        @Override
+        public String getJsonType() {
+            return "core/myfacet";
+        }
     }
 }

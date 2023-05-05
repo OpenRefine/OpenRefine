@@ -171,26 +171,26 @@ public class ListFacetTests extends RefineTest {
                         { "a", "b" },
                         { "c", "d" }
                 });
-        ListFacetConfig firstColumn = new ListFacetConfig();
-        firstColumn.columnName = "foo";
-        firstColumn.setExpression("grel:value");
-        firstColumn.invert = false;
-        firstColumn.name = "foo";
-        firstColumn.omitBlank = false;
-        firstColumn.omitError = false;
-        firstColumn.selectBlank = false;
-        firstColumn.selectError = false;
-        firstColumn.selection = Collections.emptyList();
-        ListFacetConfig secondColumn = new ListFacetConfig();
-        secondColumn.columnName = "bar";
-        secondColumn.setExpression("grel:value");
-        secondColumn.invert = false;
-        secondColumn.name = "foo";
-        secondColumn.omitBlank = false;
-        secondColumn.omitError = false;
-        secondColumn.selectBlank = false;
-        secondColumn.selectError = false;
-        secondColumn.selection = Collections.emptyList();
+        ListFacetConfig firstColumn = new ListFacetConfig(
+                "foo",
+                "grel:value",
+                "foo",
+                false,
+                false,
+                false,
+                Collections.emptyList(),
+                false,
+                false);
+        ListFacetConfig secondColumn = new ListFacetConfig(
+                "foo",
+                "grel:value",
+                "bar",
+                false,
+                false,
+                false,
+                Collections.emptyList(),
+                false,
+                false);
         EngineConfig config = new EngineConfig(Arrays.asList(firstColumn, secondColumn), Engine.Mode.RowBased);
         Engine engine = new Engine(project.getCurrentGrid(), config);
         TestUtils.isSerializedTo(engine.getFacetResults(), expectedJson, ParsingUtilities.defaultWriter);

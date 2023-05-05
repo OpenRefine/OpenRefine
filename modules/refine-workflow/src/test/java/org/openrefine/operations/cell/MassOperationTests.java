@@ -188,9 +188,7 @@ public class MassOperationTests extends RefineTest {
                         { "v1", "b" }
                 });
         initialState = project.getCurrentGrid();
-        facet = new ListFacetConfig();
-        facet.columnName = "bar";
-        facet.setExpression("grel:value");
+        facet = new ListFacetConfig("bar", "grel:value", "bar");
         facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
         engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         edits = Collections.singletonList(new Edit(Collections.singletonList("v1"), false, false, "v2"));

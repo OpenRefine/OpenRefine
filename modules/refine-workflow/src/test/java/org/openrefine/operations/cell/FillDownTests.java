@@ -96,9 +96,7 @@ public class FillDownTests extends RefineTest {
         withPendingCells = withPendingCells.withColumnModel(withPendingCells.getColumnModel().withHasRecords(true));
 
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-        facet = new ListFacetConfig();
-        facet.columnName = "hello";
-        facet.setExpression("grel:value");
+        facet = new ListFacetConfig("hello", "grel:value", "hello");
     }
 
     @Test

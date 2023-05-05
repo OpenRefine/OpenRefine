@@ -67,16 +67,16 @@ public class ListFacetResultTests {
         ProjectManager.singleton = mock(ProjectManager.class);
         when(ProjectManager.singleton.getPreferenceStore()).thenReturn(new PreferenceStore());
 
-        config = new ListFacetConfig();
-        config.name = "facet A";
-        config.setExpression("value+\"bar\"");
-        config.invert = false;
-        config.selectBlank = false;
-        config.selectError = false;
-        config.omitBlank = false;
-        config.omitError = false;
-        config.columnName = "Column A";
-        config.selection = Arrays.asList(new DecoratedValue("foobar", "foobar"));
+        config = new ListFacetConfig(
+                "facet A",
+                "value+\"bar\"",
+                "Column A",
+                false,
+                false,
+                false,
+                false,
+                false,
+                Collections.singletonList(new DecoratedValue("foobar", "foobar")));
     }
 
     @Test

@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -104,6 +100,52 @@ public class ListFacet implements Facet {
         @JsonProperty("selectError")
         public boolean selectError;
 
+        @JsonCreator
+        public ListFacetConfig(
+                @JsonProperty("name") String name,
+                @JsonProperty("expression") String expression,
+                @JsonProperty("columnName") String columnName,
+                @JsonProperty("invert") boolean invert,
+                @JsonProperty("omitBlank") boolean omitBlank,
+                @JsonProperty("omitError") boolean omitError,
+                @JsonProperty("selection") List<DecoratedValueWrapper> selection,
+                @JsonProperty("selectBlank") boolean selectBlank,
+                @JsonProperty("selectError") boolean selectError) {
+            this(name, expression, columnName, invert, omitBlank, omitError, selectBlank, selectError, selection.stream()
+                    .map(e -> e.value)
+                    .collect(Collectors.toList()));
+        }
+
+        public ListFacetConfig(
+                String name,
+                String expression,
+                String columnName,
+                boolean invert,
+                boolean omitBlank,
+                boolean omitError,
+                boolean selectBlank,
+                boolean selectError,
+                List<DecoratedValue> selection) {
+            this.name = name;
+            this.columnName = columnName;
+            this.invert = invert;
+            this.omitBlank = omitBlank;
+            this.omitError = omitError;
+            this.selection = selection == null ? Collections.emptyList() : selection;
+            this.selectBlank = selectBlank;
+            this.selectError = selectError;
+            if (expression != null) {
+                setExpression(expression);
+            }
+        }
+
+        /**
+         * Convenience constructor for a text facet in neutral configuration.
+         */
+        public ListFacetConfig(String name, String expression, String columnName) {
+            this(name, expression, columnName, false, false, false, false, false, Collections.emptyList());
+        }
+
         @JsonProperty("selection")
         public List<DecoratedValueWrapper> getWrappedSelection() {
             return selection.stream()
@@ -145,16 +187,15 @@ public class ListFacet implements Facet {
             if (translated == null) {
                 return null;
             }
-            ListFacetConfig newConfig = new ListFacetConfig();
-            newConfig.columnName = substitutions.getOrDefault(columnName, columnName);
-            newConfig.setExpression(translated.getFullSource());
-            newConfig.invert = invert;
-            newConfig.name = name;
-            newConfig.omitBlank = omitBlank;
-            newConfig.omitError = omitError;
-            newConfig.selectBlank = selectBlank;
-            newConfig.selectError = selectError;
-            newConfig.selection = selection;
+            ListFacetConfig newConfig = new ListFacetConfig(name,
+                    translated.getFullSource(),
+                    substitutions.getOrDefault(columnName, columnName),
+                    invert,
+                    omitBlank,
+                    omitError,
+                    selectBlank,
+                    selectError,
+                    selection);
             return newConfig;
         }
 

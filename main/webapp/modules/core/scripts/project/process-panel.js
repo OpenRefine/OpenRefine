@@ -198,6 +198,9 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   } else {
     self._panelElmts.noProcessDiv.show();
     self._panelElmts.processes.empty();
+    if (self._panelElmts.noProcessDiv.is(':visible') && ui.browsingEngine.getFacetUIStates().length > 0) {
+      Refine.activateLeftPanelTab('facets');
+    }
   }
 
   // clean up any existing processes which do not exist anymore

@@ -33,10 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.history.ChangeResolver;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
@@ -74,14 +78,23 @@ public interface Change {
      * @throws DoesNotApplyException
      *             when the change cannot be applied to the given grid
      */
-    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException;
+    ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException;
 
     /**
      * Returns true when the change is derived purely from the operation metadata and does not store any data by itself.
      * In this case it does not need serializing as it can be recreated directly by {@link Operation#createChange()}.
      */
     @JsonIgnore
-    public boolean isImmediate();
+    boolean isImmediate();
+
+    /**
+     * The facets that are suggested to be created after this change is applied. This is not included in the JSON
+     * serialization here, but rather in the containing HistoryEntry.
+     */
+    @JsonIgnore
+    default List<FacetConfig> getCreatedFacets() {
+        return Collections.emptyList();
+    }
 
     /**
      * Bundles up various pieces of information:
@@ -90,7 +103,7 @@ public interface Change {
      * <li>whether the rows or records of the original grid were preserved</li>
      * </ul>
      */
-    public static class ChangeResult {
+    static class ChangeResult {
 
         protected final Grid grid;
         protected final GridPreservation gridPreservation;
