@@ -4,6 +4,7 @@ package org.openrefine.commands.history;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.commands.CSRFTokenFactory;
 import org.openrefine.commands.Command;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.ProjectManager;
@@ -33,12 +34,16 @@ public class PauseProcessCommandTests extends CommandTestBase {
     ProjectMetadata projectMetadata;
     ProcessManager processManager;
     Process process;
+    Grid grid;
 
     @BeforeMethod
     public void setUpCommand() {
         command = new PauseProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
+        grid = mock(Grid.class);
+        when(grid.rowCount()).thenReturn(5L);
+        when(project.getCurrentGrid()).thenReturn(grid);
         projectMetadata = mock(ProjectMetadata.class);
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();

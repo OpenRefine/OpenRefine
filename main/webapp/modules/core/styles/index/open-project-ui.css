@@ -34,18 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #projects-container {
   background: var(--background-primary);
   overflow: auto;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
+  height: 100%;
 }
 
 #projects-workspace-controls {
-  position: absolute;
+  position: fixed;
   padding: var(--padding-normal);
   background: var(--fill-primary);
   border-top: 1px solid var(--chrome-primary);
   font-size: 1.3em;
+  width: 100%;
+  bottom: 0;
 }
 
 #projects-container>table {
@@ -79,8 +78,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #projects-container .message {
   padding: var(--padding-loose);
   font-size: 170%;
-  line-height: 1.5em;
-  opacity: 0.2;
 }
 
 #projects-container>table thead th:nth-child(1) {

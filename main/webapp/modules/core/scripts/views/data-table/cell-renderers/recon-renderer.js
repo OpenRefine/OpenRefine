@@ -55,17 +55,17 @@ class ReconCellRenderer {
               var liSpan = $('<span></span>').appendTo(li);
 
               $('<a href="javascript:{}">&nbsp;</a>')
-              .addClass("data-table-recon-match-similar")
-              .attr("title", $.i18n('core-views/match-all-cells'))
-              .appendTo(liSpan).on('click',function(evt) {
-                self.doMatchTopicToSimilarCells(candidate, cellIndex, cell);
-              });
-
-              $('<a href="javascript:{}">&nbsp;</a>')
               .addClass("data-table-recon-match")
               .attr("title", $.i18n('core-views/match-this-cell') )
               .appendTo(liSpan).on('click',function(evt) {
                 self.doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI);
+              });
+
+              $('<a href="javascript:{}">&nbsp;</a>')
+              .addClass("data-table-recon-match-similar")
+              .attr("title", $.i18n('core-views/match-all-cells'))
+              .appendTo(liSpan).on('click',function(evt) {
+                self.doMatchTopicToSimilarCells(candidate, cellIndex, cell);
               });
 
               var a = $('<a></a>')
@@ -95,18 +95,19 @@ class ReconCellRenderer {
           }
 
           var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
-          $('<a href="javascript:{}">&nbsp;</a>')
-          .addClass("data-table-recon-match-similar")
-          .attr("title", $.i18n('core-views/create-topic-cells'))
-          .appendTo(liNew).on('click',function(evt) {
-            self.doMatchNewTopicToSimilarCells(cellIndex, cell);
-          });
 
           $('<a href="javascript:{}">&nbsp;</a>')
           .addClass("data-table-recon-match")
           .attr("title", $.i18n('core-views/create-topic-cell'))
           .appendTo(liNew).on('click',function(evt) {
             self.doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI);
+          });
+
+          $('<a href="javascript:{}">&nbsp;</a>')
+          .addClass("data-table-recon-match-similar")
+          .attr("title", $.i18n('core-views/create-topic-cells'))
+          .appendTo(liNew).on('click',function(evt) {
+            self.doMatchNewTopicToSimilarCells(cellIndex, cell);
           });
 
           $('<span>').text($.i18n('core-views/create-topic')).appendTo(liNew);

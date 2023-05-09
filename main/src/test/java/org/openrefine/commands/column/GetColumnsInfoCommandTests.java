@@ -53,7 +53,7 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
 
         command.doGet(request, response);
 
-        TestUtils.assertEqualAsJson(jsonResponse, writer.toString());
+        TestUtils.assertEqualsAsJson(jsonResponse, writer.toString());
     }
 
 }

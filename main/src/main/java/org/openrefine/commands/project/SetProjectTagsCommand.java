@@ -98,9 +98,8 @@ public class SetProjectTagsCommand extends Command {
             }
         }
 
-        // Lets update the project tags
+        // Let's update the project tags
         metadata.setTags(polishedTags.toArray(new String[polishedTags.size()]));
-        metadata.updateModified();
 
         respond(response, "{ \"code\" : \"ok\" }");
     }

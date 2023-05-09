@@ -3,10 +3,7 @@ package org.openrefine.util;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 public class HttpClientTests {
 

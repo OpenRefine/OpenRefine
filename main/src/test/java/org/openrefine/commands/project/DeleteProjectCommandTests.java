@@ -5,6 +5,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -35,6 +36,9 @@ public class DeleteProjectCommandTests extends CommandTestBase {
     public void testAcceptsNullTags() throws ServletException, IOException {
         Project project = mock(Project.class);
         when(project.getId()).thenReturn(1234L);
+        Grid grid = mock(Grid.class);
+        when(grid.rowCount()).thenReturn(5L);
+        when(project.getCurrentGrid()).thenReturn(grid);
         Instant now = Instant.now();
         when(project.getLastSave()).thenReturn(now);
         ProjectMetadata projectMetadata = mock(ProjectMetadata.class);

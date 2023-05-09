@@ -60,5 +60,6 @@
     "database-import/title": "Servidores de banco de dados",
     "database-source/databaseSaveButton": "Gravar",
     "database-parsing/ignore": "linhas(s) no começo do ficheiro",
-    "database-import/importer-name": "Banco de dados"
+    "database-import/importer-name": "Banco de dados",
+    "database-parsing/disable-auto-preview": "Desativar pré-visualização automática"
 }

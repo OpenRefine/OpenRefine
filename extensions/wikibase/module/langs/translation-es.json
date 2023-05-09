@@ -222,5 +222,17 @@
     "wikibase-management/dialog-header": "Seleccionar instancia de Wikibase",
     "wikibase-management/discover-manifests": "Descubrir instancias de Wikibase…",
     "wikibase-management/cancel": "Cancelar",
-    "wikibase-management/ok": "OK"
+    "wikibase-management/ok": "OK",
+    "wikibase-addition/version-error": "La versión $1 del manifiesto no es compatible. OpenRefine solo admite las versiones de manifiesto 1.x y 2.x.",
+    "wikibase-schema/mediainfo-file-path": "Ruta de archivo:",
+    "wikibase-schema/start-from-an-existing-schema": "Partir de un esquema existente:",
+    "wikibase-schema/save-new-schema": "Guardar nuevo...",
+    "wikibase-schema/target-wikibase-instance": "Instancia Wikibase de destino:",
+    "wikibase-schema/captions-header": "Subtítulos",
+    "wikibase-schema/mediainfo-file-name": "Nombre de archivo:",
+    "wikibase-schema/mediainfo-wikitext": "Wikitexto:",
+    "wikibase-schema/mediainfo-wikitext-override": "Wikitext (anular):",
+    "wikibase-schema/mediainfo-wikitext-no-override": "Wikitexto (no anular):",
+    "wikibase-addition/manifest-paste-input": "JSON del manifiesto",
+    "wikibase-addition/manifest-url-input": "URL del manifiesto"
 }

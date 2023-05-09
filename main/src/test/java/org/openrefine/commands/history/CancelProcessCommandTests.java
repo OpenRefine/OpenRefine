@@ -7,6 +7,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeDataId;
@@ -34,12 +35,16 @@ public class CancelProcessCommandTests extends CommandTestBase {
     ProcessManager processManager;
     Process process;
     History history;
+    Grid grid;
 
     @BeforeMethod
     public void setUpCommand() {
         command = new CancelProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
+        grid = mock(Grid.class);
+        when(grid.rowCount()).thenReturn(5L);
+        when(project.getCurrentGrid()).thenReturn(grid);
         projectMetadata = mock(ProjectMetadata.class);
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();

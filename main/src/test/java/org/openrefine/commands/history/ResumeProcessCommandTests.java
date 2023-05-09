@@ -6,6 +6,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.time.Instant;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.testng.AssertJUnit.assertEquals;
 
 public class ResumeProcessCommandTests extends CommandTestBase {
@@ -31,12 +31,16 @@ public class ResumeProcessCommandTests extends CommandTestBase {
     ProjectMetadata projectMetadata;
     ProcessManager processManager;
     Process process;
+    Grid grid;
 
     @BeforeMethod
     public void setUpCommand() {
         command = new ResumeProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
+        grid = mock(Grid.class);
+        when(grid.rowCount()).thenReturn(5L);
+        when(project.getCurrentGrid()).thenReturn(grid);
         projectMetadata = mock(ProjectMetadata.class);
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();

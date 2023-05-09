@@ -65,7 +65,7 @@ public abstract class OperationTest extends RefineTest {
         Operation op = reconstruct();
         StringWriter writer = new StringWriter();
         ParsingUtilities.defaultWriter.writeValue(writer, op);
-        TestUtils.assertEqualAsJson(json, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 
     protected LineNumberReader makeReader(String input) {

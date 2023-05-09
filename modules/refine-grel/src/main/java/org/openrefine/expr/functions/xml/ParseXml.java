@@ -40,6 +40,7 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.EvalErrorMessage;
 import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
+import org.openrefine.expr.functions.Type;
 
 public class ParseXml extends PureFunction {
 

@@ -121,7 +121,7 @@ public class LookupCacheManager {
             HasFieldsListImpl rows = new HasFieldsListImpl();
             List<Long> rowIds = valueToRowIndices.get(valueStr);
             if (rowIds == null) {
-                return null;
+                return rows;
             }
             List<IndexedRow> matchedRows = grid.getRows(rowIds);
             for (IndexedRow indexedRow : matchedRows) {

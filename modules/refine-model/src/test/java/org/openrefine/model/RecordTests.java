@@ -37,7 +37,7 @@ public class RecordTests {
         Assert.assertEquals(SUT.getStartRowId(), 34L);
         Assert.assertEquals(SUT.getEndRowId(), 37L);
         Assert.assertEquals(SUT.size(), 3);
-        Assert.assertEquals(SUT.getOriginalStartRowId(), null);
+        Assert.assertNull(SUT.getOriginalStartRowId());
         Assert.assertEquals(SUT.getLogicalStartRowId(), 34L);
 
         Assert.assertEquals(sortedRecord.getOriginalStartRowId(), 56L);

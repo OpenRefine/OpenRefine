@@ -200,19 +200,19 @@ div.data-table-cell-content-numeric {
 
 a.data-table-cell-edit {
   position: absolute;
-  top: 0;
   right: 0;
-  display: block;
-  width: 25px;
-  height: 16px;
   text-decoration: none;
-  background-image: url(../../images/edit-map.png);
-  background-repeat: no-repeat;
   visibility: hidden;
+  color: var(--background-primary);
+  background-color: #8ae;
+  padding: 2px 3px;
+  border-radius: 3px;
+  font-weight: bold;
+  line-height: normal;
 }
 
 a.data-table-cell-edit:hover {
-  background-position: -25px 0px;
+  background-color: var(--link-secondary);
 }
 
 div.data-table-cell-content-numeric>a.data-table-cell-edit {

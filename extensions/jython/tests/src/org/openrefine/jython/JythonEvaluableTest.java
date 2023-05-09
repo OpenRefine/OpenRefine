@@ -2,6 +2,7 @@
 package org.openrefine.jython;
 
 import java.util.Arrays;
+import java.io.File;
 import java.util.Properties;
 
 import org.openrefine.expr.CellTuple;
