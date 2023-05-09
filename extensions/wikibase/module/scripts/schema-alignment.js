@@ -1666,6 +1666,7 @@ SchemaAlignment.updateNbEdits = function(nb_edits) {
 
 SchemaAlignment.preview = function() {
   var self = this;
+  var countsElem = this.issuesTabCount;
 
   $('.invalid-schema-warning').hide();
   self.schemaValidationErrorsInPreview.empty();
@@ -1693,11 +1694,21 @@ SchemaAlignment.preview = function() {
         self.updateNbEdits(data["edit_count"]);
       }
 
-      if (data.warnings) {
-          self._updateWarnings(data.warnings, data.nb_warnings);
-      } else {
-          self._updateWarnings([], 0);
-      }
+      // update the counts in the issues tab
+     var numWarnings = data.warnings ? data.nb_warnings : 0;
+     var numErrors = data.errors ? data.errors.length : 0;
+     var totalCount = numErrors + numWarnings;
+     countsElem.hide();
+     if (totalCount) {
+       countsElem.text(totalCount);
+       countsElem.show();
+     }
+
+     if (data.warnings) {
+         self._updateWarnings(data.warnings);
+     } else {
+         self._updateWarnings([]);
+     }
 
       if ("code" in data && data.code === "error" && data.reason == 'invalid-schema') {
          $('.invalid-schema-warning').show();
@@ -1734,25 +1745,17 @@ SchemaAlignment.onProjectUpdate = function(options) {
  * WARNINGS RENDERING *
  *************************/
 
-SchemaAlignment._updateWarnings = function(warnings, totalCount) {
+SchemaAlignment._updateWarnings = function(warnings) {
    var self = this;
-   var countsElem = this.issuesTabCount;
-
-   // clear everything
-   countsElem.hide();
+   
    self._issuesElmts.warningsArea.empty();
-
+   
    var table = $('<table></table>').appendTo(self._issuesElmts.warningsArea);
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
    }   
 
-   // update the counts
-   if (totalCount) {
-        countsElem.text(totalCount);
-        countsElem.show();
-   }
 };
 
 /************************************

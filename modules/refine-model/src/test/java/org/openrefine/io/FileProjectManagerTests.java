@@ -28,20 +28,25 @@
 package org.openrefine.io;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.model.Grid;
+import org.openrefine.model.Project;
 import org.openrefine.model.Runner;
+import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -49,11 +54,18 @@ public class FileProjectManagerTests {
 
     protected File workspaceDir;
     protected File workspaceFile;
+    protected Grid mockGrid;
 
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
+    }
+
+    @BeforeMethod
+    public void setUpMocks() {
+        mockGrid = mock(Grid.class);
+        when(mockGrid.rowCount()).thenReturn(14L);
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -115,5 +127,41 @@ public class FileProjectManagerTests {
         InputStream inputStream = new FileInputStream(workspaceFile);
         ObjectNode json = (ObjectNode) ParsingUtilities.mapper.readTree(inputStream);
         assertTrue(json.get("projectIDs").isEmpty());
+    }
+
+    /**
+     * Tests whether only meta files of modified projects will be updated locally.
+     */
+    @Test
+    public void metaFileUpdateTest() throws InterruptedException, GetProjectIDException {
+        FileProjectManager manager = new FileProjectManager(workspaceDir, mock(Runner.class));
+        ProjectMetadata metaA = new ProjectMetadata();
+        ProjectMetadata metaB = new ProjectMetadata();
+        metaA.setName("A");
+        metaB.setName("B");
+        Project projA = mock(Project.class);
+        when(projA.getId()).thenReturn(1234L);
+        when(projA.getCurrentGrid()).thenReturn(mockGrid);
+        Project projB = mock(Project.class);
+        when(projB.getId()).thenReturn(5678L);
+        when(projB.getCurrentGrid()).thenReturn(mockGrid);
+        manager.registerProject(projA, metaA);
+        manager.registerProject(projB, metaB);
+        manager.saveWorkspace();
+        long idA = manager.getProjectID("A");
+        long idB = manager.getProjectID("B");
+        Path pathA = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idA) + ".project", "metadata.json");
+        Path pathB = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idB) + ".project", "metadata.json");
+        File metaAFile = pathA.toFile();
+        File metaBFile = pathB.toFile();
+        long timeBeforeA = metaAFile.lastModified();
+        long timeBeforeB = metaBFile.lastModified();
+        Thread.sleep(1000);
+        manager.getProjectMetadata(idA).setName("ModifiedA");
+        manager.saveWorkspace();
+        long timeAfterA = metaAFile.lastModified();
+        long timeAfterB = metaBFile.lastModified();
+        assertEquals(timeBeforeB, timeAfterB);
+        assertNotEquals(timeBeforeA, timeAfterA);
     }
 }

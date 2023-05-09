@@ -83,7 +83,7 @@ class SpreadsheetSerializer implements TabularSerializer {
             if (cellData.value instanceof String) {
                 ev.setStringValue((String) cellData.value);
             } else if (cellData.value instanceof Integer) {
-                ev.setNumberValue(new Double((Integer) cellData.value));
+                ev.setNumberValue(Double.valueOf((Integer) cellData.value));
             } else if (cellData.value instanceof Double) {
                 ev.setNumberValue((Double) cellData.value);
             } else if (cellData.value instanceof OffsetDateTime) {

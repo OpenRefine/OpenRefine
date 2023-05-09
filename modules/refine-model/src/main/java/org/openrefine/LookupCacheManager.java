@@ -114,14 +114,14 @@ public class LookupCacheManager {
         }
 
         public HasFieldsListImpl getRows(Object value) {
+            HasFieldsListImpl rows = new HasFieldsListImpl();
             if (!ExpressionUtils.isNonBlankData(value))
-                return null;
+                return rows;
             String valueStr = value.toString();
             ColumnModel columnModel = grid.getColumnModel();
-            HasFieldsListImpl rows = new HasFieldsListImpl();
             List<Long> rowIds = valueToRowIndices.get(valueStr);
             if (rowIds == null) {
-                return null;
+                return rows;
             }
             List<IndexedRow> matchedRows = grid.getRows(rowIds);
             for (IndexedRow indexedRow : matchedRows) {

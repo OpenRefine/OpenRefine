@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, 2022 Google Inc. & OpenRefine contributors
+Copyright 2010, 2023 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.ProjectStub;
 import org.openrefine.model.Runner;
@@ -60,6 +61,7 @@ import org.openrefine.process.ProgressReporter;
 public class ProjectManagerTests {
 
     private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
+    private static final int ROW_COUNT = 3;
 
     Runner runner;
     ProjectManagerStub pm;
@@ -68,19 +70,24 @@ public class ProjectManagerTests {
     ProjectMetadata metadata;
     ProcessManager procmgr;
     ProgressReporter progressReporter;
+    Grid grid;
 
     @BeforeMethod
     public void SetUp() {
         runner = mock(Runner.class);
         pm = new ProjectManagerStub(runner);
         SUT = spy(pm);
+
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
         procmgr = mock(ProcessManager.class);
         progressReporter = mock(ProgressReporter.class);
+        grid = mock(Grid.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(project.getId()).thenReturn(1234L);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
+        when(project.getCurrentGrid()).thenReturn(grid);
+        when(grid.rowCount()).thenReturn((long) ROW_COUNT);
     }
 
     @AfterMethod
@@ -98,7 +105,9 @@ public class ProjectManagerTests {
 
         AssertProjectRegistered();
         verify(project, atLeast(1)).getId();
+        verify(project, atLeast(1)).getCurrentGrid();
         verify(metadata, times(1)).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
 
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -126,6 +135,8 @@ public class ProjectManagerTests {
         verify(SUT, times(1)).saveProject(project, progressReporter);
         verify(metadata, times(1)).getTags();
         verify(project, atLeast(1)).getId();
+        verify(project, atLeast(1)).getCurrentGrid();
+        verify(metadata).setRowCount(ROW_COUNT);
 
         // ensure end
         verifyNoMoreInteractions(project);
@@ -141,6 +152,7 @@ public class ProjectManagerTests {
 
         // add a second project to the cache
         Project project2 = spy(new ProjectStub(2));
+        when(project2.getHistory().getCurrentGrid()).thenReturn(grid);
         ProjectMetadata metadata2 = mock(ProjectMetadata.class);
         whenGetSaveTimes(project2, metadata2, 10); // not modified since the last save but within 30 seconds flush limit
         registerProject(project2, metadata2);
@@ -168,11 +180,13 @@ public class ProjectManagerTests {
 
         verify(metadata, atLeastOnce()).getModified();
         verify(metadata, atLeastOnce()).getTags();
+        verify(metadata).setRowCount(ROW_COUNT);
         verify(project, atLeastOnce()).getProcessManager();
         verify(project, atLeastOnce()).getLastSave();
         verify(SUT, never()).saveProject(project, progressReporter);
         Assert.assertNull(SUT.getProject(0));
         verify(project, atLeast(1)).getId();
+        verify(project, atLeast(1)).getCurrentGrid();
         verify(project, times(1)).dispose();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -190,9 +204,8 @@ public class ProjectManagerTests {
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
         verify(metadata, times(1)).getTags();
-        verify(project, atLeast(1)).getId();
-        verifyNoMoreInteractions(project);
-        verifyNoMoreInteractions(metadata);
+        verify(metadata).setRowCount(ROW_COUNT);
+        verify(project, atLeast(1)).getCurrentGrid();
     }
 
     // TODO test canSaveAllModifiedWithRaceCondition
@@ -256,9 +269,6 @@ public class ProjectManagerTests {
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(eq(proj), any());
         verify(meta, times(1)).getTags();
-        verify(proj, atLeast(1)).getId();
-
-        verifyNoMoreInteractions(proj);
-        verifyNoMoreInteractions(meta);
+        verify(meta).setRowCount(ROW_COUNT);
     }
 }

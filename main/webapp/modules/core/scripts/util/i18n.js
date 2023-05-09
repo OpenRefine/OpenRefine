@@ -1,8 +1,5 @@
 I18NUtil = {};
 
-var lang = (navigator.language).split("-")[0];
-var dictionary = "";
-
 /*
    Initialize i18n and load message translation file from the server.
 
@@ -10,6 +7,9 @@ var dictionary = "";
    clicking on 'Language Settings' on the landing page.
 */
 I18NUtil.init = function (module) {
+    var lang = (navigator.language).split("-")[0];
+    var dictionary = "";
+
     $.ajax({
         url: "command/core/load-language?",
         type: "POST",
@@ -34,5 +34,7 @@ I18NUtil.init = function (module) {
         }
     });
     $.i18n().load(dictionary, lang);
-    $.i18n({locale: lang});
+    if (module === 'core') {
+      $.i18n({locale: lang});
+    }
 }

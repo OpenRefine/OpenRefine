@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openrefine.util.TestUtils.assertEqualAsJson;
+import static org.openrefine.util.TestUtils.assertEqualsAsJson;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_SECRET;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_TOKEN;
 import static org.openrefine.wikibase.commands.LoginCommand.API_ENDPOINT;
@@ -97,13 +97,13 @@ public class LoginCommandTest extends CommandTest {
     public void testNoApiEndpointPost() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         command.doPost(request, response);
-        assertEqualAsJson("{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}", writer.toString());
+        assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
     public void testNoApiEndpointGet() throws ServletException, IOException {
         command.doGet(request, response);
-        assertEqualAsJson("{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}", writer.toString());
+        assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
@@ -111,25 +111,25 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doPost(request, response);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", writer.toString());
+        assertEqualsAsJson(writer.toString(), "{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");
     }
 
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
         command.doPost(request, response);
-        assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
     public void testGetNotCsrfProtected() throws ServletException, IOException {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doGet(request, response);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", writer.toString());
+        assertEqualsAsJson(writer.toString(), "{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");
     }
 
     private void assertLogin() {
-        assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\",\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}",
-                writer.toString());
+        assertEqualsAsJson(writer.toString(),
+                "{\"logged_in\":true,\"username\":\"" + username + "\",\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");
     }
 
     @Test
@@ -400,8 +400,8 @@ public class LoginCommandTest extends CommandTest {
 
         verify(connectionManager).logout(apiEndpoint);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}",
-                logoutWriter.toString());
+        assertEqualsAsJson(logoutWriter.toString(),
+                "{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");
 
         Map<String, Cookie> cookies = getCookieMap(
                 cookieCaptor.getAllValues().subList(loginCookiesSize, cookieCaptor.getAllValues().size()));

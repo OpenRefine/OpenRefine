@@ -44,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.Validate;
 
+import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -291,7 +292,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
                         } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
                             if (_combinedColumnName != null) {
                                 Cell newCell;
-                                if (cell == null || cell.value == null) {
+                                if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                                     if (_prependColumnName && !_ignoreBlankCells) {
                                         newCell = new Cell(column.getName() + _separator, null);
                                     } else {
@@ -314,7 +315,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
 
                                 transposedCells++;
                             } else {
-                                if (_ignoreBlankCells && (cell == null || cell.value == null)) {
+                                if (_ignoreBlankCells && (cell == null || !ExpressionUtils.isNonBlankData(cell.value))) {
                                     continue;
                                 }
 

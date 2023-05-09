@@ -77,7 +77,7 @@ public class ProjectMetadataUtilities {
                 file.delete();
             }
         }
-
+        projectMeta.setLastSave();
         tempFile.renameTo(file);
     }
 

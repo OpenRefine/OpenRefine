@@ -123,54 +123,12 @@ $(function() {
   };
 
   var resize = function() {
-    var leftPanelWidth = 150;
-    // px
-    var width = $(window).width();
-    var height = $(window).height();
-    var headerHeight = $('#header').outerHeight();
-    var panelHeight = height - headerHeight;
-
-    $('.main-layout-panel')
-    .css("top", headerHeight + "px")
-    .css("bottom", "0px")
-    .css("height", panelHeight + "px")
-    .css("visibility", "visible");
-
-    $('#left-panel')
-    .css("left", "0px")
-    .css("width", leftPanelWidth + "px");
-    var leftPanelBodyHPaddings = 10;
-    // px
-    var leftPanelBodyVPaddings = 0;
-    // px
-    $('#left-panel-body')
-    .css("margin-left", leftPanelBodyHPaddings + "px")
-    .css("margin-top", leftPanelBodyVPaddings + "px")
-    .css("width", ($('#left-panel').width() - leftPanelBodyHPaddings) + "px")
-    .css("height", ($('#left-panel').height() - leftPanelBodyVPaddings) + "px");
-
-    $('#right-panel')
-    .css("left", leftPanelWidth + "px")
-    .css("width", (width - leftPanelWidth) + "px");
-
-    var rightPanelBodyHPaddings = 5;
-    // px
-    var rightPanelBodyVPaddings = 5;
-    // px
-    $('#right-panel-body')
-    .css("margin-left", rightPanelBodyHPaddings + "px")
-    .css("margin-top", rightPanelBodyVPaddings + "px")
-    .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
-    .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       if (Refine.actionAreas[i].ui.resize) {
         Refine.actionAreas[i].ui.resize();
       }
     }
   };
-  $(window).on("resize", resize);
-  window.setTimeout(resize, 100); // for Chrome, give the window some time to layout first
 
   var renderActionArea = function(actionArea) {
     actionArea.bodyElmt = $('<div>')
@@ -179,11 +137,15 @@ $(function() {
 
     actionArea.tabElmt = $('<li>')
     .addClass('action-area-tab')
-    .text(actionArea.label)
-    .appendTo($('#action-area-tabs'))
-    .on('click', function() {
-      Refine.selectActionArea(actionArea.id);
-    });
+    .append(
+      $('<a>')
+      .attr('href', '#' + actionArea.id)
+      .text(actionArea.label)
+      .on('click', function() {
+        Refine.selectActionArea(actionArea.id);
+      })
+    )
+    .appendTo($('#action-area-tabs'));
 
     actionArea.ui = new actionArea.uiClass(actionArea.bodyElmt);
   };
@@ -215,4 +177,7 @@ $(function() {
   $("#or-index-sample").text($.i18n('core-index/sample-data'));
 
   showVersion();
+
+  $(window).on("resize", resize);
+  resize();
 });

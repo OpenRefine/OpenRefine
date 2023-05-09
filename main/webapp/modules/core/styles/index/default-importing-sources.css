@@ -36,6 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #default-importing-clipboard-textarea {
-  width: 50em;
+  width: 100%;
+  max-width: 50em;
   height: 30em;
 }

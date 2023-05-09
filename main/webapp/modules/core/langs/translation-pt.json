@@ -221,7 +221,7 @@
     "core-views/collapse-white/single": "Contrair espaços em brancos consecutivos",
     "core-recon/access-service": "Acessar API de serviço",
     "core-views/recon-stats": "$1% combinaram, $2% novos, $3% para ser reconciliados",
-    "core-views/replacement-info": "Se a opção \"expressão regular\" estiver marcada e o modelo de busca contiver grupos delimitados por parênteses, $0 retornará a cadeia completa coincidindo com o modelo, e $1, $2… o 1º, 1º… grupo.",
+    "core-views/replacement-info": "Se a opção \"expressão regular\" estiver marcada e o modelo de busca contiver grupos delimitados por parênteses, $0 retornará a cadeia completa coincidindo com o modelo, e $1, $2… o 1º, 2º… grupo.",
     "core-project/json-invalid": "O JSON que introduziu é inválido",
     "core-index-parser/blank-spanning-cells": "Preencher células que ocupam múltiplas linhas ou colunas com nulos",
     "core-buttons/export": "Exportar",
@@ -368,7 +368,7 @@
     "core-recon/cell-type": "Reconcilie cada célula com uma entidade de um desses tipos:",
     "core-facets/click-to-edit": "Clique para editar a expressão",
     "core-views/search-for": "Pesquisar por",
-    "core-views/one-topic": "Criar um novo item para células similares",
+    "core-views/one-topic": "Criar um novo item para células similares…",
     "clustering-keyers/ngram-fingerprint": "ngram-fingerprint",
     "core-dialogs/local-time": "Usar fuso horário local",
     "core-facets/change": "mudança",
@@ -630,7 +630,7 @@
     "core-views/choose-reconciliation-service": "Escolher um serviço de reconciliação",
     "core-dialogs/sel-and-ord": "Selecione e ordene as colunas para exportar",
     "core-views/rows": "linhas",
-    "core-index/download-now": "Baixe $1 agora.",
+    "core-index/download-now": "Descarregue $1 agora.",
     "core-index/pref-key": "Valor da chave de preferência:",
     "core-views/copy-recon2": "Copiar dados de reconciliação para outras colunas",
     "core-buttons/add-url": "Adicionar outra URL",
@@ -671,7 +671,7 @@
     "core-dialogs/date-format": "Para valores de data/hora use o formato",
     "core-dialogs/cluster-row-limit-exceeded": "Limite excedido de $1 escolhas totais",
     "core-index-parser/ignore-first": "Ignorar primeira(s)",
-    "core-views/new-topic": "Criar um novo item para cada célula",
+    "core-views/new-topic": "Criar um novo item para cada célula…",
     "core-views/cache-responses": "Armazenar respostas em cache",
     "core-views/split-into": "Dividir em",
     "core-index-import/file": "Ficheiro do projeto",
@@ -776,5 +776,6 @@
     "core-views/remove-prop": "remover",
     "core-dialogs/row-index": "O índice da linha atual. É um atalho para 'row.index'.",
     "core-buttons/create-project": "Criar projeto &raquo;",
-    "core-index-import/comma-separated": "números separados por vírgula"
+    "core-index-import/comma-separated": "números separados por vírgula",
+    "core-about/definition": "O OpenRefine é uma ferramenta poderosa para trabalhar com dados sujos. Utilize-a para melhorar a consistência dos dados, relacioná-los a registros de dados como o Wikidata, enriquece-los com dados de outras fontes, transformá-los em diferentes formatos para que outras ferramentas possam consumi-los e contribuir com dados de volta às suas fontes. O OpenRefine não é um serviço web, mas um aplicativo de desktop que roda em seu próprio computador, permitindo que você processe dados sensíveis com privacidade."
 }

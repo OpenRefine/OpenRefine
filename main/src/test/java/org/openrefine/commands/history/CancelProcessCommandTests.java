@@ -18,6 +18,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeDataId;
@@ -32,6 +33,7 @@ public class CancelProcessCommandTests extends CommandTestBase {
     int processId = 5678;
     int missingProcessId = 9876;
     Project project;
+    Grid grid;
     ProjectMetadata projectMetadata;
     ProcessManager processManager;
     Process process;
@@ -42,6 +44,8 @@ public class CancelProcessCommandTests extends CommandTestBase {
         command = new CancelProcessCommand();
         project = mock(Project.class);
         when(project.getId()).thenReturn(projectId);
+        grid = mock(Grid.class);
+        when(project.getCurrentGrid()).thenReturn(grid);
         projectMetadata = mock(ProjectMetadata.class);
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();

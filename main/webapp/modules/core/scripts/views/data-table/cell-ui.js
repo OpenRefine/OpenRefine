@@ -71,7 +71,7 @@ DataTableCellUI.prototype._render = function() {
   editLink.className = 'data-table-cell-edit';
   editLink.setAttribute('title', $.i18n('core-views/edit-cell'));
   editLink.href = 'javascript:{}';
-  divContent.appendChild(editLink).appendChild(document.createTextNode('\u00A0'));
+  divContent.appendChild(editLink).appendChild(document.createTextNode($.i18n('core-facets/edit')));
   editLink.addEventListener('click', function() { self._startEdit(this); });
 
   $(this._td).empty()

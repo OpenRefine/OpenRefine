@@ -91,7 +91,7 @@ public class SpreadsheetSerializerTests {
         row.add(new CellData("null value", null, "null value", null));
         row.add(new CellData("string value", "a string", "a string as string", null));
         row.add(new CellData("integer value", 42, "42", null));
-        row.add(new CellData("double value", new Double(42), "42.0", null));
+        row.add(new CellData("double value", Double.valueOf(42), "42.0", null));
         row.add(new CellData("boolean value", true, "true", null));
         OffsetDateTime now = OffsetDateTime.now(ZoneId.of("Z"));
         row.add(new CellData("datetime value", now, now.toString(), null));
@@ -109,9 +109,9 @@ public class SpreadsheetSerializerTests {
         value = values.get(1).getUserEnteredValue();
         assertEquals(value.getStringValue(), "a string");
         value = values.get(2).getUserEnteredValue();
-        assertEquals(value.getNumberValue(), new Double(42));
+        assertEquals(value.getNumberValue(), Double.valueOf(42));
         value = values.get(3).getUserEnteredValue();
-        assertEquals(value.getNumberValue(), new Double(42));
+        assertEquals(value.getNumberValue(), Double.valueOf(42));
         value = values.get(4).getUserEnteredValue();
         assertEquals(value.getBoolValue(), Boolean.TRUE);
         value = values.get(5).getUserEnteredValue();

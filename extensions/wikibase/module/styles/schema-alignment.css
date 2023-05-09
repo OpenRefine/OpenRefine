@@ -66,9 +66,20 @@
   margin: 1em;
 }
 
+.schema-alignment-save-buttons{
+  display:flex; 
+  flex-direction: row; 
+  float: right; 
+  padding: 12px;
+}
+
 .schema-alignment-save {
-  float: right;
-  padding: 1em;
+  padding-right: 10px; 
+}
+
+#schema-alignment-entity-add-buttons .wbs-toolbar{
+  float: left;
+  padding: 1em;  
 }
 
 .schema-alignment-save button:disabled {
@@ -76,6 +87,15 @@
 }
 
 .schema-alignment-save button {
+  font-weight: normal;
+  width: 100%;
+}
+
+.schema-alignment-discard button:disabled {
+  color: gray;
+}
+
+.schema-alignment-discard button {
   font-weight: normal;
   width: 100%;
 }
@@ -312,6 +332,8 @@ input[type="checkbox"].wbs-wikitext-override {
 .wbs-entity {
   margin-bottom: 5px;
   padding-right: 5px;
+  padding: 10px;
+  border-bottom: 1px solid #d3deff;
 }
 
 .wbs-statement-group {

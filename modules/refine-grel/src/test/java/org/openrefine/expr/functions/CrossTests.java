@@ -58,6 +58,8 @@ public class CrossTests extends FunctionTestBase {
     private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
             DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
+    private HasFieldsListImpl emptyList;
+
     // dependencies
     Project projectGift;
     Project projectAddress;
@@ -92,7 +94,7 @@ public class CrossTests extends FunctionTestBase {
 
         projectDuplicate1 = createProject("Duplicate", new String[] { "Col1", "Col2" }, new Serializable[][] {});
         projectDuplicate2 = createProject("Duplicate", new String[] { "Col1", "Col2" }, new Serializable[][] {});
-
+        emptyList = new HasFieldsListImpl();
         bindings = new Properties();
         bindings.put("project_id", projectGift.getId());
 
@@ -244,7 +246,7 @@ public class CrossTests extends FunctionTestBase {
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
-        Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "Anne", "My Address Book", "friend"), emptyList);
     }
 
     @Test
@@ -299,9 +301,10 @@ public class CrossTests extends FunctionTestBase {
      * Two values will match if and only if they have the same string representation. In this case, "1600.0" doesn't
      * equal to "1600".
      */
+
     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
-        Assert.assertNull(invoke("cross", "1600.0", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "1600.0", "My Address Book", "friend"), emptyList);
     }
 
     @Test
@@ -376,7 +379,7 @@ public class CrossTests extends FunctionTestBase {
      */
     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
-        Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
+        Assert.assertEquals(invoke("cross", "NON-EXIST", "My Address Book", "friend"), emptyList);
     }
 
     /**

@@ -257,8 +257,8 @@ Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
       databaseType = "mysql";
   }
   
-  $("div.pure-control-group.dbtype-options").hide();
-  $("div.pure-control-group.dbtype-options.dbt-"+databaseType).show();
+  $("div.dbtype-options").hide();
+  $("div.dbtype-options.dbt-"+databaseType).show();
   
   if (databaseType == "sqlite") {
     $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
@@ -285,8 +285,8 @@ Refine.DatabaseSourceUI.prototype._editConnection = function(connectionInfo) {
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
 
-                 var li = $('<li class="pure-menu-item sc-list"></li>').appendTo(menuList);
-                 var a = $('<a href="#" class="pure-menu-link context-menu-one"></a>').appendTo(li);
+                 var li = $('<li class="sc-list"></li>').appendTo(menuList);
+                 var a = $('<a href="#" class="database-menu-item context-menu-one"></a>').appendTo(li);
                  $('<span class="context-menu-text"></span>').text(savedConnection.connectionName)
                       .appendTo(a);
                  $('<span class="sc-context-more-vert pull-right"> </span>').appendTo(a);
@@ -338,7 +338,7 @@ Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo)
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
              
-                  items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
+                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
                     + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
                     + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
                })
@@ -367,7 +367,7 @@ Refine.DatabaseSourceUI.prototype._loadSavedConnections = function() {
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
                   
-                  items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
+                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
                     + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
                     + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
 

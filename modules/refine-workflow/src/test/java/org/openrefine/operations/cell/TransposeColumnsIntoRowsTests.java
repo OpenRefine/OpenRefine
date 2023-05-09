@@ -128,4 +128,31 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
         assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
+
+    @Test
+    public void testBlankValues() throws DoesNotApplyException, ParsingException {
+        Grid initialRecords = createGrid(
+                new String[] { "num1", "num2" },
+                new Serializable[][] {
+                        { "2", "3" },
+                        { "6", "", },
+                        { "5", "9" }
+                });
+
+        Operation op = new TransposeColumnsIntoRowsOperation(
+                "num1", -1, true, false, "a", true, ":");
+        Change change = op.createChange();
+
+        Grid expected = createGrid(
+                new String[] { "a" },
+                new Serializable[][] {
+                        { "num1:2" },
+                        { "num2:3" },
+                        { "num1:6" },
+                        { "num1:5" },
+                        { "num2:9" }
+                });
+
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
+    }
 }

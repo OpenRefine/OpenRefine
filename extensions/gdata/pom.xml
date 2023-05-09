@@ -85,12 +85,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20230212-2.0.0</version>
+      <version>v3-rev20230520-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20221216-2.0.0</version>
+      <version>v4-rev20230526-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

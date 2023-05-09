@@ -45,6 +45,12 @@ public class ProjectStub extends Project {
         super(state, new LazyChangeDataStore(state.getRunner()), new LazyGridCache());
     }
 
+    /**
+     * Public version of protected constructor in the super class for testing purposes only.
+     *
+     * @param id
+     *            create project with the given ID rather than generating a new one.
+     */
     public ProjectStub(long id) {
         super(id, mock(History.class));
     }

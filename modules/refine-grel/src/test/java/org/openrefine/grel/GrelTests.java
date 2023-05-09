@@ -139,7 +139,15 @@ public class GrelTests {
                 { "2<=2", "true" },
                 { "3<=2", "false" },
                 { "0/0", "NaN" },
-//                { "", "" }, 
+                { "fact(4)", "24" },
+                { "fact(20)", "2432902008176640000" }, // limit for Java longs
+                { "fact(21)", "java.lang.ArithmeticException: Integer overflow computing factorial" },
+                { "multinomial(1, 3)", "4" },
+                { "multinomial(0, 4)", "1" },
+                { "multinomial(18, 2)", "190" }, // limit for Java longs
+                { "multinomial(18, 3)", "1330" }, // test BigInteger support
+                { "multinomial(3, 5, 2)", "2520" },
+//                { "", "" },
         };
         for (String[] test : tests) {
             parseEval(bindings, test);

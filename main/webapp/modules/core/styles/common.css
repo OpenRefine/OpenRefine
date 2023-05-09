@@ -35,7 +35,6 @@ html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pr
   margin: 0;
   padding: 0;
   border: 0;
-  outline: 0;
   font-size: 100%;
   vertical-align: baseline;
   background: transparent;
@@ -131,7 +130,7 @@ a img {
   border: 0;
 }
 
-.button, a.button {
+.button, a.button, input[type="file"]::file-selector-button {
   display: inline-block;
   overflow: visible;
   font-size: 1em;
@@ -141,18 +140,20 @@ a img {
   padding: 1px 6px;
   border: 1px solid #bbb;
   cursor: pointer;
-  background: #eee;
   white-space: nowrap;
   font-family: Arial, Helvetica, sans-serif;
   border-radius: 3px;
+  background: linear-gradient(#f9f9f9, #e3e3e3);
 }
 
-.button:hover, a.button:hover {
+
+.button:hover, a.button:hover, input[type="file"]::file-selector-button:hover {
   border: 1px solid #666;
 }
 
-.button:active, a.button:active {
+.button:active, a.button:active, input[type="file"]::file-selector-button:active {
   border: 1px solid #000;
+  background: linear-gradient(#e3e3e3, #f9f9f9);
 }
 
 button:disabled {

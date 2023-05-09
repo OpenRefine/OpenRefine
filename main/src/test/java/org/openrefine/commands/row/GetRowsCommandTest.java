@@ -302,7 +302,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(recordJson, writer.toString());
+        TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test

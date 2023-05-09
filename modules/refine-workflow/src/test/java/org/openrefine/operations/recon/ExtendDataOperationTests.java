@@ -249,7 +249,7 @@ public class ExtendDataOperationTests extends RefineTest {
         String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
         ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint", "http://identifier.space",
                 "http://schema.space");
-        TestUtils.assertEqualAsJson(stub.formulateQueryStub(ids, config), json);
+        TestUtils.assertEqualsAsJson(stub.formulateQueryStub(ids, config), json);
     }
 
     @AfterMethod

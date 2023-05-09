@@ -36,7 +36,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 0;
   padding: 0;
   overflow: hidden;
-  visibility: hidden;
+  width: 150px;
+  height: calc(100% - 40px);
 }
 
 #slogan {
@@ -51,6 +52,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin-left: var(--padding-tight);
   overflow: hidden;
   position: relative;
+  height: 100%;
+  margin-left: 10px;
 }
 
 #action-area-tabs {
@@ -72,6 +75,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: var(--chrome-primary);
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+}
+
+#action-area-tabs li a {
+  color: var(--text-secondary);
+  text-decoration: none;
 }
 
 #project-links {
@@ -105,11 +113,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #right-panel {
   background: var(--chrome-primary);
+  left: 150px;
+  width: calc(100% - 150px);
 }
 
 #right-panel-body {
   overflow: auto;
   position: relative;
+  height: 100%;
+  margin: 5px 0 0 5px;
 }
 
 .action-area-tab-body {

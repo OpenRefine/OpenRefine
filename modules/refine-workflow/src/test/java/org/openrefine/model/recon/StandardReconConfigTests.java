@@ -202,7 +202,7 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfig r = StandardReconConfig.reconstruct(config);
         Row row = project.getCurrentGrid().getRow(0);
         ReconJob job = r.createJob(project.getCurrentGrid().getColumnModel(), 0, row, "title", row.getCell(0));
-        TestUtils.assertEqualAsJson(job.toString(), "{"
+        TestUtils.assertEqualsAsJson(job.toString(), "{"
                 + "\"query\":\"mulholland drive\","
                 + "\"type\":\"Q1234\","
                 + "\"properties\":["

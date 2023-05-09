@@ -79,7 +79,6 @@ HistoryPanel.prototype.undoneChanges = function() {
 
 HistoryPanel.prototype._render = function() {
   var self = this;
-
   this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.position + ' / ' + ( this._data.entries.length ) + '</span>');
 
   this._div.empty().off().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
@@ -302,9 +301,33 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
   
   elmts.dialogHeader.html($.i18n('core-project/apply-operation'));
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
+
+  elmts.operationJsonButton.on('click', async function() {
+    const fileInput = elmts.operationJsonButton[0];
+    fileInput.accept = '.json';
+    fileInput.onchange = async function() {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const fileContent = JSON.parse(e.target.result);
+          const textAreaElement = elmts.textarea[0];
+          if (textAreaElement) {
+            textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
+          }
+        } catch (error) {
+            window.alert($.i18n('core-project/json-invalid'));
+          }
+      };
+      reader.readAsText(file);
+    };
+    fileInput.click();
+  });
+  
   
   elmts.applyButton.html($.i18n('core-buttons/perform-op'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  elmts.operationJsonButton.html($.i18n('core-buttons/select'));
 
   var fixJson = function(json) {
     json = json.trim();

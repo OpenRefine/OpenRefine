@@ -177,7 +177,7 @@ public class DataExtensionChangeTest extends RefineTest {
         DataExtensionSerializer serializer = new DataExtensionSerializer();
 
         String serialized = serializer.serialize(recordDataExtension);
-        TestUtils.assertEqualAsJson(serialized, serializedChangeData);
+        TestUtils.assertEqualsAsJson(serialized, serializedChangeData);
     }
 
     @Test
