@@ -291,6 +291,7 @@ jobs:
 
   windows_installer:
     runs-on: windows-2022
+    needs: mac_test_and_deploy
 
     steps:
     - uses: actions/checkout@v3
