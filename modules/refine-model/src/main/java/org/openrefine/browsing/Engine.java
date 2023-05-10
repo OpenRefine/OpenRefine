@@ -135,6 +135,9 @@ public class Engine {
         return _facetsState;
     }
 
+    /**
+     * The state of the computed facets.
+     */
     @JsonProperty("facets")
     public ImmutableList<FacetResult> getFacetResults() {
         AllFacetsState states = getFacetsState().getState();
@@ -146,6 +149,17 @@ public class Engine {
         return facetResults.build();
     }
 
+    /**
+     * True when all the facets are in a neutral state, meaning that they do not filter out any row or record.
+     */
+    @JsonProperty("neutral")
+    public boolean isNeutral() {
+        return _config.isNeutral();
+    }
+
+    /**
+     * Some statistics for each column: reconciliation and data type statistics.
+     */
     @JsonProperty("columnStats")
     public List<ColumnStats> getColumnStats() {
         return getFacetsState().getState().getColumnStats();
@@ -180,11 +194,18 @@ public class Engine {
         return getFacetsState().getProcessed();
     }
 
+    /**
+     * Number of rows in the filtered grid, among those which have been checked ({@link #getAggregatedCount()}).
+     */
     @JsonProperty("filteredCount")
     public long getFilteredCount() {
         return getFacetsState().getState().getFilteredCount();
     }
 
+    /**
+     * True when the aggregation stopped because of the imposed aggregation limit, in which case statistics such as
+     * {@link #getFilteredCount()} should be understood relative to {@link #getAggregatedCount()}.
+     */
     @JsonProperty("limitReached")
     public boolean limitReached() {
         return getFacetsState().limitReached();
