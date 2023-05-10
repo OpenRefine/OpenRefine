@@ -274,6 +274,7 @@ public class FileProjectManager extends ProjectManager {
             File dir = getProjectDir(id);
 
             _historyEntryManager.save(project.getHistory(), dir, progressReporter);
+            project.setLastSave();
 
             logger.info("Saved project '{}'", id);
         }
