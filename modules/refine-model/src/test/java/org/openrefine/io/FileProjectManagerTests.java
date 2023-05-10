@@ -27,7 +27,10 @@
 
 package org.openrefine.io;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
@@ -37,15 +40,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Runner;
+import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -163,5 +169,34 @@ public class FileProjectManagerTests {
         long timeAfterB = metaBFile.lastModified();
         assertEquals(timeBeforeB, timeAfterB);
         assertNotEquals(timeBeforeA, timeAfterA);
+    }
+
+    @Test
+    public void testSave() throws IOException {
+        Project proj = mock(Project.class);
+        when(proj.getId()).thenReturn(1234L);
+        when(proj.getCurrentGrid()).thenReturn(mockGrid);
+        History history = mock(History.class);
+        when(proj.getHistory()).thenReturn(history);
+        Grid initialGrid = mock(Grid.class);
+        when(history.getEntries()).thenReturn(Collections.emptyList());
+        when(history.getPosition()).thenReturn(0);
+        when(history.getInitialGrid()).thenReturn(initialGrid);
+        VoidFuture future = mock(VoidFuture.class);
+        when(initialGrid.saveToFileAsync(any())).thenReturn(future);
+        ProjectMetadata meta = new ProjectMetadata();
+        meta.setName("some project");
+
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+        manager.registerProject(proj, meta);
+
+        manager.saveProject(proj, null);
+
+        verify(proj, times(1)).setLastSave();
+        verify(initialGrid, times(1)).saveToFileAsync(any());
+    }
+
+    private static interface VoidFuture extends ProgressingFuture<Void> {
+
     }
 }
