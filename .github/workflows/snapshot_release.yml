@@ -256,6 +256,19 @@ jobs:
         asset_name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
         asset_content_type: application/zip
 
+    - name: Unzip release artifact for Windows (with Java) for Installer
+      id: unzip-release-artifact-win-with-java
+      if: github.event_name == 'release'
+      run: unzip ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip -d ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}
+
+    - name: Upload release artifact for Windows (with Java) for Installer
+      id: upload-release-artifact-win-with-java
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v3
+      with:
+        name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}
+        path: ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}/openrefine-${{ steps.get_release_upload_url.outputs.tag_name }}
+
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
@@ -276,3 +289,80 @@ jobs:
         asset_name: openrefine-mac-${{ steps.get_release_upload_url.outputs.tag_name }}.dmg
         asset_content_type: application/x-apple-diskimage
 
+  windows_installer:
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download release artifact for Windows Installer (with Java)
+      id: download-release-artifact-win-with-java
+      if: github.event_name == 'release'
+      uses: actions/download-artifact@v3
+      with:
+        name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}
+        path: ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}
+
+#    - name: Sign the executables
+#      uses: nextgens/authenticode-sign-action@v1.0.1
+#      if: github.event_name == 'release'
+#      with:
+#        certificate: '${{ secrets.CERTIFICATES }}'
+#        credentials: '${{ secrets.CERTIFICATE_CREDENTIALS }}'
+#        key-uri: "projects/myProject/locations/europe-west2/keyRings/code-signing/cryptoKeys/ev/cryptoKeyVersions/1"
+#        timestamp-url: 'http://timestamp.digicert.com'
+#        description: 'OpenRefine'
+#        description-url: 'https://openrefine.org'
+#        folder: "./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}"
+#        recursive: true
+
+    - name: Build self-containing installer with InnoSetup 6 for Windows
+      id: build-installer-innosetup-win-with-java
+      if: github.event_name == 'release'
+      run: |
+        "%ProgramFiles(x86)%\Inno Setup 6\iscc.exe" -DMyAppVersion="${{ steps.get_release_upload_url.outputs.tag_name }}" -DMyProgramFiles="target\openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}" "packaging\openrefine.iss"
+      shell: cmd
+
+    - name: Cleanup unused installer build artifact (delete)
+      id: delete-release-artifact-win-with-java
+      if: github.event_name =='release'
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}
+        useGlob: false
+        failOnError: false
+
+#    - name: Sign the installer
+#      uses: nextgens/authenticode-sign-action@v1.0.1
+#      if: github.event_name == 'release'
+#      with:
+#        certificate: '${{ secrets.CERTIFICATES }}'
+#        credentials: '${{ secrets.CERTIFICATE_CREDENTIALS }}'
+#        key-uri: "projects/myProject/locations/europe-west2/keyRings/code-signing/cryptoKeys/ev/cryptoKeyVersions/1"
+#        timestamp-url: 'http://timestamp.digicert.com'
+#        description: 'OpenRefine Installer'
+#        description-url: 'https://openrefine.org'
+#        folder: "./packaging/target"
+#        recursive: false
+
+#    - name: Verify the signature
+#      if: github.event_name == 'release'
+#      run: call "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe" verify /v /pa "OpenRefine-Installer-${{ steps.get_release_upload_url.outputs.tag_name }}.exe"
+#      shell: cmd
+
+    - name: Upload the installer as an artifact
+      uses: actions/upload-artifact@v2
+      if: github.event_name == 'release'
+      with:
+        path: "./packaging/target/openrefine-win-with-java-installer-${{ steps.get_release_upload_url.outputs.tag_name }}.exe"
+        name: wininstaller-innosetup-${{ steps.get_release_upload_url.outputs.tag_name }}
+
+    - name: Upload release asset for Windows (with Java)
+      id: upload-release-asset-win-with-java-installer
+      if: github.event_name == 'release'
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
+      with:
+        upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
+        asset_path: ./packaging/target/openrefine-win-with-java-installer-${{ steps.get_release_upload_url.outputs.tag_name }}.exe
+        asset_name: openrefine-win-with-java-installer-${{ steps.get_release_upload_url.outputs.tag_name }}.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
