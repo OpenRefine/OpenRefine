@@ -573,7 +573,7 @@ public class SqlExporterTests extends RefineTest {
     }
 
     protected ObjectNode createOptionsFromProject(String tableName, String type, String size, String defaultValue,
-                                                  boolean allowNull) {
+            boolean allowNull) {
 
         ObjectNode json = ParsingUtilities.mapper.createObjectNode();
         ArrayNode columns = json.putArray("columns");
