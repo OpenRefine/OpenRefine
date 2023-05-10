@@ -109,6 +109,8 @@ public class EngineTests {
         when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetA.getFacetResult(new FacetStateStub(65, 35))).thenReturn(new FacetStateStub(65, 35));
         when(facetAll.getFacetResult(new FacetStateStub(100, 0))).thenReturn(new FacetStateStub(100, 0));
+        when(facetConfigA.isNeutral()).thenReturn(false);
+        when(facetConfigAll.isNeutral()).thenReturn(true);
         when((FacetAggregator<FacetStateStub>) facetA.getAggregator()).thenReturn(new FacetAggregatorStub(filterA));
         when((FacetAggregator<FacetStateStub>) facetAll.getAggregator()).thenReturn(new FacetAggregatorStub(noFilter));
         when(initialState.aggregateRows(Mockito.any(), Mockito.any())).thenReturn(allRowsState);
@@ -180,6 +182,12 @@ public class EngineTests {
         Assert.assertEquals(enginePartial.getTotalRows(), 123L);
         Assert.assertEquals(engine.getTotalCount(), 123L);
         Assert.assertEquals(enginePartial.getTotalCount(), 123L);
+    }
+
+    @Test
+    public void testNeutral() {
+        Assert.assertFalse(engine.isNeutral());
+        Assert.assertFalse(enginePartial.isNeutral());
     }
 
     @Test
