@@ -90,7 +90,7 @@ public class TextSearchFacet implements Facet {
         }
 
         @Override
-        public TextSearchFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public TextSearchFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
             return new TextSearchFacet(this, cellIndex);
         }
@@ -266,9 +266,6 @@ public class TextSearchFacet implements Facet {
             if ("regex".equals(_config._mode)) {
                 return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
 
-                    /**
-                     * 
-                     */
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -279,9 +276,6 @@ public class TextSearchFacet implements Facet {
             } else {
                 return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
 
-                    /**
-                     * 
-                     */
                     private static final long serialVersionUID = 1L;
 
                     @Override

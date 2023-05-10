@@ -122,9 +122,9 @@ public class TimeRangeFacet implements Facet {
         };
 
         @Override
-        public TimeRangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public TimeRangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
-            return new TimeRangeFacet(this, cellIndex, columnModel, overlayModels);
+            return new TimeRangeFacet(this, cellIndex, columnModel, overlayModels, projectId);
         }
 
         @Override
@@ -216,13 +216,16 @@ public class TimeRangeFacet implements Facet {
     protected String _errorMessage;
     protected ColumnModel _columnModel;
     protected Map<String, OverlayModel> _overlayModels;
+    protected long _projectId;
 
-    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long projectId) {
         _config = config;
         _cellIndex = cellIndex;
         _errorMessage = cellIndex == -1 ? "No column named " + _config._columnName : config._errorMessage;
         _columnModel = columnModel;
         _overlayModels = overlayModels;
+        _projectId = projectId;
     }
 
     @Override
@@ -243,7 +246,8 @@ public class TimeRangeFacet implements Facet {
             return new TimeRangeFacetAggregator(
                     _config,
                     false,
-                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels));
+                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels,
+                            _projectId));
         } else {
             return null;
         }

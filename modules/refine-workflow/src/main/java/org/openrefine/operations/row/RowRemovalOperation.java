@@ -72,7 +72,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
 
         @Override
         public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            Engine engine = getEngine(projectState);
+            Engine engine = getEngine(projectState, context.getProjectId());
             Grid result;
             if (Mode.RowBased.equals(engine.getMode())) {
                 result = projectState.removeRows(engine.combinedRowFilters());

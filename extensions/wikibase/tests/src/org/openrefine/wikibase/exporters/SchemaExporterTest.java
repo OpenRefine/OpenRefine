@@ -26,11 +26,11 @@ public class SchemaExporterTest extends RefineTest {
         Grid grid = this.createGrid(
                 new String[] { "a", "b" },
                 new Serializable[][] { { "c", "d" } });
-        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
-        exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
+        exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         TestUtils.assertEqualsAsJson(writer.toString(),
                 "{\"entityEdits\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}");
     }

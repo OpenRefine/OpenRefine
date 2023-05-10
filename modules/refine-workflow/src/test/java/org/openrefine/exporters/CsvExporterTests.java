@@ -71,6 +71,7 @@ public class CsvExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Properties options;
+    long projectId = 1234L;
 
     // System Under Test
     CsvExporter SUT;
@@ -98,7 +99,7 @@ public class CsvExporterTests extends RefineTest {
         CreateGrid(2, 2);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -113,7 +114,7 @@ public class CsvExporterTests extends RefineTest {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -130,7 +131,7 @@ public class CsvExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -146,7 +147,7 @@ public class CsvExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -167,9 +168,9 @@ public class CsvExporterTests extends RefineTest {
                 });
 
         Grid grid = project.getCurrentGrid();
-        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased), 1234L);
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -191,9 +192,9 @@ public class CsvExporterTests extends RefineTest {
                 });
 
         Grid grid = project.getCurrentGrid();
-        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased), 1234L);
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -215,9 +216,9 @@ public class CsvExporterTests extends RefineTest {
                 });
 
         Grid grid = project.getCurrentGrid();
-        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased), 1234L);
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -239,9 +240,9 @@ public class CsvExporterTests extends RefineTest {
                 });
 
         Grid grid = project.getCurrentGrid();
-        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased), 1234L);
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -269,6 +270,6 @@ public class CsvExporterTests extends RefineTest {
         }
 
         grid = createGrid(columns, cells);
-        engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+        engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased), 1234L);
     }
 }

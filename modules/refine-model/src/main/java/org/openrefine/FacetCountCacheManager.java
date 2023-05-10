@@ -47,7 +47,7 @@ public class FacetCountCacheManager {
         FacetCount facetCount = _cache.get(key);
 
         if (facetCount == null || facetCount.getChangeId() != changeId) {
-            facetCount = computeFacetCount(project.getCurrentGrid(), columnName, expression, changeId);
+            facetCount = computeFacetCount(project.getCurrentGrid(), columnName, expression, changeId, targetProjectId);
 
             synchronized (_cache) {
                 _cache.put(key, facetCount);
@@ -57,7 +57,8 @@ public class FacetCountCacheManager {
         return facetCount.getFacetState();
     }
 
-    protected FacetCount computeFacetCount(Grid grid, String columnName, String expression, long changeId) throws FacetCountException {
+    protected FacetCount computeFacetCount(Grid grid, String columnName, String expression, long changeId, long projectId)
+            throws FacetCountException {
         ColumnModel columnModel = grid.getColumnModel();
         int cellIndex = columnModel.getColumnIndexByName(columnName);
         if (cellIndex == -1) {
@@ -67,7 +68,7 @@ public class FacetCountCacheManager {
         RowEvaluable evaluable;
         try {
             evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression), columnModel,
-                    grid.getOverlayModels());
+                    grid.getOverlayModels(), projectId);
         } catch (ParsingException e) {
             throw new FacetCountException(String.format("The expression '%s' is invalid: %s", expression, e.getMessage()));
         }

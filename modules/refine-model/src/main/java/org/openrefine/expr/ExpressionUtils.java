@@ -88,6 +88,8 @@ public class ExpressionUtils {
      *            the cell at the intersection of the base column and current row
      * @param overlayModels
      *            the overlay models stored in the grid on which the expression is evaluated
+     * @param projectId
+     *            the id of the project this expression is evaluated on
      */
     static public void bind(
             Properties bindings,
@@ -97,7 +99,7 @@ public class ExpressionUtils {
             Record record,
             String columnName,
             Cell cell,
-            Map<String, OverlayModel> overlayModels) {
+            Map<String, OverlayModel> overlayModels, long projectId) {
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(columnModel, rowIndex, row, record));
         bindings.put("cells", new CellTuple(columnModel, row));
@@ -111,6 +113,7 @@ public class ExpressionUtils {
         if (columnModel != null) {
             bindings.put("columnModel", columnModel);
         }
+        bindings.put("project_id", projectId);
 
         if (cell == null) {
             bindings.remove("cell");

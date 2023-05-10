@@ -94,11 +94,11 @@ public class Engine {
         return MODE_ROW_BASED.equals(s) ? RowBased : Mode.RecordBased;
     }
 
-    public Engine(Grid state, EngineConfig config) {
+    public Engine(Grid state, EngineConfig config, long projectId) {
         _state = state;
         _config = config;
         _facets = config.getFacetConfigs().stream()
-                .map(fc -> fc.apply(state.getColumnModel(), state.getOverlayModels()))
+                .map(fc -> fc.apply(state.getColumnModel(), state.getOverlayModels(), projectId))
                 .collect(Collectors.toList());
         _facetsState = null;
 

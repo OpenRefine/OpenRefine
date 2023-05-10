@@ -140,7 +140,7 @@ public abstract class RowMapChange extends EngineDependentChange {
 
     @Override
     public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-        Engine engine = getEngine(projectState);
+        Engine engine = getEngine(projectState, context.getProjectId());
         GridMap gridMap = getGridMap(projectState, context);
         RowInRecordMapper positiveMapper = gridMap.positiveMapper;
         RowInRecordMapper negativeMapper = gridMap.negativeMapper;

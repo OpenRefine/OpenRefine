@@ -200,7 +200,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
         options = mock(Properties.class);
         engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
-        engine = new Engine(project.getCurrentGrid(), engine_config);
+        engine = new Engine(project.getCurrentGrid(), engine_config, 1234L);
 
         dispatcher = new Dispatcher() {
 

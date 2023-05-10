@@ -100,7 +100,7 @@ public class FillDownOperation extends EngineDependentOperation {
                 throw new DoesNotApplyException(
                         String.format("Column '%s' does not exist", _columnName));
             }
-            Engine engine = getEngine(state);
+            Engine engine = getEngine(state, context.getProjectId());
             boolean recordsPreserved = index != model.getKeyColumnIndex();
             Grid result;
             if (Mode.RecordBased.equals(_engineConfig.getMode())) {

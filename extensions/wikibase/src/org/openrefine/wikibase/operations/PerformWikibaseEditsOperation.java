@@ -156,7 +156,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 }
             }
             List<String> tags = Collections.singletonList(tag);
-            Engine engine = new Engine(projectState, operation._engineConfig);
+            Engine engine = new Engine(projectState, operation._engineConfig, 1234L);
 
             // Validate schema
             WikibaseSchema schema = (WikibaseSchema) projectState.getOverlayModels().get("wikibaseSchema");

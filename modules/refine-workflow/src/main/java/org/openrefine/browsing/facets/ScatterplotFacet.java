@@ -294,7 +294,7 @@ public class ScatterplotFacet implements Facet {
         }
 
         @Override
-        public ScatterplotFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public ScatterplotFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             return new ScatterplotFacet(this,
                     columnModel.getColumnIndexByName(columnName_x),
                     columnModel.getColumnIndexByName(columnName_y),
@@ -326,6 +326,7 @@ public class ScatterplotFacet implements Facet {
     protected String errorMessage_y;
     protected ColumnModel columnModel;
     protected Map<String, OverlayModel> overlayModels;
+    protected long projectId;
 
     final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
 
@@ -418,8 +419,10 @@ public class ScatterplotFacet implements Facet {
     public FacetAggregator<ScatterplotFacetState> getAggregator() {
         if (config.evaluableX != null && config.evaluableY != null) {
             return new ScatterplotFacetAggregator(config,
-                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX, columnModel, overlayModels),
-                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY, columnModel, overlayModels));
+                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX, columnModel, overlayModels,
+                            projectId),
+                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY, columnModel, overlayModels,
+                            projectId));
         } else {
             return null;
         }

@@ -192,7 +192,7 @@ public class PreviewExpressionCommand extends Command {
             Grid state = project.getCurrentGrid();
             Map<String, OverlayModel> overlayModels = state.getOverlayModels();
             ColumnModel columnModel = state.getColumnModel();
-            Engine engine = new Engine(state, engineConfig);
+            Engine engine = new Engine(state, engineConfig, project.getId());
 
             try {
                 Evaluable eval = MetaParser.parse(expression);
@@ -257,8 +257,7 @@ public class PreviewExpressionCommand extends Command {
             int repeatCount) {
         Row row = indexedRow.getRow();
         long rowIndex = indexedRow.getIndex();
-        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels);
-        bindings.put("project_id", projectId);
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels, projectId);
         Object result = null;
         try {
 
@@ -267,7 +266,7 @@ public class PreviewExpressionCommand extends Command {
             if (repeat) {
                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                    ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, newCell, overlayModels);
+                    ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, newCell, overlayModels, projectId);
 
                     Object newResult = eval.evaluate(bindings);
                     if (ExpressionUtils.isError(newResult)) {

@@ -133,7 +133,7 @@ public abstract class ColumnChangeByChangeData implements Change {
     protected ChangeData<Cell> getChangeDataRowBased(Grid state, int columnIndex, ChangeContext changeContext,
             Optional<ChangeData<Cell>> partialChangeData) {
         ColumnModel columnModel = state.getColumnModel();
-        Engine engine = new Engine(state, _engineConfig);
+        Engine engine = new Engine(state, _engineConfig, changeContext.getProjectId());
 
         RowInRecordChangeDataProducer<Cell> changeDataProducer = getChangeDataProducer(columnIndex, _columnName, columnModel,
                 state.getOverlayModels(), changeContext);
@@ -146,7 +146,7 @@ public abstract class ColumnChangeByChangeData implements Change {
     protected ChangeData<List<Cell>> getChangeDataRecordBased(Grid state, int columnIndex, ChangeContext changeContext,
             Optional<ChangeData<List<Cell>>> partialChangeData) {
         ColumnModel columnModel = state.getColumnModel();
-        Engine engine = new Engine(state, _engineConfig);
+        Engine engine = new Engine(state, _engineConfig, changeContext.getProjectId());
 
         RowInRecordChangeDataProducer<Cell> changeDataProducer = getChangeDataProducer(columnIndex, _columnName, columnModel,
                 state.getOverlayModels(), changeContext);
@@ -248,8 +248,7 @@ public abstract class ColumnChangeByChangeData implements Change {
                 Cell newCell = null;
 
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels);
-                bindings.put("project_id", projectId);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels, projectId);
                 // this should only happen when we are actually called by a row mapper and
                 // not within the context of change data production
                 if (ExpressionUtils.dependsOnPendingValues(eval, baseColumnName, columnModel, row, record)) {

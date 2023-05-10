@@ -187,7 +187,7 @@ public class MassEditOperation extends EngineDependentOperation {
         public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
             int columnIdx = columnIndex(state.getColumnModel(), _columnName);
             return mapper(columnIdx, _evaluable, _columnName, state.getColumnModel(), state.getOverlayModels(), _fromTo, _fromBlankTo,
-                    _fromErrorTo);
+                    _fromErrorTo, context.getProjectId());
         }
 
         @Override
@@ -199,7 +199,7 @@ public class MassEditOperation extends EngineDependentOperation {
 
     private static RowInRecordMapper mapper(int columnIdx, Evaluable evaluable, String columnName,
             ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            Map<String, Serializable> fromTo, Serializable fromBlankTo, Serializable fromErrorTo) {
+            Map<String, Serializable> fromTo, Serializable fromBlankTo, Serializable fromErrorTo, long projectId) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 6383816657756293719L;
@@ -210,7 +210,7 @@ public class MassEditOperation extends EngineDependentOperation {
                 Cell newCell = cell;
 
                 Properties bindings = ExpressionUtils.createBindings();
-                ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels);
+                ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels, projectId);
                 if (ExpressionUtils.dependsOnPendingValues(evaluable, columnName, columnModel, row, record)) {
                     return row.withCell(columnIdx, Cell.PENDING_NULL);
                 }

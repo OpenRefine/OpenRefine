@@ -88,6 +88,7 @@ public class ExportRowsCommand extends Command {
 
         try {
             Project project = getProject(request);
+            long projectId = project.getId();
             ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
@@ -119,13 +120,13 @@ public class ExportRowsCommand extends Command {
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
 
-                ((WriterExporter) exporter).export(project.getCurrentGrid(), projectMetadata, params, engine, writer);
+                ((WriterExporter) exporter).export(project.getCurrentGrid(), projectMetadata, projectId, params, engine, writer);
                 writer.close();
             } else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
 
                 OutputStream stream = response.getOutputStream();
-                ((StreamExporter) exporter).export(project.getCurrentGrid(), projectMetadata, params, engine, stream);
+                ((StreamExporter) exporter).export(project.getCurrentGrid(), projectMetadata, projectId, params, engine, stream);
                 stream.close();
 //          } else if (exporter instanceof UrlExporter) {
 //              ((UrlExporter) exporter).export(project, options, engine);

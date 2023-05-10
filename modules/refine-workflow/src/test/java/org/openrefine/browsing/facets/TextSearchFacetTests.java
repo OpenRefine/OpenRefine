@@ -97,7 +97,7 @@ public class TextSearchFacetTests extends RefineTest {
     private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
         // Add the facet to the project and create a row filter
         textFilterConfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
-        textFilter = textFilterConfig.apply(grid.getColumnModel(), Collections.emptyMap());
+        textFilter = textFilterConfig.apply(grid.getColumnModel(), Collections.emptyMap(), 1234L);
         rowFilter = textFilter.getAggregator().getRowFilter();
     }
 
@@ -226,7 +226,7 @@ public class TextSearchFacetTests extends RefineTest {
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
-        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }

@@ -82,6 +82,7 @@ public class SqlExporterTests extends RefineTest {
     Properties options;
     SqlCreateBuilder sqlCreateBuilder;
     SqlInsertBuilder sqlInsertBuilder;
+    long projectId = 1234L;
 
     // System Under Test
     SqlExporter SUT;
@@ -114,14 +115,14 @@ public class SqlExporterTests extends RefineTest {
                         { generateRandomNumericValues(), generateRandomNumericValues() },
                         { generateRandomNumericValues(), generateRandomNumericValues() }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         String optionsString = createOptionsFromProject(tableName, SqlData.SQL_TYPE_NUMERIC, null).toString();
         when(options.getProperty("options")).thenReturn(optionsString);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -143,14 +144,14 @@ public class SqlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         String optionsString = createOptionsFromProject(tableName, null, null).toString();
         when(options.getProperty("options")).thenReturn(optionsString);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -170,7 +171,7 @@ public class SqlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
@@ -178,7 +179,7 @@ public class SqlExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -201,7 +202,7 @@ public class SqlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
@@ -209,7 +210,7 @@ public class SqlExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -232,7 +233,7 @@ public class SqlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
@@ -242,7 +243,7 @@ public class SqlExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -272,7 +273,7 @@ public class SqlExporterTests extends RefineTest {
                         { "row1cell0", "row1cell1", "row1cell2" },
                         { "row2cell0", "row2cell1", "row2cell2" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         String type = "CHAR";
@@ -292,7 +293,7 @@ public class SqlExporterTests extends RefineTest {
                 new Serializable[][] {
                         { "It's row0cell0", "It's row0cell1", "It's row0cell2", "It's row0cell3" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         String tableName = "sql_table_test";
         ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
         optionsJson.put("includeStructure", true);
@@ -302,7 +303,7 @@ public class SqlExporterTests extends RefineTest {
 
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -330,7 +331,7 @@ public class SqlExporterTests extends RefineTest {
                         { "", "", "" },
                         { "", "", "row2cell2" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         int inNull = 8;
 
@@ -343,7 +344,7 @@ public class SqlExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -364,7 +365,7 @@ public class SqlExporterTests extends RefineTest {
                         { "row1cell0", "row1cell1", "row1cell2", "row1cell3" },
                         { "row2cell0", "row2cell1", "row2cell2", "row2cell3" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
@@ -374,7 +375,7 @@ public class SqlExporterTests extends RefineTest {
 
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -394,7 +395,7 @@ public class SqlExporterTests extends RefineTest {
                 new Serializable[][] {
                         { "It's row0cell0", "It's row0cell1", "It's row0cell2", "It's row0cell3" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         String tableName = "sql_table_test";
         ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
@@ -404,7 +405,7 @@ public class SqlExporterTests extends RefineTest {
 
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }

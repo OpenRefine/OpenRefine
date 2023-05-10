@@ -86,11 +86,11 @@ public class QuickStatementsExporterTest extends RefineTest {
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         schema.validate(new ValidationState(grid.getColumnModel()));
         grid = grid.withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
-        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
-        exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
+        exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         assertEquals(writer.toString(), TestingData.inceptionWithNewQS);
     }
 
@@ -230,10 +230,10 @@ public class QuickStatementsExporterTest extends RefineTest {
         Grid grid = this.createGrid(
                 new String[] { "a", "b" },
                 new Serializable[][] { { "c", "d" } });
-        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
-        exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
+        exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         assertEquals(QuickStatementsExporter.noSchemaErrorMessage, writer.toString());
     }
 

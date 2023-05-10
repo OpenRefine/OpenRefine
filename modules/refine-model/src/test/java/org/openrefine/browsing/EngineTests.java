@@ -68,6 +68,7 @@ public class EngineTests {
     private Grid initialState;
     private EngineConfig engineConfig;
     private EngineConfig engineConfigPartial;
+    private long projectId = 1234L;
     protected static RowInRecordFilter filterA = new RowInRecordFilter(true) {
 
         private static final long serialVersionUID = -609451600084843923L;
@@ -102,8 +103,8 @@ public class EngineTests {
         FacetConfig facetConfigA = mock(FacetConfig.class);
         FacetConfig facetConfigAll = mock(FacetConfig.class);
 
-        when(facetConfigA.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class))).thenReturn(facetA);
-        when(facetConfigAll.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class))).thenReturn(facetAll);
+        when(facetConfigA.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class), Mockito.anyLong())).thenReturn(facetA);
+        when(facetConfigAll.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class), Mockito.anyLong())).thenReturn(facetAll);
         when(facetA.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetA.getFacetResult(new FacetStateStub(65, 35))).thenReturn(new FacetStateStub(65, 35));
@@ -119,8 +120,8 @@ public class EngineTests {
                 facetConfigA, facetConfigAll);
         engineConfig = new EngineConfig(facetConfigs, Mode.RowBased);
         engineConfigPartial = new EngineConfig(facetConfigs, Mode.RowBased, 2L);
-        engine = new Engine(initialState, engineConfig);
-        enginePartial = new Engine(initialState, engineConfigPartial);
+        engine = new Engine(initialState, engineConfig, 1234L);
+        enginePartial = new Engine(initialState, engineConfigPartial, 1234L);
     }
 
     @Test

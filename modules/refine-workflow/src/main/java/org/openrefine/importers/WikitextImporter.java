@@ -754,7 +754,7 @@ public class WikitextImporter extends ReaderImporter {
 
         // Add reconciliation configs for columns with at least one reconciled cell
         ColumnModel columnModel = grid.getColumnModel();
-        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 0L);
         List<ColumnStats> columnStats = engine.getColumnStats();
         for (int i = 0; i != columnModel.getColumns().size(); i++) {
             if (columnStats.get(i).getReconciled() > 0) {

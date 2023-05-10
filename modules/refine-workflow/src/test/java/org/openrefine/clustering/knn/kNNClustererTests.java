@@ -82,7 +82,7 @@ public class kNNClustererTests extends RefineTest {
 
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(grid);
-        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS, 1234L));
 
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
@@ -95,7 +95,7 @@ public class kNNClustererTests extends RefineTest {
                         { "bar" } });
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(grid);
-        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS, 1234L));
 
         assertTrue(clusterer.getJsonRepresentation().isEmpty());
     }

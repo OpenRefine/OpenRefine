@@ -227,7 +227,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
             // Create an aggregator which counts the number of columns generated
             // by the splitting settings.
-            Engine engine = getEngine(state);
+            Engine engine = getEngine(state, context.getProjectId());
             int nbColumns = engine.aggregateFilteredRows(buildAggregator(_splitter, origColumnIdx), 0);
             if (_maxColumns != null && _maxColumns > 0) {
                 nbColumns = Math.min(nbColumns, _maxColumns);
@@ -262,8 +262,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 
         // for visibility in tests
         @Override
-        protected Engine getEngine(Grid grid) {
-            return super.getEngine(grid);
+        protected Engine getEngine(Grid grid, long projectId) {
+            return super.getEngine(grid, projectId);
         }
 
     }

@@ -104,7 +104,7 @@ public class GetScatterplotCommand extends Command {
         List<FacetConfig> newFacetConfigs = new ArrayList<>(origEngineConfig.getFacetConfigs());
         newFacetConfigs.add(o);
         EngineConfig newEngineConfig = new EngineConfig(newFacetConfigs, engine.getMode());
-        Engine newEngine = new Engine(grid, newEngineConfig);
+        Engine newEngine = new Engine(grid, newEngineConfig, project.getId());
 
         ScatterplotFacetResult scatterplotFacetResult = (ScatterplotFacetResult) newEngine.getFacetResults().get(scatterplotFacetPosition);
         ScatterplotFacetState facetState = scatterplotFacetResult.getFacetState();

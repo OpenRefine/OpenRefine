@@ -491,8 +491,8 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testComputeRowFacets() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
-        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
+        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels(), 1234L);
+        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels(), 1234L);
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
         List<FacetState> initialStates = facets
@@ -530,8 +530,8 @@ public abstract class RunnerTestBase {
 
     @Test
     public void testComputeRecordFacets() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
-        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
+        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels(), 1234L);
+        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels(), 1234L);
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
         List<FacetState> initialStates = facets

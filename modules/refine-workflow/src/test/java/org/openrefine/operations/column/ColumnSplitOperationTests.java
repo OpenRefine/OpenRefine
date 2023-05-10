@@ -28,6 +28,7 @@
 package org.openrefine.operations.column;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -282,7 +283,7 @@ public class ColumnSplitOperationTests extends RefineTest {
         when(engine.combinedRowFilters()).thenReturn(new OddRowFilter());
         when(engine.aggregateFilteredRows(any(), any())).thenReturn(3);
         ColumnSplitChange spied = spy(SUT);
-        when(spied.getEngine(any())).thenReturn(engine);
+        when(spied.getEngine(any(), anyLong())).thenReturn(engine);
 
         Change.ChangeResult changeResult = spied.apply(toSplit, mock(ChangeContext.class));
         Grid result = changeResult.getGrid();

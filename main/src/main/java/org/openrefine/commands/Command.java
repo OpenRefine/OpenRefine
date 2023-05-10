@@ -149,16 +149,12 @@ public abstract class Command {
         if (c == null) {
             c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
         }
-        Engine engine = new Engine(project.getHistory().getCurrentGrid(), c);
+        Engine engine = new Engine(project.getHistory().getCurrentGrid(), c, project.getId());
         return engine;
     }
 
     /**
      * Utility method for retrieving the Project object having the ID specified in the "project" URL parameter.
-     *
-     * @param request
-     * @return
-     * @throws ServletException
      */
     protected Project getProject(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -179,7 +175,7 @@ public abstract class Command {
         if (p != null) {
             return p;
         } else {
-            throw new ServletException("Failed to find project id #" + param + " - may be corrupt");
+            throw new ServletException(String.format("Failed to find project id #%d - may be corrupt", id));
         }
     }
 

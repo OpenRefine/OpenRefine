@@ -54,9 +54,11 @@ public interface FacetConfig {
      * @param overlayModels
      *            the overlay models of the table the facet is applied to (can be accessed by expressions evaluated by
      *            the facet)
+     * @param projectId
+     *            the id of the project this facet is evaluated on
      * @return a computed facet on the given project.
      */
-    public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels);
+    public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId);
 
     /**
      * Computes the set of columns the facet depends on. If the facet relies on an unknown set of columns, or if it is

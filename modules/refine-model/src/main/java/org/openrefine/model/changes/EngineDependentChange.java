@@ -19,8 +19,8 @@ public abstract class EngineDependentChange implements Change {
         _engineConfig = engineConfig;
     }
 
-    protected Engine getEngine(Grid grid) {
-        return new Engine(grid, _engineConfig);
+    protected Engine getEngine(Grid grid, long projectId) {
+        return new Engine(grid, _engineConfig, projectId);
     }
 
     // For the changes that need serializing in JSON

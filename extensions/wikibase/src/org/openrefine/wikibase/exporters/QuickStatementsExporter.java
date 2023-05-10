@@ -76,8 +76,8 @@ public class QuickStatementsExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Grid grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
-            Writer writer) throws IOException {
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Properties options,
+            Engine engine, Writer writer) throws IOException {
         WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
             writer.write(noSchemaErrorMessage);

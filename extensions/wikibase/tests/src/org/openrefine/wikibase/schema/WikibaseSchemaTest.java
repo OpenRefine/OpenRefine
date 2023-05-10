@@ -149,7 +149,7 @@ public class WikibaseSchemaTest extends RefineTest {
         schema.validate(validation);
         assertTrue(validation.getValidationErrors().isEmpty());
 
-        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         List<EntityEdit> updates = schema.evaluate(grid, engine);
         List<EntityEdit> expected = new ArrayList<>();
         TermedStatementEntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).addContributingRowId(123L).build();
@@ -220,7 +220,7 @@ public class WikibaseSchemaTest extends RefineTest {
                 + "      ]\n"
                 + "    }");
 
-        Engine engine = new Engine(grid, engineConfig);
+        Engine engine = new Engine(grid, engineConfig, 1234L);
         List<EntityEdit> updates = schema.evaluate(grid, engine);
         List<EntityEdit> expected = new ArrayList<>();
         EntityEdit update1 = new ItemEditBuilder(qid1).addStatement(statementUpdate1).addContributingRowId(123L).build();

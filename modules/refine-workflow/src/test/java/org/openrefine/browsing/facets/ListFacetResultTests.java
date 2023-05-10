@@ -82,7 +82,7 @@ public class ListFacetResultTests {
     @Test
     public void serializeListFacet() throws JsonParseException, JsonMappingException, IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column A")));
-        ListFacet facet = config.apply(model, Collections.emptyMap());
+        ListFacet facet = config.apply(model, Collections.emptyMap(), 1234L);
 
         Map<String, Long> map = new HashMap<>();
         map.put("foobar", 1L);
@@ -97,7 +97,7 @@ public class ListFacetResultTests {
     @Test
     public void serializeListFacetWithError() throws JsonParseException, JsonMappingException, IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column B")));
-        ListFacet facet = config.apply(model, Collections.emptyMap());
+        ListFacet facet = config.apply(model, Collections.emptyMap(), 1234L);
 
         ListFacetResult result = facet.getFacetResult(facet.getInitialFacetState());
 
@@ -107,7 +107,7 @@ public class ListFacetResultTests {
     @Test
     public void testSelectedEmptyChoice() throws IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column A")));
-        ListFacet facet = config.apply(model, Collections.emptyMap());
+        ListFacet facet = config.apply(model, Collections.emptyMap(), 1234L);
 
         Map<String, Long> map = new HashMap<>();
         map.put("abar", 1L);
