@@ -57,7 +57,6 @@ public class SqlCreateBuilder {
         return "\"" + columnName.replace("\"", "\"\"") + "\"";
     }
 
-
     public String getCreateSQL() {
         if (logger.isDebugEnabled()) {
             logger.debug("Create SQL with columns: {}", columns);
