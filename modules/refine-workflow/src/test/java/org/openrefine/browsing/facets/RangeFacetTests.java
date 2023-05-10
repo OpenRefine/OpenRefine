@@ -211,7 +211,7 @@ public class RangeFacetTests extends RefineTest {
                 });
 
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
-        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
     }
@@ -226,7 +226,7 @@ public class RangeFacetTests extends RefineTest {
                 });
 
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
-        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoNumericJson, ParsingUtilities.defaultWriter);
     }
@@ -241,7 +241,7 @@ public class RangeFacetTests extends RefineTest {
                 });
 
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
-        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetSingleNumericJson, ParsingUtilities.defaultWriter);
     }
@@ -256,7 +256,7 @@ public class RangeFacetTests extends RefineTest {
                 });
 
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
-        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetTwoValuesJson, ParsingUtilities.defaultWriter);
     }
@@ -273,7 +273,7 @@ public class RangeFacetTests extends RefineTest {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
         ListFacetConfig configListFacet = ParsingUtilities.mapper.readValue(listFacetConfigJson, ListFacetConfig.class);
 
-        Engine engine = new Engine(grid, new EngineConfig(Arrays.asList(config, configListFacet), Mode.RowBased));
+        Engine engine = new Engine(grid, new EngineConfig(Arrays.asList(config, configListFacet), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetBinBaseJson, ParsingUtilities.defaultWriter);
     }

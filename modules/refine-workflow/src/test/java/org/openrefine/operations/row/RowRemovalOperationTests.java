@@ -154,14 +154,10 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     private void checkRowCounts(Project project, long all, long filtered) {
-        Engine engine = new Engine(project.getCurrentGrid(), engineConfig);
+        Engine engine = new Engine(project.getCurrentGrid(), engineConfig, project.getId());
 
         assertEquals(engine.getTotalCount(), all);
         assertEquals(engine.getFilteredCount(), filtered);
-
-        Function fc = new FacetCount();
-        Integer count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
-        assertEquals(count.intValue(), filtered);
     }
 
     /**

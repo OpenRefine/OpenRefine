@@ -21,7 +21,7 @@ public class StringFacet implements Facet {
         }
 
         @Override
-        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             return new StringFacet(columnModel.getColumnIndexByName(columnName), this);
         }
 

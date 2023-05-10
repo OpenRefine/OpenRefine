@@ -52,15 +52,18 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
     final protected Evaluable _eval;
     final protected ColumnModel _columnModel;
     final protected Map<String, OverlayModel> _overlayModels;
+    final protected long _projectId;
 
     public ExpressionBasedRowEvaluable(
-            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long projectId) {
 
         _columnName = columnName;
         _cellIndex = cellIndex;
         _eval = eval;
         _columnModel = columnModel;
         _overlayModels = overlayModels;
+        _projectId = projectId;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
         Cell cell = row.getCell(_cellIndex);
 
-        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell, _overlayModels);
+        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell, _overlayModels, _projectId);
 
         return _eval.evaluate(bindings);
     }

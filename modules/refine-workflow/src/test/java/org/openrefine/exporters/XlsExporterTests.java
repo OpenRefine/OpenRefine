@@ -71,6 +71,7 @@ public class XlsExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Engine engine;
     Properties options;
+    long projectId = 1234L;
 
     // System Under Test
     StreamExporter SUT;
@@ -100,10 +101,10 @@ public class XlsExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
+            SUT.export(grid, projectMetadata, projectId, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -122,10 +123,10 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void test256Columns() throws IOException {
         CreateGrid(2, 256);
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
+            SUT.export(grid, projectMetadata, projectId, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -141,10 +142,10 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void test257Columns() throws IOException {
         CreateGrid(2, 257);
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
+            SUT.export(grid, projectMetadata, projectId, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -166,10 +167,10 @@ public class XlsExporterTests extends RefineTest {
                         { odt, odt },
                         { odt, odt }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
+            SUT.export(grid, projectMetadata, projectId, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }

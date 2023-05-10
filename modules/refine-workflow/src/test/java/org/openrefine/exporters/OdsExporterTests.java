@@ -69,6 +69,7 @@ public class OdsExporterTests extends RefineTest {
     Grid grid;
     Engine engine;
     Properties options;
+    long projectId = 1234L;
 
     // System Under Test
     StreamExporter SUT;
@@ -79,7 +80,7 @@ public class OdsExporterTests extends RefineTest {
         stream = new ByteArrayOutputStream();
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         options = mock(Properties.class);
     }
 
@@ -106,7 +107,7 @@ public class OdsExporterTests extends RefineTest {
                 });
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
+            SUT.export(grid, projectMetadata, projectId, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }

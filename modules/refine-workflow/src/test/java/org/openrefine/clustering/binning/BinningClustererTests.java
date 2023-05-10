@@ -85,7 +85,7 @@ public class BinningClustererTests extends RefineTest {
                         { "ĉ" } });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(grid);
-        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS, 1234L));
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
 
@@ -98,7 +98,7 @@ public class BinningClustererTests extends RefineTest {
                         { "d" } });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(grid);
-        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS, 1234L));
         assertEquals(clusterer.getJsonRepresentation().size(), 1);
     }
 }

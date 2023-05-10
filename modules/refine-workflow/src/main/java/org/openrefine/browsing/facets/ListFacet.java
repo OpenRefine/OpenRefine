@@ -161,8 +161,8 @@ public class ListFacet implements Facet {
         }
 
         @Override
-        public ListFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
-            return new ListFacet(this, columnModel, overlayModels);
+        public ListFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
+            return new ListFacet(this, columnModel, overlayModels, projectId);
         }
 
         @Override
@@ -233,6 +233,7 @@ public class ListFacet implements Facet {
     final ListFacetConfig _config;
     final ColumnModel _columnModel;
     final Map<String, OverlayModel> _overlayModels;
+    final long _projectId;
 
     /*
      * Derived configuration
@@ -241,10 +242,11 @@ public class ListFacet implements Facet {
     protected Evaluable _eval;
     protected String _errorMessage;
 
-    public ListFacet(ListFacetConfig config, ColumnModel model, Map<String, OverlayModel> overlayModels) {
+    public ListFacet(ListFacetConfig config, ColumnModel model, Map<String, OverlayModel> overlayModels, long projectId) {
         _config = config;
         _columnModel = model;
         _overlayModels = overlayModels;
+        _projectId = projectId;
 
         if (_config.columnName.length() > 0) {
             _cellIndex = _columnModel.getColumnIndexByName(_config.columnName);
@@ -287,7 +289,7 @@ public class ListFacet implements Facet {
     public FacetAggregator<StringValuesFacetState> getAggregator() {
         if (_errorMessage == null) {
             return new StringValuesFacetAggregator(_columnModel, _cellIndex,
-                    new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel, _overlayModels),
+                    new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel, _overlayModels, _projectId),
                     Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
                             .collect(Collectors.toSet()),
                     _config.selectBlank, _config.selectError, _config.invert);

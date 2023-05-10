@@ -71,6 +71,7 @@ public class HtmlExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Properties options;
+    long projectId = 1234L;
 
     // System Under Test
     WriterExporter SUT;
@@ -100,10 +101,10 @@ public class HtmlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -132,11 +133,11 @@ public class HtmlExporterTests extends RefineTest {
                         { "row0cell0", "row0cell1" },
                         { "row1cell0", "row1cell1" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -163,10 +164,10 @@ public class HtmlExporterTests extends RefineTest {
                         { "row1cell0", null, "row1cell2" },
                         { null, "row2cell1", "row2cell2" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -194,10 +195,10 @@ public class HtmlExporterTests extends RefineTest {
                         { "row1cell0", "ftp://ftp.ripe.net/ripe/", "row1cell2" },
                         { "https://gnu.org/", "row2cell1", "row2cell2" }
                 });
-        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         try {
-            SUT.export(grid, projectMetadata, options, engine, writer);
+            SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }

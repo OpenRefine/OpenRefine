@@ -120,7 +120,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
         return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError,
-                _repeat ? _repeatCount : 0);
+                _repeat ? _repeatCount : 0, context.getProjectId());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
 
     protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
-            Evaluable eval, OnError onError, int repeatCount) {
+            Evaluable eval, OnError onError, int repeatCount, long projectId) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 2272064171042189466L;
@@ -160,7 +160,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                 Cell newCell = null;
 
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell, overlayModels);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell, overlayModels, projectId);
                 if (ExpressionUtils.dependsOnPendingValues(eval, columnName, columnModel, row, record)) {
                     return row.withCell(columnIndex, new Cell(
                             cell != null ? cell.value : null,
@@ -189,7 +189,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                         newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
 
                         for (int i = 0; i < repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell, overlayModels);
+                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell, overlayModels, projectId);
 
                             newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(newValue)) {

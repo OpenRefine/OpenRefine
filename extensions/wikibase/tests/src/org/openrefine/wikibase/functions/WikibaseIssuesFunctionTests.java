@@ -69,7 +69,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
         row = grid.getRow(0L);
         rowId = 0;
         bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels());
+        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels(), 1234L);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
     public void testNoSchema() {
         grid = grid.withOverlayModels(Collections.emptyMap());
         bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels());
+        ExpressionUtils.bind(bindings, grid.getColumnModel(), row, rowId, null, "a", row.getCell(0), grid.getOverlayModels(), 1234L);
 
         Object returnValue = SUT.call(bindings, new Object[] {});
         assertEquals(returnValue, new EvalError("No wikibase schema associated with this project"));

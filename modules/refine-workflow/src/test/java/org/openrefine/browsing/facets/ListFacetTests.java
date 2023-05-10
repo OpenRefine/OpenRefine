@@ -192,7 +192,7 @@ public class ListFacetTests extends RefineTest {
                 false,
                 false);
         EngineConfig config = new EngineConfig(Arrays.asList(firstColumn, secondColumn), Engine.Mode.RowBased);
-        Engine engine = new Engine(project.getCurrentGrid(), config);
+        Engine engine = new Engine(project.getCurrentGrid(), config, 1234L);
         TestUtils.isSerializedTo(engine.getFacetResults(), expectedJson, ParsingUtilities.defaultWriter);
     }
 

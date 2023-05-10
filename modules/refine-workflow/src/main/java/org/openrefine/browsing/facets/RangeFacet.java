@@ -126,9 +126,9 @@ public class RangeFacet implements Facet {
         }
 
         @Override
-        public RangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public RangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
-            return new RangeFacet(this, cellIndex, columnModel, overlayModels);
+            return new RangeFacet(this, cellIndex, columnModel, overlayModels, projectId);
         }
 
         @Override
@@ -199,12 +199,14 @@ public class RangeFacet implements Facet {
     protected int _cellIndex;
     protected ColumnModel _columnModel;
     protected Map<String, OverlayModel> _overlayModels;
+    protected long _projectId;
 
     public RangeFacet(
             RangeFacetConfig config,
             int cellIndex,
             ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels) {
+            Map<String, OverlayModel> overlayModels,
+            long projectId) {
         _config = config;
         _cellIndex = cellIndex;
         _columnModel = columnModel;
@@ -225,7 +227,8 @@ public class RangeFacet implements Facet {
     @Override
     public FacetAggregator<NumericFacetState> getAggregator() {
         return new NumericFacetAggregator(100,
-                new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels),
+                new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels,
+                        _projectId),
                 _config._from,
                 _config._to,
                 _config._selectNumeric,

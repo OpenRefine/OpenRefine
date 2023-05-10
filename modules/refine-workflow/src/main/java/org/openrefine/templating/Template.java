@@ -73,7 +73,7 @@ public class Template {
     }
 
     public void writeRows(CloseableIterator<IndexedRow> rows, Writer writer, ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels,
+            Map<String, OverlayModel> overlayModels, long projectId,
             int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
@@ -86,7 +86,8 @@ public class Template {
                     break;
                 }
 
-                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, null);
+                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, projectId,
+                        null);
                 total++;
             }
         }
@@ -96,7 +97,7 @@ public class Template {
     }
 
     public void writeRecords(CloseableIterator<Record> records, Writer writer, ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels,
+            Map<String, OverlayModel> overlayModels, long projectId,
             int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
@@ -113,7 +114,8 @@ public class Template {
                     if (limit > 0 && total >= limit) {
                         break;
                     }
-                    internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, record);
+                    internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels,
+                            projectId, record);
                     bindings.remove("recordIndex");
                     total++;
                 }
@@ -125,13 +127,13 @@ public class Template {
     }
 
     public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings,
-            ColumnModel columnModel, Map<String, OverlayModel> overlayModels, Record record)
+            ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId, Record record)
             throws IOException {
         if (total > 0 && _separator != null) {
             writer.write(_separator);
         }
 
-        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, null, null, overlayModels);
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, null, null, overlayModels, projectId);
         for (Fragment f : _fragments) {
             if (f instanceof StaticFragment) {
                 writer.write(((StaticFragment) f).text);

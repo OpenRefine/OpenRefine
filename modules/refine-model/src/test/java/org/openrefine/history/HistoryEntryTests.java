@@ -139,7 +139,7 @@ public class HistoryEntryTests {
     protected static class MyFacetConfig implements FacetConfig {
 
         @Override
-        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
             throw new NotImplementedException();
         }
 

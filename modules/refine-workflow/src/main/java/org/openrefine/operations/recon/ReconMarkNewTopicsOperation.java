@@ -143,7 +143,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         if (_shareNewTopics) {
             // Aggregate the set of distinct values
             ImmutableMap<String, Long> empty = ImmutableMap.of();
-            RowFilter filter = createEngine(state).combinedRowFilters();
+            RowFilter filter = createEngine(state, context.getProjectId()).combinedRowFilters();
             ImmutableMap<String, Long> valueToId = state.aggregateRows(aggregator(columnIndex, filter), empty);
 
             return rowMapperWithSharing(columnIndex, reconConfig, historyEntryId, valueToId);

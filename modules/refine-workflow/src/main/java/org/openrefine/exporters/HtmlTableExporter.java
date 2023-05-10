@@ -54,7 +54,8 @@ public class HtmlTableExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Grid grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
+    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Properties params, Engine engine,
+            final Writer writer)
             throws IOException {
 
         TabularSerializer serializer = new TabularSerializer() {

@@ -140,7 +140,7 @@ public class TimeRangeFacetTests extends RefineTest {
                         { OffsetDateTime.parse("2012-04-05T02:00:01Z") } });
 
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
-        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
     }
@@ -155,7 +155,7 @@ public class TimeRangeFacetTests extends RefineTest {
                         { OffsetDateTime.parse("2012-04-05T02:00:01Z") } });
 
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
-        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoColumnJson, ParsingUtilities.defaultWriter);
     }
@@ -170,7 +170,7 @@ public class TimeRangeFacetTests extends RefineTest {
                         { "foo" } });
 
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
-        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        Engine engine = new Engine(project, new EngineConfig(Collections.singletonList(config), Mode.RowBased), 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoTimeJson, ParsingUtilities.defaultWriter);
     }

@@ -162,7 +162,7 @@ public class ScatterplotFacetTests extends RefineTest {
     public void serializeScatterplotFacetResult() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         EngineConfig engineConfig = new EngineConfig(Collections.singletonList(config), Mode.RowBased);
-        Engine engine = new Engine(grid, engineConfig);
+        Engine engine = new Engine(grid, engineConfig, 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
     }
@@ -176,7 +176,7 @@ public class ScatterplotFacetTests extends RefineTest {
 
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         EngineConfig engineConfig = new EngineConfig(Collections.singletonList(config), Mode.RowBased);
-        Engine engine = new Engine(grid, engineConfig);
+        Engine engine = new Engine(grid, engineConfig, 1234L);
 
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetWithErrorJson, ParsingUtilities.defaultWriter);
     }
@@ -184,7 +184,7 @@ public class ScatterplotFacetTests extends RefineTest {
     @Test
     public void testFilterRows() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
-        ScatterplotFacet facet = config.apply(grid.getColumnModel(), Collections.emptyMap());
+        ScatterplotFacet facet = config.apply(grid.getColumnModel(), Collections.emptyMap(), 1234L);
         RowFilter filter = facet.getAggregator().getRowFilter();
 
         assertTrue(filter.filterRow(0, grid.getRow(0)));

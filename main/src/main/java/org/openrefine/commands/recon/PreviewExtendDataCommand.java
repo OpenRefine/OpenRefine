@@ -134,7 +134,7 @@ public class PreviewExtendDataCommand extends Command {
             Set<String> ids = new HashSet<String>();
 
             Grid state = project.getCurrentGrid();
-            Engine engine = new Engine(state, engineConfig);
+            Engine engine = new Engine(state, engineConfig, project.getId());
             Grid sorted = state;
             if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
                 sorted = sorted.reorderRows(sortingConfig, false);

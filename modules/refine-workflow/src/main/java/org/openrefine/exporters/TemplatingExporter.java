@@ -78,7 +78,7 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Grid grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Properties options, Engine engine, Writer writer)
             throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
@@ -114,9 +114,10 @@ public class TemplatingExporter implements WriterExporter {
         }
 
         if (engine.getMode() == Mode.RowBased) {
-            template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), limit);
+            template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), projectId, limit);
         } else {
-            template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), limit);
+            template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), grid.getOverlayModels(), projectId,
+                    limit);
         }
     }
 

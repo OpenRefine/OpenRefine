@@ -71,7 +71,7 @@ public class DataExtensionChange extends EngineDependentChange {
          * that should not be fetched inside a given record.
          */
 
-        Engine engine = new Engine(projectState, _engineConfig);
+        Engine engine = new Engine(projectState, _engineConfig, 1234L);
         RowFilter rowFilter = RowFilter.ANY_ROW;
         if (Engine.Mode.RowBased.equals(engine.getMode())) {
             rowFilter = engine.combinedRowFilters();
