@@ -1,0 +1,8 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+  "recommendations": [
+    "vscjava.vscode-java-pack",
+    "yzhang.markdown-all-in-one"
+  ],
+  "unwantedRecommendations": []
+}
