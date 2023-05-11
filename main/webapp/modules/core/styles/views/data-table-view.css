@@ -69,6 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0;
   font-size: 1.05em;
   border-collapse: separate;
+  width: max-content;
 }
 
 .data-table td, .data-table-header td, .data-table-header th {
@@ -79,6 +80,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-bottom: 0.02rem dotted #ddd;
   border-right: 0.02rem solid #ddd;
   position: relative;
+  max-width: 300px;
 }
 
 .data-table-header td, .data-table-header th {
