@@ -422,8 +422,6 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
     if (cachedWidth !== undefined) {
         col.width(cachedWidth + 'px');
-    } else {
-        col.css('max-width', '200px');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       $(th).html("&nbsp;").on('click',function(evt) {
