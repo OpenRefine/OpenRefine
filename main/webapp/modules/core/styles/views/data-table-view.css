@@ -113,6 +113,23 @@ th {
   text-align: left;
 }
 
+.column-header-title {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+th .column-header-resizer {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: col-resize;
+  width: 6px;
+}
+
 table.data-header-table>tbody>tr>td {
   overflow: hidden !important;
 }
@@ -146,14 +163,13 @@ table.data-table td.column-header, table.data-table th.column-header {
 }
 
 .column-header-name {
-  margin: 0 0 0 21px;
   padding: 4px 0 0 0;
-  display: block;
+  display: inline-block;
+  position: absolute;
 }
 
 a.column-header-menu {
-  float: left;
-  display: block;
+  display: inline-block;
   margin: 0 4px 0 0;
   width: 17px;
   height: 19px;
@@ -191,7 +207,7 @@ div.data-table-cell-content {
   line-height: 1.2;
   color: #222;
   position: relative;
-  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 div.data-table-cell-content-numeric {

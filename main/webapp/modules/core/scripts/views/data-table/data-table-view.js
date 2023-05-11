@@ -112,6 +112,7 @@ DataTableView.prototype.render = function() {
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
       '<table class="data-table">'+
+        '<colgroup bind="colGroup"></colgroup>'+
         '<thead bind="tableHeader" class="data-table-header">'+
         '</thead>'+
         '<tbody bind="table" class="data-table">'+
@@ -144,7 +145,7 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
+  this._renderDataTables(elmts.table[0], elmts.tableHeader[0], elmts.colGroup);
   this._div.empty().append(html);
 
   // show/hide null values in cells
@@ -273,47 +274,18 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   return newGridPageSize;
 };
 
-DataTableView.prototype._renderDataTables = function(table, tableHeader) {
+DataTableView.prototype._renderDataTables = function(table, tableHeader, colGroup) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
-
-  /*------------------------------------------------------------
-   *  Column Group Headers
-   *------------------------------------------------------------
-   */
-
-  var renderColumnKeys = function(keys) {
-    if (keys.length > 0) {
-      var tr = tableHeader.insertRow(tableHeader.rows.length);
-      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
-
-      for (var c = 0; c < columns.length; c++) {
-        var column = columns[c];
-        var th = tr.appendChild(document.createElement("th"));
-        if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-          $(th).html('&nbsp;');
-        } else {
-          for (var k = 0; k < keys.length; k++) {
-            // if a node is a key in the tree-based data (JSON/XML/etc), then also display a dropdown arrow (non-functional currently)
-            // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
-            // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
-            if (c == keys[k]) {
-              $('<img />').attr("src", "images/down-arrow.png").appendTo(th);
-              break;
-            }
-          }
-        }
-      }
-    }
-  };
 
   /*------------------------------------------------------------
    *  Column Headers with Menus
    *------------------------------------------------------------
    */
 
-  self._renderTableHeader(tableHeader);
+  colGroup.empty();
+  self._renderTableHeader(tableHeader, colGroup);
 
   /*------------------------------------------------------------
    *  Data Cells
@@ -415,11 +387,16 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   }
 };
 
-DataTableView.prototype._renderTableHeader = function(tableHeader) {
+// cache which remembers the set width of each column (used when the grid is re-rendered)
+DataTableView.columnWidthCache = new Map();
+
+DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   var self = this;
   var columns = theProject.columnModel.columns;
   var trHead = document.createElement('tr');
   tableHeader.append(trHead);
+
+  // header for the first three columns (star, flag, row number)
   DOM.bind(
       $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
@@ -432,17 +409,29 @@ DataTableView.prototype._renderTableHeader = function(tableHeader) {
   ).dropdownMenu.on('click',function() {
     self._createMenuForAllColumns(this);
   });
+  $('<col>').attr('span', 3).appendTo(colGroup);
+
+  // headers for the normal columns
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
+    var col = $('<col>')
+        .attr('span', 1)
+        .appendTo(colGroup);
+    var cachedWidth = DataTableView.columnWidthCache.get(column.name);
+    if (cachedWidth !== undefined) {
+        col.width(cachedWidth + 'px');
+    } else {
+        col.css('max-width', '200px');
+    }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       $(th).html("&nbsp;").on('click',function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
     } else {
-      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
+      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th, col);
       self._columnHeaderUIs.push(columnHeaderUI);
     }
   };

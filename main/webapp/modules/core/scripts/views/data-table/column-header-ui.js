@@ -31,11 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
+function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td, col) {
   this._dataTableView = dataTableView;
   this._column = column;
   this._columnIndex = columnIndex;
   this._td = td;
+  this._col = col;
 
   this._render();
 }
@@ -58,6 +59,39 @@ DataTableColumnHeaderUI.prototype.getColumn = function() {
   return this._column;
 };
 
+// global state for the resizing of column headers
+DataTableColumnHeaderUI.resizingState = {
+  dragging: false, // whether we are currently resizing any column
+  col: null, // the column being resized
+  columnName: null, // the name of the column being resized
+  originalWidth: 0, // the original width of the header when the dragging started
+  originalPosition: 0 // the original position of the cursor when the dragging started
+};
+
+// global event handlers to react to mouse moves during resizing
+$(function() {
+  $('body').on('mousemove', function(e) {
+    var state = DataTableColumnHeaderUI.resizingState;
+    if (state.dragging) {
+      var totalMovement = e.pageX - state.originalPosition;
+      var newWidth = state.originalWidth + totalMovement;
+      state.col.width(newWidth);
+      e.preventDefault();
+    }
+  }).on('mouseup', function(e) {
+    // only capture left clicks
+    if (e.button !== 0) {
+      return;
+    }
+    var state = DataTableColumnHeaderUI.resizingState;
+    if (state.dragging) {
+      DataTableView.columnWidthCache.set(state.columnName, state.col.width());
+      state.dragging = false;
+    }
+    e.preventDefault();
+  });
+});
+
 DataTableColumnHeaderUI.prototype._render = function() {
   var self = this;
   var td = $(this._td);
@@ -68,6 +102,20 @@ DataTableColumnHeaderUI.prototype._render = function() {
   elmts.nameContainer.text(this._column.name);
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
+  });
+
+  elmts.resizer.on('mousedown', function(e) {
+    // only capture left clicks
+    if (e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    var state = DataTableColumnHeaderUI.resizingState;
+    state.dragging = true;
+    state.col = self._col;
+    state.columnName = self._column.name;
+    state.originalWidth = self._col.width();
+    state.originalPosition = e.pageX;
   });
 
   self.updateColumnStats();
