@@ -294,6 +294,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Get release upload URL
+      id: get_release_upload_url
+      if: github.event_name == 'release'
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
     - name: Download release artifact for Windows Installer (with Java)
       id: download-release-artifact-win-with-java
       uses: actions/download-artifact@v3
