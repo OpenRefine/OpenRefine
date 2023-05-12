@@ -9,11 +9,8 @@ import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.DetectLanguageUtils;
 import com.optimaize.langdetect.i18n.LdLocale;
-import com.optimaize.langdetect.profiles.LanguageProfile;
-import com.optimaize.langdetect.profiles.LanguageProfileReader;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 public class DetectLanguage implements Function {

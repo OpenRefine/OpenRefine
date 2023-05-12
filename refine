@@ -51,7 +51,7 @@ Actions
     run                           Run OpenRefine [default].
     server_test                   Run the server tests.
     test                          Run all tests.
-    ui_tests                      Run the UI tests.
+    e2e_tests                      Run the e2e tests.
     windows_dist <version>        Make Windows binary distribution.
 EOF
 exit 1
@@ -347,7 +347,7 @@ test() {
 }
 
 
-ui_tests() {
+e2e_tests() {
     get_revision
 
     CYPRESS_RECORD=0
@@ -582,7 +582,6 @@ for ((i=0; i<${#args[@]}; i+=1)); do
     -w) ((i+=1)); REFINE_WEBAPP="${args[i]}"; continue;;
     -d) ((i+=1)); REFINE_DATA_DIR="${args[i]}"; continue;;
     -m) ((i+=1)); REFINE_MEMORY="${args[i]}"; REFINE_MIN_MEMORY="${args[i]}"; continue;;
-    -k) ((i+=1)); REFINE_GOOGLE_API_KEY="${args[i]}"; continue;;
     -v) ((i+=1)); REFINE_VERBOSITY="${args[i]}"; continue;;
     -x) ((i+=1)); REFINE_EXTRA_OPTS="${args[i]}"; continue;;
     --debug) add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
@@ -721,7 +720,7 @@ case "$ACTION" in
   clean) do_mvn clean;;
   test) test $1;;
   tests) test $1;;
-  ui_tests) ui_tests;;    
+  e2e_tests) e2e_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;

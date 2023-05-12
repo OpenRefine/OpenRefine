@@ -35,7 +35,6 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.FunctionDescription;
 import org.jsoup.Jsoup;

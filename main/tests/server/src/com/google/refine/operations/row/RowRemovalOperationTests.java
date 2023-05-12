@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2012,2023, OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,50 @@
 package com.google.refine.operations.row;
 
 import java.io.IOException;
+import java.util.Properties;
 
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.RowVisitor;
+import com.google.refine.expr.functions.FacetCount;
+import com.google.refine.grel.Function;
+import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.Cell;
+import com.google.refine.model.ModelException;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RowRemovalOperationTests extends RefineTest {
 
+    // Equivalent to duplicate facet on Column A with true selected
+    static final String ENGINE_JSON_DUPLICATES = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column A\",\"expression\":\"facetCount(value, 'value', 'Column A') > 1\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":true,\"l\":\"true\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "row-removal", RowRemovalOperation.class);
     }
+
+    @Override
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+
+    // dependencies
+    Project project;
+    Properties options;
+    EngineConfig engine_config;
+    Engine engine;
+    Properties bindings;
 
     @Test
     public void serializeRowRemovalOperation() throws IOException {
@@ -52,4 +81,84 @@ public class RowRemovalOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json);
     }
+
+    @BeforeMethod
+    public void SetUp() throws IOException, ModelException {
+        project = createProjectWithColumns("RowRemovalOperationTests", "Column A");
+
+        engine = new Engine(project);
+        engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
+        engine.initializeFromConfig(engine_config);
+        engine.setMode(Engine.Mode.RowBased);
+
+        bindings = new Properties();
+        bindings.put("project", project);
+
+    }
+
+    @AfterMethod
+    public void TearDown() {
+        project = null;
+        engine = null;
+        bindings = null;
+    }
+
+    private void checkRowCounts(int all, int filtered) {
+        engine.getAllRows().accept(project, new CountVerificationRowVisitor(all));
+        engine.getAllFilteredRows().accept(project, new CountVerificationRowVisitor(filtered));
+
+        Function fc = new FacetCount();
+        Integer count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
+        Assert.assertEquals(count.intValue(), filtered);
+    }
+
+    /**
+     * Test for issue 567. Problem doesn't seem to occur when testing interactively, but this demonstrates that the
+     * facet count cache can get stale after row removal operations
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIssue567() throws Exception {
+        for (int i = 0; i < 5; i++) {
+            Row row = new Row(5);
+            row.setCell(0, new Cell(i < 4 ? "a" : "b", null));
+            project.rows.add(row);
+        }
+        checkRowCounts(5, 4);
+
+        EngineDependentOperation op = new RowRemovalOperation(engine_config);
+        HistoryEntry historyEntry = op.createProcess(project, options).performImmediate();
+        checkRowCounts(1, 0);
+
+        historyEntry.revert(project);
+        checkRowCounts(5, 4);
+    }
+
+    class CountVerificationRowVisitor implements RowVisitor {
+
+        private int count = 0;
+        private int target;
+
+        private CountVerificationRowVisitor(int targetCount) {
+            target = targetCount;
+        }
+
+        @Override
+        public boolean visit(Project project, int rowIndex, Row row) {
+            count++;
+            return false;
+        }
+
+        @Override
+        public void start(Project project) {
+            count = 0;
+        }
+
+        @Override
+        public void end(Project project) {
+            Assert.assertEquals(count, target);
+        }
+    }
+
 }
