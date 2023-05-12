@@ -411,11 +411,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         {
           onDone: function(o) {
             row.starred = newStarred;
-            renderRow(tr, r, row, even);
           }
         },
         "json"
       );
+      star.classList.remove(newStarred ? "data-table-star-off" : "data-table-star-on");
+      star.classList.add(newStarred ? "data-table-star-on" : "data-table-star-off");
     });
     
     var tdFlag = tr.insertCell(tr.cells.length);
@@ -433,11 +434,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         {
           onDone: function(o) {
             row.flagged = newFlagged;
-            renderRow(tr, r, row, even);
           }
         },
         "json"
       );
+      flag.classList.remove(newFlagged ? "data-table-flag-off" : "data-table-flag-on");
+      flag.classList.add(newFlagged ? "data-table-flag-on" : "data-table-flag-off");
     });
 
     var tdIndex = tr.insertCell(tr.cells.length);
