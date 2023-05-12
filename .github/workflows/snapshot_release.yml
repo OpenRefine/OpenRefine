@@ -395,7 +395,7 @@ jobs:
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
       if: github.event_name != 'release'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: "./packaging/target/openrefine-win-with-java-installer-4.0-SNAPSHOT.exe"
         name: wininstaller-innosetup-4.0-SNAPSHOT
