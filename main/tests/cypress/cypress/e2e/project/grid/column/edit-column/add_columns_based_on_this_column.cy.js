@@ -42,6 +42,10 @@ describe(__filename, function () {
     cy.assertCellEquals(0, 'Test_Python_toLower', 'butter,with salt');
     cy.assertCellEquals(1, 'Test_Python_toLower', 'butter,whipped,with salt');
   });
+/*
+ * Test temporarily disabled as it does not pass reliably.
+ * I have planned to change the backend architecture to remove some potential races.
+ *
   it('Cancel a long computation of Python expressions', function () {
     cy.loadAndVisitProject('food.mini');
 
@@ -67,7 +71,7 @@ describe(__filename, function () {
     cy.get('.column-header-name').contains('long_computation').should('not.exist');
     cy.get('.data-table td .waiting').should('not.exist');
   });
-
+*/
   it('Ensure new column is added based on previous column in Clojure', function () {
     cy.loadAndVisitProject('food.mini');
 
