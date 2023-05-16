@@ -41,6 +41,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   color: inherit;
 }
 
+.ui-tabs-tab:focus {
+  outline: #86A8DF auto 5px; /* color of native browser outlines */
+}
+
 .ui-tabs .ui-tabs-nav {
   padding: 0 var(--padding-normal);
 }
