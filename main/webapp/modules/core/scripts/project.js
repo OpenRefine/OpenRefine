@@ -134,6 +134,7 @@ function initializeUI(uiState) {
   $('#app-home-button').attr('title', $.i18n('core-index/navigate-home'));
 
   Refine.setTitle();
+  Refine.clearAjaxInProgress();
 
   ui = DOM.bind($("#body"));
 
