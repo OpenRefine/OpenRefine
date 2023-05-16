@@ -86,12 +86,7 @@ public class ApplyOperationsCommand extends Command {
                     }
                 }
             }
-
-            String code = "ok";
-            if (project.getProcessManager().hasPending()) {
-                code = "pending";
-            }
-            respondJSON(response, new JsonResponse(code, results));
+            respondJSON(response, new JsonResponse("ok", results));
         } catch (IOException e) {
             respondException(response, e);
         }
