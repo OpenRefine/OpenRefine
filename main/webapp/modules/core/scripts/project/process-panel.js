@@ -38,8 +38,6 @@ function ProcessPanel(notificationsContainer, processPanel, tabHeader) {
   this._timerID = null;
   this._processCount = 0;
 
-  this._updateOptions = {};
-  this._onDones = [];
   this._latestHistoryEntry = null;
   
   this._notificationsContainer.html(DOM.loadHTML("core", "scripts/project/notifications-area.html"));
@@ -65,7 +63,7 @@ function ProcessPanel(notificationsContainer, processPanel, tabHeader) {
     }
   });
 
-  this.update({});
+  this.update();
 }
 
 ProcessPanel.prototype.resize = function() {
@@ -222,17 +220,8 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   }
 };
 
-ProcessPanel.prototype.update = function(updateOptions, onDone) {
+ProcessPanel.prototype.update = function(onDone) {
   this._latestHistoryEntry = null;
-
-  for (var n in updateOptions) {
-    if (updateOptions.hasOwnProperty(n)) {
-      this._updateOptions[n] = updateOptions[n];
-    }
-  }
-  if (onDone) {
-    this._onDones.push(onDone);
-  }
 
   if (this._timerID !== null) {
     return;
@@ -244,6 +233,9 @@ ProcessPanel.prototype.update = function(updateOptions, onDone) {
       function(data) {
         self._latestHistoryEntry = null;
         self._render(data);
+        if (onDone) {
+          onDone();
+        }
       }
   );
 };
@@ -291,99 +283,22 @@ ProcessPanel.prototype._cancelAll = function() {
     { },
     function(o) {
         self._data = null;
-        self._runOnDones();
     },
     "json"
   );
 };
 
 ProcessPanel.prototype._render = function(newData) {
-  this._renderNotifications(newData);
-  this._renderPanel(newData);
-}
-
-ProcessPanel.prototype._renderNotifications = function(newData) {
   var self = this;
-  var newProcessMap = {};
-  var processes = newData.processes;
+  self._renderPanel(newData);
+  self._data = newData;
 
-  if ((this._data) && this._data.processes.length > 0) {
-    var oldProcesses = this._data.processes;
-    for (var i = 0; i < oldProcesses.length; i++) {
-      var process = oldProcesses[i];
-      if ("onDone" in process && !(process.id in newProcessMap)) {
-        this._perform(process.onDone);
-      }
-    }
-  }
-  this._data = newData;
-  
-  if (this._data.exceptions) {
-    var messages = $.map(this._data.exceptions, function(e) {
-      return e.message;
-    }).join('\n');
-    
-    if (this._data.processes.length == 0) {
-      window.alert($.i18n('core-project/last-op-er')+'\n' + messages);
-    } else {
-      if (window.confirm($.i18n('core-project/last-op-er')+'\n' + messages +
-            '\n\n'+$.i18n('core-project/continue-remaining'))) {
-        Refine.postCSRF(
-          "command/core/apply-operations?" + $.param({ project: theProject.id }), 
-          { operations: '[]' },
-          function(o) {},
-          "json"
-        );
-      } else {
-        self._cancelAll();
-      }
-    }
-  }
-  
+  // schedule next update
   if (this._data.processes.length && !this._timerID) {
     this._timerID = window.setTimeout(function() {
       self._timerID = null;
       self.update();
     }, 500);
-  } else {
-    this._runOnDones();
   }
 };
 
-ProcessPanel.prototype._perform = function(jobs) {
-  for (var i = 0; i < jobs.length; i++) {
-    var job = jobs[i];
-    if (job.action == "createFacet") {
-      try {
-        ui.browsingEngine.addFacet(
-            job.facetType,
-            job.facetConfig,
-            job.facetOptions
-        );
-      } catch (e) {
-        //
-      }
-    } else if (job.action == "open") {
-      var url = 'http://' + window.location.host + ModuleWirings[job.module] + job.path + '?' + job.params;
-      window.open(url, 'new');
-    }
-  }
-};
-
-ProcessPanel.prototype._runOnDones = function() {
-  var updateOptions = this._updateOptions;
-  var onDones = this._onDones;
-
-  this._updateOptions = {};
-  this._onDones = [];
-
-  Refine.update(updateOptions, function() {
-    for (var i = 0; i < onDones.length; i++) {
-      try {
-        onDones[i]();
-      } catch (e) {
-        Refine.reportException(e);
-      }
-    }
-  });
-};

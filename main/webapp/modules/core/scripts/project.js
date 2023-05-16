@@ -336,6 +336,11 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
       ui.browsingEngine.update(onDone);
     });
   }
+  if (options.everythingChanged || options.processesChanged) {
+    pushFunction(function(onDone) {
+      ui.processPanel.update(onDone);
+    });
+  }
 
   // run the callbacks registered by extensions, passing them
   // the options
@@ -418,11 +423,6 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
     updateOptions,
     {
       onDone: function(o) {
-        if (o.code == "pending") {
-          // Something might have already been done and so it's good to update
-          Refine.update({ everythingChanged: true });
-        }
-
         // show pill notification for the last operation to have been successfully applied,
         // and compute whether all operations successfully applied preserved rows / records
         var latestHistoryEntry = null;
@@ -433,6 +433,7 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
             latestHistoryEntry = operationResult.historyEntry;
             updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestHistoryEntry.gridPreservation !== 'no-row-preservation';
             updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestHistoryEntry.gridPreservation === 'preserves-records'; 
+            updateOptions.processesChanged = true;
             if (latestHistoryEntry.createdFacets) {
               for (let facetConfig of latestHistoryEntry.createdFacets) {
                 let facetType = facetConfig.type;
@@ -516,24 +517,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       }
 
       if (o.code == "ok") {
-        if ("historyEntry" in o) {
-          updateOptions.rowIdsPreserved = o.historyEntry.gridPreservation !== 'no-row-preservation';
-          updateOptions.recordIdsPreserved = o.historyEntry.gridPreservation === 'preserves-records';
-        }
         Refine.update(updateOptions, callbacks.onFinallyDone);
-
-        if ("historyEntry" in o) {
-          ui.processPanel.showUndo(o.historyEntry);
-        }
-      } else if (o.code == "pending") {
-        if ("onPending" in callbacks) {
-          try {
-            callbacks.onPending(o);
-          } catch (e) {
-            Refine.reportException(e);
-          }
-        }
-        ui.processPanel.update(updateOptions, callbacks.onFinallyDone);
       }
     }
   }

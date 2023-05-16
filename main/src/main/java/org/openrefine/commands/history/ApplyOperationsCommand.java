@@ -36,28 +36,25 @@ package org.openrefine.commands.history;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.commands.Command;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.UnknownOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ApplyOperationsCommand extends Command {
 
@@ -89,12 +86,7 @@ public class ApplyOperationsCommand extends Command {
                     }
                 }
             }
-
-            String code = "ok";
-            if (project.getProcessManager().hasPending()) {
-                code = "pending";
-            }
-            respondJSON(response, new JsonResponse(code, results));
+            respondJSON(response, new JsonResponse("ok", results));
         } catch (IOException e) {
             respondException(response, e);
         }
