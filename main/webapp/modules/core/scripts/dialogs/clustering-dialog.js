@@ -284,7 +284,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             return choices.length;
         };
 
-        var maxRenderRows = JSON.parse(
+        var maxRenderRows = parseInt(
             Refine.getPreference("ui.clustering.choices.limit", 5000)
         );
         maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
