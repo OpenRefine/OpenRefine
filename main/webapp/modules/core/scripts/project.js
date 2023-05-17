@@ -520,7 +520,17 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       }
 
       if (o.code == "ok") {
+        // TODO remove this once changes and operations are merged as it is duplicating
+        // logic from the handling of apply-operations' output
+        if ("historyEntry" in o) {
+          updateOptions.rowIdsPreserved = o.historyEntry.gridPreservation !== 'no-row-preservation';
+          updateOptions.recordIdsPreserved = o.historyEntry.gridPreservation === 'preserves-records';
+        }
         Refine.update(updateOptions, callbacks.onFinallyDone);
+
+        if ("historyEntry" in o) {
+          ui.processPanel.showUndo(o.historyEntry);
+        }
       }
     }
   }
