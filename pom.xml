@@ -58,7 +58,6 @@
         <module>modules/refine-grel</module>
         <module>modules/refine-util</module>
         <module>modules/refine-testing</module>
-        <module>modules/refine-spark-runner</module>
         <module>modules/refine-local-runner</module>
         <module>modules/refine-workflow</module>
         <module>main</module>

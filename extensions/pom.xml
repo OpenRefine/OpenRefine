@@ -24,7 +24,6 @@
         <module>gdata</module>
         <module>pc-axis</module>
         <module>phonetic</module>
-        <module>spark</module>
         <!-- Add new extensions here -->
   </modules>
 
