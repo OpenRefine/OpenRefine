@@ -287,6 +287,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
         var maxRenderRows = JSON.parse(
             Refine.getPreference("ui.clustering.choices.limit", 5000)
         );
+        maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
         var totalRows = 0;
         for (var clusterIndex = 0; clusterIndex < clusters.length && totalRows < maxRenderRows; clusterIndex++) {
             totalRows += renderCluster(clusters[clusterIndex], clusterIndex);
