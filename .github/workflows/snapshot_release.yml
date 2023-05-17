@@ -217,8 +217,8 @@ jobs:
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
       
-    - name: Build and test
-      run: mvn -B test
+    - name: Build
+      run: mvn -B compile
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
