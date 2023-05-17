@@ -221,8 +221,6 @@ ProcessPanel.prototype._renderPanel = function(newData) {
 };
 
 ProcessPanel.prototype.update = function(onDone) {
-  this._latestHistoryEntry = null;
-
   if (this._timerID !== null) {
     return;
   }
@@ -231,7 +229,6 @@ ProcessPanel.prototype.update = function(onDone) {
   Ajax.chainGetJSON(
       "command/core/get-processes?" + $.param({ project: theProject.id }), null,
       function(data) {
-        self._latestHistoryEntry = null;
         self._render(data);
         if (onDone) {
           onDone();
