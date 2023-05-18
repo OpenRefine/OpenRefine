@@ -62,7 +62,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
         Operation op = new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, "b", false, null);
-        Change change = op.createChange();
 
         Grid expected = createGrid(
                 new String[] { "a", "b", "c" },
@@ -73,7 +72,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "11", null }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
+        assertGridEquals(op.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 
     @Test
@@ -87,7 +86,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
         Operation op = new TransposeColumnsIntoRowsOperation(
                 "b 1", 0, true, false, "b", false, null);
-        Change change = op.createChange();
 
         Grid expected = createGrid(
                 new String[] { "a", "b" },
@@ -100,7 +98,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "9" }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
+        assertGridEquals(op.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 
     @Test
@@ -114,7 +112,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 
         Operation op = new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, "key", "value");
-        Change change = op.createChange();
 
         Grid expected = createGrid(
                 new String[] { "a", "key", "value", "c" },
@@ -125,6 +122,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "b 2", "11", null }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
+        assertGridEquals(op.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 }

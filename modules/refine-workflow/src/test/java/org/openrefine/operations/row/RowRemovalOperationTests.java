@@ -41,6 +41,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.functions.FacetCount;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.Function;
@@ -52,6 +53,7 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -113,13 +115,13 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRemoveRows() throws DoesNotApplyException {
+    public void testRemoveRows() throws DoesNotApplyException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-        Change change = new RowRemovalOperation(engineConfig).createChange();
-        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Operation operation = new RowRemovalOperation(engineConfig);
+        Change.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 
@@ -134,13 +136,13 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRemoveRecords() throws DoesNotApplyException {
+    public void testRemoveRecords() throws DoesNotApplyException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-        Change change = new RowRemovalOperation(engineConfig).createChange();
-        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Operation operation = new RowRemovalOperation(engineConfig);
+        Change.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 

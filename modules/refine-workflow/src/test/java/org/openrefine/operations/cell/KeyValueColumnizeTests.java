@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -48,6 +49,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -99,9 +101,9 @@ public class KeyValueColumnizeTests extends RefineTest {
                         { "3", "b", "5" },
                         { "3", "d", "3" } });
 
-        Change change = new KeyValueColumnizeOperation(
-                "Cat", "Val", null).createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Operation operation = new KeyValueColumnizeOperation(
+                "Cat", "Val", null);
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -152,11 +154,11 @@ public class KeyValueColumnizeTests extends RefineTest {
                         { "fruit", "banana" },
                         { "price", "3.1" } });
 
-        Change change = new KeyValueColumnizeOperation(
+        Operation operation = new KeyValueColumnizeOperation(
                 "Key",
                 "Value",
-                null).createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+                null);
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -193,11 +195,11 @@ public class KeyValueColumnizeTests extends RefineTest {
                         { "price", "3.1", "legislation" }
                 });
 
-        Change change = new KeyValueColumnizeOperation(
+        Operation operation = new KeyValueColumnizeOperation(
                 "Key",
                 "Value",
-                "Notes").createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+                "Notes");
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -236,11 +238,11 @@ public class KeyValueColumnizeTests extends RefineTest {
                         { "price", "3.1", "56" }
                 });
 
-        Change change = new KeyValueColumnizeOperation(
+        Operation operation = new KeyValueColumnizeOperation(
                 "Key",
                 "Value",
-                null).createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+                null);
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -256,7 +258,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     @Test
-    public void testCopyRowsWithNoKeys() throws DoesNotApplyException {
+    public void testCopyRowsWithNoKeys() throws DoesNotApplyException, ParsingException {
         // when a key cell is empty, if there are other columns around, we simply copy those
         Grid grid = createGrid(
                 new String[] { "Key", "Value" },
@@ -269,11 +271,11 @@ public class KeyValueColumnizeTests extends RefineTest {
                         { "price", "3.1", }
                 });
 
-        Change change = new KeyValueColumnizeOperation(
+        Operation operation = new KeyValueColumnizeOperation(
                 "Key",
                 "Value",
-                null).createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+                null);
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();

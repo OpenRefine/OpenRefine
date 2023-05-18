@@ -78,8 +78,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             }
 
             Operation op = new SaveWikibaseSchemaOperation(schema);
-            Change change = op.createChange();
-            addHistoryEntryAndRespond(request, response, project, op.getDescription(), op, change);
+            addHistoryEntryAndRespond(request, response, project, op);
         } catch (Exception e) {
             // This is an unexpected exception, so we log it.
             respondException(response, e);

@@ -59,9 +59,9 @@ public class CellEditOperationTests extends RefineTest {
 
     @Test
     public void testCellChange() throws DoesNotApplyException, ParsingException {
-        Change change = new CellEditOperation(0L, "foo", "changed").createChange();
+        Operation operation = new CellEditOperation(0L, "foo", "changed");
 
-        Change.ChangeResult changeResult = change.apply(initialGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);

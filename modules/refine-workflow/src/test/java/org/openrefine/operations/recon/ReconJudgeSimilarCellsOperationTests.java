@@ -36,6 +36,7 @@ import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -49,6 +50,7 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -117,13 +119,13 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsShareTopics() throws DoesNotApplyException, ModelException {
-        Change change = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.New, null, true).createChange();
+    public void testReconJudgeSimilarCellsShareTopics() throws DoesNotApplyException, ModelException, ParsingException {
+        Operation operation = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.New, null, true);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -153,15 +155,14 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsMatch() throws DoesNotApplyException, ModelException {
+    public void testReconJudgeSimilarCellsMatch() throws DoesNotApplyException, ModelException, ParsingException {
         ReconCandidate match = new ReconCandidate("p", "x 1", new String[] {}, 24.);
-        Change change = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.Matched, match, false)
-                .createChange();
+        Operation operation = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.Matched, match, false);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

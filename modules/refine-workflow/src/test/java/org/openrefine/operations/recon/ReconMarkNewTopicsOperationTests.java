@@ -35,6 +35,7 @@ import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -47,6 +48,7 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -106,14 +108,14 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconMarkNewTopicsOperation() throws DoesNotApplyException, ModelException {
-        Change change = new ReconMarkNewTopicsOperation(
-                EngineConfig.ALL_ROWS, "bar", true, null, null, null).createChange();
+    public void testReconMarkNewTopicsOperation() throws DoesNotApplyException, ModelException, ParsingException {
+        Operation operation = new ReconMarkNewTopicsOperation(
+                EngineConfig.ALL_ROWS, "bar", true, null, null, null);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -143,14 +145,13 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsIndividually() throws DoesNotApplyException, ModelException {
-        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace)
-                .createChange();
+    public void testReconJudgeSimilarCellsIndividually() throws DoesNotApplyException, ModelException, ParsingException {
+        Operation operation = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -181,7 +182,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testNotPreviouslyReconciled() throws DoesNotApplyException, ModelException {
+    public void testNotPreviouslyReconciled() throws DoesNotApplyException, ModelException, ParsingException {
         Grid initialGrid = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -190,13 +191,13 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                         { "c", "d" }
                 });
 
-        Change change = new ReconMarkNewTopicsOperation(
-                EngineConfig.ALL_ROWS, "bar", true, service, identifierSpace, schemaSpace).createChange();
+        Operation operation = new ReconMarkNewTopicsOperation(
+                EngineConfig.ALL_ROWS, "bar", true, service, identifierSpace, schemaSpace);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

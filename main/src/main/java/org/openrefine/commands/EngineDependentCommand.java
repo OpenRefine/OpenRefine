@@ -75,9 +75,8 @@ abstract public class EngineDependentCommand extends Command {
             Project project = getProject(request);
 
             Operation op = createOperation(project, request, getEngineConfig(request));
-            Change change = op.createChange();
 
-            addHistoryEntryAndRespond(request, response, project, op.getDescription(), op, change);
+            addHistoryEntryAndRespond(request, response, project, op);
         } catch (Exception e) {
             respondException(response, e);
         }
