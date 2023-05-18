@@ -99,8 +99,6 @@ public class ReconJudgeOneCellCommand extends Command {
                 throw new Exception("No such column");
             }
 
-            Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
-
             // The historyEntryId will be set on the recon by the CellChange
             Recon newRecon = null;
             if (cell.recon != null) {
@@ -159,7 +157,7 @@ public class ReconJudgeOneCellCommand extends Command {
                     cell.value,
                     newRecon);
 
-            Change change = new ReconCellChange(rowIndex, column.getName(), newRecon);
+            Change change = new ReconCellChange(rowIndex, column.getName(), judgment, identifierSpace, schemaSpace, match);
 
             HistoryEntry historyEntry = project.getHistory().addEntry(description, null, change);
             respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, newCell));
