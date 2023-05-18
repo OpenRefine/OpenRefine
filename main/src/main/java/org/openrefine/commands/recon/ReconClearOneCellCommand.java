@@ -99,7 +99,7 @@ public class ReconClearOneCellCommand extends Command {
                     ", column " + column.getName() +
                     ", containing \"" + cell.value + "\"";
 
-            Change change = new ReconCellChange(rowIndex, column.getName(), null);
+            Change change = new ReconCellChange(rowIndex, column.getName(), null, null, null, null);
 
             HistoryEntry historyEntry = project.getHistory().addEntry(description, null, change);
             respondJSON(response, new CellResponse(historyEntry, newCell));

@@ -2,13 +2,15 @@
 package org.openrefine.model.changes;
 
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,20 +21,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ReconCellChange implements Change {
 
     @JsonProperty("rowId")
-    final protected long row;
+    protected final long row;
     @JsonProperty("columnName")
-    final protected String columnName;
-    @JsonProperty("newRecon")
-    final protected Recon newRecon;
+    protected final String columnName;
+    @JsonProperty("judgment")
+    protected final Judgment judgment;
+    @JsonProperty("identifierSpace")
+    protected final String identifierSpace;
+    @JsonProperty("schemaSpace")
+    protected final String schemaSpace;
+    @JsonProperty("match")
+    protected final ReconCandidate match;
 
     @JsonCreator
     public ReconCellChange(
             @JsonProperty("rowId") long rowId,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("newRecon") Recon newRecon) {
+            @JsonProperty("judgment") Judgment judgment,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace,
+            @JsonProperty("match") ReconCandidate match) {
         this.row = rowId;
         this.columnName = columnName;
-        this.newRecon = newRecon;
+        this.judgment = judgment;
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
+        this.match = match;
     }
 
     @Override
@@ -42,10 +56,59 @@ public class ReconCellChange implements Change {
             throw new ColumnNotFoundException(columnName);
         }
         ColumnModel columnModel = state.getColumnModel();
-        // set judgment id on recon if changed
-        Recon finalRecon = newRecon == null ? null : newRecon.withJudgmentHistoryEntry(context.getHistoryEntryId());
+        ColumnMetadata column = columnModel.getColumnByIndex(columnIndex);
+
+        Cell cell = null;
+        try {
+            Row row = state.getRow(this.row);
+            cell = row.getCell(columnIndex);
+        } catch (IndexOutOfBoundsException e) {
+        }
+        if (cell == null) {
+            // leave the grid unchanged
+            return new ChangeResult(state, GridPreservation.PRESERVES_RECORDS, null);
+        }
+        Recon newRecon = null;
+        if (cell.recon != null) {
+            newRecon = cell.recon.withJudgmentHistoryEntry(context.getHistoryEntryId());
+        } else if (identifierSpace != null && schemaSpace != null) {
+            newRecon = new Recon(context.getHistoryEntryId(), identifierSpace, schemaSpace);
+        } else if (column.getReconConfig() != null) {
+            newRecon = column.getReconConfig().createNewRecon(context.getHistoryEntryId());
+        } else {
+            // This should only happen if we are judging a cell in a column that
+            // has never been reconciled before.
+            // TODO we should rather throw an exception in this case,
+            // ReconConfig should be required on the column.
+            newRecon = new Recon(context.getHistoryEntryId(), null, null);
+        }
+        newRecon = newRecon
+                .withMatchRank(-1)
+                .withJudgmentAction("single");
+
+        if (judgment == Judgment.None) {
+            newRecon = newRecon.withJudgment(Recon.Judgment.None)
+                    .withMatch(null);
+        } else if (judgment == Judgment.New) {
+            newRecon = newRecon
+                    .withJudgment(Recon.Judgment.New)
+                    .withMatch(null);
+        } else if (judgment == Judgment.Matched) {
+            newRecon = newRecon.withJudgment(Recon.Judgment.Matched)
+                    .withMatch(match);
+            if (newRecon.candidates != null) {
+                for (int m = 0; m < newRecon.candidates.size(); m++) {
+                    if (newRecon.candidates.get(m).id.equals(match.id)) {
+                        newRecon = newRecon.withMatchRank(m);
+                        break;
+                    }
+                }
+            }
+        } else {
+            newRecon = null;
+        }
         return new ChangeResult(
-                state.mapRows(mapFunction(columnIndex, row, finalRecon), columnModel),
+                state.mapRows(mapFunction(columnIndex, row, newRecon), columnModel),
                 GridPreservation.PRESERVES_RECORDS,
                 null);
     }
