@@ -207,8 +207,14 @@ public class History {
             Grid previous = getGrid(position - 1, refresh);
             HistoryEntry entry = _entries.get(position - 1);
             ChangeContext context = ChangeContext.create(entry.getId(), _projectId, _dataStore, entry.getDescription());
-            Change change = entry.getChange();
-            Grid newState = change.apply(previous, context).getGrid();
+            Operation operation = entry.getOperation();
+            Grid newState;
+            try {
+                newState = operation.apply(previous, context).getGrid();
+            } catch (ParsingException e) {
+                // TODO rather add as throws?
+                throw new DoesNotApplyException(e.getMessage());
+            }
             _states.set(position, newState);
             _inProgress.set(position, _inProgress.get(position - 1) || _dataStore.needsRefreshing(entry.getId()));
             _cachedOnDisk.set(position, false);
@@ -242,19 +248,7 @@ public class History {
     }
 
     public HistoryEntry addEntry(Operation operation) throws ParsingException, DoesNotApplyException {
-        return addEntry(operation.getDescription(), operation, operation.createChange());
-    }
-
-    public HistoryEntry addEntry(
-            String description,
-            Operation operation,
-            Change change) throws DoesNotApplyException {
-        return addEntry(HistoryEntry.allocateID(), description, operation, change);
-    }
-
-    public HistoryEntry addEntry(long id,
-            Operation operation) throws DoesNotApplyException, ParsingException {
-        return addEntry(id, operation.getDescription(), operation, operation.createChange());
+        return addEntry(HistoryEntry.allocateID(), operation);
     }
 
     /**
@@ -262,9 +256,7 @@ public class History {
      * histories
      */
     public HistoryEntry addEntry(long id,
-            String description,
-            Operation operation,
-            Change change) throws DoesNotApplyException {
+            Operation operation) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             // uncache all the grids that we are removing
@@ -287,10 +279,16 @@ public class History {
         }
 
         // TODO refactor this so that it does not duplicate the logic of getGrid
-        ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, description);
-        Change.ChangeResult changeResult = change.apply(getCurrentGrid(), context);
+        ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, operation.getDescription());
+        Change.ChangeResult changeResult = null;
+        try {
+            changeResult = operation.apply(getCurrentGrid(), context);
+        } catch (ParsingException e) {
+            // TODO rather add as throws?
+            throw new DoesNotApplyException(e.getMessage());
+        }
         Grid newState = changeResult.getGrid();
-        HistoryEntry entry = new HistoryEntry(id, description, operation, change, changeResult.getGridPreservation());
+        HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
         _states.add(newState);
         _cachedOnDisk.add(false);
         _inProgress.add(_inProgress.get(_position) || _dataStore.needsRefreshing(entry.getId()));

@@ -59,7 +59,6 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
@@ -278,19 +277,10 @@ public abstract class Command {
             HttpServletRequest request,
             HttpServletResponse response,
             Project project,
-            Operation operation) throws Exception {
-        addHistoryEntryAndRespond(request, response, project, description, operation.getDescription(), operation.createChange());
-    }
-
-    static protected void addHistoryEntryAndRespond(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Project project,
             String description,
-            Operation operation,
-            Change change) throws Exception {
+            Operation operation) throws Exception {
 
-        HistoryEntry historyEntry = project.getHistory().addEntry(description, operation, change);
+        HistoryEntry historyEntry = project.getHistory().addEntry(operation);
         Writer w = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");

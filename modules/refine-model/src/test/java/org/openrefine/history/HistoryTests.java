@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,6 +49,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -56,6 +57,7 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.operations.Operation;
 
 public class HistoryTests {
 
@@ -77,9 +79,9 @@ public class HistoryTests {
     long secondChangeId = 5678L;
     long newChangeId = 9012L;
 
-    Change firstChange;
-    Change secondChange;
-    Change newChange;
+    Operation firstOperation;
+    Operation secondOperation;
+    Operation newOperation;
 
     HistoryEntry firstEntry;
     HistoryEntry secondEntry;
@@ -88,7 +90,7 @@ public class HistoryTests {
     List<HistoryEntry> entries;
 
     @BeforeMethod
-    public void setUp() throws DoesNotApplyException {
+    public void setUp() throws DoesNotApplyException, ParsingException {
         dataStore = mock(ChangeDataStore.class);
         gridStore = mock(GridCache.class);
         initialState = mock(Grid.class);
@@ -96,9 +98,9 @@ public class HistoryTests {
         newState = mock(Grid.class);
         finalState = mock(Grid.class);
         columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
-        firstChange = mock(Change.class);
-        secondChange = mock(Change.class);
-        newChange = mock(Change.class);
+        firstOperation = mock(Operation.class);
+        secondOperation = mock(Operation.class);
+        newOperation = mock(Operation.class);
         firstEntry = mock(HistoryEntry.class);
         secondEntry = mock(HistoryEntry.class);
         newEntry = mock(HistoryEntry.class);
@@ -106,15 +108,15 @@ public class HistoryTests {
         finalResult = mock(Change.ChangeResult.class);
         newResult = mock(Change.ChangeResult.class);
 
-        when(firstChange.apply(eq(initialState), any())).thenReturn(intermediateResult);
+        when(firstOperation.apply(eq(initialState), any())).thenReturn(intermediateResult);
         when(intermediateResult.getGrid()).thenReturn(intermediateState);
-        when(firstChange.isImmediate()).thenReturn(false);
-        when(secondChange.apply(eq(intermediateState), any())).thenReturn(finalResult);
+        when(firstOperation.isImmediate()).thenReturn(false);
+        when(secondOperation.apply(eq(intermediateState), any())).thenReturn(finalResult);
         when(finalResult.getGrid()).thenReturn(finalState);
-        when(secondChange.isImmediate()).thenReturn(true);
-        when(newChange.apply(eq(intermediateState), any())).thenReturn(newResult);
+        when(secondOperation.isImmediate()).thenReturn(true);
+        when(newOperation.apply(eq(intermediateState), any())).thenReturn(newResult);
         when(newResult.getGrid()).thenReturn(newState);
-        when(newChange.isImmediate()).thenReturn(true);
+        when(newOperation.isImmediate()).thenReturn(true);
 
         when(initialState.getColumnModel()).thenReturn(columnModel);
         when(intermediateState.getColumnModel()).thenReturn(columnModel);
@@ -129,9 +131,9 @@ public class HistoryTests {
         when(secondEntry.getId()).thenReturn(secondChangeId);
         when(newEntry.getId()).thenReturn(newChangeId);
 
-        when(firstEntry.getChange()).thenReturn(firstChange);
-        when(secondEntry.getChange()).thenReturn(secondChange);
-        when(newEntry.getChange()).thenReturn(newChange);
+        when(firstEntry.getOperation()).thenReturn(firstOperation);
+        when(secondEntry.getOperation()).thenReturn(secondOperation);
+        when(newEntry.getOperation()).thenReturn(newOperation);
 
         when(firstEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_RECORDS);
         when(secondEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_ROWS);
@@ -141,7 +143,7 @@ public class HistoryTests {
     }
 
     @Test(enabled = false) // TODO reenable after restoring caching
-    public void testConstruct() throws DoesNotApplyException {
+    public void testConstruct() throws DoesNotApplyException, ParsingException {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
@@ -170,8 +172,8 @@ public class HistoryTests {
         Assert.assertEquals(gridPreservation2, GridPreservation.PRESERVES_ROWS);
 
         // All changes were called only once
-        verify(firstChange, times(1)).apply(eq(initialState), any());
-        verify(secondChange, times(1)).apply(eq(intermediateState), any());
+        verify(firstOperation, times(1)).apply(eq(initialState), any());
+        verify(secondOperation, times(1)).apply(eq(intermediateState), any());
 
         // Test some getters too
         Assert.assertEquals(history.getEntry(firstChangeId), firstEntry);
@@ -181,16 +183,16 @@ public class HistoryTests {
     }
 
     @Test
-    public void testConstructWithCachedGrids() throws DoesNotApplyException, IOException {
+    public void testConstructWithCachedGrids() throws DoesNotApplyException, IOException, ParsingException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
-        Change thirdChange = mock(Change.class);
+        Operation thirdChange = mock(Operation.class);
         Grid thirdState = mock(Grid.class);
         Grid fourthState = mock(Grid.class);
         Change.ChangeResult changeResult = mock(Change.ChangeResult.class);
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.singleton(secondChangeId));
         when(gridStore.getCachedGrid(secondChangeId)).thenReturn(thirdState);
-        when(thirdEntry.getChange()).thenReturn(thirdChange);
+        when(thirdEntry.getOperation()).thenReturn(thirdChange);
         when(changeResult.getGrid()).thenReturn(fourthState);
         when(thirdChange.apply(eq(thirdState), any())).thenReturn(changeResult);
 
@@ -205,9 +207,9 @@ public class HistoryTests {
     }
 
     @Test
-    public void testCacheIntermediateGrid() throws DoesNotApplyException, IOException {
+    public void testCacheIntermediateGrid() throws DoesNotApplyException, IOException, ParsingException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
-        Change thirdChange = mock(Change.class);
+        Operation thirdOperation = mock(Operation.class);
         Grid fourthState = mock(Grid.class);
         Grid cachedSecondState = mock(Grid.class);
         Grid rederivedThirdState = mock(Grid.class);
@@ -217,11 +219,11 @@ public class HistoryTests {
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         when(gridStore.cacheGrid(firstChangeId, intermediateState)).thenReturn(cachedSecondState);
-        when(thirdEntry.getChange()).thenReturn(thirdChange);
-        when(thirdChange.apply(eq(finalState), any())).thenReturn(fourthResult);
+        when(thirdEntry.getOperation()).thenReturn(thirdOperation);
+        when(thirdOperation.apply(eq(finalState), any())).thenReturn(fourthResult);
         when(fourthResult.getGrid()).thenReturn(fourthState);
         when(thirdEntry.getId()).thenReturn(thirdEntryId);
-        when(secondChange.apply(eq(cachedSecondState), any())).thenReturn(rederivedThirdResult);
+        when(secondOperation.apply(eq(cachedSecondState), any())).thenReturn(rederivedThirdResult);
         when(rederivedThirdResult.getGrid()).thenReturn(rederivedThirdState);
 
         List<HistoryEntry> fullEntries = Arrays.asList(firstEntry, secondEntry, thirdEntry);
@@ -252,7 +254,7 @@ public class HistoryTests {
     }
 
     @Test
-    public void testEraseUndoneChanges() throws DoesNotApplyException {
+    public void testEraseUndoneChanges() throws DoesNotApplyException, ParsingException {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
@@ -262,7 +264,7 @@ public class HistoryTests {
         Assert.assertEquals(history.getEntries(), entries);
 
         // Adding an entry when there are undone changes erases those changes
-        history.addEntry(newEntry.getId(), newEntry.getDescription(), newEntry.getOperation(), newEntry.getChange());
+        history.addEntry(newEntry.getId(), newEntry.getOperation());
 
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGrid(), newState);

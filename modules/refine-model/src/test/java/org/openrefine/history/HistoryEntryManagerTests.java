@@ -15,6 +15,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -25,7 +26,8 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
-import org.openrefine.operations.UnknownOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.OperationRegistry;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.TestUtils;
@@ -40,15 +42,15 @@ public class HistoryEntryManagerTests {
 
     static RowMapper mapper = mock(RowMapper.class);
 
-    public static class MyChange implements Change {
+    public static class MyOperation implements Operation {
 
         // Deletes the first column of the table
         @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) {
+        public Change.ChangeResult apply(Grid projectState, ChangeContext context) {
             List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 
-            return new ChangeResult(
+            return new Change.ChangeResult(
                     projectState.mapRows(mapper, new ColumnModel(newColumns)),
                     GridPreservation.PRESERVES_ROWS);
         }
@@ -57,10 +59,22 @@ public class HistoryEntryManagerTests {
         public boolean isImmediate() {
             return false;
         }
+
+        @Override
+        public Change createChange() throws ParsingException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return "remove the first column";
+        }
     };
 
     @BeforeMethod
     public void setUp() throws IOException, DoesNotApplyException {
+        OperationRegistry.registerOperation("core", "my-operation", MyOperation.class);
         runner = mock(Runner.class);
         saveFuture = mock(VoidFuture.class);
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
@@ -74,11 +88,11 @@ public class HistoryEntryManagerTests {
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
         when(grid.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
         when(grid.saveToFileAsync(Mockito.any())).thenReturn(saveFuture);
-        Change change = new MyChange();
+        Operation operation = new MyOperation();
         gridStore = mock(GridCache.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         history = new History(grid, mock(ChangeDataStore.class), gridStore, 34983L);
-        history.addEntry(1234L, "some description", new UnknownOperation("my-op", "some desc"), change);
+        history.addEntry(1234L, operation);
         sut = new HistoryEntryManager();
     }
 

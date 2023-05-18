@@ -33,11 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
@@ -84,6 +88,24 @@ public interface Operation {
      */
     public default ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, DoesNotApplyException {
         return createChange().apply(projectState, context);
+    }
+
+    /**
+     * Returns true when the change is derived purely from the operation metadata and does not store any data by itself.
+     * In this case it does not need serializing as it can be recreated directly by {@link Operation#createChange()}.
+     */
+    @JsonIgnore
+    default boolean isImmediate() {
+        return true;
+    }
+
+    /**
+     * The facets that are suggested to be created after this change is applied. This is not included in the JSON
+     * serialization here, but rather in the containing HistoryEntry.
+     */
+    @JsonIgnore
+    default List<FacetConfig> getCreatedFacets() {
+        return Collections.emptyList();
     }
 
     /**

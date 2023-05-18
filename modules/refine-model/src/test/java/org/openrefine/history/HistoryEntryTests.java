@@ -53,20 +53,14 @@ public class HistoryEntryTests {
 
     public static final String fullJson = "{"
             + "\"id\":1533633623158,"
-            + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
+            + "\"description\":\"some description\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
-            + "\"change\" : {\n"
-            + "  \"type\" : \"org.openrefine.history.ChangeStub\"\n"
-            + "},\n"
             + "\"gridPreservation\":\"preserves-rows\",\n"
-            + "\"operation\":{\"op\":\"core/my-operation\","
+            + "\"operation\":{\"op\":\"core/operation-stub\","
             + "   \"description\":\"some description\"}"
             + "}";
 
     public static final String unknownOperationJson = "{\n" +
-            "  \"change\" : {\n" +
-            "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" +
-            "  },\n" +
             "  \"description\" : \"some mysterious operation\",\n" +
             "  \"id\" : 1533633623158,\n" +
             "\"gridPreservation\":\"preserves-rows\",\n" +
@@ -80,11 +74,11 @@ public class HistoryEntryTests {
 
     public static final String historyEntryWithCreatedFacets = "    {\n" +
             "      \"id\": 1683271793411,\n" +
-            "      \"description\": \"some operation\",\n" +
-            "      \"change\": {" +
-            "           \"type\": \"" + ChangeStubWithFacets.class.getCanonicalName() + "\"" +
+            "      \"description\": \"operation stub\",\n" +
+            "      \"operation\": {" +
+            "           \"op\": \"core/my-operation-with-facets\"," +
+            "           \"description\" : \"operation stub\"" +
             "       },\n" +
-            "      \"operation\":null,\n" +
             "      \"gridPreservation\": \"preserves-rows\",\n" +
             "      \"time\": \"2023-05-05T07:27:41Z\",\n" +
             "      \"createdFacets\": [\n" +
@@ -96,24 +90,17 @@ public class HistoryEntryTests {
 
     @BeforeTest
     public void register() {
-        OperationRegistry.registerOperation("core", "my-operation", OperationStub.class);
+        OperationRegistry.registerOperation("core", "operation-stub", OperationStub.class);
+        OperationRegistry.registerOperation("core", "my-operation-with-facets", OperationStubWithFacets.class);
+
         ProjectManager.singleton = new ProjectManagerStub(mock(Runner.class));
     }
 
     @Test
     public void serializeHistoryEntry() throws Exception {
-        String json = "{\"id\":1533651837506,"
-                + "\"description\":\"Discard recon judgment for single cell on row 76, column organization_name, containing \\\"Catholic University Leuven\\\"\","
-                + "\"time\":\"2018-08-07T14:18:29Z\","
-                + "\"gridPreservation\":\"preserves-rows\"}";
-        TestUtils.isSerializedTo(HistoryEntry.load(json), json, ParsingUtilities.defaultWriter);
-    }
-
-    @Test
-    public void serializeHistoryEntryWithOperation() throws Exception {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
-                + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
+                + "\"description\":\"some description\","
                 + "\"time\":\"2018-08-07T09:06:37Z\","
                 + "\"gridPreservation\":\"preserves-rows\"}";
 

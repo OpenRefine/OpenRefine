@@ -36,20 +36,17 @@ package org.openrefine.history;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.facets.FacetConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
@@ -62,23 +59,13 @@ public class HistoryEntry {
 
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     private final long id;
-    private final String description;
     private final OffsetDateTime time;
 
-    // the abstract operation, if any, that results in the change
+    // the operation applied at this step
     private final Operation operation;
-
-    // the actual change
-    protected final Change change;
 
     // whether the change preserved the structure of the grid
     protected final GridPreservation gridPreservation;
-
-    // JsonIgnore because it is included later on in special cases, see {@link getJsonChange}.
-    @JsonIgnore
-    public Change getChange() {
-        return change;
-    }
 
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
@@ -87,40 +74,23 @@ public class HistoryEntry {
     @JsonCreator
     public HistoryEntry(
             @JsonProperty("id") long id,
-            @JsonProperty("description") String description,
             @JsonProperty("operation") Operation operation,
-            @JsonProperty("change") Change change,
             @JsonProperty("gridPreservation") GridPreservation gridPreservation) {
         this(id,
-                description,
                 operation,
                 OffsetDateTime.now(ZoneId.of("Z")),
-                change,
                 gridPreservation);
     }
 
     protected HistoryEntry(
             long id,
-            String description,
             Operation operation,
             OffsetDateTime time,
-            Change change,
             GridPreservation gridPreservation) {
         this.id = id;
-        this.description = description;
+        Validate.notNull(operation);
         this.operation = operation;
         this.time = time;
-        Change actualChange = change;
-        if (change == null && operation != null) {
-            try {
-                actualChange = change != null ? change : operation.createChange();
-            } catch (ParsingException e) {
-                // todo redesign error reporting for changes which fail to be loaded
-                // for instance, suppose a language evaluator is not available:
-                // how do we fail?
-            }
-        }
-        this.change = actualChange;
         this.gridPreservation = gridPreservation != null ? gridPreservation : GridPreservation.NO_ROW_PRESERVATION;
     }
 
@@ -130,7 +100,7 @@ public class HistoryEntry {
 
     @JsonProperty("description")
     public String getDescription() {
-        return description;
+        return operation.getDescription();
     }
 
     @JsonProperty("id")
@@ -149,21 +119,6 @@ public class HistoryEntry {
         return operation;
     }
 
-    /**
-     * Only returns a change if it needs to be serialized to JSON, i.e. if it is not directly derived from the
-     * operation.
-     */
-    @JsonProperty("change")
-    @JsonView(JsonViews.SaveMode.class)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Change getJsonChange() {
-        if (change.isImmediate()) {
-            return null;
-        } else {
-            return change;
-        }
-    }
-
     @JsonProperty("gridPreservation")
     public GridPreservation getGridPreservation() {
         return gridPreservation;
@@ -172,7 +127,7 @@ public class HistoryEntry {
     @JsonProperty("createdFacets")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public List<FacetConfig> getCreatedFacets() {
-        return change != null ? change.getCreatedFacets() : Collections.emptyList();
+        return operation.getCreatedFacets();
     }
 
     /**
