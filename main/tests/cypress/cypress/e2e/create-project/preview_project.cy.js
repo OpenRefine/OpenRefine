@@ -200,4 +200,15 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
     cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();
   });
+
+  it('Test "Use quote as separator" default to True for CSV import', function () {
+    navigateToProjectPreview();
+    cy.get('input[bind="processQuoteMarksCheckbox"]').should('be.checked');
+  });
+
+  it('Test "Use quote as separator" default to False for TSV import', function () {
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('shop.mini.tsv');
+    cy.get('input[bind="processQuoteMarksCheckbox"]').should('not.be.checked');
+  });
 });
