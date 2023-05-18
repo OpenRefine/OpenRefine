@@ -17,6 +17,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
@@ -30,7 +31,7 @@ public class UndoRedoCommandTests extends CommandTestBase {
     Project project;
 
     @BeforeMethod
-    public void setUpCommand() throws Change.DoesNotApplyException {
+    public void setUpCommand() throws Change.DoesNotApplyException, ParsingException {
         command = new UndoRedoCommand();
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
 
@@ -51,10 +52,10 @@ public class UndoRedoCommandTests extends CommandTestBase {
                 OnError.StoreError,
                 false,
                 0);
-        project.getHistory().addEntry(1234L, "Transform", transform, transform.createChange());
+        project.getHistory().addEntry(1234L, transform);
         // the second one only rows
         FillDownOperation fillDown = new FillDownOperation(EngineConfig.ALL_RECORDS, "foo");
-        project.getHistory().addEntry(5678L, "Fill down", fillDown, fillDown.createChange());
+        project.getHistory().addEntry(5678L, fillDown);
     }
 
     @Test

@@ -43,6 +43,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
@@ -50,6 +51,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -100,9 +102,9 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRowsNoFacets() throws DoesNotApplyException {
-        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+    public void testFillDownRowsNoFacets() throws DoesNotApplyException, ParsingException {
+        Operation operation = new FillDownOperation(EngineConfig.ALL_ROWS, "bar");
+        Change.ChangeResult changeResult = operation.apply(toFillDown, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
@@ -123,9 +125,9 @@ public class FillDownTests extends RefineTest {
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
-    public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
-        Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+    public void testFillDownRecordsNoFacets() throws DoesNotApplyException, ParsingException {
+        Operation operation = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar");
+        Change.ChangeResult changeResult = operation.apply(toFillDown, mock(ChangeContext.class));
         Grid applied = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
@@ -142,13 +144,13 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRowsFacets() throws DoesNotApplyException {
+    public void testFillDownRowsFacets() throws DoesNotApplyException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-        Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+        Operation operation = new FillDownOperation(engineConfig, "bar");
+        Change.ChangeResult changeResult = operation.apply(toFillDown, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
         Grid applied = changeResult.getGrid();
@@ -166,12 +168,12 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRecordsFacets() throws DoesNotApplyException {
+    public void testFillDownRecordsFacets() throws DoesNotApplyException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("c", "c"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-        Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+        Operation operation = new FillDownOperation(engineConfig, "bar");
+        Change.ChangeResult changeResult = operation.apply(toFillDown, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -189,9 +191,9 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRowsKeyColumn() throws DoesNotApplyException {
-        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "foo").createChange();
-        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+    public void testFillDownRowsKeyColumn() throws DoesNotApplyException, ParsingException {
+        Operation operation = new FillDownOperation(EngineConfig.ALL_ROWS, "foo");
+        Change.ChangeResult changeResult = operation.apply(toFillDown, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
@@ -210,9 +212,9 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRowsPendingCells() throws DoesNotApplyException {
-        Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(withPendingCells, mock(ChangeContext.class));
+    public void testFillDownRowsPendingCells() throws DoesNotApplyException, ParsingException {
+        Operation operation = new FillDownOperation(EngineConfig.ALL_ROWS, "bar");
+        Change.ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
@@ -231,9 +233,9 @@ public class FillDownTests extends RefineTest {
     }
 
     @Test
-    public void testFillDownRecordsPendingCells() throws DoesNotApplyException {
-        Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-        Change.ChangeResult changeResult = change.apply(withPendingCells, mock(ChangeContext.class));
+    public void testFillDownRecordsPendingCells() throws DoesNotApplyException, ParsingException {
+        Operation operation = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar");
+        Change.ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 

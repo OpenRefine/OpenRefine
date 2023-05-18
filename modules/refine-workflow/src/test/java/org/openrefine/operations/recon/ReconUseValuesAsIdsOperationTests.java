@@ -85,7 +85,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
 
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        Change.ChangeResult changeResult = op.createChange().apply(initialState, context);
+        Change.ChangeResult changeResult = op.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

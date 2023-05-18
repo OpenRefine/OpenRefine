@@ -62,10 +62,9 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     public void testApply()
             throws Exception {
         Operation operation = reconstruct();
-        Change change = operation.createChange();
         ChangeContext context = mock(ChangeContext.class);
 
-        Change.ChangeResult changeResult = change.apply(project.getCurrentGrid(), context);
+        Change.ChangeResult changeResult = operation.apply(project.getCurrentGrid(), context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

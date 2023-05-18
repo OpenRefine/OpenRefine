@@ -14,6 +14,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
@@ -70,15 +71,15 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRowsMode() throws DoesNotApplyException {
-        Change change = new TextTransformOperation(
+    public void testTransformColumnInRowsMode() throws DoesNotApplyException, ParsingException {
+        Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
-                false, 0).createChange();
+                false, 0);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -96,7 +97,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRowsModeWithPendingCells() throws DoesNotApplyException {
+    public void testTransformColumnInRowsModeWithPendingCells() throws DoesNotApplyException, ParsingException {
         Grid pendingGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "a", Cell.PENDING_NULL },
@@ -106,14 +107,14 @@ public class TextTransformTests extends RefineTest {
                         { new EvalError("error"), "a", "i" },
                         { "v1", "b", "j" }
                 });
-        Change change = new TextTransformOperation(
+        Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
-                false, 0).createChange();
+                false, 0);
 
-        Change.ChangeResult changeResult = change.apply(pendingGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -131,15 +132,15 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformIdentity() throws DoesNotApplyException {
-        Change change = new TextTransformOperation(
+    public void testTransformIdentity() throws DoesNotApplyException, ParsingException {
+        Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 "grel:value",
                 OnError.SetToBlank,
-                false, 0).createChange();
+                false, 0);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -147,15 +148,15 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRecordsMode() throws DoesNotApplyException {
-        Change change = new TextTransformOperation(
+    public void testTransformColumnInRecordsMode() throws DoesNotApplyException, ParsingException {
+        Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+row.record.rowCount",
                 OnError.SetToBlank,
-                false, 0).createChange();
+                false, 0);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

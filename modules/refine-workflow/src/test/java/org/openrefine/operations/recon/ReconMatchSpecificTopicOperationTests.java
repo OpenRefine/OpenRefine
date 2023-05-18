@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
@@ -47,6 +48,7 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
@@ -97,17 +99,17 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     }
 
     @Test
-    public void testMatchSpecificTopicOperation() throws DoesNotApplyException, ModelException {
+    public void testMatchSpecificTopicOperation() throws DoesNotApplyException, ModelException, ParsingException {
         ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
-        Change change = new ReconMatchSpecificTopicOperation(
+        Operation operation = new ReconMatchSpecificTopicOperation(
                 EngineConfig.ALL_ROWS,
                 "bar", reconItem,
-                "http://identifier.space", "http://schema.space").createChange();
+                "http://identifier.space", "http://schema.space");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

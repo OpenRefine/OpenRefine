@@ -73,7 +73,7 @@ public class Sort extends PureFunction {
                 } else if (v instanceof ArrayNode) {
                     // FIXME: Probably need a test for this
                     // Comparable[] is a (slight) lie since nulls can be included, but our comparator will handle them
-                    Comparable[] r = (Comparable[]) JSONUtilities.toSortableArray((ArrayNode) v);
+                    Comparable[] r = JSONUtilities.toSortableArray((ArrayNode) v);
                     Arrays.sort(r, Comparator.nullsLast(Comparator.naturalOrder()));
                     return r;
                 } else if (v instanceof List<?>) {

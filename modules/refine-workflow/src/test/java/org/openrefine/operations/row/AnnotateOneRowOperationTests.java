@@ -43,7 +43,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
         Operation operation = new AnnotateOneRowOperation(0L, false, true);
         Assert.assertEquals(operation.getDescription(), "Flag row 1");
 
-        Grid applied = operation.createChange().apply(initialGrid, mock(ChangeContext.class)).getGrid();
+        Grid applied = operation.apply(initialGrid, mock(ChangeContext.class)).getGrid();
 
         Assert.assertEquals(applied.getColumnModel(), initialGrid.getColumnModel());
         Assert.assertEquals(applied.getRow(0L), initialGrid.getRow(0L).withFlagged(true));
@@ -63,7 +63,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
         Operation operation = new AnnotateOneRowOperation(1L, true, true);
         Assert.assertEquals(operation.getDescription(), "Star row 2");
 
-        Grid applied = operation.createChange().apply(initialGrid, mock(ChangeContext.class)).getGrid();
+        Grid applied = operation.apply(initialGrid, mock(ChangeContext.class)).getGrid();
 
         Assert.assertEquals(applied.getColumnModel(), initialGrid.getColumnModel());
         Assert.assertEquals(applied.getRow(0L), initialGrid.getRow(0L));

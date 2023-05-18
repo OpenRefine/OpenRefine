@@ -57,6 +57,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MassEditOperation.Edit;
 import org.openrefine.util.ParsingUtilities;
@@ -197,8 +198,8 @@ public class MassOperationTests extends RefineTest {
 
     @Test
     public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
-        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -222,8 +223,8 @@ public class MassOperationTests extends RefineTest {
     @Test
     public void testRecordsMode() throws DoesNotApplyException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -253,8 +254,8 @@ public class MassOperationTests extends RefineTest {
                         { null, "c" }
                 });
 
-        Change change = new MassEditOperation(EngineConfig.ALL_ROWS, "foo", "grel:value", editsWithFromBlank).createChange();
-        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Operation operation = new MassEditOperation(EngineConfig.ALL_ROWS, "foo", "grel:value", editsWithFromBlank);
+        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {

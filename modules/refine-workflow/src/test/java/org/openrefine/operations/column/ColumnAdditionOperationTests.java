@@ -96,15 +96,15 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
     @Test
     public void testAddColumnRowsMode() throws DoesNotApplyException, ParsingException {
-        Change change = new ColumnAdditionOperation(
+        Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
                 "newcolumn",
-                2).createChange();
+                2);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -130,15 +130,15 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "", "a", Cell.PENDING_NULL },
                         { "", "b", "h" }
                 });
-        Change change = new ColumnAdditionOperation(
+        Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
                 "newcolumn",
-                2).createChange();
+                2);
 
-        Change.ChangeResult changeResult = change.apply(pendingGrid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -155,15 +155,15 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
     @Test
     public void testAddColumnRecordsMode() throws DoesNotApplyException, ParsingException {
-        Change change = new ColumnAdditionOperation(
+        Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
                 "grel:length(row.record.cells['hello'])",
                 OnError.SetToBlank,
                 "newcolumn",
-                2).createChange();
+                2);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -246,7 +246,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
         long historyEntryId = 138908L;
         project.getHistory().getChangeDataStore().store(
                 incompleteChangeData, new ChangeDataId(historyEntryId, "eval"), serializer, Optional.empty());
-        project.getHistory().addEntry(historyEntryId, "operation", operation, operation.createChange());
+        project.getHistory().addEntry(historyEntryId, operation);
 
         Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },

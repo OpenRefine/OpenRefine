@@ -45,6 +45,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
@@ -75,8 +76,8 @@ public class RowReorderOperationTests extends RefineTest {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
 
-        Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
-        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Operation operation = new RowReorderOperation(Mode.RowBased, sortingConfig);
+        Change.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());

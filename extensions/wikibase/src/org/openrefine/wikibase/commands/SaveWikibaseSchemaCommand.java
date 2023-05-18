@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation;
@@ -77,8 +76,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             }
 
             Operation op = new SaveWikibaseSchemaOperation(schema);
-            Change change = op.createChange();
-            addHistoryEntryAndRespond(request, response, project, op.getDescription(), op, change);
+            addHistoryEntryAndRespond(request, response, project, op);
         } catch (Exception e) {
             // This is an unexpected exception, so we log it.
             respondException(response, e);

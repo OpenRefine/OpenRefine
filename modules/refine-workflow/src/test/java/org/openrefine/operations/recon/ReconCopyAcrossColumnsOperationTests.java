@@ -40,6 +40,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
@@ -47,6 +48,7 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -85,15 +87,15 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconCopyAcrossColumns() throws DoesNotApplyException {
-        Change change = new ReconCopyAcrossColumnsOperation(
+    public void testReconCopyAcrossColumns() throws DoesNotApplyException, ParsingException {
+        Operation operation = new ReconCopyAcrossColumnsOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 Collections.singletonList("foo"),
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-                true).createChange();
+                true);
 
-        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -111,26 +113,26 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     }
 
     @Test(expectedExceptions = DoesNotApplyException.class)
-    public void testInvalidSourceColumn() throws DoesNotApplyException {
-        Change change = new ReconCopyAcrossColumnsOperation(
+    public void testInvalidSourceColumn() throws DoesNotApplyException, ParsingException {
+        Operation operation = new ReconCopyAcrossColumnsOperation(
                 EngineConfig.ALL_ROWS,
                 "does_not_exist",
                 Collections.singletonList("foo"),
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-                true).createChange();
+                true);
 
-        change.apply(initialState, mock(ChangeContext.class));
+        operation.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test(expectedExceptions = DoesNotApplyException.class)
-    public void testInvalidTargetColumn() throws DoesNotApplyException {
-        Change change = new ReconCopyAcrossColumnsOperation(
+    public void testInvalidTargetColumn() throws DoesNotApplyException, ParsingException {
+        Operation operation = new ReconCopyAcrossColumnsOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
                 Collections.singletonList("does_not_exist"),
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-                true).createChange();
+                true);
 
-        change.apply(initialState, mock(ChangeContext.class));
+        operation.apply(initialState, mock(ChangeContext.class));
     }
 }

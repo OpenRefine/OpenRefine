@@ -89,7 +89,7 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @Test
     public void testReorder() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
+        Operation SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar"));
         Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
@@ -108,8 +108,8 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @Test(expectedExceptions = Change.DoesNotApplyException.class)
     public void testDoesNotExist() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar")).createChange();
-        SUT.apply(initialState, mock(ChangeContext.class));
+        Operation operation = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar"));
+        operation.apply(initialState, mock(ChangeContext.class));
     }
 
 }

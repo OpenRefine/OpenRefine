@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
@@ -47,6 +48,7 @@ import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -87,13 +89,13 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconDiscardJudgmentsOperation() throws DoesNotApplyException, ModelException {
-        Change change = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", false).createChange();
+    public void testReconDiscardJudgmentsOperation() throws DoesNotApplyException, ModelException, ParsingException {
+        Operation operation = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", false);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -110,13 +112,13 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testClearReconOperation() throws DoesNotApplyException, ModelException {
-        Change change = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", true).createChange();
+    public void testClearReconOperation() throws DoesNotApplyException, ModelException, ParsingException {
+        Operation operation = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", true);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Change.ChangeResult changeResult = change.apply(initialState, context);
+        Change.ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

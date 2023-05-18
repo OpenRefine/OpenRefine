@@ -39,7 +39,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 import org.openrefine.expr.ParsingException;
+import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.ChangeResult;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
 
 /**
@@ -50,10 +54,6 @@ import org.openrefine.model.changes.ChangeData;
  * Operations only store the metadata for the transformation step. They are required to be serializable and
  * deserializable in JSON with Jackson, and the corresponding JSON object is shown in the JSON export of a workflow.
  * Therefore, the JSON serialization is expected to be stable and deserialization should be backwards-compatible.
- * 
- * Operations are reproducible, in the sense that they represent transformation steps which can be meaningfully
- * reapplied in another context. For instance, editing a single cell at a specified row and column is not reproducible
- * (in the sense that it relies on a specific version of the dataset, rather than any dataset with a given schema).
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true)
 @JsonTypeIdResolver(OperationResolver.class)
@@ -69,6 +69,22 @@ public interface Operation {
      *             if the operation metadata contains expressions that could not be parsed
      */
     public Change createChange() throws ParsingException;
+
+    /**
+     * Derives the new grid state from the current grid state. Executing this method should be quick (even on large
+     * datasets) since it is expected to just derive the new RDD from the existing one without actually executing any
+     * expensive computation. Long-running computations should rather go in the derivation of a {@link ChangeData} which
+     * will be fetched asynchronously.
+     * 
+     * @param projectState
+     *            the state of the grid before the change
+     * @return the state of the grid after the change
+     * @throws DoesNotApplyException
+     *             when the change cannot be applied to the given grid
+     */
+    public default ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, DoesNotApplyException {
+        return createChange().apply(projectState, context);
+    }
 
     /**
      * A short human-readable description of what this operation does.

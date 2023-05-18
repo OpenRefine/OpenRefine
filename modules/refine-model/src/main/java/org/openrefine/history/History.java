@@ -252,6 +252,11 @@ public class History {
         return addEntry(HistoryEntry.allocateID(), description, operation, change);
     }
 
+    public HistoryEntry addEntry(long id,
+            Operation operation) throws DoesNotApplyException, ParsingException {
+        return addEntry(id, operation.getDescription(), operation, operation.createChange());
+    }
+
     /**
      * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
      * histories

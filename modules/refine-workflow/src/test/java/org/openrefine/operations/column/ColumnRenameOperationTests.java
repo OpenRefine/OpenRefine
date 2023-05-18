@@ -91,7 +91,7 @@ public class ColumnRenameOperationTests extends RefineTest {
 
     @Test
     public void testRename() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnRenameOperation("foo", "newfoo").createChange();
+        Operation SUT = new ColumnRenameOperation("foo", "newfoo");
         Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
@@ -104,7 +104,7 @@ public class ColumnRenameOperationTests extends RefineTest {
 
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testNameConflict() throws DoesNotApplyException, ParsingException {
-        Change SUT = new ColumnRenameOperation("foo", "bar").createChange();
+        Operation SUT = new ColumnRenameOperation("foo", "bar");
         SUT.apply(initialState, mock(ChangeContext.class));
     }
 }
