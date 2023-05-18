@@ -274,24 +274,15 @@ public abstract class Command {
             historyEntry = entry;
         }
     }
-    
-    static protected void addHistoryEntryAndRespond(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Project project,
-            Operation operation) throws Exception {
-    	addHistoryEntryAndRespond(request, response, project, description, operation.getDescription(), operation.createChange());
-    }
 
     static protected void addHistoryEntryAndRespond(
             HttpServletRequest request,
             HttpServletResponse response,
             Project project,
             String description,
-            Operation operation,
-            Change change) throws Exception {
+            Operation operation) throws Exception {
 
-        HistoryEntry historyEntry = project.getHistory().addEntry(description, operation, change);
+        HistoryEntry historyEntry = project.getHistory().addEntry(operation);
         Writer w = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
