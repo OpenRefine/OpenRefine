@@ -143,13 +143,15 @@ function initializeUI(uiState) {
   resize();
   resizeTabs();
 
-  $('<a>').attr("id", "hide-left-panel-button")
+  $('<button>').attr("id", "hide-left-panel-button")
     .addClass("visibility-panel-button")
+    .attr("aria-label", $.i18n('core-index/hide-panel'))
     .on('click',function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.leftPanelTabs);
 
-  $('<a>').attr("id", "show-left-panel-button")
+  $('<button>').attr("id", "show-left-panel-button")
     .addClass("visibility-panel-button")
+    .attr("aria-label", $.i18n('core-index/show-panel'))
     .on('click',function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.toolPanelDiv);
 
