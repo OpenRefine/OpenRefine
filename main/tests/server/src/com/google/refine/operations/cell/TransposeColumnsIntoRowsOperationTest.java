@@ -1,3 +1,4 @@
+
 package com.google.refine.operations.cell;
 
 import com.google.refine.ProjectManager;
@@ -15,6 +16,7 @@ import org.testng.annotations.Test;
 import java.util.Properties;
 
 public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
+
     Project project = null;
 
     @BeforeSuite
@@ -25,10 +27,10 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
     @BeforeMethod
     public void setUp() {
         project = createCSVProject(
-            "num1,num2\n" +
-                "2,3\n" +
-                "6,\n" +
-                "5,9");
+                "num1,num2\n" +
+                        "2,3\n" +
+                        "6,\n" +
+                        "5,9");
     }
 
     @AfterMethod
