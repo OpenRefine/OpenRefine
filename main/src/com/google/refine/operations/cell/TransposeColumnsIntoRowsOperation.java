@@ -282,7 +282,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
                     if (_combinedColumnName != null) {
                         Cell newCell;
-                        if (cell == null || cell.value == null) {
+                        if (cell == null || cell.value == null || cell.value == "") {
                             if (_prependColumnName && !_ignoreBlankCells) {
                                 newCell = new Cell(column.getName() + _separator, null);
                             } else {
@@ -305,7 +305,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
                         transposedCells++;
                     } else {
-                        if (_ignoreBlankCells && (cell == null || cell.value == null)) {
+                        if (_ignoreBlankCells && (cell == null || cell.value == null || cell.value == "")) {
                             continue;
                         }
 
