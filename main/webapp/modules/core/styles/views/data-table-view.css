@@ -159,7 +159,6 @@ table.data-table-header td.column-header, table.data-table-header th.column-head
 table.data-table td.column-header, table.data-table th.column-header {
   vertical-align: top;
   white-space: nowrap;
-  cursor: pointer;
   padding: 4px 6px 4px 4px;
   border-bottom: none;
   font-weight: bold;
@@ -185,6 +184,7 @@ table.data-table td.column-header, table.data-table th.column-header {
   height: 19px;
   background-image: url(../../images/menu-dropdown.png);
   background-repeat: no-repeat;
+  cursor: pointer;
   border: none;
 }
 

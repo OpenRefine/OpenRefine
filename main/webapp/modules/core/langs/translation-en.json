@@ -176,6 +176,8 @@
     "core-index-parser/column-names-label": "Column names (comma separated)",
     "core-index-parser/column-names-optional": "Comma separated",
     "core-index-parser/update-format-failed": "The request to parse and format the data failed",
+    "core-index/hide-panel": "Hide panel",
+    "core-index/show-panel": "Show panel",
     "core-dialogs/no-clustering-functions-and-distances": "The clustering functions and distances could not be loaded.",
     "core-dialogs/cluster-edit": "Cluster and edit column",
     "core-dialogs/cluster-size": "Cluster size",
