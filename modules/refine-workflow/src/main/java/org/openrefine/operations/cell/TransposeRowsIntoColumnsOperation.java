@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -50,9 +51,10 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.util.CloseableIterator;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {
@@ -68,6 +70,75 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
         _rowCount = rowCount;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel columnModel = projectState.getColumnModel();
+        ColumnModel newColumns = new ColumnModel(Collections.emptyList());
+        List<ColumnMetadata> oldColumns = columnModel.getColumns();
+
+        int columnIndex = columnModel.getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new Operation.DoesNotApplyException(String.format("Column %s could not be found", _columnName));
+        }
+        int columnCount = oldColumns.size();
+
+        for (int i = 0; i < columnCount; i++) {
+            if (i == columnIndex) {
+                int newIndex = 1;
+                for (int n = 0; n < _rowCount; n++) {
+                    String columnName = _columnName + " " + newIndex++;
+                    while (columnModel.getColumnByName(columnName) != null) {
+                        columnName = _columnName + " " + newIndex++;
+                    }
+                    newColumns = newColumns.appendUnduplicatedColumn(new ColumnMetadata(columnName));
+                }
+            } else {
+                newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
+            }
+        }
+
+        int nbNewColumns = newColumns.getColumns().size();
+        RowBuilder firstNewRow = null;
+        List<RowBuilder> newRows = new ArrayList<>();
+        try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
+            for (IndexedRow indexedRow : iterator) {
+                long r = indexedRow.getIndex();
+                int r2 = (int) (r % (long) _rowCount);
+
+                RowBuilder newRow = RowBuilder.create(nbNewColumns);
+                newRows.add(newRow);
+                if (r2 == 0) {
+                    firstNewRow = newRow;
+                }
+
+                Row oldRow = indexedRow.getRow();
+
+                for (int c = 0; c < oldColumns.size(); c++) {
+                    Cell cell = oldRow.getCell(c);
+
+                    if (cell != null && cell.value != null) {
+                        if (c == columnIndex) {
+                            firstNewRow.withCell(columnIndex + r2, cell);
+                        } else if (c < columnIndex) {
+                            newRow.withCell(c, cell);
+                        } else {
+                            newRow.withCell(c + _rowCount - 1, cell);
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Row> rows = newRows.stream()
+                .map(rb -> rb.build(nbNewColumns))
+                .filter(row -> !row.isEmpty())
+                .collect(Collectors.toList());
+
+        return new Operation.ChangeResult(
+                projectState.getRunner().gridFromList(newColumns, rows, projectState.getOverlayModels()),
+                GridPreservation.NO_ROW_PRESERVATION);
+    }
+
     @JsonProperty("rowCount")
     public int getRowCount() {
         return _rowCount;
@@ -81,88 +152,5 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
     @Override
     public String getDescription() {
         return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
-    }
-
-    @Override
-    public Change createChange() {
-        return new TransposeRowsIntoColumnsChange();
-    }
-
-    public class TransposeRowsIntoColumnsChange implements Change {
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel columnModel = projectState.getColumnModel();
-            ColumnModel newColumns = new ColumnModel(Collections.emptyList());
-            List<ColumnMetadata> oldColumns = columnModel.getColumns();
-
-            int columnIndex = columnModel.getColumnIndexByName(_columnName);
-            if (columnIndex == -1) {
-                throw new DoesNotApplyException(String.format("Column %s could not be found", _columnName));
-            }
-            int columnCount = oldColumns.size();
-
-            for (int i = 0; i < columnCount; i++) {
-                if (i == columnIndex) {
-                    int newIndex = 1;
-                    for (int n = 0; n < _rowCount; n++) {
-                        String columnName = _columnName + " " + newIndex++;
-                        while (columnModel.getColumnByName(columnName) != null) {
-                            columnName = _columnName + " " + newIndex++;
-                        }
-                        newColumns = newColumns.appendUnduplicatedColumn(new ColumnMetadata(columnName));
-                    }
-                } else {
-                    newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
-                }
-            }
-
-            int nbNewColumns = newColumns.getColumns().size();
-            RowBuilder firstNewRow = null;
-            List<RowBuilder> newRows = new ArrayList<>();
-            try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
-                for (IndexedRow indexedRow : iterator) {
-                    long r = indexedRow.getIndex();
-                    int r2 = (int) (r % (long) _rowCount);
-
-                    RowBuilder newRow = RowBuilder.create(nbNewColumns);
-                    newRows.add(newRow);
-                    if (r2 == 0) {
-                        firstNewRow = newRow;
-                    }
-
-                    Row oldRow = indexedRow.getRow();
-
-                    for (int c = 0; c < oldColumns.size(); c++) {
-                        Cell cell = oldRow.getCell(c);
-
-                        if (cell != null && cell.value != null) {
-                            if (c == columnIndex) {
-                                firstNewRow.withCell(columnIndex + r2, cell);
-                            } else if (c < columnIndex) {
-                                newRow.withCell(c, cell);
-                            } else {
-                                newRow.withCell(c + _rowCount - 1, cell);
-                            }
-                        }
-                    }
-                }
-            }
-
-            List<Row> rows = newRows.stream()
-                    .map(rb -> rb.build(nbNewColumns))
-                    .filter(row -> !row.isEmpty())
-                    .collect(Collectors.toList());
-
-            return new ChangeResult(
-                    projectState.getRunner().gridFromList(newColumns, rows, projectState.getOverlayModels()),
-                    GridPreservation.NO_ROW_PRESERVATION);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
     }
 }

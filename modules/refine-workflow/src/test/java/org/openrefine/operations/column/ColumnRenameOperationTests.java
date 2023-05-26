@@ -48,8 +48,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -90,9 +88,9 @@ public class ColumnRenameOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRename() throws DoesNotApplyException, ParsingException {
+    public void testRename() throws Operation.DoesNotApplyException, ParsingException {
         Operation SUT = new ColumnRenameOperation("foo", "newfoo");
-        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
         List<IndexedRow> rows = changeResult.getGrid().collectRows();
@@ -102,8 +100,8 @@ public class ColumnRenameOperationTests extends RefineTest {
                 Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
     }
 
-    @Test(expectedExceptions = DoesNotApplyException.class)
-    public void testNameConflict() throws DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
+    public void testNameConflict() throws Operation.DoesNotApplyException, ParsingException {
         Operation SUT = new ColumnRenameOperation("foo", "bar");
         SUT.apply(initialState, mock(ChangeContext.class));
     }

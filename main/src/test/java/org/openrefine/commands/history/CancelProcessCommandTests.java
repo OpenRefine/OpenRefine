@@ -20,8 +20,8 @@ import org.openrefine.commands.CommandTestBase;
 import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.operations.Operation;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
@@ -72,7 +72,7 @@ public class CancelProcessCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testSuccessfulCancel() throws ServletException, IOException, Change.DoesNotApplyException {
+    public void testSuccessfulCancel() throws ServletException, IOException, Operation.DoesNotApplyException {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -87,7 +87,7 @@ public class CancelProcessCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCancelAndUndo() throws ServletException, IOException, Change.DoesNotApplyException {
+    public void testCancelAndUndo() throws ServletException, IOException, Operation.DoesNotApplyException {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());

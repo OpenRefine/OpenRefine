@@ -44,6 +44,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -53,10 +54,11 @@ import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.RowScanMapper;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 /**
  * Transforms a table without a record structure to blanking out values which are identical to those on the previous
@@ -74,6 +76,40 @@ public class BlankDownOperation extends EngineDependentOperation {
         _columnName = columnName;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel model = projectState.getColumnModel();
+        int index = model.getColumnIndexByName(_columnName);
+        if (index == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Column '%s' does not exist", _columnName));
+        }
+        Engine engine = getEngine(projectState, context.getProjectId());
+        boolean recordsPreserved = index != model.getKeyColumnIndex();
+        Grid result;
+        if (Mode.RecordBased.equals(_engineConfig.getMode())) {
+            // Simple map of records
+            result = projectState.mapRecords(
+                    RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
+                    model);
+
+        } else {
+            // We need to remember the cell from the previous row, so we use a scan map
+            result = projectState.mapRows(
+                    RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
+                            RowMapper.IDENTITY),
+                    model);
+        }
+        // if we are blanking down the key column, this will likely create records
+        if (index == model.getKeyColumnIndex() && !model.hasRecords()) {
+            result = result.withColumnModel(result.getColumnModel().withHasRecords(true));
+        }
+
+        return new Operation.ChangeResult(
+                result,
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -82,57 +118,6 @@ public class BlankDownOperation extends EngineDependentOperation {
     @Override
     public String getDescription() {
         return "Blank down cells in column " + _columnName;
-    }
-
-    @Override
-    public Change createChange() {
-        return new BlankDownChange(getEngineConfig());
-    }
-
-    public class BlankDownChange extends EngineDependentChange {
-
-        public BlankDownChange(EngineConfig engineConfig) {
-            super(engineConfig);
-        }
-
-        @Override
-        public ChangeResult apply(Grid state, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel model = state.getColumnModel();
-            int index = model.getColumnIndexByName(_columnName);
-            if (index == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Column '%s' does not exist", _columnName));
-            }
-            Engine engine = getEngine(state, context.getProjectId());
-            boolean recordsPreserved = index != model.getKeyColumnIndex();
-            Grid result;
-            if (Mode.RecordBased.equals(_engineConfig.getMode())) {
-                // Simple map of records
-                result = state.mapRecords(
-                        RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
-                        model);
-
-            } else {
-                // We need to remember the cell from the previous row, so we use a scan map
-                result = state.mapRows(
-                        RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
-                                RowMapper.IDENTITY),
-                        model);
-            }
-            // if we are blanking down the key column, this will likely create records
-            if (index == model.getKeyColumnIndex() && !model.hasRecords()) {
-                result = result.withColumnModel(result.getColumnModel().withHasRecords(true));
-            }
-
-            return new ChangeResult(
-                    result,
-                    recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
     }
 
     protected static RecordMapper recordMapper(int columnIndex) {

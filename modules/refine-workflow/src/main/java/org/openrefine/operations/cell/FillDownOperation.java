@@ -43,6 +43,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -52,10 +53,9 @@ import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.RowScanMapper;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
 
 /**
  * Transforms a table with a record structure to by spreading non-null values in the rows below, in a specific column.
@@ -72,6 +72,38 @@ public class FillDownOperation extends EngineDependentOperation {
         _columnName = columnName;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid state, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel model = state.getColumnModel();
+        int index = model.getColumnIndexByName(_columnName);
+        if (index == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Column '%s' does not exist", _columnName));
+        }
+        Engine engine = getEngine(state, context.getProjectId());
+        boolean recordsPreserved = index != model.getKeyColumnIndex();
+        Grid result;
+        if (Mode.RecordBased.equals(_engineConfig.getMode())) {
+            // simple map of records, since a filled down value cannot spread beyond a record boundary
+            result = state.mapRecords(
+                    RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index, model.getKeyColumnIndex()),
+                            RecordMapper.IDENTITY),
+                    model);
+        } else {
+            // scan map, because we need to remember the last non-null cell
+            result = state.mapRows(
+                    RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
+                            RowMapper.IDENTITY),
+                    model);
+        }
+
+        // if we are filling down the first column, that is removing the records structure
+        if (!recordsPreserved && model.hasRecords()) {
+            result = result.withColumnModel(result.getColumnModel().withHasRecords(false));
+        }
+        return new Operation.ChangeResult(result, recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -80,54 +112,6 @@ public class FillDownOperation extends EngineDependentOperation {
     @Override
     public String getDescription() {
         return "Fill down cells in column " + _columnName;
-    }
-
-    public Change createChange() {
-        return new FillDownChange(getEngineConfig());
-    }
-
-    public class FillDownChange extends EngineDependentChange {
-
-        public FillDownChange(EngineConfig engineConfig) {
-            super(engineConfig);
-        }
-
-        @Override
-        public ChangeResult apply(Grid state, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel model = state.getColumnModel();
-            int index = model.getColumnIndexByName(_columnName);
-            if (index == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Column '%s' does not exist", _columnName));
-            }
-            Engine engine = getEngine(state, context.getProjectId());
-            boolean recordsPreserved = index != model.getKeyColumnIndex();
-            Grid result;
-            if (Mode.RecordBased.equals(_engineConfig.getMode())) {
-                // simple map of records, since a filled down value cannot spread beyond a record boundary
-                result = state.mapRecords(
-                        RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index, model.getKeyColumnIndex()),
-                                RecordMapper.IDENTITY),
-                        model);
-            } else {
-                // scan map, because we need to remember the last non-null cell
-                result = state.mapRows(
-                        RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
-                                RowMapper.IDENTITY),
-                        model);
-            }
-            // if we are filling down the first column, that is removing the records structure
-            if (!recordsPreserved && model.hasRecords()) {
-                result = result.withColumnModel(result.getColumnModel().withHasRecords(false));
-            }
-            return new ChangeResult(result, recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
     }
 
     protected static RecordMapper recordMapper(int columnIndex, int keyColumnIndex) {

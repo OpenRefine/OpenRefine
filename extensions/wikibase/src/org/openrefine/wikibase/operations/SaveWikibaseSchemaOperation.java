@@ -31,9 +31,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.overlay.OverlayModel;
@@ -43,6 +43,7 @@ public class SaveWikibaseSchemaOperation implements Operation {
 
     @JsonIgnore
     final public static String operationDescription = "Save Wikibase schema";
+    public final static String overlayModelKey = "wikibaseSchema";
     @JsonProperty("schema")
     final protected WikibaseSchema _schema;
 
@@ -50,45 +51,19 @@ public class SaveWikibaseSchemaOperation implements Operation {
     public SaveWikibaseSchemaOperation(
             @JsonProperty("schema") WikibaseSchema schema) {
         this._schema = schema;
+    }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
+        newModels.put(overlayModelKey, _schema);
+        return new Operation.ChangeResult(
+                projectState.withOverlayModels(newModels),
+                GridPreservation.PRESERVES_RECORDS);
     }
 
     @Override
     public String getDescription() {
         return operationDescription;
     }
-
-    @Override
-    public Change createChange() {
-        Change change = new WikibaseSchemaChange(_schema);
-        return change;
-    }
-
-    static public class WikibaseSchemaChange implements Change {
-
-        final protected WikibaseSchema _newSchema;
-        protected WikibaseSchema _oldSchema = null;
-        public final static String overlayModelKey = "wikibaseSchema";
-
-        public WikibaseSchemaChange(WikibaseSchema newSchema) {
-            _newSchema = newSchema;
-        }
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
-            newModels.put(overlayModelKey, _newSchema);
-            return new ChangeResult(
-                    projectState.withOverlayModels(newModels),
-                    GridPreservation.PRESERVES_RECORDS,
-                    null);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-    }
-
 }

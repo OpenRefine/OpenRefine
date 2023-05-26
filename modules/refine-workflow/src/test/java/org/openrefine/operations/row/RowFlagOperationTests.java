@@ -49,10 +49,9 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -93,13 +92,13 @@ public class RowFlagOperationTests extends RefineTest {
     }
 
     @Test
-    public void testFlagRows() throws DoesNotApplyException, ParsingException {
+    public void testFlagRows() throws Operation.DoesNotApplyException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("d", "d"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Operation operation = new RowFlagOperation(engineConfig, true);
-        Change.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

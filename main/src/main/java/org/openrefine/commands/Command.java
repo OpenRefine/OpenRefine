@@ -277,7 +277,6 @@ public abstract class Command {
             HttpServletRequest request,
             HttpServletResponse response,
             Project project,
-            String description,
             Operation operation) throws Exception {
 
         HistoryEntry historyEntry = project.getHistory().addEntry(operation);

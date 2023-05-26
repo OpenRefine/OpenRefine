@@ -42,14 +42,15 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
-public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
+public class ReconDiscardJudgmentsOperation extends RowMapOperation {
 
     final protected boolean _clearData;
     final protected String _columnName;
@@ -84,10 +85,10 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws Operation.DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
-            throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
+            throw new Operation.DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
         }
         return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
     }

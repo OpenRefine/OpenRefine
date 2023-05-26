@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.util.ParsingUtilities;
@@ -64,7 +63,7 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
         Operation operation = reconstruct();
         ChangeContext context = mock(ChangeContext.class);
 
-        Change.ChangeResult changeResult = operation.apply(project.getCurrentGrid(), context);
+        Operation.ChangeResult changeResult = operation.apply(project.getCurrentGrid(), context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

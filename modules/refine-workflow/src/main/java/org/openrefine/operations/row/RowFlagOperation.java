@@ -42,9 +42,9 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.RowMapOperation;
 
-public class RowFlagOperation extends ImmediateRowMapOperation {
+public class RowFlagOperation extends RowMapOperation {
 
     final protected boolean _flagged;
 

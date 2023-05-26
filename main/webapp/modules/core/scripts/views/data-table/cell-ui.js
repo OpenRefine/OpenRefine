@@ -187,13 +187,12 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         { cellsChanged: true }
       );
     } else {
-      Refine.postCoreProcess(
-        "edit-one-cell", 
-        {},
+      Refine.postOperation(
         {
-          row: self._rowIndex,
-          cell: self._cellIndex,
-          value: value,
+          op: "core/cell-edit", 
+          columnName: Refine.cellIndexToColumn(self._cellIndex).name,
+          rowId: self._rowIndex,
+          newCellValue: value,
           type: type
         },
         {},

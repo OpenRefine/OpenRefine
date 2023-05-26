@@ -49,11 +49,9 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
       return;
     }
 
-    Refine.postProcess(
-      "wikidata",
-      "perform-wikibase-edits",
-      {},
+    Refine.postOperation(
       {
+        op: "wikidata/perform-wikibase-edits",
         summary: elmts.editSummary.val(),
         maxlag: elmts.maxlag.val(),
         editGroupsUrlSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema(),

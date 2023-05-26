@@ -37,11 +37,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.sorting.SortingConfig;
 
 /**
@@ -63,6 +65,17 @@ public class RowReorderOperation implements Operation {
         _sorting = sorting;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        Grid grid;
+        if (Mode.RowBased.equals(_mode)) {
+            grid = projectState.reorderRows(_sorting, true);
+        } else {
+            grid = projectState.reorderRecords(_sorting, true);
+        }
+        return new Operation.ChangeResult(grid, GridPreservation.NO_ROW_PRESERVATION);
+    }
+
     @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
@@ -76,31 +89,6 @@ public class RowReorderOperation implements Operation {
     @Override
     public String getDescription() {
         return "Reorder rows";
-    }
-
-    @Override
-    public Change createChange() {
-        return new RowReorderChange();
-    }
-
-    public class RowReorderChange implements Change {
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            Grid grid;
-            if (Mode.RowBased.equals(_mode)) {
-                grid = projectState.reorderRows(_sorting, true);
-            } else {
-                grid = projectState.reorderRecords(_sorting, true);
-            }
-            return new ChangeResult(grid, GridPreservation.NO_ROW_PRESERVATION);
-        }
-
     }
 
 }

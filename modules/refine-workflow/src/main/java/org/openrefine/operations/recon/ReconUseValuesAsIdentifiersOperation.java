@@ -49,8 +49,8 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.openrefine.operations.ImmediateRowMapOperation;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
 /**
  * When a column contains bare identifiers or URLs, this can be used to mark them as reconciled to some reconciliation
@@ -59,7 +59,7 @@ import org.openrefine.operations.OperationDescription;
  * @author Antonin Delpeuch
  *
  */
-public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperation {
+public class ReconUseValuesAsIdentifiersOperation extends RowMapOperation {
 
     @JsonProperty("columnName")
     protected String columnName;

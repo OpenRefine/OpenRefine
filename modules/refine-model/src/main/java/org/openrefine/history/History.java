@@ -45,11 +45,8 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.RefineModel;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
@@ -128,7 +125,7 @@ public class History {
      *            the list of entries of the history
      * @param position
      *            the current position in the history
-     * @throws DoesNotApplyException
+     * @throws Operation.DoesNotApplyException
      *             if one step in the list of history entries failed to apply to the supplied grid
      */
     public History(
@@ -137,7 +134,7 @@ public class History {
             GridCache gridStore,
             List<HistoryEntry> entries,
             int position,
-            long projectId) throws DoesNotApplyException {
+            long projectId) throws Operation.DoesNotApplyException {
         this(initialGrid, dataStore, gridStore, projectId);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
         for (HistoryEntry entry : entries) {
@@ -195,7 +192,7 @@ public class History {
      * @param refresh
      *            whether the grid should be refreshed if it depends on change data being currently fetched
      */
-    protected Grid getGrid(int position, boolean refresh) throws DoesNotApplyException {
+    protected Grid getGrid(int position, boolean refresh) throws Operation.DoesNotApplyException {
         Grid grid = _states.get(position);
         if (grid != null && !(refresh && _inProgress.get(position))) {
             return grid;
@@ -213,7 +210,7 @@ public class History {
                 newState = operation.apply(previous, context).getGrid();
             } catch (ParsingException e) {
                 // TODO rather add as throws?
-                throw new DoesNotApplyException(e.getMessage());
+                throw new Operation.DoesNotApplyException(e.getMessage());
             }
             _states.set(position, newState);
             _inProgress.set(position, _inProgress.get(position - 1) || _dataStore.needsRefreshing(entry.getId()));
@@ -247,7 +244,7 @@ public class History {
         return _gridStore;
     }
 
-    public HistoryEntry addEntry(Operation operation) throws ParsingException, DoesNotApplyException {
+    public HistoryEntry addEntry(Operation operation) throws ParsingException, Operation.DoesNotApplyException {
         return addEntry(HistoryEntry.allocateID(), operation);
     }
 
@@ -256,7 +253,7 @@ public class History {
      * histories
      */
     public HistoryEntry addEntry(long id,
-            Operation operation) throws DoesNotApplyException {
+            Operation operation) throws Operation.DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             // uncache all the grids that we are removing
@@ -280,12 +277,12 @@ public class History {
 
         // TODO refactor this so that it does not duplicate the logic of getGrid
         ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, operation.getDescription());
-        Change.ChangeResult changeResult = null;
+        Operation.ChangeResult changeResult = null;
         try {
             changeResult = operation.apply(getCurrentGrid(), context);
         } catch (ParsingException e) {
             // TODO rather add as throws?
-            throw new DoesNotApplyException(e.getMessage());
+            throw new Operation.DoesNotApplyException(e.getMessage());
         }
         Grid newState = changeResult.getGrid();
         HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
@@ -298,7 +295,7 @@ public class History {
         return entry;
     }
 
-    protected void cacheIntermediateGridOnDisk(int position) throws DoesNotApplyException, IOException {
+    protected void cacheIntermediateGridOnDisk(int position) throws Operation.DoesNotApplyException, IOException {
         Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
         Grid grid = getGrid(position, false);
@@ -354,7 +351,7 @@ public class History {
     public void refreshCurrentGrid() {
         try {
             getGrid(_position, true);
-        } catch (DoesNotApplyException e) {
+        } catch (Operation.DoesNotApplyException e) {
             throw new IllegalStateException("Recomputing the current grid failed", e);
         }
     }
@@ -375,10 +372,10 @@ public class History {
      *            the id of the last change to be performed before the desired state of the project. Use 0L for the
      *            initial state.
      * @return the degree to which the grid was preserved while changing the position in the history
-     * @throws DoesNotApplyException
+     * @throws Operation.DoesNotApplyException
      *             if the application of changes required for this move did not succeed
      */
-    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws DoesNotApplyException {
+    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws Operation.DoesNotApplyException {
         int oldPosition = _position;
         if (lastDoneEntryID == 0) {
             _position = 0;
@@ -431,11 +428,6 @@ public class History {
         } catch (IllegalArgumentException e) {
             return null;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
-        return (Class<? extends Change>) RefineModel.getClass(className);
     }
 
 }

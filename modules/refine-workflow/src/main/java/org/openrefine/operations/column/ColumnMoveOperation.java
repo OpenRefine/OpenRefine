@@ -48,11 +48,12 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.RowMapOperation;
 
-public class ColumnMoveOperation extends ImmediateRowMapOperation {
+public class ColumnMoveOperation extends RowMapOperation {
 
     final protected String _columnName;
     final protected int _index;
@@ -82,7 +83,7 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
         ColumnModel columnModel = grid.getColumnModel();
         int fromIndex = columnIndex(columnModel, _columnName);
         ColumnMetadata column = columnModel.getColumns().get(fromIndex);
@@ -90,7 +91,7 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         int fromIndex = columnIndex(state.getColumnModel(), _columnName);
         return mapper(fromIndex, _index, state.getColumnModel().getKeyColumnIndex());
     }

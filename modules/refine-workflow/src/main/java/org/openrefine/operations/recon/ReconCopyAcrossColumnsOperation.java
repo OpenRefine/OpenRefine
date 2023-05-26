@@ -52,14 +52,15 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
-public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
+public class ReconCopyAcrossColumnsOperation extends RowMapOperation {
 
     final protected String _fromColumnName;
     final protected List<String> _toColumnNames;
@@ -101,18 +102,18 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws Operation.DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
         List<Integer> targetColumnIndices = _toColumnNames
                 .stream()
                 .map(name -> projectState.getColumnModel().getColumnIndexByName(name))
                 .collect(Collectors.toList());
         if (columnIndex == -1) {
-            throw new DoesNotApplyException(String.format("Column '%s' does not exist", _fromColumnName));
+            throw new Operation.DoesNotApplyException(String.format("Column '%s' does not exist", _fromColumnName));
         }
         for (Integer targetColumnIndex : targetColumnIndices) {
             if (targetColumnIndex == -1) {
-                throw new DoesNotApplyException(String.format("Target column does not exist"));
+                throw new Operation.DoesNotApplyException(String.format("Target column does not exist"));
             }
         }
         Set<Judgment> judgments = new HashSet<>(_judgments);

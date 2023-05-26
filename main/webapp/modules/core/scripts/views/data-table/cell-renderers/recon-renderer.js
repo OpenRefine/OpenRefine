@@ -143,20 +143,19 @@ class ReconCellRenderer {
   }
 
   doRematch(rowIndex, cellIndex, cell, cellUI) {
-    this.doJudgment("none", {}, {}, rowIndex, cellIndex, cell, cellUI);
+    this.doJudgment("none", null, rowIndex, cellIndex, cell, cellUI);
   }
 
   doMatchNewTopicToOneCell(rowIndex, cellIndex, cell, cellUI, onDone) {
-    this.doJudgment("new", {}, {}, rowIndex, cellIndex, cell, cellUI, onDone);
+    this.doJudgment("new", null, rowIndex, cellIndex, cell, cellUI, onDone);
   }
 
   doClearOneCell(rowIndex, cellIndex, cellUI, onDone) {
     self.postProcessOneCell(
-      "recon-clear-one-cell",
-      {},
       {
-        row: rowIndex,
-        cell: cellIndex
+        op: "core/recon-edit",
+        rowId: rowIndex,
+        columnName: Refine.cellIndexToColumn(cellIndex).name,
       },
       true,
       cellUI,
@@ -181,7 +180,7 @@ class ReconCellRenderer {
   }
 
   doMatchTopicToOneCell(candidate, rowIndex, cellIndex, cell, cellUI, onDone) {
-    this.doJudgment("matched", {}, {
+    this.doJudgment("matched", {
       id : candidate.id,
       name: candidate.name,
       score: candidate.score,
@@ -200,17 +199,17 @@ class ReconCellRenderer {
     }, cellIndex, cell, onDone);
   }
 
-  doJudgment(judgment, params, bodyParams, rowIndex, cellIndex, cell, cellUI, onDone) {
+  doJudgment(judgment, match, rowIndex, cellIndex, cell, cellUI, onDone) {
     this.postProcessOneCell(
-      "recon-judge-one-cell",
-      params || {},
-      $.extend(bodyParams || {}, {
-        row: rowIndex,
-        cell: cellIndex,
+      {
+        op: "core/recon-edit",
+        rowId: rowIndex,
+        columnName: Refine.cellIndexToColumn(cellIndex).name,
         judgment: judgment,
         identifierSpace: (cell.r) ? cell.r.identifierSpace : null,
-        schemaSpace: (cell.r) ? cell.r.schemaSpace : null
-      }),
+        schemaSpace: (cell.r) ? cell.r.schemaSpace : null,
+        match: match
+      },
       true,
       cellUI,
       onDone
@@ -268,7 +267,7 @@ class ReconCellRenderer {
         if (match.notable) {
           notable_types = $.map(match.notable, function(elmt) {
             return typeof elmt == "string" ? elmt : elmt.id;
-          }).join(",");
+          });
         }
         if (elmts.radioSimilar[0].checked) {
           var params = {
@@ -284,16 +283,20 @@ class ReconCellRenderer {
           };
           self.postProcessSeveralCells(params, true, dismiss);
         } else {
-          var params = {
+          var operation = {
+            op: "core/recon-edit",
             judgment: "matched",
-            id: match.id,
-            name: match.name,
-            types: notable_types
+            match: {
+              id: match.id,
+              name: match.name,
+              types: notable_types
+            },
+            rowId: rowIndex,
+            columnName: Refine.cellIndexToColumn(cellIndex).name
           };
-          params.row = rowIndex;
-          params.cell = cellIndex;
 
-          self.postProcessOneCell("recon-judge-one-cell", {}, params, true, cellUI, dismiss);
+          self.postProcessOneCell(
+            operation, true, cellUI, dismiss);
         }
       }
     };
@@ -346,13 +349,11 @@ class ReconCellRenderer {
 
   }
 
-  postProcessOneCell(command, params, bodyParams, columnStatsChanged, cellUI, onDone) {
+  postProcessOneCell(operation, columnStatsChanged, cellUI, onDone) {
     var self = this;
 
-    Refine.postCoreProcess(
-      command,
-      params,
-      bodyParams,
+    Refine.postOperation(
+      operation,
       { columnStatsChanged: columnStatsChanged },
       {
         onDone: function(o) {

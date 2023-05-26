@@ -33,35 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
-import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.*;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.overlay.OverlayModel;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 public class TextTransformOperation extends ExpressionBasedOperation {
 
     @JsonProperty("repeat")
     final protected boolean _repeat;
-    @JsonProperty("repeatCount")
-    final protected int _repeatCount;
 
     static public OnError stringToOnError(String s) {
         if ("set-to-blank".equalsIgnoreCase(s)) {
@@ -91,9 +82,8 @@ public class TextTransformOperation extends ExpressionBasedOperation {
             @JsonProperty("onError") OnError onError,
             @JsonProperty("repeat") boolean repeat,
             @JsonProperty("repeatCount") int repeatCount) {
-        super(engineConfig, expression, columnName, onError);
+        super(engineConfig, expression, columnName, onError, repeat ? repeatCount : 0);
         _repeat = repeat;
-        _repeatCount = repeatCount;
     }
 
     @JsonProperty("columnName")
@@ -111,107 +101,57 @@ public class TextTransformOperation extends ExpressionBasedOperation {
         return _onError;
     }
 
+    @JsonProperty("repeatCount")
+    public int getRepeatCount() {
+        return _repeatCount;
+    }
+
     @Override
     public String getDescription() {
         return "Text transform on cells in column " + _baseColumnName + " using expression " + _expression;
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
-        int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
-        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError,
-                _repeat ? _repeatCount : 0, context.getProjectId());
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+        ColumnModel columnModel = grid.getColumnModel();
+        int baseColumnIndex = columnIndex(columnModel, _baseColumnName);
+        return new Joiner(baseColumnIndex, columnModel.getKeyColumnIndex());
     }
 
-    @Override
-    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable) {
-        return new ColumnChangeByChangeData(
-                changeDataId,
-                _baseColumnName,
-                null,
-                _engineConfig,
-                null) {
+    public static class Joiner extends RowInRecordChangeDataJoiner {
 
-            @Override
-            public RowInRecordChangeDataProducer<Cell> getChangeDataProducer(int columnIndex, String columnName, ColumnModel columnModel,
-                    Map<String, OverlayModel> overlayModels, ChangeContext changeContext) {
-                return evaluatingChangeDataProducer(
-                        columnIndex,
-                        columnName,
-                        _onError,
-                        evaluable,
-                        columnModel,
-                        overlayModels,
-                        changeContext.getProjectId());
+        private static final long serialVersionUID = 5279645865937629998L;
+        final int _columnIndex;
+        final boolean _preservesRecords;
+
+        public Joiner(int columnIndex, int keyColumnIndex) {
+            _columnIndex = columnIndex;
+            // TODO: if the key column index is not 0, it probably
+            // needs shifting in the new grid if we are inserting the new column before it
+            _preservesRecords = columnIndex > keyColumnIndex;
+        }
+
+        @Override
+        public Row call(Row row, IndexedData<Cell> indexedData) {
+            Cell cell = indexedData.getData();
+            if (indexedData.isPending()) {
+                Cell currentCell = row.getCell(_columnIndex);
+                cell = new Cell(
+                        currentCell == null ? null : currentCell.value,
+                        currentCell == null ? null : currentCell.recon,
+                        true);
             }
-        };
-    }
-
-    protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel,
-            Map<String, OverlayModel> overlayModels,
-            Evaluable eval, OnError onError, int repeatCount, long projectId) {
-        return new RowInRecordMapper() {
-
-            private static final long serialVersionUID = 2272064171042189466L;
-
-            @Override
-            public Row call(Record record, long rowId, Row row) {
-                Cell cell = row.getCell(columnIndex);
-                Cell newCell = null;
-
-                Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell, overlayModels, projectId);
-                if (ExpressionUtils.dependsOnPendingValues(eval, columnName, columnModel, row, record)) {
-                    return row.withCell(columnIndex, new Cell(
-                            cell != null ? cell.value : null,
-                            cell != null ? cell.recon : null,
-                            true));
-                }
-
-                Object o = eval.evaluate(bindings);
-                if (o == null) {
-                    newCell = null;
-                } else {
-                    if (o instanceof Cell) {
-                        newCell = (Cell) o;
-                    } else if (o instanceof WrappedCell) {
-                        newCell = ((WrappedCell) o).cell;
-                    } else {
-                        Serializable newValue = ExpressionUtils.wrapStorable(o);
-                        if (ExpressionUtils.isError(newValue)) {
-                            if (onError == OnError.KeepOriginal) {
-                                return row;
-                            } else if (onError == OnError.SetToBlank) {
-                                newValue = null;
-                            }
-                        }
-
-                        newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
-
-                        for (int i = 0; i < repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell, overlayModels, projectId);
-
-                            newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                            if (ExpressionUtils.isError(newValue)) {
-                                break;
-                            } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
-                                break;
-                            }
-
-                            newCell = new Cell(newValue, newCell.recon);
-                        }
-                    }
-                }
-
-                return row.withCell(columnIndex, newCell);
+            if (cell != null) {
+                return row.withCell(_columnIndex, cell);
+            } else {
+                return row;
             }
+        }
 
-            @Override
-            public boolean preservesRecordStructure() {
-                return columnIndex != columnModel.getKeyColumnIndex();
-            }
-
-        };
+        @Override
+        public boolean preservesRecordStructure() {
+            return _preservesRecords;
+        }
     }
 
 }

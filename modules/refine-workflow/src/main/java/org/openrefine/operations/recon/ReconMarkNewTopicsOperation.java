@@ -45,23 +45,29 @@ import com.google.common.collect.ImmutableMap.Builder;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
 /**
  * Marks all filtered cells in a given column as reconciled to "new". Similar values can either be matched to the same
  * reconciliation id, or distinct ones.
  */
-public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
+public class ReconMarkNewTopicsOperation extends RowMapOperation {
 
     final protected boolean _shareNewTopics;
     final protected String _columnName;
@@ -132,7 +138,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);
@@ -143,7 +149,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         if (_shareNewTopics) {
             // Aggregate the set of distinct values
             ImmutableMap<String, Long> empty = ImmutableMap.of();
-            RowFilter filter = createEngine(state, context.getProjectId()).combinedRowFilters();
+            RowFilter filter = getEngine(state, context.getProjectId()).combinedRowFilters();
             ImmutableMap<String, Long> valueToId = state.aggregateRows(aggregator(columnIndex, filter), empty);
 
             return rowMapperWithSharing(columnIndex, reconConfig, historyEntryId, valueToId);

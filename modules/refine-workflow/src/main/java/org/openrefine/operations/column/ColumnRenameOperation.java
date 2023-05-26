@@ -42,12 +42,13 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
-public class ColumnRenameOperation extends ImmediateRowMapOperation {
+public class ColumnRenameOperation extends RowMapOperation {
 
     final protected String _oldColumnName;
     final protected String _newColumnName;
@@ -77,19 +78,19 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
         int index = columnIndex(model, _oldColumnName);
         try {
             return model.renameColumn(index, _newColumnName);
         } catch (ModelException e) {
-            throw new DoesNotApplyException(
+            throw new Operation.DoesNotApplyException(
                     String.format("Column '%s' already exists", _newColumnName));
         }
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         return RowInRecordMapper.IDENTITY;
     }
 

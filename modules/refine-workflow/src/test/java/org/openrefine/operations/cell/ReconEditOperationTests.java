@@ -22,8 +22,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
@@ -67,13 +65,13 @@ public class ReconEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testMatch() throws DoesNotApplyException, ParsingException {
+    public void testMatch() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ReconEditOperation(1L, "bar", Judgment.Matched, null, null, new ReconCandidate("u", "v", null, 48), "p");
         Assert.assertEquals(operation.getDescription(), "Match v (u) to single cell on row 2, column bar, containing \"p\"");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(6789L);
-        Change.ChangeResult changeResult = operation.apply(initialGrid, context);
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, context);
         Grid newGrid = changeResult.getGrid();
 
         Recon expectedRecon = testRecon("c", "d", Judgment.None)
@@ -88,13 +86,31 @@ public class ReconEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testNew() throws DoesNotApplyException, ParsingException {
+    public void testMatchPreviouslyUnreconciled() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new ReconEditOperation(0L, "foo", Judgment.Matched, "http://my.custom.space/id",
+                "http://my.custom.space/schema", new ReconCandidate("u", "v", null, 48), "a");
+        Assert.assertEquals(operation.getDescription(), "Match v (u) to single cell on row 1, column foo, containing \"a\"");
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(6789L);
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, context);
+        Grid newGrid = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Cell resultingCell = newGrid.getRow(0L).getCell(0);
+        Assert.assertEquals(resultingCell.recon.identifierSpace, "http://my.custom.space/id");
+        Assert.assertEquals(resultingCell.recon.schemaSpace, "http://my.custom.space/schema");
+        Assert.assertEquals(newGrid.getRow(1L), initialGrid.getRow(1L));
+    }
+
+    @Test
+    public void testNew() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ReconEditOperation(1L, "bar", Judgment.New, null, null, null, "p");
         Assert.assertEquals(operation.getDescription(), "Mark to create new item for single cell on row 2, column bar, containing \"p\"");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(6789L);
-        Change.ChangeResult changeResult = operation.apply(initialGrid, context);
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, context);
         Grid newGrid = changeResult.getGrid();
 
         Recon expectedRecon = testRecon("c", "d", Judgment.New)
@@ -107,13 +123,13 @@ public class ReconEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testUnmatch() throws DoesNotApplyException, ParsingException {
+    public void testUnmatch() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ReconEditOperation(0L, "bar", Judgment.None, null, null, null, "b");
         Assert.assertEquals(operation.getDescription(), "Discard recon judgment for single cell on row 1, column bar, containing \"b\"");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(6789L);
-        Change.ChangeResult changeResult = operation.apply(initialGrid, context);
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, context);
         Grid newGrid = changeResult.getGrid();
 
         Recon expectedRecon = testRecon("c", "d", Judgment.None)
@@ -126,13 +142,13 @@ public class ReconEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testClear() throws DoesNotApplyException, ParsingException {
+    public void testClear() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ReconEditOperation(0L, "bar", null, null, null, null, "b");
         Assert.assertEquals(operation.getDescription(), "Clear recon data for single cell on row 1, column bar, containing \"b\"");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(6789L);
-        Change.ChangeResult changeResult = operation.apply(initialGrid, context);
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, context);
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);

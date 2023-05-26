@@ -44,7 +44,6 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -84,14 +83,14 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
                 });
     }
 
-    @Test(expectedExceptions = DoesNotApplyException.class)
-    public void testDoesNotApply() throws DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
+    public void testDoesNotApply() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TransposeRowsIntoColumnsOperation("d", 2);
         operation.apply(initial, mock(ChangeContext.class));
     }
 
     @Test
-    public void testTransposeRowsIntoColumns() throws DoesNotApplyException, ParsingException {
+    public void testTransposeRowsIntoColumns() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TransposeRowsIntoColumnsOperation("b", 2);
 
         Grid expected = createGrid(
@@ -107,7 +106,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeRecordsIntoRows() throws DoesNotApplyException, ParsingException {
+    public void testTransposeRecordsIntoRows() throws Operation.DoesNotApplyException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b", "c" },
                 new Serializable[][] {

@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -51,9 +52,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -74,6 +76,194 @@ public class KeyValueColumnizeOperation implements Operation {
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
         _noteColumnName = noteColumnName;
+    }
+
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel columnModel = projectState.getColumnModel();
+        int keyColumnIndex = columnModel.getColumnIndexByName(_keyColumnName);
+        int valueColumnIndex = columnModel.getColumnIndexByName(_valueColumnName);
+        int noteColumnIndex = _noteColumnName == null ? -1 : columnModel.getColumnIndexByName(_noteColumnName);
+        ColumnMetadata noteColumn = _noteColumnName == null ? null : columnModel.getColumnByName(_noteColumnName);
+
+        ColumnModel newColumns = new ColumnModel(Collections.emptyList());
+        ColumnModel newNoteColumns = new ColumnModel(Collections.emptyList());
+        Map<String, Integer> keyValueToColumn = new HashMap<>();
+        Map<String, Integer> keyValueToNoteColumn = new HashMap<>();
+        Map<String, List<Cell>> groupByCellValuesToRow = new HashMap<>();
+
+        List<Integer> unchangedColumns = new ArrayList<>();
+        List<ColumnMetadata> oldColumns = columnModel.getColumns();
+        for (int i = 0; i < oldColumns.size(); i++) {
+            if (i != keyColumnIndex &&
+                    i != valueColumnIndex &&
+                    i != noteColumnIndex) {
+                unchangedColumns.add(i);
+                newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
+            }
+        }
+
+        List<List<Cell>> newBaseRows = new ArrayList<>();
+        List<List<Cell>> newNotes = new ArrayList<>();
+
+        List<Cell> baseRow = null;
+        List<Cell> notes = null;
+        List<List<Cell>> currentBaseRows = new ArrayList<>();
+        List<List<Cell>> currentNotes = new ArrayList<>();
+
+        String recordKey = null; // key which indicates the start of a record
+        if (unchangedColumns.isEmpty()) {
+            pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
+            baseRow = new ArrayList<>(newColumns.getColumns().size());
+            currentBaseRows.add(baseRow);
+            notes = new ArrayList<>(1);
+            currentNotes.add(notes);
+        }
+
+        try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
+            for (IndexedRow indexedRow : iterator) {
+                Row oldRow = indexedRow.getRow();
+
+                Object key = oldRow.getCellValue(keyColumnIndex);
+                if (!ExpressionUtils.isNonBlankData(key)) {
+                    if (unchangedColumns.isEmpty()) {
+                        // For degenerate 2 column case (plus optional note column),
+                        // start a new row when we hit a blank line
+                        pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
+                        baseRow = new ArrayList<>(newColumns.getColumns().size());
+                        currentBaseRows.add(baseRow);
+                        notes = new ArrayList<>(newNoteColumns.getColumns().size());
+                        currentNotes.add(notes);
+                    } else {
+                        // Copy rows with no key
+                        newBaseRows.add(buildNewRow(keyColumnIndex, valueColumnIndex, noteColumnIndex, oldRow));
+                        newNotes.add(Collections.emptyList());
+                    }
+                    continue;
+                }
+
+                String keyString = key.toString();
+                // Start a new row on our beginning of record key
+                // TODO: Add support for processing in record mode instead of just by rows
+                if (keyString.equals(recordKey) || recordKey == null) {
+                    pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
+                    baseRow = new ArrayList<>(newColumns.getColumns().size());
+                    currentBaseRows.add(baseRow);
+                    notes = new ArrayList<>(newNoteColumns.getColumns().size());
+                    currentNotes.add(notes);
+                }
+                Integer newColumn = keyValueToColumn.get(keyString);
+                if (newColumn == null) {
+                    // Allocate new column
+                    String columnName = newColumns.getUnduplicatedColumnName(keyString);
+                    int columnIndex = newColumns.getColumns().size();
+                    newColumns = newColumns.insertUnduplicatedColumn(columnIndex,
+                            new ColumnMetadata(columnName));
+                    keyValueToColumn.put(keyString, columnIndex);
+                    newColumn = columnIndex;
+
+                    // We assume first key encountered is the beginning of record key
+                    // TODO: make customizable?
+                    if (recordKey == null) {
+                        recordKey = keyString;
+                    }
+                }
+
+                /*
+                 * NOTE: If we have additional columns, we currently merge all rows that have identical values in those
+                 * columns and then add our new columns.
+                 */
+                if (unchangedColumns.size() > 0) {
+                    StringBuffer sb = new StringBuffer();
+                    for (int c = 0; c < unchangedColumns.size(); c++) {
+                        Object cellValue = oldRow.getCellValue(unchangedColumns.get(c));
+                        if (c > 0) {
+                            sb.append('\0');
+                        }
+                        if (cellValue != null) {
+                            sb.append(cellValue.toString());
+                        }
+                    }
+                    String unchangedCellValues = sb.toString();
+
+                    baseRow = groupByCellValuesToRow.get(unchangedCellValues);
+                    if (baseRow == null ||
+                            (newColumn < baseRow.size() && baseRow.get(newColumn) != null)) {
+                        baseRow = buildNewRow(keyColumnIndex, valueColumnIndex, noteColumnIndex, oldRow);
+                        groupByCellValuesToRow.put(unchangedCellValues, baseRow);
+                        currentBaseRows.add(baseRow);
+                        currentNotes.add(new ArrayList<>());
+                    }
+                }
+
+                Cell cell = oldRow.getCell(valueColumnIndex);
+                if (unchangedColumns.size() == 0) {
+                    int index = newColumn;
+                    List<Cell> row = getAvailableRow(currentBaseRows, currentNotes, index);
+                    if (row == null) {
+                        row = new ArrayList<>();
+                        currentBaseRows.add(row);
+                        currentNotes.add(new ArrayList<>());
+                    }
+                    setCell(row, index, cell);
+                } else {
+                    // TODO: support repeating keys in this mode too
+                    setCell(baseRow, newColumn, cell);
+                }
+
+                if (noteColumn != null) {
+                    Object noteValue = oldRow.getCellValue(noteColumnIndex);
+                    if (ExpressionUtils.isNonBlankData(noteValue)) {
+                        Integer newNoteColumn = keyValueToNoteColumn.get(keyString);
+                        if (newNoteColumn == null) {
+                            // Allocate new column
+                            String name = newNoteColumns.getUnduplicatedColumnName(
+                                    noteColumn.getName() + " : " + keyString);
+                            newNoteColumn = newNoteColumns.getColumns().size();
+                            newNoteColumns = newNoteColumns.insertUnduplicatedColumn(newNoteColumn,
+                                    new ColumnMetadata(name));
+                            keyValueToNoteColumn.put(keyString, newNoteColumn);
+                        }
+
+                        int newNoteCellIndex = newNoteColumn;
+                        Cell existingNewNoteCell = newNoteCellIndex < notes.size() ? notes.get(newNoteCellIndex) : null;
+                        Object existingNewNoteValue = existingNewNoteCell == null ? null : existingNewNoteCell.value;
+                        if (ExpressionUtils.isNonBlankData(existingNewNoteValue)) {
+                            Cell concatenatedNoteCell = new Cell(
+                                    existingNewNoteValue.toString() + ";" + noteValue.toString(), null);
+                            setCell(notes, newNoteCellIndex, concatenatedNoteCell);
+                        } else {
+                            setCell(notes, newNoteCellIndex, oldRow.getCell(noteColumnIndex));
+                        }
+                    }
+                }
+            }
+        }
+
+        pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
+
+        ColumnModel finalColumnModel = newColumns;
+        for (ColumnMetadata notesColumn : newNoteColumns.getColumns()) {
+            finalColumnModel = finalColumnModel.insertUnduplicatedColumn(
+                    finalColumnModel.getColumns().size(), notesColumn);
+        }
+        finalColumnModel = finalColumnModel.withHasRecords(true);
+
+        // build the final grid of rows
+        List<Row> finalRows = new ArrayList<>(newBaseRows.size());
+        for (int i = 0; i != newBaseRows.size(); i++) {
+            padWithNulls(newBaseRows.get(i), newColumns.getColumns().size());
+            padWithNulls(newNotes.get(i), newNoteColumns.getColumns().size());
+            newBaseRows.get(i).addAll(newNotes.get(i));
+            Row row = new Row(newBaseRows.get(i));
+            if (!row.isEmpty()) {
+                finalRows.add(row);
+            }
+        }
+
+        return new Operation.ChangeResult(
+                projectState.getRunner().gridFromList(finalColumnModel, finalRows, projectState.getOverlayModels()),
+                GridPreservation.NO_ROW_PRESERVATION);
     }
 
     @JsonProperty("keyColumnName")
@@ -98,247 +288,44 @@ public class KeyValueColumnizeOperation implements Operation {
                 (_noteColumnName != null ? (" with note column " + _noteColumnName) : "");
     }
 
-    @Override
-    public Change createChange() {
-        return new KeyValueColumnizeChange();
+    private List<Cell> getAvailableRow(List<List<Cell>> currentRows, List<List<Cell>> currentNotes, int index) {
+        for (List<Cell> row : currentRows) {
+            if (index >= row.size() || row.get(index) == null) {
+                return row;
+            }
+        }
+        // If we couldn't find a row with an empty spot
+        return null;
     }
 
-    public class KeyValueColumnizeChange implements Change {
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel columnModel = projectState.getColumnModel();
-            int keyColumnIndex = columnModel.getColumnIndexByName(_keyColumnName);
-            int valueColumnIndex = columnModel.getColumnIndexByName(_valueColumnName);
-            int noteColumnIndex = _noteColumnName == null ? -1 : columnModel.getColumnIndexByName(_noteColumnName);
-            ColumnMetadata noteColumn = _noteColumnName == null ? null : columnModel.getColumnByName(_noteColumnName);
-
-            ColumnModel newColumns = new ColumnModel(Collections.emptyList());
-            ColumnModel newNoteColumns = new ColumnModel(Collections.emptyList());
-            Map<String, Integer> keyValueToColumn = new HashMap<>();
-            Map<String, Integer> keyValueToNoteColumn = new HashMap<>();
-            Map<String, List<Cell>> groupByCellValuesToRow = new HashMap<>();
-
-            List<Integer> unchangedColumns = new ArrayList<>();
-            List<ColumnMetadata> oldColumns = columnModel.getColumns();
-            for (int i = 0; i < oldColumns.size(); i++) {
-                if (i != keyColumnIndex &&
-                        i != valueColumnIndex &&
-                        i != noteColumnIndex) {
-                    unchangedColumns.add(i);
-                    newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
-                }
-            }
-
-            List<List<Cell>> newBaseRows = new ArrayList<>();
-            List<List<Cell>> newNotes = new ArrayList<>();
-
-            List<Cell> baseRow = null;
-            List<Cell> notes = null;
-            List<List<Cell>> currentBaseRows = new ArrayList<>();
-            List<List<Cell>> currentNotes = new ArrayList<>();
-
-            String recordKey = null; // key which indicates the start of a record
-            if (unchangedColumns.isEmpty()) {
-                pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
-                baseRow = new ArrayList<>(newColumns.getColumns().size());
-                currentBaseRows.add(baseRow);
-                notes = new ArrayList<>(1);
-                currentNotes.add(notes);
-            }
-
-            try (CloseableIterator<IndexedRow> iterator = projectState.iterateRows(RowFilter.ANY_ROW)) {
-                for (IndexedRow indexedRow : iterator) {
-                    Row oldRow = indexedRow.getRow();
-
-                    Object key = oldRow.getCellValue(keyColumnIndex);
-                    if (!ExpressionUtils.isNonBlankData(key)) {
-                        if (unchangedColumns.isEmpty()) {
-                            // For degenerate 2 column case (plus optional note column),
-                            // start a new row when we hit a blank line
-                            pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
-                            baseRow = new ArrayList<>(newColumns.getColumns().size());
-                            currentBaseRows.add(baseRow);
-                            notes = new ArrayList<>(newNoteColumns.getColumns().size());
-                            currentNotes.add(notes);
-                        } else {
-                            // Copy rows with no key
-                            newBaseRows.add(buildNewRow(keyColumnIndex, valueColumnIndex, noteColumnIndex, oldRow));
-                            newNotes.add(Collections.emptyList());
-                        }
-                        continue;
-                    }
-
-                    String keyString = key.toString();
-                    // Start a new row on our beginning of record key
-                    // TODO: Add support for processing in record mode instead of just by rows
-                    if (keyString.equals(recordKey) || recordKey == null) {
-                        pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
-                        baseRow = new ArrayList<>(newColumns.getColumns().size());
-                        currentBaseRows.add(baseRow);
-                        notes = new ArrayList<>(newNoteColumns.getColumns().size());
-                        currentNotes.add(notes);
-                    }
-                    Integer newColumn = keyValueToColumn.get(keyString);
-                    if (newColumn == null) {
-                        // Allocate new column
-                        String columnName = newColumns.getUnduplicatedColumnName(keyString);
-                        int columnIndex = newColumns.getColumns().size();
-                        newColumns = newColumns.insertUnduplicatedColumn(columnIndex,
-                                new ColumnMetadata(columnName));
-                        keyValueToColumn.put(keyString, columnIndex);
-                        newColumn = columnIndex;
-
-                        // We assume first key encountered is the beginning of record key
-                        // TODO: make customizable?
-                        if (recordKey == null) {
-                            recordKey = keyString;
-                        }
-                    }
-
-                    /*
-                     * NOTE: If we have additional columns, we currently merge all rows that have identical values in
-                     * those columns and then add our new columns.
-                     */
-                    if (unchangedColumns.size() > 0) {
-                        StringBuffer sb = new StringBuffer();
-                        for (int c = 0; c < unchangedColumns.size(); c++) {
-                            Object cellValue = oldRow.getCellValue(unchangedColumns.get(c));
-                            if (c > 0) {
-                                sb.append('\0');
-                            }
-                            if (cellValue != null) {
-                                sb.append(cellValue.toString());
-                            }
-                        }
-                        String unchangedCellValues = sb.toString();
-
-                        baseRow = groupByCellValuesToRow.get(unchangedCellValues);
-                        if (baseRow == null ||
-                                (newColumn < baseRow.size() && baseRow.get(newColumn) != null)) {
-                            baseRow = buildNewRow(keyColumnIndex, valueColumnIndex, noteColumnIndex, oldRow);
-                            groupByCellValuesToRow.put(unchangedCellValues, baseRow);
-                            currentBaseRows.add(baseRow);
-                            currentNotes.add(new ArrayList<>());
-                        }
-                    }
-
-                    Cell cell = oldRow.getCell(valueColumnIndex);
-                    if (unchangedColumns.size() == 0) {
-                        int index = newColumn;
-                        List<Cell> row = getAvailableRow(currentBaseRows, currentNotes, index);
-                        if (row == null) {
-                            row = new ArrayList<>();
-                            currentBaseRows.add(row);
-                            currentNotes.add(new ArrayList<>());
-                        }
-                        setCell(row, index, cell);
-                    } else {
-                        // TODO: support repeating keys in this mode too
-                        setCell(baseRow, newColumn, cell);
-                    }
-
-                    if (noteColumn != null) {
-                        Object noteValue = oldRow.getCellValue(noteColumnIndex);
-                        if (ExpressionUtils.isNonBlankData(noteValue)) {
-                            Integer newNoteColumn = keyValueToNoteColumn.get(keyString);
-                            if (newNoteColumn == null) {
-                                // Allocate new column
-                                String name = newNoteColumns.getUnduplicatedColumnName(
-                                        noteColumn.getName() + " : " + keyString);
-                                newNoteColumn = newNoteColumns.getColumns().size();
-                                newNoteColumns = newNoteColumns.insertUnduplicatedColumn(newNoteColumn,
-                                        new ColumnMetadata(name));
-                                keyValueToNoteColumn.put(keyString, newNoteColumn);
-                            }
-
-                            int newNoteCellIndex = newNoteColumn;
-                            Cell existingNewNoteCell = newNoteCellIndex < notes.size() ? notes.get(newNoteCellIndex) : null;
-                            Object existingNewNoteValue = existingNewNoteCell == null ? null : existingNewNoteCell.value;
-                            if (ExpressionUtils.isNonBlankData(existingNewNoteValue)) {
-                                Cell concatenatedNoteCell = new Cell(
-                                        existingNewNoteValue.toString() + ";" + noteValue.toString(), null);
-                                setCell(notes, newNoteCellIndex, concatenatedNoteCell);
-                            } else {
-                                setCell(notes, newNoteCellIndex, oldRow.getCell(noteColumnIndex));
-                            }
-                        }
-                    }
-                }
-            }
-
-            pushCurrentRows(newBaseRows, currentBaseRows, newNotes, currentNotes);
-
-            ColumnModel finalColumnModel = newColumns;
-            for (ColumnMetadata notesColumn : newNoteColumns.getColumns()) {
-                finalColumnModel = finalColumnModel.insertUnduplicatedColumn(
-                        finalColumnModel.getColumns().size(), notesColumn);
-            }
-            finalColumnModel = finalColumnModel.withHasRecords(true);
-
-            // build the final grid of rows
-            List<Row> finalRows = new ArrayList<>(newBaseRows.size());
-            for (int i = 0; i != newBaseRows.size(); i++) {
-                padWithNulls(newBaseRows.get(i), newColumns.getColumns().size());
-                padWithNulls(newNotes.get(i), newNoteColumns.getColumns().size());
-                newBaseRows.get(i).addAll(newNotes.get(i));
-                Row row = new Row(newBaseRows.get(i));
-                if (!row.isEmpty()) {
-                    finalRows.add(row);
-                }
-            }
-
-            return new ChangeResult(
-                    projectState.getRunner().gridFromList(finalColumnModel, finalRows, projectState.getOverlayModels()),
-                    GridPreservation.NO_ROW_PRESERVATION);
-        }
-
-        private List<Cell> getAvailableRow(List<List<Cell>> currentRows, List<List<Cell>> currentNotes, int index) {
-            for (List<Cell> row : currentRows) {
-                if (index >= row.size() || row.get(index) == null) {
-                    return row;
-                }
-            }
-            // If we couldn't find a row with an empty spot
-            return null;
-        }
-
-        private List<Cell> buildNewRow(int keyColumnIndex, int valueColumnIndex, int noteColumnIndex, Row oldRow) {
-            List<Cell> cells = new ArrayList<>(oldRow.getCells().size());
-            for (int c = 0; c < oldRow.getCells().size(); c++) {
-                if (c != keyColumnIndex && c != valueColumnIndex && c != noteColumnIndex) {
-                    cells.add(oldRow.getCell(c));
-                }
-            }
-            return cells;
-        }
-
-        private void pushCurrentRows(List<List<Cell>> newBaseRows, List<List<Cell>> currentBaseRows, List<List<Cell>> newNotes,
-                List<List<Cell>> currentNotes) {
-            newBaseRows.addAll(currentBaseRows);
-            newNotes.addAll(currentNotes);
-            currentBaseRows.clear();
-            currentNotes.clear();
-        }
-
-        private void setCell(List<Cell> cells, int index, Cell cell) {
-            while (cells.size() <= index) {
-                cells.add(null);
-            }
-            cells.set(index, cell);
-        }
-
-        private void padWithNulls(List<Cell> cells, int targetLength) {
-            while (cells.size() < targetLength) {
-                cells.add(null);
+    private List<Cell> buildNewRow(int keyColumnIndex, int valueColumnIndex, int noteColumnIndex, Row oldRow) {
+        List<Cell> cells = new ArrayList<>(oldRow.getCells().size());
+        for (int c = 0; c < oldRow.getCells().size(); c++) {
+            if (c != keyColumnIndex && c != valueColumnIndex && c != noteColumnIndex) {
+                cells.add(oldRow.getCell(c));
             }
         }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
+        return cells;
     }
 
+    private void pushCurrentRows(List<List<Cell>> newBaseRows, List<List<Cell>> currentBaseRows, List<List<Cell>> newNotes,
+            List<List<Cell>> currentNotes) {
+        newBaseRows.addAll(currentBaseRows);
+        newNotes.addAll(currentNotes);
+        currentBaseRows.clear();
+        currentNotes.clear();
+    }
+
+    private void setCell(List<Cell> cells, int index, Cell cell) {
+        while (cells.size() <= index) {
+            cells.add(null);
+        }
+        cells.set(index, cell);
+    }
+
+    private void padWithNulls(List<Cell> cells, int targetLength) {
+        while (cells.size() < targetLength) {
+            cells.add(null);
+        }
+    }
 }

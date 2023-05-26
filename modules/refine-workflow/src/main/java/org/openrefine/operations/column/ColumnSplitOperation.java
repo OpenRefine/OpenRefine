@@ -55,13 +55,13 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.utils.CellValueSplitter;
 
-public class ColumnSplitOperation extends EngineDependentOperation {
+public class ColumnSplitOperation extends RowMapOperation {
 
     public static enum Mode {
         @JsonProperty("lengths")
@@ -79,6 +79,9 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     final protected Integer _maxColumns;
 
     final protected int[] _fieldLengths;
+
+    // initialized lazily
+    protected CellValueSplitter _splitter = null;
 
     @JsonCreator
     public static ColumnSplitOperation deserialize(
@@ -202,70 +205,57 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                 (Mode.Separator.equals(_mode) ? " by separator" : " by field lengths");
     }
 
-    public Change createChange() {
-        return new ColumnSplitChange(_engineConfig);
-    }
-
-    public class ColumnSplitChange extends RowMapChange {
-
-        final protected CellValueSplitter _splitter;
-
-        public ColumnSplitChange(EngineConfig engineConfig) {
-            super(engineConfig);
+    protected CellValueSplitter getSplitter() {
+        if (_splitter == null) {
             _splitter = CellValueSplitter.construct(_mode, _separator, _regex, _fieldLengths, _maxColumns);
         }
+        return _splitter;
+    }
 
-        @Override
-        public boolean isImmediate() {
-            return true;
+    @Override
+    public GridMap getGridMap(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+        ColumnModel origColumnModel = state.getColumnModel();
+        int origColumnIdx = columnIndex(origColumnModel, _columnName);
+
+        // Create an aggregator which counts the number of columns generated
+        // by the splitting settings.
+        Engine engine = getEngine(state, context.getProjectId());
+        int nbColumns = engine.aggregateFilteredRows(buildAggregator(getSplitter(), origColumnIdx), 0);
+        if (_maxColumns != null && _maxColumns > 0) {
+            nbColumns = Math.min(nbColumns, _maxColumns);
         }
 
-        @Override
-        public GridMap getGridMap(Grid state, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel origColumnModel = state.getColumnModel();
-            int origColumnIdx = columnIndex(origColumnModel, _columnName);
-
-            // Create an aggregator which counts the number of columns generated
-            // by the splitting settings.
-            Engine engine = getEngine(state, context.getProjectId());
-            int nbColumns = engine.aggregateFilteredRows(buildAggregator(_splitter, origColumnIdx), 0);
-            if (_maxColumns != null && _maxColumns > 0) {
-                nbColumns = Math.min(nbColumns, _maxColumns);
-            }
-
-            // Build new column model
-            List<String> columnNames = new ArrayList<>(nbColumns);
-            int columnNameIndex = 1;
-            for (int i = 0; i < nbColumns; i++) {
-                while (true) {
-                    String newColumnName = _columnName + " " + columnNameIndex++;
-                    if (origColumnModel.getColumnByName(newColumnName) == null) {
-                        columnNames.add(newColumnName);
-                        break;
-                    }
+        // Build new column model
+        List<String> columnNames = new ArrayList<>(nbColumns);
+        int columnNameIndex = 1;
+        for (int i = 0; i < nbColumns; i++) {
+            while (true) {
+                String newColumnName = _columnName + " " + columnNameIndex++;
+                if (origColumnModel.getColumnByName(newColumnName) == null) {
+                    columnNames.add(newColumnName);
+                    break;
                 }
             }
-
-            int startColumnIdx = _removeOriginalColumn ? origColumnIdx : origColumnIdx + 1;
-            List<ColumnMetadata> origColumns = origColumnModel.getColumns();
-            List<ColumnMetadata> newColumns = new ArrayList<>(origColumns.subList(0, startColumnIdx));
-            newColumns.addAll(columnNames.stream().map(n -> new ColumnMetadata(n)).collect(Collectors.toList()));
-            newColumns.addAll(origColumns.subList(origColumnIdx + 1, origColumns.size()));
-            ColumnModel newColumnModel = new ColumnModel(newColumns);
-
-            return new GridMap(
-                    newColumnModel,
-                    mapper(_splitter, origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType, origColumnModel.getKeyColumnIndex()),
-                    negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn, origColumnModel.getKeyColumnIndex()),
-                    state.getOverlayModels());
         }
 
-        // for visibility in tests
-        @Override
-        protected Engine getEngine(Grid grid, long projectId) {
-            return super.getEngine(grid, projectId);
-        }
+        int startColumnIdx = _removeOriginalColumn ? origColumnIdx : origColumnIdx + 1;
+        List<ColumnMetadata> origColumns = origColumnModel.getColumns();
+        List<ColumnMetadata> newColumns = new ArrayList<>(origColumns.subList(0, startColumnIdx));
+        newColumns.addAll(columnNames.stream().map(n -> new ColumnMetadata(n)).collect(Collectors.toList()));
+        newColumns.addAll(origColumns.subList(origColumnIdx + 1, origColumns.size()));
+        ColumnModel newColumnModel = new ColumnModel(newColumns);
 
+        return new GridMap(
+                newColumnModel,
+                mapper(getSplitter(), origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType, origColumnModel.getKeyColumnIndex()),
+                negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn, origColumnModel.getKeyColumnIndex()),
+                state.getOverlayModels());
+    }
+
+    // for visibility in tests
+    @Override
+    protected Engine getEngine(Grid grid, long projectId) {
+        return super.getEngine(grid, projectId);
     }
 
     protected static RowInRecordMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn, int keyColumnIdx) {

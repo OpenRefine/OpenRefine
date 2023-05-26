@@ -27,7 +27,13 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,12 +54,24 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.model.*;
-import org.openrefine.model.changes.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Grid;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.commands.ConnectionManager;
 import org.openrefine.wikibase.editing.EditBatchProcessor;
@@ -69,10 +87,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final String description = "Perform Wikibase edits";
     static final protected String changeDataId = "newEntities";
-
-    // only used for backwards compatibility, these things are configurable through
-    // the manifest now.
-    static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
 
     @JsonProperty("summary")
     private String summary;
@@ -122,105 +136,83 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        String tag = tagTemplate;
+        if (tag.contains("${version}")) {
+            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+            if (matcher.matches()) {
+                tag = tag.replace("${version}", matcher.group(1));
+            }
+        }
+        List<String> tags = Collections.singletonList(tag);
+        Engine engine = new Engine(projectState, _engineConfig, 1234L);
+
+        // Validate schema
+        WikibaseSchema schema = (WikibaseSchema) projectState.getOverlayModels().get("wikibaseSchema");
+        ValidationState validation = new ValidationState(projectState.getColumnModel());
+        schema.validate(validation);
+        if (!validation.getValidationErrors().isEmpty()) {
+            throw new IllegalStateException("Schema is incomplete");
+        }
+
+        // TODO if we want to preserve the batch id after the operation is restarted (for instance after a crash),
+        // we could store this id as a separate change data.
         String editGroupId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
-        return new PerformWikibaseEditsChange(editGroupId, this);
+
+        ChangeData<RowEditingResults> changeData = null;
+        try {
+            changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer(), existingChangeData -> {
+                // TODO resume from existing change data
+                NewEntityLibrary library = new NewEntityLibrary();
+
+                // Get Wikibase connection
+                ConnectionManager manager = ConnectionManager.getInstance();
+                String mediaWikiApiEndpoint = schema.getMediaWikiApiEndpoint();
+                if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
+                    // TODO find a way to signal to the user that they should re-login
+                    return existingChangeData.orElse(projectState.getRunner().changeDataFromList(Collections.emptyList()));
+                }
+                ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
+
+                // Prepare edit summary
+                String summary;
+                if (StringUtils.isBlank(editGroupsUrlSchema)) {
+                    summary = this.summary;
+                } else {
+                    // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                    // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                    // from the user-supplied ones, we replace these separators by similar unicode characters to
+                    // make sure they can be told apart.
+                    String summaryWithoutCommas = this.summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
+                    summary = summaryWithoutCommas + " " + this.editGroupsUrlSchema.replace("${batch_id}", editGroupId);
+                }
+
+                RowEditingResultsProducer changeProducer = new RowEditingResultsProducer(
+                        connection,
+                        schema,
+                        projectState.getColumnModel(),
+                        summary,
+                        batchSize,
+                        maxlag,
+                        tags,
+                        maxEditsPerMinute,
+                        library);
+                ChangeData<RowEditingResults> newChangeData = projectState.mapRows(engine.combinedRowFilters(), changeProducer,
+                        existingChangeData);
+                return newChangeData;
+            });
+        } catch (IOException e) {
+            throw new Operation.DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
+        }
+        NewReconRowJoiner joiner = new NewReconRowJoiner();
+        Grid joined = projectState.join(changeData, joiner, projectState.getColumnModel());
+        return new Operation.ChangeResult(joined, GridPreservation.PRESERVES_RECORDS);
     }
 
     @Override
     public String getDescription() {
         return description;
-    }
-
-    static public class PerformWikibaseEditsChange implements Change {
-
-        private final String editGroupId;
-        private final PerformWikibaseEditsOperation operation;
-
-        @JsonCreator
-        public PerformWikibaseEditsChange(
-                @JsonProperty("editGroupId") String editGroupId,
-                @JsonProperty("operation") PerformWikibaseEditsOperation operation) {
-            this.editGroupId = editGroupId;
-            this.operation = operation;
-        }
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            String tag = operation.tagTemplate;
-            if (tag.contains("${version}")) {
-                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-                if (matcher.matches()) {
-                    tag = tag.replace("${version}", matcher.group(1));
-                }
-            }
-            List<String> tags = Collections.singletonList(tag);
-            Engine engine = new Engine(projectState, operation._engineConfig, 1234L);
-
-            // Validate schema
-            WikibaseSchema schema = (WikibaseSchema) projectState.getOverlayModels().get("wikibaseSchema");
-            ValidationState validation = new ValidationState(projectState.getColumnModel());
-            schema.validate(validation);
-            if (!validation.getValidationErrors().isEmpty()) {
-                throw new IllegalStateException("Schema is incomplete");
-            }
-
-            ChangeData<RowEditingResults> changeData = null;
-            try {
-                changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer(), existingChangeData -> {
-                    // TODO resume from existing change data
-                    NewEntityLibrary library = new NewEntityLibrary();
-
-                    // Get Wikibase connection
-                    ConnectionManager manager = ConnectionManager.getInstance();
-                    String mediaWikiApiEndpoint = schema.getMediaWikiApiEndpoint();
-                    if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
-                        // TODO find a way to signal to the user that they should re-login
-                        return existingChangeData.orElse(projectState.getRunner().changeDataFromList(Collections.emptyList()));
-                    }
-                    ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
-
-                    // Prepare edit summary
-                    String summary;
-                    if (StringUtils.isBlank(operation.editGroupsUrlSchema)) {
-                        summary = operation.summary;
-                    } else {
-                        // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-                        // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-                        // from the user-supplied ones, we replace these separators by similar unicode characters to
-                        // make sure they can be told apart.
-                        String summaryWithoutCommas = operation.summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
-                        summary = summaryWithoutCommas + " " + operation.editGroupsUrlSchema.replace("${batch_id}", editGroupId);
-                    }
-
-                    RowEditingResultsProducer changeProducer = new RowEditingResultsProducer(
-                            connection,
-                            schema,
-                            projectState.getColumnModel(),
-                            summary,
-                            operation.batchSize,
-                            operation.maxlag,
-                            tags,
-                            operation.maxEditsPerMinute,
-                            library);
-                    ChangeData<RowEditingResults> newChangeData = projectState.mapRows(engine.combinedRowFilters(), changeProducer,
-                            existingChangeData);
-                    return newChangeData;
-                });
-            } catch (IOException e) {
-                throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
-            }
-            NewReconRowJoiner joiner = new NewReconRowJoiner();
-            Grid joined = projectState.join(changeData, joiner, projectState.getColumnModel());
-            return new ChangeResult(joined, GridPreservation.PRESERVES_RECORDS, null);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return false;
-        }
-
     }
 
     protected static class RowEditingResults implements Serializable {
@@ -393,6 +385,22 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         @Override
         public RowEditingResults deserialize(String serialized) throws IOException {
             return ParsingUtilities.mapper.readValue(serialized, RowEditingResults.class);
+        }
+
+    }
+
+    protected static class EditGroupIdSerializer implements ChangeDataSerializer<String> {
+
+        private static final long serialVersionUID = -8739862435042915677L;
+
+        @Override
+        public String serialize(String changeDataItem) {
+            return changeDataItem;
+        }
+
+        @Override
+        public String deserialize(String serialized) throws IOException {
+            return serialized;
         }
 
     }

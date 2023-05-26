@@ -1,9 +1,10 @@
 
 package org.openrefine.model.changes;
 
-import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
-public class ColumnNotFoundException extends DoesNotApplyException {
+public class ColumnNotFoundException extends Operation.DoesNotApplyException {
 
     private static final long serialVersionUID = 5174258629728283835L;
 

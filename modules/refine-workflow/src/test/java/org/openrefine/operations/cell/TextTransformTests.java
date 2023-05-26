@@ -20,8 +20,6 @@ import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.Operation;
@@ -71,7 +69,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRowsMode() throws DoesNotApplyException, ParsingException {
+    public void testTransformColumnInRowsMode() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -79,7 +77,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0);
 
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -97,7 +95,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRowsModeWithPendingCells() throws DoesNotApplyException, ParsingException {
+    public void testTransformColumnInRowsModeWithPendingCells() throws Operation.DoesNotApplyException, ParsingException {
         Grid pendingGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "a", Cell.PENDING_NULL },
@@ -114,7 +112,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0);
 
-        Change.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -132,7 +130,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformIdentity() throws DoesNotApplyException, ParsingException {
+    public void testTransformIdentity() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -140,7 +138,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0);
 
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -148,7 +146,7 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
-    public void testTransformColumnInRecordsMode() throws DoesNotApplyException, ParsingException {
+    public void testTransformColumnInRecordsMode() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
@@ -156,7 +154,7 @@ public class TextTransformTests extends RefineTest {
                 OnError.SetToBlank,
                 false, 0);
 
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

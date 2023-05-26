@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -48,15 +46,13 @@ import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ColumnChangeByChangeData;
-import org.openrefine.model.changes.RowInRecordChangeDataProducer;
-import org.openrefine.model.changes.RowMapChange;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.overlay.OverlayModel;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 /**
  * Adds a new column by evaluating an expression, based on a given column.
@@ -77,7 +73,7 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
             @JsonProperty("onError") OnError onError,
             @JsonProperty("newColumnName") String newColumnName,
             @JsonProperty("columnInsertIndex") int columnInsertIndex) {
-        super(engineConfig, expression, baseColumnName, onError);
+        super(engineConfig, expression, baseColumnName, onError, 0);
 
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
@@ -117,52 +113,47 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws Operation.DoesNotApplyException {
         ColumnModel columnModel = state.getColumnModel();
         try {
             return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
         } catch (ModelException e) {
-            throw new DoesNotApplyException("Another column already named " + _newColumnName);
+            throw new Operation.DoesNotApplyException("Another column already named " + _newColumnName);
         }
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context, Evaluable eval)
-            throws DoesNotApplyException {
-        ColumnModel columnModel = state.getColumnModel();
-        int columnIndex = RowMapChange.columnIndex(columnModel, _baseColumnName);
-        return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel, state.getOverlayModels());
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+        return new Joiner(_columnInsertIndex, grid.getColumnModel().getKeyColumnIndex());
     }
 
-    @Override
-    protected RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context, Evaluable eval)
-            throws DoesNotApplyException {
-        return negativeMapper(_columnInsertIndex, state.getColumnModel().getKeyColumnIndex());
-    }
+    public static class Joiner extends RowInRecordChangeDataJoiner {
 
-    protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError,
-            Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
-        RowInRecordChangeDataProducer<Cell> changeDataProducer = ColumnChangeByChangeData.evaluatingChangeDataProducer(columnIndex,
-                baseColumnName, onError, eval, columnModel,
-                overlayModels,
-                0L);
-        return new RowInRecordMapper() {
+        private static final long serialVersionUID = 5279645865937629998L;
+        final int _columnIndex;
+        final boolean _preservesRecords;
 
-            private static final long serialVersionUID = 897585827026825498L;
+        public Joiner(int columnIndex, int keyColumnIndex) {
+            _columnIndex = columnIndex;
+            // TODO: if the key column index is not 0, it probably
+            // needs shifting in the new grid if we are inserting the new column before it
+            _preservesRecords = columnIndex > keyColumnIndex;
+        }
 
-            @Override
-            public Row call(Record record, long rowId, Row row) {
-                return row.insertCell(columnInsertIndex, changeDataProducer.call(record, rowId, row));
+        @Override
+        public Row call(Row row, IndexedData<Cell> indexedData) {
+            Cell cell = indexedData.getData();
+            if (indexedData.isPending()) {
+                cell = new Cell(null, null, true);
             }
+            return row.insertCell(_columnIndex, cell);
+        }
 
-            @Override
-            public boolean preservesRecordStructure() {
-                // TODO: if the key column index is not 0, it probably
-                // needs shifting in the new grid if we are inserting the new column before it
-                return columnInsertIndex > columnModel.getKeyColumnIndex();
-            }
+        @Override
+        public boolean preservesRecordStructure() {
+            return _preservesRecords;
+        }
 
-        };
     }
 
     protected static RowInRecordMapper negativeMapper(int columnInsertIndex, int keyColumnIndex) {
@@ -184,28 +175,4 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
         };
     }
 
-    @Override
-    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable) {
-        return new ColumnChangeByChangeData(
-                changeDataId,
-                _baseColumnName,
-                _newColumnName,
-                _engineConfig,
-                null) {
-
-            @Override
-            public RowInRecordChangeDataProducer<Cell> getChangeDataProducer(
-                    int columnIndex, String columnName, ColumnModel columnModel,
-                    Map<String, OverlayModel> overlayModels, ChangeContext changeContext) {
-                return evaluatingChangeDataProducer(
-                        columnIndex,
-                        columnName,
-                        _onError,
-                        evaluable,
-                        columnModel,
-                        overlayModels,
-                        changeContext.getProjectId());
-            }
-        };
-    }
 }

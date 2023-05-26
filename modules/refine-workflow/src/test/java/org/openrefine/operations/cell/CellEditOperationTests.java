@@ -21,8 +21,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -35,6 +33,15 @@ public class CellEditOperationTests extends RefineTest {
     private String serializedOperation = ""
             + "{\n" +
             "       \"newCellValue\" : \"changed\"," +
+            "       \"columnName\": \"bar\"," +
+            "       \"description\" : \"Edit single cell on row 15, column bar\"," +
+            "       \"rowId\" : 14,\n" +
+            "       \"op\" : \"core/cell-edit\"\n" +
+            "     }";
+    private String serializedOperationWithDate = ""
+            + "{\n" +
+            "       \"newCellValue\" : \"2020-03-08T07:02:45Z\"," +
+            "       \"type\": \"date\"," +
             "       \"columnName\": \"bar\"," +
             "       \"description\" : \"Edit single cell on row 15, column bar\"," +
             "       \"rowId\" : 14,\n" +
@@ -58,10 +65,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChange() throws DoesNotApplyException, ParsingException {
-        Operation operation = new CellEditOperation(0L, "foo", "changed");
+    public void testCellChange() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new CellEditOperation(0L, "foo", "changed", null);
 
-        Change.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -72,9 +79,72 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
+    public void testCellChangeDouble() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new CellEditOperation(0L, "foo", 1234.34, null);
+
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        Grid newGrid = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Assert.assertEquals(newGrid.getRow(0L),
+                new Row(Arrays.asList(new Cell(1234.34, null), new Cell(1, null))));
+        Assert.assertEquals(newGrid.getRow(1L),
+                new Row(Arrays.asList(new Cell(3, null), new Cell(true, null))));
+    }
+
+    @Test
+    public void testCellChangeLong() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new CellEditOperation(0L, "foo", 987439L, null);
+
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        Grid newGrid = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Assert.assertEquals(newGrid.getRow(0L),
+                new Row(Arrays.asList(new Cell(987439L, null), new Cell(1, null))));
+        Assert.assertEquals(newGrid.getRow(1L),
+                new Row(Arrays.asList(new Cell(3, null), new Cell(true, null))));
+    }
+
+    @Test
+    public void testCellChangeDate() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new CellEditOperation(0L, "foo", "1989-07-09T18:17:04Z", "date");
+
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        Grid newGrid = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Assert.assertEquals(newGrid.getRow(0L),
+                new Row(Arrays.asList(new Cell(ParsingUtilities.stringToDate("1989-07-09T18:17:04Z"), null), new Cell(1, null))));
+        Assert.assertEquals(newGrid.getRow(1L),
+                new Row(Arrays.asList(new Cell(3, null), new Cell(true, null))));
+    }
+
+    @Test
+    public void testCellChangeBoolean() throws Operation.DoesNotApplyException, ParsingException {
+        Operation operation = new CellEditOperation(0L, "foo", true, null);
+
+        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        Grid newGrid = changeResult.getGrid();
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Assert.assertEquals(newGrid.getRow(0L),
+                new Row(Arrays.asList(new Cell(true, null), new Cell(1, null))));
+        Assert.assertEquals(newGrid.getRow(1L),
+                new Row(Arrays.asList(new Cell(3, null), new Cell(true, null))));
+    }
+
+    @Test
     public void testRoundTripSerialize() throws JsonParseException, JsonMappingException, IOException {
         Operation operation = ParsingUtilities.mapper.readValue(serializedOperation, Operation.class);
         TestUtils.isSerializedTo(operation, serializedOperation, ParsingUtilities.defaultWriter);
+        Assert.assertTrue(operation instanceof CellEditOperation);
+    }
+
+    @Test
+    public void testRoundTripSerializeDate() throws JsonParseException, JsonMappingException, IOException {
+        Operation operation = ParsingUtilities.mapper.readValue(serializedOperationWithDate, Operation.class);
+        TestUtils.isSerializedTo(operation, serializedOperationWithDate, ParsingUtilities.defaultWriter);
         Assert.assertTrue(operation instanceof CellEditOperation);
     }
 }

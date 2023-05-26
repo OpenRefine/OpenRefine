@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.mockwebserver.Dispatcher;
@@ -69,9 +70,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
-import org.openrefine.model.changes.DataExtensionChange.DataExtensionProducer;
+import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconciledDataExtensionJob;
@@ -80,6 +82,9 @@ import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.recon.ExtendDataOperation.DataExtensionJoiner;
+import org.openrefine.operations.recon.ExtendDataOperation.DataExtensionProducer;
+import org.openrefine.operations.recon.ExtendDataOperation.DataExtensionSerializer;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -142,15 +147,6 @@ public class ExtendDataOperationTests extends RefineTest {
             + "     ]"
             + "}}";
 
-    private String processJson = ""
-            + "    {\n" +
-            "       \"description\" : \"Extend data at index 3 based on column organization_name\",\n" +
-            "       \"id\" : %d,\n" +
-            "       \"immediate\" : false,\n" +
-            "       \"progress\" : 0,\n" +
-            "       \"status\" : \"pending\"\n" +
-            "     }";
-
     private Map<JsonNode, String> mockedResponses = new HashMap<>();
 
     static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
@@ -182,6 +178,7 @@ public class ExtendDataOperationTests extends RefineTest {
     Properties options;
     EngineConfig engine_config;
     Engine engine;
+    RecordDataExtension recordDataExtension;
 
     // HTTP mocking
     Dispatcher dispatcher;
@@ -222,6 +219,123 @@ public class ExtendDataOperationTests extends RefineTest {
 
         };
 
+        DataExtension dataExtension = new DataExtension(Arrays.asList(
+                Collections.singletonList(new Cell("a", null)),
+                Collections.singletonList(new Cell("b", null))));
+        recordDataExtension = new RecordDataExtension(Collections.singletonMap(0L, dataExtension));
+
+    }
+
+    private static final String serializedChangeData = "{\"e\":{\"0\":{\"d\":[[{\"v\":\"a\"}],[{\"v\":\"b\"}]]}}}";
+    private static final String serializedChangeMetadata = "{\n" +
+            "        \"type\": \"org.openrefine.model.changes.DataExtensionChange\",\n" +
+            "        \"engineConfig\": {\n" +
+            "          \"facets\": [],\n" +
+            "          \"mode\": \"record-based\"\n" +
+            "        },\n" +
+            "        \"baseColumnName\": \"head of government\",\n" +
+            "        \"endpoint\": \"https://wikidata.reconci.link/en/api\",\n" +
+            "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+            "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+            "        \"columnInsertIndex\": 3,\n" +
+            "        \"columnNames\": [\n" +
+            "          \"date of birth\"\n" +
+            "        ],\n" +
+            "        \"columnTypes\": [\n" +
+            "          null\n" +
+            "        ]\n," +
+            "        \"extension\": {" +
+            "           \"batchSize\": 10," +
+            "           \"properties\": [" +
+            "              {\"id\": \"P123\", \"name\": \"date of birth\"}" +
+            "           ]" +
+            "        }" +
+            "      }";
+
+    @Test
+    public void testJoiner() {
+        Grid state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, new IndexedData<>(record.getStartRowId(), recordDataExtension));
+
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", "a" },
+                        { null, null, "b" },
+                        { null, "3", null }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testJoinerOnExcludedRow() {
+        Grid state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, new IndexedData<RecordDataExtension>(0L, null));
+
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", null },
+                        { null, "3", null }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testJoinerOnPendingRow() {
+        Grid state = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "1", "2" },
+                        { null, "3" }
+                });
+        Record record = state.getRecord(0L);
+
+        DataExtensionJoiner joiner = new DataExtensionJoiner(1, 2, 1);
+
+        List<Row> rows = joiner.call(record, new IndexedData<RecordDataExtension>(0L));
+
+        Grid expectedState = createGrid(new String[] { "foo", "bar", "extended" },
+                new Serializable[][] {
+                        { "1", "2", Cell.PENDING_NULL },
+                        { null, "3", Cell.PENDING_NULL }
+                });
+        List<Row> expectedRows = expectedState.collectRows()
+                .stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        Assert.assertEquals(rows, expectedRows);
+    }
+
+    @Test
+    public void testSerializeChangeData() {
+        DataExtensionSerializer serializer = new DataExtensionSerializer();
+
+        String serialized = serializer.serialize(recordDataExtension);
+        TestUtils.assertEqualsAsJson(serialized, serializedChangeData);
+    }
+
+    @Test
+    public void testDeserializeChangeData() throws IOException {
+        DataExtensionSerializer serializer = new DataExtensionSerializer();
+
+        RecordDataExtension deserialized = serializer.deserialize(serializedChangeData);
+        Assert.assertEquals(deserialized, recordDataExtension);
     }
 
     @Test

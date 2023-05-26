@@ -51,11 +51,12 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.RowMapOperation;
 
-public class ColumnReorderOperation extends ImmediateRowMapOperation {
+public class ColumnReorderOperation extends RowMapOperation {
 
     final protected List<String> _columnNames;
 
@@ -81,13 +82,13 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
         ColumnModel model = grid.getColumnModel();
         List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
             ColumnMetadata meta = model.getColumnByName(columnName);
             if (meta == null) {
-                throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
+                throw new Operation.DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
             }
             columns.add(meta);
         }
@@ -95,7 +96,7 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());
         for (int i = 0; i != _columnNames.size(); i++) {

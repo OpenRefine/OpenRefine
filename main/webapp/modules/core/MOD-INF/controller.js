@@ -95,19 +95,12 @@ function registerCommands() {
   RS.registerCommand(module, "compute-clusters", new Packages.org.openrefine.commands.browsing.ComputeClustersCommand());
   RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.org.openrefine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
 
-  RS.registerCommand(module, "edit-one-cell", new Packages.org.openrefine.commands.cell.EditOneCellCommand());
-
   RS.registerCommand(module, "get-languages", Packages.org.openrefine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.org.openrefine.commands.lang.LoadLanguageCommand());
   
-  RS.registerCommand(module, "recon-judge-one-cell", new Packages.org.openrefine.commands.recon.ReconJudgeOneCellCommand());
-  RS.registerCommand(module, "recon-clear-one-cell", new Packages.org.openrefine.commands.recon.ReconClearOneCellCommand());
-
   RS.registerCommand(module, "preview-extend-data", new Packages.org.openrefine.commands.recon.PreviewExtendDataCommand());
 
   RS.registerCommand(module, "guess-types-of-column", new Packages.org.openrefine.commands.recon.GuessTypesOfColumnCommand());
-
-  RS.registerCommand(module, "annotate-one-row", new Packages.org.openrefine.commands.row.AnnotateOneRowCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.org.openrefine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.org.openrefine.commands.expr.GetExpressionHistoryCommand());
@@ -148,6 +141,10 @@ function registerOperations() {
   OR.registerOperation(module.getName(), "row-star", Packages.org.openrefine.operations.row.RowStarOperation);
   OR.registerOperation(module.getName(), "row-flag", Packages.org.openrefine.operations.row.RowFlagOperation);
   OR.registerOperation(module.getName(), "row-reorder", Packages.org.openrefine.operations.row.RowReorderOperation);
+
+  OR.registerOperation(module.getName(), "cell-edit", Packages.org.openrefine.operations.cell.CellEditOperation);
+  OR.registerOperation(module.getName(), "recon-edit", Packages.org.openrefine.operations.cell.ReconEditOperation);
+  OR.registerOperation(module.getName(), "annotate-one-row", Packages.org.openrefine.operations.row.AnnotateOneRowOperation);
 
   OR.registerOperation(module.getName(), "recon", Packages.org.openrefine.operations.recon.ReconOperation);
   OR.registerOperation(module.getName(), "recon-mark-new-topics", Packages.org.openrefine.operations.recon.ReconMarkNewTopicsOperation);

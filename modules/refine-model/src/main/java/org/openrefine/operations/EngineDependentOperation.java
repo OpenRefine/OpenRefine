@@ -47,8 +47,8 @@ abstract public class EngineDependentOperation implements Operation {
         _engineConfig = engineConfig;
     }
 
-    protected Engine createEngine(Grid state, long projectId) {
-        return new Engine(state, _engineConfig, projectId);
+    protected Engine getEngine(Grid grid, long projectId) {
+        return new Engine(grid, _engineConfig, projectId);
     }
 
     @JsonProperty("engineConfig")

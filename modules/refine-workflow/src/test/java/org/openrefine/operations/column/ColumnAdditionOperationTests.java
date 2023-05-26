@@ -49,8 +49,10 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Runner;
-import org.openrefine.model.changes.*;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -95,7 +97,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumnRowsMode() throws DoesNotApplyException, ParsingException {
+    public void testAddColumnRowsMode() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -104,7 +106,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2);
 
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -122,7 +124,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumnRowsModePendingCell() throws DoesNotApplyException, ParsingException {
+    public void testAddColumnRowsModePendingCell() throws Operation.DoesNotApplyException, ParsingException {
         Grid pendingGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { Cell.PENDING_NULL, "a", "d" },
@@ -138,7 +140,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2);
 
-        Change.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(pendingGrid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -154,7 +156,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumnRecordsMode() throws DoesNotApplyException, ParsingException {
+    public void testAddColumnRecordsMode() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
@@ -163,7 +165,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2);
 
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -231,7 +233,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testIncompleteChangeData() throws ParsingException, IOException, DoesNotApplyException {
+    public void testIncompleteChangeData() throws ParsingException, IOException, Operation.DoesNotApplyException {
         ColumnAdditionOperation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",

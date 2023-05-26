@@ -44,7 +44,6 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.IndexedData;
@@ -64,7 +63,6 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     Map<String, OverlayModel> overlayModels;
     Grid grid;
     PerformWikibaseEditsOperation operation;
-    Change change;
     ChangeContext context;
 
     @BeforeMethod
@@ -96,7 +94,6 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         operation = new PerformWikibaseEditsOperation(
                 EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag");
 
-        change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange("ab3892def", operation);
         context = mock(ChangeContext.class);
     }
 
@@ -129,7 +126,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any(), Mockito.any()))
                 .thenReturn(changeData);
 
-        Change.ChangeResult changeResult = change.apply(grid, context);
+        Operation.ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -147,7 +144,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any(), Mockito.any()))
                 .thenReturn(changeData);
 
-        Change.ChangeResult changeResult = change.apply(grid, context);
+        Operation.ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

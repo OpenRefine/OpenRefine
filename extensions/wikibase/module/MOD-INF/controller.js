@@ -5,15 +5,6 @@ importPackage(org.openrefine.wikibase.commands);
  */
 function init() {
     var RefineServlet = Packages.org.openrefine.RefineServlet;
-    RefineServlet.registerClassMapping(
-            "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange",
-            "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange");
-    RefineServlet.registerClassMapping(
-            "org.openrefine.wikibase.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange",
-            "org.openrefine.wikibase.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange");
-    
-    RefineServlet.cacheClass(Packages.org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange);
-    RefineServlet.cacheClass(Packages.org.openrefine.wikibase.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange);
 
     /*
      *  Attach a Wikibase schema to each project.
@@ -45,7 +36,6 @@ function init() {
      */
     RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
-    RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
     RefineServlet.registerCommand(module, "parse-wikibase-schema", new ParseWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "login", new LoginCommand());
 

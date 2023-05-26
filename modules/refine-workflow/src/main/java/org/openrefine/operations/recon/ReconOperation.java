@@ -33,7 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -46,23 +53,34 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.ListFacet;
 import org.openrefine.browsing.facets.RangeFacet;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
-import org.openrefine.model.changes.*;
+import org.openrefine.model.changes.CellChangeDataSerializer;
+import org.openrefine.model.changes.CellListChangeDataSerializer;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
+import org.openrefine.model.changes.RowInRecordChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.overlay.OverlayModel;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 /**
  * Runs reconciliation on a column.
@@ -75,6 +93,7 @@ public class ReconOperation extends EngineDependentOperation {
 
     final protected String _columnName;
     final protected ReconConfig _reconConfig;
+    final protected String _changeDataId = "recon";
 
     @JsonCreator
     public ReconOperation(
@@ -87,53 +106,70 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
-        return new ColumnChangeByChangeData(
-                "recon",
-                _columnName,
-                null,
-                _engineConfig,
-                _reconConfig) {
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel columnModel = projectState.getColumnModel();
+        int baseColumnIndex = columnModel.getColumnIndexByName(_columnName);
+        if (baseColumnIndex == -1) {
+            throw new Operation.DoesNotApplyException(String.format("Column '{}' not found", _columnName));
+        }
+        ColumnModel newColumnModel = columnModel
+                .withReconConfig(baseColumnIndex, _reconConfig);
 
-            @Override
-            public RowInRecordChangeDataProducer<Cell> getChangeDataProducer(int columnIndex, String columnName, ColumnModel columnModel,
-                    Map<String, OverlayModel> overlayModels, ChangeContext changeContext) {
-                return new ReconChangeDataProducer(
-                        columnName,
-                        columnIndex,
-                        _reconConfig,
-                        changeContext.getHistoryEntryId(),
-                        columnModel);
+        Joiner joiner = new Joiner(baseColumnIndex);
+
+        Grid joined;
+        Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
+        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, baseColumnIndex, _reconConfig,
+                context.getHistoryEntryId(), columnModel);
+        if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
+            ChangeData<Cell> changeData = null;
+            try {
+                changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
+                        partialChangeData -> projectState.mapRows(engine.combinedRowFilters(), producer, partialChangeData));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
-
-            @Override
-            public List<FacetConfig> getCreatedFacets() {
-                ListFacet.ListFacetConfig judgmentFacet = new ListFacet.ListFacetConfig(
-                        _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name(),
-                        "grel:forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))",
-                        _columnName);
-
-                RangeFacet.RangeFacetConfig scoreFacet = new RangeFacet.RangeFacetConfig(
-                        _columnName + ": " + OpenRefineMessage.recon_operation_score_facet_name(),
-                        "grel:cell.recon.best.score",
-                        _columnName,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
-
-                return Arrays.asList(
-                        judgmentFacet,
-                        scoreFacet);
+            joined = projectState.join(changeData, joiner, newColumnModel);
+        } else {
+            ChangeData<List<Cell>> changeData = null;
+            try {
+                changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
+                        partialChangeData -> projectState.mapRecords(engine.combinedRecordFilters(), producer, partialChangeData));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
-        };
+            joined = projectState.join(changeData, joiner, newColumnModel);
+        }
+        return new Operation.ChangeResult(joined,
+                GridPreservation.PRESERVES_ROWS); // TODO add record preservation metadata on Joiner
     }
 
     @Override
     public String getDescription() {
         return _reconConfig.getBriefDescription(_columnName);
+    }
+
+    @Override
+    public List<FacetConfig> getCreatedFacets() {
+        ListFacet.ListFacetConfig judgmentFacet = new ListFacet.ListFacetConfig(
+                _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name(),
+                "grel:forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))",
+                _columnName);
+
+        RangeFacet.RangeFacetConfig scoreFacet = new RangeFacet.RangeFacetConfig(
+                _columnName + ": " + OpenRefineMessage.recon_operation_score_facet_name(),
+                "grel:cell.recon.best.score",
+                _columnName,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        return Arrays.asList(
+                judgmentFacet,
+                scoreFacet);
     }
 
     @JsonProperty("config")
@@ -144,6 +180,39 @@ public class ReconOperation extends EngineDependentOperation {
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
+    }
+
+    protected static class Joiner extends RowInRecordChangeDataJoiner {
+
+        private static final long serialVersionUID = 5848902684901514597L;
+        private final int _columnIndex;
+
+        public Joiner(int columnIndex) {
+            _columnIndex = columnIndex;
+        }
+
+        @Override
+        public Row call(Row row, IndexedData<Cell> indexedData) {
+            Cell cell = indexedData.getData();
+            if (indexedData.isPending()) {
+                Cell currentCell = row.getCell(_columnIndex);
+                cell = new Cell(
+                        currentCell == null ? null : currentCell.value,
+                        currentCell == null ? null : currentCell.recon,
+                        true);
+            }
+            if (cell != null) {
+                return row.withCell(_columnIndex, cell);
+            } else {
+                return row;
+            }
+        }
+
+        @Override
+        public boolean preservesRecordStructure() {
+            return true; // blank cells are preserved
+        }
+
     }
 
     protected static class ReconChangeDataProducer extends RowInRecordChangeDataProducer<Cell> {

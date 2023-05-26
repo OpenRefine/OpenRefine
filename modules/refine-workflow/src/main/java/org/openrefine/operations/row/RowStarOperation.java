@@ -41,12 +41,12 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
-public class RowStarOperation extends ImmediateRowMapOperation {
+public class RowStarOperation extends RowMapOperation {
 
     final protected boolean _starred;
 
@@ -88,7 +88,7 @@ public class RowStarOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Change.DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         return rowMapper(_starred);
     }
 }

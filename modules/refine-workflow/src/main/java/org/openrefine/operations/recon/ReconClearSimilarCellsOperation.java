@@ -42,12 +42,13 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
-public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
+public class ReconClearSimilarCellsOperation extends RowMapOperation {
 
     final protected String _similarValue;
     final protected String _columnName;
@@ -78,7 +79,7 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         int cellIndex = columnIndex(state.getColumnModel(), _columnName);
         return rowMapper(cellIndex, _similarValue);
     }

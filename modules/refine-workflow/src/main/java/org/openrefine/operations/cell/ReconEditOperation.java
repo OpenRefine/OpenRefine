@@ -6,11 +6,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconCellChange;
+import org.openrefine.history.GridPreservation;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Grid;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 /**
  * An operation which changes the recon field of a single cell.
@@ -59,8 +69,89 @@ public class ReconEditOperation implements Operation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
-        return new ReconCellChange(row, columnName, judgment, identifierSpace, schemaSpace, match);
+    public Operation.ChangeResult apply(Grid state, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        ColumnModel columnModel = state.getColumnModel();
+        ColumnMetadata column = columnModel.getColumnByIndex(columnIndex);
+
+        Cell cell = null;
+        try {
+            Row row = state.getRow(this.row);
+            cell = row.getCell(columnIndex);
+        } catch (IndexOutOfBoundsException e) {
+        }
+        if (cell == null) {
+            // leave the grid unchanged
+            return new Operation.ChangeResult(state, GridPreservation.PRESERVES_RECORDS);
+        }
+        Recon newRecon = null;
+        if (cell.recon != null) {
+            newRecon = cell.recon.withJudgmentHistoryEntry(context.getHistoryEntryId());
+        } else if (identifierSpace != null && schemaSpace != null) {
+            newRecon = new Recon(context.getHistoryEntryId(), identifierSpace, schemaSpace);
+        } else if (column.getReconConfig() != null) {
+            newRecon = column.getReconConfig().createNewRecon(context.getHistoryEntryId());
+        } else {
+            // This should only happen if we are judging a cell in a column that
+            // has never been reconciled before.
+            // TODO we should rather throw an exception in this case,
+            // ReconConfig should be required on the column.
+            newRecon = new Recon(context.getHistoryEntryId(), null, null);
+        }
+        newRecon = newRecon
+                .withMatchRank(-1)
+                .withJudgmentAction("single");
+
+        if (judgment == Judgment.None) {
+            newRecon = newRecon.withJudgment(Recon.Judgment.None)
+                    .withMatch(null);
+        } else if (judgment == Judgment.New) {
+            newRecon = newRecon
+                    .withJudgment(Recon.Judgment.New)
+                    .withMatch(null);
+        } else if (judgment == Judgment.Matched) {
+            newRecon = newRecon.withJudgment(Recon.Judgment.Matched)
+                    .withMatch(match);
+            if (newRecon.candidates != null) {
+                for (int m = 0; m < newRecon.candidates.size(); m++) {
+                    if (newRecon.candidates.get(m).id.equals(match.id)) {
+                        newRecon = newRecon.withMatchRank(m);
+                        break;
+                    }
+                }
+            }
+        } else {
+            newRecon = null;
+        }
+        return new Operation.ChangeResult(
+                state.mapRows(mapFunction(columnIndex, row, newRecon), columnModel),
+                GridPreservation.PRESERVES_RECORDS);
+    }
+
+    static protected RowMapper mapFunction(int cellIndex, long rowId, Recon newRecon) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = -5983834950609157341L;
+
+            @Override
+            public Row call(long currentRowId, Row row) {
+                if (rowId == currentRowId) {
+                    Cell oldCell = row.getCell(cellIndex);
+                    Cell newCell = oldCell == null ? null : new Cell(oldCell.value, newRecon);
+                    return row.withCell(cellIndex, newCell);
+                } else {
+                    return row;
+                }
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return true;
+            }
+        };
     }
 
     @Override
