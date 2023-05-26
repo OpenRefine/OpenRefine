@@ -42,16 +42,16 @@ import java.util.stream.Collectors;
 
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.column.ColumnSplitOperation.Mode;
 import org.openrefine.operations.utils.CellValueSplitter;
 
@@ -125,6 +125,29 @@ public class MultiValuedCellSplitOperation implements Operation {
         _fieldLengths = fieldLengths;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        CellValueSplitter splitter = CellValueSplitter.construct(_mode, _separator, _regex, _fieldLengths, null);
+        ColumnModel columnModel = projectState.getColumnModel();
+        int columnIdx = columnModel.getColumnIndexByName(_columnName);
+        if (columnIdx == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Column '%s' does not exist", _columnName));
+        }
+        int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
+        if (keyColumnIdx == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Key column '%s' does not exist", _keyColumnName));
+        }
+        if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
+            projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
+        }
+        return new Operation.ChangeResult(
+                projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel.withHasRecords(true)),
+                GridPreservation.NO_ROW_PRESERVATION,
+                null);
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -161,48 +184,6 @@ public class MultiValuedCellSplitOperation implements Operation {
     @Override
     public String getDescription() {
         return "Split multi-valued cells in column " + _columnName;
-    }
-
-    @Override
-    public Change createChange() throws ParsingException {
-        return new MultiValuedCellSplitChange();
-    }
-
-    public class MultiValuedCellSplitChange implements Change {
-
-        private final CellValueSplitter splitter;
-
-        public MultiValuedCellSplitChange() {
-            this.splitter = CellValueSplitter.construct(_mode, _separator, _regex, _fieldLengths, null);
-        }
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel columnModel = projectState.getColumnModel();
-            int columnIdx = columnModel.getColumnIndexByName(_columnName);
-            if (columnIdx == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Column '%s' does not exist", _columnName));
-            }
-            int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
-            if (keyColumnIdx == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Key column '%s' does not exist", _keyColumnName));
-            }
-            if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
-                projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
-            }
-            return new ChangeResult(
-                    projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel.withHasRecords(true)),
-                    GridPreservation.NO_ROW_PRESERVATION,
-                    null);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
     }
 
     protected static RecordMapper recordMapper(int columnIdx, CellValueSplitter splitter) {

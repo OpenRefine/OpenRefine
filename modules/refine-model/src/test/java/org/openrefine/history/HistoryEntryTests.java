@@ -95,7 +95,6 @@ public class HistoryEntryTests {
         ProjectManager.singleton = new ProjectManagerStub(mock(Runner.class));
     }
 
-
     @Test
     public void serializeHistoryEntry() throws Exception {
         String jsonSimple = "{"

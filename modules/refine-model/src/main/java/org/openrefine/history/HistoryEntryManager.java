@@ -41,7 +41,8 @@ import java.util.concurrent.ExecutionException;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.GridCache;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.FileGridCache;
 import org.openrefine.model.changes.FileChangeDataStore;
@@ -95,7 +96,7 @@ public class HistoryEntryManager {
         ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
     }
 
-    public History load(Runner runner, File dir, long projectId) throws IOException, DoesNotApplyException {
+    public History load(Runner runner, File dir, long projectId) throws IOException, Operation.DoesNotApplyException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Load the metadata

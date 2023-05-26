@@ -44,13 +44,13 @@ import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.RowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openrefine.operations.OperationDescription;
 
-public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation {
+public class ReconMatchBestCandidatesOperation extends RowMapOperation {
 
     private String _columnName;
 

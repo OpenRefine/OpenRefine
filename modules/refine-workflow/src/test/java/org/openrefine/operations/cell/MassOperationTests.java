@@ -44,14 +44,10 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
-import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -81,7 +77,10 @@ public class MassOperationTests extends RefineTest {
                 + "\"description\":\"Mass edit cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\",\"expression\":\"value\","
-                + "\"edits\":[{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"}]}";
+                + "\"edits\":["
+                + "{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"},"
+                + "{\"fromBlank\":false,\"fromError\":false,\"from\":[\"other string\"],\"to\":\"2017-03-04T04:05:06Z\",\"type\":\"date\"}"
+                + "]}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MassEditOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
@@ -199,9 +198,9 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
+    public void testSimpleReplace() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -223,10 +222,10 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRecordsMode() throws DoesNotApplyException, ParsingException {
+    public void testRecordsMode() throws Operation.DoesNotApplyException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
-        Change.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -248,7 +247,7 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRowsModePendingCells() throws ParsingException, DoesNotApplyException {
+    public void testRowsModePendingCells() throws ParsingException, Operation.DoesNotApplyException {
         Grid grid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "v1", "b" },
@@ -257,7 +256,7 @@ public class MassOperationTests extends RefineTest {
                 });
 
         Operation operation = new MassEditOperation(EngineConfig.ALL_ROWS, "foo", "grel:value", editsWithFromBlank);
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {

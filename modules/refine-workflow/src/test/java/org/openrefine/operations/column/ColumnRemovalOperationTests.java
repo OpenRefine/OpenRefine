@@ -44,8 +44,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -101,9 +99,9 @@ public class ColumnRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRemoval() throws DoesNotApplyException, ParsingException {
+    public void testRemoval() throws Operation.DoesNotApplyException, ParsingException {
         Operation SUT = new ColumnRemovalOperation(Collections.singletonList("foo"));
-        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -114,9 +112,9 @@ public class ColumnRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testMultipleColumns() throws DoesNotApplyException, ParsingException {
+    public void testMultipleColumns() throws Operation.DoesNotApplyException, ParsingException {
         Operation SUT = new ColumnRemovalOperation(Arrays.asList("foo", "bar"));
-        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Grid applied = changeResult.getGrid();
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         List<IndexedRow> rows = applied.collectRows();
@@ -126,8 +124,8 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 Arrays.asList(new Cell("d", null)));
     }
 
-    @Test(expectedExceptions = DoesNotApplyException.class)
-    public void testColumnNotFound() throws DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
+    public void testColumnNotFound() throws Operation.DoesNotApplyException, ParsingException {
         Operation SUT = new ColumnRemovalOperation(Collections.singletonList("not_found"));
         SUT.apply(initialState, mock(ChangeContext.class));
     }

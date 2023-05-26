@@ -36,9 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikibase.schema.WikibaseSchema;

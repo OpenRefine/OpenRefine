@@ -7,6 +7,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
+import org.openrefine.operations.Operation;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.PLLContext;
 import org.openrefine.runners.local.pll.Tuple2;
@@ -167,7 +168,7 @@ public class LocalRunnerTests extends RunnerTestBase {
     }
 
     @Test
-    public void testMemoryCostPrediction() throws Change.DoesNotApplyException {
+    public void testMemoryCostPrediction() throws Operation.DoesNotApplyException {
         LocalGrid smallGrid = (LocalGrid) createGrid(new String[] { "foo" }, new Serializable[][] {});
 
         // caching a small grid should always be possible

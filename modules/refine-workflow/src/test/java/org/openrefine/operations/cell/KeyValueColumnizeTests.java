@@ -46,8 +46,6 @@ import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -103,7 +101,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
         Operation operation = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -158,7 +156,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null);
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -199,7 +197,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 "Notes");
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -242,7 +240,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null);
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();
@@ -258,7 +256,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     @Test
-    public void testCopyRowsWithNoKeys() throws DoesNotApplyException, ParsingException {
+    public void testCopyRowsWithNoKeys() throws Operation.DoesNotApplyException, ParsingException {
         // when a key cell is empty, if there are other columns around, we simply copy those
         Grid grid = createGrid(
                 new String[] { "Key", "Value" },
@@ -275,7 +273,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null);
-        Change.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid applied = changeResult.getGrid();

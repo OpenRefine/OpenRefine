@@ -331,18 +331,20 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0')); // NBSP
     star.addEventListener('click', function() {
     var newStarred = !row.starred;
-      Refine.postCoreProcess(
-        "annotate-one-row",
-        { row: row.i, starred: newStarred },
-        null,
+      Refine.postOperation(
+        {
+          op: "core/annotate-one-row",
+          rowId: row.i,
+          star: true,
+          value: newStarred
+        },
         {},
         {
           onDone: function(o) {
             row.starred = newStarred;
             renderRow(tr, r, row, even);
           }
-        },
-        "json"
+        }
       );
     });
     
@@ -353,18 +355,20 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     tdFlag.appendChild(flag).appendChild(document.createTextNode('\u00A0'));
     flag.addEventListener('click', function() {
       var newFlagged = !row.flagged;
-      Refine.postCoreProcess(
-        "annotate-one-row",
-        { row: row.i, flagged: newFlagged },
-        null,
+      Refine.postOperation(
+        {
+          op: "core/annotate-one-row",
+          rowId: row.i,
+          star: false,
+          value: newFlagged
+        },
         {},
         {
           onDone: function(o) {
             row.flagged = newFlagged;
             renderRow(tr, r, row, even);
           }
-        },
-        "json"
+        }
       );
     });
 

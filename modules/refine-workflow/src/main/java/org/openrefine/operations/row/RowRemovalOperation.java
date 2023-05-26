@@ -36,14 +36,14 @@ package org.openrefine.operations.row;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,33 +62,14 @@ public class RowRemovalOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Change createChange() {
-        return new RowRemovalChange(_engineConfig);
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        Engine engine = getEngine(projectState, context.getProjectId());
+        Grid result;
+        if (Mode.RowBased.equals(engine.getMode())) {
+            result = projectState.removeRows(engine.combinedRowFilters());
+        } else {
+            result = projectState.removeRecords(engine.combinedRecordFilters());
+        }
+        return new Operation.ChangeResult(result, GridPreservation.NO_ROW_PRESERVATION, null);
     }
-
-    public class RowRemovalChange extends EngineDependentChange {
-
-        public RowRemovalChange(EngineConfig engineConfig) {
-            super(engineConfig);
-        }
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            Engine engine = getEngine(projectState, context.getProjectId());
-            Grid result;
-            if (Mode.RowBased.equals(engine.getMode())) {
-                result = projectState.removeRows(engine.combinedRowFilters());
-            } else {
-                result = projectState.removeRecords(engine.combinedRecordFilters());
-            }
-            return new ChangeResult(result, GridPreservation.NO_ROW_PRESERVATION, null);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-    }
-
 }

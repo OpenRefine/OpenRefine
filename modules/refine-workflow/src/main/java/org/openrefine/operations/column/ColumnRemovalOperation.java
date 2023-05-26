@@ -33,6 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
@@ -40,17 +45,16 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.RowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
-
-public class ColumnRemovalOperation extends ImmediateRowMapOperation {
+public class ColumnRemovalOperation extends RowMapOperation {
 
     final protected List<String> _columnNames;
 
@@ -91,7 +95,7 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
         for (String columnName : _columnNames) {
             int columnIndex = columnIndex(model, columnName);
@@ -101,7 +105,7 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
         List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
             int columnIndex = columnIndex(state.getColumnModel(), columnName);

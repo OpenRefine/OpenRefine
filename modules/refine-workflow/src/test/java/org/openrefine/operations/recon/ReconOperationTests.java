@@ -54,6 +54,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
+import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
@@ -61,7 +62,6 @@ import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -173,7 +173,6 @@ public class ReconOperationTests extends RefineTest {
 
         Grid state = project.getCurrentGrid();
         ColumnModel columnModel = state.getColumnModel();
-
         row1 = state.getRow(0L);
         row2 = state.getRow(1L);
         row3 = state.getRow(3L);
@@ -289,6 +288,16 @@ public class ReconOperationTests extends RefineTest {
         Assert.assertNull(grid.getRow(0).getCell(0).recon);
         Assert.assertNull(grid.getRow(1).getCell(0).recon);
         Assert.assertNull(grid.getRow(2).getCell(0).recon);
+    }
+
+    @Test
+    public void testJoinerReplaceNull() {
+        // this behaviour is important to make sure reconciling only a subset of a column does not blank out
+        // the cells outside the subset
+        ReconOperation.Joiner joiner = new ReconOperation.Joiner(0);
+        Row row1 = new Row(Arrays.asList(new Cell(1, null), new Cell(2, null)));
+        Row row = joiner.call(row1, new IndexedData<>(4, null));
+        Assert.assertEquals(row, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))));
     }
 
 }

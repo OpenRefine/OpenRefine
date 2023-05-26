@@ -54,9 +54,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
-import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -279,7 +277,6 @@ public abstract class Command {
             HttpServletRequest request,
             HttpServletResponse response,
             Project project,
-            String description,
             Operation operation) throws Exception {
 
         HistoryEntry historyEntry = project.getHistory().addEntry(operation);

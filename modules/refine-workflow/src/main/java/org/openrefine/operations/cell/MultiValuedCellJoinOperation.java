@@ -39,16 +39,16 @@ import java.util.List;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.ChangeResult;
+import org.openrefine.operations.Operation.DoesNotApplyException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -77,6 +77,30 @@ public class MultiValuedCellJoinOperation implements Operation {
         _separator = separator;
     }
 
+    @Override
+    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+        ColumnModel columnModel = projectState.getColumnModel();
+        int columnIdx = columnModel.getColumnIndexByName(_columnName);
+        if (columnIdx == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Column '%s' does not exist", _columnName));
+        }
+        int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
+        if (keyColumnIdx == -1) {
+            throw new Operation.DoesNotApplyException(
+                    String.format("Key column '%s' does not exist", _keyColumnName));
+        }
+        if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
+            projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
+        }
+        return new Operation.ChangeResult(
+                projectState.mapRecords(
+                        recordMapper(columnIdx, _separator),
+                        columnModel),
+                GridPreservation.NO_ROW_PRESERVATION,
+                null);
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -95,44 +119,6 @@ public class MultiValuedCellJoinOperation implements Operation {
     @Override
     public String getDescription() {
         return "Join multi-valued cells in column " + _columnName;
-    }
-
-    @Override
-    public Change createChange() throws ParsingException {
-        return new MultiValuedCellJoinChange();
-    }
-
-    public class MultiValuedCellJoinChange implements Change {
-
-        @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
-            ColumnModel columnModel = projectState.getColumnModel();
-            int columnIdx = columnModel.getColumnIndexByName(_columnName);
-            if (columnIdx == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Column '%s' does not exist", _columnName));
-            }
-            int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
-            if (keyColumnIdx == -1) {
-                throw new DoesNotApplyException(
-                        String.format("Key column '%s' does not exist", _keyColumnName));
-            }
-            if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
-                projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
-            }
-            return new ChangeResult(
-                    projectState.mapRecords(
-                            recordMapper(columnIdx, _separator),
-                            columnModel),
-                    GridPreservation.NO_ROW_PRESERVATION,
-                    null);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
     }
 
     protected static RecordMapper recordMapper(int columnIdx, String separator) {

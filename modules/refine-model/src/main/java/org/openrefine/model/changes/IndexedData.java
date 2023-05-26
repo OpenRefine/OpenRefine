@@ -1,14 +1,13 @@
 
 package org.openrefine.model.changes;
 
-import org.openrefine.util.CloseableIterator;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Objects;
+
+import org.openrefine.util.CloseableIterator;
 
 /**
  * Helper class to represent an item in the map from row ids to change values in the context of a {@link ChangeData}

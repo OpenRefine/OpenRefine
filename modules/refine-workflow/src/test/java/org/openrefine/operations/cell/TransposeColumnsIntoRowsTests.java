@@ -8,8 +8,6 @@ import java.io.Serializable;
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -52,7 +50,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
      * rows into columns operation.
      */
     @Test
-    public void testTransposeBackToRecords() throws DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecords() throws Operation.DoesNotApplyException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
@@ -76,7 +74,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeBackToRecordsNoLimit() throws DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecordsNoLimit() throws Operation.DoesNotApplyException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
@@ -102,7 +100,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeBackToRecordsKeyValue() throws DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecordsKeyValue() throws Operation.DoesNotApplyException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
