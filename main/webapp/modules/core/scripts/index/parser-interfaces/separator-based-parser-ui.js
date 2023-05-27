@@ -233,7 +233,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.guessCellValueTypesCheckbox.prop("checked", true);
   }
   if (this._config.processQuotes) {
-    this._optionContainerElmts.processQuoteMarksCheckbox.prop("checked", columnSeparatorValue !== 'tab');
+    this._optionContainerElmts.processQuoteMarksCheckbox.prop("checked", true);
     this._optionContainerElmts.quoteCharacterInput[0].value = this._config.quoteCharacter;
   }
 
