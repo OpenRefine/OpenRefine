@@ -710,5 +710,6 @@
     "core-index-parser/column-names-label": "列名（用逗号分隔）",
     "core-index-parser/column-names-optional": "以逗号分隔",
     "core-views/choose-reconciliation-service": "选择搭配服务",
-    "core-views/choose-reconciliation-service-alert": "请先选择搭配服务。"
+    "core-views/choose-reconciliation-service-alert": "请先选择搭配服务。",
+    "core-index/rows-loading-failed": "加载行数失败。"
 }
