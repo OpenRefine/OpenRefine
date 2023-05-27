@@ -1691,7 +1691,7 @@ SchemaAlignment.preview = function() {
       }
 
       // update the counts in the issues tab
-     var numWarnings = data.warnings ? data.warnings.length : 0;
+     var numWarnings = data.warnings ? data.nb_warnings : 0;
      var numErrors = data.errors ? data.errors.length : 0;
      var totalCount = numErrors + numWarnings;
      countsElem.hide();
