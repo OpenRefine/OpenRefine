@@ -91,7 +91,7 @@
     <commons-codec.version>1.15</commons-codec.version>
     <commons-compress.version>1.23.0</commons-compress.version>
     <velocity.version>1.5</velocity.version>
-    <marc4j.version>2.9.2</marc4j.version>
+    <marc4j.version>2.9.4</marc4j.version>
     <jsoup.version>1.15.3</jsoup.version>
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
@@ -100,7 +100,7 @@
     <httpcore.version>4.4.16</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
-    <commons-io.version>2.11.0</commons-io.version>
+    <commons-io.version>2.12.0</commons-io.version>
     <guava.version>31.1-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
@@ -115,7 +115,7 @@
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-    <maven-dependency-plugin.version>3.5.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>3.1.0</surefire.version>

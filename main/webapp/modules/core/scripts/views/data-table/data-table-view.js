@@ -362,7 +362,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       .addClass("column-header")
       .html(
         '<div class="column-header-title">' +
-          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
+          '<button class="column-header-menu" bind="dropdownMenu"></button><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
         '</div>'
       )
   ).dropdownMenu.on('click',function() {
