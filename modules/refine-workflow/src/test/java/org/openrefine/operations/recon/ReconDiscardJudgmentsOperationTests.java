@@ -41,8 +41,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -86,13 +88,13 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconDiscardJudgmentsOperation() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconDiscardJudgmentsOperation() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", false);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -109,13 +111,13 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testClearReconOperation() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testClearReconOperation() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", true);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

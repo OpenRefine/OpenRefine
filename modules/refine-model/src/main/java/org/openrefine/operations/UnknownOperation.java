@@ -7,6 +7,7 @@ import java.util.Map;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.exceptions.OperationException;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -56,8 +57,8 @@ public class UnknownOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
-        throw new ParsingException("Unknown operation of type " + opCode + " cannot be applied.");
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        throw new OperationException("unknown", "Unknown operation of type " + opCode + " cannot be applied.");
     }
 
     public String getDescription() {

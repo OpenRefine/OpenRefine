@@ -124,12 +124,6 @@ public class HistoryEntry {
         return gridPreservation;
     }
 
-    @JsonProperty("createdFacets")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public List<FacetConfig> getCreatedFacets() {
-        return operation.getCreatedFacets();
-    }
-
     /**
      * Introduced for https://github.com/FasterXML/jackson-databind/issues/2692
      * 

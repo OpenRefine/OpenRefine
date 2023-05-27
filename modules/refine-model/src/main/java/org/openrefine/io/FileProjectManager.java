@@ -59,8 +59,7 @@ import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Runner;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.GridCache;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
@@ -287,7 +286,7 @@ public class FileProjectManager extends ProjectManager {
         History history;
         try {
             history = _historyEntryManager.load(_runner, dir, id);
-        } catch (Operation.DoesNotApplyException e) {
+        } catch (OperationException e) {
             throw new IOException(e);
         }
         return new Project(id, history);

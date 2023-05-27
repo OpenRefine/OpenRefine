@@ -43,6 +43,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.slf4j.LoggerFactory;
@@ -82,14 +83,14 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
                 });
     }
 
-    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
-    public void testDoesNotApply() throws Operation.DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = OperationException.class)
+    public void testDoesNotApply() throws OperationException, ParsingException {
         Operation operation = new TransposeRowsIntoColumnsOperation("d", 2);
         operation.apply(initial, mock(ChangeContext.class));
     }
 
     @Test
-    public void testTransposeRowsIntoColumns() throws Operation.DoesNotApplyException, ParsingException {
+    public void testTransposeRowsIntoColumns() throws OperationException, ParsingException {
         Operation operation = new TransposeRowsIntoColumnsOperation("b", 2);
 
         Grid expected = createGrid(
@@ -105,7 +106,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeRecordsIntoRows() throws Operation.DoesNotApplyException, ParsingException {
+    public void testTransposeRecordsIntoRows() throws OperationException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b", "c" },
                 new Serializable[][] {

@@ -184,7 +184,7 @@ class ReconCellRenderer {
       id : candidate.id,
       name: candidate.name,
       score: candidate.score,
-      types: candidate.types.join(",")
+      types: candidate.types
     }, rowIndex, cellIndex, cell, cellUI, onDone);
   }
 
@@ -208,6 +208,7 @@ class ReconCellRenderer {
         judgment: judgment,
         identifierSpace: (cell.r) ? cell.r.identifierSpace : null,
         schemaSpace: (cell.r) ? cell.r.schemaSpace : null,
+        cellValue: cell.v,
         match: match
       },
       true,
@@ -357,8 +358,8 @@ class ReconCellRenderer {
       { columnStatsChanged: columnStatsChanged },
       {
         onDone: function(o) {
-          cellUI._dataTableView._updateCell(self._rowIndex, self._cellIndex, o.cell);
-          cellUI._cell = o.cell;
+          cellUI._cell = o.changeResult.cell;
+          cellUI._dataTableView._updateCell(self._rowIndex, self._cellIndex, cellUI._cell);
           cellUI._render();
           if (onDone) {
             onDone();

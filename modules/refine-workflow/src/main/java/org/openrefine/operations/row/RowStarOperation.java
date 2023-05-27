@@ -39,9 +39,9 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -88,7 +88,7 @@ public class RowStarOperation extends RowMapOperation {
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
         return rowMapper(_starred);
     }
 }

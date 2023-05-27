@@ -46,8 +46,10 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -106,14 +108,14 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconMarkNewTopicsOperation() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconMarkNewTopicsOperation() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconMarkNewTopicsOperation(
                 EngineConfig.ALL_ROWS, "bar", true, null, null, null);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -143,13 +145,13 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsIndividually() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconJudgeSimilarCellsIndividually() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -180,7 +182,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testNotPreviouslyReconciled() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testNotPreviouslyReconciled() throws OperationException, ModelException, ParsingException {
         Grid initialGrid = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -195,7 +197,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

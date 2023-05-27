@@ -10,8 +10,8 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -38,7 +38,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
     }
 
     @Test
-    public void testFlag() throws Operation.DoesNotApplyException, ParsingException {
+    public void testFlag() throws OperationException, ParsingException {
         Operation operation = new AnnotateOneRowOperation(0L, false, true);
         Assert.assertEquals(operation.getDescription(), "Flag row 1");
 
@@ -58,7 +58,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
     }
 
     @Test
-    public void testStar() throws Operation.DoesNotApplyException, ParsingException {
+    public void testStar() throws OperationException, ParsingException {
         Operation operation = new AnnotateOneRowOperation(1L, true, true);
         Assert.assertEquals(operation.getDescription(), "Star row 2");
 

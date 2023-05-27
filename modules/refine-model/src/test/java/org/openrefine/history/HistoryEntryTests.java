@@ -71,26 +71,9 @@ public class HistoryEntryTests {
             "  \"time\" : \"2018-08-07T09:06:37Z\"\n" +
             "}";
 
-    public static final String historyEntryWithCreatedFacets = "    {\n" +
-            "      \"id\": 1683271793411,\n" +
-            "      \"description\": \"operation stub\",\n" +
-            "      \"operation\": {" +
-            "           \"op\": \"core/my-operation-with-facets\"," +
-            "           \"description\" : \"operation stub\"" +
-            "       },\n" +
-            "      \"gridPreservation\": \"preserves-rows\",\n" +
-            "      \"time\": \"2023-05-05T07:27:41Z\",\n" +
-            "      \"createdFacets\": [\n" +
-            "        {\n" +
-            "          \"type\": \"core/myfacet\"\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }";
-
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation("core", "operation-stub", OperationStub.class);
-        OperationRegistry.registerOperation("core", "my-operation-with-facets", OperationStubWithFacets.class);
 
         ProjectManager.singleton = new ProjectManagerStub(mock(Runner.class));
     }
@@ -115,39 +98,4 @@ public class HistoryEntryTests {
         TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
     }
 
-    @Test
-    public void deserializeCreatedFacets() throws IOException {
-        // for https://github.com/FasterXML/jackson-databind/issues/2692
-        FacetConfigResolver.registerFacetConfig("core", "myfacet", MyFacetConfig.class);
-        HistoryEntry entry = HistoryEntry.load(historyEntryWithCreatedFacets);
-        TestUtils.isSerializedTo(entry, historyEntryWithCreatedFacets, ParsingUtilities.saveWriter);
-    }
-
-    protected static class MyFacetConfig implements FacetConfig {
-
-        @Override
-        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long projectId) {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public Set<String> getColumnDependencies() {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public boolean isNeutral() {
-            return true;
-        }
-
-        @Override
-        public String getJsonType() {
-            return "core/myfacet";
-        }
-    }
 }

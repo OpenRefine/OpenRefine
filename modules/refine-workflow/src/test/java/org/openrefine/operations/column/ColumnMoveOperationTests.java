@@ -44,8 +44,10 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -86,9 +88,9 @@ public class ColumnMoveOperationTests extends RefineTest {
     }
 
     @Test
-    public void testForward() throws Operation.DoesNotApplyException, ParsingException {
+    public void testForward() throws OperationException, ParsingException {
         Operation operation = new ColumnMoveOperation("foo", 1);
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -99,9 +101,9 @@ public class ColumnMoveOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSamePosition() throws Operation.DoesNotApplyException, ParsingException {
+    public void testSamePosition() throws OperationException, ParsingException {
         Operation SUT = new ColumnMoveOperation("bar", 1);
-        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -112,9 +114,9 @@ public class ColumnMoveOperationTests extends RefineTest {
     }
 
     @Test
-    public void testBackward() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBackward() throws OperationException, ParsingException {
         ColumnMoveOperation SUT = new ColumnMoveOperation("hello", 1);
-        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -124,8 +126,8 @@ public class ColumnMoveOperationTests extends RefineTest {
                 Arrays.asList(new Cell("v1", null), new Cell("d", null), new Cell("a", null)));
     }
 
-    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
-    public void testColumnDoesNotExist() throws Operation.DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = OperationException.class)
+    public void testColumnDoesNotExist() throws OperationException, ParsingException {
         Operation SUT = new ColumnMoveOperation("not_found", 1);
         SUT.apply(initialState, mock(ChangeContext.class));
     }

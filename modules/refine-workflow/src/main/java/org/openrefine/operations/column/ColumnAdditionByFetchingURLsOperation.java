@@ -58,9 +58,10 @@ import org.openrefine.model.changes.CellAtRow;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.model.changes.RowInRecordChangeDataProducer;
+import org.openrefine.operations.exceptions.DuplicateColumnException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.Operation;
 import org.openrefine.util.HttpClient;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -140,22 +141,22 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
 
     @Override
     protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(Grid state, ChangeContext context)
-            throws Operation.DoesNotApplyException {
+            throws OperationException {
         RowInRecordChangeDataProducer<Cell> evaluatingProducer = super.getChangeDataProducer(state, context);
         return new URLFetchingChangeProducer(_onError, _httpHeadersJson, _cacheResponses, _delay, evaluatingProducer);
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
         return new ColumnAdditionOperation.Joiner(_columnInsertIndex, grid.getColumnModel().getKeyColumnIndex());
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(Grid grid, ChangeContext context, Evaluable evaluable) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid grid, ChangeContext context, Evaluable evaluable) throws OperationException {
         try {
             return grid.getColumnModel().insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
         } catch (ModelException e) {
-            throw new DoesNotApplyException(e.getMessage());
+            throw new DuplicateColumnException(_newColumnName);
         }
     }
 

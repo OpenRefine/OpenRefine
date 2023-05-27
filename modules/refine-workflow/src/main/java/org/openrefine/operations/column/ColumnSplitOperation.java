@@ -51,9 +51,8 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.operations.utils.CellValueSplitter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -213,9 +212,9 @@ public class ColumnSplitOperation extends RowMapOperation {
     }
 
     @Override
-    public GridMap getGridMap(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    public GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
         ColumnModel origColumnModel = state.getColumnModel();
-        int origColumnIdx = columnIndex(origColumnModel, _columnName);
+        int origColumnIdx = origColumnModel.getRequiredColumnIndex(_columnName);
 
         // Create an aggregator which counts the number of columns generated
         // by the splitting settings.

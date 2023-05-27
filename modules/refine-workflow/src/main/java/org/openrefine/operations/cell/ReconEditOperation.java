@@ -1,7 +1,6 @@
 
 package org.openrefine.operations.cell;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -10,13 +9,12 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -69,11 +67,8 @@ public class ReconEditOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid state, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
-        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
-        if (columnIndex == -1) {
-            throw new ColumnNotFoundException(columnName);
-        }
+    public ChangeResult apply(Grid state, ChangeContext context) throws OperationException {
+        int columnIndex = state.getColumnModel().getRequiredColumnIndex(columnName);
         ColumnModel columnModel = state.getColumnModel();
         ColumnMetadata column = columnModel.getColumnByIndex(columnIndex);
 
@@ -85,7 +80,7 @@ public class ReconEditOperation implements Operation {
         }
         if (cell == null) {
             // leave the grid unchanged
-            return new Operation.ChangeResult(state, GridPreservation.PRESERVES_RECORDS, null);
+            return new ChangeResult(state, GridPreservation.PRESERVES_RECORDS, null);
         }
         Recon newRecon = null;
         if (cell.recon != null) {
@@ -126,10 +121,22 @@ public class ReconEditOperation implements Operation {
         } else {
             newRecon = null;
         }
-        return new Operation.ChangeResult(
-                state.mapRows(mapFunction(columnIndex, row, newRecon), columnModel),
+        Grid newState = state.mapRows(mapFunction(columnIndex, row, newRecon), columnModel);
+
+        return new ChangeResult(
+                newState,
                 GridPreservation.PRESERVES_RECORDS,
-                null);
+                null) {
+
+            @JsonProperty("cell")
+            public Cell getCell() {
+                try {
+                    return newState.getRow(row).getCell(columnIndex);
+                } catch (IndexOutOfBoundsException e) {
+                    return null;
+                }
+            }
+        };
     }
 
     static protected RowMapper mapFunction(int cellIndex, long rowId, Recon newRecon) {

@@ -1,13 +1,14 @@
 
 package org.openrefine.operations.row;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,8 +36,8 @@ public class AnnotateOneRowOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
-        return new Operation.ChangeResult(
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        return new ChangeResult(
                 projectState.mapRows(mapper(rowId, star, value), projectState.getColumnModel()),
                 GridPreservation.PRESERVES_RECORDS,
                 null);
