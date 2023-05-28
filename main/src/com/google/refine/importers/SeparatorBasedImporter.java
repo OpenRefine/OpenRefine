@@ -73,10 +73,11 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         String separator = guessSeparator(job, fileRecords);
-        JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
+        String nonNullSeparator = separator != null ? separator : "\\t";
+        JSONUtilities.safePut(options, "separator", nonNullSeparator);
 
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        JSONUtilities.safePut(options, "processQuotes", true);
+        JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
         JSONUtilities.safePut(options, "trimStrings", true);
 
