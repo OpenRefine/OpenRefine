@@ -65,33 +65,10 @@ DataTableColumnHeaderUI.resizingState = {
   col: null, // the column being resized
   columnName: null, // the name of the column being resized
   originalWidth: 0, // the original width of the header when the dragging started
-  originalPosition: 0 // the original position of the cursor when the dragging started
+  originalPosition: 0, // the original position of the cursor when the dragging started
+  moveListener: null, // the event listener for mouse move events
+  releaseListener: null, // the event listener for mouse release events
 };
-
-// global event handlers to react to mouse moves during resizing
-$(function() {
-  $('body').on('mousemove', function(e) {
-    var state = DataTableColumnHeaderUI.resizingState;
-    if (state.dragging) {
-      var totalMovement = e.pageX - state.originalPosition;
-      var newWidth = state.originalWidth + totalMovement;
-      state.col.width(newWidth);
-
-      e.preventDefault();
-    }
-  }).on('mouseup', function(e) {
-    // only capture left clicks
-    if (e.button !== 0) {
-      return;
-    }
-    var state = DataTableColumnHeaderUI.resizingState;
-    if (state.dragging) {
-      DataTableView.columnWidthCache.set(state.columnName, state.col.width());
-      state.dragging = false;
-    }
-    e.preventDefault();
-  });
-});
 
 DataTableColumnHeaderUI.prototype._render = function() {
   var self = this;
@@ -117,6 +94,38 @@ DataTableColumnHeaderUI.prototype._startResizing = function(clickEvent) {
   state.columnName = self._column.name;
   state.originalWidth = self._col.width();
   state.originalPosition = clickEvent.pageX;
+
+  $('body')
+      .on('mousemove', DataTableColumnHeaderUI.mouseMoveListener)
+      .on('mouseup', DataTableColumnHeaderUI.mouseReleaseListener);
+};
+
+// event handlers to react to mouse moves during resizing
+DataTableColumnHeaderUI.mouseMoveListener = function(e) {
+  var state = DataTableColumnHeaderUI.resizingState;
+  if (state.dragging) {
+    var totalMovement = e.pageX - state.originalPosition;
+    var newWidth = state.originalWidth + totalMovement;
+    state.col.width(newWidth);
+
+    e.preventDefault();
+  }
+};
+
+DataTableColumnHeaderUI.mouseReleaseListener = function(e) {
+  // only capture left clicks
+  if (e.button !== 0) {
+    return;
+  }
+  var state = DataTableColumnHeaderUI.resizingState;
+  if (state.dragging) {
+    DataTableView.columnWidthCache.set(state.columnName, state.col.width());
+    state.dragging = false;
+    $('body')
+        .off('mousemove', DataTableColumnHeaderUI.mouseMoveListener)
+        .off('mouseup', DataTableColumnHeaderUI.mouseReleaseListener);
+  }
+  e.preventDefault();
 };
 
 DataTableColumnHeaderUI.prototype.updateColumnStats = function() {
