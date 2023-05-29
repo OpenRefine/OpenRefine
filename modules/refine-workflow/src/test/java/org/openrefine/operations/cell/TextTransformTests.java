@@ -146,6 +146,32 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
+    public void testTransformNull() throws OperationException, ParsingException {
+        Operation operation = new TextTransformOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:null",
+                OnError.SetToBlank,
+                false, 0);
+
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", null, "d" },
+                        { "v3", null, "f" },
+                        { "", null, "g" },
+                        { "", null, "h" },
+                        { new EvalError("error"), null, "i" },
+                        { "v1", null, "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
     public void testTransformColumnInRecordsMode() throws Operation.DoesNotApplyException, ParsingException {
         Operation operation = new TextTransformOperation(
                 EngineConfig.ALL_RECORDS,
