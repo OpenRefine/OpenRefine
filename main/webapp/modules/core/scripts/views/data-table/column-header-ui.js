@@ -76,6 +76,7 @@ $(function() {
       var totalMovement = e.pageX - state.originalPosition;
       var newWidth = state.originalWidth + totalMovement;
       state.col.width(newWidth);
+
       e.preventDefault();
     }
   }).on('mouseup', function(e) {
@@ -104,21 +105,18 @@ DataTableColumnHeaderUI.prototype._render = function() {
     self._createMenuForColumnHeader(this);
   });
 
-  elmts.resizer.on('mousedown', function(e) {
-    // only capture left clicks
-    if (e.button !== 0) {
-      return;
-    }
-    e.preventDefault();
-    var state = DataTableColumnHeaderUI.resizingState;
-    state.dragging = true;
-    state.col = self._col;
-    state.columnName = self._column.name;
-    state.originalWidth = self._col.width();
-    state.originalPosition = e.pageX;
-  });
-
   self.updateColumnStats();
+};
+
+DataTableColumnHeaderUI.prototype._startResizing = function(clickEvent) {
+  var self = this;
+  clickEvent.preventDefault();
+  var state = DataTableColumnHeaderUI.resizingState;
+  state.dragging = true;
+  state.col = self._col;
+  state.columnName = self._column.name;
+  state.originalWidth = self._col.width();
+  state.originalPosition = clickEvent.pageX;
 };
 
 DataTableColumnHeaderUI.prototype.updateColumnStats = function() {

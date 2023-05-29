@@ -420,17 +420,41 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
         .attr('span', 1)
         .appendTo(colGroup);
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
-    if (cachedWidth !== undefined) {
+    if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
         col.width(cachedWidth + 'px');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(th).html("&nbsp;").on('click',function(evt) {
+      $(th).html("&nbsp;").on('mousedown',function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
     } else {
       var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th, col);
       self._columnHeaderUIs.push(columnHeaderUI);
+
+      // add resizing controls
+      var resizerLeft = $('<div></div>').addClass('column-header-resizer-left')
+            .appendTo(th);
+      resizerLeft.on('mousedown', function(e) {
+        // only capture left clicks
+        if (e.button !== 0) {
+          return;
+        }
+        columnHeaderUI._startResizing(e);
+      });
+
+      // add resizing control for the previous column (if uncollapsed)
+      if (index > 0 && !self._collapsedColumnNames.hasOwnProperty(columns[index-1].name)) {
+        var resizerRight = $('<div></div>').addClass('column-header-resizer-right')
+              .appendTo(th);
+        resizerRight.on('mousedown', function(e) {
+          // only capture left clicks
+          if (e.button !== 0) {
+            return;
+          }
+          self._columnHeaderUIs[index - 1]._startResizing(e);
+        });
+      }
     }
   };
 
