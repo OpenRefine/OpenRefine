@@ -112,13 +112,13 @@ public class HistoryTests {
 
         when(firstOperation.apply(eq(initialState), any())).thenReturn(intermediateResult);
         when(intermediateResult.getGrid()).thenReturn(intermediateState);
-        when(firstOperation.isImmediate()).thenReturn(false);
+        when(firstOperation.isReproducible()).thenReturn(false);
         when(secondOperation.apply(eq(intermediateState), any())).thenReturn(finalResult);
         when(finalResult.getGrid()).thenReturn(finalState);
-        when(secondOperation.isImmediate()).thenReturn(true);
+        when(secondOperation.isReproducible()).thenReturn(true);
         when(newOperation.apply(eq(intermediateState), any())).thenReturn(newResult);
         when(newResult.getGrid()).thenReturn(newState);
-        when(newOperation.isImmediate()).thenReturn(true);
+        when(newOperation.isReproducible()).thenReturn(true);
         when(failingOperation.apply(eq(intermediateState), any()))
                 .thenThrow(new OperationException("some_error", "Some error occured"));
 

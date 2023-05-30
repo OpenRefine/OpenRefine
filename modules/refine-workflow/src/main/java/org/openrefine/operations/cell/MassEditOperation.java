@@ -172,11 +172,6 @@ public class MassEditOperation extends ExpressionBasedOperation {
         return new Joiner(columnIdx, columnModel.getKeyColumnIndex(), fromTo, fromBlankTo, fromErrorTo);
     }
 
-    @Override
-    public boolean isImmediate() {
-        return true;
-    }
-
     private static class Joiner extends RowInRecordChangeDataJoiner {
 
         private static final long serialVersionUID = 749899770859402444L;

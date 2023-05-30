@@ -166,6 +166,11 @@ public class ReconEditOperation implements Operation {
         return description;
     }
 
+    @Override
+    public boolean isReproducible() {
+        return false;
+    }
+
     /**
      * The 0-based index of the row to change.
      */

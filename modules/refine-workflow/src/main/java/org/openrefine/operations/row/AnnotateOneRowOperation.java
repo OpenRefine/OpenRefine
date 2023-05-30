@@ -51,6 +51,11 @@ public class AnnotateOneRowOperation implements Operation {
         }
     }
 
+    @Override
+    public boolean isReproducible() {
+        return false;
+    }
+
     protected static RowMapper mapper(long rowId, boolean star, boolean value) {
         return new RowMapper() {
 

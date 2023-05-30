@@ -68,7 +68,12 @@ public class GetOperationsCommand extends Command {
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
         public Operation getOperation() {
-            return entry.getOperation();
+            Operation operation = entry.getOperation();
+            if (operation.isReproducible()) {
+                return entry.getOperation();
+            } else {
+                return null;
+            }
         }
     }
 

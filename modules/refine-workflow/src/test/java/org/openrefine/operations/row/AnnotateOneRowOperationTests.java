@@ -35,7 +35,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
 
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation("core", "annotate-one-row", RowFlagOperation.class);
+        OperationRegistry.registerOperation("core", "annotate-one-row", AnnotateOneRowOperation.class);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
 
         TestUtils.isSerializedTo(operation, "{\n"
                 + "  \"description\" : \"Flag row 1\",\n"
-                + "  \"op\" : \"null\",\n"
+                + "  \"op\" : \"core/annotate-one-row\",\n"
                 + "  \"rowId\" : 0,\n"
                 + "  \"star\" : false,\n"
                 + "  \"value\" : true\n"
@@ -71,7 +71,7 @@ public class AnnotateOneRowOperationTests extends RefineTest {
 
         TestUtils.isSerializedTo(operation, "{\n"
                 + "  \"description\" : \"Star row 2\",\n"
-                + "  \"op\" : \"null\",\n"
+                + "  \"op\" : \"core/annotate-one-row\",\n"
                 + "  \"rowId\" : 1,\n"
                 + "  \"star\" : true,\n"
                 + "  \"value\" : true\n"

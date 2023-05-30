@@ -55,11 +55,6 @@ public class HistoryEntryManagerTests {
         }
 
         @Override
-        public boolean isImmediate() {
-            return false;
-        }
-
-        @Override
         public String getDescription() {
             return "remove the first column";
         }
