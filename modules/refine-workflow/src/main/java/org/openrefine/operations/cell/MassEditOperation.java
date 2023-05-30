@@ -176,11 +176,6 @@ public class MassEditOperation extends ExpressionBasedOperation {
         return new Joiner(columnIdx, columnModel.getKeyColumnIndex(), fromTo, fromBlankTo, fromErrorTo);
     }
 
-    @Override
-    public boolean isImmediate() {
-        return true;
-    }
-
     protected DagSlice getDagSlice() {
         Set<String> dependencies = new HashSet<>(_eval.getColumnDependencies(_baseColumnName));
         dependencies.addAll(_engineConfig.getColumnDependencies());

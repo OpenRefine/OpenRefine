@@ -51,6 +51,11 @@ public class AnnotateOneRowOperation implements Operation {
             return (value ? "Flag row " : "Unflag row ") + (rowId + 1);
         }
     }
+    
+    @Override
+    public boolean isReproducible() {
+        return false;
+    }
 
     protected static RowMapper mapper(long rowId, boolean star, boolean value) {
         return new RowMapper() {
