@@ -145,7 +145,7 @@ public class TextTransformTests extends RefineTest {
 
         assertGridEquals(applied, initialState);
     }
-    
+
     @Test
     public void testTransformNull() throws OperationException, ParsingException {
         Operation operation = new TextTransformOperation(
@@ -171,7 +171,6 @@ public class TextTransformTests extends RefineTest {
                 });
         assertGridEquals(applied, expected);
     }
-
 
     @Test
     public void testTransformColumnInRecordsMode() throws OperationException, ParsingException {

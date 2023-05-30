@@ -1,3 +1,4 @@
+
 package org.openrefine.commands.history;
 
 import org.openrefine.ProjectManager;
@@ -31,17 +32,17 @@ import javax.servlet.ServletException;
 
 public class GetOperationsCommandTests extends CommandTestBase {
 
-	Project project;
-	ProjectMetadata projectMetadata;
-	History history;
-	Grid grid;
-	
-	@BeforeMethod
-	public void setUpProject() {
-		project = mock(Project.class);
-		when(project.getId()).thenReturn(1234L);
-		history = mock(History.class);
-		grid = mock(Grid.class);
+    Project project;
+    ProjectMetadata projectMetadata;
+    History history;
+    Grid grid;
+
+    @BeforeMethod
+    public void setUpProject() {
+        project = mock(Project.class);
+        when(project.getId()).thenReturn(1234L);
+        history = mock(History.class);
+        grid = mock(Grid.class);
         when(grid.rowCount()).thenReturn(5L);
         when(project.getCurrentGrid()).thenReturn(grid);
         projectMetadata = mock(ProjectMetadata.class);
@@ -50,82 +51,82 @@ public class GetOperationsCommandTests extends CommandTestBase {
         when(projectMetadata.getModified()).thenReturn(now);
         when(project.getLastSave()).thenReturn(now);
         when(project.getHistory()).thenReturn(history);
-        
+
         List<HistoryEntry> historyEntries = new ArrayList<>();
         Operation reproducibleOperation = new ReproducibleOp();
         historyEntries.add(new HistoryEntry(3487L, reproducibleOperation, GridPreservation.PRESERVES_RECORDS));
         Operation unreproducibleOperation = new UnreproducibleOp();
         historyEntries.add(new HistoryEntry(4589L, unreproducibleOperation, GridPreservation.PRESERVES_ROWS));
-        
+
         when(history.getLastPastEntries(-1)).thenReturn(historyEntries);
-        
+
         ProjectManager.singleton.registerProject(project, projectMetadata);
-        
+
         command = new GetOperationsCommand();
-	}
-	
-	@Test
-	public void testCommand() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn("1234");
-		
-		command.doGet(request, response);
-		
-		String expectedJson = "{\n"
-				+ "  \"entries\" : [ {\n"
-				+ "    \"description\" : \"some reproducible operation\",\n"
-				+ "    \"operation\" : {\n"
-				+ "      \"description\" : \"some reproducible operation\",\n"
-				+ "      \"op\" : \"core/reproducible-op\"\n"
-				+ "    }\n"
-				+ "  }, {\n"
-				+ "    \"description\" : \"unreproducible op\"\n"
-				+ "  } ]\n"
-				+ "}";
-		
-		JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
-		TestUtils.isSerializedTo(json, expectedJson, ParsingUtilities.defaultWriter);
-	}
-	
-	protected static class ReproducibleOp implements Operation {
+    }
 
-		@Override
-		public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+    @Test
+    public void testCommand() throws ServletException, IOException {
+        when(request.getParameter("project")).thenReturn("1234");
 
-		@Override
-		public String getDescription() {
-			return "some reproducible operation";
-		}
-		
-		@Override
-		public String getOperationId() {
-			return "core/reproducible-op";
-		}
-	}
-	
-	protected static class UnreproducibleOp implements Operation {
+        command.doGet(request, response);
 
-		@Override
-		public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        String expectedJson = "{\n"
+                + "  \"entries\" : [ {\n"
+                + "    \"description\" : \"some reproducible operation\",\n"
+                + "    \"operation\" : {\n"
+                + "      \"description\" : \"some reproducible operation\",\n"
+                + "      \"op\" : \"core/reproducible-op\"\n"
+                + "    }\n"
+                + "  }, {\n"
+                + "    \"description\" : \"unreproducible op\"\n"
+                + "  } ]\n"
+                + "}";
 
-		@Override
-		public String getDescription() {
-			return "unreproducible op";
-		}
-		
-		@Override
-		public String getOperationId() {
-			return "core/unreproducible-op";
-		}
-		
-		@Override
-		public boolean isReproducible() {
-			return false;
-		}
-	}
+        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
+        TestUtils.isSerializedTo(json, expectedJson, ParsingUtilities.defaultWriter);
+    }
+
+    protected static class ReproducibleOp implements Operation {
+
+        @Override
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return "some reproducible operation";
+        }
+
+        @Override
+        public String getOperationId() {
+            return "core/reproducible-op";
+        }
+    }
+
+    protected static class UnreproducibleOp implements Operation {
+
+        @Override
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return "unreproducible op";
+        }
+
+        @Override
+        public String getOperationId() {
+            return "core/unreproducible-op";
+        }
+
+        @Override
+        public boolean isReproducible() {
+            return false;
+        }
+    }
 }

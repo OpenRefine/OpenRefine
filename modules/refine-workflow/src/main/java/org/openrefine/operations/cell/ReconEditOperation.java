@@ -166,7 +166,7 @@ public class ReconEditOperation implements Operation {
     public String getDescription() {
         return description;
     }
-    
+
     @Override
     public boolean isReproducible() {
         return false;

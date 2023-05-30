@@ -96,8 +96,8 @@ public class CellEditOperation implements Operation {
         // TODO localize
         return "Edit single cell on row " + (row + 1) + ", column " + columnName;
     }
-    
-    @Override 
+
+    @Override
     public boolean isReproducible() {
         return false;
     }

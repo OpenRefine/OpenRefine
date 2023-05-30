@@ -51,7 +51,7 @@ public class AnnotateOneRowOperation implements Operation {
             return (value ? "Flag row " : "Unflag row ") + (rowId + 1);
         }
     }
-    
+
     @Override
     public boolean isReproducible() {
         return false;

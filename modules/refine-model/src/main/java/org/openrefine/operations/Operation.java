@@ -44,8 +44,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 /**
- * An operation represents one step in a cleaning workflow in Refine. It applies to a single project by
- * via the {@link #apply(Grid, ChangeContext)} method. The result of this method is then stored in the
+ * An operation represents one step in a cleaning workflow in Refine. It applies to a single project by via the
+ * {@link #apply(Grid, ChangeContext)} method. The result of this method is then stored in the
  * {@link org.openrefine.history.History} by an {@link org.openrefine.history.HistoryEntry}.
  * 
  * Operations only store the metadata for the transformation step. They are required to be serializable and
@@ -64,9 +64,9 @@ public interface Operation {
      * 
      * @param projectState
      *            the state of the grid before the change
-     * @return an object which bundles up various pieces of information produced by the operation: primarily, the new grid
-     *          after applying the operation. This object can be subclassed to expose more information, which should be
-     *          serializable with Jackson so that it reaches the frontend.
+     * @return an object which bundles up various pieces of information produced by the operation: primarily, the new
+     *         grid after applying the operation. This object can be subclassed to expose more information, which should
+     *         be serializable with Jackson so that it reaches the frontend.
      * @throws OperationException
      *             when the change cannot be applied to the given grid
      */
@@ -77,13 +77,11 @@ public interface Operation {
      */
     @JsonProperty("description")
     public String getDescription();
-    
+
     /**
-     * Could this operation be meaningfully re-applied to another project,
-     * or is it too specific to the data in this project?
-     * Operations which affect a single row or cell designated by a row index
-     * should return false, indicating that they are small fixes that should
-     * likely not be part of a reusable pipeline.
+     * Could this operation be meaningfully re-applied to another project, or is it too specific to the data in this
+     * project? Operations which affect a single row or cell designated by a row index should return false, indicating
+     * that they are small fixes that should likely not be part of a reusable pipeline.
      */
     @JsonIgnore // this can be derived from operation metadata itself
     public default boolean isReproducible() {
