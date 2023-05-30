@@ -101,6 +101,15 @@ DataTableView.prototype.render = function() {
   var oldTableDiv = this._div.find(".data-table-container");
   var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
 
+  // store the current width of each column to be able to restore it later
+  this._div.find("colgroup col").each(function(index) {
+    var column = $(this);
+    if (column.data('name')) {
+      var width = column.width();
+      DataTableView.columnWidthCache.set(column.data('name'), width);
+    }
+  });
+
   var html = $(
     '<div class="viewpanel-header">' +
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
@@ -418,6 +427,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     $(th).addClass("column-header").attr('title', column.name);
     var col = $('<col>')
         .attr('span', 1)
+        .data('name', column.name)
         .appendTo(colGroup);
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
