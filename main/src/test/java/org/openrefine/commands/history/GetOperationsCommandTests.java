@@ -66,26 +66,26 @@ public class GetOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
-	public void testCommand() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn("1234");
-		
-		command.doGet(request, response);
-		
-		String expectedJson = "{\n"
-				+ "  \"entries\" : [ {\n"
-				+ "    \"description\" : \"some reproducible operation\",\n"
-				+ "    \"operation\" : {\n"
-				+ "      \"description\" : \"some reproducible operation\",\n"
-				+ "      \"op\" : \"core/reproducible-op\"\n"
-				+ "    }\n"
-				+ "  }, {\n"
-				+ "    \"description\" : \"unreproducible op\"\n"
-				+ "  } ]\n"
-				+ "}";
-		
-		JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
-		TestUtils.isSerializedTo(json, expectedJson, ParsingUtilities.defaultWriter);
-	}
+    public void testCommand() throws ServletException, IOException {
+        when(request.getParameter("project")).thenReturn("1234");
+
+        command.doGet(request, response);
+
+        String expectedJson = "{\n"
+                + "  \"entries\" : [ {\n"
+                + "    \"description\" : \"some reproducible operation\",\n"
+                + "    \"operation\" : {\n"
+                + "      \"description\" : \"some reproducible operation\",\n"
+                + "      \"op\" : \"core/reproducible-op\"\n"
+                + "    }\n"
+                + "  }, {\n"
+                + "    \"description\" : \"unreproducible op\"\n"
+                + "  } ]\n"
+                + "}";
+
+        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
+        TestUtils.isSerializedTo(json, expectedJson, ParsingUtilities.defaultWriter);
+    }
 
     protected static class ReproducibleOp implements Operation {
 
