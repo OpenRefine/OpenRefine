@@ -393,29 +393,33 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-      <repository>
-          <id>jenkins-repo</id>
-          <url>https://repo.jenkins-ci.org/releases/</url>
-      </repository>
+    <repository>
+      <id>jenkins-repo</id>
+      <url>https://repo.jenkins-ci.org/releases/</url>
+    </repository>
+    <repository>
+      <id>repo1.maven</id>
+      <url>https://repo1.maven.org/maven2</url>
+    </repository>
   </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jenkins-repo</id>
-            <url>https://repo.jenkins-ci.org/releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jenkins-repo</id>
+      <url>https://repo.jenkins-ci.org/releases/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <!-- Locations of the artifacts published -->
   <distributionManagement>
-     <snapshotRepository>
-       <id>ossrh</id>
-       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-     </snapshotRepository>
-     <repository>
-       <id>ossrh</id>
-       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-     </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
  
 </project>

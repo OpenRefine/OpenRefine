@@ -733,6 +733,11 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency> <!-- should not be needed here, but somehow downloading it later sometimes fails? See https://github.com/OpenRefine/OpenRefine/issues/5834 -->
+      <groupId>net.sf.launch4j</groupId>
+      <artifactId>launch4j</artifactId>
+      <version>3.50</version>
+    </dependency>
   </dependencies>
 </project>
 
