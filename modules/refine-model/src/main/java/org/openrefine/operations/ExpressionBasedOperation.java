@@ -24,6 +24,8 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.RecordMapper;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.CellChangeDataSerializer;
 import org.openrefine.model.changes.CellListChangeDataSerializer;
