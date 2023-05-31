@@ -431,7 +431,10 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
         .appendTo(colGroup);
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
-        col.width(cachedWidth + 'px');
+      col.width(cachedWidth + 'px');
+    } else {
+      // Not set in CSS directly because the user needs to be able to override that by dragging 
+      col.css('min-width', '5em');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       $(th).html("&nbsp;").on('mousedown',function(evt) {

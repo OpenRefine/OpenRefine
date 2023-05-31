@@ -106,6 +106,9 @@ DataTableColumnHeaderUI.mouseMoveListener = function(e) {
   if (state.dragging) {
     var totalMovement = e.pageX - state.originalPosition;
     var newWidth = state.originalWidth + totalMovement;
+    if (state.col.css('min-width')) {
+      state.col.css('min-width', '');
+    }
     state.col.width(newWidth);
 
     e.preventDefault();
