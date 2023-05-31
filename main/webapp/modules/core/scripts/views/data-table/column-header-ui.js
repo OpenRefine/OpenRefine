@@ -94,6 +94,8 @@ DataTableColumnHeaderUI.prototype._startResizing = function(clickEvent) {
   state.columnName = self._column.name;
   state.originalWidth = self._col.width();
   state.originalPosition = clickEvent.pageX;
+  // for conversion from px to em
+  state.emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
 
   $('body')
       .on('mousemove', DataTableColumnHeaderUI.mouseMoveListener)
@@ -122,7 +124,9 @@ DataTableColumnHeaderUI.mouseReleaseListener = function(e) {
   }
   var state = DataTableColumnHeaderUI.resizingState;
   if (state.dragging) {
-    DataTableView.columnWidthCache.set(state.columnName, state.col.width());
+    var totalMovement = e.pageX - state.originalPosition;
+    var newWidth = state.originalWidth + totalMovement;
+    state.col.width((newWidth / state.emFactor) + 'em');
     state.dragging = false;
     $('body')
         .off('mousemove', DataTableColumnHeaderUI.mouseMoveListener)

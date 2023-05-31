@@ -101,11 +101,21 @@ DataTableView.prototype.render = function() {
   var oldTableDiv = this._div.find(".data-table-container");
   var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
 
+  // utility to convert px widths to em.
+  // The factor is computed only on demand (and once) because it might trigger some
+  // DOM rendering given that it uses computed styles
+  var emFactor = null;
+  var getEmFactor = function() {
+    if (emFactor === null) {
+      emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
+    }
+    return emFactor;
+  };
   // store the current width of each column to be able to restore it later
-  this._div.find("colgroup col").each(function(index) {
+  this._div.find(".data-table-container col").each(function(index) {
     var column = $(this);
     if (column.data('name')) {
-      var width = column.width();
+      var width = column.width() / getEmFactor();
       DataTableView.columnWidthCache.set(column.data('name'), width);
     }
   });
@@ -431,7 +441,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
         .appendTo(colGroup);
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      col.width(cachedWidth + 'px');
+      col.width(cachedWidth + 'em');
     } else {
       // Not set in CSS directly because the user needs to be able to override that by dragging 
       col.css('min-width', '5em');
