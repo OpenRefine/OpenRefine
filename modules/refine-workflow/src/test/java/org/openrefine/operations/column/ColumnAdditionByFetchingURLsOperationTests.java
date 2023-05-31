@@ -183,9 +183,9 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/random");
-            server.enqueue(new MockResponse());
+            server.enqueue(new MockResponse().setResponseCode(200).setBody("found").setStatus("HTTP/1.1 200 OK"));
             HttpUrl url404 = server.url("/404");
-            server.enqueue(new MockResponse().setResponseCode(404).setBody("not found").setStatus("NOT FOUND"));
+            server.enqueue(new MockResponse().setResponseCode(404).setBody("not found").setStatus("HTTP/1.1 404 NOT FOUND"));
 
             project = createProject("UrlFetchingTests",
                     new String[] { "fruits" },
@@ -271,7 +271,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             project = createProject(new String[] { "fruits" },
                     new Serializable[][] {
-                            { "test1" }, { "test2" }, { "test3" }
+                            { "test1" }, { "test2" }
                     });
 
             // Queue 5 error responses with 1 sec. Retry-After interval
@@ -279,10 +279,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 server.enqueue(new MockResponse()
                         .setHeader("Retry-After", 1)
                         .setResponseCode(429)
+                        .setStatus("HTTP/1.1 429 Too Many Requests")
                         .setBody(Integer.toString(i, 10)));
             }
 
-            server.enqueue(new MockResponse().setBody("success"));
+            server.enqueue(new MockResponse()
+                    .setResponseCode(200)
+                    .setStatus("HTTP/1.1 200 OK")
+                    .setBody("success"));
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
