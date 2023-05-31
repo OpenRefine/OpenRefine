@@ -45,10 +45,12 @@ HistoryPanel.prototype.resize = function() {
 
   var bodyPaddings = body.outerHeight(true) - body.height();
   body.height((this._div.height() - controls.outerHeight(true) - bodyControls.outerHeight(true) - bodyPaddings) + "px");
-  body[0].scrollTop = 
-    nowDiv[0].offsetTop + 
-    nowDiv[0].offsetHeight - 
-    body[0].offsetHeight;
+  if (nowDiv.length > 0) {
+    body[0].scrollTop = 
+        nowDiv[0].offsetTop + 
+        nowDiv[0].offsetHeight - 
+        body[0].offsetHeight;
+  }
 };
 
 HistoryPanel.prototype.update = function(onDone) {
