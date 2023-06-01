@@ -129,9 +129,7 @@ ExpressionPreviewDialog.Widget = function(
         .val(this.expression)
         .on("keyup change input",function(){
             self._scheduleUpdate();
-        })
-        .trigger('select')
-        .trigger('focus');
+        });
 
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
