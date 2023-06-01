@@ -29,10 +29,7 @@ package com.google.refine.grel.controls;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.*;
-import com.google.refine.model.Project;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
@@ -40,9 +37,6 @@ import com.google.refine.util.TestUtils;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 public class ForRangeTests extends RefineTest {
 

@@ -158,9 +158,11 @@ Cypress.Commands.add('cleanupProjects', () => {
           body: { project: projectId },
           form: true,
         }).then((resp) => {
-          cy.log('Deleted OR project' + projectId);
+          cy.log('Deleted OR project ' + projectId);
         });
       }
+      // clear loaded projects
+      loadedProjectIds.length = 0;
     });
   });
 });

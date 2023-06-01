@@ -43,9 +43,7 @@ import com.google.refine.util.TestUtils;
 import java.util.Collections;
 import java.util.Properties;
 
-import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 

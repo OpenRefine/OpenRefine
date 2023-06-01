@@ -11,7 +11,7 @@ on:
     types: [created]
 
 jobs:
-  prepare_ui_test_matrix:
+  prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -28,11 +28,12 @@ jobs:
         run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
-  ui_test:
-    needs: prepare_ui_test_matrix
+  e2e_test:
+    name: e2e_test ${{ matrix.specs.group }}
+    needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.prepare_e2e_test_matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -81,13 +82,14 @@ jobs:
         run: | 
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
           echo REFINE_MEMORY=4096M >> ./refine.ini
-          ./refine ui_tests
+          ./refine e2e_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
           CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_SPECS: ${{ matrix.specs }}
+          CYPRESS_SPECS: ${{ matrix.specs.paths }}
+          CYPRESS_GROUP: ${{ matrix.specs.group }}
 
 
   build:
@@ -160,13 +162,13 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
 
     - name: Generate dist files
-      run: mvn package -DskipTests=true
+      run: mvn -B package -DskipTests=true
 
   mac_test_and_deploy:
     runs-on: macos-12
@@ -212,13 +214,13 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test
-      run: mvn test
+      run: mvn -B test
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Package and upload to OSSRH
       run: |
-        mvn package deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
+        mvn -B package deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
@@ -237,7 +239,7 @@ jobs:
     - name: Upload release asset for Windows (without Java)
       id: upload-release-asset-win
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
@@ -247,7 +249,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.get_release_upload_url.outputs.tag_name }}.zip
@@ -257,7 +259,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.get_release_upload_url.outputs.tag_name }}.tar.gz
@@ -267,7 +269,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.6.3
+      uses: shogo82148/actions-upload-release-asset@v1.6.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.get_release_upload_url.outputs.tag_name }}.dmg

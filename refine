@@ -51,7 +51,7 @@ Actions
     run                           Run OpenRefine [default].
     server_test                   Run the server tests.
     test                          Run all tests.
-    ui_tests                      Run the UI tests.
+    e2e_tests                      Run the e2e tests.
     windows_dist <version>        Make Windows binary distribution.
 EOF
 exit 1
@@ -347,7 +347,7 @@ test() {
 }
 
 
-ui_tests() {
+e2e_tests() {
     get_revision
 
     CYPRESS_RECORD=0
@@ -446,6 +446,20 @@ run() {
         fi
     fi
 
+    freeRam=UNKNOWN
+    if [ "$OS" = "macosx" ] ; then
+        freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+    elif [ "$OS" = "linux" ] ; then
+        freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+    fi
+
+    echo "-------------------------------------------------------------------------------------------------"
+    echo You have "$freeRam"M of free memory.
+    echo Your current configuration is set to use $REFINE_MEMORY of memory.
+    echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+    echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+    echo "-------------------------------------------------------------------------------------------------"
+
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
     fi
@@ -535,8 +549,53 @@ if [ "$OS" = "windows" ] ; then
     SEP=";"
 fi
 
+# ----- Check for custom ini file /c option  ---------------------------------
+args=()
+while [ $# -ne 0 ] ; do
+  case "$1" in
+    -c) REFINE_INI_PATH="$2"; shift 2; continue;;
+    *) args+=("$1"); shift;;
+  esac
+done
 
-# ----- Make sure there is an appropriate java environment is available -------------
+# -- Read ini file ------------------------------------------------------------
+
+if [ -z $REFINE_INI_PATH ]; then
+  REFINE_INI_PATH=refine.ini
+fi
+
+if [ ! -f "$REFINE_INI_PATH" ]; then
+  error "$REFINE_INI_PATH is not a valid filename"
+fi
+
+echo "Using ${REFINE_INI_PATH} for configuration"
+load_configs $REFINE_INI_PATH
+
+# ----- Parse the command line args -------------------------------------------
+for ((i=0; i<${#args[@]}; i+=1)); do
+  arg="${args[i]}"
+  case "$arg" in
+    -h) usage;;
+    -p) ((i+=1)); REFINE_PORT="${args[i]}"; continue;;
+    -H) ((i+=1)); REFINE_HOST="${args[i]}"; continue;;
+    -i) ((i+=1)); REFINE_INTERFACE="${args[i]}"; continue;;
+    -w) ((i+=1)); REFINE_WEBAPP="${args[i]}"; continue;;
+    -d) ((i+=1)); REFINE_DATA_DIR="${args[i]}"; continue;;
+    -m) ((i+=1)); REFINE_MEMORY="${args[i]}"; REFINE_MIN_MEMORY="${args[i]}"; continue;;
+    -v) ((i+=1)); REFINE_VERBOSITY="${args[i]}"; continue;;
+    -x) ((i+=1)); REFINE_EXTRA_OPTS="${args[i]}"; continue;;
+    --debug) add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --jmx) add_option '-Dcom.sun.management.jmxremote'; continue;;
+    -*) echo "Invalid option: $arg" >&2; exit 1;;
+    *) ACTION="$arg"; break;;
+  esac
+done
+
+if [ -z "$ACTION" ] ; then
+    ACTION="run"
+fi
+
+# --- Check Java --------------------------------------------------------------
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
@@ -558,45 +617,6 @@ fi
 
 checkJavaMajorVersion
 
-# ----- Parse the command line args ------------------------------------------
-
-while [ $# -ne 0 ] ; do
-  case "$1" in
-	-h) usage;;
-    -p) shift; REFINE_PORT="$1"; shift; continue;;
-    -H) shift; REFINE_HOST="$1"; shift; continue;;
-    -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
-    -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
-    -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
-    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
-    -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
-    -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
-    -c) shift; REFINE_INI_PATH="$1"; shift; continue;;
-    --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
-    --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
-    -*) fail "Invalid option: $1";;
-    *) break;;
-  esac
-done
-
-if [ $# -ne 0 ] ; then
-    ACTION=$1; shift
-fi
-
-if [ -z "$ACTION" ] ; then
-    ACTION="run"
-fi
-
-# ----- Load configurations -------------------------------------
-
-if [ -z $REFINE_INI_PATH ]; then
-  REFINE_INI_PATH=refine.ini
-fi
-
-echo "Using ${REFINE_INI_PATH} for configuration"
-load_configs $REFINE_INI_PATH
-
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ -z "$JAVA_OPTIONS" ] ; then
@@ -611,20 +631,6 @@ if [ -z "$REFINE_MIN_MEMORY" ] ; then
     REFINE_MIN_MEMORY="256M"
 fi
 add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
-
-freeRam=UNKNOWN
-if [ "$OS" = "macosx" ] ; then
-    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
-elif [ "$OS" = "linux" ] ; then
-    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
-fi
-
-echo "-------------------------------------------------------------------------------------------------"
-echo You have "$freeRam"M of free memory.
-echo Your current configuration is set to use $REFINE_MEMORY of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
-echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
@@ -714,7 +720,7 @@ case "$ACTION" in
   clean) do_mvn clean;;
   test) test $1;;
   tests) test $1;;
-  ui_tests) ui_tests;;    
+  e2e_tests) e2e_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
@@ -724,7 +730,7 @@ case "$ACTION" in
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
   dist) dist $1;;
-  *) usage; ;;
+  *) echo "Unknown Refine command called \"$ACTION\", type \"./refine -h\" for proper usage.";;
 esac
 
 # ----------- end of file --------------------

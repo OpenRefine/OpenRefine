@@ -68,7 +68,7 @@ public class ProjectMetadata {
     @JsonProperty("modified")
     private Instant _modified;
     @JsonIgnore
-    private Instant written = null;
+    private Instant lastSave = null;
     @JsonProperty("name")
     private String _name = "";
     @JsonProperty("password")
@@ -125,23 +125,22 @@ public class ProjectMetadata {
 
     protected ProjectMetadata(Instant date) {
         _created = date;
+        _modified = _created;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
         this(Instant.now());
-        _modified = _created;
     }
 
     public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
-        _modified = modified;
         _name = name;
     }
 
     @JsonIgnore
     public boolean isDirty() {
-        return written == null || _modified.isAfter(written);
+        return lastSave == null || _modified.isAfter(lastSave);
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
@@ -382,6 +381,12 @@ public class ProjectMetadata {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
+            throw new RuntimeException(e);
         }
+    }
+
+    @JsonIgnore
+    public void setLastSave() {
+        lastSave = Instant.now();
     }
 }

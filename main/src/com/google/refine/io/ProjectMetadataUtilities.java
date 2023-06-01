@@ -80,7 +80,7 @@ public class ProjectMetadataUtilities {
                 file.delete();
             }
         }
-
+        projectMeta.setLastSave();
         tempFile.renameTo(file);
     }
 
@@ -132,7 +132,6 @@ public class ProjectMetadataUtilities {
      *            the project directory
      * @param id
      *            the project id
-     * @return
      */
     static public ProjectMetadata recover(File projectDir, long id) {
         ProjectMetadata pm = null;

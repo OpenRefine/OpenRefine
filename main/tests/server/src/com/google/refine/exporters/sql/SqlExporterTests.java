@@ -308,7 +308,14 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);
 
-        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (_column_0_,_column_1_,_column_2_,_column_3_) VALUES \n" +
+        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS sql_table_test;\n" +
+                "CREATE TABLE sql_table_test (\n" +
+                "\"_column_0_\" VARCHAR(100) NOT NULL,\n" +
+                "\"_column_1_\" VARCHAR(100) NOT NULL,\n" +
+                "\"_column_2_\" VARCHAR(100) NOT NULL,\n" +
+                "\"_column_3_\" VARCHAR(100) NOT NULL\n" +
+                ");\n" +
+                "INSERT INTO sql_table_test (\"_column_0_\",\"_column_1_\",\"_column_2_\",\"_column_3_\") VALUES \n" +
                 "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
 
     }
@@ -388,7 +395,14 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);
 
-        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" +
+        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS sql_table_test;\n" +
+                "CREATE TABLE sql_table_test (\n" +
+                "\"column0\" VARCHAR(100) NOT NULL,\n" +
+                "\"column1\" VARCHAR(100) NOT NULL,\n" +
+                "\"column2\" VARCHAR(100) NOT NULL,\n" +
+                "\"column3\" VARCHAR(100) NOT NULL\n" +
+                ");\n" +
+                "INSERT INTO sql_table_test (\"column0\",\"column1\",\"column2\",\"column3\") VALUES \n" +
                 "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
 
     }

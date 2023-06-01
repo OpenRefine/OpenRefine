@@ -805,5 +805,7 @@
     "core-views/edit-all-columns": "Editar todas las columnas",
     "core-index-import/invalid-url": "URL inválido",
     "core-index-import/blank-url": "URL en blanco",
-    "core-index-import/remove-row": "Remover esta fila"
+    "core-index-import/remove-row": "Remover esta fila",
+    "core-index/rows-loading-failed": "Error al cargar las filas.",
+    "core-index/navigate-home": "Navegar a la pantalla de inicio"
 }

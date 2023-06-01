@@ -123,6 +123,23 @@ class ListFacet extends Facet {
     this._update();
   };
 
+  checkInitialHeight() {
+    if (this._elmts) {
+      let innerList = this._elmts.bodyInnerDiv[0];
+      if (!this._initialHeightSet && innerList.offsetHeight !== 0) {
+        let innerHeight = innerList.offsetHeight;
+        let defaultMaxHeight = 17 * 13;
+
+        if (innerHeight > defaultMaxHeight) {
+          this._elmts.bodyDiv.height(defaultMaxHeight + 'px');
+        } else {
+          this._elmts.bodyDiv.height((innerHeight + 1) + 'px');
+        }
+        this._initialHeightSet = true;
+      }
+    }
+  }
+
   _reSortChoices() {
     this._data.choices.sort(this._options.sort === "name" ?
         function(a, b) {
@@ -402,18 +419,7 @@ class ListFacet extends Facet {
     this._renderBodyControls();
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
 
-    if (!this._initialHeightSet) {
-      let innerList = this._elmts.bodyInnerDiv[0];
-      let innerHeight = innerList.clientHeight;
-      let defaultMaxHeight = 17 * 13;
-
-      if (innerHeight > defaultMaxHeight) {
-        this._elmts.bodyDiv.height(defaultMaxHeight + 'px');
-      } else {
-        this._elmts.bodyDiv.height((innerHeight + 1) + 'px');
-      }
-      this._initialHeightSet = true;
-    }
+    this.checkInitialHeight();
 
     var getChoice = function(elmt) {
       var index = parseInt(elmt.attr("choiceIndex"),10);

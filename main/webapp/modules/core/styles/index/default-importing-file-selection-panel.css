@@ -37,13 +37,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: var(--chrome-secondary);
   padding: var(--padding-looser);
   border-right: 1px solid var(--chrome-primary);
+  height: 100%;
+  width: calc(350px - (var(--padding-looser) * 2));
 }
 
 .default-importing-file-selection-file-panel {
   font-size: 1.3em;
   position: absolute;
+  height: 100%;
+  right: 0;
   background: var(--background-primary);
   overflow: auto;
+  width: calc(100% - 350px);
 }
 
 .default-importing-file-selection-file-panel>table {

@@ -41,9 +41,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -297,28 +297,33 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected boolean saveNeeded() {
-        boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
-                .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
-        return projectSaveNeeded || _preferenceStore.isDirty() || projectRemoved;
+    protected List<Long> getModifiedProjectIds() {
+        List<Long> modified = _projectsMetadata.entrySet().stream()
+                .filter(e -> {
+                    ProjectMetadata metadata = e.getValue();
+                    if (metadata == null) return false;
+                    return metadata.isDirty();
+                }).map(Entry::getKey).collect(Collectors.toList());
+        return modified;
     }
 
-    protected void saveProjectMetadata() throws IOException {
-        for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
-            ProjectMetadata metadata = entry.getValue();
-            if (metadata != null && metadata.isDirty()) {
-                ProjectMetadataUtilities.save(metadata, getProjectDir(entry.getKey()));
+    protected void saveProjectMetadata(List<Long> modified) throws IOException {
+        for (Long id : modified) {
+            ProjectMetadata metadata = _projectsMetadata.get(id);
+            if (metadata != null) {
+                ProjectMetadataUtilities.save(metadata, getProjectDir(id));
             }
         }
     }
 
     protected boolean saveToFile(File file) throws IOException {
         OutputStream stream = new FileOutputStream(file);
-        boolean saveWasNeeded = saveNeeded();
+        List<Long> modified = getModifiedProjectIds();
+        boolean saveWasNeeded = (modified.size() > 0) || (_preferenceStore.isDirty());
         try {
             // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
             ParsingUtilities.defaultWriter.writeValue(stream, this);
-            saveProjectMetadata();
+            saveProjectMetadata(modified);
         } finally {
             stream.close();
         }
