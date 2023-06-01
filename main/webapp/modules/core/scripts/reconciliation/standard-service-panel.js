@@ -88,7 +88,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   
-  this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
+  //this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
   this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
@@ -99,23 +99,13 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
-// Hide the documentation link initially
-this._elmts.documentationLink.css("display", "none");
-for (var i = 0; i < ReconciliationManager.standardServices.length; i++) {
-  if (ReconciliationManager.standardServices[i] ===this._service) {
-    fetch(ReconciliationManager.standardServices[i].url)
-  .then(response => response.json())
-  .then(apiData => {
-    if(apiData.documentation) {
-      this._elmts.documentationLink.attr("href", apiData.documentation);
-      // Show the documentation link if documentation is available
-      this._elmts.documentationLink.css("display", "block");
-    } 
-  });
-    break;
-  }
-}
-
+  this._elmts.documentationLink.css("display", "none");
+  if(this._service.documentation) {
+    this._elmts.documentationLink.attr("href", this._service.documentation);
+    // Show the documentation link if documentation is available
+    this._elmts.documentationLink.css("display", "block");
+  } 
+  
   this._elmts.againstType.on('change', function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
