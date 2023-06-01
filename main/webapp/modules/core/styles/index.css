@@ -77,6 +77,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-bottom-left-radius: 5px;
 }
 
+#action-area-tabs li a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
 #project-links {
   font-size: 1.3em;
   position: absolute;
