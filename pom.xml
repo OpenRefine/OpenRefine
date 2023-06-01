@@ -77,7 +77,7 @@
     <butterfly.version>1.2.4</butterfly.version>
     <slf4j.version>2.0.7</slf4j.version>
     <log4j.version>2.20.0</log4j.version>
-    <jetty.version>9.4.48.v20220622</jetty.version>
+    <jetty.version>9.4.51.v20230217</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.8.0</jena.version>
     <poi.version>5.2.3</poi.version>
@@ -91,7 +91,7 @@
     <commons-codec.version>1.15</commons-codec.version>
     <commons-compress.version>1.23.0</commons-compress.version>
     <velocity.version>1.5</velocity.version>
-    <marc4j.version>2.9.2</marc4j.version>
+    <marc4j.version>2.9.5</marc4j.version>
     <jsoup.version>1.15.3</jsoup.version>
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
@@ -115,7 +115,7 @@
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-    <maven-dependency-plugin.version>3.5.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>3.1.0</surefire.version>
