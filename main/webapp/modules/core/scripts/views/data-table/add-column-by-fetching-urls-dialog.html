@@ -22,9 +22,12 @@
 	     <input type="checkbox" name="dialog-cache-responses" id="$add-column-cache-responses" checked="checked" />
 		<label for="$add-column-cache-responses" bind="or_views_cacheResponses"></label></td>
         </tr>
-        <tr><td colspan="4"><span bind="or_views_httpHeaders"></span>
-          <span class="toggle-text" bind="or_views_httpHeadersShowHide"></span>
-          $HTTP_HEADERS_WIDGET$
+        <tr><td colspan="4">
+          <details>
+            <summary bind="or_views_httpHeaders"></summary>
+            $HTTP_HEADERS_WIDGET$
+          </details>
+          <span class="toggle-text" bind=""></span>
         </td></tr>
         <tr><td colspan="4"><h3><span bind="or_views_urlFetch"></span></h3></td></tr>
         <tr><td colspan="4">$EXPRESSION_PREVIEW_WIDGET$</td></tr>

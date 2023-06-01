@@ -383,10 +383,6 @@ a.data-table-flag-off {
   color: var(--light-grey);
 }
 
-.set-httpheaders-container {
-  display: none;
-}
-
 .set-httpheaders-container label {
   display: inline-block;
   width: 15%;
