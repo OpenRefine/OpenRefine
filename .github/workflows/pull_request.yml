@@ -88,6 +88,10 @@ jobs:
     - name: Build and test with Maven
       run: mvn -B jacoco:prepare-agent test
 
+    - name: Submit test coverage to Coveralls
+      run: |
+        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DfailOnServiceError=false
+
   windows_server_tests:
     runs-on: windows-latest
 
