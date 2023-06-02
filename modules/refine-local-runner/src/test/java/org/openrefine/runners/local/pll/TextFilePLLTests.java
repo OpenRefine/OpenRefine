@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.vavr.collection.Array;
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 import org.openrefine.process.ProgressReporterStub;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.CloseableIterable;
+import org.openrefine.util.IOUtils;
 import org.openrefine.util.TestUtils;
 
 public class TextFilePLLTests extends PLLTestsBase {
@@ -25,6 +27,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     File textFile;
     File longerTextFile;
     File veryLongTextFile;
+    File incompleteChangeData;
     Charset utf8 = Charset.forName("UTF-8");
 
     @BeforeTest
@@ -42,6 +45,15 @@ public class TextFilePLLTests extends PLLTestsBase {
         // this file will have 9 * 2048 - 1 = 18431 characters, which is too much to be split in 4 partitions only
         veryLongTextFile = new File(tempDir, "verylongtextfile.txt");
         createTestTextFile(veryLongTextFile, String.join("\n", Collections.nCopies(2048, "aaaaaaaa")));
+
+        // file where the Gzip decompressor fails early but we should still be able to read a few lines
+        try (InputStream stream = this.getClass().getClassLoader().getResourceAsStream("incomplete-partition.gz")) {
+            File subDir = new File(tempDir, "incomplete");
+            subDir.mkdir();
+            incompleteChangeData = subDir;
+            File partitionFile = new File(subDir, "part-00000.gz");
+            IOUtils.copy(stream, partitionFile);
+        }
     }
 
     @AfterTest
@@ -200,6 +212,15 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
+    public void testReadIncompleteChangeData() throws IOException {
+        // this is a change data partition observed in the wild, which used not to be read at all
+        // (with the decompressor failing before any line could be read)
+        PLL<String> pll = new TextFilePLL(context, incompleteChangeData.getAbsolutePath(), utf8, true);
+        Array<String> lines = pll.collect();
+        Assert.assertTrue(lines.size() >= 20);
+    }
+
+    @Test
     public void testReadIncompletePLL() throws IOException, InterruptedException {
         PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath(), utf8);
         int nbPartitions = pll.getPartitions().size();
@@ -221,7 +242,8 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
-        Assert.assertEquals(deserializedPLL.count(), 1137L);
+        Assert.assertTrue(deserializedPLL.count() > 1000L); // it is 1196 as of 2023-06-02 with java 11
+        // but I suspect the exact count can be JVM-dependent
     }
 
     protected void createTestTextFile(File file, String contents) throws IOException {
