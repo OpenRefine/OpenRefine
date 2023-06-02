@@ -10,6 +10,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
 import io.vavr.collection.Array;
+
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.Runner;
 import org.openrefine.util.CloseableIterator;
@@ -117,6 +119,48 @@ public class TextFilePLL extends PLL<String> {
         this.progress = progress == null ? null : new ReadingProgressReporter(progress, filename);
     }
 
+    /**
+     * Helper which suppresses any IOException raised while reading a stream and treats those as if the end of file was
+     * reached normally. This is used when reading an incomplete compressed file (being currently written by another
+     * process, or just recovering from a crash) such that the stream may end abruptly at any point.
+     */
+    private static class NoEOFInputStream extends InputStream {
+
+        private final InputStream parent;
+
+        public NoEOFInputStream(InputStream parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public int read() {
+            try {
+                return parent.read();
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+
+        @Override
+        public int read(byte[] b) {
+            try {
+                return parent.read(b);
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) {
+            try {
+                return parent.read(b, off, len);
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+
+    }
+
     @Override
     protected CloseableIterator<String> compute(Partition partition) {
         TextFilePartition textPartition = (TextFilePartition) partition;
@@ -139,16 +183,9 @@ public class TextFilePLL extends PLL<String> {
                 // computed).
                 InputStream bufferedIs = new BufferedInputStream(stream);
                 countingIs = new CountingInputStream(bufferedIs);
-                try {
-                    bufferedIs = new GZIPInputStream(countingIs);
-                } catch (IOException e) {
-                    if (ignoreEarlyEOF) {
-                        // this partition was truncated very early, in the Gzip header.
-                        // No content in it is recoverable. We replace it by an empty stream
-                        bufferedIs = new ByteArrayInputStream(new byte[] {});
-                    } else {
-                        throw e;
-                    }
+                bufferedIs = new GZIPInputStream(countingIs);
+                if (ignoreEarlyEOF) {
+                    bufferedIs = new NoEOFInputStream(bufferedIs);
                 }
                 lineReader = null;
                 lineNumberReader = new LineNumberReader(new InputStreamReader(bufferedIs, encoding));
