@@ -56,7 +56,6 @@ import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-import org.checkerframework.checker.units.qual.A;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -110,7 +109,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         File dirA = new File(tempDir, "a");
         dirA.mkdir();
         File conflicting = new File(dirA, "dummy");
-        conflicting.createNewFile();
+        Assert.assertTrue(conflicting.createNewFile());
 
         File allocated = ImportingUtilities.allocateFile(dirA, ".././a/dummy");
         Assert.assertEquals(allocated, new File(dirA, "dummy-2"));
