@@ -48,6 +48,7 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
@@ -615,10 +616,11 @@ public class SeparatorBasedImporterTests extends ImporterTest {
 
     // ---------------------guess separators------------------------
     @Test
-    public void testThatDefaultGuessIsATabSeparator() {
+    public void testThatDefaultGuessIsATabSeparatorAndDefaultProcessQuotesToFalse() {
         ObjectNode options = SUT.createParserUIInitializationData(
                 runner, job, new LinkedList<>(), "text/json");
         assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
     }
 
     @Test
@@ -630,11 +632,12 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testThatSeparatorIsGuessedCorrectlyForTSV() throws IOException {
+    public void testThatSeparatorIsGuessedCorrectlyForTSVAndDefaultProcessQuotesToFalse() throws IOException {
         List<ImportingFileRecord> fileRecords = prepareFileRecords("movies-condensed.tsv");
         ObjectNode options = SUT.createParserUIInitializationData(
                 runner, job, fileRecords, "text/tsv");
         assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
     }
 
     // --helpers--

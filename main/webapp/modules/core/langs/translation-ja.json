@@ -353,7 +353,7 @@
     "core-project/filter": "フィルタ",
     "core-project/extensions": "エクステンション",
     "core-project/starting": "開始",
-    "core-project/paste-json": "操作履歴のJSONを貼り付けてください:",
+    "core-project/paste-json": "ファイルを選択するか、操作履歴のJSONを貼り付けてください:",
     "core-project/undo-history": "履歴保存は無制限",
     "core-recon/error-contact": "照合サービスの接続にエラー",
     "core-recon/cell-contains": "各セルに含まれる:",
@@ -467,7 +467,7 @@
     "core-views/pos-blank": "空白とエラー値の順序",
     "core-views/errors": "エラー",
     "core-views/hide": "隠す",
-    "core-views/drag-drop": "ドラッグ&ドロップできます",
+    "core-views/drag-drop": "ドラッグ＆ドロップで並べ替え",
     "core-views/collapse-white": "連続した空白を縮める…",
     "core-views/collapse-white/header": "連続した空白を縮める",
     "core-views/collapse-white/single": "連続した空白を縮める",
@@ -847,5 +847,7 @@
     "core-index-parser/row-separator": "行の区切り文字:",
     "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）",
     "core-index-parser/force-text": "全セルをテキストとしてインポート",
-    "core-index/navigate-home": "ホーム画面へ案内"
+    "core-index/navigate-home": "ホーム画面へ案内",
+    "core-index/show-panel": "パネルを表示",
+    "core-index/hide-panel": "パネルを隠す"
 }

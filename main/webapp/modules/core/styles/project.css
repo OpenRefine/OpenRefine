@@ -47,9 +47,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #project-name-button {
   padding: 3px;
   border: 1px solid transparent;
+  background: none;
+  font-size: 100%;
+  font-family: Arial, sans-serif;
 }
 
-#project-name-button:hover {
+#project-name-button:hover,
+#project-name-button:focus {
   background: var(--fill-editable);
   border: 1px solid #ccc;
   border-top: 1px solid #aaa;

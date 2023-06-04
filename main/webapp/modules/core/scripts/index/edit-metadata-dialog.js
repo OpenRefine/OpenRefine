@@ -5,8 +5,17 @@ function EditMetadataDialog(metaData, targetRowElem) {
   this._metaData = metaData;
   
   this._MetadataUI = function(tr, key, value, project) {
-      var self = this;
-      
+      var isCode = false;
+
+      if (typeof value === 'string') {
+          value = value.replace(/\"/g, "");  
+      } else {
+          value = JSON.stringify(value, null, 2);
+          isCode = true;
+      }
+
+      value = (value !== null) ? value : "";
+
       if (key === "date") {
           return;
       }
@@ -17,7 +26,11 @@ function EditMetadataDialog(metaData, targetRowElem) {
       $(td0).text(keyLable);
 
       var td1 = tr.insertCell(1);
-      $(td1).text((value !== null) ? value : "");
+      if (!isCode || key === 'tags') {
+        $(td1).text(value);
+      } else {
+        $('<pre>').append($('<code>').text(value)).appendTo(td1);
+      }
 
       var td2 = tr.insertCell(2);
       
@@ -120,17 +133,10 @@ EditMetadataDialog.prototype._createDialog = function() {
     
   var flatMetadata = flattenObject(this._metaData, "userMetadata");
       
-  for (var k in flatMetadata) {
+  for (var metadataKey in flatMetadata) {
     var tr = metadataTable.insertRow(metadataTable.rows.length);
-    var v;
-    
-    if (typeof flatMetadata[k] === 'string') {
-        v = flatMetadata[k].replace(/\"/g, "");  
-    } else {
-        v = JSON.stringify(flatMetadata[k]);
-    }
-    
-    this._metaDataUIs.push(new this._MetadataUI(tr, k, v, flatMetadata.id));
+
+    this._metaDataUIs.push(new this._MetadataUI(tr, metadataKey, flatMetadata[metadataKey], flatMetadata.id));
   }
 };
 

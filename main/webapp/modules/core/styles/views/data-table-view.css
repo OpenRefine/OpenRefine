@@ -159,7 +159,6 @@ table.data-table-header td.column-header, table.data-table-header th.column-head
 table.data-table td.column-header, table.data-table th.column-header {
   vertical-align: top;
   white-space: nowrap;
-  cursor: pointer;
   padding: 4px 6px 4px 4px;
   border-bottom: none;
   font-weight: bold;
@@ -177,18 +176,19 @@ table.data-table td.column-header, table.data-table th.column-header {
   position: absolute;
 }
 
-a.column-header-menu {
+.column-header-menu {
   display: inline-block;
   margin: 0 4px 0 0;
   width: 17px;
   height: 19px;
   background-image: url(../../images/menu-dropdown.png);
   background-repeat: no-repeat;
+  cursor: pointer;
+  border: none;
 }
 
-a.column-header-menu:hover {
+.column-header-menu:hover {
   background-position: -17px 0px;
-  text-decoration: none;
 }
 
 .column-header-recon-stats-bar {
@@ -381,10 +381,6 @@ a.data-table-flag-off {
 .data-table-cell-editor-key {
   font-size: 0.8em;
   color: var(--light-grey);
-}
-
-.set-httpheaders-container {
-  display: none;
 }
 
 .set-httpheaders-container label {
