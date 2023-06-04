@@ -165,6 +165,7 @@ jobs:
       run: mvn -B jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
+      continue-on-error: true
       run: |
         mvn -B jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=${GITHUB_REF#refs/heads/} -DfailOnServiceError=false
 
