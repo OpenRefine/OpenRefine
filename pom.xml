@@ -227,6 +227,9 @@
                 <configuration>
                     <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                    <excludes>
+                        <exclude>org/openrefine/messages/*</exclude>
+                    </excludes>
                 </configuration>
             </execution>
             <execution>
@@ -251,6 +254,9 @@
                             </includes>
                         </fileSet>
                      </fileSets> 
+                    <excludes>
+                        <exclude>org/openrefine/messages/*</exclude>
+                    </excludes>
                 </configuration>
              </execution>
         </executions>
