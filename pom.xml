@@ -214,6 +214,9 @@
                 <configuration>
                     <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
                     <propertyName>surefireArgs</propertyName>
+                    <excludes>
+                        <exclude>org/openrefine/messages/*</exclude>
+                    </excludes>
                 </configuration>
             </execution>
             <execution>
