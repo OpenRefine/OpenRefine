@@ -603,7 +603,7 @@
     "core-views/throttle-delay": "Throttle delay",
     "core-views/milli": "milliseconds",
     "core-views/url-fetch": "Formulate the URLs to fetch:",
-    "core-views/http-headers": "HTTP headers to be used when fetching URLs:",
+    "core-views/http-headers": "HTTP headers to be used when fetching URLs",
     "core-views/enter-col-name": "Enter new column name",
     "core-views/join-col": "Join columns…",
     "core-views/split-col": "Split column $1 into several columns",
