@@ -74,6 +74,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -110,6 +111,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -146,6 +148,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ null, {\n" +
                 "           \"v\" : \"c\"\n" +
@@ -173,6 +176,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {" +
                 "         \"cells\": [ {\n" +
                 "            \"v\" : \"a\"\n" +
@@ -209,6 +213,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -244,6 +249,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -273,6 +279,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -310,6 +317,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +
@@ -354,6 +362,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"a\"\n" +

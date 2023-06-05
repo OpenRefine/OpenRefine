@@ -641,17 +641,26 @@ Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
     body.sorting = JSON.stringify(sorting);
   }
 
+  var fullSettings = {
+     engine: ui.browsingEngine.getJSON(),
+     paginationOptions,
+     limit,
+     sorting
+  };
+  
+  Refine._lastRequestedPaginationSettings = fullSettings;
   $.post(
     "command/core/get-rows?" + $.param({ ...paginationOptions, project: theProject.id, limit: limit }),
     body,
     function(data) {
-      if(data.code === "error") {
-        data = theProject.rowModel;
-      }
-      theProject.rowModel = data;
+      if (fullSettings === Refine._lastRequestedPaginationSettings) {
+        if (data.code !== "error") {
+          theProject.rowModel = data;
+        }
 
-      if (onDone) {
-        onDone();
+        if (onDone) {
+          onDone();
+        }
       }
     },
     "json"

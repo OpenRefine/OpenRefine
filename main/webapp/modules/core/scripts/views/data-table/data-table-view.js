@@ -175,6 +175,30 @@ DataTableView.prototype.render = function() {
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
+// update a grid after progress of computation of a long-running operation
+DataTableView.prototype.rerenderChangedCells = function() {
+  let self = this;
+  $('tbody.data-table tr').each(function(localRowIndex) {
+    var rowElement = $(this);
+    var row = theProject.rowModel.rows[localRowIndex];
+    rowElement.find('td').each(function(rawIndex) {
+      let cellIndex = rawIndex - 3; // skip the first three cells (star, flag, row number)
+      if (cellIndex >= 0) {
+        let cell = row.cells[cellIndex];
+        let previousCell = self._lastRenderedRowModel.rows[localRowIndex].cells[cellIndex];
+        if (!deeplyEquals(cell, previousCell)) {
+          if (!previousCell.p) {
+            console.warn('re-rendering a cell which was not previously marked as pending');
+          }
+          let td = $(this);
+          td.empty(); 
+          new DataTableCellUI(self, cell, row.i, cellIndex, td[0]);
+        }
+      }
+    });
+  });
+};
+
 DataTableView.prototype.updateColumnStats = function() {
   var self = this;
   for (let columnHeaderUI of self._columnHeaderUIs) {
@@ -490,12 +514,29 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
 
 DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
-  self._lastRequestedPagination = paginationOptions;
   self._cancelAutoUpdate();
+  self._lastRequestedPagination = paginationOptions;
   Refine.fetchRows(paginationOptions, this._pageSize, function() {
-    if (self._lastRequestedPagination == paginationOptions) {
+    var fullViewOptions = {
+      paginationOptions,
+      sorting: this.sorting,
+      pageSize: this._pageSize
+    };
+    if (self._lastRenderedViewOptions !== undefined &&
+        deeplyEquals(self._lastRenderedViewOptions, fullViewOptions) &&
+        deeplyEquals(theProject.columnModel, self._lastRenderedColumnModel) &&
+        theProject.rowModel.rows.length === self._lastRenderedRowModel.rows.length &&
+        theProject.rowModel.historyEntryId === self._lastRenderedRowModel.historyEntryId) {
+      // do an incremental update of the DOM, only re-rendering cells which
+      // have changed
+      self.rerenderChangedCells();
+    } else {
+      // do a full re-render
       self.render();
     }
+    self._lastRenderedViewOptions = fullViewOptions;
+    self._lastRenderedColumnModel = theProject.columnModel
+    self._lastRenderedRowModel = theProject.rowModel;
 
     // schedule some follow-up update if the grid has incomplete cells
     if (theProject.rowModel.hasPendingCells) {
