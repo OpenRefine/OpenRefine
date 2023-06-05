@@ -140,8 +140,13 @@ public class GetRowsCommand extends Command {
         @JsonProperty("hasPendingCells")
         protected final boolean hasPendingCells;
 
-        protected JsonResult(Mode mode, List<WrappedRow> rows, long start, long end, int limit, Long previousPageId, Long nextPageId) {
+        @JsonProperty("historyEntryId")
+        protected final long historyEntryId;
+
+        protected JsonResult(Mode mode, long historyEntryId, List<WrappedRow> rows, long start, long end, int limit, Long previousPageId,
+                Long nextPageId) {
             this.mode = mode;
+            this.historyEntryId = historyEntryId;
             this.rows = rows;
             this.start = start == -1 ? null : start;
             this.end = end == -1 ? null : end;
@@ -201,6 +206,7 @@ public class GetRowsCommand extends Command {
             project.getHistory().refreshCurrentGrid();
             Engine engine = getEngine(request, project);
             Grid entireGrid = project.getCurrentGrid();
+            long historyEntryId = project.getHistory().getCurrentEntryId();
 
             long start = getLongParameter(request, "start", -1L);
             long end = getLongParameter(request, "end", -1L);
@@ -281,7 +287,7 @@ public class GetRowsCommand extends Command {
                 nextPageId = end;
             }
 
-            JsonResult result = new JsonResult(engine.getMode(),
+            JsonResult result = new JsonResult(engine.getMode(), historyEntryId,
                     wrappedRows, start, end,
                     limit, previousPageId, nextPageId);
 

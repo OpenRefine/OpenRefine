@@ -55,6 +55,26 @@ function cloneDeep(o) {
   }
 }
 
+// Checks if two Javascript objects have all their fields equal
+function deeplyEquals(a, b) {
+  if (a === null || b === null ||
+      typeof a !== 'object' || typeof b !== 'object') {
+    return a == b;
+  }
+  let keysA = Object.keys(a);
+  let keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+  for (let keyId in keysA) {
+    let key = keysA[keyId];
+    if (!deeplyEquals(a[key], b[key])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function formatRelativeDate(d) {
   var d = new Date(d);
   var almost_last_year = Date.today().add({ months: -11 });

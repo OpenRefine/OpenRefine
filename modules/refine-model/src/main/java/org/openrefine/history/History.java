@@ -220,6 +220,15 @@ public class History {
         return _position;
     }
 
+    @JsonProperty("currentEntryId")
+    public long getCurrentEntryId() {
+        if (_position == 0) {
+            return 0L;
+        } else {
+            return _entries.get(_position - 1).getId();
+        }
+    }
+
     @JsonProperty("cachedPosition")
     public int getCachedPosition() {
         return _cachedPosition;

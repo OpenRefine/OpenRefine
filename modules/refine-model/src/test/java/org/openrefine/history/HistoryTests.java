@@ -161,6 +161,7 @@ public class HistoryTests {
         GridPreservation gridPreservation = history.undoRedo(secondChangeId);
 
         Assert.assertEquals(history.getPosition(), 2);
+        Assert.assertEquals(history.getCurrentEntryId(), secondChangeId);
         Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
         Assert.assertEquals(history.getCurrentGrid(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
@@ -169,6 +170,7 @@ public class HistoryTests {
         GridPreservation gridPreservation2 = history.undoRedo(0);
 
         Assert.assertEquals(history.getPosition(), 0);
+        Assert.assertEquals(history.getCurrentEntryId(), 0L);
         Assert.assertEquals(history.getCachedPosition(), 0);
         Assert.assertEquals(history.getCurrentGrid(), initialState);
         Assert.assertEquals(history.getEntries(), entries);
