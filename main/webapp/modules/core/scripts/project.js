@@ -437,8 +437,8 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
             updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestOperationResult.historyEntry.gridPreservation !== 'no-row-preservation';
             updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestOperationResult.historyEntry.gridPreservation === 'preserves-records'; 
             updateOptions.processesChanged = true;
-            if (latestOperationResult.createdFacets) {
-              for (let facetConfig of latestOperationResult.createdFacets) {
+            if (latestOperationResult.changeResult.createdFacets) {
+              for (let facetConfig of latestOperationResult.changeResult.createdFacets) {
                 let facetType = facetConfig.type;
                 ui.browsingEngine.addFacet(facetType.indexOf('/') != -1 ? facetType.split('/')[1] : facetType, facetConfig, {});
               }
