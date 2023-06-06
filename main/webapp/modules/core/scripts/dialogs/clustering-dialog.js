@@ -123,6 +123,7 @@ ClusteringDialog.prototype._createDialog = function() {
 
         if (checkbox.checked) {
             button.disabled = true;
+            self._cluster();
         } else {
             button.disabled = false;
         }
