@@ -70,10 +70,6 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.html($.i18n('core-buttons/merge-close'));
     this._elmts.closeButton.html($.i18n('core-buttons/close'));
 
-    this._elmts.clusterButton.on('load', function() {
-        this.disabled = true;
-    })
-
     this._elmts.methodSelector.on('change',function() {
         var selection = $(this).find("option:selected").text();
         if (selection == $.i18n('core-dialogs/key-collision')) {
