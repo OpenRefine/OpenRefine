@@ -70,26 +70,52 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
-    this._buildTagsListPanel();
+    Refine.OpenProjectUI.refreshTagsListPanel();
     this._fetchProjects();
+    var tag = new URLSearchParams(window.location.search).get('tag');
+    if (!tag) tag = '';
+    Refine.OpenProjectUI._filterTags(tag);
 };
 
-Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
-    var self = this;
-    self._allTags = Refine.TagsManager._getAllProjectTags();
+Refine.OpenProjectUI.refreshTagsListPanel = function() {
+    var allTags = Refine.TagsManager._getAllProjectTags();
 
-    var container = self._elmts.projectTags.empty();
-    var ul = $("<ul/>").attr('id', 'tagsUl').appendTo(container);
+    var ul = $("#tagsUl").empty();
 
     // Add 'all' menu item
-    var li = $('<li/>').addClass("active").appendTo(ul);
-    $('<a/>').attr('href', '#all').addClass("current").text('All').appendTo(li);
-
-    $.each(self._allTags, function(i) {
-            var li = $('<li/>').appendTo(ul);
-            $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
-                            .appendTo(li);
+    var li = $('<li/>').appendTo(ul);
+    var a = $('<a/>').attr('href', '?tag=#open-project').text('All').appendTo(li);
+    a.on('click', function(e) {
+      e.preventDefault();
+      Refine.OpenProjectUI._filterTags('');
     });
+
+    $.each(allTags, function(i) {
+      var li = $('<li/>').appendTo(ul);
+      var a = $('<a/>').attr('href', '?tag=' + allTags[i] + '#open-project').text(allTags[i])
+                      .appendTo(li);
+      a.on('click', function(elm) {
+        elm.preventDefault();
+        Refine.OpenProjectUI._filterTags(allTags[i]);
+      });
+    });
+};
+
+Refine.OpenProjectUI._filterTags = function(tag) {
+  window.history.pushState("", "", "?tag=" + tag + "#open-project");
+
+  $('#tagsUl').children().each(function() {
+    $(this).removeClass('current');
+  });
+  $('#tagsUl').find('a[href="?tag=' + tag + '#open-project"]').parent().addClass('current');
+
+  $("#tableBody").children().each(function() {
+    if ($(this).hasClass(tag) || tag === "") {
+      $(this).show();
+    } else {
+      $(this).hide();
+    }
+  });
 };
 
 
@@ -278,7 +304,10 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 };
 
 Refine.OpenProjectUI.prototype._addTagFilter = function() {
-    $("#tableBody").filterList();
+  if (window.location.hash === 'open-project') {
+    var tag = new URLSearchParams(window.location.search).get("tag", "");
+    Refine.OpenProjectUI._filterTags(tag);
+  }
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
@@ -349,21 +378,8 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
              refreshMetaField(data[i].value,index); index++; 
          }
     }
-    
-    Refine.TagsManager.allProjectTags = [];
-    var self = this;
-    var list = $("#tagsUl").empty();
-    self._allTags = Refine.TagsManager._getAllProjectTags();
-     
-      var li = $('<li/>').addClass("active").appendTo(list);
-      $('<a/>').attr('href',
-      '#all').addClass("current").text('All').appendTo(li);
-     
-      $.each(self._allTags, function(i) {
-      var li = $('<li/>').appendTo(list);
-      $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
-      .appendTo(li);
-      });
+
+    Refine.OpenProjectUI.refreshTagsListPanel();
 };
 
 Refine.actionAreas.push({

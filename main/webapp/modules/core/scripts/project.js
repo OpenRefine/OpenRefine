@@ -559,7 +559,7 @@ Refine.getPermanentLink = function() {
  */
 
 function onLoad() {
-  var params = URL.getParameters();
+  var params = URLUtil.getParameters();
   if ("project" in params) {
     var uiState = {};
     if ("ui" in params) {
