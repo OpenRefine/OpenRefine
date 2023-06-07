@@ -143,7 +143,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'
         );
-        menuItem.on('mouseenter',function() {
+        menuItem.on('mouseenter click', function () {
           MenuSystem.dismissUntil(level);
 
           menuItem.addClass("menu-expanded");
@@ -173,7 +173,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           if ("tooltip" in item) {
             menuItem.attr("title", item.tooltip);
           }
-          menuItem.on('mouseenter', function () {
+          menuItem.on('mouseenter click', function () {
             MenuSystem.dismissUntil(level);
           });
         }
@@ -195,6 +195,8 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   } else {
     MenuSystem.positionMenuAboveBelow(menu, $(elmt));
   }
+
+  menu.find(".menu-item").first().trigger('focus');
 
   return level;
 };
