@@ -50,7 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <h1>OpenRefine</h1>
       </a>
       <div id="project-title">
-        <span id="project-name-button" class="app-path-section"></span>
+        <button id="project-name-button" class="app-path-section"></button>
         <a id="project-permalink-button" href="javascript:{}" class="secondary"></a>
       </div>
       <div id="project-controls">

@@ -35,7 +35,6 @@ package com.google.refine.commands;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

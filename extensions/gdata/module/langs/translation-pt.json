@@ -47,5 +47,6 @@
     "gdata-parsing/updating-preview": "Atualizando pré-visualização …",
     "gdata-parsing/limit-next": "Carregar ao menos",
     "gdata-import/re-sign-in-another": "Faça login com conta diferente",
-    "gdata-import/please-signin": "Faça login e autorize o acesso aos seus dados do Google"
+    "gdata-import/please-signin": "Faça login e autorize o acesso aos seus dados do Google",
+    "gdata-parsing/disable-auto-preview": "Desativar pré-visualização automática"
 }

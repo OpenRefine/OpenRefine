@@ -6,10 +6,10 @@
       <div class="grid-layout layout-normal layout-full"><table cols="2" style="width: 700px;">
         <tr>
           <td width="1%" style="white-space: pre;"><label for="columnNameInputId" bind="or_views_newCol"></label></td>
-          <td><input bind="columnNameInput" id="columnNameInputId" size="40" /></td>
+          <td><input bind="columnNameInput" type="text" id="columnNameInputId" size="40" /></td>
 
           <td width="1%" style="white-space: pre;"><label for="throttleDelayInputId" bind="or_views_throttle"></label></td>
-          <td><input bind="throttleDelayInput" id="throttleDelayInputId" size="10" value="500" /> <span bind="or_views_milli"></span></td>
+          <td><input bind="throttleDelayInput" id="throttleDelayInputId" type="number" size="10" value="500" /> <span bind="or_views_milli"></span></td>
         </tr>
         <tr>
           <td width="1%" style="white-space: pre;" bind="or_views_onErr"></td>
@@ -22,9 +22,12 @@
 	     <input type="checkbox" name="dialog-cache-responses" id="$add-column-cache-responses" checked="checked" />
 		<label for="$add-column-cache-responses" bind="or_views_cacheResponses"></label></td>
         </tr>
-        <tr><td colspan="4"><span bind="or_views_httpHeaders"></span>
-          <span class="toggle-text" bind="or_views_httpHeadersShowHide"></span>
-          $HTTP_HEADERS_WIDGET$
+        <tr><td colspan="4">
+          <details>
+            <summary bind="or_views_httpHeaders"></summary>
+            $HTTP_HEADERS_WIDGET$
+          </details>
+          <span class="toggle-text" bind=""></span>
         </td></tr>
         <tr><td colspan="4"><h3><span bind="or_views_urlFetch"></span></h3></td></tr>
         <tr><td colspan="4">$EXPRESSION_PREVIEW_WIDGET$</td></tr>

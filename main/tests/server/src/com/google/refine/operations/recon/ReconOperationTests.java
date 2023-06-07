@@ -35,10 +35,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;

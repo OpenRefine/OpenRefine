@@ -91,6 +91,9 @@ public class RowRemovalChange implements Change {
                 project.rows.add(index, row);
             }
 
+            project.columnModel.clearPrecomputes();
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
+
             project.update();
         }
     }

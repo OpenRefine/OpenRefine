@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI
 
 on:
   pull_request:
@@ -70,7 +70,7 @@ jobs:
     - name: Check Java linting
       id: java_linting
       run: |
-        mvn compile formatter:validate javadoc:javadoc -Ddoclint=all
+        mvn -B compile formatter:validate javadoc:javadoc -Ddoclint=all
 
     - name: Configure connections to databases
       id: configure_db_connections
@@ -86,7 +86,11 @@ jobs:
         PGPASSWORD: postgres
 
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
+
+    - name: Submit test coverage to Coveralls
+      run: |
+        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DfailOnServiceError=false
 
   windows_server_tests:
     runs-on: windows-latest
@@ -107,12 +111,12 @@ jobs:
     - name: Check Java linting
       id: java_linting
       run: |
-        mvn formatter:validate
+        mvn -B formatter:validate
 
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test
 
-  prepare_ui_test_matrix:
+  prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -129,11 +133,12 @@ jobs:
         run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
-  ui_test:
-    needs: prepare_ui_test_matrix
+  e2e_test:
+    name: e2e_test ${{ matrix.specs.group }}
+    needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.prepare_e2e_test_matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -182,10 +187,11 @@ jobs:
         run: | 
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
           echo REFINE_MEMORY=4096M >> ./refine.ini
-          ./refine ui_tests
+          ./refine e2e_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
           CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_SPECS: ${{ matrix.specs }}
+          CYPRESS_SPECS: ${{ matrix.specs.paths }}
+          CYPRESS_GROUP: ${{ matrix.specs.group }}

@@ -29,12 +29,16 @@ package com.google.refine.io;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import com.google.refine.model.Project;
+import com.google.refine.util.GetProjectIDException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.jena.atlas.json.JSON;
 import org.apache.jena.atlas.json.JsonObject;
@@ -115,5 +119,35 @@ public class FileProjectManagerTests {
         InputStream inputStream = new FileInputStream(workspaceFile);
         JsonObject json = JSON.parse(inputStream);
         assertTrue(json.get("projectIDs").getAsArray().isEmpty());
+    }
+
+    /**
+     * Tests whether only meta files of modified projects will be updated locally.
+     */
+    @Test
+    public void metaFileUpdateTest() throws GetProjectIDException, InterruptedException {
+        FileProjectManager manager = new FileProjectManager(workspaceDir);
+        ProjectMetadata metaA = new ProjectMetadata();
+        ProjectMetadata metaB = new ProjectMetadata();
+        metaA.setName("A");
+        metaB.setName("B");
+        manager.registerProject(new Project(), metaA);
+        manager.registerProject(new Project(), metaB);
+        manager.saveWorkspace();
+        long idA = manager.getProjectID("A");
+        long idB = manager.getProjectID("B");
+        Path pathA = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idA) + ".project", "metadata.json");
+        Path pathB = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idB) + ".project", "metadata.json");
+        File metaAFile = pathA.toFile();
+        File metaBFile = pathB.toFile();
+        long timeBeforeA = metaAFile.lastModified();
+        long timeBeforeB = metaBFile.lastModified();
+        Thread.sleep(1000);
+        manager.getProjectMetadata(idA).setName("ModifiedA");
+        manager.saveWorkspace();
+        long timeAfterA = metaAFile.lastModified();
+        long timeAfterB = metaBFile.lastModified();
+        assertEquals(timeBeforeB, timeAfterB);
+        assertNotEquals(timeBeforeA, timeAfterA);
     }
 }

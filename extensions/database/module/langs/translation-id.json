@@ -60,5 +60,6 @@
     "database-import/creating": "Membuat proyek …",
     "database-import/checking": "Memvalidasi kueri …",
     "database-import/title": "Server Basis Data",
-    "database-import/importer-name": "Basis Data"
+    "database-import/importer-name": "Basis Data",
+    "database-parsing/disable-auto-preview": "Matikan pratinjau otomatis"
 }

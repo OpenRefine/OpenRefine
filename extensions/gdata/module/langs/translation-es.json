@@ -47,5 +47,6 @@
     "gdata-import/creating": "Creando proyecto…",
     "gdata-import/preparing": "Preparando…",
     "gdata-import/re-sign-in-another": "Iniciar sesión con una cuenta diferente",
-    "gdata-import/please-signin": "Inicie sesión y autorice el acceso a sus datos de Google"
+    "gdata-import/please-signin": "Inicie sesión y autorice el acceso a sus datos de Google",
+    "gdata-parsing/disable-auto-preview": "Desactivar la vista previa automática"
 }

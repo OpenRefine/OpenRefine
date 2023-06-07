@@ -6,7 +6,6 @@ import java.util.List;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
 import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;

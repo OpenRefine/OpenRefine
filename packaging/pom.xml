@@ -509,7 +509,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.2</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -631,7 +631,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -657,7 +657,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.6.3</version>
+              <version>4.7.1</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

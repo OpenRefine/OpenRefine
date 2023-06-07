@@ -47,11 +47,8 @@ import com.google.refine.preference.PreferenceStore;
 
 public class GetAllPreferencesCommand extends Command {
 
-    /**
-     * The command uses POST (not sure why?) but does not actually modify any state so it does not require CSRF.
-     */
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         Project project = request.getParameter("project") != null ? getProject(request) : null;
@@ -67,6 +64,17 @@ public class GetAllPreferencesCommand extends Command {
         }
 
         respondJSON(response, map);
+    }
+
+    /**
+     * POST is supported but does not actually change any state so we do not add CSRF protection to it. Extensions and
+     * the UI still uses POST 2023-04-03.
+     */
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        doGet(request, response);
     }
 
 }
