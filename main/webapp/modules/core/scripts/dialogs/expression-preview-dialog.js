@@ -150,7 +150,7 @@ ExpressionPreviewDialog.Widget = function(
 };
 
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
-    var s = jQueryTrim(this.expression || "");
+    var s = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value || "");
     if (!s.length) {
         return null;
     }
