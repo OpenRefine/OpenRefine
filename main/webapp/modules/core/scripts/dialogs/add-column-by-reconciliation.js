@@ -190,7 +190,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
 
 ExtendReconciledDataPreviewDialog.prototype._update = function() {
   this._elmts.previewContainer.empty().html(
-        '<div bind="progressPanel" class="add-column-by-reconciliation-progress"><img src="images/large-spinner.gif" /></div>');
+        '<div bind="progressPanel" class="add-column-by-reconciliation-progress"><span class="loader"></span></span></div>');
 
   var self = this;
   var params = {
