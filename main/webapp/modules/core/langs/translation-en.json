@@ -418,6 +418,7 @@
     "core-project/undo": "Undo",
     "core-recon/add-std-srv": "Add standard service",
     "core-recon/access-service": "Access service API",
+    "core-recon/service-documentation":"Service documentation",
     "core-recon/cell-type": "Reconcile each cell to an entity of one of these types:",
     "core-recon/col-detail": "Also use relevant details from other columns:",
     "core-recon/against-type": "Reconcile against type:",
