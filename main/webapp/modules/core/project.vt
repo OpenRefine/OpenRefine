@@ -60,7 +60,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </div>
     </div>
     
-    <div id="loading-message"><img src="images/large-spinner.gif" /> <span id="or-proj-starting"></span></div>
+    <div id="loading-message"><span class="loader"></span <span id="or-proj-starting"></span></div>
       
     <div id="body">
       <div bind="leftPanelDiv" id="left-panel">
