@@ -187,7 +187,7 @@ DataTableView.prototype.rerenderChangedCells = function() {
         let cell = row.cells[cellIndex];
         let previousCell = self._lastRenderedRowModel.rows[localRowIndex].cells[cellIndex];
         if (!deeplyEquals(cell, previousCell)) {
-          if (!previousCell.p) {
+          if (!previousCell || !previousCell.p) {
             console.warn('re-rendering a cell which was not previously marked as pending');
           }
           let td = $(this);
@@ -519,13 +519,14 @@ DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   Refine.fetchRows(paginationOptions, this._pageSize, function() {
     var fullViewOptions = {
       paginationOptions,
+      engine: ui.browsingEngine.getJSON(),
       sorting: this.sorting,
       pageSize: this._pageSize
     };
     if (self._lastRenderedViewOptions !== undefined &&
         deeplyEquals(self._lastRenderedViewOptions, fullViewOptions) &&
         deeplyEquals(theProject.columnModel, self._lastRenderedColumnModel) &&
-        theProject.rowModel.rows.length === self._lastRenderedRowModel.rows.length &&
+        deeplyEquals(theProject.rowModel.rows.map(r => r.i), self._lastRenderedRowModel.rows.map(r => r.i)) &&
         theProject.rowModel.historyEntryId === self._lastRenderedRowModel.historyEntryId) {
       // do an incremental update of the DOM, only re-rendering cells which
       // have changed
