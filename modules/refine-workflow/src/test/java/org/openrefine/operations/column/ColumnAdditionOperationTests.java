@@ -31,10 +31,14 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ListFacet;
+import org.openrefine.browsing.DecoratedValue;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
@@ -96,7 +100,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
-
+    
     @Test
     public void testAddColumnRowsMode() throws OperationException, ParsingException {
         Operation operation = new ColumnAdditionOperation(
@@ -120,6 +124,36 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "", "b", "_b", "h" },
                         { new EvalError("error"), "a", null, "i" },
                         { "v1", "b", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testAddColumnRowsModeWithFacet() throws OperationException, ParsingException {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig("my facet", "grel:value", "bar");
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
+        Operation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "v1_a", "d" },
+                        { "v3", "a", "v3_a", "f" },
+                        { "", "a", "_a", "g" },
+                        { "", "b", null, "h" },
+                        { new EvalError("error"), "a", null, "i" },
+                        { "v1", "b", null, "j" }
                 });
         assertGridEquals(applied, expected);
     }
