@@ -440,7 +440,7 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
             if (latestOperationResult.changeResult.createdFacets) {
               for (let facetConfig of latestOperationResult.changeResult.createdFacets) {
                 let facetType = facetConfig.type;
-                ui.browsingEngine.addFacet(facetType.indexOf('/') != -1 ? facetType.split('/')[1] : facetType, facetConfig, {});
+                ui.browsingEngine.addFacetWithoutUpdating(facetType.indexOf('/') != -1 ? facetType.split('/')[1] : facetType, facetConfig, {});
               }
             }
           }

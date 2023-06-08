@@ -193,6 +193,11 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
 };
 
 BrowsingEngine.prototype.addFacet = function(type, config, options) {
+  this.addFacetWithoutUpdating(type, config, options);
+  Refine.update({ engineChanged: true });
+};
+
+BrowsingEngine.prototype.addFacetWithoutUpdating = function(type, config, options) {
   var elmt = this._createFacetContainer();
   var facet;
   switch (type) {
@@ -227,8 +232,6 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
        }
      }
   });
-
-  Refine.update({ engineChanged: true });
 };
 
 BrowsingEngine.prototype._createFacetContainer = function() {
