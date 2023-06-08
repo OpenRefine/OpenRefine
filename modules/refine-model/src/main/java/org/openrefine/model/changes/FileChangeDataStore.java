@@ -123,18 +123,18 @@ public class FileChangeDataStore implements ChangeDataStore {
 
         Optional<ChangeData<T>> returnedChangeData;
         Optional<ChangeData<T>> recoveredChangeData;
-        boolean storedChangedDataIsComplete;
+        boolean storedChangeDataIsComplete;
         try {
             recoveredChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer));
-            storedChangedDataIsComplete = recoveredChangeData.get().isComplete();
+            storedChangeDataIsComplete = recoveredChangeData.get().isComplete();
         } catch (IOException e) {
             recoveredChangeData = Optional.empty();
-            storedChangedDataIsComplete = false;
+            storedChangeDataIsComplete = false;
         }
 
         returnedChangeData = recoveredChangeData;
 
-        if (!storedChangedDataIsComplete && !changeDataIdsInProgress().contains(changeDataId)) {
+        if (!storedChangeDataIsComplete && !changeDataIdsInProgress().contains(changeDataId)) {
             if (recoveredChangeData.isPresent() && changeDataDir.exists()) {
                 // move the existing change data to a temporary directory
                 incompleteDir = idsToFile(changeDataId, true);
@@ -156,6 +156,8 @@ public class FileChangeDataStore implements ChangeDataStore {
                     completionProcess,
                     incompleteDir));
             _toRefresh.add(changeDataId);
+        } else if (storedChangeDataIsComplete) {
+            _toRefresh.remove(changeDataId);
         }
         return returnedChangeData.orElse(_runner.emptyChangeData());
     }
@@ -163,10 +165,6 @@ public class FileChangeDataStore implements ChangeDataStore {
     @Override
     public boolean needsRefreshing(long historyEntryId) {
         return _toRefresh.stream()
-                .filter(changeDataId -> {
-                    Process process = processManager.getProcess(changeDataId);
-                    return process == null || process.isRunning() && !process.isPaused();
-                })
                 .map(ChangeDataId::getHistoryEntryId)
                 .anyMatch(id -> id == historyEntryId);
     }
