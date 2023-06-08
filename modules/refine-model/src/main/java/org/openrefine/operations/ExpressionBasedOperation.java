@@ -223,7 +223,7 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
 
         @Override
         public Row call(Record record, long rowId, Row row) {
-            return joiner.call(row, null);
+            return joiner.call(row, new IndexedData<>(rowId, null));
         }
 
         @Override
