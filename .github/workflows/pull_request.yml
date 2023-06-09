@@ -25,50 +25,42 @@ jobs:
       DIRECTORIES: 'main/src/* extensions/jython/src/* extensions/wikidata/src/* extensions/database/src/* extensions/phonetic/src/* extensions/gdata/src/*'
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Get changed files
+      - name: Get all changed files
         id: getfiles
+        uses: jitterbit/get-changed-files@v1
+
+      - name: Echo all changed files
         run: |
-          echo "::set-output name=files::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})"
-          echo "Files changed: $files"
+          echo "Files changed:"
+          echo "${{ steps.getfiles.outputs.all }}"
 
       - name: Get directories of changed files
         id: getdirs
         run: |
           declare -A dirArray
-          for file in ${{ steps.getfiles.outputs.files }}
+          for file in ${{ steps.getfiles.outputs.all }}
           do
             dir=$(dirname "$file")
             dirArray["$dir"]=1
           done
-          echo "::set-output name=dirs::${!dirArray[@]}"
+          dirs=${!dirArray[@]}
+          echo "::set-output name=dirs::$dirs"
           echo "Directories changed: $dirs"
 
-      - name: Check if java source directories were modified
+      - name: Check if certain directories were modified
         id: filter
         run: |
           changed='false'
           for dir in ${{ steps.getdirs.outputs.dirs }}
           do
-            for directory in ${{ env.DIRECTORIES }}
-            do
-              # If there's a wildcard in the directory from DIRECTORIES
-              if [[ "$directory" == *"*"* ]]; then
-                baseDir="${directory/\/*/}"
-                if [[ "$dir" == "$baseDir"* ]]; then
-                  changed='true'
-                  echo "Java Source Directory $dir was modified"
-                  break 2
-                fi
-              else
-                if [[ "$dir" == "$directory" ]]; then
-                  changed='true'
-                  echo "Java Source Directory $dir was modified"
-                  break 2
-                fi
-              fi
-            done
+            if echo "${{ env.DIRECTORIES }}" | grep -q "$dir"
+            then
+              changed='true'
+              break
+            fi
           done
           echo "::set-output name=changed::$changed"
 
