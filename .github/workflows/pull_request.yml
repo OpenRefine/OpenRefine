@@ -20,7 +20,7 @@ jobs:
   check_java_src_changes:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.filter.outputs.changed }}
+      changed: ${{ steps.check_changes.outputs.changed }}
     env:
       DIRECTORIES: 'main/src/* extensions/jython/src/* extensions/wikidata/src/* extensions/database/src/* extensions/phonetic/src/* extensions/gdata/src/*'
 
@@ -29,40 +29,25 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get all changed files
-        id: getfiles
+        id: get_changed_files
         uses: jitterbit/get-changed-files@v1
 
-      - name: Echo all changed files
+      - name: Check changes
+        id: check_changes
         run: |
-          echo "Files changed:"
-          echo "${{ steps.getfiles.outputs.all }}"
-
-      - name: Get directories of changed files
-        id: getdirs
-        run: |
-          declare -A dirArray
-          for file in ${{ steps.getfiles.outputs.all }}
+          echo "Checking for changes in the directories: $DIRECTORIES"
+          changed='false'
+          for file in ${{ steps.get_changed_files.outputs.all }}
           do
             dir=$(dirname "$file")
-            dirArray["$dir"]=1
-          done
-          dirs=${!dirArray[@]}
-          echo "::set-output name=dirs::$dirs"
-          echo "Directories changed: $dirs"
-
-      - name: Check if certain directories were modified
-        id: filter
-        run: |
-          changed='false'
-          for dir in ${{ steps.getdirs.outputs.dirs }}
-          do
             if echo "${{ env.DIRECTORIES }}" | grep -q "$dir"
             then
               changed='true'
               break
             fi
           done
-          echo "::set-output name=changed::$changed"
+          echo "Changed: $changed"
+          echo "changed=$changed" >> $GITHUB_OUTPUT
 
   linux_server_tests:
     needs: check_java_src_changes
