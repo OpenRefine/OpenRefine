@@ -26,7 +26,7 @@ public abstract class RowInRecordChangeDataJoiner implements RowChangeDataJoiner
             if (indexedData.isPending()) {
                 changeData = rows.stream().map(row -> Cell.PENDING_NULL).collect(Collectors.toList());
             } else {
-                return rows;
+                changeData = rows.stream().map(row -> (Cell) null).collect(Collectors.toList());
             }
         }
         List<Row> result = new ArrayList<>(rows.size());
