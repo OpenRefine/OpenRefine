@@ -30,15 +30,16 @@ jobs:
 
       - name: Get all changed files
         id: get_changed_files
-        uses: jitterbit/get-changed-files@v1
+        uses: tj-actions/changed-files@v36.1.0
 
       - name: Check changes
         id: check_changes
         run: |
           echo "Checking for changes in the directories: $DIRECTORIES"
           changed='false'
-          for file in ${{ steps.get_changed_files.outputs.all }}
+          for file in ${{ steps.get_changed_files.outputs.all_changed_files }}
           do
+            echo "$file"
             dir=$(dirname "$file")
             if echo "${{ env.DIRECTORIES }}" | grep -q "$dir"
             then
