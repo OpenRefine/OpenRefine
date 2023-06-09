@@ -39,7 +39,6 @@ jobs:
           changed='false'
           for file in ${{ steps.get_changed_files.outputs.all_changed_files }}
           do
-            echo "$file"
             dir=$(dirname "$file")
             if echo "${{ env.DIRECTORIES }}" | grep -q "$dir"
             then
@@ -155,13 +154,14 @@ jobs:
         mvn -B formatter:validate
 
     - name: Build and test with Maven
+      shell: pwsh
       run: |
-        skipTestsFlag=""
-        if [[ "${{ needs.check_java_src_changes.outputs.changed }}" != 'true' ]]; then
-          skipTestsFlag="-DskipTests=true"
-        fi
+        $skipTestsFlag = ""
+        if ("${{ needs.check_java_src_changes.outputs.changed }}" -ne "true") {
+          $skipTestsFlag = "-DskipTests=true"
+        }
         mvn -B $skipTestsFlag jacoco:prepare-agent test
-
+        
   prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
