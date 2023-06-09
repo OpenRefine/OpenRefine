@@ -17,7 +17,66 @@ on:
 permissions: read-all
 
 jobs:
+  check_java_src_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    env:
+      DIRECTORIES: 'main/src/* extensions/jython/src/* extensions/wikidata/src/* extensions/database/src/* extensions/phonetic/src/* extensions/gdata/src/*'
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: getfiles
+        run: |
+          echo "::set-output name=files::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})"
+          echo "Files changed: $files"
+
+      - name: Get directories of changed files
+        id: getdirs
+        run: |
+          declare -A dirArray
+          for file in ${{ steps.getfiles.outputs.files }}
+          do
+            dir=$(dirname "$file")
+            dirArray["$dir"]=1
+          done
+          echo "::set-output name=dirs::${!dirArray[@]}"
+          echo "Directories changed: $dirs"
+
+      - name: Check if java source directories were modified
+        id: filter
+        run: |
+          changed='false'
+          for dir in ${{ steps.getdirs.outputs.dirs }}
+          do
+            for directory in ${{ env.DIRECTORIES }}
+            do
+              # If there's a wildcard in the directory from DIRECTORIES
+              if [[ "$directory" == *"*"* ]]; then
+                baseDir="${directory/\/*/}"
+                if [[ "$dir" == "$baseDir"* ]]; then
+                  changed='true'
+                  echo "Java Source Directory $dir was modified"
+                  break 2
+                fi
+              else
+                if [[ "$dir" == "$directory" ]]; then
+                  changed='true'
+                  echo "Java Source Directory $dir was modified"
+                  break 2
+                fi
+              fi
+            done
+          done
+          echo "::set-output name=changed::$changed"
+
   linux_server_tests:
+    needs: check_java_src_changes
     strategy:
       matrix:
         java: [ 11, 17 ]
@@ -86,13 +145,20 @@ jobs:
         PGPASSWORD: postgres
 
     - name: Build and test with Maven
-      run: mvn -B jacoco:prepare-agent test
+      run: |
+        skipTestsFlag=""
+        if [[ "${{ needs.check_java_src_changes.outputs.changed }}" == 'true' ]]; then
+          skipTestsFlag="-DskipTests=true"
+        fi
+        mvn -B $skipTestsFlag jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
+      if: needs.check_java_src_changes.outputs.changed != 'true'
       run: |
         mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DfailOnServiceError=false
 
   windows_server_tests:
+    needs: check_java_src_changes
     runs-on: windows-latest
 
     steps:
@@ -114,7 +180,12 @@ jobs:
         mvn -B formatter:validate
 
     - name: Build and test with Maven
-      run: mvn -B jacoco:prepare-agent test
+      run: |
+        skipTestsFlag=""
+        if [[ "${{ needs.check_java_src_changes.outputs.changed }}" != 'true' ]]; then
+          skipTestsFlag="-DskipTests=true"
+        fi
+        mvn -B $skipTestsFlag jacoco:prepare-agent test
 
   prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
