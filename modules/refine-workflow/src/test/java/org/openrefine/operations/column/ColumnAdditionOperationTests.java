@@ -100,7 +100,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testAddColumnRowsMode() throws OperationException, ParsingException {
         Operation operation = new ColumnAdditionOperation(
@@ -218,6 +218,36 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
+    public void testAddColumnRecordsModeWithFacet() throws OperationException, ParsingException {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig("my facet", "grel:value", "bar");
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("b", "b"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RecordBased);
+        Operation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:length(row.record.cells['hello'])",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", null, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 4, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 1, "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
     public void testAddColumnRowsModeNotLocal() throws Exception {
         Operation operation = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
@@ -258,6 +288,34 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 new String[] { "foo", "bar", "newcolumn", "hello" },
                 new Serializable[][] {
                         { "v1", "a", 4L, "d" },
+                        { "v3", "a", 4L, "f" },
+                        { "", "a", 4L, "g" },
+                        { "", "b", 2L, "h" },
+                        { new EvalError("error"), "a", 4L, "i" },
+                        { "v1", "b", 2L, "j" }
+                });
+        assertGridEquals(project.getCurrentGrid(), expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsModeNotLocalWithFacet() throws Exception {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig("my facet", "grel:value", "bar");
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("b", "b"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RecordBased);
+        Operation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        project.getHistory().addEntry(operation);
+
+        Grid expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", null, "d" },
                         { "v3", "a", 4L, "f" },
                         { "", "a", 4L, "g" },
                         { "", "b", 2L, "h" },
