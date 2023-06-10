@@ -657,10 +657,10 @@ Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
         if (data.code !== "error") {
           theProject.rowModel = data;
         }
+      }
 
-        if (onDone) {
-          onDone();
-        }
+      if (onDone) {
+        onDone();
       }
     },
     "json"
