@@ -66,14 +66,26 @@ function deeplyEquals(a, b) {
   if (keysA.length !== keysB.length) {
     return false;
   }
-  for (let keyId in keysA) {
-    let key = keysA[keyId];
+  for (let key of keysA) {
     if (!deeplyEquals(a[key], b[key])) {
       return false;
     }
   }
   return true;
 }
+
+// returns a deep copy of an object
+function deepCopy(obj) {
+  if (obj == null || typeof obj !== 'object') {
+    return obj;
+  } else {
+    let copy = {};
+    for (let key of Object.keys(obj)) {
+      copy[key] = deepCopy(obj[key]);
+    }
+    return copy;
+  }
+};
 
 function formatRelativeDate(d) {
   var d = new Date(d);

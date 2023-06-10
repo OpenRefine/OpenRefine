@@ -516,13 +516,14 @@ DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
   self._cancelAutoUpdate();
   self._lastRequestedPagination = paginationOptions;
+  var fullViewOptions = deepCopy({
+    paginationOptions,
+    engine: ui.browsingEngine.getJSON(),
+    sorting: self._sorting,
+    pageSize: self._pageSize
+  });
+
   Refine.fetchRows(paginationOptions, this._pageSize, function() {
-    var fullViewOptions = {
-      paginationOptions,
-      engine: ui.browsingEngine.getJSON(),
-      sorting: this.sorting,
-      pageSize: this._pageSize
-    };
     if (self._lastRenderedViewOptions !== undefined &&
         deeplyEquals(self._lastRenderedViewOptions, fullViewOptions) &&
         deeplyEquals(theProject.columnModel, self._lastRenderedColumnModel) &&

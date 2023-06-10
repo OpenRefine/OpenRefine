@@ -231,21 +231,16 @@ public class MassOperationTests extends RefineTest {
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
-        Row row0 = applied.getRow(0);
-        Assert.assertEquals(row0.getCellValue(0), "v2");
-        Assert.assertEquals(row0.getCellValue(1), "a");
-        Row row1 = applied.getRow(1);
-        Assert.assertEquals(row1.getCellValue(0), "v3");
-        Assert.assertEquals(row1.getCellValue(1), "a");
-        Row row2 = applied.getRow(2);
-        Assert.assertEquals(row2.getCellValue(0), "hey");
-        Assert.assertEquals(row2.getCellValue(1), "a");
-        Row row3 = applied.getRow(3);
-        Assert.assertEquals(row3.getCellValue(0), "hey");
-        Assert.assertEquals(row3.getCellValue(1), "b");
-        Row row4 = applied.getRow(5);
-        Assert.assertEquals(row4.getCellValue(0), "v1");
-        Assert.assertEquals(row4.getCellValue(1), "b");
+        Grid expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v2", "a" },
+                        { "v3", "a" },
+                        { "hey", "a" },
+                        { "hey", "b" },
+                        { "hey", "a" },
+                        { "v1", "b" }
+                });
+        assertGridEquals(applied, expected);
     }
 
     @Test

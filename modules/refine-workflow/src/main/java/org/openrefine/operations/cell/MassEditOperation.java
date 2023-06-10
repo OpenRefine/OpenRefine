@@ -205,7 +205,7 @@ public class MassEditOperation extends ExpressionBasedOperation {
 
         @Override
         public Row call(Row row, IndexedData<Cell> indexedData) {
-            if (indexedData == null) {
+            if (indexedData.getData() == null) {
                 return row;
             }
             if (indexedData.isPending() || (indexedData.getData() != null && indexedData.getData().isPending())) {
@@ -213,7 +213,7 @@ public class MassEditOperation extends ExpressionBasedOperation {
             }
             Cell cell = indexedData.getData();
             Cell newCell = row.getCell(columnIdx);
-            Object v = cell == null ? null : cell.getValue();
+            Object v = cell.getValue();
             if (ExpressionUtils.isError(v)) {
                 if (fromErrorTo != null) {
                     newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
