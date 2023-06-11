@@ -56,7 +56,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
                     });
 
             String serviceResponse = "{"
-                    + "   \"meta\": [{\"id\":\"P123\",\"name\":\"Property\"}],"
+                    + "   \"meta\": [{\"id\":\"P123\",\"name\":\"Property\",\"type\":{\"id\":\"Q5\",\"name\":\"human\"}}],"
                     + "   \"rows\": {"
                     + "       \"Q123\": {\"P123\": [{\"str\":\"hello\"}]},"
                     + "       \"Q345\": {\"P123\": [{\"str\":\"world\"}]}"
@@ -82,7 +82,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
             String expectedResponse = "{\n"
                     + "       \"code\" : \"ok\",\n"
                     + "       \"columns\" : [ {\n"
-                    + "         \"expectedType\" : null,\n"
+                    + "         \"type\" : {\"id\":\"Q5\",\"name\":\"human\"},\n"
                     + "         \"id\" : \"P123\",\n"
                     + "         \"name\" : \"Property\"\n"
                     + "       } ],\n"
