@@ -216,8 +216,7 @@ public class GetRowsCommand extends Command {
             response.setHeader("Content-Type", "application/json");
 
             if ((start == -1L) == (end == -1L)) {
-                respondException(response, new IllegalArgumentException("Exactly one of 'start' and 'end' should be provided."));
-                return;
+                throw new IllegalArgumentException("Exactly one of 'start' and 'end' should be provided.");
             }
 
             SortingConfig sortingConfig = SortingConfig.NO_SORTING;
@@ -231,21 +230,40 @@ public class GetRowsCommand extends Command {
                 return;
             }
 
-            List<WrappedRow> wrappedRows;
+            Grid sortedGrid = entireGrid;
+            if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                // TODO cache this appropriately
+                sortedGrid = entireGrid.reorderRows(sortingConfig, false);
+            }
 
-            EngineConfig engineConfig = engine.getConfig();
+            List<WrappedRow> wrappedRows;
+            Long previousPageId = null;
+            Long nextPageId = null;
             if (engine.getMode() == Mode.RowBased) {
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
-                Grid sortedGrid = entireGrid;
-                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                    // TODO cache this appropriately
-                    sortedGrid = entireGrid.reorderRows(sortingConfig, false);
-                }
+
                 List<IndexedRow> rows;
                 if (start != -1L) {
-                    rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit);
+                    rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit + 1);
+                    if (rows.size() == limit + 1) {
+                        nextPageId = rows.get(limit).getIndex();
+                        rows = rows.subList(0, limit);
+                    }
+
+                    if (start > 0) {
+                        previousPageId = start;
+                    }
                 } else {
-                    rows = sortedGrid.getRowsBefore(combinedRowFilters, end, limit);
+                    rows = sortedGrid.getRowsBefore(combinedRowFilters, end, limit + 1);
+                    if (rows.size() == limit + 1) {
+                        previousPageId = rows.get(0).getIndex() + 1;
+                        rows = rows.subList(1, limit + 1);
+                    } else if (rows.size() < limit) {
+                        rows.addAll(sortedGrid.getRowsAfter(combinedRowFilters, end, limit - rows.size()));
+                    }
+                    if (end < entireGrid.rowCount()) {
+                        nextPageId = end;
+                    }
                 }
 
                 wrappedRows = rows.stream()
@@ -253,38 +271,32 @@ public class GetRowsCommand extends Command {
                         .collect(Collectors.toList());
             } else {
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-                Grid sortedGrid = entireGrid;
-                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                    // TODO cache this appropriately
-                    sortedGrid = entireGrid.reorderRecords(sortingConfig, false);
-                }
                 List<Record> records;
                 if (start != -1L) {
-                    records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit);
+                    records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit + 1);
+                    if (records.size() == limit + 1) {
+                        nextPageId = records.get(limit).getStartRowId();
+                        records = records.subList(0, limit);
+                    }
+                    if (start > 0) {
+                        previousPageId = start;
+                    }
                 } else {
-                    records = sortedGrid.getRecordsBefore(combinedRecordFilters, end, limit);
+                    records = sortedGrid.getRecordsBefore(combinedRecordFilters, end, limit + 1);
+                    if (records.size() == limit + 1) {
+                        previousPageId = records.get(0).getStartRowId() + 1;
+                        records = records.subList(1, limit + 1);
+                    } else if (records.size() < limit) {
+                        records.addAll(sortedGrid.getRecordsAfter(combinedRecordFilters, end, limit - records.size()));
+                    }
+                    if (end < entireGrid.rowCount()) {
+                        nextPageId = end;
+                    }
                 }
 
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())
                         .collect(Collectors.toList());
-            }
-
-            // Compute the indices of the previous and next pages
-            Long previousPageId = null;
-            Long nextPageId = null;
-            if (start != -1L) {
-                if (start > 0) {
-                    previousPageId = start;
-                }
-                if (!wrappedRows.isEmpty()) {
-                    nextPageId = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
-                }
-            } else {
-                if (!wrappedRows.isEmpty() && wrappedRows.get(0).paginationIndex > 0) {
-                    previousPageId = wrappedRows.get(0).paginationIndex;
-                }
-                nextPageId = end;
             }
 
             JsonResult result = new JsonResult(engine.getMode(), historyEntryId,
