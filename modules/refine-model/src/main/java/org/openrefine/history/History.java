@@ -193,7 +193,7 @@ public class History {
      * @param refresh
      *            whether the grid should be refreshed if it depends on change data being currently fetched
      */
-    protected Grid getGrid(int position, boolean refresh) throws OperationException {
+    protected synchronized Grid getGrid(int position, boolean refresh) throws OperationException {
         Grid grid = _states.get(position);
         if (grid != null && !(refresh && _inProgress.get(position))) {
             return grid;
@@ -264,9 +264,10 @@ public class History {
      * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
      * histories
      */
-    public OperationApplicationResult addEntry(long id, Operation operation) {
+    public synchronized OperationApplicationResult addEntry(long id, Operation operation) {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
+            logger.warn(String.format("Removing undone history entries from %d to %d", _position, _entries.size()));
             // uncache all the grids that we are removing
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
@@ -305,7 +306,7 @@ public class History {
         return new OperationApplicationResult(entry, changeResult);
     }
 
-    protected void cacheIntermediateGridOnDisk(int position) throws OperationException, IOException {
+    protected synchronized void cacheIntermediateGridOnDisk(int position) throws OperationException, IOException {
         Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
         Grid grid = getGrid(position, false);
@@ -323,7 +324,7 @@ public class History {
         }
     }
 
-    protected void updateCachedPosition() {
+    protected synchronized void updateCachedPosition() {
         int previousCachedPosition = _cachedPosition;
         // Find the last expensive operation before the current one.
         int newCachedPosition = _position;
@@ -385,7 +386,7 @@ public class History {
      * @throws OperationException
      *             if the application of changes required for this move did not succeed
      */
-    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws OperationException {
+    public synchronized GridPreservation undoRedo(long lastDoneEntryID) throws OperationException {
         int oldPosition = _position;
         if (lastDoneEntryID == 0) {
             _position = 0;
@@ -406,7 +407,7 @@ public class History {
     /**
      * Given an history entry id, return the id of the preceding history entry, or -1 if there is none.
      */
-    synchronized public long getPrecedingEntryID(long entryID) {
+    public synchronized long getPrecedingEntryID(long entryID) {
         if (entryID == 0) {
             return -1;
         } else {
@@ -423,7 +424,7 @@ public class History {
      * Return the position of the history entry with the supplied id, or throws {@link IllegalArgumentException} if that
      * id cannot be found.
      */
-    public int entryIndex(long entryID) {
+    public synchronized int entryIndex(long entryID) {
         for (int i = 0; i < _entries.size(); i++) {
             if (_entries.get(i).getId() == entryID) {
                 return i;
@@ -432,7 +433,7 @@ public class History {
         throw new IllegalArgumentException(String.format("History entry with id %d not found", entryID));
     }
 
-    protected HistoryEntry getEntry(long entryID) {
+    protected synchronized HistoryEntry getEntry(long entryID) {
         try {
             return _entries.get(entryIndex(entryID));
         } catch (IllegalArgumentException e) {
