@@ -28,12 +28,15 @@
 package org.openrefine.commands.row;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.ServletException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -44,6 +47,7 @@ import org.openrefine.commands.CommandTestBase;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class GetRowsCommandTest extends CommandTestBase {
@@ -70,7 +74,20 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testJsonOutputRowsStart() throws ServletException, IOException {
+    public void testNoStartOrEnd() throws ServletException, IOException {
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("limit")).thenReturn("2");
+
+        command.doPost(request, response);
+
+        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
+        assertEquals(json.get("code").asText(), "error");
+        assertEquals(json.get("message").asText(),
+                "java.lang.IllegalArgumentException: Exactly one of 'start' and 'end' should be provided.");
+    }
+
+    @Test
+    public void testRowsStartWithNoPreviousPage() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -107,7 +124,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testJsonOutputRowsStartWithNoNextPage() throws ServletException, IOException {
+    public void testRowsStartWithNoNextPage() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -144,7 +161,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testJsonOutputRowsEnd() throws ServletException, IOException {
+    public void testRowsEnd() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -172,7 +189,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testJsonOutputRowsEndWithNoPreviousPage() throws ServletException, IOException {
+    public void testRowsEndWithNoPreviousPage() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -203,79 +220,94 @@ public class GetRowsCommandTest extends CommandTestBase {
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("2");
-        when(request.getParameter("limit")).thenReturn("3");
+        when(request.getParameter("limit")).thenReturn("2");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testAggregationLimitRowsNoFacet() throws ServletException, IOException {
+    public void testRowsStartWithPreviousPage() throws ServletException, IOException {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
-                "         \"cells\" : [ {\n" +
-                "           \"v\" : \"a\"\n" +
-                "         }, {\n" +
-                "           \"v\" : \"b\"\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
-                "         \"i\" : 0,\n" +
-                "         \"k\" : 0,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
-                "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1,\n" +
+                "       \"start\" : 1,\n" +
+                "       \"previousPageId\": 1,\n" +
+                "       \"nextPageId\": 2,\n" +
                 "       \"hasPendingCells\": false\n" +
                 "     }";
 
-        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
-        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("1");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testAggregationLimitRowsFacet() throws ServletException, IOException {
+    public void testRowsEndWithFilter() throws ServletException, IOException {
         String engineConfig = "{\"facets\":["
                 + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"isBlank(value)\","
-                + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"false\",\"l\":\"false\"}}],"
+                + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],"
                 + "\"selectBlank\":false,\"selectError\":false,\"invert\":false}"
-                + "],\"mode\":\"row-based\","
-                + "\"aggregationLimit\":2}";
+                + "],\"mode\":\"row-based\"}";
+        when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("2");
 
-        String rowJson = "{\n" +
+        // there is only one row before the supplied "end" that matches the filter,
+        // so we expect to also fetch some rows after, so that the full page size is returned.
+        // Otherwise this means that we are going to be returning an incomplete page (which could even be empty)
+        // while at the beginning of the dataset, which is confusing as a user.
+
+        command.doPost(request, response);
+
+        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
+        assertEquals(json.get("rows").size(), 2);
+        assertEquals(json.get("limit").asInt(), 2);
+        assertFalse(json.has("previousPageId"));
+    }
+
+    @Test
+    public void testRowsEndWithNoNextPage() throws ServletException, IOException {
+        String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"a\"\n" +
+                "           \"v\" : \"g\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"v\" : \"h\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
-                "         \"i\" : 0,\n" +
-                "         \"k\" : 0,\n" +
+                "         \"i\" : 4,\n" +
+                "         \"k\" : 4,\n" +
                 "         \"starred\" : false\n" +
-                "       } ],\n" +
-                "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 1,\n" +
+                "       }],\n" +
+                "       \"end\" : 5,\n" +
+                "       \"previousPageId\": 4,\n" +
                 "       \"hasPendingCells\": false\n" +
                 "     }";
 
-        when(request.getParameter("engine")).thenReturn(engineConfig);
-        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("5");
         when(request.getParameter("limit")).thenReturn("1");
-
         command.doPost(request, response);
-        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+        TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testJsonOutputRecords() throws ServletException, IOException {
+    public void testRecordsStartWithoutPreviousPage() throws ServletException, IOException {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
@@ -313,85 +345,122 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testAggregationLimitRecordsNoFacet() throws ServletException, IOException {
+    public void testRecordsStartWithPreviousPage() throws ServletException, IOException {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"a\"\n" +
+                "           \"v\" : \"g\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"v\" : \"h\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
-                "         \"i\" : 0,\n" +
-                "         \"j\" : 0,\n" +
-                "         \"k\" : 0,\n" +
+                "         \"i\" : 4,\n" +
+                "         \"j\" : 4,\n" +
+                "         \"k\" : 4,\n" +
                 "         \"starred\" : false\n" +
-                "       }, {\n" +
-                "         \"cells\" : [ null, {\n" +
-                "           \"v\" : \"c\"\n" +
-                "         } ],\n" +
-                "         \"flagged\" : false,\n" +
-                "         \"i\" : 1,\n" +
-                "         \"k\" : 1,\n" +
-                "         \"starred\" : false\n" +
-                "       } ],\n" +
-                "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
+                "       }],\n" +
+                "       \"start\" : 4,\n" +
+                "       \"previousPageId\": 4,\n" +
                 "       \"hasPendingCells\": false\n" +
                 "     }";
 
-        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
-        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("4");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+        TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testAggregationLimitRecordsFacet() throws ServletException, IOException {
-        String engineConfig = "{\"facets\":["
-                + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"isBlank(value)\","
-                + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"false\",\"l\":\"false\"}}],"
-                + "\"selectBlank\":false,\"selectError\":false,\"invert\":false}"
-                + "],\"mode\":\"record-based\","
-                + "\"aggregationLimit\":2}";
-
+    public void testRecordsEndWithoutNextPage() throws ServletException, IOException {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"historyEntryId\": 0,\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"a\"\n" +
+                "           \"v\" : \"g\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"v\" : \"h\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
-                "         \"i\" : 0,\n" +
-                "         \"j\" : 0,\n" +
-                "         \"k\" : 0," +
+                "         \"i\" : 4,\n" +
+                "         \"j\" : 4,\n" +
+                "         \"k\" : 4,\n" +
                 "         \"starred\" : false\n" +
-                "       }, {\n" +
-                "         \"cells\" : [ null, {\n" +
-                "           \"v\" : \"c\"\n" +
-                "         } ],\n" +
-                "         \"flagged\" : false,\n" +
-                "         \"i\" : 1,\n" +
-                "         \"k\" : 1,\n" +
-                "         \"starred\" : false\n" +
-                "       } ],\n" +
-                "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
+                "       }],\n" +
+                "       \"end\" : 5,\n" +
+                "       \"previousPageId\": 3,\n" +
                 "       \"hasPendingCells\": false\n" +
                 "     }";
 
-        when(request.getParameter("engine")).thenReturn(engineConfig);
-        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("5");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+        TestUtils.assertEqualsAsJson(recordJson, writer.toString());
+    }
+
+    @Test
+    public void testRecordsEndWithPreviousPage() throws ServletException, IOException {
+        String recordJson = "{\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"record-based\",\n" +
+                "       \"historyEntryId\": 0,\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"e\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 2,\n" +
+                "         \"j\" : 2,\n" +
+                "         \"k\" : 2,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ {\"v\":\"\"}, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 3,\n" +
+                "         \"k\" : 3,\n" +
+                "         \"starred\" : false\n" +
+                "       }],\n" +
+                "       \"end\" : 4,\n" +
+                "       \"previousPageId\": 1,\n" +
+                "       \"nextPageId\": 4,\n" +
+                "       \"hasPendingCells\": false\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("4");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(recordJson, writer.toString());
+    }
+
+    @Test
+    public void testRecordsEndWithFilter() throws ServletException, IOException {
+        String engineConfig = "{\"facets\":["
+                + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"isBlank(value)\","
+                + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],"
+                + "\"selectBlank\":false,\"selectError\":false,\"invert\":false}"
+                + "],\"mode\":\"record-based\"}";
+        when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("end")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("2");
+
+        // same sort of scenario as in testOutputRowsWithFilteredEnd, but for records
+
+        command.doPost(request, response);
+
+        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
+        assertEquals(json.get("rows").size(), 4);
+        assertEquals(json.get("limit").asInt(), 2);
+        assertFalse(json.has("previousPageId"));
     }
 }
