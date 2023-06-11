@@ -68,6 +68,7 @@ import org.openrefine.model.recon.ReconciledDataExtensionJob;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
+import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionProperty;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
@@ -116,23 +117,11 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     @Override
     public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-        ReconciledDataExtensionJob initialJob = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
-
-        // Prefetch column names with an initial request.
-        // TODO do this rather frontend side so that the column metadata is present in the operation metadata already
-        try {
-            initialJob.extend(Collections.emptySet());
-        } catch (Exception e) {
-            throw new OperationException("network", "Unable to fetch column metadata from service: " + e.getMessage());
-        }
         List<String> columnNames = new ArrayList<>();
-        for (ColumnInfo info : initialJob.columns) {
-            columnNames.add(info.name);
-        }
-
         List<ReconType> columnTypes = new ArrayList<>();
-        for (ColumnInfo info : initialJob.columns) {
-            columnTypes.add(info.expectedType);
+        for (DataExtensionProperty info : _extension.getProperties()) {
+            columnNames.add(info.name);
+            columnTypes.add(info.type);
         }
 
         /**

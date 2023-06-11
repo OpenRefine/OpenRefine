@@ -77,6 +77,9 @@ public class ReconciledDataExtensionJob implements Serializable {
         @JsonProperty("name")
         @JsonView(JsonViews.NonSaveMode.class)
         public final String name;
+        @JsonProperty("type")
+        @JsonInclude(Include.NON_NULL)
+        public final ReconType type;
         @JsonProperty("settings")
         @JsonInclude(Include.NON_NULL)
         public final Map<String, Object> settings;
@@ -85,9 +88,11 @@ public class ReconciledDataExtensionJob implements Serializable {
         public DataExtensionProperty(
                 @JsonProperty("id") String id,
                 @JsonProperty("name") String name,
+                @JsonProperty("type") ReconType type,
                 @JsonProperty("settings") Map<String, Object> settings) {
             this.id = id;
             this.name = name;
+            this.type = type;
             this.settings = settings;
         }
     }
@@ -222,6 +227,7 @@ public class ReconciledDataExtensionJob implements Serializable {
         final public String name;
         @JsonProperty("id")
         final public String id;
+        @JsonProperty("type")
         final public ReconType expectedType;
 
         @JsonCreator

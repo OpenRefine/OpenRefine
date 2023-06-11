@@ -273,7 +273,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
   var trHead = table.insertRow(table.rows.length);
   $('<th>').appendTo(trHead).text(this._column.name);
 
-  var renderColumnHeader = function(column) {
+  var renderColumnHeader = function(column, index) {
     var th = $('<th>').appendTo(trHead);
 
     $('<span>').html(column.name).appendTo(th);
@@ -294,9 +294,17 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     .on('click',function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
+
+    // store the type returned by the service in the operation settings,
+    // so that it can be added to the recon config of the column later on
+    if (column.type && self._extension.properties.length > index &&
+        self._extension.properties[index].id === column.id) {
+      self._extension.properties[index].type = column.type;
+    }
   };
+
   for (var c = 0; c < data.columns.length; c++) {
-    renderColumnHeader(data.columns[c]);
+    renderColumnHeader(data.columns[c], c);
   }
 
   for (var r = 0; r < data.rows.length; r++) {
