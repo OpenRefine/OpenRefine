@@ -230,10 +230,10 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     }
                     List<Cell> insertedCells = extensionRow;
                     if (insertedCells.size() != nbInsertedColumns) {
-                        insertedCells = new ArrayList<>(extensionRow);
+                        insertedCells = new ArrayList<>(insertedCells);
                         insertedCells.addAll(Collections.nCopies(nbInsertedColumns - insertedCells.size(), null));
                     }
-                    newRows.add(newRow.insertCells(columnInsertId, extensionRow));
+                    newRows.add(newRow.insertCells(columnInsertId, insertedCells));
                 }
             }
             return newRows;

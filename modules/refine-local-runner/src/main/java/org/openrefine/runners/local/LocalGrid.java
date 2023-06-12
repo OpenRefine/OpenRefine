@@ -611,7 +611,7 @@ public class LocalGrid implements Grid {
                 .filter(tuple -> tuple.getValue().getValue() == null || tuple.getValue().getValue().isPending())
                 .map(tuple -> tuple.getValue().getKey())
                 .collect(Collectors.toList());
-        List<T> changeData = rowMapper.callRowBatch(toCompute);
+        List<T> changeData = toCompute.isEmpty() ? Collections.emptyList() : rowMapper.callRowBatch(toCompute);
         if (changeData.size() != toCompute.size()) {
             throw new IllegalStateException(
                     String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), toCompute.size()));
@@ -727,7 +727,12 @@ public class LocalGrid implements Grid {
                 .filter(tuple -> tuple.getValue().getValue() == null || tuple.getValue().getValue().isPending())
                 .map(tuple -> tuple.getValue().getKey())
                 .collect(Collectors.toList());
-        List<T> changeData = recordMapper.callRecordBatch(toCompute);
+        List<T> changeData;
+        if (toCompute.isEmpty()) {
+            changeData = Collections.emptyList();
+        } else {
+            changeData = recordMapper.callRecordBatch(toCompute);
+        }
         if (changeData.size() != toCompute.size()) {
             throw new IllegalStateException(
                     String.format("Change data producer returned %d results on a batch of %d records", changeData.size(),
