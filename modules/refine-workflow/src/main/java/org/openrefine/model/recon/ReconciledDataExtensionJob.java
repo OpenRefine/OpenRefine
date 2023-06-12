@@ -62,6 +62,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -73,14 +74,18 @@ public class ReconciledDataExtensionJob implements Serializable {
 
         private static final long serialVersionUID = -6309521399471519189L;
         @JsonProperty("id")
+        @JsonView({ QueryView.class, JsonViews.SaveMode.class })
         public final String id;
         @JsonProperty("name")
-        @JsonView(JsonViews.NonSaveMode.class)
+        @JsonView(JsonViews.SaveMode.class)
+        @JsonInclude(Include.NON_NULL)
         public final String name;
         @JsonProperty("type")
+        @JsonView(JsonViews.SaveMode.class)
         @JsonInclude(Include.NON_NULL)
         public final ReconType type;
         @JsonProperty("settings")
+        @JsonView({ QueryView.class, JsonViews.SaveMode.class })
         @JsonInclude(Include.NON_NULL)
         public final Map<String, Object> settings;
 
@@ -243,7 +248,7 @@ public class ReconciledDataExtensionJob implements Serializable {
 
     final public DataExtensionConfig extension;
     final public String endpoint;
-    final public List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
+    public List<ColumnInfo> columns = null;
     final private String identifierSpace;
     final private String schemaSpace;
 
@@ -272,11 +277,10 @@ public class ReconciledDataExtensionJob implements Serializable {
 
         ObjectNode o = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
 
-        if (columns.size() == 0) {
+        if (columns == null) {
             // Extract the column metadata
-            List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {
+            columns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {
             });
-            columns.addAll(newColumns);
         }
 
         Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
@@ -317,7 +321,7 @@ public class ReconciledDataExtensionJob implements Serializable {
 
         // for each property
         int colindex = 0;
-        for (ColumnInfo ci : columns) {
+        for (DataExtensionProperty ci : extension.properties) {
             String pid = ci.id;
             ArrayNode values = JSONUtilities.getArray(record, pid);
             if (values == null) {
@@ -380,10 +384,17 @@ public class ReconciledDataExtensionJob implements Serializable {
         rows.get(row).set(col, cell);
     }
 
+    public static class QueryView {
+        ;
+    }
+
+    public static final ObjectWriter queryWriter = ParsingUtilities.mapper.writerWithView(QueryView.class)
+            .with(ParsingUtilities.defaultFilters);
+
     static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
         DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()),
                 node.getProperties());
-        ParsingUtilities.saveWriter.writeValue(writer, query);
+        queryWriter.writeValue(writer, query);
     }
 
     public int getBatchSize() {

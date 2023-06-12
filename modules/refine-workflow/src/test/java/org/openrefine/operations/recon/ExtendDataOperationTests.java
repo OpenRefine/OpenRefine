@@ -228,30 +228,6 @@ public class ExtendDataOperationTests extends RefineTest {
     }
 
     private static final String serializedChangeData = "{\"e\":{\"0\":{\"d\":[[{\"v\":\"a\"}],[{\"v\":\"b\"}]]}}}";
-    private static final String serializedChangeMetadata = "{\n" +
-            "        \"type\": \"org.openrefine.model.changes.DataExtensionChange\",\n" +
-            "        \"engineConfig\": {\n" +
-            "          \"facets\": [],\n" +
-            "          \"mode\": \"record-based\"\n" +
-            "        },\n" +
-            "        \"baseColumnName\": \"head of government\",\n" +
-            "        \"endpoint\": \"https://wikidata.reconci.link/en/api\",\n" +
-            "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-            "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-            "        \"columnInsertIndex\": 3,\n" +
-            "        \"columnNames\": [\n" +
-            "          \"date of birth\"\n" +
-            "        ],\n" +
-            "        \"columnTypes\": [\n" +
-            "          null\n" +
-            "        ]\n," +
-            "        \"extension\": {" +
-            "           \"batchSize\": 10," +
-            "           \"properties\": [" +
-            "              {\"id\": \"P123\", \"name\": \"date of birth\"}" +
-            "           ]" +
-            "        }" +
-            "      }";
 
     @Test
     public void testJoiner() {
@@ -342,19 +318,19 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void serializeExtendDataOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson,
-                ParsingUtilities.defaultWriter);
+                ParsingUtilities.saveWriter);
     }
 
     @Test
     public void serializeDataExtensionConfigWithoutBatchSize() throws IOException {
         TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJsonWithBatchSize,
-                ParsingUtilities.defaultWriter);
+                ParsingUtilities.saveWriter);
     }
 
     @Test
     public void serializeDataExtensionConfig() throws IOException {
         TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJsonWithBatchSize),
-                dataExtensionConfigJsonWithBatchSize, ParsingUtilities.defaultWriter);
+                dataExtensionConfigJsonWithBatchSize, ParsingUtilities.saveWriter);
     }
 
     @Test

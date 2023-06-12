@@ -1,6 +1,10 @@
 
 package org.openrefine.runners.testing;
 
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
@@ -1043,7 +1047,18 @@ public abstract class RunnerTestBase {
 
         @Override
         public String call(long rowId, Row row) {
+            if (rowId < 2L) {
+                throw new IllegalStateException("mapper called for a row that was meant to be already computed");
+            }
             return concatChangeMapper.call(rowId, row) + "_v2";
+        }
+
+        @Override
+        public List<String> callRowBatch(List<IndexedRow> rows) {
+            if (rows.isEmpty()) {
+                throw new IllegalStateException("Row mapper called on an empty batch");
+            }
+            return RowChangeDataProducer.super.callRowBatch(rows);
         }
     };
 
@@ -1164,7 +1179,18 @@ public abstract class RunnerTestBase {
 
         @Override
         public String call(Record record) {
+            if (record.getStartRowId() == 0) {
+                throw new IllegalArgumentException("calling the countingRecordChangeMapper on a previously computed record");
+            }
             return recordChangeMapper.call(record) + "_v2";
+        }
+
+        @Override
+        public List<String> callRecordBatch(List<Record> records) {
+            if (records.isEmpty()) {
+                throw new IllegalStateException("calling the record mapper on an empty batch of records");
+            }
+            return RecordChangeDataProducer.super.callRecordBatch(records);
         }
     };
 
