@@ -174,6 +174,14 @@ public class History {
     }
 
     /**
+     * Is the current grid incomplete? If so, it should be refreshed with {@link #refreshCurrentGrid()} after a while.
+     */
+    @JsonIgnore
+    public boolean currentGridNeedsRefreshing() {
+        return _inProgress.get(_position);
+    }
+
+    /**
      * Returns the state of the grid at before any operation was applied on it
      */
     @JsonIgnore
