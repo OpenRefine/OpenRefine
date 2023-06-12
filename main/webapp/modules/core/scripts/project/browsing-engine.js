@@ -194,6 +194,7 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
 
 BrowsingEngine.prototype.addFacet = function(type, config, options) {
   this.addFacetWithoutUpdating(type, config, options);
+  Refine.activateLeftPanelTab('facets');
   Refine.update({ engineChanged: true });
 };
 
