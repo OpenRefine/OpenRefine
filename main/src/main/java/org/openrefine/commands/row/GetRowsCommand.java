@@ -46,6 +46,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
+import org.openrefine.history.History;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.Grid;
@@ -137,14 +138,14 @@ public class GetRowsCommand extends Command {
         @JsonInclude(Include.NON_NULL)
         protected final Long nextPageId;
 
-        @JsonProperty("hasPendingCells")
-        protected final boolean hasPendingCells;
+        @JsonProperty("needsRefreshing")
+        protected final boolean needsRefreshing;
 
         @JsonProperty("historyEntryId")
         protected final long historyEntryId;
 
         protected JsonResult(Mode mode, long historyEntryId, List<WrappedRow> rows, long start, long end, int limit, Long previousPageId,
-                Long nextPageId) {
+                Long nextPageId, boolean refreshNeeded) {
             this.mode = mode;
             this.historyEntryId = historyEntryId;
             this.rows = rows;
@@ -153,8 +154,7 @@ public class GetRowsCommand extends Command {
             this.limit = Math.min(rows.size(), limit);
             this.previousPageId = previousPageId;
             this.nextPageId = nextPageId;
-            this.hasPendingCells = rows.stream().anyMatch(
-                    wrappedRow -> wrappedRow.row.getCells().stream().anyMatch(cell -> cell != null && cell.isPending()));
+            this.needsRefreshing = refreshNeeded;
         }
     }
 
@@ -203,10 +203,18 @@ public class GetRowsCommand extends Command {
                 project = getProject(request);
             }
 
-            project.getHistory().refreshCurrentGrid();
-            Engine engine = getEngine(request, project);
-            Grid entireGrid = project.getCurrentGrid();
-            long historyEntryId = project.getHistory().getCurrentEntryId();
+            History history = project.getHistory();
+            Engine engine;
+            Grid entireGrid;
+            boolean gridNeedsRefreshing;
+            long historyEntryId;
+            synchronized (history) {
+                history.refreshCurrentGrid();
+                engine = getEngine(request, project);
+                entireGrid = history.getCurrentGrid();
+                gridNeedsRefreshing = history.currentGridNeedsRefreshing();
+                historyEntryId = history.getCurrentEntryId();
+            }
 
             long start = getLongParameter(request, "start", -1L);
             long end = getLongParameter(request, "end", -1L);
@@ -299,9 +307,18 @@ public class GetRowsCommand extends Command {
                         .collect(Collectors.toList());
             }
 
+            // the first condition is overly optimistic: we could also need to refresh even if we are returning
+            // as many rows as the limit, because perhaps those rows are coming from distinct partitions and so
+            // the fetching is happening between them, leading to a change of the filtered rows in view.
+            // That being said, this does not feel critical, and the performance benefit of not refreshing in such
+            // a case feels higher.
+            boolean needsRefreshing = (wrappedRows.size() < limit && gridNeedsRefreshing)
+                    || wrappedRows.stream().anyMatch(
+                            wrappedRow -> wrappedRow.row.getCells().stream().anyMatch(cell -> cell != null && cell.isPending()));
+
             JsonResult result = new JsonResult(engine.getMode(), historyEntryId,
                     wrappedRows, start, end,
-                    limit, previousPageId, nextPageId);
+                    limit, previousPageId, nextPageId, needsRefreshing);
 
             respondJSON(response, result);
         } catch (Exception e) {

@@ -30,18 +30,24 @@ package org.openrefine.commands.row;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
+import org.openrefine.ProjectManager;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ListFacet;
 import org.openrefine.commands.CommandTestBase;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.History;
+import org.openrefine.model.Cell;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -54,7 +60,10 @@ public class GetRowsCommandTest extends CommandTestBase {
 
     Project project = null;
     Project longerProject = null;
+    Project incompleteProject = null;
     EngineConfig engineConfigWithFacet = null;
+
+    HttpServletRequest requestIncomplete = null;
 
     @BeforeMethod
     public void setUp() {
@@ -66,9 +75,30 @@ public class GetRowsCommandTest extends CommandTestBase {
                         { "", "f" },
                         { "g", "h" }
                 });
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
+
+        Grid incompleteGrid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "a", "c" },
+                        { Cell.PENDING_NULL, "d" }
+                });
+
+        incompleteProject = mock(Project.class);
+        long incompleteProjectId = 378928L;
+        when(incompleteProject.getCurrentGrid()).thenReturn(incompleteGrid);
+        when(incompleteProject.getId()).thenReturn(incompleteProjectId);
+        when(incompleteProject.getLastSave()).thenReturn(project.getLastSave());
+        History history = mock(History.class);
+        when(history.currentGridNeedsRefreshing()).thenReturn(true);
+        when(history.getCurrentGrid()).thenReturn(incompleteGrid);
+        when(incompleteProject.getHistory()).thenReturn(history);
+        ProjectManager.singleton.registerProject(incompleteProject, ProjectManager.singleton.getProjectMetadata(project.getId()));
+        requestIncomplete = mock(HttpServletRequest.class);
+        when(requestIncomplete.getParameter("project")).thenReturn(String.valueOf(incompleteProjectId));
+
         command = new GetRowsCommand();
 
-        when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
         FacetConfigResolver.registerFacetConfig("core", "list", ListFacet.ListFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
@@ -113,7 +143,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -150,7 +180,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -178,7 +208,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       \"end\" : 2,\n" +
                 "       \"previousPageId\": 1,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -215,7 +245,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -243,7 +273,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       \"start\" : 1,\n" +
                 "       \"previousPageId\": 1,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -296,7 +326,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       }],\n" +
                 "       \"end\" : 5,\n" +
                 "       \"previousPageId\": 4,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
@@ -334,7 +364,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
                 "       \"nextPageId\": 2,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -364,7 +394,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       }],\n" +
                 "       \"start\" : 4,\n" +
                 "       \"previousPageId\": 4,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -394,7 +424,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       }],\n" +
                 "       \"end\" : 5,\n" +
                 "       \"previousPageId\": 3,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -433,7 +463,7 @@ public class GetRowsCommandTest extends CommandTestBase {
                 "       \"end\" : 4,\n" +
                 "       \"previousPageId\": 1,\n" +
                 "       \"nextPageId\": 4,\n" +
-                "       \"hasPendingCells\": false\n" +
+                "       \"needsRefreshing\": false\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
@@ -462,5 +492,130 @@ public class GetRowsCommandTest extends CommandTestBase {
         assertEquals(json.get("rows").size(), 4);
         assertEquals(json.get("limit").asInt(), 2);
         assertFalse(json.has("previousPageId"));
+    }
+
+    @Test
+    public void testIncompleteGridNoRefreshNeeded() throws ServletException, IOException {
+
+        when(requestIncomplete.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(requestIncomplete.getParameter("start")).thenReturn("0");
+        when(requestIncomplete.getParameter("limit")).thenReturn("2");
+
+        command.doPost(requestIncomplete, response);
+
+        String expectedJson = "{\n"
+                + "  \"historyEntryId\" : 0,"
+                + "  \"limit\" : 2,"
+                + "  \"mode\" : \"row-based\","
+                + "  \"needsRefreshing\" : false,"
+                + "  \"nextPageId\" : 2,"
+                + "  \"rows\" : [ {"
+                + "    \"cells\" : [ {"
+                + "      \"v\" : \"a\""
+                + "    }, {"
+                + "      \"v\" : \"b\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 0,"
+                + "    \"k\" : 0,"
+                + "    \"starred\" : false"
+                + "  }, {"
+                + "    \"cells\" : [ {\"v\":\"a\"}, {"
+                + "      \"v\" : \"c\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 1,"
+                + "    \"k\" : 1,"
+                + "    \"starred\" : false"
+                + "  } ],"
+                + "  \"start\" : 0"
+                + "} ";
+        TestUtils.assertEqualsAsJson(expectedJson, writer.toString());
+    }
+
+    @Test
+    public void testIncompleteGridWithPendingCell() throws ServletException, IOException {
+
+        when(requestIncomplete.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(requestIncomplete.getParameter("start")).thenReturn("1");
+        when(requestIncomplete.getParameter("limit")).thenReturn("2");
+
+        command.doPost(requestIncomplete, response);
+
+        String expectedJson = "{\n"
+                + "  \"historyEntryId\" : 0,"
+                + "  \"limit\" : 2,"
+                + "  \"mode\" : \"row-based\","
+                + "  \"needsRefreshing\" : true,"
+                + "  \"previousPageId\" : 1,"
+                + "  \"rows\" : [ {"
+                + "    \"cells\" : [ {"
+                + "      \"v\" : \"a\""
+                + "    }, {"
+                + "      \"v\" : \"c\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 1,"
+                + "    \"k\" : 1,"
+                + "    \"starred\" : false"
+                + "  }, {"
+                + "    \"cells\" : [ {\"p\":true}, {"
+                + "      \"v\" : \"d\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 2,"
+                + "    \"k\" : 2,"
+                + "    \"starred\" : false"
+                + "  } ],"
+                + "  \"start\" : 1"
+                + "} ";
+        TestUtils.assertEqualsAsJson(expectedJson, writer.toString());
+    }
+
+    @Test
+    public void testIncompleteGridFiltered() throws ServletException, IOException {
+        String engineConfig = "{\"facets\":["
+                + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"value\","
+                + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"a\",\"l\":\"a\"}}],"
+                + "\"selectBlank\":false,\"selectError\":false,\"invert\":false}"
+                + "],\"mode\":\"row-based\"}";
+
+        when(requestIncomplete.getParameter("engine")).thenReturn(engineConfig);
+        when(requestIncomplete.getParameter("start")).thenReturn("0");
+        when(requestIncomplete.getParameter("limit")).thenReturn("3");
+
+        command.doPost(requestIncomplete, response);
+
+        // in this case, although the returned rows do not contain any pending cell,
+        // we still need to refresh because the last row might turn out to contain an 'a'
+        // after being computed, hence being in the view.
+
+        String expectedJson = "{\n"
+                + "  \"historyEntryId\" : 0,"
+                + "  \"limit\" : 2,"
+                + "  \"mode\" : \"row-based\","
+                + "  \"needsRefreshing\" : true,"
+                + "  \"rows\" : [ {"
+                + "    \"cells\" : [ {"
+                + "      \"v\" : \"a\""
+                + "    }, {"
+                + "      \"v\" : \"b\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 0,"
+                + "    \"k\" : 0,"
+                + "    \"starred\" : false"
+                + "  }, {"
+                + "    \"cells\" : [ {\"v\":\"a\"}, {"
+                + "      \"v\" : \"c\""
+                + "    } ],"
+                + "    \"flagged\" : false,"
+                + "    \"i\" : 1,"
+                + "    \"k\" : 1,"
+                + "    \"starred\" : false"
+                + "  } ],"
+                + "  \"start\" : 0"
+                + "}";
+        TestUtils.assertEqualsAsJson(expectedJson, writer.toString());
     }
 }

@@ -540,8 +540,8 @@ DataTableView.prototype._showRows = function(paginationOptions, onDone) {
     self._lastRenderedColumnModel = theProject.columnModel
     self._lastRenderedRowModel = theProject.rowModel;
 
-    // schedule some follow-up update if the grid has incomplete cells
-    if (theProject.rowModel.hasPendingCells) {
+    // schedule some follow-up update if the grid has incomplete cells or potentially missing rows
+    if (theProject.rowModel.needsRefreshing) {
       self._cancelAutoUpdate();
       self._autoUpdateTimeout = setTimeout(function() {
         self._showRows(self._lastRequestedPagination);
