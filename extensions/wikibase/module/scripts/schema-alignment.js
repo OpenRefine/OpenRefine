@@ -253,7 +253,7 @@ SchemaAlignment.updateColumns = function() {
         reconStats = theProject.columnStats[i];
      }
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig && reconStats ? reconConfig.identifierSpace : null);
+        reconConfig && reconStats && reconStats.reconciled > 0 ? reconConfig.identifierSpace : null);
      this._columnArea.append(cell);
   }
 
