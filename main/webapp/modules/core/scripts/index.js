@@ -137,11 +137,19 @@ $(function() {
 
     actionArea.tabElmt = $('<li>')
     .addClass('action-area-tab')
-    .text(actionArea.label)
-    .appendTo($('#action-area-tabs'))
-    .on('click', function() {
-      Refine.selectActionArea(actionArea.id);
-    });
+    .append(
+      $('<a>')
+      .attr('href', '#' + actionArea.id)
+      .text(actionArea.label)
+      .on('click', function() {
+        Refine.selectActionArea(actionArea.id);
+        // clear action area specific query parameters
+        var url = new URL(location.href);
+        url.search = '';
+        window.history.replaceState('', '', url);
+      })
+    )
+    .appendTo($('#action-area-tabs'));
 
     actionArea.ui = new actionArea.uiClass(actionArea.bodyElmt);
   };

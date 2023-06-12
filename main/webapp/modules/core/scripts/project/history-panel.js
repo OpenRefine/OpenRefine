@@ -68,7 +68,6 @@ HistoryPanel.prototype.update = function(onDone) {
 
 HistoryPanel.prototype._render = function() {
   var self = this;
-
   this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.past.length + ' / ' + ( this._data.future.length + this._data.past.length ) + '</span>');
 
   this._div.empty().off().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));

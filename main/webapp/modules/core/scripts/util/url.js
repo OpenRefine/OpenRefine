@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-URL = {
+var URLUtil = {
   schemes: { // 1 means followed by ://, 0 means followed by just :
     "callto":0,
     "chrome":1,
@@ -65,16 +65,16 @@ URL = {
   var minLength = 100;
   var maxLength = 0;
 
-  for (var n in URL.schemes) {
+  for (var n in URLUtil.schemes) {
     minLength = Math.min(minLength, n.length);
     maxLength = Math.max(maxLength, n.length);
   }
 
-  URL.minSchemeLength = minLength;
-  URL.maxSchemeLength = maxLength;
+  URLUtil.minSchemeLength = minLength;
+  URLUtil.maxSchemeLength = maxLength;
 })();
 
-URL.getParameters = function() {
+URLUtil.getParameters = function() {
   var r = {};
 
   var params = window.location.search;
@@ -89,13 +89,13 @@ URL.getParameters = function() {
   return r;
 };
 
-URL.looksLikeUrl = function(s) {
-  if (s.length > URL.minSchemeLength + 1) {
-    var sep = s.substring(0, URL.maxSchemeLength + 3).indexOf(":");
-    if (sep >= URL.minSchemeLength) {
+URLUtil.looksLikeUrl = function(s) {
+  if (s.length > URLUtil.minSchemeLength + 1) {
+    var sep = s.substring(0, URLUtil.maxSchemeLength + 3).indexOf(":");
+    if (sep >= URLUtil.minSchemeLength) {
       var scheme = s.substring(0, sep).toLowerCase();
-      if (scheme in URL.schemes) {
-        return (URL.schemes[scheme] === 0) || (s.substring(sep + 1, sep + 3) == "//");
+      if (scheme in URLUtil.schemes) {
+        return (URLUtil.schemes[scheme] === 0) || (s.substring(sep + 1, sep + 3) == "//");
       }
     }
   }

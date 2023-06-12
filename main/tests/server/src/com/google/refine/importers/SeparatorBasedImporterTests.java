@@ -53,6 +53,7 @@ import org.testng.annotations.Test;
 import com.google.refine.util.ParsingUtilities;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 
 public class SeparatorBasedImporterTests extends ImporterTest {
 
@@ -644,10 +645,11 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     // ---------------------guess separators------------------------
 
     @Test
-    public void testThatDefaultGuessIsATabSeparator() {
+    public void testThatDefaultGuessIsATabSeparatorAndDefaultProcessQuotesToFalse() {
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
         assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
     }
 
     @Test
@@ -659,11 +661,12 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testThatSeparatorIsGuessedCorrectlyForTSV() throws IOException {
+    public void testThatSeparatorIsGuessedCorrectlyForTSVAndDefaultProcessQuotesToFalse() throws IOException {
         List<ObjectNode> fileRecords = prepareFileRecords("movies-condensed.tsv");
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, fileRecords, "text/tsv");
         assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
     }
 
     // --helpers--
