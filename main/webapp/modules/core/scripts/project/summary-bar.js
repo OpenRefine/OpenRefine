@@ -49,7 +49,7 @@ SummaryBar.prototype.updateResultCount = function() {
     summaryText = ''; // TODO we could have a loading indicator?
   } else if (engineStats.filteredCount == engineStats.totalCount || engineStats.facets.length === 0 || engineStats.neutral) {
     summaryText = $.i18n(mode == "row-based" ? 'core-views/total-rows' : 'core-views/total-records', engineStats.totalCount.toLocaleString(locale));
-  } else if (engineStats.aggregatedCount == engineStats.totalCount) {
+  } else if (engineStats.aggregatedCount == engineStats.totalRows) {
     summaryText = $.i18n(mode == "row-based" ? 'core-views/total-matching-rows' : 'core-views/total-matching-records', engineStats.filteredCount.toLocaleString(locale), engineStats.totalCount.toLocaleString(locale));
   } else {
     var percentage = 100;
