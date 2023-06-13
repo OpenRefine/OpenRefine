@@ -263,10 +263,12 @@ WikibaseManager.loadWikibases = function (onDone) {
         });
 
         WikibaseManager.selected = WikibaseManager.selectDefaultWikibaseAccordingToSavedSchema();
-
-        if (onDone) {
-          onDone();
-        }
+      } else {
+        // preference does not exist yet, we need to create it with the default Wikibase instances
+        WikibaseManager.saveWikibases();
+      }
+      if (onDone) {
+        onDone();
       }
     },
     dataType: "json"
