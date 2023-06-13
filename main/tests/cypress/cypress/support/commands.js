@@ -35,8 +35,7 @@ import 'cypress-wait-until';
 //             entity: {
 //               service_url: 'http://localhost:8000',
 //               service_path: '/suggest',
-//               flyout_service_url: 'http://localhost:8000',
-//               flyout_sercice_path: '/flyout',
+//               
 //             },
 //           },
 //           url: 'http://localhost:8000/reconcile',

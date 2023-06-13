@@ -41,7 +41,7 @@
 
   /**
    * jQuery UI provides a way to be notified when an element is removed from the DOM.
-   * suggest would like to use this facility to properly teardown it's elements from the DOM (suggest list, flyout, etc.).
+   
    * The following logic tries to determine if "remove" event is already present, else
    * tries to mimic what jQuery UI does (as of 1.8.5) by adding a hook to $.cleanData or $.fn.remove.
    */
@@ -141,18 +141,6 @@
         o.ac_param[k] = v;
       });
 
-      // flyout service lang is the first specified lang
-      o.flyout_lang = null;
-      if (o.ac_param.lang) {
-        var lang = o.ac_param.lang;
-        if ($.isArray(lang) && lang.length) {
-          lang = lang.join(',');
-        }
-        if (lang) {
-          o.flyout_lang = lang;
-        }
-      }
-
       // status texts
       this._status = {
         START: "",
@@ -248,19 +236,6 @@
           }, 0);
         });
 
-        // resize handler
-        this.onresize = function(e) {
-          self.invalidate_position();
-          if (p.is(":visible")) {
-            self.position();
-            if (o.flyout && self.flyoutpane && self.flyoutpane.is(":visible")) {
-              var s = self.get_selected();
-              if (s) {
-                self.flyout_position(s);
-              }
-            }
-          }
-        };
 
         $(window)
           .on("resize.suggest", this.onresize)
@@ -1089,71 +1064,6 @@
     _init: function() {
       var self = this,
           o = this.options;
-      if (o.flyout_service_url == null) {
-        o.flyout_service_url = o.service_url;
-      }
-      this.flyout_url = o.flyout_service_url;
-      if (o.flyout_service_path) {
-          this.flyout_url += o.flyout_service_path;
-      }
-      // set api key for flyout service (search)
-      this.flyout_url = this.flyout_url.replace(/\$\{key\}/g, o.key);
-      if (o.flyout_image_service_url == null) {
-        o.flyout_image_service_url = o.service_url;
-      }
-      this.flyout_image_url = o.flyout_image_service_url;
-      if (o.flyout_image_service_path) {
-          this.flyout_image_url += o.flyout_image_service_path;
-      }
-      // set api key for image api
-      this.flyout_image_url = this.flyout_image_url.replace(/\$\{key\}/g, o.key);
-
-      if (!$.suggest.cache) {
-        $.suggest.cache = {};
-      }
-
-      if (o.flyout) {
-        this.flyoutpane = $('<div style="display:none;" class="fbs-reset">')
-            .addClass(o.css.flyoutpane);
-
-        if (o.flyout_parent) {
-          $(o.flyout_parent).append(this.flyoutpane);
-        }
-        else {
-          this.flyoutpane.css("position","absolute");
-          if (o.zIndex) {
-            this.flyoutpane.css("z-index", o.zIndex);
-          }
-          $(document.body).append(this.flyoutpane);
-        }
-        var hoverover = function(e) {
-          self.hoverover_list(e);
-        };
-        var hoverout = function(e) {
-          self.hoverout_list(e);
-        };
-        this.flyoutpane.on('mouseenter',hoverover).on('mouseleave', hoverout)
-          .on("mousedown.suggest", function(e) {
-            e.stopPropagation();
-            self.pane.click();
-          });
-
-        if (!$.suggest.flyout) {
-          $.suggest.flyout = {};
-        }
-        if (!$.suggest.flyout.cache) {
-          $.suggest.flyout.cache = {};
-        }
-      }
-    },
-
-    _destroy: function() {
-      base._destroy.call(this);
-      if (this.flyoutpane) {
-        this.flyoutpane.remove();
-      }
-      this.input.removeData("request.count.suggest");
-      this.input.removeData("flyout.request.count.suggest");
     },
 
     shift_enter: function(e) {
@@ -1161,15 +1071,6 @@
         this.suggest_new();
         this.hide_all();
       }
-    },
-
-    hide_all: function(e) {
-      this.pane.hide();
-      if (this.flyoutpane) {
-        this.flyoutpane.hide();
-      }
-      this.input.trigger("fb-pane-hide", this);
-      this.input.trigger("fb-flyoutpane-hide", this);
     },
 
     request: function(val, cursor) {
@@ -1319,34 +1220,10 @@
     },
 
 
-    mouseover_item_hook: function(li) {
-      var data = li.data("data.suggest");
-      if (this.options.flyout) {
-        if (data) {
-          this.flyout_request(data);
-        }
-        else {
-          //this.flyoutpane.hide();
-        }
-      }
-    },
-
     check_response: function(response_data) {
       return response_data.prefix === this.input.val();
     },
 
-    response_hook: function(response_data, cursor) {
-      if (this.flyoutpane) {
-        this.flyoutpane.hide();
-      }
-      if (cursor > 0) {
-        $(".fbs-more", this.pane).remove();
-      }
-      else {
-        //this.pane.hide();
-        this.list.empty();
-      }
-    },
 
     show_hook: function(response_data, cursor, first) {
       base.show_hook.apply(this, [response_data]);
@@ -1453,159 +1330,6 @@
       return false;
     },
 
-    flyout_request: function(data) {
-      var self = this;
-      var o = this.options;
-      var sug_data = this.flyoutpane.data("data.suggest");
-      if (sug_data && data.id === sug_data.id) {
-        if (!this.flyoutpane.is(":visible")) {
-          var s = this.get_selected();
-          this.flyout_position(s);
-          this.flyoutpane.show();
-          this.input.trigger("fb-flyoutpane-show", this);
-        }
-        return;
-      }
-
-      // check $.suggest.flyout.cache
-      var cached = $.suggest.flyout.cache[data.id];
-      if (cached && cached.id && cached.html) {
-        // CLI-10009: use cached item only if id and html present
-        this.flyout_response(cached);
-        return;
-      }
-
-      //this.flyoutpane.hide();
-      var flyout_id = data.id;
-      var url = this.flyout_url.replace(/\$\{id\}/g, encodeURIComponent(data.id));
-
-      var ajax_options = {
-        url: url,
-        traditional: true,
-        beforeSend: function(xhr) {
-          var calls = self.input.data("flyout.request.count.suggest") || 0;
-          calls += 1;
-          self.trackEvent(self.name, "flyout.request", "count", calls);
-          self.input.data("flyout.request.count.suggest", calls);
-        },
-        success: function(data) {
-          data["req:id"] = flyout_id;
-          if (data['result'] && data['result'].length) {
-            data.html =
-                $.suggest.suggest.create_flyout(data['result'][0],
-                    self.flyout_image_url);
-          }
-          $.suggest.flyout.cache[flyout_id] = data;
-          self.flyout_response(data);
-        },
-        error: function(xhr) {
-          self.trackEvent(self.name, "flyout", "error", {
-            url:this.url,
-            response: xhr ? xhr.responseText : ''
-          });
-        },
-        complete: function(xhr) {
-          if (xhr) {
-            self.trackEvent(self.name, "flyout", "tid",
-            xhr.getResponseHeader("X-Metaweb-TID"));
-          }
-        },
-        dataType: o.access === undefined ? "jsonp" : o.access,
-        cache: true
-      };
-      if (o.flyout_lang) {
-          ajax_options.data = {lang:o.flyout_lang};
-      }
-
-      clearTimeout(this.flyout_request.timeout);
-      this.flyout_request.timeout =
-        setTimeout(function() {
-          $.ajax(ajax_options);
-        }, o.xhr_delay);
-
-      this.input.trigger("fb-request-flyout", ajax_options);
-    },
-
-    flyout_response: function(data) {
-      var o = this.options,
-          p = this.pane,
-          s = this.get_selected() || [];
-      if (p.is(":visible") && s.length) {
-        var sug_data = s.data("data.suggest");
-        if (sug_data && data["req:id"] === sug_data.id && data.html) {
-          this.flyoutpane.html(data.html);
-          this.flyout_position(s);
-          this.flyoutpane.show()
-            .data("data.suggest", sug_data);
-          this.input.trigger("fb-flyoutpane-show", this);
-        }
-      }
-    },
-
-    flyout_position: function($item) {
-      if (this.options.flyout_parent) {
-        return;
-      }
-
-      var p = this.pane,
-          fp = this.flyoutpane,
-          css = this.options.css,
-          pos = undefined,
-          old_pos = {
-            top: parseInt(fp.css("top"), 10),
-            left: parseInt(fp.css("left"), 10)
-          },
-          pane_pos = p.offset(),
-          pane_width = p.outerWidth(),
-          flyout_height = fp.outerHeight(),
-          flyout_width = fp.outerWidth();
-
-      if (this.options.flyout === "bottom") {
-        // flyout position on top/bottom
-        pos = pane_pos;
-        var input_pos = this.input.offset();
-        if (pane_pos.top < input_pos.top) {
-          pos.top -= flyout_height;
-        }
-        else {
-          pos.top += p.outerHeight();
-        }
-        fp.addClass(css.flyoutpane + "-bottom");
-      }
-      else {
-        pos = $item.offset();
-        var item_height = $item.outerHeight();
-
-        pos.left += pane_width;
-        var flyout_right = pos.left + flyout_width,
-            scroll_left =  $(document.body).scrollLeft(),
-            window_right = $(window).width() + scroll_left;
-
-        pos.top = pos.top + item_height - flyout_height;
-        if (pos.top < pane_pos.top) {
-          pos.top = pane_pos.top;
-        }
-
-        if (flyout_right > window_right) {
-          var left = pos.left - (pane_width + flyout_width);
-          if (left > scroll_left) {
-            pos.left = left;
-          }
-        }
-        fp.removeClass(css.flyoutpane + "-bottom");
-      }
-
-      if (!(pos.top === old_pos.top &&
-            pos.left === old_pos.left)) {
-        fp.css({top:pos.top, left:pos.left});
-      }
-    },
-
-    hoverout_list: function(e) {
-      if (this.flyoutpane && !this.get_selected()) {
-        this.flyoutpane.hide();
-      }
-    }
   });
 
   // Freebase suggest settings
@@ -1672,28 +1396,7 @@
       // where list will be aligned left or right with the input
       align: null,
 
-      // whether or not to show flyout on mouseover
-      flyout: true,
-
-      // default is service_url if NULL
-      flyout_service_url: null,
-
-      // flyout_service_url + flyout_service_path =
-      // url to search with
-      // output=(notable:/client/summary (description citation) type).
-      flyout_service_path: "/search?filter=(all mid:${id})&" +
-          "output=(notable:/client/summary " +
-          "(description citation provenance) type)&key=${key}",
-
-      // default is service_url if NULL
-      flyout_image_service_url: null,
-
-      flyout_image_service_path:
-          "/image${id}?maxwidth=75&key=${key}&errorid=/freebase/no_image_png",
-
-      // jQuery selector to specify where the flyout
-      // will be appended to (defaults to document.body).
-      flyout_parent: null,
+      
 
       // text snippet you want to show for the suggest
       // new option
@@ -1712,15 +1415,7 @@
         ]
       },
 
-      // CSS default class names
-      css: {
-        item_type: "fbs-item-type",
-        flyoutpane: "fbs-flyout-pane"
-      },
-
-      // the delay before sending off the ajax request to the
-      // suggest and flyout service
-      xhr_delay: 200
+      
     },
 
     /**
@@ -1811,161 +1506,6 @@
       return true;
     },
 
-    /**
-     * Create the flyout html content given the search result
-     * containing output=(notable:/client/summary \
-     * (description citation provenance) type).
-     * The resulting html will be cached for optimization.
-     *
-     * @param data:Object - The search result with
-     *   output=(notable:/client/summary \
-     *   (description citation provenance) type)
-     * @param flyout_image_url:String - The url template for the image url.
-     *   The substring, "${id}", will be replaced by data.id. It is assumed all
-     *   parameters to the flyout image service (api key, dimensions, etc.) is
-     *   already encoded into the url template.
-     */
-    create_flyout: function(data, flyout_image_url) {
-      var get_value_by_keys = $.suggest.suggest.get_value_by_keys;
-      var get_value = $.suggest.suggest.get_value;
-      var is_system_type = $.suggest.is_system_type;
-      var is_commons_id = $.suggest.suggest.is_commons_id;
-
-      var name = data['name'];
-      var id = null;
-      var image = null;
-      var notable_props = [];
-      var notable_types = [];
-      var notable_seen = {}; // Notable types already added
-      var notable = get_value(data, 'notable');
-      if (notable && notable['name']) {
-        notable_types.push(notable['name']);
-        notable_seen[notable['name']] = true;
-      }
-      if (notable && is_system_type(notable['id'])) {
-        id = data['id'];
-      }
-      else {
-        id = data['mid'];
-        image = flyout_image_url.replace(/\$\{id\}/g, encodeURIComponent(id));
-      }
-
-      var desc_text = null;
-      var desc_source = null;
-      var desc_provider = null;
-      var desc_statement = null;
-      var descs = get_value_by_keys(
-          data, 'output', 'description', '/common/topic/description') || [];
-      if (descs.length) {
-        var best = descs[0];
-        $.each(descs, function(i, desc) {
-          if (get_value_by_keys(desc, 'citation', 0, 'mid') == '/m/0d07ph') {
-            // Prefer 'Wikipedia" descriptions (/m/0d07ph).
-            best = desc;
-            return false;
-          }
-          return true;
-        });
-        if ($.isArray(best.value) && best.value.length) {
-          desc_text = best.value[0].value;
-        } else {
-          desc_text = best.value;
-        }
-        if (get_value_by_keys(best, 'provenance', 0, 'restrictions', 0) ==
-            'REQUIRES_CITATION') {
-          desc_source = get_value_by_keys(best, 'provenance', 0, 'source', 0);
-          desc_provider =
-              get_value_by_keys(best, 'citation', 'provider', 0, 'name');
-          if (desc_provider && $.isArray(desc_provider) &&
-              desc_provider.length) {
-            desc_provider = desc_provider[0].value;
-          }
-          desc_statement = get_value_by_keys(best, 'citation', 'statement', 0);
-          if (desc_statement && desc_statement.value) {
-            desc_statement = desc_statement.value;
-          }
-        }
-      } else {
-        // Handle "old" output description format.
-        $.each(['wikipedia', 'freebase'], function(i, key) {
-          descs = get_value(data, ['output', 'description', key], true);
-          if (descs && descs.length) {
-            desc_text = descs[0];
-            desc_provider = key;
-            return false;
-          }
-          return true;
-        });
-      }
-      var summary = get_value(data, ['output', 'notable:/client/summary']);
-      if (summary) {
-        var notable_paths = get_value(summary, '/common/topic/notable_paths');
-        if (notable_paths && notable_paths.length) {
-          $.each(notable_paths, function(i, path) {
-            var values = get_value(summary, path, true);
-            if (values && values.length) {
-              values = values.slice(0, 3);
-              var prop_text = path.split('/').pop();
-              notable_props.push([prop_text, values.join(', ')]);
-            }
-          });
-        }
-      }
-      var types = get_value(
-          data, ['output', 'type', '/type/object/type'], true);
-      if (types && types.length) {
-        $.each(types, function(i, t) {
-          if (!notable_seen[t]) {
-            notable_types.push(t);
-            notable_seen[t] = true;
-          }
-        });
-      }
-      var content = $('<div class="fbs-flyout-content">');
-      if (name) {
-        content.append($('<h1 id="fbs-flyout-title">').text(name));
-      }
-      content
-          .append($('<h3 class="fbs-topic-properties fbs-flyout-id">')
-          .text(id));
-      notable_props = notable_props.slice(0, 3);
-      $.each(notable_props, function(i, prop) {
-          content.append($('<h3 class="fbs-topic-properties">')
-              .append($('<strong>').text(prop[0] + ': '))
-              .append(document.createTextNode(prop[1])));
-          });
-      if (desc_text) {
-        var article = $('<p class="fbs-topic-article">');
-        if (desc_provider) {
-          if (desc_source) {
-            article.append($('<a class="fbs-citation">')
-                .attr('href', desc_source)
-                .attr('title', desc_statement || desc_provider)
-                .text('[' + desc_provider + ']'));
-          } else {
-            article.append($('<em class="fbs-citation">')
-                .attr('title', desc_statement || desc_provider)
-                .text('[' + desc_provider + '] '));
-          }
-        }
-        article.append(document.createTextNode(' ' + desc_text));
-        content.append(article);
-      }
-      if (image) {
-        content.children().addClass('fbs-flyout-image-true');
-        content.prepend(
-          $('<img id="fbs-topic-image" class="fbs-flyout-image-true" src="' +
-              image + '">'));
-      }
-      var flyout_types = $('<span class="fbs-flyout-types">')
-        .text(notable_types.slice(0, 3).join(', '));
-      var footer = $('<div class="fbs-attribution">').append(flyout_types);
-
-      return $('<div>')
-          .append(content)
-          .append(footer)
-          .html();
-    }
   });
 
 

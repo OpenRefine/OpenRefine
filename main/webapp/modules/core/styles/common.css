@@ -466,10 +466,6 @@ img {
   display: none;
 }
 
-.fbs-pane, .fbs-flyout-pane {
-  z-index: 2000;
-}
-
 .ui-widget {
   font-family: inherit;
   font-size: inherit;

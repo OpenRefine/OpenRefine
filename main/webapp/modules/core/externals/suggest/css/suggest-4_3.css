@@ -16,7 +16,7 @@ Author: Kai Conragan (kai@metaweb.com)
     .fbs-subpane    : Inner container for result list <div>
     .fbs-list       : Contained by .fbs-subpane, this is the actual results list <ul>
     .fbs-item       : Individual item in results list <li>
-    .fbs-flyout-pane : Outermost container for flyout on specific object <div>
+
 
 =======================================================
 */
@@ -67,55 +67,36 @@ below rules into your own stylesheet to customize.
 
 */
 
-.fbs-pane,
-.fbs-flyout-pane,
-li.fbs-nomatch,
-a.fbs-more-link,
-li.fbs-selected,
-.fbs-flyout-images,
-#fbs-topic-image { 
-    background: #fff; 
-}
+
 
 
 .fbs-suggestnew { 
     color: #444;
 }
 
-.fbs-pane,
-.fbs-flyout-pane,
-.fbs-flyout-subtitle,
-.fbs-topic-properties strong { 
-    color:  #666;
-}
+
 
 h3.fbs-topic-properties,
-.fbs-flyout-pane p { 
-    color: #444;
-}
+
 
 .fbs-item-name,
 li.fbs-help-on-focus,
 li.fbs-nomatch,
 .fbs-nomatch-text,
-.fbs-flyout-pane h3,
+
 .fbs-properties-header { 
     color: #333;
 }
 
 .fbs-pane,
-.fbs-flyout-pane { 
-    border: 1px solid #bbb;
-    padding: 2px;
-}
 
-.fbs-flyout-pane {
-    border-color: #ccc;
-}
+
+
+
 
 .fbs-list,
 .fbs-list-icons,
-.fbs-flyout-content,
+
 .fbs-attribution, 
 .fbs-header { 
     background-color: #f5f5f5;
@@ -132,9 +113,7 @@ li.fbs-nomatch {
     border: 1px solid #f5f5f5;
 }
 
-h1#fbs-flyout-title { 
-    color: #f60;
-}
+
 
 li.fbs-selected .fbs-item-name {
     border-color: #f60;
@@ -153,9 +132,7 @@ li.fbs-selected .fbs-item-name {
 }
 
 
-#fbs-flyout-title .fbs-flyout-label { 
-    color: #aaa;
-}
+
 
 .fbs-citation {
   white-space: nowrap;
@@ -165,22 +142,17 @@ li.fbs-selected .fbs-item-name {
 
 /* topic image */
 #fbs-topic-image,
-.fbs-flyout-images {
-    border: 1px solid #a9a9a9;
-}
+
 
 .fbs-suggestnew-button,
-.fbs-flyout-pane { 
-    border: 1px solid #9a9a9a;
-    color: #999999;
-}
+
 
 .fbs-suggestnew-button {
     color: #444444;
 }
 
 ul.fbs-list,
-.fbs-flyout-content,
+
 .fbs-attribution,
 .fbs-header {
     border: 1px solid #dae3e9;
@@ -209,13 +181,10 @@ Freebase Suggest Typography
 */
 
 .fbs-pane,
-.fbs-flyout-pane {
-    font-size: 16px;
-    font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
-}
+
 
 ul.fbs-list,
-.fbs-flyout-content,
+
 .fbs-attribution,
 div.fbs-header {
   font-size: 62.5%;
@@ -224,9 +193,7 @@ div.fbs-header {
 
 /* insure <strong> displays bold */
 .fbs-pane strong,
-.fbs-flyout-pane strong {
-  font-weight: bold;
-}
+
 
 /*
 -------------------------------------------------------
@@ -234,16 +201,16 @@ Freebase Suggest Structure
 -------------------------------------------------------
 */
 
-.fbs-flyout-content,
+
 .fbs-attribution {
     margin: 2px;
 }
 
-.fbs-flyout-content { margin-bottom: 0; }
+
 .fbs-attribution    { margin-top: 0; }
 
 .fbs-pane        { width: 325px; } /* results list container */
-.fbs-flyout-pane { width: 319px; margin-left: 3px; } /* flyout container, 3px narrower on each side to create drawer appearance */
+
 
 ul.fbs-list {    
     max-height: 400px;
@@ -253,18 +220,12 @@ ul.fbs-list {
     border-top: 0;
 }
 
-.fbs-flyout-content,
+
 .fbs-attribution {
     padding: 5px;
 }
 
-.fbs-flyout-content:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
+
   
 
 /*
@@ -436,34 +397,20 @@ Freebase Suggest Create New
     font-style: italic;
 }
 
-/*
--------------------------------------------------------
-Freebase Suggest Flyout Elements
--------------------------------------------------------
-*/
-
-.fbs-flyout-id {
-    color: #999 !important;
-}
-
-/* the object title */
-h1#fbs-flyout-title {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 0.5em;
-    margin-top: 0.3em;
-}
-
-h1#fbs-flyout-title .fbs-flyout-template-label {
-    color: #999999;
-    font-size: 0.8em;
-}
 
 
-/* denotes topic, type, view, base, etc. */
-#fbs-flyout-title .fbs-flyout-label {
-    font-weight: normal;
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Image for single topic result */
 #fbs-topic-image {
@@ -474,27 +421,13 @@ h1#fbs-flyout-title .fbs-flyout-template-label {
 }
 
 /* Image pair for views/base/etc. */
-.fbs-flyout-images {
-    float: left;
-    margin: 0 10px 0 0;
-    padding: 1px 0 1px 1px;
-}
 
-.fbs-flyout-images img {
-    float: left;
-    margin-right: 1px;
-}
 
-.fbs-flyout-subtitle {
-    font-size: 1.1em;
-    margin-bottom: 0.5em;
-}
 
-.fbs-flyout-pane h3 {
-    font-size: 1em;
-    line-height: 1.4;
-    margin-bottom: 0.25em;
-}
+
+
+
+
 
 .fbs-properties-header {
     font-size: 1em;
@@ -512,34 +445,21 @@ h3.fbs-topic-properties {
     font-size: 0.8em;
 }
 
-.fbs-flyout-pane p {
-  font-size: 1.2em;
-  line-height: 1.4;
-  max-height: 10em;
-  overflow: auto;
-}
 
-/* this class is applied with fbs-topic-flyout when a thumbnail is present
-   in order to provide a fixed margin on text to prevent poor text wrapping
-   around thumbnail
-*/
-p.fbs-flyout-image-true,
-h3.fbs-flyout-image-true,
-h1.fbs-flyout-image-true { margin-left: 85px; }
+
+
+
+
+
+
 
 .fbs-meta-info { margin-left: 110px; }
-#fbs-user-flyout li { 
-    margin-left: 100px;
-    }
-#fbs-domain-flyout .fbs-meta-info { margin-left: 145px;}
 
-/* generic flyout list */
-.fbs-flyout-list li {
-    font-size: 1em;
-    margin-left: 15px;
-}
 
-#fbs-domain-flyout #fbs-flyout-title { margin-bottom: 0.5em; }
+
+
+
+
 
 /*
 -------------------------------------------------------
@@ -555,11 +475,7 @@ Freebase Suggest Attribution
     min-height: 15px;
 }
 
-.fbs-flyout-types {
-    font-style: italic;
-    line-height: 1; 
-    font-size: 1.2em;
-}
+
 
 /*
 -------------------------------------------------------
@@ -571,7 +487,7 @@ to inline Internet Explor fixes
 */
 
 * html .fbs-list,
-* html .fbs-list-icons { height: expression( this.scrollHeight > 410 ? "410" : "auto" ); /* sets max-height for IE */ }
+* html .fbs-list-icons { height: expression( this.scrolllHeight > 410 ? "410" : "auto" ); /* sets max-height for IE */ }
 
 * html .fbs-item-name {
     width : 253px !important;
@@ -579,5 +495,5 @@ to inline Internet Explor fixes
 
 * html .fbs-item-name{ width: 100%; }
 
-* html .fbs-flyout-content:after { height: 1px; }
+
 

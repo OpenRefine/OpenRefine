@@ -43,10 +43,6 @@
           return li;
         },
 
-        flyout_request: function() {
-           // disable flyout requests, not used for Wikibase
-        },
-
         request: function(val, cursor) {
           var self = this,
               o = this.options;
