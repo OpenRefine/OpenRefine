@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 const FROM_DIR = 'node_modules';
 const TO_DIR = 'modules/core/3rdparty';
