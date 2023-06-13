@@ -67,7 +67,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
             if (defaultTypes.hasOwnProperty(id)) {
               self._types.push({
                 id: id,
-                name: defaultTypes[id].name
+                name: defaultTypes[id]
               });
             }
           }
