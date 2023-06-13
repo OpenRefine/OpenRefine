@@ -148,7 +148,7 @@ public class ReconOperation extends EngineDependentOperation {
                 "    \"name\" : \"" + _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name() + "\"\n" +
                 "    },\n" +
                 "    \"facetOptions\" : {\n" +
-                "      \"scroll\" : false\n" +
+                "      \"scroll\" : true\n" +
                 "    },\n" +
                 "    \"facetType\" : \"list\"\n" +
                 " }";

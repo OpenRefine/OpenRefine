@@ -369,7 +369,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "expression" : 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
                 {
-                  "scroll" : false
+                  "scroll" : true
                 }
             );
           }
