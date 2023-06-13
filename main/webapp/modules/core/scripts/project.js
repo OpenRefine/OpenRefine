@@ -171,6 +171,11 @@ function initializeUI(uiState) {
 
   if (uiState.facets) {
     Refine.update({ engineChanged: true });
+  } else {
+    // run the custom update handlers registered by extensions for the first time
+    for(var i = 0; i != Refine.customUpdateCallbacks.length; i++) {
+        Refine.customUpdateCallbacks[i]({});
+    }
   }
 }
 
