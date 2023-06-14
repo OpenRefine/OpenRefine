@@ -11,7 +11,7 @@ jobs:
     name: Unassign issues labeled "good first issue" after 45 days of inactivity.
     runs-on: ubuntu-latest
     steps:
-      - uses: wetneb/action-unassign-contributor-after-days-of-inactivity@main
+      - uses: boundfoxstudios/action-unassign-contributor-after-days-of-inactivity@v1.0.2
         with:
           last-activity: 45 # After how many days the issue should get unassigned
           labels: 'good first issue' # Only search for issues containing this labels (comma-separated)
