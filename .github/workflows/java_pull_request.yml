@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - 'refine'
+      - 'refine.bat'
+      - 'refine.ini'
+      - 'pom.xml'
+      - 'main/pom.xml'
+      - 'main/resources/**'
+      - 'main/src/**'
+      - 'server/lib-local/**'
+      - 'server/src/**'
+      - 'server/pom.xml'
+    branches:
+      - master
+      - '4.0'
+
+permissions: read-all
+
+jobs:
+  linux_server_tests:
+    strategy:
+      matrix:
+        java: [ 11, 17 ]
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 3
+
+    steps:
+      - name: Set up secrets
+        run: |
+          echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Java ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+
+      - name: Check Java linting
+        id: java_linting
+        run: |
+          mvn -B compile formatter:validate javadoc:javadoc -Ddoclint=all
+
+      - name: Configure connections to databases
+        id: configure_db_connections
+        run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
+
+      - name: Populate databases with test data
+        id: populate_databases_with_test_data
+        run: |
+          mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot -e 'CREATE DATABASE test_db;'
+          mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/test-mysql.sql
+          psql -U postgres test_db -h 127.0.0.1 -p ${{ job.services.postgres.ports[5432] }} < extensions/database/tests/conf/test-pgsql.sql
+        env:
+          PGPASSWORD: postgres
+
+      - name: Build and test with Maven
+        run: mvn -B jacoco:prepare-agent test
+
+      - name: Submit test coverage to Coveralls
+        run: |
+          mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DfailOnServiceError=false
+
+  windows_server_tests:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Check Java linting
+        id: java_linting
+        run: |
+          mvn -B formatter:validate
+
+      - name: Build and test with Maven
+        run: mvn -B jacoco:prepare-agent test
