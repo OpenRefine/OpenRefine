@@ -58,15 +58,9 @@ public class CancelProcessesCommand extends Command {
             return;
         }
 
-        try {
-            Project project = getProject(request);
-            project.getProcessManager().cancelAll();
+        Project project = getProject(request);
+        project.getProcessManager().cancelAll();
 
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            response.getWriter().write("{ \"code\" : \"ok\" }");
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondOK(response);
     }
 }

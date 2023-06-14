@@ -27,20 +27,15 @@ package org.openrefine.wikibase.commands;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
-import org.testng.annotations.Test;
-
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
+import org.testng.annotations.Test;
 
 public abstract class SchemaCommandTest extends CommandTest {
 
     @Test
     public void testNoSchema()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         command.doPost(request, response);
@@ -50,7 +45,7 @@ public abstract class SchemaCommandTest extends CommandTest {
 
     @Test
     public void testInvalidSchema()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("schema")).thenReturn("{bogus json");
         command.doPost(request, response);
 

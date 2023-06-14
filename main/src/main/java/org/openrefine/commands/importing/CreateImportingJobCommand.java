@@ -34,11 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.importing;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.slf4j.Logger;
@@ -60,6 +62,6 @@ public class CreateImportingJobCommand extends Command {
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-        respond(response, "{ \"jobID\" : " + id + " }");
+        respondJSON(response, HttpStatus.OK_200, Collections.singletonMap("jobID", id));
     }
 }

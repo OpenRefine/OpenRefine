@@ -28,17 +28,9 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.wikibase.qa.ConstraintFetcher;
-import org.openrefine.wikibase.qa.EditInspector;
 import org.openrefine.wikibase.utils.EntityCache;
-import java.io.IOException;
-
 import org.openrefine.wikibase.utils.EntityCacheStub;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -46,7 +38,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommandTest extends CommandTest {
 
@@ -80,7 +71,7 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testIncompleteSchema() throws IOException, ServletException {
+    public void testIncompleteSchema() throws Exception {
         String schemaJson = jsonFromFile("schema/inception_with_errors.json");
         String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         when(request.getParameter("schema")).thenReturn(schemaJson);
@@ -94,7 +85,7 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testNoManifest() throws IOException, ServletException {
+    public void testNoManifest() throws Exception {
         String schemaJson = jsonFromFile("schema/inception.json");
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
@@ -104,7 +95,7 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testInvalidManifest() throws IOException, ServletException {
+    public void testInvalidManifest() throws Exception {
         String schemaJson = jsonFromFile("schema/inception.json");
         String manifestJson = "{ invalid manifest";
         when(request.getParameter("schema")).thenReturn(schemaJson);
@@ -118,7 +109,7 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
 
     @Test
     public void testNoSchema()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         command.doPost(request, response);
@@ -128,7 +119,7 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
 
     @Test
     public void testInvalidSchema()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("schema")).thenReturn("{bogus json");
         command.doPost(request, response);
 

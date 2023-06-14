@@ -427,7 +427,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
             limit: this._limit
         },
         function(data) {
-            if (data.code != "error") {
+            if (data.type != "parsingError") {
                 self._results = data.results;
             } else {
                 self._results = null;
@@ -482,7 +482,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
             }
         }
     } else {
-        var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+        var message = (data.type == "parsingError") ? data.message : $.i18n('core-dialogs/internal-err');
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }    
 };

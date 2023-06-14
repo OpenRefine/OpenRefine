@@ -54,6 +54,7 @@ import org.python.core.PyLong;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PySyntaxError;
 import org.python.util.PythonInterpreter;
 
 public class JythonEvaluable implements Evaluable {
@@ -65,7 +66,11 @@ public class JythonEvaluable implements Evaluable {
 
             @Override
             public Evaluable parse(String source, String languagePrefix) throws ParsingException {
-                return new JythonEvaluable(source, languagePrefix);
+                try {
+                    return new JythonEvaluable(source, languagePrefix);
+                } catch (PySyntaxError e) {
+                    throw new ParsingException(e.getMessage());
+                }
             }
         };
     }

@@ -57,6 +57,6 @@ public class GetAllProjectTagsCommand extends Command {
 
         Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
         Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
-        respondJSON(response, new AllProjectsTags(tags));
+        respondJSON(response, 200, new AllProjectsTags(tags));
     }
 }

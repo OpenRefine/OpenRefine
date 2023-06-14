@@ -59,7 +59,7 @@ public class GetImportingConfigurationCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        respondJSON(response, new ConfigurationResponse());
+        respondJSON(response, 200, new ConfigurationResponse());
     }
 
     @Override

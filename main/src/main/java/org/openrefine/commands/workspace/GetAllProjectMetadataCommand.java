@@ -71,6 +71,6 @@ public class GetAllProjectMetadataCommand extends Command {
             throws ServletException, IOException {
 
         String userMeta = (String) ProjectManager.singleton.getPreferenceStore().get("userMetadata");
-        respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
+        respondJSON(response, 200, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
     }
 }

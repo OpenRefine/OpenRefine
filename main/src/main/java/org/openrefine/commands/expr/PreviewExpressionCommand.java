@@ -126,26 +126,26 @@ public class PreviewExpressionCommand extends Command {
     protected static class PreviewResult {
 
         @JsonProperty("code")
-        protected String code;
+        protected final String code = "ok";
         @JsonProperty("message")
         @JsonInclude(Include.NON_NULL)
-        protected String message;
+        protected final String message;
         @JsonProperty("type")
         @JsonInclude(Include.NON_NULL)
-        protected String type;
+        protected final String type;
         @JsonProperty("results")
         @JsonInclude(Include.NON_NULL)
         List<RowResult> results;
 
-        public PreviewResult(String code, String message, String type) {
-            this.code = code;
+        // For parse errors
+        public PreviewResult(String message) {
             this.message = message;
-            this.type = type;
+            this.type = "parsingError";
             this.results = null;
         }
 
+        // for successful parses
         public PreviewResult(List<RowResult> evaluated) {
-            this.code = "ok";
             this.message = null;
             this.type = null;
             this.results = evaluated;
@@ -160,86 +160,79 @@ public class PreviewExpressionCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        Project project = getProject(request);
+
+        int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
+        String columnName = cellIndex < 0 ? "" : project.getColumnModel().getColumns().get(cellIndex).getName();
+
+        String expression = request.getParameter("expression");
+        EngineConfig engineConfig = getEngineConfig(request);
+        String limitString = request.getParameter("limit");
+        int limit = 10;
         try {
-            Project project = getProject(request);
-
-            int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
-            String columnName = cellIndex < 0 ? "" : project.getColumnModel().getColumns().get(cellIndex).getName();
-
-            String expression = request.getParameter("expression");
-            EngineConfig engineConfig = getEngineConfig(request);
-            String limitString = request.getParameter("limit");
-            int limit = 10;
-            try {
-                if (limitString != null) {
-                    limit = Integer.parseInt(limitString);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid limit specified", e);
+            if (limitString != null) {
+                limit = Integer.parseInt(limitString);
             }
-            SortingConfig sortingConfig = getSortingConfig(request);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid limit specified", e);
+        }
+        SortingConfig sortingConfig = getSortingConfig(request);
 
-            boolean repeat = "true".equals(request.getParameter("repeat"));
-            int repeatCount = 10;
-            if (repeat) {
-                String repeatCountString = request.getParameter("repeatCount");
-                try {
-                    repeatCount = Math.max(Math.min(Integer.parseInt(repeatCountString), 10), 0);
-                } catch (Exception e) {
-                }
-            }
-
-            Grid state = project.getCurrentGrid();
-            Map<String, OverlayModel> overlayModels = state.getOverlayModels();
-            ColumnModel columnModel = state.getColumnModel();
-            Engine engine = new Engine(state, engineConfig, project.getId());
-
+        boolean repeat = "true".equals(request.getParameter("repeat"));
+        int repeatCount = 10;
+        if (repeat) {
+            String repeatCountString = request.getParameter("repeatCount");
             try {
-                Evaluable eval = MetaParser.parse(expression);
-
-                List<RowResult> evaluated = new ArrayList<>();
-                Properties bindings = ExpressionUtils.createBindings();
-
-                if (Mode.RowBased.equals(engine.getMode())) {
-                    Grid sorted = state;
-                    if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                        // TODO cache appropriately
-                        sorted = state.reorderRows(sortingConfig, false);
-                    }
-                    List<IndexedRow> rows = sorted.getRowsAfter(engine.combinedRowFilters(), 0, limit);
-                    for (IndexedRow indexedRow : rows) {
-                        Cell cell = indexedRow.getRow().getCell(cellIndex);
-                        Record record = null;
-                        evaluated.add(
-                                evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
-                                        repeat, repeatCount));
-                    }
-                } else {
-                    Grid sorted = state;
-                    if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                        // TODO cache appropriately
-                        sorted = state.reorderRecords(sortingConfig, false);
-                    }
-                    List<Record> records = sorted.getRecordsAfter(engine.combinedRecordFilters(), 0, limit);
-                    for (Record record : records) {
-                        for (IndexedRow indexedRow : record.getIndexedRows()) {
-                            Cell cell = indexedRow.getRow().getCell(cellIndex);
-                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels,
-                                    project.getId(), eval,
-                                    repeat, repeatCount));
-                        }
-                    }
-                }
-
-                respondJSON(response, new PreviewResult(evaluated));
-            } catch (ParsingException e) {
-                respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
+                repeatCount = Math.max(Math.min(Integer.parseInt(repeatCountString), 10), 0);
             } catch (Exception e) {
-                e.printStackTrace();
-                respondJSON(response, new PreviewResult("error", e.getMessage(), "other"));
             }
-        } catch (Exception e) {
-            respondException(response, e);
+        }
+
+        Grid state = project.getCurrentGrid();
+        Map<String, OverlayModel> overlayModels = state.getOverlayModels();
+        ColumnModel columnModel = state.getColumnModel();
+        Engine engine = new Engine(state, engineConfig, project.getId());
+
+        try {
+            Evaluable eval = MetaParser.parse(expression);
+
+            List<RowResult> evaluated = new ArrayList<>();
+            Properties bindings = ExpressionUtils.createBindings();
+
+            if (Mode.RowBased.equals(engine.getMode())) {
+                Grid sorted = state;
+                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                    // TODO cache appropriately
+                    sorted = state.reorderRows(sortingConfig, false);
+                }
+                List<IndexedRow> rows = sorted.getRowsAfter(engine.combinedRowFilters(), 0, limit);
+                for (IndexedRow indexedRow : rows) {
+                    Cell cell = indexedRow.getRow().getCell(cellIndex);
+                    Record record = null;
+                    evaluated.add(
+                            evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
+                                    repeat, repeatCount));
+                }
+            } else {
+                Grid sorted = state;
+                if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+                    // TODO cache appropriately
+                    sorted = state.reorderRecords(sortingConfig, false);
+                }
+                List<Record> records = sorted.getRecordsAfter(engine.combinedRecordFilters(), 0, limit);
+                for (Record record : records) {
+                    for (IndexedRow indexedRow : record.getIndexedRows()) {
+                        Cell cell = indexedRow.getRow().getCell(cellIndex);
+                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels,
+                                project.getId(), eval,
+                                repeat, repeatCount));
+                    }
+                }
+            }
+
+            respondJSON(response, 200, new PreviewResult(evaluated));
+        } catch (ParsingException e) {
+            respondJSON(response, 200, new PreviewResult(e.getMessage()));
         }
     }
 

@@ -58,6 +58,6 @@ public class GetClusteringFunctionsAndDistancesCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        respondJSON(response, new FunctionsAndDistancesResponse());
+        respondJSON(response, 200, new FunctionsAndDistancesResponse());
     }
 }

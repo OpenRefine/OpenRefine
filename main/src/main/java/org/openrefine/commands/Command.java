@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
+import org.eclipse.jetty.http.HttpStatus;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The super class of all calls that the client side can invoke, most of which are AJAX calls.
@@ -79,25 +81,25 @@ public abstract class Command {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
         throw new UnsupportedOperationException();
     };
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
         throw new UnsupportedOperationException();
     };
 
     public void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
         throw new UnsupportedOperationException();
     };
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
         throw new UnsupportedOperationException();
     };
@@ -280,55 +282,24 @@ public abstract class Command {
             Operation operation) throws Exception {
 
         HistoryEntry historyEntry = project.getHistory().addEntry(operation).getHistoryEntry();
-        Writer w = response.getWriter();
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-        ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
-
-        w.flush();
-        w.close();
+        respondJSON(response, 200, new HistoryEntryResponse(historyEntry));
     }
 
-    static protected void respond(HttpServletResponse response, String content)
-            throws IOException, ServletException {
-
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        Writer w = response.getWriter();
-        if (w != null) {
-            w.write(content);
-            w.flush();
-            w.close();
-        } else {
-            throw new ServletException("response returned a null writer");
-        }
-    }
-
-    static protected void respond(HttpServletResponse response, String status, String message)
-            throws IOException {
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("status", status);
-        writer.writeStringField("message", message);
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
-    }
-
-    public static void respondJSON(HttpServletResponse response, Object o)
-            throws IOException {
-
-        respondJSON(response, o, new Properties());
-    }
-
+    /**
+     * @deprecated use {@link #respondJSON(HttpServletResponse, int, Object)} to make sure an HTTP status code is set
+     */
+    @Deprecated
     static protected void respondJSON(
-            HttpServletResponse response, Object o, Properties options)
+            HttpServletResponse response, Object o)
+            throws IOException {
+        respondJSON(response, HttpStatus.OK_200, o);
+    }
+
+    static public void respondJSON(
+            HttpServletResponse response, int status, Object o)
             throws IOException {
 
+        response.setStatus(status);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         response.setHeader("Cache-Control", "no-cache");
@@ -340,43 +311,34 @@ public abstract class Command {
         w.close();
     }
 
-    static protected void respondCSRFError(HttpServletResponse response) throws IOException {
-        Map<String, String> responseJSON = new HashMap<>();
-        responseJSON.put("code", "error");
-        responseJSON.put("message", "Missing or invalid csrf_token parameter");
-        respondJSON(response, responseJSON);
+    static public void respondCSRFError(HttpServletResponse response) throws IOException {
+        respondError(response, 401, "Missing or invalid csrf_token parameter");
     }
 
-    static protected void respondException(HttpServletResponse response, Exception e)
-            throws IOException, ServletException {
+    /**
+     * Helper introduced to ease returning error messages from a response, with a default 400 status code.
+     */
+    public static void respondError(HttpServletResponse response, String errorMessage)
+            throws IOException {
+        respondError(response, 400, errorMessage);
+    }
 
-        logger.warn("Exception caught", e);
-        e.printStackTrace();
+    /**
+     * Helper introduced to ease returning error messages from a response.
+     */
+    public static void respondError(HttpServletResponse response, int status, String errorMessage)
+            throws IOException {
+        ObjectNode jsonObject = ParsingUtilities.mapper.createObjectNode();
+        jsonObject.put("code", "error");
+        jsonObject.put("message", errorMessage);
+        respondJSON(response, status, jsonObject);
+    }
 
-        if (response == null) {
-            throw new ServletException("Response object can't be null");
-        }
-
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        pw.flush();
-        sw.flush();
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("code", "error");
-        writer.writeStringField("message", e.toString());
-        writer.writeStringField("stack", sw.toString());
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+    public static void respondOK(HttpServletResponse response)
+            throws IOException {
+        ObjectNode jsonObject = ParsingUtilities.mapper.createObjectNode();
+        jsonObject.put("code", "ok");
+        respondJSON(response, 200, jsonObject);
     }
 
     protected void respondWithErrorPage(

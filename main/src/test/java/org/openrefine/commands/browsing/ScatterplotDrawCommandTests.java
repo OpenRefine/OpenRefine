@@ -2,12 +2,12 @@
 package org.openrefine.commands.browsing;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 
 import org.openrefine.browsing.facets.FacetConfigResolver;
@@ -139,13 +139,14 @@ public class ScatterplotDrawCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testDrawScatterplot() throws ServletException, IOException {
+    public void testDrawScatterplot() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("plotter")).thenReturn(configJson);
         when(request.getParameter("engineConfig")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
         command.doGet(request, response);
         // Not sure how to check the resulting image - at least this test ensures that no exception was thrown
+        verify(response).setStatus(200);
         Assert.assertEquals(writer.toString(), "");
     }
 

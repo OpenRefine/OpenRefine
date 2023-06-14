@@ -6,6 +6,7 @@ import org.openrefine.commands.Command;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.process.Process;
 
 import javax.servlet.ServletException;
@@ -37,7 +38,7 @@ public class CancelProcessCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
@@ -45,27 +46,19 @@ public class CancelProcessCommand extends Command {
 
         String processId = request.getParameter("id");
 
-        try {
-            Project project = getProject(request);
-            Long newHistoryEntryId = null;
+        Project project = getProject(request);
+        Long newHistoryEntryId = null;
 
-            try {
-                int processIdInt = Integer.parseInt(processId);
-                Process process = project.getProcessManager().getProcess(processIdInt);
-                long historyEntryId = process.getChangeDataId().getHistoryEntryId();
-                History history = project.getHistory();
-                if (history.getPosition() >= history.entryIndex(historyEntryId) + 1) {
-                    long precedingEntryID = history.getPrecedingEntryID(historyEntryId);
-                    newHistoryEntryId = Math.max(precedingEntryID, 0L);
-                    history.undoRedo(newHistoryEntryId);
-                }
-                process.cancel();
-            } catch (IllegalArgumentException e) {
-                respondException(response, e);
-            }
-            respondJSON(response, new Response(newHistoryEntryId));
-        } catch (Exception e) {
-            respondException(response, e);
+        int processIdInt = Integer.parseInt(processId);
+        Process process = project.getProcessManager().getProcess(processIdInt);
+        long historyEntryId = process.getChangeDataId().getHistoryEntryId();
+        History history = project.getHistory();
+        if (history.getPosition() >= history.entryIndex(historyEntryId) + 1) {
+            long precedingEntryID = history.getPrecedingEntryID(historyEntryId);
+            newHistoryEntryId = Math.max(precedingEntryID, 0L);
+            history.undoRedo(newHistoryEntryId);
         }
+        process.cancel();
+        respondJSON(response, 202, new Response(newHistoryEntryId));
     }
 }

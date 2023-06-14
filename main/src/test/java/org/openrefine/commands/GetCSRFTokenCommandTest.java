@@ -3,13 +3,13 @@ package org.openrefine.commands;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,8 +17,6 @@ import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GetCSRFTokenCommandTest {
@@ -42,8 +40,10 @@ public class GetCSRFTokenCommandTest {
     }
 
     @Test
-    public void testGetToken() throws JsonParseException, JsonMappingException, IOException, ServletException {
+    public void testGetToken() throws Exception {
         command.doGet(request, response);
+
+        verify(response).setStatus(200);
         ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
         String token = result.get("token").asText();
         assertTrue(Command.csrfFactory.validToken(token));

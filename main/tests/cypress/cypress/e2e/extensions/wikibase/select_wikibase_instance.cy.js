@@ -177,6 +177,6 @@ describe(__filename, function () {
     }
 
     function resetWikibases(savedValue) {
-        cy.setPreference('wikibase.manifests', savedValue);
+        cy.setPreference('wikibase.manifests', JSON.stringify(savedValue));
     }
 });

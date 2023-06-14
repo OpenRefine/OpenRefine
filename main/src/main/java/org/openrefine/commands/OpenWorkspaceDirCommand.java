@@ -57,8 +57,7 @@ public class OpenWorkspaceDirCommand extends Command {
         String serverName = request.getServerName();
 
         if (!"127.0.0.1".equals(serverName) && !"localhost".equals(serverName)) {
-            respond(response,
-                    "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where OpenRefine is run.\" }");
+            respondError(response, "Workspace directory can only be opened on the local machine where OpenRefine is run.");
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
@@ -72,9 +71,9 @@ public class OpenWorkspaceDirCommand extends Command {
                         dir);
             }
 
-            respond(response, "{ \"code\" : \"ok\" }");
+            respondOK(response);
         } else {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace is not stored on the file system.\" }");
+            respondError(response, "Workspace is not stored on the file system.");
         }
     }
 

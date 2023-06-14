@@ -1,15 +1,13 @@
 
 package org.openrefine.commands.history;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.servlet.ServletException;
 
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
@@ -24,6 +22,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -50,13 +49,13 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testEmptyOperations() throws ServletException, IOException {
+    public void testEmptyOperations() throws Exception {
         String operationsJson = "[]";
         when(request.getParameter("operations")).thenReturn(operationsJson);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -64,29 +63,23 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(202);
         String jsonResponse = writer.toString();
-
-        String expectedResponse = "{\"code\":\"ok\", \"results\":[] }";
-        TestUtils.assertEqualsAsJson(jsonResponse, expectedResponse);
+        TestUtils.assertEqualsAsJson(jsonResponse, "{\"code\":\"ok\", \"results\":[] }");
     }
 
-    @Test
-    public void testInvalidJson() throws ServletException, IOException {
+    @Test(expectedExceptions = JsonParseException.class)
+    public void testInvalidJson() throws Exception {
         String operationsJson = "[invalid_json";
         when(request.getParameter("operations")).thenReturn(operationsJson);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 
         command.doPost(request, response);
-
-        ObjectNode jsonResponse = (ObjectNode) ParsingUtilities.mapper.readTree(writer.toString());
-        // we cannot directly check the JSON for equality with a known object because it contains a timestamp and unique
-        // id
-        assertEquals(jsonResponse.get("code").asText(), "error");
     }
 
     @Test
-    public void testSuccessfullyApplyOneOperation() throws ServletException, IOException {
+    public void testSuccessfullyApplyOneOperation() throws Exception {
         String operationsJson = "[" +
                 "  {\n" +
                 "    \"op\": \"core/mass-edit\",\n" +
@@ -116,6 +109,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(202);
         ObjectNode jsonResponse = (ObjectNode) ParsingUtilities.mapper.readTree(writer.toString());
         // we cannot directly check the JSON for equality with a known object because it contains a timestamp and unique
         // id
@@ -127,7 +121,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testMismatchingOperation() throws ServletException, IOException {
+    public void testMismatchingOperation() throws Exception {
         String operationsJson = "[" +
                 "  {\n" +
                 "    \"op\": \"core/mass-edit\",\n" +
@@ -157,6 +151,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(400);
         ObjectNode jsonResponse = (ObjectNode) ParsingUtilities.mapper.readTree(writer.toString());
         // we cannot directly check the JSON for equality with a known object because it contains a timestamp and unique
         // id

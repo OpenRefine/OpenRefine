@@ -1,6 +1,12 @@
 
 package org.openrefine.commands.project;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
@@ -8,16 +14,8 @@ import org.openrefine.commands.CommandTestBase;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.time.Instant;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class DeleteProjectCommandTests extends CommandTestBase {
 
@@ -27,13 +25,13 @@ public class DeleteProjectCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testAcceptsNullTags() throws ServletException, IOException {
+    public void testAcceptsNullTags() throws Exception {
         Project project = mock(Project.class);
         when(project.getId()).thenReturn(1234L);
         Grid grid = mock(Grid.class);
@@ -51,6 +49,7 @@ public class DeleteProjectCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 }

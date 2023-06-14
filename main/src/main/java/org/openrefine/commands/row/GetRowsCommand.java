@@ -164,12 +164,12 @@ public class GetRowsCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
         internalRespond(request, response);
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
         internalRespond(request, response);
     }
 
@@ -185,144 +185,135 @@ public class GetRowsCommand extends Command {
     }
 
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
-        try {
-            Project project = null;
+        Project project = null;
 
-            // This command also supports retrieving rows for an importing job.
-            String importingJobID = request.getParameter("importingJobID");
-            if (importingJobID != null) {
-                long jobID = Long.parseLong(importingJobID);
-                ImportingJob job = ImportingManager.getJob(jobID);
-                if (job != null) {
-                    project = job.getProject();
-                }
+        // This command also supports retrieving rows for an importing job.
+        String importingJobID = request.getParameter("importingJobID");
+        if (importingJobID != null) {
+            long jobID = Long.parseLong(importingJobID);
+            ImportingJob job = ImportingManager.getJob(jobID);
+            if (job != null) {
+                project = job.getProject();
             }
-            if (project == null) {
-                project = getProject(request);
-            }
-
-            History history = project.getHistory();
-            Engine engine;
-            Grid entireGrid;
-            boolean gridNeedsRefreshing;
-            long historyEntryId;
-            synchronized (history) {
-                history.refreshCurrentGrid();
-                engine = getEngine(request, project);
-                entireGrid = history.getCurrentGrid();
-                gridNeedsRefreshing = history.currentGridNeedsRefreshing();
-                historyEntryId = history.getCurrentEntryId();
-            }
-
-            long start = getLongParameter(request, "start", -1L);
-            long end = getLongParameter(request, "end", -1L);
-            int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
-
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-
-            if ((start == -1L) == (end == -1L)) {
-                throw new IllegalArgumentException("Exactly one of 'start' and 'end' should be provided.");
-            }
-
-            SortingConfig sortingConfig = SortingConfig.NO_SORTING;
-            try {
-                String sortingJson = request.getParameter("sorting");
-                if (sortingJson != null) {
-                    sortingConfig = SortingConfig.reconstruct(sortingJson);
-                }
-            } catch (IOException e) {
-                respondException(response, e);
-                return;
-            }
-
-            Grid sortedGrid = entireGrid;
-            if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                // TODO cache this appropriately
-                sortedGrid = entireGrid.reorderRows(sortingConfig, false);
-            }
-
-            List<WrappedRow> wrappedRows;
-            Long previousPageId = null;
-            Long nextPageId = null;
-            if (engine.getMode() == Mode.RowBased) {
-                RowFilter combinedRowFilters = engine.combinedRowFilters();
-
-                List<IndexedRow> rows;
-                if (start != -1L) {
-                    rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit + 1);
-                    if (rows.size() == limit + 1) {
-                        nextPageId = rows.get(limit).getIndex();
-                        rows = rows.subList(0, limit);
-                    }
-
-                    if (start > 0) {
-                        previousPageId = start;
-                    }
-                } else {
-                    rows = sortedGrid.getRowsBefore(combinedRowFilters, end, limit + 1);
-                    if (rows.size() == limit + 1) {
-                        previousPageId = rows.get(0).getIndex() + 1;
-                        rows = rows.subList(1, limit + 1);
-                    } else if (rows.size() < limit) {
-                        rows.addAll(sortedGrid.getRowsAfter(combinedRowFilters, end, limit - rows.size()));
-                    }
-                    if (end < entireGrid.rowCount()) {
-                        nextPageId = end;
-                    }
-                }
-
-                wrappedRows = rows.stream()
-                        .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getLogicalIndex(), null, tuple.getIndex()))
-                        .collect(Collectors.toList());
-            } else {
-                RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-                List<Record> records;
-                if (start != -1L) {
-                    records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit + 1);
-                    if (records.size() == limit + 1) {
-                        nextPageId = records.get(limit).getStartRowId();
-                        records = records.subList(0, limit);
-                    }
-                    if (start > 0) {
-                        previousPageId = start;
-                    }
-                } else {
-                    records = sortedGrid.getRecordsBefore(combinedRecordFilters, end, limit + 1);
-                    if (records.size() == limit + 1) {
-                        previousPageId = records.get(0).getStartRowId() + 1;
-                        records = records.subList(1, limit + 1);
-                    } else if (records.size() < limit) {
-                        records.addAll(sortedGrid.getRecordsAfter(combinedRecordFilters, end, limit - records.size()));
-                    }
-                    if (end < entireGrid.rowCount()) {
-                        nextPageId = end;
-                    }
-                }
-
-                wrappedRows = records.stream()
-                        .flatMap(record -> recordToWrappedRows(record).stream())
-                        .collect(Collectors.toList());
-            }
-
-            // the first condition is overly optimistic: we could also need to refresh even if we are returning
-            // as many rows as the limit, because perhaps those rows are coming from distinct partitions and so
-            // the fetching is happening between them, leading to a change of the filtered rows in view.
-            // That being said, this does not feel critical, and the performance benefit of not refreshing in such
-            // a case feels higher.
-            boolean needsRefreshing = (wrappedRows.size() < limit && gridNeedsRefreshing)
-                    || wrappedRows.stream().anyMatch(
-                            wrappedRow -> wrappedRow.row.getCells().stream().anyMatch(cell -> cell != null && cell.isPending()));
-
-            JsonResult result = new JsonResult(engine.getMode(), historyEntryId,
-                    wrappedRows, start, end,
-                    limit, previousPageId, nextPageId, needsRefreshing);
-
-            respondJSON(response, result);
-        } catch (Exception e) {
-            respondException(response, e);
         }
+        if (project == null) {
+            project = getProject(request);
+        }
+
+        History history = project.getHistory();
+        Engine engine;
+        Grid entireGrid;
+        boolean gridNeedsRefreshing;
+        long historyEntryId;
+        synchronized (history) {
+            history.refreshCurrentGrid();
+            engine = getEngine(request, project);
+            entireGrid = history.getCurrentGrid();
+            gridNeedsRefreshing = history.currentGridNeedsRefreshing();
+            historyEntryId = history.getCurrentEntryId();
+        }
+
+        long start = getLongParameter(request, "start", -1L);
+        long end = getLongParameter(request, "end", -1L);
+        int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
+
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+
+        if ((start == -1L) == (end == -1L)) {
+            throw new IllegalArgumentException("Exactly one of 'start' and 'end' should be provided.");
+        }
+
+        SortingConfig sortingConfig = SortingConfig.NO_SORTING;
+        String sortingJson = request.getParameter("sorting");
+        if (sortingJson != null) {
+            sortingConfig = SortingConfig.reconstruct(sortingJson);
+        }
+
+        Grid sortedGrid = entireGrid;
+        if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            // TODO cache this appropriately
+            sortedGrid = entireGrid.reorderRows(sortingConfig, false);
+        }
+
+        List<WrappedRow> wrappedRows;
+        Long previousPageId = null;
+        Long nextPageId = null;
+        if (engine.getMode() == Mode.RowBased) {
+            RowFilter combinedRowFilters = engine.combinedRowFilters();
+
+            List<IndexedRow> rows;
+            if (start != -1L) {
+                rows = sortedGrid.getRowsAfter(combinedRowFilters, start, limit + 1);
+                if (rows.size() == limit + 1) {
+                    nextPageId = rows.get(limit).getIndex();
+                    rows = rows.subList(0, limit);
+                }
+
+                if (start > 0) {
+                    previousPageId = start;
+                }
+            } else {
+                rows = sortedGrid.getRowsBefore(combinedRowFilters, end, limit + 1);
+                if (rows.size() == limit + 1) {
+                    previousPageId = rows.get(0).getIndex() + 1;
+                    rows = rows.subList(1, limit + 1);
+                } else if (rows.size() < limit) {
+                    rows.addAll(sortedGrid.getRowsAfter(combinedRowFilters, end, limit - rows.size()));
+                }
+                if (end < entireGrid.rowCount()) {
+                    nextPageId = end;
+                }
+            }
+
+            wrappedRows = rows.stream()
+                    .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getLogicalIndex(), null, tuple.getIndex()))
+                    .collect(Collectors.toList());
+        } else {
+            RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
+            List<Record> records;
+            if (start != -1L) {
+                records = sortedGrid.getRecordsAfter(combinedRecordFilters, start, limit + 1);
+                if (records.size() == limit + 1) {
+                    nextPageId = records.get(limit).getStartRowId();
+                    records = records.subList(0, limit);
+                }
+                if (start > 0) {
+                    previousPageId = start;
+                }
+            } else {
+                records = sortedGrid.getRecordsBefore(combinedRecordFilters, end, limit + 1);
+                if (records.size() == limit + 1) {
+                    previousPageId = records.get(0).getStartRowId() + 1;
+                    records = records.subList(1, limit + 1);
+                } else if (records.size() < limit) {
+                    records.addAll(sortedGrid.getRecordsAfter(combinedRecordFilters, end, limit - records.size()));
+                }
+                if (end < entireGrid.rowCount()) {
+                    nextPageId = end;
+                }
+            }
+
+            wrappedRows = records.stream()
+                    .flatMap(record -> recordToWrappedRows(record).stream())
+                    .collect(Collectors.toList());
+        }
+
+        // the first condition is overly optimistic: we could also need to refresh even if we are returning
+        // as many rows as the limit, because perhaps those rows are coming from distinct partitions and so
+        // the fetching is happening between them, leading to a change of the filtered rows in view.
+        // That being said, this does not feel critical, and the performance benefit of not refreshing in such
+        // a case feels higher.
+        boolean needsRefreshing = (wrappedRows.size() < limit && gridNeedsRefreshing)
+                || wrappedRows.stream().anyMatch(
+                        wrappedRow -> wrappedRow.row.getCells().stream().anyMatch(cell -> cell != null && cell.isPending()));
+
+        JsonResult result = new JsonResult(engine.getMode(), historyEntryId,
+                wrappedRows, start, end,
+                limit, previousPageId, nextPageId, needsRefreshing);
+
+        respondJSON(response, 200, result);
     }
 }

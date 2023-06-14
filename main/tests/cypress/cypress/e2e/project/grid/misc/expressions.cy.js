@@ -77,7 +77,9 @@ describe(__filename, function () {
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
     cy.typeExpression('(;)');
-    cy.get('.expression-preview-parsing-status').contains('Internal error');
+    cy.get('.expression-preview-parsing-status').contains(
+      "SyntaxError: no viable alternative at input ';'"
+    );
   });
 
   it('Test a Clojure syntax error', function () {
@@ -120,7 +122,7 @@ describe(__filename, function () {
     ).should('to.contain', 'Error: No matching method');
   });
 
-  it('Test switching from one langage to another', function () {
+  it('Test switching from one language to another', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.typeExpression('(.. value (toLowerCase) )');

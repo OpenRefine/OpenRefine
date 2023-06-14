@@ -130,18 +130,13 @@ public class LoadLanguageCommand extends Command {
         }
 
         if (translations != null) {
-            try {
-                ObjectNode node = ParsingUtilities.mapper.createObjectNode();
-                node.set("dictionary", translations);
-                node.set("lang", new TextNode(bestLang));
-                Command.respondJSON(response, node);
-            } catch (IOException e) {
-                logger.error("Error writing language labels to response stream");
-                Command.respondException(response, e);
-            }
+            ObjectNode node = ParsingUtilities.mapper.createObjectNode();
+            node.set("dictionary", translations);
+            node.set("lang", new TextNode(bestLang));
+            Command.respondJSON(response, 200, node);
         } else {
             logger.error("Failed to load any language files");
-            Command.respondException(response, new IOException("No language files"));
+            throw new IOException("No language files");
         }
     }
 

@@ -27,9 +27,7 @@
 
 package org.openrefine.commands.expr;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
+import static org.mockito.Mockito.verify;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,7 +40,7 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
     }
 
     @Test
-    public void testJsonResponse() throws ServletException, IOException {
+    public void testJsonResponse() throws Exception {
 
         initWorkspace("{\n" +
                 "        \"class\": \"org.openrefine.preference.TopList\",\n" +
@@ -79,7 +77,7 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
     }
 
     @Test
-    public void testUninitialized() throws ServletException, IOException {
+    public void testUninitialized() throws Exception {
 
         initWorkspace("{}");
 
@@ -87,6 +85,8 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
                 "       \"expressions\" : []\n" +
                 "     }";
         command.doGet(request, response);
+
+        verify(response).setStatus(200);
         assertResponseJsonIs(json);
     }
 

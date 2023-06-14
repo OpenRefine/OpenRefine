@@ -27,15 +27,14 @@
 
 package org.openrefine.commands.row;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
 import java.io.Serializable;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.ProjectManager;
@@ -103,21 +102,16 @@ public class GetRowsCommandTest extends CommandTestBase {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
-    @Test
-    public void testNoStartOrEnd() throws ServletException, IOException {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testNoStartOrEnd() throws Exception {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("limit")).thenReturn("2");
 
         command.doPost(request, response);
-
-        JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
-        assertEquals(json.get("code").asText(), "error");
-        assertEquals(json.get("message").asText(),
-                "java.lang.IllegalArgumentException: Exactly one of 'start' and 'end' should be provided.");
     }
 
     @Test
-    public void testRowsStartWithNoPreviousPage() throws ServletException, IOException {
+    public void testRowsStartWithNoPreviousPage() throws Exception {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -149,12 +143,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("2");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testRowsStartWithNoNextPage() throws ServletException, IOException {
+    public void testRowsStartWithNoNextPage() throws Exception {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -186,12 +183,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("2");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testRowsEnd() throws ServletException, IOException {
+    public void testRowsEnd() throws Exception {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -214,12 +214,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("2");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testRowsEndWithNoPreviousPage() throws ServletException, IOException {
+    public void testRowsEndWithNoPreviousPage() throws Exception {
         String rowJson = "{\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -251,12 +254,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("2");
         when(request.getParameter("limit")).thenReturn("2");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testRowsStartWithPreviousPage() throws ServletException, IOException {
+    public void testRowsStartWithPreviousPage() throws Exception {
         String rowJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -279,12 +285,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("start")).thenReturn("1");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testRowsEndWithFilter() throws ServletException, IOException {
+    public void testRowsEndWithFilter() throws Exception {
         String engineConfig = "{\"facets\":["
                 + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"isBlank(value)\","
                 + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],"
@@ -301,6 +310,7 @@ public class GetRowsCommandTest extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
         assertEquals(json.get("rows").size(), 2);
         assertEquals(json.get("limit").asInt(), 2);
@@ -308,7 +318,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testRowsEndWithNoNextPage() throws ServletException, IOException {
+    public void testRowsEndWithNoNextPage() throws Exception {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"row-based\",\n" +
@@ -332,12 +342,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("5");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testRecordsStartWithoutPreviousPage() throws ServletException, IOException {
+    public void testRecordsStartWithoutPreviousPage() throws Exception {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
@@ -370,12 +383,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         when(request.getParameter("start")).thenReturn("0");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testRecordsStartWithPreviousPage() throws ServletException, IOException {
+    public void testRecordsStartWithPreviousPage() throws Exception {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
@@ -400,12 +416,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         when(request.getParameter("start")).thenReturn("4");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testRecordsEndWithoutNextPage() throws ServletException, IOException {
+    public void testRecordsEndWithoutNextPage() throws Exception {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
@@ -430,12 +449,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("5");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testRecordsEndWithPreviousPage() throws ServletException, IOException {
+    public void testRecordsEndWithPreviousPage() throws Exception {
         String recordJson = "{\n" +
                 "       \"limit\" : 1,\n" +
                 "       \"mode\" : \"record-based\",\n" +
@@ -469,12 +491,15 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("4");
         when(request.getParameter("limit")).thenReturn("1");
+
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(recordJson, writer.toString());
     }
 
     @Test
-    public void testRecordsEndWithFilter() throws ServletException, IOException {
+    public void testRecordsEndWithFilter() throws Exception {
         String engineConfig = "{\"facets\":["
                 + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"isBlank(value)\","
                 + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],"
@@ -488,6 +513,7 @@ public class GetRowsCommandTest extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
         assertEquals(json.get("rows").size(), 4);
         assertEquals(json.get("limit").asInt(), 2);
@@ -495,7 +521,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testIncompleteGridNoRefreshNeeded() throws ServletException, IOException {
+    public void testIncompleteGridNoRefreshNeeded() throws Exception {
 
         when(requestIncomplete.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(requestIncomplete.getParameter("start")).thenReturn("0");
@@ -503,6 +529,7 @@ public class GetRowsCommandTest extends CommandTestBase {
 
         command.doPost(requestIncomplete, response);
 
+        verify(response).setStatus(200);
         String expectedJson = "{\n"
                 + "  \"historyEntryId\" : 0,"
                 + "  \"limit\" : 2,"
@@ -534,7 +561,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testIncompleteGridWithPendingCell() throws ServletException, IOException {
+    public void testIncompleteGridWithPendingCell() throws Exception {
 
         when(requestIncomplete.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(requestIncomplete.getParameter("start")).thenReturn("1");
@@ -542,6 +569,7 @@ public class GetRowsCommandTest extends CommandTestBase {
 
         command.doPost(requestIncomplete, response);
 
+        verify(response).setStatus(200);
         String expectedJson = "{\n"
                 + "  \"historyEntryId\" : 0,"
                 + "  \"limit\" : 2,"
@@ -573,7 +601,7 @@ public class GetRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    public void testIncompleteGridFiltered() throws ServletException, IOException {
+    public void testIncompleteGridFiltered() throws Exception {
         String engineConfig = "{\"facets\":["
                 + "{\"type\":\"list\",\"name\":\"foo\",\"columnName\":\"foo\",\"expression\":\"value\","
                 + "\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"a\",\"l\":\"a\"}}],"
@@ -590,6 +618,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         // we still need to refresh because the last row might turn out to contain an 'a'
         // after being computed, hence being in the view.
 
+        verify(response).setStatus(200);
         String expectedJson = "{\n"
                 + "  \"historyEntryId\" : 0,"
                 + "  \"limit\" : 2,"

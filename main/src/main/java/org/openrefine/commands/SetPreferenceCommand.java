@@ -64,15 +64,11 @@ public class SetPreferenceCommand extends Command {
         String prefName = request.getParameter("name");
         String valueString = request.getParameter("value");
 
-        try {
-            JsonNode o = valueString == null ? null : ParsingUtilities.mapper.readTree(valueString);
+        JsonNode o = valueString == null ? null : ParsingUtilities.mapper.readTree(valueString);
 
-            ps.put(prefName, PreferenceStore.loadObject(o));
+        ps.put(prefName, PreferenceStore.loadObject(o));
 
-            respondJSON(response, Collections.singletonMap("code", "ok"));
-        } catch (IOException e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 202, Collections.singletonMap("code", "ok"));
 
         if (prefName.equals("userLang")) {
             LocaleUtils.setLocale(valueString);

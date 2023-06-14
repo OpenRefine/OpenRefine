@@ -58,3 +58,22 @@ Ajax.chainGetJSON = function() {
   };
   next();
 };
+
+$(function() {
+  // set up callback for server errors (executed on all jQuery requests)
+  $(document).on("ajaxError", function(event, request, settings) {
+    // ideally we'd also check that the host matches that of our backend but the host
+    // part of the request URL does not seem to be available in this context,
+    // so we just assume that if the URL startswith 'command/', it's an OpenRefine command
+    if (settings.url.startsWith('command/')) {
+      let command = settings.url.substr('command/'.length);
+      let queryIndex = command.indexOf('?');
+      let commandName = command.substr(0, queryIndex === -1 ? command.length : queryIndex);
+      let commandParams = undefined;
+      if (queryIndex != -1) {
+        commandParams = command.substr(queryIndex);
+      }
+      alert('Internal HTTP error for command ' + commandName +'.');
+    }
+  });
+});

@@ -1,12 +1,10 @@
 
 package org.openrefine.commands.expr;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.Collections;
-
-import javax.servlet.ServletException;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
@@ -28,19 +26,20 @@ public class LogExpressionCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testNullExpressions() throws ServletException, IOException {
+    public void testNullExpressions() throws Exception {
         prefStore.put("scripting.expressions", null);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("expression")).thenReturn("grel:value+'a'");
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         TopList topList = (TopList) prefStore.get("scripting.expressions");
         Assert.assertEquals(topList.getList(), Collections.singletonList("grel:value+'a'"));
     }

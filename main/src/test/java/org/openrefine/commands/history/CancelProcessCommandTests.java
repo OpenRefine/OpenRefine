@@ -1,7 +1,14 @@
 
 package org.openrefine.commands.history;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.AssertJUnit.assertEquals;
+
+import java.time.Instant;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
@@ -10,7 +17,6 @@ import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ChangeDataId;
-import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
@@ -18,12 +24,7 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.time.Instant;
-
-import static org.mockito.Mockito.*;
-import static org.testng.AssertJUnit.assertEquals;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class CancelProcessCommandTests extends CommandTestBase {
 
@@ -65,13 +66,13 @@ public class CancelProcessCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testSuccessfulCancel() throws ServletException, IOException, OperationException {
+    public void testSuccessfulCancel() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -80,13 +81,14 @@ public class CancelProcessCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(202);
         verify(history, times(0)).undoRedo(5678L);
         verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 
     @Test
-    public void testCancelAndUndo() throws ServletException, IOException, OperationException {
+    public void testCancelAndUndo() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(processId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -95,20 +97,18 @@ public class CancelProcessCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(202);
         verify(history, times(1)).undoRedo(5678L);
         verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\",\"newHistoryEntryId\":5678}");
     }
 
-    @Test
-    public void testProcessNotFound() throws ServletException, IOException {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testProcessNotFound() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(projectId));
         when(request.getParameter("id")).thenReturn(Integer.toString(missingProcessId));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         command.doPost(request, response);
-
-        JsonNode response = ParsingUtilities.mapper.readTree(writer.toString());
-        assertEquals(response.get("code").asText(), "error");
     }
 }

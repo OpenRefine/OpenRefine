@@ -1,10 +1,6 @@
 
 package org.openrefine.commands.importing;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.openrefine.commands.CommandTestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -17,7 +13,7 @@ public class CreateImportingJobCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }

@@ -27,9 +27,7 @@
 
 package org.openrefine.commands.expr;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
+import static org.mockito.Mockito.verify;
 
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -46,12 +44,14 @@ public class GetExpressionLanguageInfoCommandTests extends ExpressionCommandTest
     }
 
     @Test
-    public void testJsonResponse() throws ServletException, IOException {
+    public void testJsonResponse() throws Exception {
 
         initWorkspace(null, null);
 
         command.doGet(request, response);
         String jsonResponse = writer.toString();
+
+        verify(response).setStatus(200);
         JsonNode result = ParsingUtilities.mapper.readValue(jsonResponse, JsonNode.class);
         TestUtils.assertEqualsAsJson(result.get("controls").get("filter").toString(),
                 "{\n" +

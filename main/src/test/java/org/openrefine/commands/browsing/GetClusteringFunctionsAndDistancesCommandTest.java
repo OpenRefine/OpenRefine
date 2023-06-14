@@ -28,6 +28,7 @@
 package org.openrefine.commands.browsing;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertTrue;
 
@@ -36,7 +37,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,8 +74,10 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
     }
 
     @Test
-    public void testGetFunctionsAndKeyers() throws ServletException, IOException {
+    public void testGetFunctionsAndKeyers() throws Exception {
         command.doGet(request, response);
+
+        verify(response).setStatus(200);
         ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
         assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
         assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));

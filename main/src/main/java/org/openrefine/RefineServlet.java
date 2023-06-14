@@ -36,6 +36,8 @@ package org.openrefine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.util.HashMap;
@@ -58,6 +60,9 @@ import org.openrefine.model.RunnerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -228,6 +233,17 @@ public class RefineServlet extends Butterfly {
                     } else {
                         response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                     }
+                } catch (Exception e) {
+                    int status;
+                    if (e instanceof IllegalArgumentException || e instanceof JacksonException) {
+                        status = HttpStatus.SC_BAD_REQUEST;
+                    } else {
+                        logger.warn("Exception caught", e);
+                        e.printStackTrace();
+                        status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+                    }
+
+                    Command.respondJSON(response, status, new ExceptionResponse(e));
                 } finally {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
@@ -237,6 +253,26 @@ public class RefineServlet extends Butterfly {
             }
         } else {
             super.service(request, response);
+        }
+    }
+
+    protected static class ExceptionResponse {
+
+        @JsonProperty("code")
+        String code = "error";
+        @JsonProperty("message")
+        String message;
+        @JsonProperty("stack")
+        String stack;
+
+        protected ExceptionResponse(Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
+            sw.flush();
+            stack = sw.toString();
+            message = e.toString();
         }
     }
 

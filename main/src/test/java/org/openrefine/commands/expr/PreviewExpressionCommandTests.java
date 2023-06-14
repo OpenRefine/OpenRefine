@@ -28,6 +28,7 @@
 package org.openrefine.commands.expr;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -35,7 +36,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -78,7 +78,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
     }
 
     @Test
-    public void testJsonResponse() throws ServletException, IOException {
+    public void testJsonResponse() throws Exception {
 
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
@@ -100,11 +100,13 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 + "     }]\n" +
                 "     }";
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 
     @Test
-    public void testRecordsMode() throws ServletException, IOException {
+    public void testRecordsMode() throws Exception {
 
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
@@ -132,11 +134,13 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 + " ]\n"
                 + "     }";
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 
     @Test
-    public void testParseError() throws ServletException, IOException {
+    public void testParseError() throws Exception {
 
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
@@ -145,11 +149,13 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
         String json = "{\n" +
-                "       \"code\" : \"error\",\n" +
+                "       \"code\" : \"ok\",\n" +
                 "       \"message\" : \"Parsing error at offset 7: Expecting something more at end of expression\",\n" +
-                "       \"type\" : \"parser\"\n" +
+                "       \"type\" : \"parsingError\"\n" +
                 "     }";
         command.doPost(request, response);
+
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 }

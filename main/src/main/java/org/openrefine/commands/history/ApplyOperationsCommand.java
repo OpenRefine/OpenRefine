@@ -70,25 +70,21 @@ public class ApplyOperationsCommand extends Command {
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
         List<OperationApplicationResult> results = new ArrayList<>();
-        try {
 
-            ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
-            int count = a.size();
-            for (int i = 0; i < count; i++) {
-                if (a.get(i) instanceof ObjectNode) {
-                    ObjectNode obj = (ObjectNode) a.get(i);
+        ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
+        int count = a.size();
+        for (int i = 0; i < count; i++) {
+            if (a.get(i) instanceof ObjectNode) {
+                ObjectNode obj = (ObjectNode) a.get(i);
 
-                    OperationApplicationResult applicationResult = applyOperation(project, obj);
-                    results.add(applicationResult);
-                    if (!applicationResult.isSuccess()) {
-                        respondJSON(response, new JsonResponse("error", results));
-                    }
+                OperationApplicationResult applicationResult = applyOperation(project, obj);
+                results.add(applicationResult);
+                if (!applicationResult.isSuccess()) {
+                    respondJSON(response, 400, new JsonResponse("error", results));
                 }
             }
-            respondJSON(response, new JsonResponse("ok", results));
-        } catch (IOException e) {
-            respondException(response, e);
         }
+        respondJSON(response, 202, new JsonResponse("ok", results));
     }
 
     protected OperationApplicationResult applyOperation(Project project, JsonNode operationJson) {

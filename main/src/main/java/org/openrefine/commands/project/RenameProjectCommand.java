@@ -52,15 +52,11 @@ public class RenameProjectCommand extends Command {
             return;
         }
 
-        try {
-            String name = request.getParameter("name");
-            ProjectMetadata pm = getProjectMetadata(request);
+        String name = request.getParameter("name");
+        ProjectMetadata pm = getProjectMetadata(request);
 
-            pm.setName(name);
+        pm.setName(name);
 
-            respond(response, "{ \"code\" : \"ok\" }");
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondOK(response);
     }
 }

@@ -29,10 +29,6 @@ import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -48,7 +44,7 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
 
     @Test
     public void testValidSchema()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         String schemaJson = jsonFromFile("schema/inception.json").toString();
@@ -60,7 +56,7 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testNoSchema() throws ServletException, IOException {
+    public void testNoSchema() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("schema")).thenReturn("null");
         command.doPost(request, response);
@@ -70,7 +66,7 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testIncompleteSchema() throws IOException, ServletException {
+    public void testIncompleteSchema() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         // schema that is syntactically correct but misses some elements
@@ -101,7 +97,7 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testCsrfProtection() throws ServletException, IOException {
+    public void testCsrfProtection() throws Exception {
         String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
@@ -111,7 +107,7 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
 
     @Test
     public void testInvalidSchemaJson()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("schema")).thenReturn("{bogus json");
         command.doPost(request, response);
 

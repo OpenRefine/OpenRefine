@@ -1,10 +1,13 @@
 
 package org.openrefine.wikibase.commands;
 
-import static org.openrefine.util.TestUtils.assertEqualsAsJson;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openrefine.util.TestUtils.assertEqualsAsJson;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_SECRET;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_TOKEN;
 import static org.openrefine.wikibase.commands.LoginCommand.API_ENDPOINT;
@@ -16,14 +19,10 @@ import static org.openrefine.wikibase.commands.LoginCommand.WIKIBASE_COOKIE_PREF
 import static org.openrefine.wikibase.commands.LoginCommand.getCookieValue;
 import static org.openrefine.wikibase.commands.LoginCommand.removeCRLF;
 import static org.openrefine.wikibase.commands.LoginCommand.sanitizeCookieKey;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -34,15 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.commands.Command;
-import org.openrefine.preference.PreferenceStore;
-import org.openrefine.util.ParsingUtilities;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.openrefine.commands.Command;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
@@ -96,20 +91,20 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testNoApiEndpointPost() throws ServletException, IOException {
+    public void testNoApiEndpointPost() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         command.doPost(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
-    public void testNoApiEndpointGet() throws ServletException, IOException {
+    public void testNoApiEndpointGet() throws Exception {
         command.doGet(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
-    public void testNoCredentials() throws ServletException, IOException {
+    public void testNoCredentials() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doPost(request, response);
@@ -117,13 +112,13 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testCsrfProtection() throws ServletException, IOException {
+    public void testCsrfProtection() throws Exception {
         command.doPost(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
-    public void testGetNotCsrfProtected() throws ServletException, IOException {
+    public void testGetNotCsrfProtected() throws Exception {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doGet(request, response);
         assertEqualsAsJson(writer.toString(), "{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");

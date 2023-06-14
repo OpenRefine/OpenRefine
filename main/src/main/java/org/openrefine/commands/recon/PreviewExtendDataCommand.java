@@ -84,129 +84,124 @@ public class PreviewExtendDataCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
         }
 
+        Project project = getProject(request);
+        String columnName = request.getParameter("columnName");
+
+        String jsonString = request.getParameter("extension");
+        DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
+
+        EngineConfig engineConfig = getEngineConfig(request);
+        String limitString = request.getParameter("limit");
+        int limit = 10;
         try {
-            Project project = getProject(request);
-            String columnName = request.getParameter("columnName");
-
-            String jsonString = request.getParameter("extension");
-            DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
-
-            EngineConfig engineConfig = getEngineConfig(request);
-            String limitString = request.getParameter("limit");
-            int limit = 10;
-            try {
-                if (limitString != null) {
-                    limit = Integer.parseInt(limitString);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid limit specified", e);
+            if (limitString != null) {
+                limit = Integer.parseInt(limitString);
             }
-            SortingConfig sortingConfig = getSortingConfig(request);
-            ColumnModel model = project.getColumnModel();
-            ColumnMetadata column = model.getColumnByName(columnName);
-            int cellIndex = model.getColumnIndexByName(columnName);
-
-            // get the endpoint to extract data from
-            String endpoint = null;
-            String identifierSpace = null;
-            String schemaSpace = null;
-            ReconConfig cfg = column.getReconConfig();
-            if (cfg != null &&
-                    cfg instanceof StandardReconConfig) {
-                StandardReconConfig scfg = (StandardReconConfig) cfg;
-                endpoint = scfg.service;
-                identifierSpace = scfg.identifierSpace;
-                schemaSpace = scfg.schemaSpace;
-            } else {
-                respond(response,
-                        "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
-                return;
-            }
-
-            List<String> topicNames = new ArrayList<String>();
-            List<String> topicIds = new ArrayList<String>();
-            Set<String> ids = new HashSet<String>();
-
-            Grid state = project.getCurrentGrid();
-            Engine engine = new Engine(state, engineConfig, project.getId());
-            Grid sorted = state;
-            if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
-                sorted = sorted.reorderRows(sortingConfig, false);
-            }
-            List<IndexedRow> previewRows = state.getRowsAfter(engine.combinedRowFilters(), 0, limit);
-            for (IndexedRow indexedRow : previewRows) {
-                try {
-                    Row row = indexedRow.getRow();
-                    Cell cell = row.getCell(cellIndex);
-                    if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        topicNames.add(cell.recon.match.name);
-                        topicIds.add(cell.recon.match.id);
-                        ids.add(cell.recon.match.id);
-                    } else {
-                        topicNames.add(null);
-                        topicIds.add(null);
-                        ids.add(null);
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    ; // skip row
-                }
-            }
-
-            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint, identifierSpace, schemaSpace);
-            Map<String, DataExtension> map = job.extend(ids);
-            List<List<Object>> rows = new ArrayList<>();
-
-            for (int r = 0; r < topicNames.size(); r++) {
-                String id = topicIds.get(r);
-                String topicName = topicNames.get(r);
-
-                if (id != null && map.containsKey(id)) {
-                    DataExtension ext = map.get(id);
-                    boolean first = true;
-
-                    if (ext.data.size() > 0) {
-                        for (List<Cell> row : ext.data) {
-                            List<Object> jsonRow = new ArrayList<>();
-                            if (first) {
-                                jsonRow.add(topicName);
-                                first = false;
-                            } else {
-                                jsonRow.add(null);
-                            }
-
-                            for (Cell cell : row) {
-                                if (cell == null) {
-                                    jsonRow.add(null);
-                                } else if (cell.recon != null && cell.recon.match != null) {
-                                    jsonRow.add(cell.recon.match);
-                                } else {
-                                    jsonRow.add(cell.value);
-                                }
-                            }
-                            rows.add(jsonRow);
-                        }
-                        continue;
-                    }
-                }
-
-                List<Object> supplement = new ArrayList<>();
-                if (id != null) {
-                    supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
-                } else {
-                    supplement.add("<not reconciled>");
-                }
-                rows.add(supplement);
-            }
-
-            respondJSON(response, new PreviewResponse(job.columns, rows));
-        } catch (Exception e) {
-            respondException(response, e);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid limit specified", e);
         }
+        SortingConfig sortingConfig = getSortingConfig(request);
+        ColumnModel model = project.getColumnModel();
+        ColumnMetadata column = model.getColumnByName(columnName);
+        int cellIndex = model.getColumnIndexByName(columnName);
+
+        // get the endpoint to extract data from
+        String endpoint = null;
+        String identifierSpace = null;
+        String schemaSpace = null;
+        ReconConfig cfg = column.getReconConfig();
+        if (cfg != null &&
+                cfg instanceof StandardReconConfig) {
+            StandardReconConfig scfg = (StandardReconConfig) cfg;
+            endpoint = scfg.service;
+            identifierSpace = scfg.identifierSpace;
+            schemaSpace = scfg.schemaSpace;
+        } else {
+            respondError(response, "This column has not been reconciled with a standard service.");
+            return;
+        }
+
+        List<String> topicNames = new ArrayList<String>();
+        List<String> topicIds = new ArrayList<String>();
+        Set<String> ids = new HashSet<String>();
+
+        Grid state = project.getCurrentGrid();
+        Engine engine = new Engine(state, engineConfig, project.getId());
+        Grid sorted = state;
+        if (!SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            sorted = sorted.reorderRows(sortingConfig, false);
+        }
+        List<IndexedRow> previewRows = state.getRowsAfter(engine.combinedRowFilters(), 0, limit);
+        for (IndexedRow indexedRow : previewRows) {
+            try {
+                Row row = indexedRow.getRow();
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null && cell.recon != null && cell.recon.match != null) {
+                    topicNames.add(cell.recon.match.name);
+                    topicIds.add(cell.recon.match.id);
+                    ids.add(cell.recon.match.id);
+                } else {
+                    topicNames.add(null);
+                    topicIds.add(null);
+                    ids.add(null);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                ; // skip row
+            }
+        }
+
+        ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint, identifierSpace, schemaSpace);
+        Map<String, DataExtension> map = job.extend(ids);
+        List<List<Object>> rows = new ArrayList<>();
+
+        for (int r = 0; r < topicNames.size(); r++) {
+            String id = topicIds.get(r);
+            String topicName = topicNames.get(r);
+
+            if (id != null && map.containsKey(id)) {
+                DataExtension ext = map.get(id);
+                boolean first = true;
+
+                if (ext.data.size() > 0) {
+                    for (List<Cell> row : ext.data) {
+                        List<Object> jsonRow = new ArrayList<>();
+                        if (first) {
+                            jsonRow.add(topicName);
+                            first = false;
+                        } else {
+                            jsonRow.add(null);
+                        }
+
+                        for (Cell cell : row) {
+                            if (cell == null) {
+                                jsonRow.add(null);
+                            } else if (cell.recon != null && cell.recon.match != null) {
+                                jsonRow.add(cell.recon.match);
+                            } else {
+                                jsonRow.add(cell.value);
+                            }
+                        }
+                        rows.add(jsonRow);
+                    }
+                    continue;
+                }
+            }
+
+            List<Object> supplement = new ArrayList<>();
+            if (id != null) {
+                supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
+            } else {
+                supplement.add("<not reconciled>");
+            }
+            rows.add(supplement);
+        }
+
+        respondJSON(response, 200, new PreviewResponse(job.columns, rows));
     }
 }

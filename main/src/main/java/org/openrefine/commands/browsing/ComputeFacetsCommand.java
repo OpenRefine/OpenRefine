@@ -51,15 +51,11 @@ public class ComputeFacetsCommand extends Command {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
-        try {
-            Project project = getProject(request);
-            Engine engine = getEngine(request, project);
+        Project project = getProject(request);
+        Engine engine = getEngine(request, project);
 
-            respondJSON(response, engine);
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 200, engine);
     }
 }

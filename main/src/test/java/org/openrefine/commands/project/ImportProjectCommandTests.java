@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collections;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.io.FileUtils;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
@@ -34,9 +32,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 public class ImportProjectCommandTests extends CommandTestBase {
 
     private String reconConfigJson = "{"
@@ -52,7 +47,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
     private File tempDir;
 
     @BeforeMethod
-    public void setUpCommand() throws JsonParseException, JsonMappingException, IOException {
+    public void setUpCommand() throws Exception {
         command = new ImportProjectCommand();
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
         FormatRegistry.registerFormat("openrefine-legacy", "OpenRefine legacy project file", "uiClass", new LegacyProjectImporter());
@@ -90,7 +85,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }

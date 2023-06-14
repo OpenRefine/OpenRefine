@@ -101,22 +101,17 @@ public class GuessTypesOfColumnCommand extends Command {
             return;
         }
 
-        try {
-            Project project = getProject(request);
-            String columnName = request.getParameter("columnName");
-            String serviceUrl = request.getParameter("service");
+        Project project = getProject(request);
+        String columnName = request.getParameter("columnName");
+        String serviceUrl = request.getParameter("service");
 
-            Grid state = project.getCurrentGrid();
-            int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
-            if (columnIndex == -1) {
-                respondJSON(response, new TypesResponse("error", "No such column", null));
-            } else {
-                List<TypeGroup> typeGroups = guessTypes(state, columnIndex, serviceUrl);
-                respondJSON(response, new TypesResponse("ok", null, typeGroups));
-            }
-
-        } catch (Exception e) {
-            respondException(response, e);
+        Grid state = project.getCurrentGrid();
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            respondJSON(response, 400, new TypesResponse("error", "No such column", null));
+        } else {
+            List<TypeGroup> typeGroups = guessTypes(state, columnIndex, serviceUrl);
+            respondJSON(response, 200, new TypesResponse("ok", null, typeGroups));
         }
     }
 

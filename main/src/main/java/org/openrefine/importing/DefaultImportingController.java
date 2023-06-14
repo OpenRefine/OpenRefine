@@ -230,7 +230,7 @@ public class DefaultImportingController implements ImportingController {
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);
 
-            Command.respondJSON(response, result);
+            Command.respondJSON(response, 202, result);
         } else {
             HttpUtilities.respond(response, "error", "Unrecognized format or format has no parser");
         }

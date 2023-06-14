@@ -58,11 +58,7 @@ public class ToggleStarredExpressionCommand extends Command {
         }
 
         if (request.getParameter("returnList") != null) {
-            try {
-                respondJSON(response, GetStarredExpressionsCommand.getExpressionsList());
-            } catch (Exception e) {
-                respondException(response, e);
-            }
+            respondJSON(response, 202, GetStarredExpressionsCommand.getExpressionsList());
         }
     }
 }

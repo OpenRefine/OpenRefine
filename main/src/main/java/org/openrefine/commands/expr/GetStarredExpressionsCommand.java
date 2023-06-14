@@ -74,10 +74,6 @@ public class GetStarredExpressionsCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            respondJSON(response, getExpressionsList());
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 200, getExpressionsList());
     }
 }

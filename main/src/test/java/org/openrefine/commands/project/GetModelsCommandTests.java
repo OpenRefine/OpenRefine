@@ -1,21 +1,19 @@
 
 package org.openrefine.commands.project;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.row.GetRowsCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.io.Serializable;
-
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class GetModelsCommandTests extends CommandTestBase {
 
@@ -37,10 +35,11 @@ public class GetModelsCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCommand() throws ServletException, IOException {
+    public void testCommand() throws Exception {
         String expectedJson = ParsingUtilities.mapper.writeValueAsString(project.getColumnModel());
         command.doGet(request, response);
 
+        verify(response).setStatus(200);
         JsonNode parsedResponse = ParsingUtilities.mapper.readTree(writer.toString());
         TestUtils.assertEqualsAsJson(parsedResponse.get("columnModel").toString(), expectedJson);
     }
