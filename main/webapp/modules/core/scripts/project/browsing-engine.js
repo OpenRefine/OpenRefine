@@ -274,7 +274,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
   }
 };
 
-BrowsingEngine.prototype.update = function(onDone) {
+BrowsingEngine.prototype.update = function(onDone, onError) {
   var self = this;
 
   this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit for facets: ' : 'Record limit for facets: '); // TODO i18n
@@ -340,7 +340,11 @@ BrowsingEngine.prototype.update = function(onDone) {
       }
     },
     "json"
-  );
+  ).fail(function (xhr, reqStatus, httpStatus) {
+    if (onError) {
+      onError('failed to update the facets');
+    }
+  });
 };
 
 BrowsingEngine.prototype.reset = function() {
