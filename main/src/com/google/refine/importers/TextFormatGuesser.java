@@ -36,7 +36,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.input.BoundedInputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.CharMatcher;
 import com.google.refine.importing.FormatGuesser;

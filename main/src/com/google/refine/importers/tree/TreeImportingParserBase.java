@@ -41,7 +41,7 @@ import java.util.List;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Row;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;

@@ -64,21 +64,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.ProgressListener;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.fileupload2.core.DiskFileItem;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.ProgressListener;
+import org.apache.commons.fileupload2.jakarta.JakartaFileCleaner;
+import org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
+import org.apache.commons.io.FileCleaningTracker;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -91,6 +94,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingManager.Format;
@@ -187,7 +191,7 @@ public class ImportingUtilities {
             Properties parameters,
             File rawDataDir,
             ObjectNode retrievalRecord,
-            final Progress progress) throws IOException, FileUploadException {
+            final Progress progress) throws IOException {
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
 
@@ -211,9 +215,16 @@ public class ImportingUtilities {
             }
         };
 
-        DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+        DiskFileItemFactory.Builder builder = new DiskFileItemFactory.Builder()
+                .setFile(rawDataDir);
+        ServletContext context = request.getServletContext();
+        if (context != null) { // context will be null for mocked requests from test suite
+            FileCleaningTracker fileCleaningTracker = JakartaFileCleaner.getFileCleaningTracker(context);
+            builder = builder.setFileCleaningTracker(fileCleaningTracker);
+        }
+        DiskFileItemFactory fileItemFactory = builder.get();
 
-        ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
+        JakartaServletFileUpload<DiskFileItem, DiskFileItemFactory> upload = new JakartaServletDiskFileUpload(fileItemFactory);
         upload.setProgressListener(new ProgressListener() {
 
             boolean setContentLength = false;
@@ -237,7 +248,7 @@ public class ImportingUtilities {
             }
         });
 
-        List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
+        List<DiskFileItem> tempFiles = upload.parseRequest(request);
 
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
@@ -274,7 +285,7 @@ public class ImportingUtilities {
                     clipboardCount++;
 
                 } else if (name.equals("download")) {
-                    String urlString = Streams.asString(stream);
+                    String urlString = IOUtils.toString(stream);
                     URL url = new URL(urlString);
 
                     if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
@@ -374,7 +385,7 @@ public class ImportingUtilities {
                         }
                     }
                 } else {
-                    String value = Streams.asString(stream);
+                    String value = IOUtils.toString(stream);
                     parameters.put(name, value);
                     // TODO: We really want to store this on the request so it's available for everyone
 //                    request.getParameterMap().put(name, value);

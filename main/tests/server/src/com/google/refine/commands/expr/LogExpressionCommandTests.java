@@ -12,7 +12,7 @@ import com.google.refine.preference.TopList;
 import java.io.IOException;
 import java.util.Collections;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

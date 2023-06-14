@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikibase.editing.MediaFileUtils;
 import org.openrefine.wikibase.editing.NewEntityLibrary;

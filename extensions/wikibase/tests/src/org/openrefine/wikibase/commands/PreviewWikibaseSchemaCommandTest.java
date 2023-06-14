@@ -30,7 +30,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.openrefine.wikibase.utils.EntityCache;
 import org.openrefine.wikibase.utils.EntityCacheStub;

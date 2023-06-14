@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
