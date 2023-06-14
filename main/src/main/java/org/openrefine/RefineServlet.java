@@ -195,42 +195,26 @@ public class RefineServlet extends Butterfly {
                     if (s_singleton != null) {
                         Thread.currentThread().setContextClassLoader(s_singleton._classLoader);
                     }
-                    if (request.getMethod().equals("GET")) {
-
-                        logger.trace("> GET {}", commandKey);
-                        Instant start = Instant.now();
+                    String method = request.getMethod();
+                    logger.trace("> {} {}", method, commandKey);
+                    Instant start = Instant.now();
+                    if ("GET".equals(method)) {
                         command.doGet(request, response);
-                        Instant end = Instant.now();
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("GET {} [{}ms]", request.getPathInfo(), end.toEpochMilli() - start.toEpochMilli());
-                        }
-                        logger.trace("< GET {}", commandKey);
-                    } else if (request.getMethod().equals("POST")) {
-                        logger.trace("> POST {}", commandKey);
-                        Instant start = Instant.now();
+                    } else if ("POST".equals(method)) {
                         command.doPost(request, response);
-                        Instant end = Instant.now();
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("POST {} [{}ms]", request.getPathInfo(), end.toEpochMilli() - start.toEpochMilli());
-                        }
-                        logger.trace("< POST {}", commandKey);
-                    } else if (request.getMethod().equals("PUT")) {
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("PUT {}", request.getPathInfo());
-                        }
-                        logger.trace("> PUT {}", commandKey);
+                    } else if ("PUT".equals(method)) {
                         command.doPut(request, response);
-                        logger.trace("< PUT {}", commandKey);
-                    } else if (request.getMethod().equals("DELETE")) {
-                        if (!logger.isTraceEnabled() && command.logRequests()) {
-                            logger.info("DELETE {}", request.getPathInfo());
-                        }
-                        logger.trace("> DELETE {}", commandKey);
+                    } else if ("DELETE".equals(method)) {
                         command.doDelete(request, response);
-                        logger.trace("< DELETE {}", commandKey);
                     } else {
                         response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                     }
+                    Instant end = Instant.now();
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
+                        logger.info("{} {} {} [{}ms]", response.getStatus(), method, request.getPathInfo(),
+                                end.toEpochMilli() - start.toEpochMilli());
+                    }
+                    logger.trace("< {} {}", method, commandKey);
                 } catch (Exception e) {
                     int status;
                     if (e instanceof IllegalArgumentException || e instanceof JacksonException) {
