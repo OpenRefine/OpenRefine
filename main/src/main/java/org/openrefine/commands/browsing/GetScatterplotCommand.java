@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,33 +65,28 @@ public class GetScatterplotCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
+        long start = System.currentTimeMillis();
+
+        Project project = getProject(request);
+        Engine engine = getEngine(request, project);
+        ScatterplotFacetConfig conf = ParsingUtilities.mapper.readValue(
+                request.getParameter("plotter"),
+                ScatterplotFacetConfig.class);
+
+        response.setHeader("Content-Type", "image/png");
+
+        ServletOutputStream sos = null;
 
         try {
-            long start = System.currentTimeMillis();
-
-            Project project = getProject(request);
-            Engine engine = getEngine(request, project);
-            ScatterplotFacetConfig conf = ParsingUtilities.mapper.readValue(
-                    request.getParameter("plotter"),
-                    ScatterplotFacetConfig.class);
-
-            response.setHeader("Content-Type", "image/png");
-
-            ServletOutputStream sos = null;
-
-            try {
-                sos = response.getOutputStream();
-                draw(sos, project, engine, conf);
-            } finally {
-                sos.close();
-            }
-
-            logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
-        } catch (Exception e) {
-            e.printStackTrace();
-            respondException(response, e);
+            sos = response.getOutputStream();
+            response.setStatus(200);
+            draw(sos, project, engine, conf);
+        } finally {
+            sos.close();
         }
+
+        logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
     }
 
     public void draw(OutputStream output, Project project, Engine engine, ScatterplotFacetConfig o) throws IOException {

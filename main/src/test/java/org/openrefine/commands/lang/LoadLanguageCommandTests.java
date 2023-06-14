@@ -2,6 +2,7 @@
 package org.openrefine.commands.lang;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -9,10 +10,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -41,68 +38,72 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testLoadSingleLanguage() throws ServletException, IOException {
+    public void testLoadSingleLanguage() throws Exception {
         when(request.getParameter("module")).thenReturn("core");
         when(request.getParameterValues("lang")).thenReturn(new String[] { "en_GB" });
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en_GB");
     }
 
     @Test
-    public void testLoadMultiLanguages() throws ServletException, IOException {
+    public void testLoadMultiLanguages() throws Exception {
         when(request.getParameter("module")).thenReturn("core");
         when(request.getParameterValues("lang")).thenReturn(new String[] { "ja", "it", "es", "de" });
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "ja");
     }
 
     @Test
-    public void testLoadUnknownLanguage() throws ServletException, IOException {
+    public void testLoadUnknownLanguage() throws Exception {
         when(request.getParameter("module")).thenReturn("core");
         when(request.getParameterValues("lang")).thenReturn(new String[] { "foobar" });
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
     }
 
     @Test
-    public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+    public void testLoadNoLanguage() throws Exception {
         when(request.getParameter("module")).thenReturn("core");
-        // when(request.getParameter("lang")).thenReturn("");
         when(request.getParameterValues("lang")).thenReturn(new String[] { "" });
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
     }
 
     @Test
-    public void testLoadNullLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+    public void testLoadNullLanguage() throws Exception {
         when(request.getParameter("module")).thenReturn("core");
         when(request.getParameterValues("lang")).thenReturn(null);
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
     }
 
     @Test
-    public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
+    public void testLanguageFallback() throws Exception {
         String fallbackJson = "{"
                 + "\"foo\":\"hello\","
                 + "\"bar\":\"world\""

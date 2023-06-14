@@ -1,12 +1,10 @@
 
 package org.openrefine.commands.column;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -49,11 +47,12 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testGetColumnsInfo() throws ServletException, IOException {
+    public void testGetColumnsInfo() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 
         command.doGet(request, response);
 
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(jsonResponse, writer.toString());
     }
 

@@ -95,25 +95,20 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
      * Contract for a complete working post
      */
     @Test
-    public void setMetadataTest() {
+    public void setMetadataTest() throws Exception {
         when(request.getParameter("name")).thenReturn("subject");
         when(request.getParameter("value")).thenReturn(SUBJECT);
 
         // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.doPost(request, response);
 
         // verify
         verify(request, times(2)).getParameter("project");
 
+        verify(response).setStatus(200);
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        assertEquals(writer.toString(), "{ \"code\" : \"ok\" }");
+        assertEquals(writer.toString(), "{\"code\":\"ok\"}");
 
         assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
@@ -122,7 +117,7 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
      * set a user defined metadata field
      */
     @Test
-    public void setUserMetadataFieldTest() {
+    public void setUserMetadataFieldTest() throws Exception {
         when(request.getParameter("name")).thenReturn("clientID");
         when(request.getParameter("value")).thenReturn("IBM");
 
@@ -138,9 +133,10 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
         // verify
         verify(request, times(2)).getParameter("project");
 
+        verify(response).setStatus(200);
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        assertEquals(writer.toString(), "{ \"code\" : \"ok\" }");
+        assertEquals(writer.toString(), "{\"code\":\"ok\"}");
 
         ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
         assertEquals(obj.get("name").asText(), "clientID");
@@ -148,7 +144,7 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void doPostThrowsIfCommand_getProjectReturnsNull() {
+    public void doPostThrowsIfCommand_getProjectReturnsNull() throws Exception {
         // run
         try {
             SUT.doPost(request, response);

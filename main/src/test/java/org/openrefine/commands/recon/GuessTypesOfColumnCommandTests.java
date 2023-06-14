@@ -1,12 +1,10 @@
 
 package org.openrefine.commands.recon;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.servlet.ServletException;
 
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
@@ -40,13 +38,13 @@ public class GuessTypesOfColumnCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
-    public void testGuessTypes() throws IOException, ServletException, InterruptedException {
+    public void testGuessTypes() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("columnName")).thenReturn("foo");
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -131,6 +129,7 @@ public class GuessTypesOfColumnCommandTests extends CommandTestBase {
 
             command.doPost(request, response);
 
+            verify(response).setStatus(200);
             TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
             RecordedRequest request = server.takeRequest();

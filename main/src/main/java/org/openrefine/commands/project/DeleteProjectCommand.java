@@ -55,33 +55,28 @@ public class DeleteProjectCommand extends Command {
         }
 
         response.setHeader("Content-Type", "application/json");
-        try {
-            long projectID = Long.parseLong(request.getParameter("project"));
+        long projectID = Long.parseLong(request.getParameter("project"));
 
-            // Remove the project tags from the general map
-            Map<String, Integer> allProjectTags = ProjectManager.singleton.getAllProjectTags();
-            ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(projectID);
-            String[] tags = metadata.getTags();
-            if (tags != null) {
-                for (String tag : tags) {
-                    if (allProjectTags.containsKey(tag)) {
-                        int occurrence = allProjectTags.get(tag);
+        // Remove the project tags from the general map
+        Map<String, Integer> allProjectTags = ProjectManager.singleton.getAllProjectTags();
+        ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(projectID);
+        String[] tags = metadata == null ? null : metadata.getTags();
+        if (tags != null) {
+            for (String tag : tags) {
+                if (allProjectTags.containsKey(tag)) {
+                    int occurrence = allProjectTags.get(tag);
 
-                        if (occurrence == 1)
-                            allProjectTags.remove(tag);
-                        else {
-                            allProjectTags.put(tag, occurrence - 1);
-                        }
+                    if (occurrence == 1)
+                        allProjectTags.remove(tag);
+                    else {
+                        allProjectTags.put(tag, occurrence - 1);
                     }
                 }
             }
-
-            ProjectManager.singleton.deleteProject(projectID);
-
-            respond(response, "{ \"code\" : \"ok\" }");
-
-        } catch (Exception e) {
-            respondException(response, e);
         }
+
+        ProjectManager.singleton.deleteProject(projectID);
+
+        respondOK(response);
     }
 }

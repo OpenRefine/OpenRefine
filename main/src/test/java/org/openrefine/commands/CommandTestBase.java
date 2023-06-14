@@ -2,6 +2,7 @@
 package org.openrefine.commands;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class CommandTestBase extends RefineTest {
      * Convenience method to check that CSRF protection was triggered
      */
     protected void assertCSRFCheckFailed() {
+        verify(response).setStatus(401);
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 }

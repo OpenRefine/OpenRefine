@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.history;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,7 +46,7 @@ public class UndoRedoCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
@@ -70,13 +67,9 @@ public class UndoRedoCommand extends Command {
             }
         }
 
-        try {
-            GridPreservation gridPreservation = project.getHistory().undoRedo(lastDoneID);
+        GridPreservation gridPreservation = project.getHistory().undoRedo(lastDoneID);
 
-            respondJSON(response, new Response(gridPreservation));
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 202, new Response(gridPreservation));
     }
 
     private static class Response {

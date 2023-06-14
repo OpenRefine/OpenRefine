@@ -24,15 +24,12 @@
 
 package org.openrefine.wikibase.commands;
 
-import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,87 +56,85 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
-        try {
-            Project project = getProject(request);
+        Project project = getProject(request);
 
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
 
-            String schemaJson = request.getParameter("schema");
-            String manifestJson = request.getParameter("manifest");
-            boolean slowMode = "true".equals(request.getParameter("slow_mode"));
+        String schemaJson = request.getParameter("schema");
+        String manifestJson = request.getParameter("manifest");
+        boolean slowMode = "true".equals(request.getParameter("slow_mode"));
 
-            WikibaseSchema schema = null;
-            if (schemaJson != null) {
-                try {
-                    schema = WikibaseSchema.reconstruct(schemaJson);
-                } catch (IOException e) {
-                    respondError(response, "Wikibase schema could not be parsed. Error message: " + e.getMessage());
-                    return;
-                }
-            } else {
-                schema = (WikibaseSchema) project.getCurrentGrid().getOverlayModels().get("wikibaseSchema");
-            }
-            if (schema == null) {
-                respondError(response, "No Wikibase schema provided.");
+        WikibaseSchema schema = null;
+        if (schemaJson != null) {
+            try {
+                schema = WikibaseSchema.reconstruct(schemaJson);
+            } catch (IOException e) {
+                Command.respondError(response, "Wikibase schema could not be parsed. Error message: " + e.getMessage());
                 return;
             }
-
-            ValidationState validation = new ValidationState(project.getCurrentGrid().getColumnModel());
-            schema.validate(validation);
-            List<ValidationError> errors = validation.getValidationErrors();
-            if (!errors.isEmpty()) {
-                Map<String, Object> json = new HashMap<>();
-                json.put("code", "error");
-                json.put("reason", "invalid-schema");
-                json.put("message", "Invalid Wikibase schema");
-                json.put("errors", errors);
-                Command.respondJSON(response, json);
-                return;
-            }
-
-            Manifest manifest = null;
-            if (manifestJson != null) {
-                try {
-                    manifest = ManifestParser.parse(manifestJson);
-                } catch (ManifestException e) {
-                    respondError(response, "Wikibase manifest could not be parsed. Error message: " + e.getMessage());
-                    return;
-                }
-            }
-            if (manifest == null) {
-                respondError(response, "No Wikibase manifest provided.");
-                return;
-            }
-
-            QAWarningStore warningStore = new QAWarningStore();
-
-            // Evaluate project
-            Engine engine = getEngine(request, project);
-            List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGrid(), engine, warningStore);
-            // Inspect the edits and generate warnings
-            EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
-            inspector.inspect(editBatch, schema);
-
-            // Dump the first 10 edits, scheduled with the default scheduler
-            WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-            List<EntityEdit> nonNullEdits = scheduler.schedule(editBatch).stream()
-                    .filter(e -> !e.isNull())
-                    .collect(Collectors.toList());
-            List<EntityEdit> firstEdits = nonNullEdits.stream()
-                    .limit(10)
-                    .collect(Collectors.toList());
-
-            PreviewResults previewResults = new PreviewResults(
-                    warningStore.getWarnings(),
-                    warningStore.getMaxSeverity(),
-                    warningStore.getNbWarnings(),
-                    nonNullEdits.size(), firstEdits);
-            respondJSON(response, previewResults);
-        } catch (Exception e) {
-            respondException(response, e);
+        } else {
+            schema = (WikibaseSchema) project.getCurrentGrid().getOverlayModels().get("wikibaseSchema");
         }
+        if (schema == null) {
+            Command.respondError(response, "No Wikibase schema provided.");
+            return;
+        }
+
+        ValidationState validation = new ValidationState(project.getCurrentGrid().getColumnModel());
+        schema.validate(validation);
+        List<ValidationError> errors = validation.getValidationErrors();
+        if (!errors.isEmpty()) {
+            Map<String, Object> json = new HashMap<>();
+            json.put("code", "error");
+            json.put("reason", "invalid-schema");
+            json.put("message", "Invalid Wikibase schema");
+            json.put("errors", errors);
+            // HTTP code 200 because it is normal for the user to submit incomplete schemas (for instance as they build
+            // them).
+            Command.respondJSON(response, 200, json);
+            return;
+        }
+
+        Manifest manifest = null;
+        if (manifestJson != null) {
+            try {
+                manifest = ManifestParser.parse(manifestJson);
+            } catch (ManifestException e) {
+                Command.respondError(response, "Wikibase manifest could not be parsed. Error message: " + e.getMessage());
+                return;
+            }
+        }
+        if (manifest == null) {
+            Command.respondError(response, "No Wikibase manifest provided.");
+            return;
+        }
+
+        QAWarningStore warningStore = new QAWarningStore();
+
+        // Evaluate project
+        Engine engine = getEngine(request, project);
+        List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGrid(), engine, warningStore);
+        // Inspect the edits and generate warnings
+        EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
+        inspector.inspect(editBatch, schema);
+
+        // Dump the first 10 edits, scheduled with the default scheduler
+        WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
+        List<EntityEdit> nonNullEdits = scheduler.schedule(editBatch).stream()
+                .filter(e -> !e.isNull())
+                .collect(Collectors.toList());
+        List<EntityEdit> firstEdits = nonNullEdits.stream()
+                .limit(10)
+                .collect(Collectors.toList());
+
+        PreviewResults previewResults = new PreviewResults(
+                warningStore.getWarnings(),
+                warningStore.getMaxSeverity(),
+                warningStore.getNbWarnings(),
+                nonNullEdits.size(), firstEdits);
+        respondJSON(response, 200, previewResults);
     }
 }

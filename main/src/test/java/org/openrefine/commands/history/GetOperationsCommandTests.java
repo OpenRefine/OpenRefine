@@ -2,14 +2,12 @@
 package org.openrefine.commands.history;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
@@ -66,7 +64,7 @@ public class GetOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCommand() throws ServletException, IOException {
+    public void testCommand() throws Exception {
         when(request.getParameter("project")).thenReturn("1234");
 
         command.doGet(request, response);
@@ -83,6 +81,7 @@ public class GetOperationsCommandTests extends CommandTestBase {
                 + "  } ]\n"
                 + "}";
 
+        verify(response).setStatus(200);
         JsonNode json = ParsingUtilities.mapper.readTree(writer.toString());
         TestUtils.isSerializedTo(json, expectedJson, ParsingUtilities.defaultWriter);
     }

@@ -27,11 +27,8 @@
 
 package org.openrefine.commands.expr;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,7 +44,7 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
     }
 
     @Test
-    public void testJsonResponse() throws ServletException, IOException {
+    public void testJsonResponse() throws Exception {
 
         initWorkspace("{\n" +
                 "        \"class\": \"org.openrefine.preference.TopList\",\n" +
@@ -74,12 +71,15 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
         when(request.getParameter("expression")).thenReturn("grel:facetCount(value, 'value', 'Column 1')");
         when(request.getParameter("returnList")).thenReturn("yes");
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
         command.doPost(request, response);
+
+        verify(response).setStatus(202);
         assertResponseJsonIs(json);
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }

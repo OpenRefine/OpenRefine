@@ -1,14 +1,12 @@
 
 package org.openrefine.commands.recon;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.servlet.ServletException;
 
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
@@ -36,13 +34,13 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testPreviewExtendData() throws IOException, ServletException {
+    public void testPreviewExtendData() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/api");
@@ -79,6 +77,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
 
             command.doPost(request, response);
 
+            verify(response).setStatus(200);
             String expectedResponse = "{\n"
                     + "       \"code\" : \"ok\",\n"
                     + "       \"columns\" : [ {\n"

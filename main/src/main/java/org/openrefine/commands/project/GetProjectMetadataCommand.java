@@ -49,14 +49,8 @@ public class GetProjectMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Project project;
-        try {
-            project = getProject(request);
-        } catch (ServletException e) {
-            respond(response, "error", e.getLocalizedMessage());
-            return;
-        }
+        Project project = getProject(request);
 
-        respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.getId()));
+        respondJSON(response, 200, ProjectManager.singleton.getProjectMetadata(project.getId()));
     }
 }

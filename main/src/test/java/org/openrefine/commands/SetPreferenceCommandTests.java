@@ -1,10 +1,6 @@
 
 package org.openrefine.commands;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,7 +12,7 @@ public class SetPreferenceCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }

@@ -70,7 +70,7 @@ public class GetPreferenceCommand extends Command {
         String prefName = request.getParameter("name");
         Object pref = ps.get(prefName);
 
-        respondJSON(response, new PreferenceValue(pref));
+        respondJSON(response, 200, new PreferenceValue(pref));
     }
 
 }

@@ -103,6 +103,6 @@ public class GetLanguagesCommand extends Command {
 
         ButterflyModule module = this.servlet.getModule(modname);
 
-        respondJSON(response, new LanguagesResponse(module));
+        respondJSON(response, 200, new LanguagesResponse(module));
     }
 }

@@ -63,7 +63,7 @@ public class GetAllPreferencesCommand extends Command {
             }
         }
 
-        respondJSON(response, map);
+        respondJSON(response, 200, map);
     }
 
     /**

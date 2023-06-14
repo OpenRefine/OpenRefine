@@ -1,12 +1,10 @@
 
 package org.openrefine.commands.project;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
@@ -37,10 +35,11 @@ public class GetModelsCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCommand() throws ServletException, IOException {
+    public void testCommand() throws Exception {
         String expectedJson = ParsingUtilities.mapper.writeValueAsString(project.getColumnModel());
         command.doGet(request, response);
 
+        verify(response).setStatus(200);
         JsonNode parsedResponse = ParsingUtilities.mapper.readTree(writer.toString());
         TestUtils.assertEqualsAsJson(parsedResponse.get("columnModel").toString(), expectedJson);
     }

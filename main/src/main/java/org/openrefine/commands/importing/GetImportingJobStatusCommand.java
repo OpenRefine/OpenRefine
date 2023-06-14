@@ -78,9 +78,9 @@ public class GetImportingJobStatusCommand extends Command {
         ImportingJob job = ImportingManager.getJob(jobID);
 
         if (job == null) {
-            respondJSON(response, new JobStatusResponse("error", "No such import job", null));
+            respondJSON(response, 400, new JobStatusResponse("error", "No such import job", null));
         } else {
-            respondJSON(response, new JobStatusResponse("ok", null, job));
+            respondJSON(response, 200, new JobStatusResponse("ok", null, job));
         }
     }
 }

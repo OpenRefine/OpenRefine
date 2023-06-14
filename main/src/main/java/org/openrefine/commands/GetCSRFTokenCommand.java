@@ -15,6 +15,6 @@ public class GetCSRFTokenCommand extends Command {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        respondJSON(response, Collections.singletonMap("token", csrfFactory.getFreshToken()));
+        respondJSON(response, 200, Collections.singletonMap("token", csrfFactory.getFreshToken()));
     }
 }

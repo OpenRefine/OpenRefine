@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.browsing;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,15 +48,11 @@ public class ComputeFacetsCommand extends Command {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
-        try {
-            Project project = getProject(request);
-            Engine engine = getEngine(request, project);
+        Project project = getProject(request);
+        Engine engine = getEngine(request, project);
 
-            respondJSON(response, engine);
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 200, engine);
     }
 }

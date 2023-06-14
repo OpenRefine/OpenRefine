@@ -55,21 +55,17 @@ public class ExportProjectCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        Project project = getProject(request);
+        // TODO not sure why this is needed?
+        ProjectManager.singleton.ensureProjectSaved(project.getId(), null);
+
+        response.setHeader("Content-Type", "application/x-gzip");
+
+        OutputStream os = response.getOutputStream();
         try {
-            Project project = getProject(request);
-            // TODO not sure why this is needed?
-            ProjectManager.singleton.ensureProjectSaved(project.getId(), null);
-
-            response.setHeader("Content-Type", "application/x-gzip");
-
-            OutputStream os = response.getOutputStream();
-            try {
-                FileProjectManager.gzipTarToOutputStream(project, os);
-            } finally {
-                os.close();
-            }
-        } catch (Exception e) {
-            respondException(response, e);
+            FileProjectManager.gzipTarToOutputStream(project, os);
+        } finally {
+            os.close();
         }
     }
 }

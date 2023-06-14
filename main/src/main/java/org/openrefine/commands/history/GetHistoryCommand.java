@@ -49,7 +49,7 @@ public class GetHistoryCommand extends Command {
             throws ServletException, IOException {
 
         Project project = getProject(request);
-        respondJSON(response, project.getHistory());
+        respondJSON(response, 200, project.getHistory());
     }
 
 }

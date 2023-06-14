@@ -33,17 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpStatus;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -53,6 +57,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
+import org.openrefine.util.ParsingUtilities;
 
 public class RefineServletTests extends RefineTest {
 
@@ -80,11 +85,17 @@ public class RefineServletTests extends RefineTest {
     HttpServletResponse response = null;
     Command command = null;
 
+    // dependencies
+    StringWriter stringWriter = null;
+
     @BeforeMethod
-    public void SetUp() throws ServletException {
+    public void SetUp() throws Exception {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = mock(Command.class);
+        stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
 
         SUT = new RefineServletStub();
         SUT.insertCommand(TEST_COMMAND_NAME, command); // inject mock into command container
@@ -109,82 +120,45 @@ public class RefineServletTests extends RefineTest {
 
     // --------------------doGet tests----------------------
     @Test
-    public void doGetRegressionTest() {
+    public void doGetRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doGet(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doGet(request, response);
     }
 
     @Test
-    public void doGetReturnsError404WhenCommandNotFound() {
+    public void doGetReturnsError404WhenCommandNotFound() throws ServletException, IOException {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
-
     }
 
     // ----------------doPost tests-------------------------
     @Test
-    public void doPostRegressionTest() {
+    public void doPostRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doPost(request, response);
     }
 
     @Test
-    public void doPostReturns404WhenCommandNotFound() {
+    public void doPostReturns404WhenCommandNotFound() throws Exception {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
@@ -192,40 +166,22 @@ public class RefineServletTests extends RefineTest {
 
     // ----------------doPut tests-------------------------
     @Test
-    public void doPutRegressionTest() {
+    public void doPutRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doPut(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doPut(request, response);
     }
 
     @Test
-    public void doPutReturns404WhenCommandNotFound() {
+    public void doPutReturns404WhenCommandNotFound() throws ServletException, IOException {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
@@ -233,40 +189,22 @@ public class RefineServletTests extends RefineTest {
 
     // ----------------doDelete tests-------------------------
     @Test
-    public void doDeleteRegressionTest() {
+    public void doDeleteRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(DELETE);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doDelete(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doDelete(request, response);
     }
 
     @Test
-    public void doDeleteReturns404WhenCommandNotFound() {
+    public void doDeleteReturns404WhenCommandNotFound() throws Exception {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(DELETE);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
@@ -282,6 +220,35 @@ public class RefineServletTests extends RefineTest {
         Assert.assertEquals("this-command-has-no-trailing-slash", SUT.wrapGetCommandName(request));
 
         verify(request, times(1)).getPathInfo();
+    }
+
+    // ---------------- exception handling tests -------------
+    @Test
+    public void doInternalError() throws Exception {
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(GET);
+
+        doThrow(new NullPointerException()).when(command).doGet(request, response);
+
+        SUT.wrapService(request, response);
+
+        verify(response).setStatus(500);
+        JsonNode jsonResponse = ParsingUtilities.mapper.readTree(stringWriter.toString());
+        Assert.assertEquals(jsonResponse.get("code").asText(), "error");
+    }
+
+    @Test
+    public void doIllegalArgumentException() throws Exception {
+        whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
+        whenGetMethodThenReturn(GET);
+
+        doThrow(new IllegalArgumentException()).when(command).doGet(request, response);
+
+        SUT.wrapService(request, response);
+
+        verify(response).setStatus(400);
+        JsonNode jsonResponse = ParsingUtilities.mapper.readTree(stringWriter.toString());
+        Assert.assertEquals(jsonResponse.get("code").asText(), "error");
     }
 
     // ------------helpers

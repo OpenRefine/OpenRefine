@@ -130,7 +130,7 @@ public class GetModelsCommand extends Command {
         Grid grid = project.getCurrentGrid();
         logger.info(grid.toString());
 
-        respondJSON(response, new ModelsResponse(
+        respondJSON(response, 200, new ModelsResponse(
                 project.getColumnModel(),
                 project.getOverlayModels(),
                 prefixesMap,

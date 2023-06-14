@@ -5,14 +5,11 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParseException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ParseWikibaseSchemaCommandTest extends CommandTest {
@@ -24,32 +21,28 @@ public class ParseWikibaseSchemaCommandTest extends CommandTest {
 
     @Test
     public void testNoSchemaTemplate()
-            throws ServletException, IOException {
+            throws Exception {
         command.doPost(request, response);
 
         assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema template provided.\"}");
     }
 
-    @Test
+    @Test(expectedExceptions = JsonParseException.class)
     public void testInvalidJson()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("template")).thenReturn("{bogus json");
         command.doPost(request, response);
-
-        assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
 
-    @Test
+    @Test(expectedExceptions = JacksonException.class)
     public void testInvalidSchemaTemplate()
-            throws ServletException, IOException {
+            throws Exception {
         when(request.getParameter("template")).thenReturn("{\"entityEdits\":\"foo\"}");
         command.doPost(request, response);
-
-        assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
 
     @Test
-    public void testIncompleteSchema() throws IOException, ServletException {
+    public void testIncompleteSchema() throws Exception {
         // schema that is syntactically correct but misses some elements.
         // it is invalid as a schema but valid as a schema template.
         String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();
@@ -67,7 +60,7 @@ public class ParseWikibaseSchemaCommandTest extends CommandTest {
     }
 
     @Test
-    public void testIncompleteSchemaWithoutName() throws IOException, ServletException {
+    public void testIncompleteSchemaWithoutName() throws Exception {
         // schema that is syntactically correct but misses some elements.
         // it is invalid as a schema but valid as a schema template.
         String schemaJson = jsonFromFile("schema/inception_with_errors.json").toString();

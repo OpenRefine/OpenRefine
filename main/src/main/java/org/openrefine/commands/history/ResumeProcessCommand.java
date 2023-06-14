@@ -34,19 +34,12 @@ public class ResumeProcessCommand extends Command {
 
         String processId = request.getParameter("id");
 
-        try {
-            Project project = getProject(request);
+        Project project = getProject(request);
 
-            try {
-                int processIdInt = Integer.parseInt(processId);
-                Process process = project.getProcessManager().getProcess(processIdInt);
-                process.resume();
-            } catch (IllegalArgumentException e) {
-                respondException(response, e);
-            }
-            respondJSON(response, new Response());
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        int processIdInt = Integer.parseInt(processId);
+        Process process = project.getProcessManager().getProcess(processIdInt);
+        process.resume();
+
+        respondJSON(response, 202, new Response());
     }
 }

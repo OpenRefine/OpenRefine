@@ -90,7 +90,7 @@ public class LoginCommand extends Command {
 
         String mediawikiApiEndpoint = removeCRLF(request.getParameter(API_ENDPOINT));
         if (isBlank(mediawikiApiEndpoint)) {
-            CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
+            Command.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
         }
         String mediawikiApiEndpointPrefix = sanitizeCookieKey(mediawikiApiEndpoint + '-');
@@ -190,7 +190,7 @@ public class LoginCommand extends Command {
     protected void respond(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String mediawikiApiEndpoint = request.getParameter(API_ENDPOINT);
         if (isBlank(mediawikiApiEndpoint)) {
-            CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
+            Command.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
         }
 
@@ -209,7 +209,7 @@ public class LoginCommand extends Command {
             jsonResponse.put("mediawiki_api_endpoint", mediawikiApiEndpoint);
         }
 
-        respondJSON(response, jsonResponse);
+        respondJSON(response, 202, jsonResponse);
     }
 
     /**

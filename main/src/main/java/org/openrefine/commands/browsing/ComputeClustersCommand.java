@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.browsing;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -56,27 +53,25 @@ public class ComputeClustersCommand extends Command {
     /**
      * This command uses POST (probably to allow for larger parameters) but does not actually modify any state so we do
      * not add CSRF protection to it.
+     * 
+     * @throws Exception
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
 
-        try {
-            long start = System.currentTimeMillis();
-            Project project = getProject(request);
-            Engine engine = getEngine(request, project);
-            String clusterer_conf = request.getParameter("clusterer");
-            ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
+        long start = System.currentTimeMillis();
+        Project project = getProject(request);
+        Engine engine = getEngine(request, project);
+        String clusterer_conf = request.getParameter("clusterer");
+        ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
 
-            Clusterer clusterer = clustererConfig.apply(project.getHistory().getCurrentGrid());
+        Clusterer clusterer = clustererConfig.apply(project.getHistory().getCurrentGrid());
 
-            clusterer.computeClusters(engine);
+        clusterer.computeClusters(engine);
 
-            respondJSON(response, clusterer);
-            logger.info("computed clusters [{}] in {}ms",
-                    new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+        respondJSON(response, 202, clusterer);
+        logger.info("computed clusters [{}] in {}ms",
+                new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
     }
 }

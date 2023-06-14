@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
 import org.mockito.ArgumentCaptor;
@@ -94,20 +92,20 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testNoApiEndpointPost() throws ServletException, IOException {
+    public void testNoApiEndpointPost() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         command.doPost(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
-    public void testNoApiEndpointGet() throws ServletException, IOException {
+    public void testNoApiEndpointGet() throws Exception {
         command.doGet(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"missing parameter 'wb-api-endpoint'\"}");
     }
 
     @Test
-    public void testNoCredentials() throws ServletException, IOException {
+    public void testNoCredentials() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doPost(request, response);
@@ -115,13 +113,13 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testCsrfProtection() throws ServletException, IOException {
+    public void testCsrfProtection() throws Exception {
         command.doPost(request, response);
         assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
-    public void testGetNotCsrfProtected() throws ServletException, IOException {
+    public void testGetNotCsrfProtected() throws Exception {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doGet(request, response);
         assertEqualsAsJson(writer.toString(), "{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}");

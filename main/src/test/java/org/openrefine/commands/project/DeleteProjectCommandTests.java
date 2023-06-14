@@ -2,12 +2,10 @@
 package org.openrefine.commands.project;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.time.Instant;
-
-import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -28,13 +26,13 @@ public class DeleteProjectCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testCSRFProtection() throws ServletException, IOException {
+    public void testCSRFProtection() throws Exception {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
 
     @Test
-    public void testAcceptsNullTags() throws ServletException, IOException {
+    public void testAcceptsNullTags() throws Exception {
         Project project = mock(Project.class);
         when(project.getId()).thenReturn(1234L);
         Instant now = Instant.now();
@@ -50,6 +48,7 @@ public class DeleteProjectCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
+        verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
     }
 }

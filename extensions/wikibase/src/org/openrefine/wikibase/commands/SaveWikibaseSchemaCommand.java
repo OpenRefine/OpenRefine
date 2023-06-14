@@ -24,13 +24,9 @@
 
 package org.openrefine.wikibase.commands;
 
-import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,40 +42,35 @@ public class SaveWikibaseSchemaCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws Exception {
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
         }
 
-        try {
-            Project project = getProject(request);
+        Project project = getProject(request);
 
-            String jsonString = request.getParameter("schema");
-            if (jsonString == null || "null".equals(jsonString)) {
-                respondError(response, "No Wikibase schema provided.");
-                return;
-            }
-
-            WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
-
-            ValidationState validation = new ValidationState(project.getColumnModel());
-            schema.validate(validation);
-            if (!validation.getValidationErrors().isEmpty()) {
-                Map<String, Object> json = new HashMap<>();
-                json.put("code", "error");
-                json.put("reason", "invalid-schema");
-                json.put("message", "Invalid Wikibase schema");
-                json.put("errors", validation.getValidationErrors());
-                respondJSON(response, json);
-                return;
-            }
-
-            Operation op = new SaveWikibaseSchemaOperation(schema);
-            addHistoryEntryAndRespond(request, response, project, op);
-        } catch (Exception e) {
-            // This is an unexpected exception, so we log it.
-            respondException(response, e);
+        String jsonString = request.getParameter("schema");
+        if (jsonString == null || "null".equals(jsonString)) {
+            Command.respondError(response, "No Wikibase schema provided.");
+            return;
         }
+
+        WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
+
+        ValidationState validation = new ValidationState(project.getColumnModel());
+        schema.validate(validation);
+        if (!validation.getValidationErrors().isEmpty()) {
+            Map<String, Object> json = new HashMap<>();
+            json.put("code", "error");
+            json.put("reason", "invalid-schema");
+            json.put("message", "Invalid Wikibase schema");
+            json.put("errors", validation.getValidationErrors());
+            respondJSON(response, 400, json);
+            return;
+        }
+
+        Operation op = new SaveWikibaseSchemaOperation(schema);
+        addHistoryEntryAndRespond(request, response, project, op);
     }
 }

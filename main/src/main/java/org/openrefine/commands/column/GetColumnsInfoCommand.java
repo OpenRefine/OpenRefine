@@ -57,24 +57,15 @@ public class GetColumnsInfoCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Project project = getProject(request);
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+        Grid grid = project.getCurrentGrid();
+        AggregationState initial = new AggregationState();
+        initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0))
+                .collect(Collectors.toList());
+        AggregationState aggregated = grid.aggregateRows(new Aggregator(), initial);
 
-            Project project = getProject(request);
-
-            Grid grid = project.getCurrentGrid();
-            AggregationState initial = new AggregationState();
-            initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0))
-                    .collect(Collectors.toList());
-            AggregationState aggregated = grid.aggregateRows(new Aggregator(), initial);
-
-            respondJSON(response, aggregated);
-        } catch (Exception e) {
-            e.printStackTrace();
-            respondException(response, e);
-        }
+        respondJSON(response, 200, aggregated);
     }
 
     private static class AggregationState implements Serializable {
