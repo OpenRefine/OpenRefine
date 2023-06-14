@@ -53,19 +53,24 @@ HistoryPanel.prototype.resize = function() {
   }
 };
 
-HistoryPanel.prototype.update = function(onDone) {
+HistoryPanel.prototype.update = function(onDone, onError) {
   var self = this;
-  Ajax.chainGetJSON(
-    "command/core/get-history?" + $.param({ project: theProject.id }), null,
-    function(data) {
-      self._data = data;
-      self._render();
+  var request = $.ajax({
+    dataType: 'json',
+    url: "command/core/get-history?" + $.param({ project: theProject.id }),
+    data: null,
+  }).done(function(data) {
+    self._data = data;
+    self._render();
 
-      if (onDone) {
-        onDone();
-      }
+    if (onDone) {
+      onDone();
     }
-  );
+  }).fail(function(xhr, textStatus, errorThrown) {
+    if (onError) {
+      onError('updating the history panel failed');
+    }
+  });
 };
 
 // returns the changes "in the future", i.e. changes that have been undone

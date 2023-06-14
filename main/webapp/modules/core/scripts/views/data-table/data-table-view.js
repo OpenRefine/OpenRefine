@@ -83,7 +83,7 @@ DataTableView.prototype.resize = function() {
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
 };
 
-DataTableView.prototype.update = function(onDone, preservePage) {
+DataTableView.prototype.update = function(onDone, preservePage, onError) {
   var paginationOptions = { start: 0 };
   if (preservePage) {
     if (theProject.rowModel.start !== undefined) {
@@ -92,7 +92,7 @@ DataTableView.prototype.update = function(onDone, preservePage) {
       paginationOptions = { end: theProject.rowModel.end };
     }
   }
-  this._showRows(paginationOptions, onDone);
+  this._showRows(paginationOptions, onDone, onError);
 };
 
 DataTableView.prototype.render = function() {
@@ -512,7 +512,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   }
 }
 
-DataTableView.prototype._showRows = function(paginationOptions, onDone) {
+DataTableView.prototype._showRows = function(paginationOptions, onDone, onError) {
   var self = this;
   self._cancelAutoUpdate();
   self._lastRequestedPagination = paginationOptions;
@@ -551,7 +551,7 @@ DataTableView.prototype._showRows = function(paginationOptions, onDone) {
     if (onDone) {
       onDone();
     }
-  }, this._sorting);
+  }, this._sorting, onError);
 };
 
 DataTableView.prototype._cancelAutoUpdate = function(elmt, evt) {

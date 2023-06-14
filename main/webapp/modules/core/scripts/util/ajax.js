@@ -33,32 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Ajax = {};
 
-Ajax.chainGetJSON = function() {
-  var a = arguments;
-  var i = 0;
-  var next = function() {
-    if (i <= a.length - 3) {
-      var url = a[i++];
-      var data = a[i++];
-      var callback = a[i++];
-
-      $.ajax({
-        dataType: "json",
-        url: url,
-        data: data,
-        timeout: 30000
-      }).done(function(o) {
-        callback(o);
-        next();
-      });
-    } else if (i < a.length) {
-      var finalCallback = a[i++];
-      finalCallback();
-    }
-  };
-  next();
-};
-
 $(function() {
   // set up callback for server errors (executed on all jQuery requests)
   $(document).on("ajaxError", function(event, request, settings) {

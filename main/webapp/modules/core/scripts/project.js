@@ -217,9 +217,8 @@ Refine.reinitializeProjectData = function(f, fError) {
     "command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
     function(data) {
       if (data.status == "error") {
-        alert(data.message);
         if (fError) {
-          fError();
+          fError(data.message);
         }
       } else {
         theProject.metadata = data;
@@ -227,9 +226,8 @@ Refine.reinitializeProjectData = function(f, fError) {
           "command/core/get-models?" + $.param({ project: theProject.id }), null,
           function(data) {
             if (data.status == "error") {
-              alert(data.message);
               if (fError) {
-                fError();
+                fError(data.message);
               }
             } else {
               for (var n in data) {
@@ -241,9 +239,8 @@ Refine.reinitializeProjectData = function(f, fError) {
                 "command/core/get-all-preferences", null,
                 function(preferences) {
                   if (preferences.status == "error") {
-                    alert(preferences.message);
                     if (fError) {
-                      fError();
+                      fError(preferences.message);
                     }
                   } else {
                     if (preferences != null) {
@@ -320,28 +317,28 @@ Refine._renameProject = function() {
 
 Refine.customUpdateCallbacks = [];
 
-Refine.createUpdateFunction = function(options, onFinallyDone) {
+Refine.createUpdateFunction = function(options, onFinallyDone, onError) {
   var functions = [];
   var pushFunction = function(f) {
     var index = functions.length;
     functions.push(function() {
-      f(functions[index + 1]);
+      f(functions[index + 1], onError);
     });
   };
 
-  pushFunction(function(onDone) {
+  pushFunction(function(onDone, onError) {
     ui.historyPanel.update(onDone);
   });
-  if (options.everythingChanged || options.modelsChanged || options.columnStatsChanged) {
+  if (options.everythingChanged || options.modelsChanged) {
     pushFunction(Refine.reinitializeProjectData);
   }
   if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
     var preservePage = options.rowIdsPreserved && (options.recordIdsPreserved || ui.browsingEngine.getMode() === "row-based");
-    pushFunction(function(onDone) {
-      ui.dataTableView.update(onDone, preservePage);
+    pushFunction(function(onDone, onError) {
+      ui.dataTableView.update(onDone, preservePage, onError);
     });
     pushFunction(function(onDone) {
-      ui.browsingEngine.update(onDone);
+      ui.browsingEngine.update(onDone, onError);
     });
   }
   if (options.everythingChanged || options.processesChanged) {
@@ -352,7 +349,7 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
 
   // run the callbacks registered by extensions, passing them
   // the options
-  pushFunction(function(onDone) {
+  pushFunction(function(onDone, onError) {
     for(var i = 0; i != Refine.customUpdateCallbacks.length; i++) {
         Refine.customUpdateCallbacks[i](options);
     }
@@ -396,6 +393,9 @@ Refine.update = function(options, onFinallyDone) {
     if (onFinallyDone) {
       onFinallyDone();
     }
+  }, function(error) {
+    dismissBusy();
+    console.warn('Error in Refine.update: '+e);
   })();
 
   window.setTimeout(function() {
@@ -638,7 +638,7 @@ Refine.columnNameToColumnIndex = function(columnName) {
   Fetch rows after or before a given row id. The engine configuration can also
   be used to set filters (facets) or switch between rows/records mode.
 */
-Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
+Refine.fetchRows = function(paginationOptions, limit, onDone, sorting, onError) {
   var body = {
     engine: JSON.stringify(ui.browsingEngine.getJSON())
   };
@@ -669,7 +669,11 @@ Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
       }
     },
     "json"
-  );
+  ).fail(function(xhr, reqStatus, httpStatus) {
+    if (onError) {
+      onError('failed to fetch project rows');
+    };
+  });
 };
 
 Refine.getPermanentLink = function() {
@@ -701,7 +705,8 @@ function onLoad() {
       function() {
         initializeUI(uiState);
       },
-      function() {
+      function(error) {
+        alert(error);
         $("#loading-message").hide();
       }
     );

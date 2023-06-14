@@ -220,21 +220,30 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   }
 };
 
-ProcessPanel.prototype.update = function(onDone) {
+ProcessPanel.prototype.update = function(onDone, onError) {
   if (this._timerID !== null) {
+    if (onDone) {
+      onDone();
+    }
     return;
   }
 
   var self = this;
-  Ajax.chainGetJSON(
-      "command/core/get-processes?" + $.param({ project: theProject.id }), null,
-      function(data) {
-        self._render(data);
-        if (onDone) {
-          onDone();
-        }
+  $.ajax({
+    dataType: 'json',
+    url: "command/core/get-processes?" + $.param({ project: theProject.id }),
+    data: null,
+  }).done(function(data) {
+      self._render(data);
+      if (onDone) {
+        onDone();
       }
-  );
+    }
+  ).fail(function (xhr, reqStatus, httpStatus) {
+    if (onError) {
+      onError('failed to refresh the process panel');
+    }
+  });
 };
 
 ProcessPanel.prototype.showUndo = function(historyEntry) {
