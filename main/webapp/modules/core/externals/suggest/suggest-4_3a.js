@@ -41,7 +41,6 @@
 
   /**
    * jQuery UI provides a way to be notified when an element is removed from the DOM.
-   
    * The following logic tries to determine if "remove" event is already present, else
    * tries to mimic what jQuery UI does (as of 1.8.5) by adding a hook to $.cleanData or $.fn.remove.
    */
@@ -141,6 +140,8 @@
         o.ac_param[k] = v;
       });
 
+      
+
       // status texts
       this._status = {
         START: "",
@@ -236,6 +237,7 @@
           }, 0);
         });
 
+        
 
         $(window)
           .on("resize.suggest", this.onresize)
@@ -1064,6 +1066,19 @@
     _init: function() {
       var self = this,
           o = this.options;
+
+      if (!$.suggest.cache) {
+        $.suggest.cache = {};
+      }
+
+      
+    },
+
+    _destroy: function() {
+      base._destroy.call(this);
+     
+      this.input.removeData("request.count.suggest");
+      
     },
 
     shift_enter: function(e) {
@@ -1071,6 +1086,13 @@
         this.suggest_new();
         this.hide_all();
       }
+    },
+
+    hide_all: function(e) {
+      this.pane.hide();
+      
+      this.input.trigger("fb-pane-hide", this);
+      
     },
 
     request: function(val, cursor) {
@@ -1220,10 +1242,22 @@
     },
 
 
+  
+
     check_response: function(response_data) {
       return response_data.prefix === this.input.val();
     },
 
+    response_hook: function(response_data, cursor) {
+      
+      if (cursor > 0) {
+        $(".fbs-more", this.pane).remove();
+      }
+      else {
+        //this.pane.hide();
+        this.list.empty();
+      }
+    },
 
     show_hook: function(response_data, cursor, first) {
       base.show_hook.apply(this, [response_data]);
@@ -1330,6 +1364,10 @@
       return false;
     },
 
+    
+    
+
+    
   });
 
   // Freebase suggest settings
@@ -1398,6 +1436,12 @@
 
       
 
+      
+
+      
+
+      
+
       // text snippet you want to show for the suggest
       // new option
       // clicking will trigger an fb-select-new event
@@ -1415,7 +1459,15 @@
         ]
       },
 
+      // CSS default class names
+      css: {
+        item_type: "fbs-item-type",
+       
+      },
+
       
+      
+      xhr_delay: 200
     },
 
     /**
@@ -1506,6 +1558,8 @@
       return true;
     },
 
+   
+    
   });
 
 
