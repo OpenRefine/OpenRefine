@@ -29,9 +29,8 @@ package com.google.refine.commands.expr;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

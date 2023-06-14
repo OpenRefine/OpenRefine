@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mozilla.universalchardet.UnicodeBOMInputStream;
 import org.mozilla.universalchardet.UniversalDetector;
 

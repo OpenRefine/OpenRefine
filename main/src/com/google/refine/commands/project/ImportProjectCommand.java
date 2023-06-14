@@ -37,16 +37,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.FileItemInput;
+import org.apache.commons.fileupload2.core.FileItemInputIterator;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,13 +106,13 @@ public class ImportProjectCommand extends Command {
 
         String url = null;
 
-        ServletFileUpload upload = new ServletFileUpload();
+        JakartaServletFileUpload upload = new JakartaServletFileUpload();
 
-        FileItemIterator iter = upload.getItemIterator(request);
+        FileItemInputIterator iter = upload.getItemIterator(request);
         while (iter.hasNext()) {
-            FileItemStream item = iter.next();
+            FileItemInput item = iter.next();
             String name = item.getFieldName().toLowerCase();
-            InputStream stream = item.openStream();
+            InputStream stream = item.getInputStream();
             if (name.equals("project-file")) {
                 String fileName = item.getName().toLowerCase();
                 if (fileName.isEmpty()) continue;
@@ -122,9 +122,9 @@ public class ImportProjectCommand extends Command {
                     stream.close();
                 }
             } else if (name.equals("project-url")) {
-                url = Streams.asString(stream);
+                url = IOUtils.toString(stream, StandardCharsets.UTF_8);
             } else {
-                options.put(name, Streams.asString(stream));
+                options.put(name, IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
         }
 

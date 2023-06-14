@@ -35,9 +35,8 @@ package com.google.refine.commands.cell;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;

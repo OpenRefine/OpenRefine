@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 
 import com.google.util.threads.ThreadPoolExecutorAdapter;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;

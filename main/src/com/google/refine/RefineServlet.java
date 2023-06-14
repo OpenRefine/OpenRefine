@@ -46,14 +46,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +71,7 @@ public class RefineServlet extends Butterfly {
     static public String FULLNAME = "OpenRefine ";
 
     static final long serialVersionUID = 2386057901503517403L;
-
-    static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    static private final String JAKARTA_SERVLET_CONTEXT_TEMPDIR = "jakarta.servlet.context.tempdir";
     private File tempDir = null;
 
     static private RefineServlet s_singleton;
@@ -115,7 +113,7 @@ public class RefineServlet extends Butterfly {
                 ObjectMapper mapper = new ObjectMapper();
                 ObjectNode parsedGit = mapper.readValue(gitStats, ObjectNode.class);
                 REVISION = parsedGit.get("git.commit.id.abbrev").asText("TRUNK");
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 REVISION = "TRUNK";
             }
         }
@@ -241,7 +239,7 @@ public class RefineServlet extends Butterfly {
 
     public File getTempDir() {
         if (tempDir == null) {
-            tempDir = (File) _config.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
+            tempDir = (File) _config.getServletContext().getAttribute(JAKARTA_SERVLET_CONTEXT_TEMPDIR);
             if (tempDir == null) {
                 throw new RuntimeException("This app server doesn't support temp directories");
             }
