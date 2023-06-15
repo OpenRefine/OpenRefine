@@ -70,8 +70,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding-bottom: var(--padding-looser);
 }
 
+#create-project-ui-source-selection-tabs>a,
 #create-project-ui-source-selection-tabs>div {
   padding: var(--padding-normal);
+  display: block;
+  text-decoration: none;
 }
 
 .create-project-ui-source-selection-tab-body {
