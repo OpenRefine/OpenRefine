@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.refine.expr.EvalError;
@@ -40,6 +41,12 @@ import com.google.refine.model.Project;
 import com.google.refine.sorting.Criterion.KeyMaker;
 
 abstract public class BaseSorter {
+
+
+    public Criterion[] getCriteria() {
+        return Arrays.copyOf(_criteria, _criteria.length);
+    }
+
 
     protected Criterion[] _criteria;
     protected KeyMaker[] _keyMakers;
