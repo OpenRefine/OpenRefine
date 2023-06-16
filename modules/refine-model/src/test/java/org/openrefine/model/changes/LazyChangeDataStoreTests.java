@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -34,6 +35,7 @@ public class LazyChangeDataStoreTests {
         MyChangeData changeData = mock(MyChangeData.class);
         SUT.store(changeData, new ChangeDataId(123, "data"), serializer, Optional.empty());
         Assert.assertEquals(SUT.retrieve(new ChangeDataId(123, "data"), serializer), changeData);
+        Assert.assertEquals(SUT.getChangeDataIds(123L), Collections.singletonList(new ChangeDataId(123, "data")));
     }
 
     @Test
@@ -47,6 +49,7 @@ public class LazyChangeDataStoreTests {
         } catch (IllegalArgumentException e) {
             ;
         }
+        Assert.assertEquals(SUT.getChangeDataIds(123L), Collections.emptyList());
     }
 
     @Test
@@ -60,6 +63,7 @@ public class LazyChangeDataStoreTests {
 
         Assert.assertEquals(returnedChangeData, changeData);
         Assert.assertFalse(SUT.needsRefreshing(456));
+        Assert.assertEquals(SUT.getChangeDataIds(456L), Collections.singletonList(new ChangeDataId(456L, "data")));
     }
 
     // to ease mocking

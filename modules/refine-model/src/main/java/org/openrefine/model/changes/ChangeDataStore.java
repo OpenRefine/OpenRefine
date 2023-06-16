@@ -2,6 +2,7 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -94,6 +95,11 @@ public interface ChangeDataStore {
      * process may have refreshed the contents on disk.
      */
     public boolean needsRefreshing(long historyEntryId);
+
+    /**
+     * Retrieve the list of change data ids associated with a given history entry.
+     */
+    public List<ChangeDataId> getChangeDataIds(long historyEntryId);
 
     /**
      * Discards all change data objects which belong to a given history entry id.

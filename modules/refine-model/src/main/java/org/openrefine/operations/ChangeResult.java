@@ -54,8 +54,7 @@ public class ChangeResult {
     }
 
     /**
-     * The facets that are suggested to be created after this change is applied. This is not included in the JSON
-     * serialization here, but rather in the containing HistoryEntry.
+     * The facets that are suggested to be created after this change is applied.
      */
     @JsonProperty("createdFacets")
     @JsonInclude(JsonInclude.Include.NON_NULL)
