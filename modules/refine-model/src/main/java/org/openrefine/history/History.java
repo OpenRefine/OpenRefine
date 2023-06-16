@@ -78,17 +78,29 @@ public class History {
     protected int _cachedPosition;
 
     @JsonIgnore
-    protected List<Grid> _states;
-    // stores whether the grid at the same index is read directly from disk or not
-    @JsonIgnore
-    protected List<Boolean> _cachedOnDisk;
-    // stores whether the grid depends on change data being fetched, and is therefore worth refreshing regularly
-    @JsonIgnore
-    protected List<Boolean> _inProgress;
+    protected List<Step> _steps;
     @JsonIgnore
     protected ChangeDataStore _dataStore;
     @JsonIgnore
     protected GridCache _gridStore;
+
+    /**
+     * A step in the history, which is a {@link Grid} with associated metadata.
+     */
+    protected static class Step {
+
+        protected Grid grid;
+        // stores whether the grid at the same index is read directly from disk or not
+        protected boolean cachedOnDisk;
+        // stores whether the grid depends on change data being fetched, and is therefore worth refreshing regularly
+        protected boolean inProgress;
+
+        protected Step(Grid grid, boolean cachedOnDisk, boolean inProgress) {
+            this.grid = grid;
+            this.cachedOnDisk = cachedOnDisk;
+            this.inProgress = inProgress;
+        }
+    }
 
     /**
      * Creates an empty on an initial grid.
@@ -102,12 +114,8 @@ public class History {
      */
     public History(Grid initialGrid, ChangeDataStore dataStore, GridCache gridStore, long projectId) {
         _entries = new ArrayList<>();
-        _states = new ArrayList<>();
-        _cachedOnDisk = new ArrayList<>();
-        _inProgress = new ArrayList<>();
-        _states.add(initialGrid);
-        _cachedOnDisk.add(true);
-        _inProgress.add(false);
+        _steps = new ArrayList<>();
+        _steps.add(new Step(initialGrid, false, false));
         _position = 0;
         _cachedPosition = 0;
         _dataStore = dataStore;
@@ -148,9 +156,7 @@ public class History {
                     e.printStackTrace();
                 }
             }
-            _states.add(grid);
-            _cachedOnDisk.add(grid != null);
-            _inProgress.add(false);
+            _steps.add(new Step(grid, grid != null, false));
             _entries.add(entry);
         }
 
@@ -166,7 +172,7 @@ public class History {
     @JsonIgnore
     public Grid getCurrentGrid() {
         // the current state is always assumed to be computed already
-        Grid grid = _states.get(_position);
+        Grid grid = _steps.get(_position).grid;
         if (grid == null) {
             throw new IllegalStateException("The current grid has not been computed yet");
         }
@@ -178,7 +184,7 @@ public class History {
      */
     @JsonIgnore
     public boolean currentGridNeedsRefreshing() {
-        return _inProgress.get(_position);
+        return _steps.get(_position).inProgress;
     }
 
     /**
@@ -187,10 +193,10 @@ public class History {
     @JsonIgnore
     public Grid getInitialGrid() {
         // the initial state is always assumed to be computed already
-        if (_states.get(0) == null) {
+        if (_steps.get(0).grid == null) {
             throw new IllegalStateException("The initial grid has not been computed yet");
         }
-        return _states.get(0);
+        return _steps.get(0).grid;
     }
 
     /**
@@ -202,8 +208,9 @@ public class History {
      *            whether the grid should be refreshed if it depends on change data being currently fetched
      */
     protected synchronized Grid getGrid(int position, boolean refresh) throws OperationException {
-        Grid grid = _states.get(position);
-        if (grid != null && !(refresh && _inProgress.get(position))) {
+        Step step = _steps.get(position);
+        Grid grid = step.grid;
+        if (grid != null && !(refresh && step.inProgress)) {
             return grid;
         } else {
             // this state has not been computed yet,
@@ -216,9 +223,9 @@ public class History {
             Operation operation = entry.getOperation();
             Grid newState;
             newState = operation.apply(previous, context).getGrid();
-            _states.set(position, newState);
-            _inProgress.set(position, _inProgress.get(position - 1) || _dataStore.needsRefreshing(entry.getId()));
-            _cachedOnDisk.set(position, false);
+            step.grid = newState;
+            step.inProgress = _steps.get(position - 1).inProgress || _dataStore.needsRefreshing(entry.getId());
+            step.cachedOnDisk = false;
             return newState;
         }
     }
@@ -280,7 +287,7 @@ public class History {
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
                 _dataStore.discardAll(oldEntry.getId());
-                if (_cachedOnDisk.get(i)) {
+                if (_steps.get(i).cachedOnDisk) {
                     try {
                         _gridStore.uncacheGrid(oldEntry.getId());
                     } catch (IOException e) {
@@ -290,9 +297,7 @@ public class History {
                 }
             }
             _entries = _entries.subList(0, _position);
-            _states = _states.subList(0, _position + 1);
-            _cachedOnDisk = _cachedOnDisk.subList(0, _position + 1);
-            _inProgress = _inProgress.subList(0, _position + 1);
+            _steps = _steps.subList(0, _position + 1);
         }
 
         // TODO refactor this so that it does not duplicate the logic of getGrid
@@ -305,9 +310,7 @@ public class History {
         }
         Grid newState = changeResult.getGrid();
         HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
-        _states.add(newState);
-        _cachedOnDisk.add(false);
-        _inProgress.add(_inProgress.get(_position) || _dataStore.needsRefreshing(entry.getId()));
+        _steps.add(new Step(newState, false, _steps.get(_position).inProgress || _dataStore.needsRefreshing(entry.getId())));
         _entries.add(entry);
         _position++;
         updateCachedPosition();
@@ -321,11 +324,12 @@ public class History {
         long historyEntryId = _entries.get(position - 1).getId();
         Grid cached = _gridStore.cacheGrid(historyEntryId, grid);
         synchronized (this) {
-            _states.set(position, cached);
-            _cachedOnDisk.set(position, true);
+            Step step = _steps.get(position);
+            step.grid = cached;
+            step.cachedOnDisk = true;
             // invalidate the following states until the next cached grid
-            for (int i = position + 1; i < _states.size() && !_cachedOnDisk.get(i); i++) {
-                _states.set(i, null);
+            for (int i = position + 1; i < _steps.size() && !_steps.get(i).cachedOnDisk; i++) {
+                _steps.get(i).grid = null;
             }
             // make sure the current position is computed
             getGrid(_position, false);
@@ -338,22 +342,23 @@ public class History {
         int newCachedPosition = _position;
         while (newCachedPosition > 0 &&
                 !isChangeExpensive(newCachedPosition - 1) && // we found an expensive change
-                _states.get(newCachedPosition - 1) != null // or we found a grid that is not computed yet, meaning it
-                                                           // (or anything before it) is not currently needed
+                _steps.get(newCachedPosition - 1).grid != null // or we found a grid that is not computed yet, meaning
+                                                               // it
+        // (or anything before it) is not currently needed
         ) {
             newCachedPosition--;
         }
         // Cache the new position
         _cachedPosition = newCachedPosition;
-        Grid newCachedState = _states.get(newCachedPosition);
+        Grid newCachedState = _steps.get(newCachedPosition).grid;
         boolean cachedSuccessfully = newCachedState.cache();
         if (!cachedSuccessfully) {
             // TODO cache on disk
         }
 
         if (newCachedPosition != previousCachedPosition) {
-            _states.get(previousCachedPosition).uncache();
-            if (previousCachedPosition > 0 && _cachedOnDisk.get(previousCachedPosition)) {
+            _steps.get(previousCachedPosition).grid.uncache();
+            if (previousCachedPosition > 0 && _steps.get(previousCachedPosition).cachedOnDisk) {
                 // TODO uncache off disk
             }
         }
