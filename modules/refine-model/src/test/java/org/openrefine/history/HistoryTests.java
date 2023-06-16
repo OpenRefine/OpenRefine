@@ -219,10 +219,10 @@ public class HistoryTests {
         History history = new History(initialState, dataStore, gridStore, fullEntries, 3, 1234L);
 
         // Inspect the states which are loaded and those which aren't
-        Assert.assertEquals(history._states.get(0), initialState);
-        Assert.assertNull(history._states.get(1));
-        Assert.assertEquals(history._states.get(2), thirdState); // loaded from cache
-        Assert.assertEquals(history._states.get(3), fourthState);
+        Assert.assertEquals(history._steps.get(0).grid, initialState);
+        Assert.assertNull(history._steps.get(1).grid);
+        Assert.assertEquals(history._steps.get(2).grid, thirdState); // loaded from cache
+        Assert.assertEquals(history._steps.get(3).grid, fourthState);
     }
 
     @Test
@@ -248,18 +248,18 @@ public class HistoryTests {
         List<HistoryEntry> fullEntries = Arrays.asList(firstEntry, secondEntry, thirdEntry);
         History history = new History(initialState, dataStore, gridStore, fullEntries, 3, 1234L);
         // make sure all changes have been derived
-        Assert.assertEquals(history._states.get(3), fourthState);
+        Assert.assertEquals(history._steps.get(3).grid, fourthState);
         // Set position to two
         history.undoRedo(secondChangeId);
 
         history.cacheIntermediateGridOnDisk(1);
 
         // the state was cached
-        Assert.assertEquals(history._states.get(1), cachedSecondState);
+        Assert.assertEquals(history._steps.get(1).grid, cachedSecondState);
         // the current state was rederived from the cached state
-        Assert.assertEquals(history._states.get(2), rederivedThirdState);
+        Assert.assertEquals(history._steps.get(2).grid, rederivedThirdState);
         // any further non-cached state is discarded
-        Assert.assertNull(history._states.get(3));
+        Assert.assertNull(history._steps.get(3).grid);
 
     }
 
