@@ -47,7 +47,7 @@ jobs:
   linux_server_tests:
     strategy:
       matrix:
-        java: [ 11, 17 ]
+        java: [ 11, 20 ]
 
     runs-on: ubuntu-latest
 
@@ -122,11 +122,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Java 17
+      - name: Set up Java 20
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 20
           cache: 'maven'
 
       - name: Check Java linting
