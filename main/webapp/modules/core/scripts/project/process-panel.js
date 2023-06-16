@@ -74,6 +74,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
 
   // mark processes as stale to keep track of which ones we are updating
   self._panelElmts.processes.find('li').addClass('stale-process');
+  let oldProcessFound = self._panelElmts.processes.find('li').length > 0;
   let newProcessFound = false;
 
   if (newData.processes && newData.processes.length > 0) {
@@ -196,7 +197,8 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   } else {
     self._panelElmts.noProcessDiv.show();
     self._panelElmts.processes.empty();
-    if (self._panelElmts.noProcessDiv.is(':visible') && ui.browsingEngine.getFacetUIStates().length > 0) {
+    // if there was at least a process before and there aren't any, and there are active facets, switch to the facets tab
+    if (self._panelElmts.noProcessDiv.is(':visible') && ui.browsingEngine.getFacetUIStates().length > 0 && oldProcessFound) {
       Refine.activateLeftPanelTab('facets');
     }
   }
