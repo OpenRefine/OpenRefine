@@ -432,7 +432,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
                 {
-                  "scroll" : false
+                  "scroll" : true
                 }
             );
           }
@@ -449,7 +449,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
                 {
-                  "scroll" : false
+                  "scroll" : true
                 }
             );
           }
