@@ -1,8 +1,8 @@
 
 package org.openrefine.model.changes;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -73,12 +74,14 @@ public class FileChangeDataStoreTests {
         verify(changeData, times(1)).saveToFileAsync(any(), eq(serializer));
         Assert.assertTrue(new File(new File(changeDir, "123"), "data").exists());
         Assert.assertFalse(SUT.needsRefreshing(123));
+        Assert.assertEquals(SUT.getChangeDataIds(123L), Collections.singletonList(changeDataId));
         ChangeData<String> retrieved = SUT.retrieve(new ChangeDataId(123, "data"), serializer);
         Assert.assertEquals(retrieved, changeData);
 
         SUT.discardAll(123);
 
         Assert.assertFalse(new File(changeDir, "123").exists());
+        Assert.assertEquals(SUT.getChangeDataIds(123L), Collections.emptyList());
     }
 
     @Test
@@ -105,6 +108,7 @@ public class FileChangeDataStoreTests {
         Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertTrue(newChangeDataLocation.exists());
         Assert.assertEquals(returnedChangeData, emptyChangeData);
+        Assert.assertEquals(SUT.getChangeDataIds(198L), Collections.singletonList(changeDataId));
     }
 
     @Test

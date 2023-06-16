@@ -4,6 +4,7 @@ package org.openrefine.model.changes;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
@@ -21,17 +22,13 @@ import org.openrefine.process.ProgressingFutures;
  */
 public class LazyChangeDataStore implements ChangeDataStore {
 
-    private final Map<String, ChangeData<?>> _changeData;
+    private final Map<ChangeDataId, ChangeData<?>> _changeData;
     private final Runner _runner;
     private final ProcessManager processManager = new ProcessManager();
 
     public LazyChangeDataStore(Runner runner) {
         _changeData = new HashMap<>();
         _runner = runner;
-    }
-
-    private String idPairToString(ChangeDataId changeDataId) {
-        return String.format("%d/%s", changeDataId.getHistoryEntryId(), changeDataId.getSubDirectory());
     }
 
     @Override
@@ -42,12 +39,12 @@ public class LazyChangeDataStore implements ChangeDataStore {
     @Override
     public <T> void store(ChangeData<T> data, ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
-        _changeData.put(idPairToString(changeDataId), data);
+        _changeData.put(changeDataId, data);
     }
 
     @Override
     public <T> ProgressingFuture<Void> storeAsync(ChangeData<T> data, ChangeDataId changeDataId, ChangeDataSerializer<T> serializer) {
-        _changeData.put(idPairToString(changeDataId), data);
+        _changeData.put(changeDataId, data);
         return ProgressingFutures.immediate(null);
     }
 
@@ -55,11 +52,10 @@ public class LazyChangeDataStore implements ChangeDataStore {
     @Override
     public <T> ChangeData<T> retrieve(ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer) throws IOException {
-        String key = idPairToString(changeDataId);
-        if (!_changeData.containsKey(key)) {
-            throw new IllegalArgumentException(String.format("Change data with id %s does not exist", key));
+        if (!_changeData.containsKey(changeDataId)) {
+            throw new IllegalArgumentException(String.format("Change data with id %s does not exist", changeDataId.toString()));
         }
-        return (ChangeData<T>) _changeData.get(key);
+        return (ChangeData<T>) _changeData.get(changeDataId);
     }
 
     @Override
@@ -67,12 +63,11 @@ public class LazyChangeDataStore implements ChangeDataStore {
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess, String description) throws IOException {
-        String key = idPairToString(changeDataId);
-        if (!_changeData.containsKey(key)) {
+        if (!_changeData.containsKey(changeDataId)) {
             ChangeData<T> computed = completionProcess.apply(Optional.empty());
-            _changeData.put(key, computed);
+            _changeData.put(changeDataId, computed);
         }
-        return (ChangeData<T>) _changeData.get(key);
+        return (ChangeData<T>) _changeData.get(changeDataId);
     }
 
     @Override
@@ -82,13 +77,16 @@ public class LazyChangeDataStore implements ChangeDataStore {
 
     @Override
     public void discardAll(long historyEntryId) {
-        Iterator<String> keySet = _changeData.keySet().iterator();
-        while (keySet.hasNext()) {
-            String key = keySet.next();
-            if (key.startsWith(Long.toString(historyEntryId) + "/")) {
-                keySet.remove();
-            }
+        for (ChangeDataId id : getChangeDataIds(historyEntryId)) {
+            _changeData.remove(id);
         }
+    }
+
+    @Override
+    public List<ChangeDataId> getChangeDataIds(long historyEntryId) {
+        return _changeData.keySet().stream()
+                .filter(id -> id.getHistoryEntryId() == historyEntryId)
+                .collect(Collectors.toList());
     }
 
 }

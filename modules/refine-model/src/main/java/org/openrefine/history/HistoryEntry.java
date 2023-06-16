@@ -36,7 +36,6 @@ package org.openrefine.history;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,14 +44,12 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.operations.Operation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 
 /**
- * This is the metadata of a Change. It's small, so we can load it in order to obtain information about a change without
- * actually loading the change.
+ * A record of applying an operation on the project at a point in time.
  */
 public class HistoryEntry {
 
@@ -121,17 +118,5 @@ public class HistoryEntry {
     @JsonProperty("gridPreservation")
     public GridPreservation getGridPreservation() {
         return gridPreservation;
-    }
-
-    /**
-     * Introduced for https://github.com/FasterXML/jackson-databind/issues/2692
-     * 
-     * @param facetConfigs
-     *            ignored
-     */
-    @JsonProperty("createdFacets")
-    @Deprecated
-    public void setCreatedFacets(List<FacetConfig> facetConfigs) {
-        // does nothing
     }
 }

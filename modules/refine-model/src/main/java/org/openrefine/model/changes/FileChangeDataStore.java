@@ -3,7 +3,12 @@ package org.openrefine.model.changes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -44,12 +49,14 @@ public class FileChangeDataStore implements ChangeDataStore {
     private final File _incompleteDirectory;
     private final ProcessManager processManager = new ProcessManager();
     private final Set<ChangeDataId> _toRefresh;
+    private final Map<Long, List<ChangeDataId>> _changeIds;
 
     public FileChangeDataStore(Runner runner, File baseDirectory, File incompleteDirectory) {
         _runner = runner;
         _baseDirectory = baseDirectory;
         _incompleteDirectory = incompleteDirectory;
         _toRefresh = new HashSet<>();
+        _changeIds = new HashMap<>();
     }
 
     /**
@@ -81,6 +88,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     public <T> void store(ChangeData<T> data, ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         File file = idsToFile(changeDataId, false);
+        registerId(changeDataId);
         file.mkdirs();
         try {
             ProgressingFuture<Void> future = data.saveToFileAsync(file, serializer);
@@ -98,6 +106,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     public <T> ProgressingFuture<Void> storeAsync(ChangeData<T> data, ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer) {
         File file = idsToFile(changeDataId, false);
+        registerId(changeDataId);
         file.mkdirs();
         return data.saveToFileAsync(file, serializer);
     }
@@ -110,6 +119,7 @@ public class FileChangeDataStore implements ChangeDataStore {
         if (changeData.isComplete() && _toRefresh.contains(changeDataId)) {
             _toRefresh.remove(changeDataId);
         }
+        registerId(changeDataId);
         return changeData;
     }
 
@@ -119,6 +129,7 @@ public class FileChangeDataStore implements ChangeDataStore {
             ChangeDataSerializer<T> serializer,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess, String description) throws IOException {
         File changeDataDir = idsToFile(changeDataId, false);
+        registerId(changeDataId);
         File incompleteDir = null;
 
         Optional<ChangeData<T>> returnedChangeData;
@@ -162,11 +173,27 @@ public class FileChangeDataStore implements ChangeDataStore {
         return returnedChangeData.orElse(_runner.emptyChangeData());
     }
 
+    protected void registerId(ChangeDataId id) {
+        long historyEntryId = id.getHistoryEntryId();
+        List<ChangeDataId> currentIds = getChangeDataIds(historyEntryId);
+        if (!currentIds.contains(id)) {
+            List<ChangeDataId> added = new LinkedList<>(currentIds);
+            added.add(id);
+            _changeIds.put(historyEntryId, added);
+        }
+    }
+
     @Override
     public boolean needsRefreshing(long historyEntryId) {
         return _toRefresh.stream()
                 .map(ChangeDataId::getHistoryEntryId)
                 .anyMatch(id -> id == historyEntryId);
+    }
+
+    @Override
+    public List<ChangeDataId> getChangeDataIds(long historyEntryId) {
+        List<ChangeDataId> ids = _changeIds.get(historyEntryId);
+        return ids != null ? ids : Collections.emptyList();
     }
 
     @Override
@@ -186,6 +213,8 @@ public class FileChangeDataStore implements ChangeDataStore {
                 ;
             }
         }
+        // and unregister the corresponding ids
+        _changeIds.remove(historyEntryId);
     }
 
     protected static class ChangeDataStoringProcess<T> extends Process {
