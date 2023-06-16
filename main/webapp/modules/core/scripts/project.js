@@ -317,7 +317,22 @@ Refine._renameProject = function() {
 
 Refine.customUpdateCallbacks = [];
 
-Refine.createUpdateFunction = function(options, onFinallyDone, onError) {
+Refine.createUpdateFunction = function(options, onFinallyDone) {
+  var dismissBusy = null;
+  var done = false;
+
+  var markAsDone = function() {
+    done = true;
+    if (dismissBusy) {
+      dismissBusy();
+      dismissBusy = null;
+    }
+  };
+  var onError = function(error) {
+    markAsDone();
+    console.warn('Error in Refine.update: '+e);
+  };
+
   var functions = [];
   var pushFunction = function(f) {
     var index = functions.length;
@@ -326,6 +341,7 @@ Refine.createUpdateFunction = function(options, onFinallyDone, onError) {
     });
   };
 
+  // first, expensive updates (which we want to shield with a "Working..." screen if they take too long)
   pushFunction(function(onDone, onError) {
     ui.historyPanel.update(onDone);
   });
@@ -337,12 +353,26 @@ Refine.createUpdateFunction = function(options, onFinallyDone, onError) {
     pushFunction(function(onDone, onError) {
       ui.dataTableView.update(onDone, preservePage, onError);
     });
+  }
+
+  // discard the "Working..." screen
+  pushFunction(function(onDone, onError) {
+    markAsDone();
+    if (onDone) {
+      onDone();
+    }
+  });  
+
+  // then, less expensive updates which can be done asynchronously. No need to have the "Working..." screen for those.
+  if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
     pushFunction(function(onDone) {
+      // this can take a long time but there is already a progress indicator in the facets panel (so no need for the "Working..." screen)
       ui.browsingEngine.update(onDone, onError);
     });
   }
   if (options.everythingChanged || options.processesChanged) {
     pushFunction(function(onDone) {
+      // this is cheap (so no need for the "Working..." screen
       ui.processPanel.update(onDone);
     });
   }
@@ -351,14 +381,31 @@ Refine.createUpdateFunction = function(options, onFinallyDone, onError) {
   // the options
   pushFunction(function(onDone, onError) {
     for(var i = 0; i != Refine.customUpdateCallbacks.length; i++) {
-        Refine.customUpdateCallbacks[i](options);
+      // those updates are done asynchronously and extensions are responsible for setting up any waiting indicator if needed
+      Refine.customUpdateCallbacks[i](options);
     }
     onDone();
   });
 
-  functions.push(onFinallyDone || function() {});
+  functions.push(function() {});
 
-  return functions[0];
+  return function() {
+
+    window.setTimeout(function() {
+      if (!done) {
+        dismissBusy = DialogSystem.showBusy();
+      }
+    }, 500);
+
+    Refine.setAjaxInProgress();
+    functions[0]();
+    Refine.clearAjaxInProgress();
+
+    markAsDone();
+    if (onFinallyDone) {
+      onFinallyDone();
+    }
+  };
 };
 
 /*
@@ -378,31 +425,7 @@ Refine.registerUpdateFunction = function(callback) {
 }
 
 Refine.update = function(options, onFinallyDone) {
-  var done = false;
-  var dismissBusy = null;
-
-  Refine.setAjaxInProgress();
-
-  Refine.createUpdateFunction(options, function() {
-    Refine.clearAjaxInProgress();
-
-    done = true;
-    if (dismissBusy) {
-      dismissBusy();
-    }
-    if (onFinallyDone) {
-      onFinallyDone();
-    }
-  }, function(error) {
-    dismissBusy();
-    console.warn('Error in Refine.update: '+e);
-  })();
-
-  window.setTimeout(function() {
-    if (!done) {
-      dismissBusy = DialogSystem.showBusy();
-    }
-  }, 500);
+  Refine.createUpdateFunction(options, onFinallyDone)();
 };
 
 Refine.postOperation = function(operation, updateOptions, callbacks) {
