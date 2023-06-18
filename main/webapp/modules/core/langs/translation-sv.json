@@ -165,12 +165,12 @@
     "core-dialogs/cluster-descr": "Den här funktionen hjälper dig att hitta grupper av olika cellvärden som kan vara alternativa representationer av samma sak. Till exempel kommer de två strängarna \"New York\" och \"new york\" mycket sannolikt att referera till samma begrepp och bara ha versalskillnader, och \"Gödel\" och \"Godel\" hänvisar förmodligen till samma person.",
     "core-dialogs/find-more": "Få reda på mer…",
     "core-dialogs/method": "Metod",
-    "core-dialogs/key-collision": "nyckelkollision",
-    "core-dialogs/nearest-neighbor": "närmaste granne",
+    "core-dialogs/key-collision": "Nyckelkollision",
+    "core-dialogs/nearest-neighbor": "Närmaste granne",
     "core-dialogs/keying-function": "Nyckelfunktion",
-    "clustering-keyers/fingerprint": "fingeravtryck",
+    "clustering-keyers/fingerprint": "Fingeravtryck",
     "clustering-keyers/ngram-fingerprint": "ngram-fingeravtryck",
-    "clustering-keyers/metaphone3": "metaphone3",
+    "clustering-keyers/metaphone3": "Metaphone3",
     "core-dialogs/distance-fun": "Distansfunktion",
     "core-dialogs/ngram-size": "N-gram-storlek",
     "core-dialogs/ngram-radius": "Radie",
@@ -457,5 +457,6 @@
     "core-index-import/load-json-rows-error": "Parsningen av JSON-data misslyckades",
     "core-index-import/remove-row": "Ta bort den här raden",
     "core-index/navigate-home": "Navigera till startskärmen",
-    "core-about/definition": "OpenRefine är ett kraftfullt verktyg för att arbeta med röriga data. Använd det för att förbättra datakonsistensen, länka till dataregister som Wikidata, utöka din data med data från andra källor, omvandla data till olika format för andra verktyg att konsumera och bidra med data tillbaka till sina källor. OpenRefine är inte en webbtjänst utan en desktop-app som körs på din egen dator så att du kan bearbeta känsliga data privat."
+    "core-about/definition": "OpenRefine är ett kraftfullt verktyg för att arbeta med röriga data. Använd det för att förbättra datakonsistensen, länka till dataregister som Wikidata, utöka din data med data från andra källor, omvandla data till olika format för andra verktyg att konsumera och bidra med data tillbaka till sina källor. OpenRefine är inte en webbtjänst utan en desktop-app som körs på din egen dator så att du kan bearbeta känsliga data privat.",
+    "core-dialogs/cluster-rows": "($1 rader)"
 }
