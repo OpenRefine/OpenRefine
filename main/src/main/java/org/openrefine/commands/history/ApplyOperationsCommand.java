@@ -41,6 +41,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
 import org.openrefine.history.OperationApplicationResult;
 import org.openrefine.model.Project;

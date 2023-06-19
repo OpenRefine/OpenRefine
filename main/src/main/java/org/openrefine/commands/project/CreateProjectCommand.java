@@ -72,7 +72,6 @@ public class CreateProjectCommand extends Command {
             return;
         }
 
-        ProjectManager.singleton.setBusy(true);
         try {
             Properties parameters = ParsingUtilities.parseUrlParameters(request);
             ImportingJob job = ImportingManager.createJob();
@@ -137,8 +136,6 @@ public class CreateProjectCommand extends Command {
             HttpUtilities.redirect(response, "/project?project=" + projectId);
         } catch (Exception e) {
             respondWithErrorPage(request, response, "Failed to import file", e);
-        } finally {
-            ProjectManager.singleton.setBusy(false);
         }
     }
 

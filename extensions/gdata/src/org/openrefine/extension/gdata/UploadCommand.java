@@ -86,7 +86,6 @@ public class UploadCommand extends Command {
             return;
         }
 
-        ProjectManager.singleton.setBusy(true);
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
@@ -130,8 +129,6 @@ public class UploadCommand extends Command {
             }
         } catch (Exception e) {
             throw new ServletException(e);
-        } finally {
-            ProjectManager.singleton.setBusy(false);
         }
     }
 

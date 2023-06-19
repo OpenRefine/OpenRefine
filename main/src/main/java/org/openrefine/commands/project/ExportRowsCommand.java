@@ -84,8 +84,6 @@ public class ExportRowsCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        ProjectManager.singleton.setBusy(true);
-
         try {
             Project project = getProject(request);
             long projectId = project.getId();
@@ -138,8 +136,6 @@ public class ExportRowsCommand extends Command {
             // Use generic error handling rather than our JSON handling
             logger.info("error:{}", e.getMessage());
             response.sendError(HttpStatus.SC_BAD_REQUEST, e.getMessage());
-        } finally {
-            ProjectManager.singleton.setBusy(false);
         }
     }
 }

@@ -93,11 +93,6 @@ public abstract class ProjectManager {
     transient protected FacetCountCacheManager _facetCountCacheManager = new FacetCountCacheManager();
 
     /**
-     * Flag for heavy operations like creating or importing projects. Workspace saves are skipped while it's set.
-     */
-    transient protected int _busy = 0;
-
-    /**
      * While each project's metadata is loaded completely at start-up, each project's raw data is loaded only when the
      * project is accessed by the user. This is because project metadata is tiny compared to raw project data. This hash
      * map from project ID to project is more like a last accessed-last out cache.
@@ -116,7 +111,7 @@ public abstract class ProjectManager {
     }
 
     public void dispose() {
-        save(true); // complete save
+        save(); // complete save
 
         for (Project project : _projects.values()) {
             if (project != null) {
@@ -226,16 +221,14 @@ public abstract class ProjectManager {
     /**
      * Save project to the data store
      */
-    protected abstract void saveProject(Project project, ProgressReporter progressReporter) throws IOException;
+    public abstract void saveProject(Project project, ProgressReporter progressReporter) throws IOException;
 
     /**
      * Save workspace and all projects to data store
      */
-    public void save(boolean allModified) {
-        if (allModified || _busy == 0) {
-            saveProjects(allModified);
-            saveWorkspace();
-        }
+    public void save() {
+        saveProjects();
+        saveWorkspace();
     }
 
     /**
@@ -261,11 +254,9 @@ public abstract class ProjectManager {
     /**
      * Saves all projects to the data store
      */
-    protected void saveProjects(boolean allModified) {
+    public void saveProjects() {
         List<SaveRecord> records = new ArrayList<>();
         Instant startTimeOfSave = Instant.now();
-        Instant quicksaveDeadline = startTimeOfSave.plus(QUICK_SAVE_MAX_TIME);
-
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
@@ -275,13 +266,16 @@ public abstract class ProjectManager {
                     // We use after or equals to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
-                    boolean hasUnsavedChanges = metadata.getModified().isAfter(project.getLastSave())
-                            || metadata.getModified().equals(project.getLastSave());
+                    Instant lastChange = project.getLastModified();
+                    if (metadata.getModified().isAfter(lastChange)) {
+                        lastChange = metadata.getModified();
+                    }
+                    boolean hasUnsavedChanges = lastChange.isAfter(project.getLastSave())
+                            || lastChange.equals(project.getLastSave());
 
                     if (hasUnsavedChanges) {
                         long msecsOverdue = Duration.between(startTimeOfSave, project.getLastSave()).toMillis();
                         records.add(new SaveRecord(project, msecsOverdue));
-
                     } else if (!project.getProcessManager().hasPending()
                             && project.getLastSave().plus(PROJECT_FLUSH_DELAY).isBefore(startTimeOfSave)) {
 
@@ -299,13 +293,9 @@ public abstract class ProjectManager {
             // Save most overdue projects first
             records.sort((o1, o2) -> Long.compare(o2.overdue, o1.overdue));
 
-            logger.info(allModified ? "Saving all modified projects ..." : "Saving some modified projects ...");
+            logger.info("Saving all modified projects ...");
 
             for (SaveRecord record : records) {
-                // If we've run out of time, bail out, unless we've been asked to save all modified projects
-                if (!allModified && Instant.now().isAfter(quicksaveDeadline)) {
-                    break;
-                }
                 try {
                     saveProject(record.project, null);
                 } catch (Exception e) {
@@ -564,19 +554,6 @@ public abstract class ProjectManager {
             _projects.remove(projectID).dispose();
         }
         _projectsMetadata.remove(projectID);
-    }
-
-    /**
-     * Sets the flag for long running operations. This will prevent workspace saves from happening while it's set.
-     */
-    public void setBusy(boolean busy) {
-        synchronized (this) {
-            if (busy) {
-                _busy++;
-            } else {
-                _busy--;
-            }
-        }
     }
 
     /**

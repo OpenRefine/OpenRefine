@@ -47,6 +47,7 @@ public class GetOperationsCommandTests extends CommandTestBase {
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();
         when(projectMetadata.getModified()).thenReturn(now);
+        when(project.getLastModified()).thenReturn(now);
         when(project.getLastSave()).thenReturn(now);
         when(project.getHistory()).thenReturn(history);
 

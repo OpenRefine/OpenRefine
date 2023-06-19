@@ -213,7 +213,7 @@ public class ImportingJob {
 
         // Make sure all projects have been saved in case we run out of memory
         // or have some other catastrophe on import
-        ProjectManager.singleton.save(true);
+        ProjectManager.singleton.save();
 
         project = newProject;
         metadata = new ProjectMetadata();

@@ -99,6 +99,8 @@ public class History {
     protected ChangeDataStore _dataStore;
     @JsonIgnore
     protected GridCache _gridStore;
+    @JsonIgnore
+    protected Instant _lastModified;
 
     /**
      * A step in the history, which is a {@link Grid} with associated metadata.
@@ -137,6 +139,7 @@ public class History {
         _gridStore = gridStore;
         _projectId = projectId;
         _cachingExecutorService = Executors.newFixedThreadPool(1);
+        _lastModified = Instant.now();
     }
 
     /**
@@ -180,6 +183,10 @@ public class History {
         getGrid(position, false);
         _position = position;
         updateCachedPosition();
+    }
+
+    private void updateModified() {
+        _lastModified = Instant.now();
     }
 
     /**
@@ -281,6 +288,14 @@ public class History {
     }
 
     /**
+     * The last time this history was modified (or created).
+     */
+    @JsonIgnore
+    public Instant getLastModified() {
+        return _lastModified;
+    }
+
+    /**
      * Applies an operation on top of the existing history. This will modify this instance. If the operation application
      * failed, the exception will be returned in {@link OperationApplicationResult#getException()}.
      * 
@@ -339,6 +354,7 @@ public class History {
         _entries.add(entry);
         _position++;
         updateCachedPosition();
+        updateModified();
         return new OperationApplicationResult(entry, changeResult);
     }
 
@@ -485,6 +501,7 @@ public class History {
                         .min(Comparator.naturalOrder()).get();
 
         updateCachedPosition();
+        updateModified();
         return gridPreservation;
     }
 

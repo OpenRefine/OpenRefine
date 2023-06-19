@@ -100,7 +100,7 @@ public class RefineServlet extends Butterfly {
         @Override
         public void run() {
             try {
-                ProjectManager.singleton.save(false); // quick, potentially incomplete save
+                ProjectManager.singleton.save();
             } catch (final Throwable e) {
                 // Not the best, but we REALLY want this to keep trying
             }
