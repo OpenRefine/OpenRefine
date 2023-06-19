@@ -312,4 +312,9 @@ public class GetRowsCommand extends Command {
 
         respondJSON(response, 200, result);
     }
+
+    @Override
+    public boolean logRequests() {
+        return false;
+    }
 }
