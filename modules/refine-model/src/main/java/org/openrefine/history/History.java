@@ -34,10 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.history;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,7 +80,18 @@ public class History {
      * permitting) or on disk
      */
     @JsonProperty("cachedPosition")
-    protected int _cachedPosition;
+    protected int _cachedPosition = -1;
+    /*
+     * The step in the history that should ideally be cached given the current position. This might not be the actual
+     * position because caching is in progress.
+     */
+    protected int _desiredCachedPosition = -1;
+    /*
+     * Position currently being cached, or -1 if no grid is currently being cached.
+     */
+    protected int _positionBeingCached = -1;
+    protected Future<Void> _cachingFuture = null;
+    protected final ExecutorService _cachingExecutorService;
 
     @JsonIgnore
     protected List<Step> _steps;
@@ -117,10 +133,10 @@ public class History {
         _steps = new ArrayList<>();
         _steps.add(new Step(initialGrid, false, false));
         _position = 0;
-        _cachedPosition = 0;
         _dataStore = dataStore;
         _gridStore = gridStore;
         _projectId = projectId;
+        _cachingExecutorService = Executors.newFixedThreadPool(1);
     }
 
     /**
@@ -283,17 +299,26 @@ public class History {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             logger.warn(String.format("Removing undone history entries from %d to %d", _position, _entries.size()));
+            // stop the caching process if we are caching a grid in the future
+            if (_positionBeingCached > _position && _cachingFuture != null && !_cachingFuture.isDone()) {
+                _positionBeingCached = -1;
+                _cachingFuture.cancel(true);
+            }
             // uncache all the grids that we are removing
             for (int i = _position; i < _entries.size(); i++) {
                 HistoryEntry oldEntry = _entries.get(i);
                 _dataStore.discardAll(oldEntry.getId());
-                if (_steps.get(i).cachedOnDisk) {
+                Step step = _steps.get(i);
+                if (step.cachedOnDisk) {
                     try {
                         _gridStore.uncacheGrid(oldEntry.getId());
                     } catch (IOException e) {
                         logger.warn("Ignoring deletion of unreachable cached grid because it failed:");
                         e.printStackTrace();
                     }
+                }
+                if (step.grid != null && step.grid.isCached()) {
+                    step.grid.uncache();
                 }
             }
             _entries = _entries.subList(0, _position);
@@ -337,39 +362,85 @@ public class History {
     }
 
     protected synchronized void updateCachedPosition() {
-        int previousCachedPosition = _cachedPosition;
         // Find the last expensive operation before the current one.
         int newCachedPosition = _position;
         while (newCachedPosition > 0 &&
-                !isChangeExpensive(newCachedPosition - 1) && // we found an expensive change
-                _steps.get(newCachedPosition - 1).grid != null // or we found a grid that is not computed yet, meaning
-                                                               // it
-        // (or anything before it) is not currently needed
-        ) {
+                (!isChangeExpensive(newCachedPosition - 1) || _steps.get(newCachedPosition).inProgress) &&
+                _steps.get(newCachedPosition - 1).grid != null) {
             newCachedPosition--;
         }
-        // Cache the new position
-        _cachedPosition = newCachedPosition;
-        Grid newCachedState = _steps.get(newCachedPosition).grid;
-        boolean cachedSuccessfully = newCachedState.cache();
-        if (!cachedSuccessfully) {
-            // TODO cache on disk
-        }
 
-        if (newCachedPosition != previousCachedPosition) {
-            _steps.get(previousCachedPosition).grid.uncache();
-            if (previousCachedPosition > 0 && _steps.get(previousCachedPosition).cachedOnDisk) {
-                // TODO uncache off disk
+        if (newCachedPosition == _desiredCachedPosition || _steps.get(newCachedPosition).inProgress) {
+            logger.info("No cached position change needed, it remains {}", _desiredCachedPosition);
+            return;
+        }
+        logger.info("Changing cached position from {} to {}", _desiredCachedPosition, newCachedPosition);
+        if (_positionBeingCached != -1) {
+            if (_positionBeingCached > newCachedPosition) {
+                // the position currently being cached is
+                // not interesting for us anymore, because the position
+                // we want to cache does not rely on it.
+                if (_cachingFuture != null) {
+                    _positionBeingCached = -1;
+                    _cachingFuture.cancel(true);
+                    // TODO cleanup any leftover files on disk
+                }
+            } else { // _positionBeingCached < newCachedPosition
+                return;
             }
         }
+        _desiredCachedPosition = newCachedPosition;
+
+        // Start caching the desired position, since we now know
+        // that no other caching is currently happening.
+        _positionBeingCached = newCachedPosition;
+        int toCache = newCachedPosition;
+        _cachingFuture = _cachingExecutorService.submit(() -> {
+            Grid newCachedState = _steps.get(toCache).grid;
+            Grid oldCachedState = _cachedPosition >= 0 ? _steps.get(_cachedPosition).grid : null;
+            boolean cachedSuccessfully = false;
+            try {
+                if (_cachedPosition > toCache) {
+                    logger.info("Uncaching previous cached position {}", _cachedPosition);
+                    oldCachedState.uncache();
+                    // TODO uncache off disk if it is cached there
+                }
+                // try to cache in memory first
+                logger.info("Caching new position {}", toCache);
+                Instant cachingStart = Instant.now();
+                cachedSuccessfully = newCachedState.cache();
+                Instant cachingEnd = Instant.now();
+                if (cachedSuccessfully) {
+                    logger.info("Successfully cached position {} in {} ms", toCache,
+                            cachingEnd.toEpochMilli() - cachingStart.toEpochMilli());
+                    _cachedPosition = toCache;
+                    if (oldCachedState != null && _cachedPosition < toCache) {
+                        logger.info("Uncaching previous state");
+                        oldCachedState.uncache();
+                    }
+                    // TODO uncache off disk if it is cached there
+                } else {
+                    // TODO cache on disk
+                }
+            } finally {
+                logger.info("Done caching position {}", toCache);
+                synchronized (History.this) {
+                    if (cachedSuccessfully) {
+                        _positionBeingCached = -1;
+                    }
+                    updateCachedPosition();
+                }
+            }
+            return null;
+        });
     }
 
     /**
      * Determines if the change at the given index was expensive to compute or not.
      */
     private boolean isChangeExpensive(int index) {
-        // for now, we are disabling caching by considering all changes inexpensive. TODO reintroduce it
-        return false;
+        long historyEntryId = _entries.get(index).getId();
+        return !_dataStore.getChangeDataIds(historyEntryId).isEmpty();
     }
 
     public void refreshCurrentGrid() {
@@ -451,6 +522,19 @@ public class History {
             return _entries.get(entryIndex(entryID));
         } catch (IllegalArgumentException e) {
             return null;
+        }
+    }
+
+    /**
+     * Utility method to wait for any caching operation currently being executed asynchronously. Mostly for testing
+     * purposes.
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    protected void waitForCaching() throws InterruptedException, ExecutionException {
+        while (_cachingFuture != null && !_cachingFuture.isDone()) {
+            _cachingFuture.get();
         }
     }
 
