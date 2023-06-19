@@ -21,6 +21,10 @@
   overflow: hidden;
 }
 
+.schema-alignment-tab-content {
+  max-width: 70em;
+}
+
 .main-view-panel-tab-header {
   margin-top: 9px;
   margin-left: 7px;
@@ -48,10 +52,6 @@
   overflow-y: auto;
 }
 
-.schema-alignment-dialog-entity-edits-area {
-  max-width: 70em;
-}
-
 .schema-alignment-dialog-statements-area {
   padding: 10px;
   max-width: 900px;
@@ -66,45 +66,25 @@
   margin: 1em;
 }
 
-.schema-alignment-save-buttons{
-  display:flex; 
-  flex-direction: row; 
-  float: right; 
-  padding: 12px;
+.float-apart {
+  display: flex;
+  justify-content: space-between;
 }
 
-.schema-alignment-save {
-  padding-right: 10px; 
+.schema-alignment-footer {
+  padding: 1em;
 }
 
-#schema-alignment-entity-add-buttons .wbs-toolbar{
-  float: left;
-  padding: 1em;  
-}
-
-.schema-alignment-save button:disabled {
-  color: gray;
-}
-
-.schema-alignment-save button {
-  font-weight: normal;
-  width: 100%;
-}
-
-.schema-alignment-discard button:disabled {
-  color: gray;
-}
-
-.schema-alignment-discard button {
-  font-weight: normal;
-  width: 100%;
+.schema-alignment-footer button:disabled {
+  color: grey;
+  cursor: not-allowed;
 }
 
 .schema-alignment-dialog-columns-area {
   border: 1px solid #bcf;
   border-left: 0;
   border-right: 0;
-  padding: 5px;
+  padding: 5px 1em;
   max-height: 100px;
   overflow-y: auto;
 }
