@@ -87,6 +87,10 @@ public class LocalRunner implements Runner {
     public Grid loadGrid(File path) throws IOException {
         File metadataFile = new File(path, METADATA_PATH);
         File gridFile = new File(path, GRID_PATH);
+        File completionMarker = new File(gridFile, Runner.COMPLETION_MARKER_FILE_NAME);
+        if (!completionMarker.exists()) {
+            throw new IOException("the grid to load is incomplete (missing completion marker)");
+        }
 
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext

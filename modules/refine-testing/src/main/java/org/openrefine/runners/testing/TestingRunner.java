@@ -86,6 +86,10 @@ public class TestingRunner implements Runner {
     public Grid loadGrid(File path) throws IOException {
         File gridPath = new File(path, Grid.GRID_PATH);
         File metadataPath = new File(path, Grid.METADATA_PATH);
+        File completionMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
+        if (!completionMarker.exists()) {
+            throw new IOException("the grid to load is incomplete (missing completion marker)");
+        }
 
         List<Row> rows = new ArrayList<>();
 
