@@ -98,6 +98,9 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         var progressContainer = $('<div></div>')
             .addClass('process-progress-container')
             .appendTo(processBody);
+        var statusContainer = $('<div></div>')
+            .addClass('process-status-container')
+            .appendTo(processBody);
         var spinner = $('<img />')
             .addClass('notification-loader')
             .attr('src', 'images/small-spinner.gif')
@@ -183,8 +186,14 @@ ProcessPanel.prototype._renderPanel = function(newData) {
           .width(process.progress + '%');
       if (process.running) {
         li.find('.pause-button').show();
+        li.find('.process-progress-container').show();
+        li.find('.process-status-container').hide();
       } else {
         li.find('.pause-button').hide();
+        li.find('.process-progress-container').hide();
+        li.find('.process-status-container')
+          .text($.i18n('core-processes/queued'))
+          .show();
       }
       let spinnerElement = li.find('.notification-loader');
       if (!process.paused && process.running) {
