@@ -46,6 +46,7 @@ public class PauseProcessCommandTests extends CommandTestBase {
         when(projectMetadata.getTags()).thenReturn(new String[] {});
         Instant now = Instant.now();
         when(projectMetadata.getModified()).thenReturn(now);
+        when(project.getLastModified()).thenReturn(now);
         when(project.getLastSave()).thenReturn(now);
         processManager = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(processManager);

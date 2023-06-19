@@ -110,8 +110,8 @@ public class ProjectManagerStub extends ProjectManager {
 
     // Overridden to make public for testing
     @Override
-    public void saveProjects(boolean allModified) {
-        super.saveProjects(allModified);
+    public void saveProjects() {
+        super.saveProjects();
     }
 
     @Override

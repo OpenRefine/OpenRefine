@@ -268,12 +268,15 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveProject(Project project, ProgressReporter progressReporter) throws IOException {
+    public void saveProject(Project project, ProgressReporter progressReporter) throws IOException {
         synchronized (project) {
             long id = project.getId();
             File dir = getProjectDir(id);
 
-            _historyEntryManager.save(project.getHistory(), dir, progressReporter);
+            History history = project.getHistory();
+            synchronized (history) {
+                _historyEntryManager.save(history, dir, progressReporter);
+            }
             project.setLastSave();
 
             logger.info("Saved project '{}'", id);

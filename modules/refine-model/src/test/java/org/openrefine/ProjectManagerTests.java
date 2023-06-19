@@ -45,12 +45,12 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.ProjectStub;
@@ -67,6 +67,7 @@ public class ProjectManagerTests {
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
+    History history;
     ProjectMetadata metadata;
     ProcessManager procmgr;
     ProgressReporter progressReporter;
@@ -79,11 +80,13 @@ public class ProjectManagerTests {
         SUT = spy(pm);
 
         project = mock(Project.class);
+        history = mock(History.class);
         metadata = mock(ProjectMetadata.class);
         procmgr = mock(ProcessManager.class);
         progressReporter = mock(ProgressReporter.class);
         grid = mock(Grid.class);
         when(project.getProcessManager()).thenReturn(procmgr);
+        when(project.getHistory()).thenReturn(history);
         when(project.getId()).thenReturn(1234L);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
         when(project.getCurrentGrid()).thenReturn(grid);
@@ -160,7 +163,7 @@ public class ProjectManagerTests {
         // check that the two projects are not the same
         Assert.assertNotEquals(project.getId(), project2.getId());
 
-        SUT.save(true);
+        SUT.save();
 
         verifySaved(project, metadata);
 
@@ -176,12 +179,14 @@ public class ProjectManagerTests {
         registerProject(project, metadata);
         Assert.assertSame(SUT.getProject(1234L), project);
 
-        SUT.save(true);
+        SUT.save();
 
         verify(metadata, atLeastOnce()).getModified();
         verify(metadata, atLeastOnce()).getTags();
         verify(metadata).setRowCount(ROW_COUNT);
         verify(project, atLeastOnce()).getProcessManager();
+        verify(project, times(1)).getLastModified();
+
         verify(project, atLeastOnce()).getLastSave();
         verify(SUT, never()).saveProject(project, progressReporter);
         Assert.assertNull(SUT.getProject(0));
@@ -194,20 +199,6 @@ public class ProjectManagerTests {
         verify(SUT, times(1)).saveWorkspace();
     }
 
-    @Test
-    public void cannotSaveWhenBusy() {
-        registerProject();
-        SUT.setBusy(true);
-
-        SUT.save(false);
-
-        verify(SUT, never()).saveProjects(Mockito.anyBoolean());
-        verify(SUT, never()).saveWorkspace();
-        verify(metadata, times(1)).getTags();
-        verify(metadata).setRowCount(ROW_COUNT);
-        verify(project, atLeast(1)).getCurrentGrid();
-    }
-
     // TODO test canSaveAllModifiedWithRaceCondition
 
     @Test
@@ -215,7 +206,7 @@ public class ProjectManagerTests {
         registerProject();
         whenGetSaveTimes(project, metadata);
 
-        SUT.save(false); // not busy
+        SUT.save(); // not busy
 
         verifySaved(project, metadata);
         verify(SUT, times(1)).saveWorkspace();
@@ -245,6 +236,7 @@ public class ProjectManagerTests {
     protected void whenGetSaveTimes(Project proj, ProjectMetadata meta, int secondsDifference) {
         whenProjectGetLastSave(proj);
         whenMetadataGetModified(meta, secondsDifference);
+        when(proj.getLastModified()).thenReturn(BASE_DATE.plusSeconds(secondsDifference));
     }
 
     protected void whenProjectGetLastSave(Project proj) {

@@ -88,6 +88,7 @@ public class GetRowsCommandTest extends CommandTestBase {
         when(incompleteProject.getCurrentGrid()).thenReturn(incompleteGrid);
         when(incompleteProject.getId()).thenReturn(incompleteProjectId);
         when(incompleteProject.getLastSave()).thenReturn(project.getLastSave());
+        when(incompleteProject.getLastModified()).thenReturn(project.getLastModified());
         History history = mock(History.class);
         when(history.currentGridNeedsRefreshing()).thenReturn(true);
         when(history.getCurrentGrid()).thenReturn(incompleteGrid);

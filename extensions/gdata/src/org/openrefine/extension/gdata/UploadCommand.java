@@ -53,7 +53,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
@@ -86,7 +85,6 @@ public class UploadCommand extends Command {
             return;
         }
 
-        ProjectManager.singleton.setBusy(true);
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
@@ -130,8 +128,6 @@ public class UploadCommand extends Command {
             }
         } catch (Exception e) {
             throw new ServletException(e);
-        } finally {
-            ProjectManager.singleton.setBusy(false);
         }
     }
 

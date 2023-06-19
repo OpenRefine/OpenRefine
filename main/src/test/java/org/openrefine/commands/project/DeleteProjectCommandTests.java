@@ -38,6 +38,7 @@ public class DeleteProjectCommandTests extends CommandTestBase {
         Instant now = Instant.now();
         when(project.getLastSave()).thenReturn(now);
         when(project.getCurrentGrid()).thenReturn(mock(Grid.class));
+        when(project.getLastModified()).thenReturn(now);
         ProjectMetadata projectMetadata = mock(ProjectMetadata.class);
         when(projectMetadata.getModified()).thenReturn(now);
 

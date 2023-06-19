@@ -86,7 +86,6 @@ public class ImportProjectCommand extends Command {
             return;
         }
 
-        ProjectManager.singleton.setBusy(true);
         try {
             Properties options = ParsingUtilities.parseUrlParameters(request);
 
@@ -109,8 +108,6 @@ public class ImportProjectCommand extends Command {
             }
         } catch (Exception e) {
             respondWithErrorPage(request, response, "Failed to import project", e);
-        } finally {
-            ProjectManager.singleton.setBusy(false);
         }
     }
 

@@ -45,6 +45,7 @@ public class ResumeProcessCommandTests extends CommandTestBase {
         Instant now = Instant.now();
         when(projectMetadata.getModified()).thenReturn(now);
         when(project.getLastSave()).thenReturn(now);
+        when(project.getLastModified()).thenReturn(now);
         processManager = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(processManager);
         process = mock(Process.class);

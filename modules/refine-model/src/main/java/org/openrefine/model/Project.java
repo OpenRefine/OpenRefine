@@ -107,6 +107,10 @@ public class Project {
         this._lastSave = Instant.now();
     }
 
+    public Instant getLastModified() {
+        return history.getLastModified();
+    }
+
     public ProjectMetadata getMetadata() {
         return ProjectManager.singleton.getProjectMetadata(id);
     }
