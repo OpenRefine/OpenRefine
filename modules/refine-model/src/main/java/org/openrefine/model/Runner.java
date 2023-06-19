@@ -16,7 +16,8 @@ import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 
 /**
- * Encapsulates the context required to implement, read and execute operations on {@link Grid} objects.
+ * Encapsulates the context required to implement, read and execute operations on {@link Grid} and {@link ChangeData}
+ * objects.
  * 
  * Implementations should have a constructor with a single parameter, a {@link RunnerConfiguration} object, which is
  * used to initialize the runner.
@@ -35,7 +36,8 @@ public interface Runner {
      *            the directory where the Grid is stored
      * @return the grid
      * @throws IOException
-     *             when loading the grid failed
+     *             when loading the grid failed, or when the grid's serialization was incomplete (lacking a _SUCCESS
+     *             marker)
      */
     Grid loadGrid(File path) throws IOException;
 

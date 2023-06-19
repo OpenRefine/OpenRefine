@@ -1,23 +1,64 @@
 
 package org.openrefine.runners.testing;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import com.google.common.collect.ImmutableList;
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.fail;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.browsing.columns.ColumnStats;
-import org.openrefine.browsing.facets.*;
+import org.openrefine.browsing.facets.AllFacetsAggregator;
+import org.openrefine.browsing.facets.AllFacetsState;
+import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetResult;
+import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.browsing.facets.StringFacet;
+import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.importers.MultiFileReadingProgressStub;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Grid.ApproxCount;
-import org.openrefine.model.Record;
 import org.openrefine.model.Grid.PartialAggregation;
-import org.openrefine.model.changes.*;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.RecordMapper;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowFlatMapper;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowScanMapper;
+import org.openrefine.model.Runner;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RecordChangeDataJoiner;
+import org.openrefine.model.changes.RecordChangeDataProducer;
+import org.openrefine.model.changes.RowChangeDataFlatJoiner;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -36,16 +77,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.mock;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A collection of generic tests that any implementation of {@link Runner} should satisfy. These tests are provided in
@@ -490,6 +522,23 @@ public abstract class RunnerTestBase {
 
         Grid loaded = SUT.loadGrid(tempFile);
         Assert.assertEquals(loaded.collectRows(), grid.collectRows());
+    }
+
+    @Test
+    public void testLoadIncompleteGrid() throws IOException {
+        File tempFile = new File(tempDir, "testgrid_incomplete");
+
+        simpleGrid.saveToFile(tempFile);
+        // artificially mark the grid as incomplete by removing the completion marker
+        File completionMarker = new File(new File(tempFile, Grid.GRID_PATH), Runner.COMPLETION_MARKER_FILE_NAME);
+        completionMarker.delete();
+
+        try {
+            SUT.loadGrid(tempFile);
+            fail("loading an incomplete grid did not throw an exception");
+        } catch (IOException e) {
+            // expected
+        }
     }
 
     @Test
