@@ -443,7 +443,6 @@
               <jre>
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
-                <maxVersion>${java.maxversion}</maxVersion>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
