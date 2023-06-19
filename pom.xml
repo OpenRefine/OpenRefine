@@ -139,10 +139,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-	<version>${maven-compiler-plugin.version}</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <source>${java.minversion}</source>
-          <target>${java.minversion}</target>
+          <release>${java.minversion}</release>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
