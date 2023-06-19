@@ -460,10 +460,10 @@ cypress-file-upload@^5.0.8:
   resolved "https://registry.yarnpkg.com/cypress-file-upload/-/cypress-file-upload-5.0.8.tgz#d8824cbeaab798e44be8009769f9a6c9daa1b4a1"
   integrity sha512-+8VzNabRk3zG6x8f8BWArF/xA/W0VK4IZNx3MV0jFWrJS/qKn8eHfa5nU73P9fOQAgwHFJx7zjg4lwOnljMO8g==
 
-cypress-wait-until@^1.7.2:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/cypress-wait-until/-/cypress-wait-until-1.7.2.tgz#7f534dd5a11c89b65359e7a0210f20d3dfc22107"
-  integrity sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==
+cypress-wait-until@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/cypress-wait-until/-/cypress-wait-until-2.0.0.tgz#86be509d60d7c5b86ecde5c3bda48a8c5966123e"
+  integrity sha512-ulUZyrWBn+OuC8oiQuGKAScDYfpaWnE3dEE/raUo64w4RHQxZrQ/iMIWT4ZjGMMPr3P+BFEALCRnjQeRqzZj6g==
 
 cypress@12.14.0:
   version "12.14.0"
