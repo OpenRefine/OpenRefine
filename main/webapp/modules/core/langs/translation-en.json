@@ -371,6 +371,8 @@
     "core-facets/numeric": "Numeric",
     "core-facets/value-range": "$1 — $2",
     "core-processes/no-process": "No running process",
+    "core-processes/queued": "Queued",
+    "core-processes/pause": "Pause",
     "core-processes/pause": "Pause",
     "core-processes/resume": "Resume",
     "core-processes/spinner-alt-text": "Loading",
