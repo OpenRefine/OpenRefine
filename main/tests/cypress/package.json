@@ -12,18 +12,13 @@
     },
     "dependencies": {
         "cypress": "12.14.0",
-        "cypress-file-upload": "^5.0.8",
-        "cypress-wait-until": "^1.7.2",
-        "dotenv": "^16.3.1",
-        "fs-extra": "^11.1.1",
-        "uniqid": "^5.4.0"
+        "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
         "eslint": "^8.43.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-cypress": "^2.13.3",
-        "jsdoc": "^4.0.2",
         "prettier": "2.8.8"
     }
 }
