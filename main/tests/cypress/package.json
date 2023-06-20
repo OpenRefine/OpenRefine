@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "cypress": "12.15.0",
-        "cypress-file-upload": "^5.0.8",
+        "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
         "eslint": "^8.43.0",
