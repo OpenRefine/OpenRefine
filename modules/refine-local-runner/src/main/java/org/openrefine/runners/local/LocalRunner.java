@@ -5,27 +5,39 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.openrefine.importers.MultiFileReadingProgress;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Grid.Metadata;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.model.Runner;
+import org.openrefine.model.RunnerConfiguration;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.PLLContext;
 import org.openrefine.runners.local.pll.PairPLL;
 import org.openrefine.runners.local.pll.TextFilePLL;
 import org.openrefine.runners.local.pll.Tuple2;
-import org.openrefine.overlay.OverlayModel;
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
-import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
+import org.openrefine.util.NamingThreadFactory;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +84,7 @@ public class LocalRunner implements Runner {
         unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", 78);
 
         pllContext = new PLLContext(MoreExecutors.listeningDecorator(
-                Executors.newCachedThreadPool()),
+                Executors.newCachedThreadPool(new NamingThreadFactory("LocalRunner"))),
                 defaultParallelism, minSplitSize, maxSplitSize, minSplitRowCount, maxSplitRowCount);
     }
 

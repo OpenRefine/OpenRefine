@@ -52,6 +52,7 @@ import org.openrefine.model.changes.GridCache;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.util.NamingThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +139,7 @@ public class History {
         _dataStore = dataStore;
         _gridStore = gridStore;
         _projectId = projectId;
-        _cachingExecutorService = Executors.newFixedThreadPool(1);
+        _cachingExecutorService = Executors.newFixedThreadPool(1, new NamingThreadFactory("History-" + projectId + "-caching"));
         _lastModified = Instant.now();
     }
 

@@ -45,8 +45,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
 
@@ -161,7 +163,8 @@ class RefineServer extends Server {
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
         long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
-        return new ThreadPoolExecutorAdapter(new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue));
+        return new ThreadPoolExecutorAdapter(new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue,
+                new NamingThreadFactory("RefineServer")));
     }
 
     private ThreadPoolExecutor threadPool;
@@ -398,6 +401,26 @@ class RefineServer extends Server {
         return dataDir.getAbsolutePath();
     }
 
+    /**
+     * A utility to name the threads in a {@link ThreadPoolExecutor}. We sadly cannot use the one from refine-model
+     * because it is only loaded later.
+     */
+    private static class NamingThreadFactory implements ThreadFactory {
+
+        private final String namePrefix;
+        private final AtomicInteger nextId = new AtomicInteger(0);
+
+        public NamingThreadFactory(String namePrefix) {
+            this.namePrefix = namePrefix;
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            String name = namePrefix + "-thread-" + nextId.getAndIncrement();
+            return new Thread(r, name);
+        }
+
+    }
 }
 
 /* -------------- Refine Client ----------------- */
