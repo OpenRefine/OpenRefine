@@ -62,7 +62,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
     this._elmts.clusterButton.html($.i18n('core-facets/cluster'));
-    this._elmts.or_auto.html($.i18n('core-facets/auto'));
+    this._elmts.or_auto_update.html($.i18n('core-facets/auto-update'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
     this._elmts.exportClusterButton.html($.i18n('core-buttons/export-cluster'));
