@@ -5,14 +5,19 @@
     "license": "BSD-3-Clause",
     "author": "OpenRefine",
     "private": true,
+    "engines": {
+        "node": ">=14.0.0",
+        "npm":  ">=8.11.0",
+        "yarn": ">=1.22.15"
+    },
     "scripts": {
         "test": "cypress run --browser electron --headless --quiet",
         "fix-lint": "prettier --write . && eslint --fix .",
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "12.14.0",
-        "cypress-file-upload": "^5.0.8"
+        "cypress": "12.15.0",
+        "cypress-file-upload": "^5.0.8",
     },
     "devDependencies": {
         "eslint": "^8.43.0",
