@@ -48,6 +48,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.util.NamingThreadFactory;
 
 public class ProcessManager {
 
@@ -55,7 +56,7 @@ public class ProcessManager {
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<>());
     @JsonIgnore
     protected ListeningExecutorService _executorService = MoreExecutors.listeningDecorator(
-            Executors.newCachedThreadPool());
+            Executors.newCachedThreadPool(new NamingThreadFactory("ProcessManager")));
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
 

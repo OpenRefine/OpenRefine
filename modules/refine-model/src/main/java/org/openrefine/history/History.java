@@ -57,6 +57,7 @@ import org.openrefine.model.changes.GridCache;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.util.NamingThreadFactory;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -138,7 +139,7 @@ public class History {
         _dataStore = dataStore;
         _gridStore = gridStore;
         _projectId = projectId;
-        _cachingExecutorService = Executors.newFixedThreadPool(1);
+        _cachingExecutorService = Executors.newFixedThreadPool(1, new NamingThreadFactory("History-" + projectId + "-caching"));
         _lastModified = Instant.now();
     }
 
