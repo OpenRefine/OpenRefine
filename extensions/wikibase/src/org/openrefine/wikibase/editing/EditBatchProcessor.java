@@ -38,6 +38,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
+import org.openrefine.operations.exceptions.ChangeDataFetchingException;
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -266,14 +267,17 @@ public class EditBatchProcessor {
         int retries = 5;
         int backoff = 2;
         int sleepTime = 5000;
+        Exception lastException = null;
         while (currentDocs == null && retries > 0 && !idsToFetch.isEmpty()) {
             try {
                 currentDocs = fetcher.getEntityDocuments(idsToFetch);
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
                         + "]: " + e.getErrorMessage());
+                lastException = e;
             } catch (IOException e) {
                 logger.warn("IO error while fetching documents to edit: " + e.getMessage());
+                lastException = e;
             }
             retries--;
             sleepTime *= backoff;
@@ -283,8 +287,8 @@ public class EditBatchProcessor {
             }
         }
         if (currentDocs == null && !idsToFetch.isEmpty()) {
-            logger.warn("Giving up on fetching documents to edit. Skipping " + remainingEdits() + " remaining edits.");
-            globalCursor = scheduled.size();
+            throw new ChangeDataFetchingException(
+                    "Error while retrieving the state of entities to edit: " + Objects.toString(lastException), true);
         }
         batchCursor = 0;
     }

@@ -38,16 +38,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.process.Process.State;
 import org.openrefine.util.NamingThreadFactory;
 
 public class ProcessManager {
@@ -55,10 +53,8 @@ public class ProcessManager {
     @JsonIgnore
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<>());
     @JsonIgnore
-    protected ListeningExecutorService _executorService = MoreExecutors.listeningDecorator(
+    private ListeningExecutorService _executorService = MoreExecutors.listeningDecorator(
             Executors.newCachedThreadPool(new NamingThreadFactory("ProcessManager")));
-    @JsonIgnore
-    protected List<Exception> _latestExceptions = null;
 
     public static class ExceptionMessage {
 
@@ -70,19 +66,8 @@ public class ProcessManager {
         }
     }
 
-    public ProcessManager() {
-
-    }
-
-    @JsonProperty("exceptions")
-    @JsonInclude(Include.NON_NULL)
-    public List<ExceptionMessage> getJsonExceptions() {
-        if (_latestExceptions != null) {
-            return _latestExceptions.stream()
-                    .map(e -> new ExceptionMessage(e))
-                    .collect(Collectors.toList());
-        }
-        return null;
+    public void shutdown() {
+        _executorService.shutdown();
     }
 
     @JsonProperty("processes")
@@ -96,6 +81,9 @@ public class ProcessManager {
         update();
     }
 
+    /**
+     * Is there any process in the queue (potentially running)?
+     */
     public boolean hasPending() {
         return _processes.size() > 0;
     }
@@ -105,26 +93,13 @@ public class ProcessManager {
         update();
     }
 
-    public void onFailedProcess(Process p, Exception exception) {
-        onFailedProcess(p, Collections.singletonList(exception));
-    }
-
-    public void onFailedProcess(Process p, List<Exception> exceptions) {
-        if (!p.isCanceled()) {
-            _latestExceptions = exceptions;
-        }
-        _processes.remove(p);
-        // Do not call update(); Just pause?
-    }
-
     public void cancelAll() {
         for (Process p : _processes) {
-            if (p.isRunning()) {
+            if (p.getState() == State.RUNNING || p.getState() == State.PAUSED) {
                 p.cancel();
             }
         }
         _processes.clear();
-        _latestExceptions = null;
     }
 
     /**
@@ -158,15 +133,19 @@ public class ProcessManager {
     protected void update() {
         while (_processes.size() > 0) {
             Process p = _processes.get(0);
-            if (p.isDone()) {
+            State state = p.getState();
+            if (state == State.DONE || state == State.CANCELED) {
                 _processes.remove(0);
             } else {
-                if (!p.isRunning()) {
-                    _latestExceptions = null;
+                if (state == State.PENDING) {
                     p.startPerforming(this);
                 }
                 break;
             }
         }
+    }
+
+    protected ListeningExecutorService getExecutorService() {
+        return _executorService;
     }
 }

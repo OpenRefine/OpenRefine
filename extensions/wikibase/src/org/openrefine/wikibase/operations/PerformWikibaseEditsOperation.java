@@ -69,6 +69,7 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.exceptions.ChangeDataFetchingException;
 import org.openrefine.operations.exceptions.IOOperationException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
@@ -169,8 +170,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 ConnectionManager manager = ConnectionManager.getInstance();
                 String mediaWikiApiEndpoint = schema.getMediaWikiApiEndpoint();
                 if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
-                    // TODO find a way to signal to the user that they should re-login
-                    return existingChangeData.orElse(projectState.getRunner().changeDataFromList(Collections.emptyList()));
+                    throw new ChangeDataFetchingException("You need to be logged in to Wikibase via OpenRefine to perform edits. " +
+                            "This process can be restarted once you are logged in.", true);
                 }
                 ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 

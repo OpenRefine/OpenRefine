@@ -115,7 +115,10 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         var progressBarInner = $('<div></div>')
             .addClass('process-progress-bar-inner')
             .appendTo(progressBar);
-                var buttonsContainer = $('<div></div>')
+        var errorContainer = $('<div></div>')
+            .addClass('process-error-container')
+            .appendTo(processBody);
+        var buttonsContainer = $('<div></div>')
             .addClass('process-buttons-container')
             .appendTo(processBody);
         var pauseButton = $('<button></button>')
@@ -146,8 +149,8 @@ ProcessPanel.prototype._renderPanel = function(newData) {
                 clicked.attr('disabled', false).removeClass('disabled');
                 if (response.code === 'ok') {
                   clicked
-                      .data('paused', !process.paused)
-                      .text(!process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
+                      .data('paused', process.state != 'paused')
+                      .text(process.state != 'paused' ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
                 }
               },
               "json");
@@ -180,23 +183,31 @@ ProcessPanel.prototype._renderPanel = function(newData) {
       li.find('.process-progress-container span')
           .text($.i18n('core-project/percent-complete', process.progress));
       li.find('.pause-button')
-          .data('paused', process.paused)
-          .text(process.paused ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
+          .data('paused', process.state === 'paused')
+          .text(process.state === 'paused' ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));
       li.find('.process-progress-bar-inner')
           .width(process.progress + '%');
-      if (process.running) {
-        li.find('.pause-button').show();
+      if (process.state === 'running' || process.state === 'paused' || process.state === 'failed') {
         li.find('.process-progress-container').show();
         li.find('.process-status-container').hide();
       } else {
-        li.find('.pause-button').hide();
         li.find('.process-progress-container').hide();
         li.find('.process-status-container')
           .text($.i18n('core-processes/queued'))
           .show();
       }
+      if (process.state === 'running' || process.state === 'paused') {
+        li.find('.pause-button').show();
+      } else {
+        li.find('.pause-button').hide();
+      }
+      if (process.state === 'failed') {
+        li.find('.process-error-container').text(process.errorMessage);
+      } else {
+        li.find('.process-error-container').empty();
+      }
       let spinnerElement = li.find('.notification-loader');
-      if (!process.paused && process.running) {
+      if (process.state === 'running') {
         spinnerElement.show();
       } else {
         spinnerElement.hide();

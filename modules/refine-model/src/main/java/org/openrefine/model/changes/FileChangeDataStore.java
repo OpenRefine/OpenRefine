@@ -262,7 +262,7 @@ public class FileChangeDataStore implements ChangeDataStore {
 
                 @Override
                 public void onFailure(Throwable t) {
-
+                    // failure is handled by the logic in Process already
                 }
             };
             Futures.addCallback(future, callback, MoreExecutors.directExecutor());

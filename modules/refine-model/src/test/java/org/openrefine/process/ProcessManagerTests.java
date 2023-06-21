@@ -27,39 +27,116 @@
 
 package org.openrefine.process;
 
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Arrays;
 import java.util.Collections;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.operations.exceptions.ChangeDataFetchingException;
+import org.openrefine.process.Process.State;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ProcessManagerTests {
 
     ProcessManager processManager;
-    Process process1, process2;
+    Process firstProcess, secondProcess, erroringProcess;
 
     @BeforeMethod
     public void setUp() {
         processManager = new ProcessManager();
-        process1 = new ProcessTests.ProcessStub("some description",
-                new ChangeDataId(1234L, "recon"),
-                () -> ProgressingFutures.exception(new IllegalArgumentException("unexpected error")));
-        process2 = new ProcessTests.ProcessStub("some other description",
-                new ChangeDataId(5678L, "urls"),
-                () -> ProgressingFutures.immediate(null));
+        ProgressingFuture<Void> firstFuture = mock(VoidProgressingFuture.class);
+        ProgressingFuture<Void> secondFuture = mock(VoidProgressingFuture.class);
+        firstProcess = new ProcessStub("first process", new ChangeDataId(123L, "data"), () -> firstFuture);
+        secondProcess = new ProcessStub("second process", new ChangeDataId(456L, "data"), () -> secondFuture);
+        erroringProcess = new ProcessStub("erroring process", new ChangeDataId(789L, "data"), () -> {
+            throw new ChangeDataFetchingException("some problem occured!", true);
+        });
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        processManager.shutdown();
     }
 
     @Test
-    public void serializeProcessManager() throws Exception {
-        processManager._latestExceptions = Collections.singletonList(new IllegalArgumentException("unexpected error"));
+    public void testLifeCycle() {
+        assertEquals(processManager.getProcesses(), Collections.emptyList());
+        assertFalse(processManager.hasPending());
 
-        TestUtils.isSerializedTo(processManager, "{"
-                + "\"processes\":[],\n"
-                + "\"exceptions\":[{\"message\":\"unexpected error\"}]"
-                + "}", ParsingUtilities.defaultWriter);
+        processManager.queueProcess(firstProcess);
+
+        assertEquals(processManager.getProcesses(), Collections.singletonList(firstProcess));
+        assertTrue(processManager.hasPending());
+        assertEquals(firstProcess.getState(), State.RUNNING);
+
+        processManager.queueProcess(secondProcess);
+
+        assertEquals(processManager.getProcesses(), Arrays.asList(firstProcess, secondProcess));
+        assertTrue(processManager.hasPending());
+        assertEquals(firstProcess.getState(), State.RUNNING);
+        assertEquals(secondProcess.getState(), State.PENDING);
+    }
+
+    @Test
+    public void testErroringProcess() {
+        assertEquals(processManager.getProcesses(), Collections.emptyList());
+        assertFalse(processManager.hasPending());
+
+        processManager.queueProcess(erroringProcess);
+
+        assertEquals(processManager.getProcesses(), Collections.singletonList(erroringProcess));
+        assertTrue(processManager.hasPending());
+        assertEquals(erroringProcess.getState(), State.FAILED);
+        assertEquals(erroringProcess.getErrorMessage(), "some problem occured!");
+
+        processManager.queueProcess(secondProcess);
+
+        assertEquals(processManager.getProcesses(), Arrays.asList(erroringProcess, secondProcess));
+        assertTrue(processManager.hasPending());
+        assertEquals(erroringProcess.getState(), State.FAILED);
+        assertEquals(secondProcess.getState(), State.PENDING);
+    }
+
+    @Test
+    public void testSerialize() throws Exception {
+        processManager.queueProcess(firstProcess);
+        processManager.queueProcess(secondProcess);
+
+        String expectedJson = "{"
+                + "  \"processes\" : [ {"
+                + "    \"changeDataId\" : {"
+                + "      \"historyEntryId\" : 123,"
+                + "      \"subDirectory\" : \"data\""
+                + "    },"
+                + "    \"description\" : \"first process\","
+                + "    \"id\" : " + firstProcess.getId() + ","
+                + "    \"progress\" : 0,"
+                + "    \"state\" : \"running\""
+                + "  }, {"
+                + "    \"changeDataId\" : {"
+                + "      \"historyEntryId\" : 456,"
+                + "      \"subDirectory\" : \"data\""
+                + "    },"
+                + "    \"description\" : \"second process\","
+                + "    \"id\" : " + secondProcess.getId() + ","
+                + "    \"progress\" : 0,"
+                + "    \"state\" : \"pending\""
+                + "  } ]"
+                + "}";
+        TestUtils.isSerializedTo(processManager, expectedJson, ParsingUtilities.defaultWriter);
+    }
+
+    private static interface VoidProgressingFuture extends ProgressingFuture<Void> {
+
     }
 
 }
