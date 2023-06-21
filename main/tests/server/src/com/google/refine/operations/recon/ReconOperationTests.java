@@ -84,7 +84,7 @@ public class ReconOperationTests extends RefineTest {
             "           \"name\" : \"researcher: judgment\"\n" +
             "         },\n" +
             "         \"facetOptions\" : {\n" +
-            "           \"scroll\" : false\n" +
+            "           \"scroll\" : true\n" +
             "         },\n" +
             "         \"facetType\" : \"list\"\n" +
             "       }, {\n" +
