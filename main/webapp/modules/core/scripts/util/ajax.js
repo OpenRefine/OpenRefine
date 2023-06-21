@@ -47,7 +47,15 @@ $(function() {
       if (queryIndex != -1) {
         commandParams = command.substr(queryIndex);
       }
-      alert('Internal HTTP error for command ' + commandName +'.');
+      if (request.status === 0) {
+        alert($.i18n('core-index/connection-lost'));
+      } else {
+        let message = 'HTTP ' + request.status;
+        if (request.responseJSON && request.responseJSON.message) {
+          message = request.responseJSON.message;
+        }
+        alert($.i18n('core-index/internal-error-for-command', commandName, message));
+      }
     }
   });
 });
