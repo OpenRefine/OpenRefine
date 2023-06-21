@@ -186,6 +186,18 @@ public class History {
         updateCachedPosition();
     }
 
+    /**
+     * Wait for any caching operation currently being executed asynchronously. Mostly for testing purposes.
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void waitForCaching() throws InterruptedException, ExecutionException {
+        while (_cachingFuture != null && !_cachingFuture.isDone()) {
+            _cachingFuture.get();
+        }
+    }
+
     private void updateModified() {
         _lastModified = Instant.now();
     }
@@ -540,19 +552,6 @@ public class History {
             return _entries.get(entryIndex(entryID));
         } catch (IllegalArgumentException e) {
             return null;
-        }
-    }
-
-    /**
-     * Utility method to wait for any caching operation currently being executed asynchronously. Mostly for testing
-     * purposes.
-     * 
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    protected void waitForCaching() throws InterruptedException, ExecutionException {
-        while (_cachingFuture != null && !_cachingFuture.isDone()) {
-            _cachingFuture.get();
         }
     }
 
