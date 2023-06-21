@@ -102,13 +102,19 @@ public class HistoryEntryManager {
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         // Load the initial grid
         Grid grid = runner.loadGrid(gridFile);
-        return new History(
+        History history = new History(
                 grid,
                 getChangeDataStore(runner, dir),
                 getGridCache(runner, dir),
                 metadata.entries,
                 metadata.position,
                 projectId);
+        try {
+            history.waitForCaching();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        return history;
     }
 
     /**
