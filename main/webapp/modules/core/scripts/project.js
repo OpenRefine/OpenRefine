@@ -330,7 +330,8 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
   };
   var onError = function(error) {
     markAsDone();
-    console.warn('Error in Refine.update: '+e);
+    Refine.clearAjaxInProgress();
+    console.warn('Error in Refine.update: '+error);
   };
 
   var functions = [];
@@ -387,7 +388,14 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
     onDone();
   });
 
-  functions.push(function() {});
+  functions.push(function() {
+    Refine.clearAjaxInProgress();
+
+    markAsDone();
+    if (onFinallyDone) {
+      onFinallyDone();
+    }
+  });
 
   return function() {
 
@@ -399,12 +407,6 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
 
     Refine.setAjaxInProgress();
     functions[0]();
-    Refine.clearAjaxInProgress();
-
-    markAsDone();
-    if (onFinallyDone) {
-      onFinallyDone();
-    }
   };
 };
 
