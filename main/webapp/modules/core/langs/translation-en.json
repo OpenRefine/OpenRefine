@@ -20,6 +20,8 @@
     "core-index/pref-key": "Preference key value:",
     "core-index/prefs-loading-failed": "Failed to load the preferences.",
     "core-index/rows-loading-failed": "Failed to load the rows.",
+    "core-index/connection-lost": "The connection to OpenRefine was lost. Please restart OpenRefine and reload this page.",
+    "core-index/internal-error-for-command": "Internal error in command $1: $2",
     "core-index/edit": "Edit",
     "core-index/delete": "Delete",
     "core-index/new-proj-name": "New project name:",
