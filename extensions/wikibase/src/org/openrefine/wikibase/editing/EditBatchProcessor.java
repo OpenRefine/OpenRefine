@@ -194,6 +194,7 @@ public class EditBatchProcessor {
                 }
             }
         } catch (MediaWikiApiErrorException e) {
+            batchCursor++;
             return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage());
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());

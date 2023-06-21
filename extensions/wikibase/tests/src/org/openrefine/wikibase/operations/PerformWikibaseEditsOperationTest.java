@@ -36,7 +36,11 @@ import java.util.Map;
 
 import org.mockito.Mockito;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ListFacet;
 import org.openrefine.history.GridPreservation;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.grel.Parser;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -50,6 +54,7 @@ import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
@@ -92,9 +97,10 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                         .withOverlayModels(overlayModels);
 
         operation = new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag");
+                EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag", "editing results");
 
         context = mock(ChangeContext.class);
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
     @Override
@@ -111,11 +117,11 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, 50, "", 60, "tag");
+        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, 50, "", 60, "tag", "errors");
     }
 
     @Test
-    public void testChange()
+    public void testApplyOperationWithSuccessfulEdit()
             throws Exception {
         PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
                 Collections.singletonMap(1234L, "Q789"), Collections.emptyList());
@@ -128,11 +134,51 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
         Grid applied = changeResult.getGrid();
+        ColumnModel columnModel = applied.getColumnModel();
+        assertEquals(columnModel.getColumnNames(), Arrays.asList("foo", "bar", "editing results"));
 
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
         assertEquals(row.getCell(0).recon.match.id, "Q789");
+        assertEquals(row.getCell(2), null);
+        String expectedJson = "[ {"
+                + "  \"columnName\" : \"editing results\","
+                + "  \"expression\" : \"grel:if(isError(value), 'failed edit', 'successful edit')\","
+                + "  \"invert\" : false,"
+                + "  \"name\" : \"Wikibase editing status\","
+                + "  \"omitBlank\" : false,"
+                + "  \"omitError\" : false,"
+                + "  \"selectBlank\" : false,"
+                + "  \"selectError\" : false,"
+                + "  \"selection\" : [ ]"
+                + "} ] ";
+        TestUtils.isSerializedTo(changeResult.getCreatedFacets(), expectedJson, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testApplyOperationWithFailingEdit()
+            throws Exception {
+        PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
+                Collections.emptyMap(), Collections.singletonList("error: this entity already exists"));
+        ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().changeDataFromList(
+                Collections.singletonList(new IndexedData<>(0L, rowNewReconUpdate)));
+
+        when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
+                Mockito.any(), Mockito.any()))
+                        .thenReturn(changeData);
+
+        ChangeResult changeResult = operation.apply(grid, context);
+        assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
+        ColumnModel columnModel = applied.getColumnModel();
+        assertEquals(columnModel.getColumnNames(), Arrays.asList("foo", "bar", "editing results"));
+
+        Row row = applied.getRow(0L);
+        assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.New);
+        assertEquals(row.getCell(2).value, new EvalError("error: this entity already exists"));
     }
 
     @Test

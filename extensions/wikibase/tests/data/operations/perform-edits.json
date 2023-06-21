@@ -10,5 +10,6 @@
   },
   "tag" : "openrefine-${version}",
   "batchSize": 50,
-  "maxEditsPerMinute": 60
+  "maxEditsPerMinute": 60,
+  "resultsColumnName": "editing results"
 }
