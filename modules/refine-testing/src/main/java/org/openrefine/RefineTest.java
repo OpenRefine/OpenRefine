@@ -338,20 +338,4 @@ public class RefineTest {
     public void TearDown() throws Exception {
         bindings = null;
     }
-
-    protected void runAndWait(ProcessManager processManager, Process process, int timeout) {
-        process.startPerforming(processManager);
-        Assert.assertTrue(process.isRunning());
-        int time = 0;
-        try {
-            while (process.isRunning() && time < timeout) {
-                Thread.sleep(200);
-                time += 200;
-            }
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
-    }
-
 }

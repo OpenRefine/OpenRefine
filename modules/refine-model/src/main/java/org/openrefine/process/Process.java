@@ -34,23 +34,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.process;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.operations.exceptions.ChangeDataFetchingException;
 
 public abstract class Process {
 
-    @JsonProperty("description")
+    public enum State {
+        @JsonProperty("pending")
+        PENDING, @JsonProperty("running")
+        RUNNING, @JsonProperty("done")
+        DONE, @JsonProperty("failed")
+        FAILED, @JsonProperty("paused")
+        PAUSED, @JsonProperty("canceled")
+        CANCELED
+    };
+
+    @JsonIgnore
     final protected String _description;
     @JsonIgnore
     protected ProcessManager _manager;
     @JsonIgnore
     protected ProgressingFuture<Void> _future;
-    @JsonProperty("progress")
+    @JsonIgnore
     protected int _progress; // out of 100
     @JsonIgnore
     protected boolean _canceled;
+    @JsonIgnore
+    protected Exception _exception;
     @JsonIgnore
     protected ProgressReporter _reporter;
 
@@ -59,23 +73,24 @@ public abstract class Process {
         _reporter = new Reporter();
     }
 
-    @JsonProperty("status")
-    public String getStatus() {
-        return _future == null ? "pending" : (!_future.isDone() ? "running" : "done");
+    @JsonProperty("state")
+    public State getState() {
+        if (_canceled) {
+            return State.CANCELED;
+        } else if (_exception != null) {
+            return State.FAILED;
+        } else if (_future == null) {
+            return State.PENDING;
+        } else if (_future.isDone()) {
+            return State.DONE;
+        } else if (_future.isPaused()) {
+            return State.PAUSED;
+        } else {
+            return State.RUNNING;
+        }
     }
 
-    public boolean isRunning() {
-        return _future != null && !_future.isDone();
-    }
-
-    public boolean isDone() {
-        return _future != null && _future.isDone();
-    }
-
-    public boolean isPaused() {
-        return _future != null && _future.isPaused();
-    }
-
+    @JsonIgnore
     public boolean isCanceled() {
         return _canceled;
     }
@@ -83,25 +98,53 @@ public abstract class Process {
     public void startPerforming(ProcessManager manager) {
         if (_future == null) {
             _manager = manager;
+            _exception = null;
 
-            _future = getFuture();
-            FutureCallback<Void> callback = new FutureCallback<>() {
+            try {
+                _future = getFuture();
+                FutureCallback<Void> callback = new FutureCallback<>() {
 
-                @Override
-                public void onSuccess(Void result) {
-                    _manager.onDoneProcess(Process.this);
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    if (t instanceof Exception) {
-                        t.printStackTrace();
-                        _manager.onFailedProcess(Process.this, (Exception) t);
+                    @Override
+                    public void onSuccess(Void result) {
+                        _manager.onDoneProcess(Process.this);
                     }
-                }
-            };
-            Futures.addCallback(_future, callback, _manager._executorService);
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        if (t instanceof Exception) {
+                            t.printStackTrace();
+                            _exception = (Exception) t;
+                        }
+                    }
+                };
+                Futures.addCallback(_future, callback, _manager.getExecutorService());
+            } catch (ChangeDataFetchingException exception) {
+                _exception = exception;
+            }
         }
+    }
+
+    @JsonProperty("errorMessage")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getErrorMessage() {
+        if (_exception != null) {
+            if (_exception instanceof ChangeDataFetchingException) {
+                return _exception.getMessage();
+            } else {
+                return _exception.toString();
+            }
+        }
+        return null;
+    }
+
+    @JsonProperty("description")
+    public String getDescription() {
+        return _description;
+    }
+
+    @JsonProperty("progress")
+    public int getProgress() {
+        return _progress;
     }
 
     public void cancel() {

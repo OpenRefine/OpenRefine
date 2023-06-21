@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -40,14 +44,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.atLeast;
 
-import static org.mockito.Mockito.*;
+import java.time.Instant;
 
-import org.mockito.Mockito;
 import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
+import org.openrefine.model.ProjectStub;
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
@@ -55,10 +58,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.openrefine.model.ProjectStub;
-
-import java.time.Instant;
 
 public class ProjectManagerTests {
 

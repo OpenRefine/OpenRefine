@@ -67,6 +67,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   justify-content: right;
 }
 
+.process-error-container {
+  color: red;
+}
+
 .process-progress-bar {
   width: 100%;
   height: 1.8em;

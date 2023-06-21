@@ -27,39 +27,30 @@
 
 package org.openrefine.process;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
 import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.openrefine.operations.exceptions.ChangeDataFetchingException;
 
-import java.util.concurrent.Callable;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 public class ProcessTests {
 
-    public static class ProcessStub extends Process {
+    ProcessManager processManager;
+    ListeningExecutorService executorService;
 
-        Callable<ProgressingFuture<Void>> future;
-        ChangeDataId changeDataId;
-
-        protected ProcessStub(String description, ChangeDataId changeDataId, Callable<ProgressingFuture<Void>> future) {
-            super(description);
-            this.future = future;
-            this.changeDataId = changeDataId;
-        }
-
-        @Override
-        protected ProgressingFuture<Void> getFuture() {
-            try {
-                return future.call();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public ChangeDataId getChangeDataId() {
-            return changeDataId;
-        }
+    @BeforeMethod
+    public void setUp() {
+        processManager = mock(ProcessManager.class);
+        executorService = mock(ListeningExecutorService.class);
+        when(processManager.getExecutorService()).thenReturn(executorService);
     }
 
     @Test
@@ -70,11 +61,49 @@ public class ProcessTests {
                 + "\"id\":" + hashCode + ","
                 + "\"description\":\"some description\","
                 + "\"changeDataId\":{\"historyEntryId\":1234,\"subDirectory\":\"recon\"},"
-                + "\"status\":\"pending\","
-                + "\"done\": false,"
-                + "\"running\": false,"
-                + "\"canceled\": false,"
-                + "\"paused\": false,"
+                + "\"state\":\"pending\","
                 + "\"progress\":0}", ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void serializeErroredProcess() {
+        ChangeDataFetchingException exception = new ChangeDataFetchingException("something bad happened", true);
+        ProcessStub process = new ProcessStub("some description", new ChangeDataId(1234L, "recon"), () -> null);
+        process.setException(exception);
+        int hashCode = process.hashCode();
+
+        String expectedJson = "{"
+                + "  \"changeDataId\" : {"
+                + "    \"historyEntryId\" : 1234,"
+                + "    \"subDirectory\" : \"recon\""
+                + "  },"
+                + "  \"description\" : \"some description\","
+                + "  \"errorMessage\" : \"something bad happened\","
+                + "  \"id\" : " + hashCode + ","
+                + "  \"progress\" : 0,"
+                + "  \"state\" : \"failed\""
+                + "}";
+        TestUtils.isSerializedTo(process, expectedJson, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void serializeErroredProcessWithUnexpectedException() {
+        IOException exception = new IOException("error");
+        ProcessStub process = new ProcessStub("some description", new ChangeDataId(1234L, "recon"), () -> null);
+        process.setException(exception);
+        int hashCode = process.hashCode();
+
+        String expectedJson = "{"
+                + "  \"changeDataId\" : {"
+                + "    \"historyEntryId\" : 1234,"
+                + "    \"subDirectory\" : \"recon\""
+                + "  },"
+                + "  \"description\" : \"some description\","
+                + "  \"errorMessage\" : \"java.io.IOException: error\","
+                + "  \"id\" : " + hashCode + ","
+                + "  \"progress\" : 0,"
+                + "  \"state\" : \"failed\""
+                + "}";
+        TestUtils.isSerializedTo(process, expectedJson, ParsingUtilities.defaultWriter);
     }
 }
