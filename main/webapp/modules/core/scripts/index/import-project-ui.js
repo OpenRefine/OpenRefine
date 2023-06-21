@@ -52,7 +52,7 @@ Refine.ImportProjectUI = function(elmt) {
       alert($.i18n('core-index-import/warning-import-input'));
     } else if (fileInput.value.length > 0 && urlInput.value.length > 0) {
       alert($.i18n('core-index-import/warning-import-two-input'));
-    } else if (urlInput.value !== "" && !URL.looksLikeUrl(urlInput.value)) {
+    } else if (urlInput.value !== "" && !URLUtil.looksLikeUrl(urlInput.value)) {
       alert($.i18n('core-index-import/warning-import-url'));
     } else {
       document.getElementById("import-project-button").type = "submit";
