@@ -76,6 +76,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
   self._panelElmts.processes.find('li').addClass('stale-process');
   let oldProcessFound = self._panelElmts.processes.find('li').length > 0;
   let newProcessFound = false;
+  let currentProgress = undefined;
 
   if (newData.processes && newData.processes.length > 0) {
     self._panelElmts.noProcessDiv.hide();
@@ -209,6 +210,7 @@ ProcessPanel.prototype._renderPanel = function(newData) {
       let spinnerElement = li.find('.notification-loader');
       if (process.state === 'running') {
         spinnerElement.show();
+        currentProgress = process.progress;
       } else {
         spinnerElement.hide();
       }
@@ -234,6 +236,13 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         .text(newData.processes.length)
         .addClass('count')
         .appendTo(self._tabHeader);
+  }
+
+  // update the page title
+  if (currentProgress !== undefined) {
+    Refine.setTitle($.i18n('core-project/percent-complete', currentProgress));
+  } else {
+    Refine.setTitle();
   }
 
   // if some processes are new, we focus the view to this tab
