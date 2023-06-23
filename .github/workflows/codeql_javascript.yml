@@ -1,0 +1,39 @@
+name: "CodeQL JavaScript"
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - '**/*.js' # Only trigger the workflow if JavaScript files have changed
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - '**/*.js'
+
+jobs:
+  analyze:
+    name: Analyze JavaScript
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'javascript'
+
+      - name: Build
+        run: |
+          echo "Run, Build Application using script"
+          ./refine build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:javascript"
