@@ -31,7 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-Ajax = {};
+Ajax = {
+  shutdownInProgress: false
+};
+
+// responses received after the user started navigating to another page
+// are marked as failed by the browser, but we do not want to report those
+// as errors to the user, so we use a flag to detect this situation.
+window.onbeforeunload = function() {
+  Ajax.shutdownInProgress = true;
+};
 
 $(function() {
   // set up callback for server errors (executed on all jQuery requests)
@@ -48,7 +57,9 @@ $(function() {
         commandParams = command.substr(queryIndex);
       }
       if (request.status === 0) {
-        alert($.i18n('core-index/connection-lost'));
+        if (!Ajax.shutdownInProgress) {
+          alert($.i18n('core-index/connection-lost'));
+        }
       } else {
         let message = 'HTTP ' + request.status;
         if (request.responseJSON && request.responseJSON.message) {
