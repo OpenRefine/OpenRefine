@@ -935,7 +935,7 @@ public class LocalGrid implements Grid {
         long unreconciledColumns = columns.stream().filter(c -> c.getReconConfig() == null).count();
         long reconciledColumns = columns.size() - unreconciledColumns;
         long predictedMemorySize = (runner.getUnreconciledCellCost() * unreconciledColumns +
-                runner.getReconciledCellCost() * reconciledColumns) * rows;
+                runner.getReconciledCellCost() * reconciledColumns + runner.getRowCost()) * rows;
         Runtime runtime = Runtime.getRuntime();
         long freeMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
         return freeMemory > predictedMemorySize;
