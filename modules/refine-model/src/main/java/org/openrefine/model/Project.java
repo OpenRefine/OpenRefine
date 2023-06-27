@@ -132,7 +132,7 @@ public class Project {
     }
 
     public void dispose() {
-        // TODO unload RDDs?
+        history.dispose();
     }
 
     /**

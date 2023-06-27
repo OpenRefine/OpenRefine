@@ -89,4 +89,8 @@ public class LazyChangeDataStore implements ChangeDataStore {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void dispose() {
+        processManager.shutdown();
+    }
 }

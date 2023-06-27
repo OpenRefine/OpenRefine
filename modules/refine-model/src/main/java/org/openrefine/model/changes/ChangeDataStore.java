@@ -106,4 +106,9 @@ public interface ChangeDataStore {
      */
     public void discardAll(long historyEntryId);
 
+    /**
+     * Stops all the processes and shuts down the thread pool.
+     */
+    public void dispose();
+
 }

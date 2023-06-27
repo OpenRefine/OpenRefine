@@ -152,13 +152,13 @@ public class HistoryTests {
         when(dataStore.getChangeDataIds(firstChangeId))
                 .thenReturn(Collections.singletonList(new ChangeDataId(firstChangeId, "data")));
 
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+
         entries = Arrays.asList(firstEntry, secondEntry);
     }
 
     @Test
     public void testConstruct() throws Exception {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         // we assume that caching any grid succeeds
         when(initialState.cache()).thenReturn(true);
         when(intermediateState.cache()).thenReturn(true);
@@ -214,8 +214,6 @@ public class HistoryTests {
 
     @Test
     public void testUnsuccessfulCaching() throws Exception {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         // we assume that caching any grid succeeds
         when(initialState.cache()).thenReturn(false);
         when(intermediateState.cache()).thenReturn(false);
@@ -250,8 +248,6 @@ public class HistoryTests {
 
     @Test
     public void testApplyFailingOperation() throws OperationException {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCurrentGrid(), intermediateState);
@@ -326,8 +322,6 @@ public class HistoryTests {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testUnknownChangeId() throws OperationException {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
 
         history.undoRedo(34782L);
@@ -335,8 +329,6 @@ public class HistoryTests {
 
     @Test
     public void testEraseUndoneChanges() throws OperationException, ParsingException {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
 
         Assert.assertEquals(history.getPosition(), 1);
@@ -366,7 +358,6 @@ public class HistoryTests {
         });
         when(initialState.cache()).thenReturn(true);
         when(newOperation.apply(eq(initialState), any())).thenReturn(newResult);
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
 
@@ -388,7 +379,6 @@ public class HistoryTests {
 
     @Test
     public void testEraseWithCachedFuture() throws Exception {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         // make the second operation expensive too
         when(dataStore.getChangeDataIds(secondChangeId))
                 .thenReturn(Collections.singletonList(new ChangeDataId(secondChangeId, "data")));
@@ -414,8 +404,6 @@ public class HistoryTests {
 
     @Test
     public void testDoNotCacheIncompleteGrids() throws Exception {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         // we assume that caching any grid succeeds
         when(initialState.cache()).thenReturn(true);
         when(intermediateState.cache()).thenReturn(true);
@@ -437,8 +425,6 @@ public class HistoryTests {
 
     @Test
     public void testAddNewExpensiveChangeWhileCachingAnEarlierState() throws Exception {
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-
         // make caching the intermediate state run until we ask it to complete
         AtomicBoolean flag = new AtomicBoolean();
         flag.set(false);
@@ -478,6 +464,14 @@ public class HistoryTests {
         verify(intermediateState, times(1)).cache();
         verify(finalState, times(1)).cache();
         Assert.assertEquals(history.getCachedPosition(), 2);
+    }
+
+    @Test
+    public void testDispose() throws OperationException {
+        History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
+
+        history.dispose();
+        verify(dataStore, times(1)).dispose();
     }
 
 }

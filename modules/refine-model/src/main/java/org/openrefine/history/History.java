@@ -535,6 +535,17 @@ public class History {
     }
 
     /**
+     * Uncaches all grids from memory and stops all related fetching and caching processes.
+     */
+    public void dispose() {
+        _cachingExecutorService.shutdown();
+        if (_cachedPosition >= 0) {
+            _steps.get(_cachedPosition).grid.uncache();
+        }
+        _dataStore.dispose();
+    }
+
+    /**
      * Return the position of the history entry with the supplied id, or throws {@link IllegalArgumentException} if that
      * id cannot be found.
      */
