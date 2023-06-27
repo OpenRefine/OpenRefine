@@ -216,6 +216,11 @@ public class FileChangeDataStore implements ChangeDataStore {
         _changeIds.remove(historyEntryId);
     }
 
+    @Override
+    public void dispose() {
+        processManager.shutdown();
+    }
+
     protected static class ChangeDataStoringProcess<T> extends Process {
 
         final Optional<ChangeData<T>> storedChangeData;
