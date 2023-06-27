@@ -58,6 +58,12 @@ public class LocalRunner implements Runner {
     final static protected String METADATA_PATH = "metadata.json";
     final static protected String GRID_PATH = "grid";
 
+    // Those costs were approximated experimentally, on some sample datasets:
+    // https://github.com/wetneb/refine-memory-benchmark
+    protected static final int defaultReconciledCellCost = 343;
+    protected static final int defaultUnreconciledCellCost = 85;
+    protected static final int defaultRowCost = 980;
+
     protected final PLLContext pllContext;
 
     // Partitioning strategy settings
@@ -68,11 +74,9 @@ public class LocalRunner implements Runner {
     protected long maxSplitRowCount;
 
     // Caching cost estimation parameters
-
-    // Those costs were approximated experimentally, on some sample datasets:
-    // https://github.com/wetneb/refine-memory-benchmark
-    protected int reconciledCellCost = 146;
-    protected int unreconciledCellCost = 78;
+    protected int reconciledCellCost;
+    protected int unreconciledCellCost;
+    protected int rowCost;
 
     public LocalRunner(RunnerConfiguration configuration) {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
@@ -80,8 +84,9 @@ public class LocalRunner implements Runner {
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
         minSplitRowCount = configuration.getLongParameter("minSplitRowCount", 32L);
         maxSplitRowCount = configuration.getLongParameter("maxSplitRowCount", 61536L);
-        reconciledCellCost = configuration.getIntParameter("reconciledCellCost", 146);
-        unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", 78);
+        reconciledCellCost = configuration.getIntParameter("reconciledCellCost", defaultReconciledCellCost);
+        unreconciledCellCost = configuration.getIntParameter("unreconciledCellCost", defaultUnreconciledCellCost);
+        rowCost = configuration.getIntParameter("rowCost", defaultRowCost);
 
         pllContext = new PLLContext(MoreExecutors.listeningDecorator(
                 Executors.newCachedThreadPool(new NamingThreadFactory("LocalRunner"))),
@@ -321,15 +326,23 @@ public class LocalRunner implements Runner {
 
     /**
      * Returns the predicted memory cost of a reconciled cell, when caching grids
-     * 
-     * @return
      */
     public int getReconciledCellCost() {
         return reconciledCellCost;
     }
 
+    /**
+     * Returns the predicted memory cost of an unreconciled cell, when caching grids
+     */
     public int getUnreconciledCellCost() {
         return unreconciledCellCost;
+    }
+
+    /**
+     * Returns the predicted memory cost of a row (on top of the cost of its cells), when caching grids
+     */
+    public int getRowCost() {
+        return rowCost;
     }
 
 }
