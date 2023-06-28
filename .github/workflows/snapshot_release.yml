@@ -344,7 +344,7 @@ jobs:
       id: download-build-artifact-win-with-java
       uses: actions/download-artifact@v3
       with:
-        name: installertemp-win-with-java-3.8-SNAPSHOT
+        name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         path: ./packaging/target/openrefine-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
 
 #    - name: Sign the executables
