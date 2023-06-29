@@ -339,8 +339,7 @@ public class RefineServlet extends Butterfly {
     }
 
     static {
-        registerClassMapping("com.metaweb.*", "com.google.*");
-        registerClassMapping("com.google.gridworks.*", "org.openrefine.*");
+        registerClassMapping("com.google.refine.*", "org.openrefine.*");
     }
 
     static final private Map<String, String> classMappingsCache = new HashMap<String, String>();
