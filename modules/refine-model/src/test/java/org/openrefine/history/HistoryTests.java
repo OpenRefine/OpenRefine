@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +74,7 @@ public class HistoryTests {
     Grid intermediateState;
     Grid finalState;
     Grid newState;
+    Grid cachedIntermediateState;
 
     ChangeResult intermediateResult;
     ChangeResult finalResult;
@@ -96,12 +98,13 @@ public class HistoryTests {
     List<HistoryEntry> entries;
 
     @BeforeMethod
-    public void setUp() throws OperationException, ParsingException {
+    public void setUp() throws OperationException, ParsingException, IOException {
         dataStore = mock(ChangeDataStore.class);
         gridStore = mock(GridCache.class);
         initialState = mock(Grid.class);
         intermediateState = mock(Grid.class);
         newState = mock(Grid.class);
+        cachedIntermediateState = mock(Grid.class);
         finalState = mock(Grid.class);
         columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
         firstOperation = mock(Operation.class);
@@ -119,9 +122,11 @@ public class HistoryTests {
         when(intermediateResult.getGrid()).thenReturn(intermediateState);
         when(firstOperation.isReproducible()).thenReturn(false);
         when(secondOperation.apply(eq(intermediateState), any())).thenReturn(finalResult);
+        when(secondOperation.apply(eq(cachedIntermediateState), any())).thenReturn(finalResult);
         when(finalResult.getGrid()).thenReturn(finalState);
         when(secondOperation.isReproducible()).thenReturn(true);
         when(newOperation.apply(eq(intermediateState), any())).thenReturn(newResult);
+        when(newOperation.apply(eq(cachedIntermediateState), any())).thenReturn(newResult);
         when(newResult.getGrid()).thenReturn(newState);
         when(newOperation.isReproducible()).thenReturn(true);
         when(failingOperation.apply(eq(intermediateState), any()))
@@ -152,15 +157,17 @@ public class HistoryTests {
                 .thenReturn(Collections.singletonList(new ChangeDataId(firstChangeId, "data")));
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        when(gridStore.cacheGrid(firstChangeId, intermediateState)).thenReturn(cachedIntermediateState);
 
         entries = Arrays.asList(firstEntry, secondEntry);
     }
 
     @Test
-    public void testConstruct() throws Exception {
+    public void testSuccessfulCaching() throws Exception {
         // we assume that caching any grid succeeds
         when(initialState.cache()).thenReturn(true);
         when(intermediateState.cache()).thenReturn(true);
+        when(intermediateState.isCached()).thenReturn(true);
         when(finalState.cache()).thenReturn(true);
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
@@ -168,8 +175,11 @@ public class HistoryTests {
         Assert.assertEquals(history.getPosition(), 1);
         history.waitForCaching();
         // the first operation is expensive, so this state is cached
-        verify(initialState, times(0)).cache();
+        verify(initialState, never()).cache();
         verify(intermediateState, times(1)).cache();
+        verify(gridStore, times(1)).cacheGrid(firstChangeId, intermediateState);
+        verify(firstOperation, times(1)).apply(eq(initialState), any());
+        verify(secondOperation, never()).apply(any(), any());
         Assert.assertEquals(history.getCachedPosition(), 1);
         Assert.assertEquals(history.getCurrentGrid(), intermediateState);
         Assert.assertEquals(history.getInitialGrid(), initialState);
@@ -180,7 +190,8 @@ public class HistoryTests {
         GridPreservation gridPreservation = history.undoRedo(secondChangeId);
 
         history.waitForCaching();
-        verify(finalState, times(0)).cache();
+        verify(finalState, never()).cache();
+        verify(secondOperation, times(1)).apply(eq(intermediateState), any());
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentEntryId(), secondChangeId);
         Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
@@ -200,10 +211,6 @@ public class HistoryTests {
         Assert.assertEquals(history.getEntries(), entries);
         Assert.assertEquals(gridPreservation2, GridPreservation.PRESERVES_ROWS);
 
-        // All changes were called only once
-        verify(firstOperation, times(1)).apply(eq(initialState), any());
-        verify(secondOperation, times(1)).apply(eq(intermediateState), any());
-
         // Test some getters too
         Assert.assertEquals(history.getEntry(firstChangeId), firstEntry);
         Assert.assertEquals(history.getPrecedingEntryID(secondChangeId), firstChangeId);
@@ -222,24 +229,25 @@ public class HistoryTests {
 
         Assert.assertEquals(history.getPosition(), 1);
         history.waitForCaching();
-        verify(initialState, times(0)).cache();
-        // caching was unsuccessful
-        Assert.assertEquals(history.getCachedPosition(), -1);
+        verify(initialState, never()).cache();
+        // caching in memory was unsuccessful but we cached on disk instead
+        Assert.assertEquals(history.getCachedPosition(), 1);
         Assert.assertEquals(history._desiredCachedPosition, 1);
-        Assert.assertEquals(history.getCurrentGrid(), intermediateState);
-        verify(history.getCurrentGrid(), times(1)).cache();
+        Assert.assertEquals(history.getCurrentGrid(), cachedIntermediateState);
+        verify(intermediateState, times(1)).cache();
+        verify(cachedIntermediateState, never()).cache();
         Assert.assertEquals(history.getEntries(), entries);
 
         GridPreservation gridPreservation = history.undoRedo(secondChangeId);
 
         history.waitForCaching();
         // we cache neither the new state nor the previous one
-        verify(finalState, times(0)).cache();
-        // we attempted to cache the intermediate state only once overall (because it failed the first time)
+        verify(finalState, never()).cache();
+        // we attempted to cache the intermediate state in memory only once overall (because it failed the first time)
         verify(intermediateState, times(1)).cache();
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentEntryId(), secondChangeId);
-        Assert.assertEquals(history.getCachedPosition(), -1); // the second operation is not expensive
+        Assert.assertEquals(history.getCachedPosition(), 1); // the second operation is not expensive
         Assert.assertEquals(history.getCurrentGrid(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
         Assert.assertEquals(gridPreservation, GridPreservation.PRESERVES_ROWS);
@@ -282,41 +290,16 @@ public class HistoryTests {
     }
 
     @Test
-    public void testCacheIntermediateGrid() throws OperationException, IOException, ParsingException {
-        HistoryEntry thirdEntry = mock(HistoryEntry.class);
-        Operation thirdOperation = mock(Operation.class);
-        Grid fourthState = mock(Grid.class);
-        Grid cachedSecondState = mock(Grid.class);
-        Grid rederivedThirdState = mock(Grid.class);
-        ChangeResult fourthResult = mock(ChangeResult.class);
-        ChangeResult rederivedThirdResult = mock(ChangeResult.class);
-        long thirdEntryId = 39827L;
+    public void testUncacheIntermediateGrid() throws OperationException, IOException {
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.singleton(firstChangeId));
 
-        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
-        when(gridStore.cacheGrid(firstChangeId, intermediateState)).thenReturn(cachedSecondState);
-        when(thirdEntry.getOperation()).thenReturn(thirdOperation);
-        when(thirdOperation.apply(eq(finalState), any())).thenReturn(fourthResult);
-        when(fourthResult.getGrid()).thenReturn(fourthState);
-        when(thirdEntry.getId()).thenReturn(thirdEntryId);
-        when(secondOperation.apply(eq(cachedSecondState), any())).thenReturn(rederivedThirdResult);
-        when(rederivedThirdResult.getGrid()).thenReturn(rederivedThirdState);
+        History history = new History(initialState, dataStore, gridStore, entries, 2, 1234L);
 
-        List<HistoryEntry> fullEntries = Arrays.asList(firstEntry, secondEntry, thirdEntry);
-        History history = new History(initialState, dataStore, gridStore, fullEntries, 3, 1234L);
-        // make sure all changes have been derived
-        Assert.assertEquals(history._steps.get(3).grid, fourthState);
-        // Set position to two
-        history.undoRedo(secondChangeId);
+        history.uncacheGridFromDisk(1);
 
-        history.cacheIntermediateGridOnDisk(1);
-
-        // the state was cached
-        Assert.assertEquals(history._steps.get(1).grid, cachedSecondState);
-        // the current state was rederived from the cached state
-        Assert.assertEquals(history._steps.get(2).grid, rederivedThirdState);
-        // any further non-cached state is discarded
-        Assert.assertNull(history._steps.get(3).grid);
-
+        verify(gridStore, times(1)).uncacheGrid(firstChangeId);
+        verify(firstOperation, times(2)).apply(eq(initialState), any());
+        verify(secondOperation, times(2)).apply(eq(intermediateState), any());
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

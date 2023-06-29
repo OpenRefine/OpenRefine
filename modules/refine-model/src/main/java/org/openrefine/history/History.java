@@ -371,14 +371,24 @@ public class History {
         return new OperationApplicationResult(entry, changeResult);
     }
 
-    protected synchronized void cacheIntermediateGridOnDisk(int position) throws OperationException, IOException {
-        Validate.isTrue(position > 0);
+    protected void cacheGridOnDisk(int position) throws OperationException, IOException {
+        Validate.isTrue(position > 0, "attempting to cache the initial grid to disk, this is unnecessary");
         // first, ensure that the grid is computed
         Grid grid = getGrid(position, false);
         long historyEntryId = _entries.get(position - 1).getId();
+        // this operation can take a long time, so we avoid running it in a synchronized block
+        // to make it possible to apply further operations while this caching is happening.
         Grid cached = _gridStore.cacheGrid(historyEntryId, grid);
         synchronized (this) {
+            // check that the history has not changed since we started caching this grid
+            if (_entries.get(position - 1).getId() != historyEntryId) {
+                _gridStore.uncacheGrid(historyEntryId);
+                return;
+            }
             Step step = _steps.get(position);
+            if (step.grid != null && step.grid.isCached()) {
+                return; // this grid is already cached in memory, no need to replace it with the one from the disk
+            }
             step.grid = cached;
             step.cachedOnDisk = true;
             // invalidate the following states until the next cached grid
@@ -388,6 +398,26 @@ public class History {
             // make sure the current position is computed
             getGrid(_position, false);
         }
+    }
+
+    protected synchronized void uncacheGridFromDisk(int position) throws IOException, OperationException {
+        Validate.isTrue(position > 0, "attempting to uncache the initial grid from the disk, this is impossible");
+        long historyEntryId = _entries.get(position - 1).getId();
+        if (!_gridStore.listCachedGridIds().contains(historyEntryId)) {
+            // nothing to do
+            return;
+        }
+        // invalidate all further grids until the next disk-cached one
+        for (int i = position + 1; i < _steps.size() && !_steps.get(i).cachedOnDisk; i++) {
+            _steps.get(i).grid = null;
+        }
+        // uncache the grid
+        Step step = _steps.get(position);
+        _gridStore.uncacheGrid(historyEntryId);
+        step.grid = null;
+        step.cachedOnDisk = false;
+        // make sure the current position is computed
+        getGrid(_position, false);
     }
 
     protected synchronized void updateCachedPosition() {
@@ -427,12 +457,13 @@ public class History {
         _cachingFuture = _cachingExecutorService.submit(() -> {
             Grid newCachedState = _steps.get(toCache).grid;
             Grid oldCachedState = _cachedPosition >= 0 ? _steps.get(_cachedPosition).grid : null;
+            int oldCachedPosition = _cachedPosition;
             boolean cachedSuccessfully = false;
             try {
                 if (_cachedPosition > toCache) {
                     logger.info("Uncaching previous cached position {}", _cachedPosition);
                     oldCachedState.uncache();
-                    // TODO uncache off disk if it is cached there
+                    uncacheGridFromDisk(_cachedPosition);
                 }
                 // try to cache in memory first
                 logger.info("Caching new position {}", toCache);
@@ -440,23 +471,22 @@ public class History {
                 cachedSuccessfully = newCachedState.cache();
                 Instant cachingEnd = Instant.now();
                 if (cachedSuccessfully) {
-                    logger.info("Successfully cached position {} in {} ms", toCache,
+                    logger.info("Successfully cached position {} in memory in {} ms", toCache,
                             cachingEnd.toEpochMilli() - cachingStart.toEpochMilli());
                     _cachedPosition = toCache;
                     if (oldCachedState != null && _cachedPosition < toCache) {
-                        logger.info("Uncaching previous state");
                         oldCachedState.uncache();
+                        uncacheGridFromDisk(oldCachedPosition);
                     }
-                    // TODO uncache off disk if it is cached there
-                } else {
-                    // TODO cache on disk
+                }
+                // also cache the grid on disk if it is not the initial one
+                if (toCache > 0) {
+                    cacheGridOnDisk(toCache);
+                    _cachedPosition = toCache;
                 }
             } finally {
-                logger.info("Done caching position {}", toCache);
                 synchronized (History.this) {
-                    if (cachedSuccessfully) {
-                        _positionBeingCached = -1;
-                    }
+                    _positionBeingCached = -1;
                     updateCachedPosition();
                 }
             }
