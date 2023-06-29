@@ -28,14 +28,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Equality;
 import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.Recon;
+import org.openrefine.model.Recon;
 
 /**
  * An EntityIdValue that holds not just the id but also the label as fetched by either the reconciliation interface or

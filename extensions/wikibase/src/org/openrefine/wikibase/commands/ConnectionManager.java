@@ -24,10 +24,16 @@
 
 package org.openrefine.wikibase.commands;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.refine.ProjectManager;
-import com.google.refine.preference.PreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -36,12 +42,8 @@ import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 import org.wikidata.wdtk.wikibaseapi.OAuthApiConnection;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import javax.servlet.http.Cookie;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.openrefine.ProjectManager;
+import org.openrefine.preference.PreferenceStore;
 
 /**
  * Manages a connection to the current Wikibase instance.

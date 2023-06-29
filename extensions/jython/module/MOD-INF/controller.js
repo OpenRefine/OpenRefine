@@ -43,10 +43,10 @@ function init() {
   }
   S.setProperty("python.path", currentLibPath);
 
-  Packages.com.google.refine.expr.MetaParser.registerLanguageParser(
+  Packages.org.openrefine.expr.MetaParser.registerLanguageParser(
     "jython",
     "Python / Jython",
-    Packages.com.google.refine.jython.JythonEvaluable.createParser(),
+    Packages.org.openrefine.jython.JythonEvaluable.createParser(),
     "return value"
   );
 }

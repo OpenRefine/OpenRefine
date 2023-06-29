@@ -14,7 +14,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.util.ParsingUtilities;
 
 public class ManifestV2 implements Manifest {
 
@@ -61,7 +62,7 @@ public class ManifestV2 implements Manifest {
         }
 
         JsonNode entityTypesJson = manifest.path("entity_types");
-        entityTypeSettings = com.google.refine.util.ParsingUtilities.mapper.readValue(
+        entityTypeSettings = org.openrefine.util.ParsingUtilities.mapper.readValue(
                 ParsingUtilities.mapper.treeAsTokens(entityTypesJson),
                 new TypeReference<Map<String, EntityTypeSettings>>() {
                 });

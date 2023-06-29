@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.google.refine.model.ColumnModel;
+import org.openrefine.model.ColumnModel;
 
 /**
  * A sort of logger which can be used when traversing a schema and logging issues about it. By using the

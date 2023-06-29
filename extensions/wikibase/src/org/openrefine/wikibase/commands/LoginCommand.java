@@ -24,14 +24,9 @@
 
 package org.openrefine.wikibase.commands;
 
-import com.google.refine.commands.Command;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -44,8 +39,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+
+import org.openrefine.commands.Command;
 
 /**
  * Handles login.

@@ -31,8 +31,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -45,6 +43,9 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class PointerExtractorTest {
 

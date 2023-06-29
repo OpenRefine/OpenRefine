@@ -7,23 +7,23 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import org.openrefine.ProjectManager;
+import org.openrefine.RefineTest;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.model.Project;
+import org.openrefine.model.Row;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.manifests.ManifestException;
 import org.openrefine.wikibase.manifests.ManifestParser;
 import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.refine.ProjectManager;
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
-import com.google.refine.util.ParsingUtilities;
 
 public class WikibaseIssuesFunctionTests extends RefineTest {
 

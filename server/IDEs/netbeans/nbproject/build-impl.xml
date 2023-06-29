@@ -19,7 +19,9 @@ is divided into following sections:
   - cleanup
 
         -->
-<project xmlns:j2seproject1="http://www.netbeans.org/ns/j2se-project/1" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxrpc="http://www.netbeans.org/ns/j2se-project/jax-rpc" basedir=".." default="default" name="refine_server-impl">
+<project xmlns:j2seproject1="http://www.netbeans.org/ns/j2se-project/1"
+         xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3"
+         basedir=".." default="default" name="refine_server-impl">
     <fail message="Please build using Ant 1.7.1 or higher.">
         <condition>
             <not>

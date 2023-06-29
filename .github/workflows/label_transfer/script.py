@@ -1,8 +1,8 @@
-import requests
-import os
-from lxml import html
-import sys
 import json
+import os
+import requests
+import sys
+from lxml import html
 
 # Config
 

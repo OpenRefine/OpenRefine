@@ -26,18 +26,18 @@ package org.openrefine.wikibase.schema;
 
 import java.util.Collections;
 
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import org.openrefine.model.Cell;
+import org.openrefine.model.Recon;
+import org.openrefine.model.ReconCandidate;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
 import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikibase.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikibase.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikibase.testing.JacksonSerializationTest;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 
 public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
 

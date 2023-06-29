@@ -241,7 +241,7 @@ if %JAVA_RELEASE% GTR 17 (
 )
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
-%JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
+%JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows org.openrefine.Refine
 goto :eof
 
 :doMvn

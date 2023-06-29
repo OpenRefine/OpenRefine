@@ -4,7 +4,7 @@ importPackage(org.openrefine.wikibase.commands);
  * Function invoked to initialize the extension.
  */
 function init() {
-    var RefineServlet = Packages.com.google.refine.RefineServlet;
+    var RefineServlet = Packages.org.openrefine.RefineServlet;
     RefineServlet.registerClassMapping(
             "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange",
             "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange");
@@ -18,22 +18,22 @@ function init() {
     /*
      *  Attach a Wikibase schema to each project.
      */
-    Packages.com.google.refine.model.Project.registerOverlayModel(
+    Packages.org.openrefine.model.Project.registerOverlayModel(
         "wikibaseSchema",
         Packages.org.openrefine.wikibase.schema.WikibaseSchema);
     
     /*
      *  Operations
      */
-    Packages.com.google.refine.operations.OperationRegistry.registerOperation(
+    Packages.org.openrefine.operations.OperationRegistry.registerOperation(
         module, "save-wikibase-schema", Packages.org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation);
-    Packages.com.google.refine.operations.OperationRegistry.registerOperation(
+    Packages.org.openrefine.operations.OperationRegistry.registerOperation(
         module, "perform-wikibase-edits", Packages.org.openrefine.wikibase.operations.PerformWikibaseEditsOperation);
     
     /*
      *  Exporters
      */
-    var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
+    var ExporterRegistry = Packages.org.openrefine.exporters.ExporterRegistry;
     var QSExporter = Packages.org.openrefine.wikibase.exporters.QuickStatementsExporter;
     var SchemaExporter = Packages.org.openrefine.wikibase.exporters.SchemaExporter;
     
@@ -52,7 +52,7 @@ function init() {
     /*
      * GREL functions
      */
-    var CFR = Packages.com.google.refine.grel.ControlFunctionRegistry;
+    var CFR = Packages.org.openrefine.grel.ControlFunctionRegistry;
     CFR.registerFunction("wikibaseIssues", new Packages.org.openrefine.wikibase.functions.WikibaseIssuesFunction());
 
     /*

@@ -36,6 +36,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.commands.Command;
+import org.openrefine.model.Project;
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.manifests.ManifestException;
 import org.openrefine.wikibase.manifests.ManifestParser;
@@ -46,10 +49,6 @@ import org.openrefine.wikibase.schema.validation.ValidationError;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
 
 public class PreviewWikibaseSchemaCommand extends Command {
 

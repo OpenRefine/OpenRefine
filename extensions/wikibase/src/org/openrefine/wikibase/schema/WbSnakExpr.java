@@ -24,6 +24,14 @@
 
 package org.openrefine.wikibase.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
 import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingNoValueSnak;
 import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingSomeValueSnak;
 import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingValueSnak;
@@ -33,14 +41,6 @@ import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
 import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.PathElement;
 import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * An expression for a snak (pair of property and value).

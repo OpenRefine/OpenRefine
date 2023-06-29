@@ -6,16 +6,16 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
-import org.openrefine.wikibase.testing.TestingData;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class PropertyOnlyStatementMergerTests {
 

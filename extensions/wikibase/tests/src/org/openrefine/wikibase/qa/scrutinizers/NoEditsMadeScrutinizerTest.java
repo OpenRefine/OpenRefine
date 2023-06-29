@@ -24,9 +24,10 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.testng.annotations.Test;
 
 public class NoEditsMadeScrutinizerTest extends ScrutinizerTest {
 

@@ -32,6 +32,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingNoValueSnak;
 import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingSomeValueSnak;
@@ -47,19 +60,6 @@ import org.openrefine.wikibase.schema.validation.PathElement;
 import org.openrefine.wikibase.schema.validation.PathElement.Type;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.StatementEdit;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WbStatementExpr {

@@ -34,15 +34,11 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
-import org.openrefine.wikibase.commands.ConnectionManager;
-import org.openrefine.wikibase.editing.EditBatchProcessor;
-import org.openrefine.wikibase.editing.NewEntityLibrary;
-import org.openrefine.wikibase.manifests.Manifest;
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.openrefine.wikibase.updates.EntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -50,19 +46,23 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.refine.RefineServlet;
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.history.Change;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.Project;
-import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.process.LongRunningProcess;
-import com.google.refine.process.Process;
-import com.google.refine.util.Pool;
+import org.openrefine.RefineServlet;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.Change;
+import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.Project;
+import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.process.LongRunningProcess;
+import org.openrefine.process.Process;
+import org.openrefine.util.Pool;
+import org.openrefine.wikibase.commands.ConnectionManager;
+import org.openrefine.wikibase.editing.EditBatchProcessor;
+import org.openrefine.wikibase.editing.NewEntityLibrary;
+import org.openrefine.wikibase.manifests.Manifest;
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.validation.ValidationState;
+import org.openrefine.wikibase.updates.EntityEdit;
 
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 

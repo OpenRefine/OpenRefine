@@ -13,13 +13,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.NotImplementedException;
 import org.jsoup.helper.Validate;
-import org.openrefine.wikibase.editing.MediaFileUtils;
-import org.openrefine.wikibase.editing.NewEntityLibrary;
-import org.openrefine.wikibase.editing.ReconEntityRewriter;
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -34,7 +30,11 @@ import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.editing.MediaFileUtils;
+import org.openrefine.wikibase.editing.NewEntityLibrary;
+import org.openrefine.wikibase.editing.ReconEntityRewriter;
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
 
 /**
  * Represents a candidate edit on a MediaInfo entity.

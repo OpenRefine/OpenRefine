@@ -33,11 +33,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A class to plan an update of an entity, after evaluating the statements but before fetching the current content of

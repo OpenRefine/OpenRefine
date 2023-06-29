@@ -29,6 +29,20 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import org.openrefine.model.Cell;
+import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.ReconCandidate;
 import org.openrefine.wikibase.schema.WbLanguageConstant;
 import org.openrefine.wikibase.schema.WbMonolingualExpr;
 import org.openrefine.wikibase.schema.WbStringConstant;
@@ -38,21 +52,6 @@ import org.openrefine.wikibase.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.strategies.StatementMerger;
 import org.openrefine.wikibase.updates.StatementEdit;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-//import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 
 public class TestingData {
 

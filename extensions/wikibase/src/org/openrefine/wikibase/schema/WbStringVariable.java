@@ -24,12 +24,12 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
+import org.openrefine.model.Cell;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 
 /**
  * A variable that returns a simple string value.

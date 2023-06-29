@@ -21,7 +21,7 @@
     </context-param>
     <servlet>
         <servlet-name>refine</servlet-name>
-        <servlet-class>com.google.refine.RefineServlet</servlet-class>
+        <servlet-class>org.openrefine.RefineServlet</servlet-class>
         <init-param>
             <param-name>refine.version</param-name>
             <param-value>$VERSION</param-value>

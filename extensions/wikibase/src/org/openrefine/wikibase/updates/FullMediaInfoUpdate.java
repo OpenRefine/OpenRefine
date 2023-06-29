@@ -1,14 +1,13 @@
 
 package org.openrefine.wikibase.updates;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.Validate;
 import org.wikidata.wdtk.datamodel.implementation.MediaInfoUpdateImpl;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * An extension of WDTK's {@link MediaInfoUpdate} which also lets us change the file name of a file and/or replace its

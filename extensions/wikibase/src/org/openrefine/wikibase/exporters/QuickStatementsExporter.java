@@ -31,15 +31,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.ItemEdit;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.StatementEdit;
-import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
-import org.openrefine.wikibase.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -50,9 +41,18 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.WriterExporter;
-import com.google.refine.model.Project;
+import org.openrefine.browsing.Engine;
+import org.openrefine.exporters.WriterExporter;
+import org.openrefine.model.Project;
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.validation.ValidationState;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.ItemEdit;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.StatementEdit;
+import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikibase.updates.scheduler.QuickStatementsUpdateScheduler;
 
 public class QuickStatementsExporter implements WriterExporter {
 

@@ -24,18 +24,18 @@
 
 package org.openrefine.wikibase.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
+import org.openrefine.model.Cell;
+import org.openrefine.model.Recon.Judgment;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
 import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon.Judgment;
 
 /**
  * An item that depends on a reconciled value in a column.

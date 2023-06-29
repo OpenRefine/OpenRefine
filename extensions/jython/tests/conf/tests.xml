@@ -8,7 +8,7 @@
       </run>
     </groups>
     <packages>
-      <package name="com.google.refine.jython.*" />
+      <package name="org.openrefine.jython.*" />
     </packages>
   </test>
 </suite>

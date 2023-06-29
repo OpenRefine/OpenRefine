@@ -24,7 +24,12 @@
 
 package org.openrefine.wikibase.editing;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -36,12 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -59,7 +58,13 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.refine.util.ParsingUtilities;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 
 public class EditBatchProcessorTest extends WikidataRefineTest {
 

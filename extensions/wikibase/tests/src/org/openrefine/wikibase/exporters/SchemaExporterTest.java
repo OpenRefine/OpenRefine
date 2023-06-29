@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.browsing.Engine;
-import com.google.refine.model.Project;
-import com.google.refine.util.TestUtils;
+import org.openrefine.browsing.Engine;
+import org.openrefine.model.Project;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
 
 public class SchemaExporterTest extends WikidataRefineTest {
 

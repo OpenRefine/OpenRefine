@@ -1,17 +1,19 @@
 
 package org.openrefine.wikibase.commands;
 
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
-
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class ParseWikibaseSchemaCommandTest extends CommandTest {
 

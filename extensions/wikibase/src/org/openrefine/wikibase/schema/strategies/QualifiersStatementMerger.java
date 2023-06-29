@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -21,9 +23,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Merging strategy which compares statements using not just their main value, but also their qualifiers. It is possible

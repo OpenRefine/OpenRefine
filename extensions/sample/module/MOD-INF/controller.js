@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 
 /*
  * Function invoked to initialize the extension.
@@ -72,7 +72,7 @@ function process(path, request, response) {
     // here's how to pass things into the .vt templates
     context.someList = ["Superior","Michigan","Huron","Erie","Ontario"];
     context.someString = "foo";
-    context.someInt = Packages.com.google.refine.sampleExtension.SampleUtil.stringArrayLength(context.someList);
+    context.someInt = Packages.org.openrefine.sampleExtension.SampleUtil.stringArrayLength(context.someList);
 
     send(request, response, "index.vt", context);
   }

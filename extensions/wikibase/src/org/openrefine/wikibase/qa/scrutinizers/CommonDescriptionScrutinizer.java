@@ -1,11 +1,12 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
+import java.util.Set;
+
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
-import java.util.Set;
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
 
 /**
  * @author Lu Liu

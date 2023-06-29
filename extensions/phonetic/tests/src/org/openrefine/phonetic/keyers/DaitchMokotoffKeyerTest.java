@@ -5,7 +5,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.clustering.binning.Keyer;
+import org.openrefine.clustering.binning.Keyer;
 
 public class DaitchMokotoffKeyerTest {
 

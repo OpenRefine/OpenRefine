@@ -31,14 +31,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.openrefine.wikibase.schema.exceptions.QAWarningException;
-import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
-import org.openrefine.wikibase.updates.StatementEdit;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -51,13 +46,18 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.refine.model.Column;
-import com.google.refine.model.ColumnModel;
-import com.google.refine.model.ModelException;
-import com.google.refine.util.ParsingUtilities;
+import org.openrefine.model.Column;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.ModelException;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikibase.schema.exceptions.QAWarningException;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.schema.validation.ValidationState;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
+import org.openrefine.wikibase.updates.StatementEdit;
 
 public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
 

@@ -4,18 +4,18 @@ package org.openrefine.wikibase.updates;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.testing.TestingData;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class StatementEditTest {
 

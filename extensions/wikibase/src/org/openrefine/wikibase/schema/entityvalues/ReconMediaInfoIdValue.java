@@ -27,7 +27,7 @@ package org.openrefine.wikibase.schema.entityvalues;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
-import com.google.refine.model.Recon;
+import org.openrefine.model.Recon;
 
 public class ReconMediaInfoIdValue extends ReconEntityIdValue implements MediaInfoIdValue {
 

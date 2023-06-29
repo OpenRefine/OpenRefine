@@ -27,11 +27,11 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
+import org.openrefine.model.Project;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
 
 public class ExpressionContextTest extends WikidataRefineTest {
 

@@ -1,8 +1,9 @@
 
 package org.openrefine.phonetic.keyers;
 
-import com.google.refine.clustering.binning.Keyer;
 import org.apache.commons.codec.language.DaitchMokotoffSoundex;
+
+import org.openrefine.clustering.binning.Keyer;
 
 public class DaitchMokotoffKeyer extends Keyer {
 

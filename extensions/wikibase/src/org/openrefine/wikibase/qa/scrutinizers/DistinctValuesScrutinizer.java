@@ -24,7 +24,10 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.QAWarning;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -32,9 +35,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.openrefine.wikibase.qa.QAWarning;
 
 /**
  * A scrutinizer that checks for properties using the same value on different entities.

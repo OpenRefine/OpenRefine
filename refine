@@ -494,7 +494,7 @@ run() {
 
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
-    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
+    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "org.openrefine.Refine")
 
     echo ""
 

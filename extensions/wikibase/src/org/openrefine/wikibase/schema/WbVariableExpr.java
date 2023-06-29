@@ -24,16 +24,16 @@
 
 package org.openrefine.wikibase.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.openrefine.model.Cell;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
 import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.ValidationState;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.Cell;
 
 /**
  * A base class for expressions which draw their values from a particular column.

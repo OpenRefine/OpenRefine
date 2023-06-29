@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.StatementUpdateBuilder;
@@ -21,7 +17,11 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 
-import com.google.refine.util.TestUtils;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class StatementGroupEditTest {
 

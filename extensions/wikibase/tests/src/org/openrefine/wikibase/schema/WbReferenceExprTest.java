@@ -27,17 +27,17 @@ package org.openrefine.wikibase.schema;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.refine.model.Column;
-import com.google.refine.model.ColumnModel;
-import com.google.refine.model.ModelException;
+import org.openrefine.model.Column;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.ModelException;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbReferenceExprTest extends WbExpressionTest<Reference> {
 
