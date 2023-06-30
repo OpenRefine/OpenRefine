@@ -8,7 +8,6 @@
     "wikibase-extension/export-schema": "Eksporter skjema",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-schema/dialog-header": "Innrett til Wikidata",
-    "wikibase-schema/dialog-explanation": "Wikidata-skjemaet nedenfor spesifiserer hvordan dine tabulære data vil transformeres til Wikidata-redigeringer. Du kan dra og slippe kolonnenavnene nedenfor til de fleste inndataboksene: For hver rad vil redigeringer genereres med verdiene i disse kolonnene.",
     "wikibase-schema/preview-explanation": "Denne fanen viser de første (av $1) redigeringene som vil gjøres når du laster opp endringene til Wikidata. Du kan bruke fasetter for å ettergå redigeringene til spesifikke elementer.",
     "wikibase-schema/schema-tab-header": "Skjema",
     "wikibase-schema/warnings-tab-header": "Saker",
