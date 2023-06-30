@@ -163,7 +163,6 @@
     "wikibase-schema/warnings-tab-header": "Problemas",
     "wikibase-schema/schema-tab-header": "Esquema",
     "wikibase-schema/preview-explanation": "Esta pestaña muestra las primeras ediciones (de $1) que se realizarán una vez que cargue los cambios en <a href=\"$2\" target=\"_blank\"> $3 </a>. Puede utilizar facetas para inspeccionar las ediciones en elementos concretos.",
-    "wikibase-schema/dialog-explanation": "Actualmente estás trabajando contra <a href=\"$1\" target=\"_blank\"> $2 </a>. Primero debe conciliar sus datos con los servicios de conciliación vinculados a $2 (como <a href=\"$3\" target=\"_blank\"> $3 </a>). El esquema a continuación especifica cómo se transformarán sus datos tabulares en ediciones de $2. Puede arrastrar y soltar los nombres de las columnas a continuación en la mayoría de los cuadros de entrada: para cada fila, las ediciones se generarán con los valores de estas columnas.",
     "wikibase-schema/dialog-header": "Alinear a Wikidata",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-extension/wikibase-schema": "Esquema de Wikidata",

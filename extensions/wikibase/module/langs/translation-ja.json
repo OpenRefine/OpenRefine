@@ -10,7 +10,6 @@
     "wikibase-extension/import-wikibase-schema": "スキーマのインポート…",
     "wikibase-extension/export-schema": "スキーマをエクスポート",
     "wikibase-schema/dialog-header": "Wikidataにアライン",
-    "wikibase-schema/dialog-explanation": "下記スキーマはあなたの表形式データがどのように <a href=\"$1\">$2</a> の編集に変換されるかを示しています。.",
     "wikibase-schema/preview-explanation": "このタブは、<a href=\"$2\" target=\"_blank\">$3</a>にアップロードされる変更の（$1個のうち）最初の編集項目を表示します。ファセットを使って内容を点検できます.",
     "wikibase-schema/schema-tab-header": "スキーマ",
     "wikibase-schema/warnings-tab-header": "問題点",

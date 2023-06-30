@@ -120,9 +120,6 @@ SchemaAlignment._rerenderTabs = function() {
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.targetWikibaseLabel.text($.i18n('wikibase-schema/target-wikibase-instance'));
-  schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
-      WikibaseManager.getSelectedWikibaseMainPage(),
-      WikibaseManager.getSelectedWikibaseName()));
   let editableEntityTypes = WikibaseManager.getSelectedWikibaseEditableEntityTypes();
   for (let entityType of editableEntityTypes) {
     let addButton = $('<div></div>').addClass("wbs-toolbar");
