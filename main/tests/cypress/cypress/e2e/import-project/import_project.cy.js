@@ -51,7 +51,7 @@ describe(__filename, function () {
   it('Import a project from URL', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
-    const url = "https://pintoch.ulminfo.fr/6e551ee9a1/Changing-the-type-of-the-column-for-numeric-1680159450732.openrefine.tar.gz";
+    const url = "https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food-small-csv.openrefine.tar.zip";
     cy.get('#or-import-url').type(url);
     cy.get('#project-upload-form').submit();
 
