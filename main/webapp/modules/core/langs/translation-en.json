@@ -94,7 +94,7 @@
     "core-index-import/warning-import-url": "You must specify a correct url.",
     "core-index-import/warning-import-input": "You must specify either a project file / url.",
     "core-index-import/warning-import-two-input": "You must specify only one input field.",
-    "core-index-import/delete-import-file": "Delete file",
+    "core-index-import/delete-import-file": "Clear file",
     "core-index-import/uploading-data": "Uploading data…",
     "core-index-import/web-address": "Web Addresses (URLs)",
     "core-index-import/warning-web-address": "You must specify a valid web address (URL) to import.",
