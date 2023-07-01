@@ -1,10 +1,15 @@
 <form id="project-upload-form" method="post" enctype="multipart/form-data" action="command/core/import-project" accept-charset="UTF-8">
   <div class="grid-layout layout-normal"><table>
     <tr>
-      <td colspan="2" id="or-import-locate"></td>
+      <td colspan="3" id="or-import-locate"></td>
     <tr>
       <td><label for="project-tar-file-input" id="or-import-file"></label></td>
       <td><input type="file" id="project-tar-file-input" name="project-file"/></td>
+      <td><input type="button" id="project-tar-file-delete" size="25" bind="projectTarDelete"/></td>
+    </tr>
+    <tr>
+      <td><label for="project-url-input" id="or-import-url"></label></td>
+      <td><input type="text" id="project-url-input" size="25" name="project-url"/></td>
     </tr>
     <tr>
       <td><label for="project-name-input" id="or-import-rename"></label></td>
