@@ -17,10 +17,6 @@
   height: 100%;
 }
 
-#schema-alignment-tab {
-  overflow: hidden;
-}
-
 .schema-alignment-tab-content {
   max-width: 70em;
 }
@@ -48,8 +44,8 @@
 }
 
 .schema-alignment-dialog-canvas {
-  background: var(--background-primary);
   overflow-y: auto;
+  margin-bottom: 3em;
 }
 
 .schema-alignment-dialog-statements-area {
@@ -64,6 +60,18 @@
 
 .invalid-schema-warning {
   margin: 1em;
+}
+
+.schema-alignment-header {
+  position: sticky;
+  top: 0;
+  padding-top: 1em;
+  background-color: var(--background-primary);
+  z-index: 1;
+}
+
+.schema-alignment-header .panel-explanation:first-child {
+  margin-top: 0;
 }
 
 .float-apart {
