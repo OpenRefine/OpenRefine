@@ -5,6 +5,7 @@ importPackage(org.openrefine.wikibase.commands);
  */
 function init() {
     var RefineServlet = Packages.org.openrefine.RefineServlet;
+    // FIXME: Unclear what the purpose of this identity mapping is
     RefineServlet.registerClassMapping(
             "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange",
             "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange");

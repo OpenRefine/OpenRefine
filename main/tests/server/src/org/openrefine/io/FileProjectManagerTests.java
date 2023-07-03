@@ -73,16 +73,17 @@ public class FileProjectManagerTests {
     @Test
     public void serializeFileProjectManager() {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        String json = "{\n" +
+        // TODO: Test both current & legacy
+        String readJson = "{\n" +
                 "       \"preferences\" : {\n" +
                 "         \"entries\" : {\n" +
                 "           \"scripting.expressions\" : {\n" +
-                "             \"class\" : \"org.openrefine.preference.TopList\",\n" +
+                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
                 "             \"list\" : [ ],\n" +
                 "             \"top\" : 100\n" +
                 "           },\n" +
                 "           \"scripting.starred-expressions\" : {\n" +
-                "             \"class\" : \"org.openrefine.preference.TopList\",\n" +
+                "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
                 "             \"list\" : [ ],\n" +
                 "             \"top\" : 2147483647\n" +
                 "           }\n" +
@@ -90,7 +91,22 @@ public class FileProjectManagerTests {
                 "       },\n" +
                 "       \"projectIDs\" : [ 5555 ]\n" +
                 "     }";
-        TestUtils.isSerializedTo(manager, json);
+        String writeJson = "{\n" +
+                "       \"preferences\" : {\n" +
+                "         \"entries\" : {\n" +
+                "           \"scripting.expressions\" : {\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 100\n" +
+                "           },\n" +
+                "           \"scripting.starred-expressions\" : {\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 2147483647\n" +
+                "           }\n" +
+                "         }\n" +
+                "       },\n" +
+                "       \"projectIDs\" : [ 5555 ]\n" +
+                "     }";
+        TestUtils.isSerializedTo(manager, writeJson);
 
     }
 

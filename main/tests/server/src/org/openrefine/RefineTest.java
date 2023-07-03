@@ -97,10 +97,11 @@ public class RefineTest {
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
+            // TODO: Test both current & legacy
             FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" +
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
-                    "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
-                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
+                    "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
+                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
                     "UTF-8"); // JSON is always UTF-8
             FileProjectManager.initialize(workspaceDir);
 

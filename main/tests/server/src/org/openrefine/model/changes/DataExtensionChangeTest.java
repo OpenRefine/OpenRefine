@@ -90,4 +90,18 @@ public class DataExtensionChangeTest extends RefineTest {
         change.apply(project);
         assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
     }
+
+    @Test
+    public void testApplyNewerChange() throws Exception {
+        Pool pool = new Pool();
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream("changes/data_extension_4.0.txt");
+        LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
+        // skip the header
+        lineReader.readLine();
+        lineReader.readLine();
+        Change change = DataExtensionChange.load(lineReader, pool);
+        change.apply(project);
+        assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
+    }
 }

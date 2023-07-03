@@ -1,5 +1,5 @@
 2.8
-org.openrefine.model.changes.DataExtensionChange
+com.google.refine.model.changes.DataExtensionChange
 baseColumnName=item
 service=https://tools.wmflabs.org/openrefine-wikidata/en/api
 identifierSpace=http://www.wikidata.org/entity/

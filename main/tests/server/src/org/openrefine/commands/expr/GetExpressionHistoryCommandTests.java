@@ -43,9 +43,9 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
 
     @Test
     public void testJsonResponse() throws ServletException, IOException {
-
+        // TODO: Test both current & legacy
         initWorkspace("{\n" +
-                "        \"class\": \"org.openrefine.preference.TopList\",\n" +
+                "        \"class\": \"com.google.refine.preference.TopList\",\n" +
                 "        \"top\": 100,\n" +
                 "        \"list\": [\n" +
                 "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" +
@@ -53,7 +53,7 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
                 "          \"grel:cell.recon.match.id\"" +
                 "]}",
                 "{\n" +
-                        "        \"class\": \"org.openrefine.preference.TopList\",\n" +
+                        "        \"class\": \"com.google.refine.preference.TopList\",\n" +
                         "        \"top\": 100,\n" +
                         "        \"list\": [\n" +
                         "          \"grel:cell.recon.match.id\"\n" +

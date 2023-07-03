@@ -67,9 +67,11 @@ public class ExpressionCommandTestBase {
     }
 
     public void initWorkspace(String expressionsJson, String starredExpressionsJson) {
-        String starred = starredExpressionsJson == null ? "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
+        // TODO: Test both current & legacy
+        String starred = starredExpressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
                 "\"list\":[]}" : starredExpressionsJson;
-        String expressions = expressionsJson == null ? "{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}"
+        // TODO: Test both current & legacy
+        String expressions = expressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
                 : expressionsJson;
         String jsonData = "{\"projectIDs\":[]\n" +
                 ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" + starred +

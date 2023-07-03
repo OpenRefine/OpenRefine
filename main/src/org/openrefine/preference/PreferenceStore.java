@@ -42,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -96,17 +97,28 @@ public class PreferenceStore {
 
     @JsonProperty("entries")
     public void setEntries(JsonNode entries) {
-        Iterator<String> i = entries.fieldNames();
-        while (i.hasNext()) {
-            String key = i.next();
-            if (entries.get(key) != null) {
-                JsonNode o = entries.get(key);
-                Object loaded = loadObject(o);
-                if (loaded == null) {
-                    if ("scripting.starred-expressions".contentEquals(key)) {
-                        // HACK to work around preferences corruption
-                        loaded = new TopList(10);
+        Iterator<Map.Entry<String, JsonNode>> fields = entries.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            String key = entry.getKey();
+            JsonNode o = entry.getValue();
+            ;
+            if (o != null) {
+                Object loaded = null;
+                if ("scripting.expressions".contentEquals(key) || "scripting.starred-expressions".contentEquals(key)) {
+                    try {
+                        loaded = ParsingUtilities.mapper.treeToValue(o, TopList.class);
+                    } catch (JsonProcessingException e) {
+                        // ignored
                     }
+                    if (loaded == null) {
+                        if ("scripting.starred-expressions".contentEquals(key)) {
+                            // HACK to work around preferences corruption
+                            loaded = new TopList(10);
+                        }
+                    }
+                } else {
+                    loaded = loadObject(o);
                 }
                 _prefs.put(key, loaded);
             }
@@ -122,8 +134,8 @@ public class PreferenceStore {
     static public Object loadObject(JsonNode o) {
         try {
             if (o instanceof ObjectNode) {
-                ObjectNode obj2 = (ObjectNode) o;
-                return ParsingUtilities.mapper.treeToValue(obj2, PreferenceValue.class);
+                // TODO: Log error
+                return null;
             } else if (o instanceof ArrayNode) {
                 return o;
             } else {

@@ -48,7 +48,9 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
 
     @Test
     public void testJsonResponse() throws ServletException, IOException {
+        // TODO: Test legacy serialization format
 
+        // TODO: Test both current & legacy
         initWorkspace("{\n" +
                 "        \"class\": \"org.openrefine.preference.TopList\",\n" +
                 "        \"top\": 100,\n" +

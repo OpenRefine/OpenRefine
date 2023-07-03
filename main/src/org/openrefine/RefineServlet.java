@@ -338,6 +338,7 @@ public class RefineServlet extends Butterfly {
         classMappings.add(new ClassMapping(from, to.endsWith("*") ? to.substring(0, to.length() - 1) : to));
     }
 
+    // FIXME: This doesn't actually work (at least for Jackson)
     static {
         registerClassMapping("com.google.refine.*", "org.openrefine.*");
     }

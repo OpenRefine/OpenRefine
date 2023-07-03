@@ -41,8 +41,8 @@ public class TopListTests {
 
     @Test
     public void serializeTopList() throws JsonParseException, JsonMappingException, IOException {
-        String json = "{"
-                + "\"class\":\"org.openrefine.preference.TopList\","
+        String readJson = "{"
+                + "\"class\":\"com.google.refine.preference.TopList\","
                 + "\"top\":100,"
                 + "\"list\":["
                 + "   \"grel:value.parseJson()[\\\"end-date\\\"][\\\"year\\\"][\\\"value\\\"]\","
@@ -52,12 +52,26 @@ public class TopListTests {
                 + "   \"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\""
                 + "]}";
-        PreferenceValue prefValue = ParsingUtilities.mapper.readValue(json, PreferenceValue.class);
+        String writeJson = "{"
+                + "\"top\":100,"
+                + "\"list\":["
+                + "   \"grel:value.parseJson()[\\\"end-date\\\"][\\\"year\\\"][\\\"value\\\"]\","
+                + "   \"grel:value.parseJson()[\\\"start-date\\\"][\\\"year\\\"][\\\"value\\\"]\","
+                + "   \"grel:value.parseJson()[\\\"organization\\\"][\\\"disambiguated-organization\\\"][\\\"disambiguated-organization-identifier\\\"]\","
+                + "   \"grel:value.parseJson()[\\\"organization\\\"][\\\"address\\\"][\\\"country\\\"]\",\"grel:value.parseJson()[\\\"organization\\\"][\\\"name\\\"]\","
+                + "   \"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
+                + "   \"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\""
+                + "]}";
+        PreferenceValue prefValueOld = ParsingUtilities.mapper.readValue(readJson, TopList.class);
+        TestUtils.isSerializedTo(
+                prefValueOld,
+                writeJson);
+        PreferenceValue prefValue = ParsingUtilities.mapper.readValue(writeJson, TopList.class);
         TestUtils.isSerializedTo(
                 prefValue,
-                json);
+                writeJson);
 
-        String mapJson = "{\"key\":" + json + "}";
+        String mapJson = "{\"key\":" + writeJson + "}";
         TestUtils.isSerializedTo(Collections.singletonMap("key", prefValue), mapJson);
     }
 }

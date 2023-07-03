@@ -37,11 +37,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @author Antonin Delpeuch
  */
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "class")
+// TODO: We could potentially map com.google.refine.preference.TopList to org.openrefine.preference.TopList here
+// but having implementation classes in our JSON seems fragile and something to be avoided.
+
+// @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "class")
 public interface PreferenceValue {
 
-    @JsonProperty("class")
-    public default String getClassName() {
-        return this.getClass().getName();
-    }
+//    @JsonProperty("class")
+//    public default String getClassName() {
+//        return this.getClass().getName();
+//    }
 }
