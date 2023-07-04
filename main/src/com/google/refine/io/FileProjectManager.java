@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.google.refine.util.LocaleUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -57,12 +56,14 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class FileProjectManager extends ProjectManager {
@@ -322,7 +323,7 @@ public class FileProjectManager extends ProjectManager {
     protected boolean saveToFile(File file) throws IOException {
         OutputStream stream = new FileOutputStream(file);
         List<Long> modified = getModifiedProjectIds();
-        boolean saveWasNeeded = (modified.size() > 0) || (_preferenceStore.isDirty());
+        boolean saveWasNeeded = (modified.size() > 0) || (_preferenceStore.isDirty() || projectRemoved);
         try {
             // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
             ParsingUtilities.defaultWriter.writeValue(stream, this);
