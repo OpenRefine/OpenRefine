@@ -136,19 +136,22 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
         long idA = manager.getProjectID("A");
         long idB = manager.getProjectID("B");
-        Path pathA = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idA) + ".project", "metadata.json");
-        Path pathB = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idB) + ".project", "metadata.json");
+
+        Path pathA = Paths.get(manager.getProjectDir(idA).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
+        Path pathB = Paths.get(manager.getProjectDir(idB).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
         File metaAFile = pathA.toFile();
         File metaBFile = pathB.toFile();
         long timeBeforeA = metaAFile.lastModified();
         long timeBeforeB = metaBFile.lastModified();
+        // Reload fresh copy of the workspace
+        manager = new FileProjectManager(workspaceDir);
         Thread.sleep(1000);
         manager.getProjectMetadata(idA).setName("ModifiedA");
         manager.saveWorkspace();
         long timeAfterA = metaAFile.lastModified();
         long timeAfterB = metaBFile.lastModified();
-        assertEquals(timeBeforeB, timeAfterB);
-        assertNotEquals(timeBeforeA, timeAfterA);
+        assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
+        assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
     }
 
     @Test
