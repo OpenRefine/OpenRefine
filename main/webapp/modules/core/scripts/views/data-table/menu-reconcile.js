@@ -55,6 +55,32 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
+  var doAddColumnWithUrlOfMatchedEntities=function(){
+    var serviceUrl = null;
+    var service = null;
+    if (column.reconConfig) {
+        serviceUrl = column.reconConfig.service;
+    }
+    if (serviceUrl) {
+        service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+    } 
+    Refine.postCoreProcess(
+      "add-column", 
+      {
+        baseColumnName: column.name,  
+        newColumnName: "Url of Matched entities", 
+        columnInsertIndex: columnIndex + 1,
+        onError: "set-to-blank"
+      },
+      { expression: '"' + service.view.url + '".replace("{{id}}", cell.recon.match.id)' },
+      { modelsChanged: true },
+      {
+        onDone: function(o) {
+          dismiss();
+        }
+      }
+    );
+  }
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
       "recon-match-best-candidates",
@@ -510,6 +536,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/actions",
       label: $.i18n('core-views/actions'),
       submenu: [
+        {
+          id: "core/Add-column-with-URLs-of-matched-entities",
+          label: $.i18n('core-views/Add column with URLs of matched entities'),
+          tooltip: $.i18n('core-views/Add column with URLs of matched entities2'),
+          click:  doAddColumnWithUrlOfMatchedEntities
+        },
         {
           id: "core/match-to-best-candidate",
           label: $.i18n('core-views/best-cand'),

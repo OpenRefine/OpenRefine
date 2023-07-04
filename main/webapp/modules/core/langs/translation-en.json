@@ -541,6 +541,8 @@
     "core-views/judg-hist": "Judgment action timestamp",
     "core-views/hist-entries": "$1: judgment action timestamp",
     "core-views/actions": "Actions",
+    "core-views/Add column with URLs of matched entities":"Add column with URLs of matched entities",
+    "core-views/Add column with URLs of matched entities2":"Add column with URLs of matched entities for all current filtered rows",
     "core-views/best-cand": "Match each cell to its best candidate",
     "core-views/best-cand2": "Match each cell to its best candidate in this column for all current filtered rows",
     "core-views/new-topic": "Create a new item for each cell…",
