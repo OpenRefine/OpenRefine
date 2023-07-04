@@ -85,11 +85,8 @@ public class ProjectMetadataUtilities {
     }
 
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
-        try {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8)) {
             ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
-        } finally {
-            writer.close();
         }
     }
 
