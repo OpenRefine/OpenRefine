@@ -27,7 +27,6 @@
 
 package com.google.refine.io;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
@@ -56,7 +55,7 @@ public class FileProjectManagerTests {
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
+        workspaceFile = new File(workspaceDir, "workspace.json");
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -112,13 +111,13 @@ public class FileProjectManagerTests {
     @Test
     public void deleteProjectAndSaveWorkspace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
         manager.deleteProject(5555);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
         JsonObject json = JSON.parse(inputStream);
-        assertTrue(json.get("projectIDs").getAsArray().isEmpty());
+        assertTrue(json.get("projectIDs").getAsArray().isEmpty(), "deleted project still in workspace.json");
     }
 
     /**
