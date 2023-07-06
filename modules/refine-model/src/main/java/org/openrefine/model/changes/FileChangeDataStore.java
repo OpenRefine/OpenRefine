@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -202,6 +203,7 @@ public class FileChangeDataStore implements ChangeDataStore {
                 .stream()
                 .filter(p -> p.getChangeDataId().getHistoryEntryId() == historyEntryId)
                 .forEach(process -> process.cancel());
+        processManager.update();
 
         // then delete the directory and all subdirectories
         File file = historyEntryIdToDir(historyEntryId, false);

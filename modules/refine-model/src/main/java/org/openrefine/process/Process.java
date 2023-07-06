@@ -147,6 +147,10 @@ public abstract class Process {
         return _progress;
     }
 
+    /**
+     * Cancels the process. Note that calling {@link ProcessManager#update()} after this cancellation is required for
+     * any other process in the queue to start.
+     */
     public void cancel() {
         _canceled = true;
         if (_future != null) {

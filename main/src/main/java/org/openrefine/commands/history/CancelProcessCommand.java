@@ -8,6 +8,7 @@ import org.openrefine.history.History;
 import org.openrefine.model.Project;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +51,8 @@ public class CancelProcessCommand extends Command {
         Long newHistoryEntryId = null;
 
         int processIdInt = Integer.parseInt(processId);
-        Process process = project.getProcessManager().getProcess(processIdInt);
+        ProcessManager processManager = project.getProcessManager();
+        Process process = processManager.getProcess(processIdInt);
         long historyEntryId = process.getChangeDataId().getHistoryEntryId();
         History history = project.getHistory();
         if (history.getPosition() >= history.entryIndex(historyEntryId) + 1) {
@@ -59,6 +61,7 @@ public class CancelProcessCommand extends Command {
             history.undoRedo(newHistoryEntryId);
         }
         process.cancel();
+        processManager.update();
         respondJSON(response, 202, new Response(newHistoryEntryId));
     }
 }

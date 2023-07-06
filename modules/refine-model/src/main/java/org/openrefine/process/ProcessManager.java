@@ -130,7 +130,7 @@ public class ProcessManager {
                 .orElse(null);
     }
 
-    protected void update() {
+    public void update() {
         while (_processes.size() > 0) {
             Process p = _processes.get(0);
             State state = p.getState();
