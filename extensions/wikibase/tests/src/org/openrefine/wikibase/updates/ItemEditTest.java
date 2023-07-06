@@ -45,6 +45,7 @@ import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
+import org.wikidata.wdtk.datamodel.helpers.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -289,6 +290,14 @@ public class ItemEditTest {
         assertEquals(update.getStatements(),
                 Datamodel.makeStatementUpdate(Collections.singletonList(statement1WithOtherSubject), Collections.emptyList(),
                         Collections.emptySet()));
+    }
+
+    @Test
+    public void testToEmptyEntityUpdate() {
+        ItemEdit edit = new ItemEditBuilder(existingSubject).addContributingRowId(123L).build();
+        ItemUpdate expectedUpdate = ItemUpdateBuilder.forEntityId(existingSubject).build();
+
+        assertEquals(edit.toEntityUpdate(null), expectedUpdate);
     }
 
     @Test

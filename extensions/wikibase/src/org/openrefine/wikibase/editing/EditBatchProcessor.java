@@ -160,18 +160,28 @@ public class EditBatchProcessor {
                 // New entities
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
                 EntityIdValue createdDocId;
+                EntityDocument createdDoc;
                 if (update instanceof MediaInfoEdit) {
                     MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                     createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags);
+                    createdDoc = fetcher.getEntityDocument(createdDocId.getId());
                 } else {
-                    createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
+                    createdDoc = editor.createEntityDocument(update.toNewEntity(), summary, tags);
+                    createdDocId = createdDoc.getEntityId();
                 }
                 library.setId(newCell.getReconInternalId(), createdDocId.getId());
+                currentDocs.put(createdDocId.getId(), createdDoc);
             } else {
                 // Existing entities
                 EntityUpdate entityUpdate;
                 if (update.requiresFetchingExistingState()) {
-                    entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                    EntityDocument currentState = currentDocs.get(update.getEntityId().getId());
+                    if (currentState == null) {
+                        // this can happen for edits on entities which have been created in this batch.
+                        // In this case, we make a dedicated call to the API to make sure the document is available
+                        currentState = fetcher.getEntityDocument(update.getEntityId().getId());
+                    }
+                    entityUpdate = update.toEntityUpdate(currentState);
                 } else {
                     entityUpdate = update.toEntityUpdate(null);
                 }
@@ -269,7 +279,7 @@ public class EditBatchProcessor {
         Exception lastException = null;
         while (currentDocs == null && retries > 0 && !idsToFetch.isEmpty()) {
             try {
-                currentDocs = fetcher.getEntityDocuments(idsToFetch);
+                currentDocs = new HashMap<>(fetcher.getEntityDocuments(idsToFetch));
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
                         + "]: " + e.getErrorMessage());
@@ -285,9 +295,13 @@ public class EditBatchProcessor {
                 Thread.sleep(sleepTime);
             }
         }
-        if (currentDocs == null && !idsToFetch.isEmpty()) {
-            throw new ChangeDataFetchingException(
-                    "Error while retrieving the state of entities to edit: " + Objects.toString(lastException), true);
+        if (currentDocs == null) {
+            if (!idsToFetch.isEmpty()) {
+                throw new ChangeDataFetchingException(
+                        "Error while retrieving the state of entities to edit: " + Objects.toString(lastException), true);
+            } else {
+                currentDocs = new HashMap<>();
+            }
         }
         batchCursor = 0;
     }
