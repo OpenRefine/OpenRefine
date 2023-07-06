@@ -74,11 +74,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       },
       { expression: '"' + service.view.url + '".replace("{{id}}", cell.recon.match.id)' },
       { modelsChanged: true },
-      {
-        onDone: function(o) {
-          dismiss();
-        }
-      }
+      
     );
   }
   var doReconMatchBestCandidates = function() {
