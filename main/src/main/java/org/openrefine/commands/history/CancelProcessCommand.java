@@ -11,6 +11,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 
 /**
  * Cancels a single long-running process.
@@ -48,7 +49,8 @@ public class CancelProcessCommand extends Command {
         Long newHistoryEntryId = null;
 
         int processIdInt = Integer.parseInt(processId);
-        Process process = project.getProcessManager().getProcess(processIdInt);
+        ProcessManager processManager = project.getProcessManager();
+        Process process = processManager.getProcess(processIdInt);
         long historyEntryId = process.getChangeDataId().getHistoryEntryId();
         History history = project.getHistory();
         if (history.getPosition() >= history.entryIndex(historyEntryId) + 1) {
@@ -57,6 +59,7 @@ public class CancelProcessCommand extends Command {
             history.undoRedo(newHistoryEntryId);
         }
         process.cancel();
+        processManager.update();
         respondJSON(response, 202, new Response(newHistoryEntryId));
     }
 }

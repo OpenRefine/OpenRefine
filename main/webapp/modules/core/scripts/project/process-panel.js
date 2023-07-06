@@ -193,8 +193,16 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         li.find('.process-status-container').hide();
       } else {
         li.find('.process-progress-container').hide();
+        var statusText = process.state;
+        if (process.state === 'pending') {
+          statusText = $.i18n('core-processes/queued');
+        } else if (process.state === 'done') {
+          statusText = $.i18n('core-processes/complete');
+        } else if (process.state === 'canceled') {
+          statusText = $.i18n('core-processes/canceled');
+        }
         li.find('.process-status-container')
-          .text($.i18n('core-processes/queued'))
+          .text(statusText)
           .show();
       }
       if (process.state === 'running' || process.state === 'paused') {

@@ -374,6 +374,8 @@
     "core-facets/value-range": "$1 — $2",
     "core-processes/no-process": "No running process",
     "core-processes/queued": "Queued",
+    "core-processes/complete": "Complete",
+    "core-processes/canceled": "Canceled",
     "core-processes/pause": "Pause",
     "core-processes/pause": "Pause",
     "core-processes/resume": "Resume",
