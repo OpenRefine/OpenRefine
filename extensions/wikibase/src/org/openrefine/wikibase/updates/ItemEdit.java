@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.helpers.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -140,6 +141,10 @@ public class ItemEdit extends TermedStatementEntityEdit {
     @Override
     public EntityUpdate toEntityUpdate(EntityDocument entityDocument) {
         Validate.isFalse(isNew(), "Cannot create a corresponding entity update for a creation of a new entity.");
+        if (entityDocument == null) {
+            Validate.isTrue(isEmpty(), "The current state of the entity is required");
+            return ItemUpdateBuilder.forEntityId(id).build();
+        }
         ItemDocument itemDocument = (ItemDocument) entityDocument;
         // Labels
         List<MonolingualTextValue> labels = getLabels().stream().collect(Collectors.toList());
