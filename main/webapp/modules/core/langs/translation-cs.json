@@ -26,6 +26,7 @@
     "core-recon/include": "Zahrnout",
     "core-recon/column": "Sloupec",
     "core-recon/add-std-srv": "Přidat standardní službu",
+    "core-recon/url-already-registered":"Adresa URL služby již existuje.",
     "core-project/undo": "Krok zpět",
     "core-project/canceling": "Rušení…",
     "core-project/cancel-all": "Zrušit vše",

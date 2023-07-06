@@ -325,6 +325,7 @@
     "core-recon/cell-contains": "כל תא מכיל:",
     "core-recon/max-candidates": "מספר המועמדים המקסימלי להחזיר",
     "core-recon/service-title": "שירותים",
+    "core-recon/url-already-registered":"כתובת האתר של השירות כבר קיימת.",
     "core-util-enc/select-enc": "בחרו קידוד",
     "core-util-enc/common": "צורות קידוד מקובלות",
     "core-util-enc/all": "כל צורות הקידוד",

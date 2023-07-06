@@ -836,5 +836,6 @@
     "core-index-parser/row-separator-newline": "nowy wiersz (\\n lub \\r\\n)",
     "core-index/navigate-home": "Przejdź do ekranu głównego",
     "core-index-parser/force-text": "Importuj wszystkie komórki jako tekst",
-    "core-views/new-column-name": "Nowa nazwa kolumny"
+    "core-views/new-column-name": "Nowa nazwa kolumny",
+    "core-recon/url-already-registered": "Adres URL usługi już istnieje."
 }

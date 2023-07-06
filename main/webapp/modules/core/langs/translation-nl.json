@@ -231,6 +231,7 @@
     "core-recon/cell-contains": "Elke cel bevat:",
     "core-recon/max-candidates": "Maximaal aantal kandidaten",
     "core-recon/service-title": "Diensten",
+    "core-recon/url-already-registered": "Service-URL bestaat al.",
     "core-util-enc/today": "vandaag",
     "core-util-enc/yesterday": "gisteren",
     "core-util-enc/days-ago": "dagen geleden",

@@ -279,6 +279,7 @@
     "core-recon/wd-recon-lang": "nb",
     "core-recon/cell-contains": "Hver celle inneholder:",
     "core-recon/service-title": "Tjenester",
+    "core-recon/url-already-registered": "Endre verdien på preferansenøkkelen",
     "core-util-enc/select-enc": "Velg koding",
     "core-util-enc/today": "i dag",
     "core-util-enc/yesterday": "i går",

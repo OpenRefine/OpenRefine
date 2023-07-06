@@ -369,6 +369,7 @@
     "core-recon/warning-type-sugg": "Mi dispiace, non è stato possibile suggerire un tipo per i tuoi dati. Specifica manualmente un tipo.",
     "core-recon/contact-service": "Contattando il servizio di riconciliazione",
     "core-recon/enter-url": "Inserisci l'URL del servizio",
+    "core-recon/url-already-registered":"L'URL del servizio esiste già.",
     "core-util-enc/all": "Tutte le codifiche",
     "core-util-enc/years-ago": "$1 {{plural:$1|anno|anni}} fa",
     "core-util-enc/working": "Lavorando",

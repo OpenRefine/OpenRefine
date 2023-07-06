@@ -356,6 +356,7 @@
     "core-recon/warning-type-sugg": "Sorry, dili mi ka sugyot bisan unsa nga matang sa data. Palihug paghingalan ug type sa imung kaugalingun sa ubos.",
     "core-recon/contact-service": "Pagkontak ug balik sa serbisyo",
     "core-recon/enter-url": "Ipasulod ang serbisyong URL",
+    "core-recon/url-already-registered":"Service URL already exists.",
     "core-util-enc/all": "Tanan nga encoding",
     "core-util-enc/years-ago": "mga tuig ang milabay",
     "core-util-enc/working": "Nagtrabaho",

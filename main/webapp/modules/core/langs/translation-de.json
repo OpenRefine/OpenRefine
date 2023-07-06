@@ -412,6 +412,7 @@
     "core-recon/include": "Einschließen",
     "core-recon/contact-service": "Kontaktaufnahme mit dem Abstimmungsdienst",
     "core-recon/enter-url": "Geben Sie die URL des Dienstes ein",
+    "core-recon/url-already-registered":"Die Dienst-URL ist bereits vorhanden.",
     "core-util-enc/all": "Alle Kodierungen",
     "core-util-enc/years-ago": "Jahre her",
     "core-util-enc/working": "In Bearbeitung",

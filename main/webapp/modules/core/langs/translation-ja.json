@@ -373,6 +373,7 @@
     "core-recon/warning-type-sugg": "データ内でどの型も見つかりませんでした。手動で型を特定してください。",
     "core-recon/contact-service": "照合サービスに接続中",
     "core-recon/enter-url": "照合サービスのURLを入力してください",
+    "core-recon/url-already-registered":"サービス URL はすでに存在します。",
     "core-util-enc/all": "すべての文字コード",
     "core-util-enc/years-ago": "年前",
     "core-util-enc/working": "処理中",

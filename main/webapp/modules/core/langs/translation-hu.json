@@ -616,6 +616,7 @@
     "core-recon/warning-type-sugg": "Nincs ajánlott típus. Alább megadhat egy típust.",
     "core-recon/contact-service": "Kapcsolódás az összeegyeztetési szolgáltatáshoz",
     "core-recon/enter-url": "Szolgáltatás URL-je",
+    "core-recon/url-already-registered":"A szolgáltatás URL-je már létezik.",
     "core-util-enc/all": "Összes karakterkódolás",
     "core-util-enc/years-ago": "éve",
     "core-util-enc/working": "Feldolgozás",
