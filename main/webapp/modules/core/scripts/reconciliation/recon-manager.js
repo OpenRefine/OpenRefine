@@ -63,6 +63,14 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f, silent) {
+
+  if (ReconciliationManager._urlMap.hasOwnProperty(url)) {
+    if (!silent) {
+      alert($.i18n('core-recon/url-already-registered'));
+    }
+    return;
+  }
+
   var dismissBusy = function() {};
   if (!silent) {
     dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
