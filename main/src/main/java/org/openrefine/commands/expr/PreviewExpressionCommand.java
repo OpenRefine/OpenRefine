@@ -275,7 +275,7 @@ public class PreviewExpressionCommand extends Command {
             // ignore
         }
 
-        ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null ? "null" : cell.value.toString());
+        ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null || cell.value == null ? "null" : cell.value.toString());
         ExpressionValue expressionResult;
         if (result == null) {
             expressionResult = null;
