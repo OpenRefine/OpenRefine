@@ -778,6 +778,7 @@
     "core-views/use-values-as-identifiers/header": "Use values as identifiers",
     "core-views/use-values-as-identifiers2": "Mark cells as reconciled with their values as identifiers",
     "core-views/choose-reconciliation-service": "Choose a reconciliation service",
+    "core-views/service-does-not-associate-URLs-to-the-entities-it-contains.":"The reconciliation service does not associate URLs to the entities it contains.",
     "core-views/choose-reconciliation-service-alert": "Please choose a reconciliation service first.",
     "core-views/column-join": "Join columns",
     "core-views/column-join-before-column-picker": "Select and order columns to join",

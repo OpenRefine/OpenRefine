@@ -80,7 +80,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
     }
     else
-    alert("The reconciliation service does not associate URLs to the entities it contains.");
+    alert($.i18n("core-views/service-does-not-associate-URLs-to-the-entities-it-contains"));
   }
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
