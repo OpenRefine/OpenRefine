@@ -76,16 +76,17 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 identifierSpace,
                 schemaSpace,
                 null,
-                true,
+                false,
                 Collections.emptyList(),
-                5);
+                0);
 
         initialState = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched).withId(1L)) },
                         { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New).withId(2L)) },
-                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", "" },
                 });
         ColumnModel columnModel = initialState.getColumnModel();
         initialState = initialState.withColumnModel(columnModel.withReconConfig(1, reconConfig));
@@ -136,7 +137,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                         { "c", new Cell("d", reconConfig.createNewRecon(2891L)
                                 .withId(otherReconId)
                                 .withJudgmentAction("mass")
-                                .withJudgment(Judgment.New)) }
+                                .withJudgment(Judgment.New)) },
+                        { "d", "" }
                 });
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
@@ -173,7 +175,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                         { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.New)
                                 .withJudgmentHistoryEntry(2891L)
                                 .withId(thirdReconId)
-                                .withJudgmentAction("mass")) }
+                                .withJudgmentAction("mass")) },
+                        { "d", "" }
                 });
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
@@ -188,7 +191,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 new Serializable[][] {
                         { "a", "b" },
                         { "c", "b" },
-                        { "c", "d" }
+                        { "c", "d" },
+                        { "d", "" }
                 });
 
         Operation operation = new ReconMarkNewTopicsOperation(
@@ -197,7 +201,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialGrid, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -217,7 +221,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                         { "c", new Cell("d", reconConfig.createNewRecon(2891L)
                                 .withId(otherReconId)
                                 .withJudgmentAction("mass")
-                                .withJudgment(Judgment.New)) }
+                                .withJudgment(Judgment.New)) },
+                        { "d", "" }
                 });
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);

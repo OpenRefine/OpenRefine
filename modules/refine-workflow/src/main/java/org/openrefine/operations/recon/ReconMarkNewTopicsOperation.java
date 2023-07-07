@@ -41,6 +41,7 @@ import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -121,6 +122,13 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
     public String getDescription() {
         return _shareNewTopics ? OperationDescription.recon_mark_new_topics_shared_brief(_columnName)
                 : OperationDescription.recon_mark_new_topics_brief(_columnName);
+    }
+
+    @Override
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws OperationException {
+        ColumnModel columnModel = state.getColumnModel();
+        int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
+        return columnModel.withReconConfig(columnIndex, getNewReconConfig(columnModel.getColumnByIndex(columnIndex)));
     }
 
     protected ReconConfig getNewReconConfig(ColumnMetadata column) {
@@ -240,7 +248,7 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
                     return state;
                 }
                 Cell cell = row.getCell(columnIndex);
-                if (cell != null && cell.value != null) {
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String value = cell.value.toString();
                     if (!state.containsKey(value)) {
                         long reconId = new Recon(0L, "", "").id;
