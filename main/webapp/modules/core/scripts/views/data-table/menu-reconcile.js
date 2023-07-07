@@ -64,6 +64,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     if (serviceUrl) {
         service = ReconciliationManager.getServiceFromUrl(serviceUrl);
     } 
+    if(service&&service.view)
+    {
     Refine.postCoreProcess(
       "add-column", 
       {
@@ -76,6 +78,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       { modelsChanged: true },
       
     );
+    }
+    else
+    alert("The reconciliation service does not associate URLs to the entities it contains.");
   }
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
@@ -534,8 +539,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       submenu: [
         {
           id: "core/Add-column-with-URLs-of-matched-entities",
-          label: $.i18n('core-views/Add column with URLs of matched entities'),
-          tooltip: $.i18n('core-views/Add column with URLs of matched entities2'),
+          label: $.i18n("core-views/add-column-with-URLs-of-matched-entities"),
+          tooltip: $.i18n("core-views/add-column-with-URLs-of-matched-entities-tooltip"),
           click:  doAddColumnWithUrlOfMatchedEntities
         },
         {
