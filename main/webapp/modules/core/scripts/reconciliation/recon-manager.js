@@ -68,7 +68,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     if (!silent) {
       alert($.i18n('core-recon/url-already-registered'));
     }
-    return;
+    if (f) { f(url); }
   }
 
   var dismissBusy = function() {};
@@ -84,7 +84,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     };
 
     index = ReconciliationManager.customServices.length + 
-    ReconciliationManager.standardServices.length;
+      ReconciliationManager.standardServices.length;
 
     ReconciliationManager.standardServices.push(data);
     ReconciliationManager._rebuildMap();
