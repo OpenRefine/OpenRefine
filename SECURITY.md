@@ -4,12 +4,12 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 3.5.x   | :white_check_mark: |
-| <= 3.4   | :x:                |
+| 3.7.x   | :white_check_mark: |
+| <= 3.6   | :x:                |
 
 ## Reporting a Vulnerability
 
-You can privately report a vulnerability to us by sending a report to this private mailing list [mailto:openrefine-coredev@googlegroups.com](mailto:openrefine-coredev@googlegroups.com)
+You can privately report a vulnerability to us by sending a report to this private mailing list [mailto:advisory.committee@openrefine.org](mailto:advisory.committee@openrefine.org)
 
 Our core team will try their best to fix any valid vulnerability that is reported to them.
 
