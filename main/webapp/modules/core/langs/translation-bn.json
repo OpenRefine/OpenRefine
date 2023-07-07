@@ -78,6 +78,5 @@
     "core-index-open/warning-proj-name": "আপনাকে অবশ্যই একটি প্রকল্পের নাম উল্লেখ করতে হবে।",
     "core-index-lang/label": "পছন্দের ভাষা নির্বাচন করুন",
     "core-index-open/edit-tags": "প্রকল্পের ট্যাগ সম্পাদনা করুন",
-    "core-dialogs/language": "ভাষা",
-    "core-recon/url-already-registered":"পরিষেবা URL ইতিমধ্যেই বিদ্যমান৷"
+    "core-dialogs/language": "ভাষা"
 }

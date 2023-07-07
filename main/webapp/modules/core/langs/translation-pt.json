@@ -777,6 +777,5 @@
     "core-dialogs/row-index": "O índice da linha atual. É um atalho para 'row.index'.",
     "core-buttons/create-project": "Criar projeto &raquo;",
     "core-index-import/comma-separated": "números separados por vírgula",
-    "core-about/definition": "O OpenRefine é uma ferramenta poderosa para trabalhar com dados sujos. Utilize-a para melhorar a consistência dos dados, relacioná-los a registros de dados como o Wikidata, enriquece-los com dados de outras fontes, transformá-los em diferentes formatos para que outras ferramentas possam consumi-los e contribuir com dados de volta às suas fontes. O OpenRefine não é um serviço web, mas um aplicativo de desktop que roda em seu próprio computador, permitindo que você processe dados sensíveis com privacidade.",
-    "core-recon/url-already-registered": "A URL do serviço já existe."
+    "core-about/definition": "O OpenRefine é uma ferramenta poderosa para trabalhar com dados sujos. Utilize-a para melhorar a consistência dos dados, relacioná-los a registros de dados como o Wikidata, enriquece-los com dados de outras fontes, transformá-los em diferentes formatos para que outras ferramentas possam consumi-los e contribuir com dados de volta às suas fontes. O OpenRefine não é um serviço web, mas um aplicativo de desktop que roda em seu próprio computador, permitindo que você processe dados sensíveis com privacidade."
 }

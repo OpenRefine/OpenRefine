@@ -384,7 +384,6 @@
     "core-recon/warning-type-sugg": "Désolé, aucun type n’a pu être identifié pour vos données. Merci de l’indiquer ci-dessous.",
     "core-recon/contact-service": "Connexion au service de réconciliation",
     "core-recon/enter-url": "Indiquer l’URL du service",
-    "core-recon/url-already-registered":"L'URL du service existe déjà.",
     "core-util-enc/all": "Tous les encodages",
     "core-util-enc/years-ago": "{{plural $1|année dernière|années avant}}",
     "core-util-enc/working": "Veuillez patienter",

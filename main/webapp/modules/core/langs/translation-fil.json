@@ -356,7 +356,6 @@
     "core-recon/include": "Isali",
     "core-recon/contact-service": "Pakikipag-ugnay sa serbisyo ng pagkakasundo",
     "core-recon/enter-url": "Ipasok ang URL ng serbisyo",
-    "core-recon/url-already-registered":"Umiiral na ang URL ng serbisyo.",
     "core-util-enc/all": "Lahat ng Pag-encode",
     "core-util-enc/months-ago": "mga buwan na nakalipas",
     "core-util-enc/working": "Paggawa",

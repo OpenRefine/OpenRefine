@@ -356,7 +356,6 @@
     "core-recon/include": "Ilakip",
     "core-recon/contact-service": "Pagkontak sa serbisyo ng pagrekonsila",
     "core-recon/enter-url": "I-enter ang service's URL",
-    "core-recon/url-already-registered": "Umiiral na ang URL ng serbisyo.",
     "core-util-enc/all": "Ang Lahat ng mga Encodings",
     "core-util-enc/months-ago": "sa nakalipas na mga buwan",
     "core-util-enc/working": "Nagsasagawa",

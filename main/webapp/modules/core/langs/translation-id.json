@@ -370,7 +370,6 @@
     "core-recon/cell-type": "Rekonsiliasi setiap cell dengan entitas dari salah satu tipe berikut:",
     "core-recon/access-service": "Akses Layanan API",
     "core-recon/add-std-srv": "Tambahkan layanan standar",
-    "core-recon/url-already-registered":"URL layanan sudah ada.",
     "core-project/undo": "Batalkan",
     "core-project/continue-remaining": "Lanjut dengan operasi yang tersisa?",
     "core-project/last-op-er": "Operasi terakhir terjadi kesalahan:",

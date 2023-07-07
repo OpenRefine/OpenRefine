@@ -325,7 +325,6 @@
     "core-recon/cell-contains": "各个包含以下内容的单元格:",
     "core-recon/max-candidates": "最大候选服务返回数量",
     "core-recon/service-title": "Services",
-    "core-recon/url-already-registered": "服务 URL 已存在。",
     "core-util-enc/select-enc": "选择编码",
     "core-util-enc/common": "常用编码",
     "core-util-enc/all": "所有编码",

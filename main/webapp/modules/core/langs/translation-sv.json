@@ -369,7 +369,6 @@
     "core-recon/cell-contains": "Varje cell innehåller:",
     "core-recon/max-candidates": "Maximalt antal kandidater att returnera",
     "core-recon/service-title": "Tjänster",
-    "core-recon/url-already-registered": "Tjänstens URL finns redan.",
     "core-util-enc/select-enc": "Välj kodning",
     "core-util-enc/common": "Vanliga kodningar",
     "core-util-enc/all": "Alla kodningar",

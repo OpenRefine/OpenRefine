@@ -250,6 +250,5 @@
     "core-buttons/reset-template": "إعادة تهيئة القالب",
     "core-buttons/pick-record": "اختر عناصر السجل",
     "core-buttons/apply-to-all": "طبق على جميع الخلايا المتماثلة",
-    "core-buttons/select-all": "اختر الكل",
-    "core-recon/url-already-registered":"عنوان URL للخدمة موجود بالفعل."
+    "core-buttons/select-all": "اختر الكل"
 }

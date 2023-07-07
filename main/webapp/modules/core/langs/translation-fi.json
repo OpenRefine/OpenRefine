@@ -264,6 +264,5 @@
     "core-index-import/load-xml-rows-error": "XML-datan jäsentäminen epäonnistui",
     "core-index-import/remove-row": "Poista tämä rivi",
     "core-dialogs/opt-for": "Valinnat:",
-    "core-dialogs/sel-and-ord": "Valitse ja järjestä vietävät sarakkeet",
-    "core-recon/url-already-registered":"Palvelun URL-osoite on jo olemassa."
+    "core-dialogs/sel-and-ord": "Valitse ja järjestä vietävät sarakkeet"
 }

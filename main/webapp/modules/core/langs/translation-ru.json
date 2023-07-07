@@ -391,7 +391,6 @@
     "core-recon/warning-type-sugg": "Извините, для ваших данных мы не можем предложить ни одного типа. Пожалуйста, укажите ниже тип самостоятельно.",
     "core-recon/contact-service": "Подключение к службе сверки",
     "core-recon/enter-url": "Введите URL-адрес службы",
-    "core-recon/url-already-registered": "URL-адрес службы уже существует.",
     "core-util-enc/all": "Все кодировки",
     "core-util-enc/years-ago": "лет назад",
     "core-util-enc/working": "Обработка",
