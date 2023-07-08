@@ -27,14 +27,9 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -58,7 +53,6 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
-import com.google.refine.expr.EvalError;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
@@ -77,6 +71,7 @@ import com.google.refine.util.Pool;
 import org.openrefine.wikibase.commands.ConnectionManager;
 import org.openrefine.wikibase.editing.EditBatchProcessor;
 import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
+import org.openrefine.wikibase.editing.EditResultsFormatter;
 import org.openrefine.wikibase.editing.NewEntityLibrary;
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.schema.WikibaseSchema;
@@ -300,23 +295,14 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, entityDocuments, newEntityLibrary, summary,
                     maxlag, getTagCandidates(RefineServlet.VERSION), 50, maxEditsPerMinute);
-            Map<Integer, String> rowIdToError = new HashMap<>();
+            EditResultsFormatter resultsFormatter = new EditResultsFormatter(mediaWikiApiEndpoint);
 
             // Perform edits
             logger.info("Performing edits");
             while (processor.remainingEdits() > 0) {
                 try {
                     EditResult result = processor.performEdit();
-                    if (result.getErrorMessage() != null && result.getErrorCode() != null && !result.getCorrespondingRowIds().isEmpty()) {
-                        String error = String.format("[%s] %s", result.getErrorCode(), result.getErrorMessage());
-                        int firstRowId = result.getCorrespondingRowIds().stream().min(Comparator.naturalOrder()).get();
-                        String existingError = rowIdToError.get(firstRowId);
-                        if (existingError == null) {
-                            rowIdToError.put(firstRowId, error);
-                        } else {
-                            rowIdToError.put(firstRowId, existingError + "; " + error);
-                        }
-                    }
+                    resultsFormatter.add(result);
                 } catch (InterruptedException e) {
                     _canceled = true;
                 }
@@ -334,10 +320,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 Column resultsColumn = _project.columnModel.getColumnByName(resultsColumnName);
                 int resultsCellIndex = resultsColumn != null ? resultsColumn.getCellIndex() : -1;
 
-                List<CellAtRow> cells = new ArrayList<>();
-                for (Entry<Integer, String> errorCell : rowIdToError.entrySet()) {
-                    cells.add(new CellAtRow(errorCell.getKey(), new Cell(new EvalError(errorCell.getValue()), null)));
-                }
+                List<CellAtRow> cells = resultsFormatter.toCells();
 
                 if (resultsCellIndex != -1) {
                     // column already exists, we overwrite cells where we made edits

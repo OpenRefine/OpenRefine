@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -158,7 +160,8 @@ public class EditBatchProcessor {
             batchCursor++;
             return new EditResult(update.getContributingRowIds(),
                     "rewrite-failed",
-                    "Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity());
+                    "Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity(),
+                    OptionalLong.empty());
         }
 
         // Pick a tag to apply to the edits
@@ -167,6 +170,7 @@ public class EditBatchProcessor {
         }
         List<String> tags = currentTag == null ? Collections.emptyList() : Collections.singletonList(currentTag);
 
+        OptionalLong lastRevisionId = OptionalLong.empty();
         try {
             if (update.isNew()) {
                 // New entities
@@ -195,7 +199,8 @@ public class EditBatchProcessor {
                 }
 
                 if (entityUpdate != null && !entityUpdate.isEmpty()) { // skip updates which do not change anything
-                    editor.editEntityDocument(entityUpdate, false, summary, tags);
+                    EditingResult result = editor.editEntityDocument(entityUpdate, false, summary, tags);
+                    lastRevisionId = result.getLastRevisionId();
                 }
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase
                 if (entityUpdate instanceof FullMediaInfoUpdate) {
@@ -203,7 +208,8 @@ public class EditBatchProcessor {
                     if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
                         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                         long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
-                        mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                        long revisionId = mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                        lastRevisionId = OptionalLong.of(revisionId);
                     } else {
                         // manually purge the wikitext page associated with this mediainfo
                         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
@@ -218,14 +224,14 @@ public class EditBatchProcessor {
                 return performEdit();
             } else {
                 batchCursor++;
-                return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage());
+                return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage(), OptionalLong.empty());
             }
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
 
         batchCursor++;
-        return new EditResult(update.getContributingRowIds(), null, null);
+        return new EditResult(update.getContributingRowIds(), null, null, lastRevisionId);
     }
 
     public static class EditResult {
@@ -233,12 +239,15 @@ public class EditBatchProcessor {
         private final Set<Integer> correspondingRowIds;
         private final String errorCode;
         private final String errorMessage;
+        private final OptionalLong lastRevisionId;
 
         public EditResult(Set<Integer> correspondingRowIds,
-                String errorCode, String errorMessage) {
+                String errorCode, String errorMessage,
+                OptionalLong lastRevisionId) {
             this.correspondingRowIds = correspondingRowIds;
             this.errorCode = errorCode;
             this.errorMessage = errorMessage;
+            this.lastRevisionId = lastRevisionId;
         }
 
         public Set<Integer> getCorrespondingRowIds() {
@@ -251,6 +260,10 @@ public class EditBatchProcessor {
 
         public String getErrorMessage() {
             return errorMessage;
+        }
+
+        public OptionalLong getLastRevisionId() {
+            return lastRevisionId;
         }
     }
 
