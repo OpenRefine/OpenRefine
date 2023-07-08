@@ -248,14 +248,15 @@ public class MediaFileUtilsTest {
         uploadParams.put("token", csrfToken);
         uploadParams.put("bot", "true");
         JsonNode editJsonResponse = ParsingUtilities.mapper.readTree(successfulEditResponse);
-        when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenReturn(editJsonResponse);
+        when(connection.sendJsonRequest("POST", uploadParams)).thenReturn(editJsonResponse);
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         // For this test, assume the CSRF token has already been fetched
         mediaFileUtils.fetchCsrfToken();
 
-        mediaFileUtils.editPage(12345L, "my new wikitext", "my summary", Collections.emptyList());
+        long revisionId = mediaFileUtils.editPage(12345L, "my new wikitext", "my summary", Collections.emptyList());
 
+        assertEquals(revisionId, 371707L);
         // check the requests were done as expected
         InOrder inOrder = Mockito.inOrder(connection);
         Map<String, String> tokenParams = new HashMap<>();

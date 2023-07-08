@@ -86,7 +86,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 null,
                 "http://site.iri",
                 Collections.singletonMap("item", "http://site.iri"),
-                "https://mediawiki.endpoint");
+                "https://mediawiki.endpoint/w/api.php");
         overlayModels = Collections.singletonMap("wikibaseSchema", schema);
         grid = createGrid(
                 new String[] { "foo", "bar" },
@@ -124,7 +124,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     public void testApplyOperationWithSuccessfulEdit()
             throws Exception {
         PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
-                Collections.singletonMap(1234L, "Q789"), Collections.emptyList());
+                Collections.singletonMap(1234L, "Q789"), Collections.emptyList(), Collections.singletonList(1234L));
         ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().changeDataFromList(
                 Collections.singletonList(new IndexedData<>(0L, rowNewReconUpdate)));
 
@@ -142,7 +142,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         Row row = applied.getRow(0L);
         assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
         assertEquals(row.getCell(0).recon.match.id, "Q789");
-        assertEquals(row.getCell(2), null);
+        assertEquals(row.getCell(2).value, "https://mediawiki.endpoint/w/index.php?diff=prev&oldid=1234");
         String expectedJson = "[ {"
                 + "  \"columnName\" : \"editing results\","
                 + "  \"expression\" : \"grel:if(isError(value), 'failed edit', 'successful edit')\","
@@ -161,7 +161,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     public void testApplyOperationWithFailingEdit()
             throws Exception {
         PerformWikibaseEditsOperation.RowEditingResults rowNewReconUpdate = new PerformWikibaseEditsOperation.RowEditingResults(
-                Collections.emptyMap(), Collections.singletonList("error: this entity already exists"));
+                Collections.emptyMap(), Collections.singletonList("error: this entity already exists"), Collections.emptyList());
         ChangeData<PerformWikibaseEditsOperation.RowEditingResults> changeData = runner().changeDataFromList(
                 Collections.singletonList(new IndexedData<>(0L, rowNewReconUpdate)));
 

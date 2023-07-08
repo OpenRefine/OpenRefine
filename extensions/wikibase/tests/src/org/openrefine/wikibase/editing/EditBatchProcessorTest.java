@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.editing;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,11 +42,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
-import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.updates.StatementEdit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -58,10 +62,10 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-import org.openrefine.util.ParsingUtilities;
 
 public class EditBatchProcessorTest extends RefineTest {
 
@@ -72,6 +76,18 @@ public class EditBatchProcessorTest extends RefineTest {
     private String summary = "my fantastic edits";
     private int maxlag = 5;
     private List<String> tags = null;
+
+    private static final String successfulEditResponse = "{\n"
+            + "    \"edit\": {\n"
+            + "        \"result\": \"Success\",\n"
+            + "        \"pageid\": 94542,\n"
+            + "        \"title\": \"File:My_test_file.png\",\n"
+            + "        \"contentmodel\": \"wikitext\",\n"
+            + "        \"oldrevid\": 371705,\n"
+            + "        \"newrevid\": 371707,\n"
+            + "        \"newtimestamp\": \"2018-12-18T16:59:42Z\"\n"
+            + "    }\n"
+            + "}";
 
     @BeforeMethod
     public void setUp() {
@@ -86,9 +102,11 @@ public class EditBatchProcessorTest extends RefineTest {
     public void testNewItem()
             throws InterruptedException, MediaWikiApiErrorException, IOException {
         List<EntityEdit> batch = new ArrayList<>();
+        MonolingualTextValue alias = Datamodel.makeMonolingualTextValue("my new alias", "en");
+        StatementEdit statement = TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA);
         batch.add(new ItemEditBuilder(TestingData.existingId)
-                .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
-                .addStatement(TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA))
+                .addAlias(alias)
+                .addStatement(statement)
                 .addContributingRowId(123L).build());
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("better label", "en");
         batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).addContributingRowId(123L).build());
@@ -105,6 +123,7 @@ public class EditBatchProcessorTest extends RefineTest {
         ItemDocument createdNewItem = ItemDocumentBuilder.forItemId(Datamodel.makeWikidataItemIdValue("Q1234"))
                 .withLabel(label).withRevisionId(37828L).build();
         when(editor.createEntityDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
+        when(editor.editEntityDocument(any(), eq(false), eq(summary), eq(tags))).thenReturn(new EditingResult(18439L));
 
         EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50, 60);
         assertEquals(2, processor.remainingEdits());
@@ -146,6 +165,17 @@ public class EditBatchProcessorTest extends RefineTest {
 
         when(fetcher.getEntityDocuments(toQids(firstBatch))).thenReturn(toMap(firstBatch));
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
+        long revId = 1000L;
+        for (ItemDocument doc : fullBatch) {
+            when(editor.editEntityDocument(Datamodel.makeItemUpdate(doc.getEntityId(),
+                    doc.getRevisionId(), Datamodel.makeTermUpdate(Collections.emptyList(), Collections.emptyList()),
+                    Datamodel.makeTermUpdate(Collections.singletonList(description), Collections.emptyList()),
+                    Collections.emptyMap(),
+                    Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()),
+                    Collections.emptyList(), Collections.emptyList()), false, summary, tags))
+                            .thenReturn(new EditingResult(revId));
+            revId++;
+        }
 
         // Run edits
         EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
@@ -197,6 +227,15 @@ public class EditBatchProcessorTest extends RefineTest {
 
         when(fetcher.getEntityDocuments(toMids(firstBatch))).thenReturn(toMapMediaInfo(firstBatch));
         when(fetcher.getEntityDocuments(toMids(secondBatch))).thenReturn(toMapMediaInfo(secondBatch));
+        long revId = 1000L;
+        for (MediaInfoDocument doc : fullBatch) {
+            StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(),
+                    Collections.emptyList());
+            when(editor.editEntityDocument(Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) doc.getEntityId(),
+                    doc.getRevisionId(), labelsUpdate, statementUpdate), false, summary, tags))
+                            .thenReturn(new EditingResult(revId));
+            revId++;
+        }
 
         // Run edits
         EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize,
@@ -242,6 +281,18 @@ public class EditBatchProcessorTest extends RefineTest {
         // mock mediainfo document fetching
         when(fetcher.getEntityDocuments(toMids(existingDocuments))).thenReturn(toMapMediaInfo(existingDocuments));
 
+        // mock page editing
+        Map<String, String> editParams = new HashMap<>();
+        editParams.put("action", "edit");
+        editParams.put("tags", "my-tag");
+        editParams.put("summary", summary);
+        editParams.put("pageid", "12345");
+        editParams.put("text", "my new wikitext");
+        editParams.put("token", csrfToken);
+        editParams.put("bot", "true");
+        when(connection.sendJsonRequest("POST", editParams))
+                .thenReturn(ParsingUtilities.mapper.readTree(successfulEditResponse));
+
         // Run the processor
         EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50,
                 60);
@@ -251,14 +302,6 @@ public class EditBatchProcessorTest extends RefineTest {
         // sadly we cannot directly verify a method on the editor here since the editing of pages is not supported
         // there, but rather in our own MediaInfoUtils, so we resort to checking that the corresponding API call was
         // made at the connection level
-        Map<String, String> editParams = new HashMap<>();
-        editParams.put("action", "edit");
-        editParams.put("tags", "my-tag");
-        editParams.put("summary", summary);
-        editParams.put("pageid", "12345");
-        editParams.put("text", "my new wikitext");
-        editParams.put("token", csrfToken);
-        editParams.put("bot", "true");
         verify(connection, times(1)).sendJsonRequest("POST", editParams);
     }
 

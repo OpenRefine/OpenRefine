@@ -239,7 +239,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     "grel:if(isError(value), 'failed edit', 'successful edit')",
                     resultsColumnName));
         }
-        NewReconRowJoiner joiner = new NewReconRowJoiner(resultsColumnIndex, insert);
+        String baseUrl = schema.getMediaWikiApiEndpoint();
+        baseUrl = baseUrl.substring(0, baseUrl.length() - "w/api.php".length());
+        NewReconRowJoiner joiner = new NewReconRowJoiner(resultsColumnIndex, insert, baseUrl);
         Grid joined = projectState.join(changeData, joiner, newColumnModel);
         return new ChangeResult(joined, GridPreservation.PRESERVES_RECORDS, createdFacets, null);
     }
@@ -253,12 +255,15 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         private final Map<Long, String> newEntities;
         private final List<String> errors;
+        private final List<Long> revisionIds;
 
         protected RowEditingResults(
                 @JsonProperty("newEntities") Map<Long, String> newEntities,
-                @JsonProperty("errors") List<String> errors) {
+                @JsonProperty("errors") List<String> errors,
+                @JsonProperty("revisionIds") List<Long> revisionIds) {
             this.newEntities = newEntities;
             this.errors = errors;
+            this.revisionIds = revisionIds;
         }
 
         @JsonProperty("newEntities")
@@ -269,6 +274,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         @JsonProperty("errors")
         public List<String> getErrors() {
             return errors;
+        }
+
+        @JsonProperty("revisionIds")
+        public List<Long> getRevisionIds() {
+            return revisionIds;
         }
     }
 
@@ -312,17 +322,25 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, edits, library, summary,
                     maxLag, tags, batchSize, maxEditsPerMinute);
             Map<Long, List<String>> rowEditingErrors = new HashMap<>();
+            Map<Long, List<Long>> rowRevisionIds = new HashMap<>();
             while (processor.remainingEdits() > 0) {
                 try {
                     EditBatchProcessor.EditResult editResult = processor.performEdit();
+                    long firstLine = editResult.getCorrespondingRowIds().stream().min(Comparator.naturalOrder()).get();
                     if (editResult.getErrorCode() != null || editResult.getErrorMessage() != null) {
-                        long firstLine = editResult.getCorrespondingRowIds().stream().min(Comparator.naturalOrder()).get();
                         List<String> logLine = rowEditingErrors.get(firstLine);
                         if (logLine == null) {
                             logLine = new ArrayList<>();
                             rowEditingErrors.put(firstLine, logLine);
                         }
                         logLine.add(String.format("[%s] %s", editResult.getErrorCode(), editResult.getErrorMessage()));
+                    } else if (editResult.getLastRevisionId().isPresent()) {
+                        List<Long> revisions = rowRevisionIds.get(firstLine);
+                        if (revisions == null) {
+                            revisions = new ArrayList<>();
+                            rowRevisionIds.put(firstLine, revisions);
+                        }
+                        revisions.add(editResult.getLastRevisionId().getAsLong());
                     }
                 } catch (InterruptedException e) {
                     break;
@@ -342,7 +360,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                             }
                         });
                 List<String> errors = rowEditingErrors.getOrDefault(indexedRow.getIndex(), Collections.emptyList());
-                rowEditingResults.add(new RowEditingResults(newEntityIds, errors));
+                List<Long> revisionIds = rowRevisionIds.getOrDefault(indexedRow.getIndex(), Collections.emptyList());
+                rowEditingResults.add(new RowEditingResults(newEntityIds, errors, revisionIds));
             }
             return rowEditingResults;
         }
@@ -364,16 +383,20 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         private final int resultsColumnIndex;
         private final boolean insert;
+        private final String wikiBaseUrl;
 
         /**
          * @param resultsColumnIndex
          *            the index of the column where to insert editing results
          * @param insert
          *            whether the column should be created or if it is already existing
+         * @param wikiBaseUrl
+         *            the baseUrl of the wiki, such as "https://www.wikidata.org/"
          */
-        public NewReconRowJoiner(int resultsColumnIndex, boolean insert) {
+        public NewReconRowJoiner(int resultsColumnIndex, boolean insert, String wikiBaseUrl) {
             this.resultsColumnIndex = resultsColumnIndex;
             this.insert = insert;
+            this.wikiBaseUrl = wikiBaseUrl;
         }
 
         @Override
@@ -415,6 +438,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     resultsCell = Cell.PENDING_NULL;
                 } else if (!changeData.getErrors().isEmpty()) {
                     resultsCell = new Cell(new EvalError(String.join("; ", changeData.getErrors())), null);
+                } else if (!changeData.getRevisionIds().isEmpty()) {
+                    resultsCell = new Cell(revisionIdsToUrl(changeData.getRevisionIds()), null);
                 }
                 if (insert) {
                     updatedRow = updatedRow.insertCell(resultsColumnIndex, resultsCell);
@@ -423,6 +448,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 }
             }
             return updatedRow;
+        }
+
+        String revisionIdsToUrl(List<Long> revisionIds) {
+            List<String> urls = revisionIds.stream()
+                    .map(r -> wikiBaseUrl + "w/index.php?diff=prev&oldid=" + r)
+                    .collect(Collectors.toList());
+            return String.join(" ", urls);
         }
 
         @Override
