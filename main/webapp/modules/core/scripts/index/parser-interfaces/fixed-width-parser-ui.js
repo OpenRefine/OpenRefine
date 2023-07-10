@@ -346,7 +346,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
           .addClass("data-table-value-nonstring")
           .text(cell.v)
           .appendTo(divContent);
-        } else if (URL.looksLikeUrl(cell.v)) {
+        } else if (URLUtil.looksLikeUrl(cell.v)) {
           $('<a>')
           .text(cell.v)
           .attr("href", cell.v)

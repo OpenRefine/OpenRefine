@@ -19,7 +19,7 @@ class SimpleValueCellRenderer {
         var arr = cell.v.split(" ");
         var spanArr = [];
         for (var i=0; i<arr.length; i++) {
-          if (URL.looksLikeUrl(arr[i])) {
+          if (URLUtil.looksLikeUrl(arr[i])) {
             if (spanArr.length != 0) {
               var span = document.createElement('span');
               span.textContent = spanArr.join(" ");

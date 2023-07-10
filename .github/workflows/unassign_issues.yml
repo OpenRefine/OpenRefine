@@ -8,13 +8,13 @@ jobs:
   # Best used in combination with actions/stale to assign a Stale label
   
   unassign-good-first-issues-after-90-days-of-inactivity:
-    name: Unassign issues labeled "good first issue" after 90 days of inactivity.
+    name: Unassign issues labeled "good first issue" after 45 days of inactivity.
     runs-on: ubuntu-latest
     steps:
-      - uses: boundfoxstudios/action-unassign-contributor-after-days-of-inactivity@main
+      - uses: boundfoxstudios/action-unassign-contributor-after-days-of-inactivity@v1.0.3
         with:
-          last-activity: 90 # After how many days the issue should get unassigned
+          last-activity: 45 # After how many days the issue should get unassigned
           labels: 'good first issue' # Only search for issues containing this labels (comma-separated)
           exempt-assignees: '' # Exempt some assignees from being unassigned (comma-separated)
           labels-to-remove: '' # Labels to remove after unassigning an issue (comma-separated)
-          message: 'Automatically unassigned after 90 days of inactivity.'
+          message: 'Automatically unassigned after 45 days of inactivity.'

@@ -64,7 +64,6 @@
     "wikibase-schema/warnings-tab-header": "Problémy",
     "wikibase-schema/schema-tab-header": "Schéma",
     "wikibase-schema/preview-explanation": "Tabulka ukazuje první změny (z $1), které nastanou, až nahrajete změny na <a href=\"$2\" target=\"_blank\">$3</a>. Můžete použít fasety, abyste prozkoumali změny konkrétních položek.",
-    "wikibase-schema/dialog-explanation": "Momentálně pracujete vůči <a href=\"$1\" target=\"_blank\">$2</a>. Nejdřív byste měli mít svá data identifikovaná službou napojenou na $2 (jako např. <a href=\"$3\" target=\"_blank\">$3</a>. Spodní schéma určuje, jak se tabulková data změní na úpravy $2. Můžete přetáhnout názvy sloupců do většiny vstupních polí: pro každý řádek se vygenerují úpravy s hodnotami v těchto sloupcích.",
     "wikibase-schema/dialog-header": "Usouvztažnit s Wikibase",
     "wikibase-addition/invalid-manifest": "Chyba v manifestu Wikibase.",
     "wikibase-addition/cancel": "Storno",

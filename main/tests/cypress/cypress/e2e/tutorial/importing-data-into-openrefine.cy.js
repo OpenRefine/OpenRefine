@@ -10,7 +10,7 @@ describe(__filename, function () {
     // Step-1:Once OpenRefine is launched in your browser, click Create project from the left hand menu and select Get data from This Computer
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('This Computer')
       .click();
     // Step-2 Click Choose Files (or ‘Browse’, depending on your setup) and locate the file which you have downloaded called doaj-article-sample.csv

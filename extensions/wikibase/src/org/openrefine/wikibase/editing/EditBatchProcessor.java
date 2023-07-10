@@ -182,12 +182,17 @@ public class EditBatchProcessor {
                         // In this case, we make a dedicated call to the API to make sure the document is available
                         currentState = fetcher.getEntityDocument(update.getEntityId().getId());
                     }
+                    if (currentState == null) {
+                        batchCursor++;
+                        return new EditResult(update.getContributingRowIds(), "entity-could-not-be-retrieved",
+                                String.format("Skipping editing of %s as it could not be retrieved", update.getEntityId().getId()));
+                    }
                     entityUpdate = update.toEntityUpdate(currentState);
                 } else {
                     entityUpdate = update.toEntityUpdate(null);
                 }
 
-                if (!entityUpdate.isEmpty()) { // skip updates which do not change anything
+                if (entityUpdate != null && !entityUpdate.isEmpty()) { // skip updates which do not change anything
                     editor.editEntityDocument(entityUpdate, false, summary, tags);
                 }
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase
@@ -205,6 +210,7 @@ public class EditBatchProcessor {
                 }
             }
         } catch (MediaWikiApiErrorException e) {
+            batchCursor++;
             return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage());
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());

@@ -24,11 +24,9 @@
 
 package org.openrefine.wikibase.editing;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +56,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import org.openrefine.RefineTest;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
@@ -120,6 +119,28 @@ public class EditBatchProcessorTest extends RefineTest {
         NewEntityLibrary expectedLibrary = new NewEntityLibrary();
         expectedLibrary.setId(1234L, "Q1234");
         assertEquals(expectedLibrary, library);
+    }
+
+    @Test
+    public void testDeletedItem() throws IOException, MediaWikiApiErrorException, InterruptedException {
+        String id = "Q389";
+        ItemIdValue qid = Datamodel.makeWikidataItemIdValue(id);
+        MonolingualTextValue description = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
+        EntityEdit edit = new ItemEditBuilder(qid)
+                .addDescription(description, true)
+                .addContributingRowId(123L)
+                .build();
+        List<EntityEdit> batch = Collections.singletonList(edit);
+        when(fetcher.getEntityDocuments(Collections.singletonList(id))).thenReturn(Collections.emptyMap());
+        when(fetcher.getEntityDocument(id)).thenReturn(null);
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library,
+                summary, maxlag, tags, 10, 60);
+        assertEquals(processor.progress(), 0);
+        EditResult result = processor.performEdit();
+        assertTrue(result.getErrorCode() != null);
+        assertEquals(processor.progress(), 100);
+        verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), any());
     }
 
     @Test

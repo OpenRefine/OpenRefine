@@ -444,7 +444,6 @@
               <jre>
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
-                <maxVersion>${java.maxversion}</maxVersion>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -509,7 +508,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.2</version>
         <configuration>
           <skip>true</skip>
         </configuration>

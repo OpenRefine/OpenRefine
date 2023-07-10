@@ -120,9 +120,6 @@ SchemaAlignment._rerenderTabs = function() {
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.targetWikibaseLabel.text($.i18n('wikibase-schema/target-wikibase-instance'));
-  schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
-      WikibaseManager.getSelectedWikibaseMainPage(),
-      WikibaseManager.getSelectedWikibaseName()));
   let editableEntityTypes = WikibaseManager.getSelectedWikibaseEditableEntityTypes();
   for (let entityType of editableEntityTypes) {
     let addButton = $('<div></div>').addClass("wbs-toolbar");
@@ -316,18 +313,6 @@ SchemaAlignment.switchTab = function(targetTab) {
 
   if (targetTab === "#view-panel") {
     ui.dataTableView.render();
-  }
-};
-
-SchemaAlignment.resize = function() {
-  if (this._viewPanel) {
-    var panelHeight = this._viewPanel.height();
-    this._schemaPanel.height(panelHeight);
-    this._issuesPanel.height(panelHeight);
-    this._previewPanel.height(panelHeight);
-    // Resize the inside of the schema panel
-    var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
-    this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
   }
 };
 
