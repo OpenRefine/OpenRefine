@@ -69,6 +69,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
       alert($.i18n('core-recon/url-already-registered'));
     }
     if (f) { f(url); }
+    return;
   }
 
   var dismissBusy = function() {};
