@@ -9,7 +9,6 @@
 // ***********************************************
 
 import 'cypress-file-upload';
-import 'cypress-wait-until';
 
 // /**
 //  * Reconcile a column
@@ -417,7 +416,7 @@ Cypress.Commands.add(
   (projectName, fixture) => {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
 

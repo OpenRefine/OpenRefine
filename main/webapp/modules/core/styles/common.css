@@ -107,10 +107,6 @@ a.secondary {
   color: var(--link-secondary);
 }
 
-a.action, a.selected, a.inaction {
-  margin: 0 3px;
-}
-
 a.selected {
   color: var(--text-primary);
   font-weight: bold;

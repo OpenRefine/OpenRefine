@@ -105,9 +105,6 @@ function resizeAll() {
   ui.processPanel.resize();
   ui.historyPanel.resize();
   ui.dataTableView.resize();
-  if (SchemaAlignment) {
-    SchemaAlignment.resize();
-  }
 }
 
 function initializeUI(uiState) {
@@ -213,52 +210,44 @@ Refine.setTitle = function(status) {
 };
 
 Refine.reinitializeProjectData = function(f, fError) {
-  $.getJSON(
-    "command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
-    function(data) {
-      if (data.status == "error") {
-        if (fError) {
-          fError(data.message);
-        }
-      } else {
-        theProject.metadata = data;
-        $.getJSON(
-          "command/core/get-models?" + $.param({ project: theProject.id }), null,
-          function(data) {
-            if (data.status == "error") {
-              if (fError) {
-                fError(data.message);
-              }
-            } else {
-              for (var n in data) {
-                if (data.hasOwnProperty(n)) {
-                  theProject[n] = data[n];
-                }
-              }
-              $.post(
-                "command/core/get-all-preferences", null,
-                function(preferences) {
-                  if (preferences.status == "error") {
-                    if (fError) {
-                      fError(preferences.message);
-                    }
-                  } else {
-                    if (preferences != null) {
-                      thePreferences = preferences;
-                    }
-                    f();
-                  }
-                },
-                'json'
-              );
-            }
-          },
-          'json'
-        );
+  function handleError(status, message, fError) {
+    if (status === "error") {
+      if (fError) {
+        fError(message);
       }
-    },
-    'json'
-  );
+      return true;
+    }
+    return false;
+  }
+
+  $.when(
+    $.getJSON("command/core/get-project-metadata?" + $.param({ project: theProject.id }), null),
+    $.getJSON("command/core/get-models?" + $.param({ project: theProject.id }), null),
+    $.getJSON("command/core/get-all-preferences", null),
+  ).done(function(metadata, models, preferences) {
+    metadata = metadata[0], models = models[0], preferences = preferences[0];
+    if (
+      handleError(metadata.status, metadata.message, fError) ||
+      handleError(models.status, models.message, fError) ||
+      handleError(preferences.status, preferences.message, fError)
+    ) {
+      return;
+    }
+
+    theProject.metadata = metadata;
+
+    for (var n in models) {
+      if (models.hasOwnProperty(n)) {
+        theProject[n] = models[n];
+      }
+    }
+
+    if (preferences) {
+      thePreferences = preferences;
+    }
+
+    f();
+  });
 };
 
 Refine.getPreference = function(key, defaultValue) { 
@@ -716,7 +705,7 @@ Refine.getPermanentLink = function() {
  */
 
 function onLoad() {
-  var params = URL.getParameters();
+  var params = URLUtil.getParameters();
   if ("project" in params) {
     var uiState = {};
     if ("ui" in params) {

@@ -162,14 +162,6 @@ set REFINE_WEBAPP=main\webapp
 :gotWebApp
 set OPTS=%OPTS% -Drefine.webapp=%REFINE_WEBAPP%
 
-for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
-echo -------------------------------------------------------------------------------------------------
-echo You have %freeRam%M of free memory.
-echo Your current configuration is set to use %REFINE_MEMORY% of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
-echo -------------------------------------------------------------------------------------------------
-
 if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
@@ -212,6 +204,15 @@ if ""%ACTION%"" == """" goto doRun
   exit /B 1
 
 :doRun
+
+for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
+echo -------------------------------------------------------------------------------------------------
+echo You have %freeRam%M of free memory.
+echo Your current configuration is set to use %REFINE_MEMORY% of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+echo -------------------------------------------------------------------------------------------------
+
 rem --- Checking Java Version  ------------------------------------------
 set JAVA="%JAVA_HOME%\bin\java.exe"
 

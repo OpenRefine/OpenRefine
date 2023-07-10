@@ -33,7 +33,7 @@ If you have cloned this repository to your computer, you can run OpenRefine with
 * `./refine` on Mac OS and Linux
 * `refine.bat` on Windows
 
-This requires [JDK 11](https://adoptium.net/), [Apache Maven](https://maven.apache.org/) and [NPM](https://www.npmjs.com/).
+This requires [JDK 11](https://adoptium.net/) or newer, [Apache Maven](https://maven.apache.org/) and [NPM](https://www.npmjs.com/) 16 or newer.
 
 ## Documentation
 

@@ -143,6 +143,10 @@ $(function() {
       .text(actionArea.label)
       .on('click', function() {
         Refine.selectActionArea(actionArea.id);
+        // clear action area specific query parameters
+        var url = new URL(location.href);
+        url.search = '';
+        window.history.replaceState('', '', url);
       })
     )
     .appendTo($('#action-area-tabs'));
