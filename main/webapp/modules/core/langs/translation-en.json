@@ -343,6 +343,7 @@
     "core-facets/name": "name",
     "core-facets/count": "count",
     "core-facets/cluster": "Cluster",
+    "core-facets/auto-update": "Auto-update",
     "core-facets/current-exp": "Current Expression",
     "core-facets/facet-choices": "Facet Choices as Tab Separated Values",
     "core-facets/loading": "Loading…",
