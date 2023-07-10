@@ -444,6 +444,7 @@
     "core-recon/cell-contains": "Each cell contains:",
     "core-recon/max-candidates": "Maximum number of candidates to return",
     "core-recon/service-title": "Services",
+    "core-recon/url-already-registered":"This reconciliation service is already registered.",
     "core-util-enc/select-enc": "Select Encoding",
     "core-util-enc/common": "Common Encodings",
     "core-util-enc/all": "All encodings",
