@@ -21,7 +21,7 @@ Community forum: **https://forum.openrefine.org**
 ## Snapshot releases
 
 You can download snapshots of the development version of OpenRefine.
-To do so, you need to be logged in to GitHub. Then, click on the first item with a green tick in [this page](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml) and scroll down to find the version that matches your operating system.
+To do so, you need to be logged in to GitHub. Then, click on the first item with a green tick / check mark on [this page](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml) and scroll down to the Artifacts section to find the version that matches your operating system.
 
 ## Run from source
 
