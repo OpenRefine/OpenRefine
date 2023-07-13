@@ -106,7 +106,7 @@ The Project Manager:
 * Assists in finding and secure new sources of funding
 * Supports the Advisory Committee in OpenRefine’s day-to-day operations.
 
-The current Release Manager is [Martin Magdinier](https://forum.openrefine.org/u/Martin/summary)
+The current Project Manager is [Martin Magdinier](https://forum.openrefine.org/u/Martin/summary)
 ## Fiscal sponsorship: Code For Science and Society
 
 Since January 2020, OpenRefine is a member project of [Code For Science and Society](https://codeforscience.org/) (CS&S).
