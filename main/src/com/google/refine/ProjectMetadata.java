@@ -49,8 +49,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.preference.PreferenceStore;
@@ -368,13 +372,20 @@ public class ProjectMetadata {
         }
     }
 
-    public void setAnyField(String metaName, String valueString) {
+    public void setAnyField(String metaName, String valueString) throws JsonMappingException, JsonProcessingException {
         Class<? extends ProjectMetadata> metaClass = this.getClass();
         try {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
             if (metaName.equals("tags")) {
                 metaField.set(this, valueString.split(","));
-            } else {
+            } else if (metaName.equals("customMetadata")) {
+                ObjectMapper customMetadataMapper = new ObjectMapper();
+                customMetadataMapper.enable(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature());
+                customMetadataMapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature())
+                Map<String, Object> mapping = customMetadataMapper.readValue(valueString, HashMap.class);
+                metaField.set(this, mapping);
+            }
+            else {
                 metaField.set(this, valueString);
             }
         } catch (NoSuchFieldException e) {
