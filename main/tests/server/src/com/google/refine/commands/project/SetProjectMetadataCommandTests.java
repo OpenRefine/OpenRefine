@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -55,7 +53,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
@@ -127,28 +124,6 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         pw = null;
         request = null;
         response = null;
-    }
-
-    @Test
-    public void setCustomMetadataTest() {
-        String customMetadata = this.getValidCustomMetadata();
-        ProjectMetadata meta = proj.getMetadata();
-        meta.setAnyField("customMetadata", customMetadata);
-
-
-        Assert.assertEquals(meta.getCustomMetadata("name"), "test");
-        Assert.assertEquals(meta.getCustomMetadata("isValid"), true);
-        Assert.assertEquals(meta.getCustomMetadata("id"), 1);
-        Assert.assertNotNull(meta.getCustomMetadata("companies"));
-        Assert.assertNotNull(meta.getCustomMetadata("information"));
-    }
-
-    @Test
-    public void setInvalidCustomMetadataTest() {
-        String customMetadata = this.getInvalidCustomMetadata();
-        ProjectMetadata meta = proj.getMetadata();
-
-        Assert.assertThrows(() -> meta.setAnyField("customMetadata", customMetadata));
     }
 
     /**
@@ -237,6 +212,27 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // verify
         verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+    }
+
+    @Test
+    public void setCustomMetadataTest() {
+        String customMetadata = this.getValidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+        meta.setAnyField("customMetadata", customMetadata);
+
+        Assert.assertEquals(meta.getCustomMetadata("name"), "test");
+        Assert.assertEquals(meta.getCustomMetadata("isValid"), true);
+        Assert.assertEquals(meta.getCustomMetadata("id"), 1);
+        Assert.assertNotNull(meta.getCustomMetadata("companies"));
+        Assert.assertNotNull(meta.getCustomMetadata("information"));
+    }
+
+    @Test
+    public void setInvalidCustomMetadataTest() {
+        String customMetadata = this.getInvalidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+
+        Assert.assertThrows(() -> meta.setAnyField("customMetadata", customMetadata));
     }
 
     private String getValidCustomMetadata() {
