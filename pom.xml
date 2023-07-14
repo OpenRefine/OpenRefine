@@ -358,11 +358,6 @@
           see main/pom.xml, server/pom.xml and each extension.
     -->
       <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>20230618</version>
-      </dependency>
-      <dependency>
           <groupId>org.jvnet.localizer</groupId>
           <artifactId>localizer</artifactId>
           <version>${org-jvnet-localizer.version}</version>
