@@ -381,7 +381,7 @@ public class ProjectMetadata {
             } else if (metaName.equals("customMetadata")) {
                 ObjectMapper customMetadataMapper = new ObjectMapper();
                 customMetadataMapper.enable(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature());
-                customMetadataMapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature())
+                customMetadataMapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
                 Map<String, Object> mapping = customMetadataMapper.readValue(valueString, HashMap.class);
                 metaField.set(this, mapping);
             }
