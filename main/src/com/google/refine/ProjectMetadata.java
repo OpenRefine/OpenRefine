@@ -384,8 +384,7 @@ public class ProjectMetadata {
                 customMetadataMapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
                 Map<String, Object> mapping = customMetadataMapper.readValue(valueString, HashMap.class);
                 metaField.set(this, mapping);
-            }
-            else {
+            } else {
                 metaField.set(this, valueString);
             }
         } catch (NoSuchFieldException e) {
