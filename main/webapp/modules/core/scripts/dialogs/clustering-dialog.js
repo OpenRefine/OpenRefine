@@ -109,7 +109,7 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
-        if(document.getElementById("autoId").checked) {
+        if (document.getElementById("autoId").checked) {
             self._cluster();
         }
     };
@@ -122,9 +122,11 @@ ClusteringDialog.prototype._createDialog = function() {
         let button = document.getElementById("clusterButtonId");
 
         if (checkbox.checked) {
+            Refine.setPreference("ui.clustering.auto-update", true);
             button.disabled = true;
             self._cluster();
         } else {
+            Refine.setPreference("ui.clustering.auto-update", false);
             button.disabled = false;
         }
     });
@@ -138,6 +140,8 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     self._level = DialogSystem.showDialog(dialog);
+    var checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
+    document.getElementById("autoId").checked = checkedValue;
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
