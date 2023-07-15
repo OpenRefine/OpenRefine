@@ -41,6 +41,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,8 +63,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
-
-import net.arnx.jsonic.JSONException;
 
 public class SetProjectMetadataCommandTests extends RefineTest {
 
@@ -223,8 +223,8 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         Assert.assertEquals(meta.getCustomMetadata("name"), "test");
         Assert.assertEquals(meta.getCustomMetadata("isValid"), true);
         Assert.assertEquals(meta.getCustomMetadata("id"), 1);
-        Assert.assertNotNull(meta.getCustomMetadata("companies"));
-        Assert.assertNotNull(meta.getCustomMetadata("information"));
+        Assert.assertTrue(meta.getCustomMetadata("companies") instanceof List);
+        Assert.assertTrue(meta.getCustomMetadata("information") instanceof Map);
     }
 
     @Test
@@ -249,15 +249,6 @@ public class SetProjectMetadataCommandTests extends RefineTest {
     }
 
     private String getInvalidCustomMetadata() {
-        return "{\n" + //
-                "  \"name\":test,\n" + //
-                "  \"companies\":[\"Google\", \"IBM\", \"meta\"],\n" + //
-                "  \"isValid\": false\n" + //
-                "  \"information\": {\n" + //
-                "    \"text-field\":\"value\",\n" + //
-                "    \"numeric-field\": 1\n" + //
-                "  },\n" + //
-                "  \"id\":2,\n" + //
-                "}";
+        return "{\n  \"name\":test\n}";
     }
 }
