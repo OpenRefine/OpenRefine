@@ -74,7 +74,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnInsertIndex: columnIndex + 1,
         onError: "set-to-blank"
       },
-      { expression: '"' + service.view.url + '".replace("{{id}}", cell.recon.match.id)' },
+      { expression: '"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url"))' },
       { modelsChanged: true },
       
     );
