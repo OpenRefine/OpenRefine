@@ -41,6 +41,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -210,5 +212,43 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // verify
         verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+    }
+
+    @Test
+    public void setCustomMetadataTest() {
+        String customMetadata = this.getValidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+        meta.setAnyField("customMetadata", customMetadata);
+
+        Assert.assertEquals(meta.getCustomMetadata("name"), "test");
+        Assert.assertEquals(meta.getCustomMetadata("isValid"), true);
+        Assert.assertEquals(meta.getCustomMetadata("id"), 1);
+        Assert.assertTrue(meta.getCustomMetadata("companies") instanceof List);
+        Assert.assertTrue(meta.getCustomMetadata("information") instanceof Map);
+    }
+
+    @Test
+    public void setInvalidCustomMetadataTest() {
+        String customMetadata = this.getInvalidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+
+        Assert.assertThrows(() -> meta.setAnyField("customMetadata", customMetadata));
+    }
+
+    private String getValidCustomMetadata() {
+        return "{\n" + //
+                "  \"name\":\"test\",\n" + //
+                "  \"companies\":[\"Google\", \"IBM\", \"meta\"],\n" + //
+                "  \"isValid\": true,\n" + //
+                "  \"information\": {\n" + //
+                "    \"text-field\":\"value\",\n" + //
+                "    \"numeric-field\": 1\n" + //
+                "  },\n" + //
+                "  \"id\":1\n" + //
+                "}";
+    }
+
+    private String getInvalidCustomMetadata() {
+        return "{\n  \"name\":test\n}";
     }
 }

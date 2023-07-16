@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -374,9 +376,17 @@ public class ProjectMetadata {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
             if (metaName.equals("tags")) {
                 metaField.set(this, valueString.split(","));
+            } else if (metaName.equals("customMetadata")) {
+                ParsingUtilities.mapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
+                Map<String, Object> map = ParsingUtilities.mapper.readValue(valueString, HashMap.class);
+                metaField.set(this, map);
             } else {
                 metaField.set(this, valueString);
             }
+        } catch (JsonProcessingException e) {
+            String errorMessage = "Error reading JSON: " + e.getOriginalMessage();
+            logger.error(errorMessage);
+            throw new RuntimeException(errorMessage);
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
