@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2023 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,8 @@ package com.google.refine.history;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -69,7 +69,7 @@ public class HistoryEntry {
     @JsonProperty("description")
     final public String description;
     @JsonProperty("time")
-    final public OffsetDateTime time;
+    final public Instant time;
 
     // the manager (deals with IO systems or databases etc.)
     @JsonIgnore
@@ -105,15 +105,23 @@ public class HistoryEntry {
             @JacksonInject("projectID") long projectID,
             @JsonProperty("description") String description,
             @JsonProperty(OPERATION) AbstractOperation operation) {
-        this(id, projectID, description, operation, OffsetDateTime.now(ZoneId.of("Z")));
+        this(id, projectID, description, operation, Instant.now());
     }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
-        this(id, project.id, description, operation, OffsetDateTime.now(ZoneId.of("Z")));
+        this(id, project.id, description, operation, Instant.now());
         setChange(change);
     }
 
+    @Deprecated(since = "3.8")
     protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, OffsetDateTime time) {
+        // TODO: I'm not sure attempting to preserve this backward compatibility is worthwhile, since:
+        // a) this constructor is unused in the core, and
+        // b) there's a public field which has changed datatype
+        this(id, projectID, description, operation, time.toInstant());
+    }
+
+    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, Instant time) {
         this.id = id;
         this.projectID = projectID;
         this.description = description;
