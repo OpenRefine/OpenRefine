@@ -30,6 +30,7 @@ package com.google.refine.io;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -115,5 +116,20 @@ public class FileProjectManagerTests {
         InputStream inputStream = new FileInputStream(workspaceFile);
         JsonObject json = JSON.parse(inputStream);
         assertTrue(json.get("projectIDs").getAsArray().isEmpty());
+    }
+
+    @Test
+    public void testUntarZipSlip() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+
+        File tempDir = TestUtils.createTempDirectory("openrefine-project-import-zip-slip-test");
+        try {
+            File subDir = new File(tempDir, "dest");
+            InputStream stream = FileProjectManagerTests.class.getClassLoader().getResourceAsStream("zip-slip.tar");
+
+            assertThrows(IllegalArgumentException.class, () -> manager.untar(subDir, stream));
+        } finally {
+            tempDir.delete();
+        }
     }
 }
