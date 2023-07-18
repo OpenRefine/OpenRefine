@@ -114,6 +114,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _mode = "lengths";
         _separator = null;
         _regex = null;
+        _pattern = null;
 
         // Make sure all of our lengths are non-negative
         for (int i = 0; i < fieldLengths.length; i++) {
@@ -228,7 +229,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
                     if (oldRow2.isCellBlank(cellIndex) &&
-                            // key cell not blank means we are on next record
+                    // key cell not blank means we are on next record
                             oldRow2.isCellBlank(keyCellIndex)) {
 
                         Row newRow = oldRow2.dup();
