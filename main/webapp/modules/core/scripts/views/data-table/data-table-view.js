@@ -373,7 +373,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(th).html("&nbsp;").on('click',function(evt) {
+      $(th).html("<button class='column-header-menu column-header-menu-expand' ></button>").on('click',function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
