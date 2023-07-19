@@ -371,12 +371,11 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var th = trHead.appendChild(document.createElement("th"));
-    $(th)
-    .addClass("column-header")
-    .attr('title', column.name);
+    $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       DOM.bind( 
         $(th)
+        .attr('title',"Expand this column")
         .html("<button class='column-header-menu column-header-menu-expand' bind='expandColumn' ></button>")
       ).expandColumn.on(
         'click', function() {
@@ -384,7 +383,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
           self.render();
         }
       )
-      
     } else {
       var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
       self._columnHeaderUIs.push(columnHeaderUI);
