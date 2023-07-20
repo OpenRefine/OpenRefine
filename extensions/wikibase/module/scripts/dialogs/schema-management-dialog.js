@@ -56,14 +56,13 @@ SchemaManagementDialog.prototype.launch = function () {
 SchemaManagementDialog.prototype.populateDialog = function () {
   this.elmts.templateList.empty();
   let templates = WikibaseTemplateManager.getTemplates(this.activeWikibase);
-  let listNumber = 0;
 
   for (let template of templates) {
     let templateName = template.name;
 
     const templateItemDOM = $(DOM.loadHTML("wikidata", "scripts/dialogs/schema-list-item.html"));
     let _elmts = DOM.bind(templateItemDOM);
-    _elmts.templateName.text(++listNumber + '. ' + templateName);
+    _elmts.templateName.text(templateName);
 
     _elmts.renameTemplate.text($.i18n('wikibase-schema-management-dialog/rename'));
     _elmts.downloadTemplate.text($.i18n('wikibase-schema-management-dialog/export'));
