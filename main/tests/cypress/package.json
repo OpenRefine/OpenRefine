@@ -16,7 +16,7 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "12.17.1",
+        "cypress": "12.17.2",
         "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
