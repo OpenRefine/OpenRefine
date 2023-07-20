@@ -855,5 +855,7 @@
     "core-index-import/delete-import-file": "ファイルをクリア",
     "core-index-import/warning-import-url": "正しいURLを指定してください。",
     "core-index-import/warning-import-input": "プロジェクトファイルかURLを指定してください。",
-    "core-index-import/warning-import-two-input": "一方だけを指定してください。"
+    "core-index-import/warning-import-two-input": "一方だけを指定してください。",
+    "core-recon/url-already-registered": "この照合サービスは登録済みです。",
+    "core-facets/auto-update": "自動更新"
 }
