@@ -20,6 +20,9 @@ describe('Add Column With Url Of Matched Entities', () => {
         'Create new column Url of Matched entities based on column Item by filling 4 rows with if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),"")',
     );
     cy.getCell(0, 'Url of Matched entities').should('to.contain', 'https://www.wikidata.org/wiki/Q3938');
+    cy.getCell(1, 'Url of Matched entities').should('to.contain', '');
+    cy.getCell(2, 'Url of Matched entities').should('to.contain', '');
+    cy.getCell(3, 'Url of Matched entities').should('to.contain', '');
     });
     });
     
