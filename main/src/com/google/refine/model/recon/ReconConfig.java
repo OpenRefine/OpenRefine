@@ -99,7 +99,7 @@ abstract public class ReconConfig {
         return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
 
-    abstract public int getBatchSize();
+    abstract public int getBatchSize(Project project);
 
     abstract public String getBriefDescription(Project project, String columnName);
 

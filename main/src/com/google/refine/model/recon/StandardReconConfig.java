@@ -143,6 +143,8 @@ public class StandardReconConfig extends ReconConfig {
     final public String typeName;
     @JsonProperty("autoMatch")
     final public boolean autoMatch;
+    @JsonProperty("batchSize")
+    final public int batchSize;
     @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
@@ -158,12 +160,13 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("type") ReconType type,
             @JsonProperty("autoMatch") boolean autoMatch,
+            @JsonProperty("batchSize") int batchSize,
             @JsonProperty("columnDetails") List<ColumnDetail> columnDetails,
             @JsonProperty("limit") int limit) {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch, columnDetails, limit);
+                autoMatch,batchSize, columnDetails, limit);
     }
 
     public StandardReconConfig(
@@ -174,8 +177,9 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch,batchSize, columnDetails, 0);
     }
 
     /**
@@ -196,6 +200,7 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails,
             int limit) {
         this.service = service;
@@ -205,6 +210,7 @@ public class StandardReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
+        this.batchSize=batchSize;
         this.columnDetails = columnDetails;
         this.limit = limit;
     }
@@ -217,12 +223,26 @@ public class StandardReconConfig extends ReconConfig {
         }
         return null;
     }
+        @Override
+        @JsonIgnore
+        public int getBatchSize (Project project) {
+        if((project.rows.size()/100)>10)
+        {
+            if((project.rows.size()/100)<batchSize)
+            {
+                return (project.rows.size()/100);
+            }
+            else
+            {
+                if(batchSize!=0)
+                {
+                    return batchSize;
+                }
+            }
 
-    @Override
-    @JsonIgnore
-    public int getBatchSize() {
+        }
         return 10;
-    }
+        }
 
     @Override
     public String getBriefDescription(Project project, String columnName) {

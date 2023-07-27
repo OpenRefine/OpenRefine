@@ -261,7 +261,7 @@ public class ReconOperation extends EngineDependentOperation {
                 group.entries.add(entry);
             }
 
-            int batchSize = _reconConfig.getBatchSize();
+            int batchSize = _reconConfig.getBatchSize(_project);
             int done = 0;
 
             List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());

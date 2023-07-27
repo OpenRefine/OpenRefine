@@ -73,7 +73,7 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
         this.service = service;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
-        this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, Collections.emptyList());
+        this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true,10, Collections.emptyList());
     }
 
     @Override
