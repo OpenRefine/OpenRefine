@@ -65,7 +65,6 @@ import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-/Users/ayushi/Downloads
 public class StandardReconConfigTests extends RefineTest {
 
     @BeforeMethod
@@ -83,7 +82,7 @@ public class StandardReconConfigTests extends RefineTest {
     private class StandardReconConfigStub extends StandardReconConfig {
 
         public StandardReconConfigStub() {
-            super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
+            super("", "", "", "", "", false,10, new ArrayList<ColumnDetail>());
         }
 
         public double wordDistanceTest(String s1, String s2) {
