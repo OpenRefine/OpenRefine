@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doAddColumnWithUrlOfMatchedEntities=function(){
+  var doAddColumnWithUrlOfMatchedEntities = function() {
     var serviceUrl = null;
     var service = null;
     if (column.reconConfig) {
@@ -64,9 +64,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     if (serviceUrl) {
         service = ReconciliationManager.getServiceFromUrl(serviceUrl);
     } 
-    if(service&&service.view)
+    if (service && service.view)
     {
-    Refine.postCoreProcess(
+     Refine.postCoreProcess
+     (
       "add-column", 
       {
         baseColumnName: column.name,  
@@ -74,13 +75,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnInsertIndex: columnIndex + 1,
         onError: "set-to-blank"
       },
-      { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),"")' },
+      { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
       { modelsChanged: true },
-      
-    );
+     );
     }
     else
-    alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains'));
+    {
+      alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains'));
+    }
   }
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
