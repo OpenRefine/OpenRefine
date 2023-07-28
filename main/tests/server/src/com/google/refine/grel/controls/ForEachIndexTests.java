@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2018, 2023, OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,71 @@
 
 package com.google.refine.grel.controls;
 
+import static org.testng.Assert.fail;
+
+import java.util.Properties;
+
 import org.testng.annotations.Test;
 
+import com.google.refine.RefineTest;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.util.TestUtils;
 
-public class ForEachIndexTests {
+public class ForEachIndexTests extends RefineTest {
 
     @Test
     public void serializeForEachIndex() {
         String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"expression a, variable i, variable v, expression e\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new ForEachIndex(), json);
     }
+
+    private void assertParseException(String expression) {
+        assertParseException(expression, null);
+    }
+
+    private void assertParseException(String expression, String message) {
+        try {
+            MetaParser.parse("grel:" + expression);
+            if (message == null) {
+                fail("Expression didn't return error : " + expression);
+            } else {
+                fail(message);
+            }
+        } catch (ParsingException e) {
+            // success
+        }
+    }
+
+    @Test
+    public void testInvalidParams() throws ParsingException {
+        bindings = new Properties();
+        bindings.put("v", "");
+        assertParseException("forEachIndex('test', v, v, v)");
+        assertParseException("forEachIndex([], 1, 1, 1)", "Didn't throw a ParsingException for wrong argument type");
+        assertParseException("forEachIndex([], v, v, v)", "Didn't throw ParsingException for duplicate variables");
+        assertParseException("forEachIndex([], v, v)", "Didn't throw a ParsingException for 3 arguments");
+        assertParseException("forEachIndex([], v)", "Didn't throw a ParsingException for 2 arguments");
+        assertParseException("forEachIndex([])", "Didn't throw a ParsingException for 1 argument");
+    }
+
+
+    @Test
+    public void testForEachIndexArray() throws ParsingException {
+        bindings = new Properties();
+        bindings.put("k", "");
+        bindings.put("v", "");
+        parseEval(bindings, new String[] { "forEachIndex([5,4,3,2.0], k, v, v*2).join(',')", "10,8,6,4.0" });
+        parseEval(bindings, new String[] { "forEachIndex([5,4,3,2.0], k, v, k).join(',')", "0,1,2,3" });
+    }
+
+    @Test
+    public void testForEachIndexJsonArray() throws ParsingException {
+        bindings = new Properties();
+        bindings.put("k", "");
+        bindings.put("v", "");
+        parseEval(bindings, new String[] { "forEachIndex('[3,2,1.0]'.parseJson(), k, v, v*2).join(',')", "6,4,2.0" });
+        parseEval(bindings, new String[] { "forEachIndex('[3,2,1.0]'.parseJson(), k, v, k).join(',')", "0,1,2" });
+    }
+
 }

@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
@@ -59,6 +61,8 @@ public class ForEachIndex implements Control {
         } else if (!(args[2] instanceof VariableExpr)) {
             // variable name";
             return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
+        } else if (args[1].equals(args[2])) {
+            return ControlEvalError.expects_second_third_args_different(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -69,7 +73,7 @@ public class ForEachIndex implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return ControlEvalError.foreach_index();
+            return new EvalError(ControlEvalError.foreach_index());
         }
 
         String indexName = ((VariableExpr) args[1]).getName();
