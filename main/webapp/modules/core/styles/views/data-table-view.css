@@ -53,6 +53,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-weight: bold;
 }
 
+.viewpanel-rowrecord a {
+  background-color: var(--fill-primary);
+  margin: 0px 1px 0px 1px;
+  padding: 2px 5px 2px 5px;
+  border-radius: 4px;
+}
+
+.viewpanel-pagesize a {
+  background-color: var(--fill-primary);
+  margin: 0px 2px 0px 2px;
+  padding: 2px 3px 2px 3px;
+  border-radius: 4px;
+}
+
+div.viewpanel-pagesize span:first-of-type {
+  margin: 0px 0px 0px 20px;
+}
+
 .data-table-header {
   width: 1px;
   position: relative;
