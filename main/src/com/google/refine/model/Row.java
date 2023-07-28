@@ -80,7 +80,7 @@ public class Row implements HasFields {
 
     /**
      * Copy a row and return the copy. Note that this is a shallow copy, so if the contents of cells are changed in the
-     * original, they will be be changed in the duplicate.
+     * original, they will be changed in the duplicate.
      * 
      * @return the duplicated row
      */
