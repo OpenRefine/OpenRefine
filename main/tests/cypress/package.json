@@ -20,7 +20,7 @@
         "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
-        "eslint": "^8.45.0",
+        "eslint": "^8.46.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.9.0",
         "eslint-plugin-cypress": "^2.13.3",
