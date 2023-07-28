@@ -70,7 +70,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       "add-column", 
       {
         baseColumnName: column.name,  
-        newColumnName: $.i18n('core-views/entity URL'), 
+        newColumnName: $.i18n('core-views/entity-URL'), 
         columnInsertIndex: columnIndex + 1,
         onError: "set-to-blank"
       },
