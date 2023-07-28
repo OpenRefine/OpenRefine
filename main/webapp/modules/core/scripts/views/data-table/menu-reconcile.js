@@ -64,25 +64,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     if (serviceUrl) {
         service = ReconciliationManager.getServiceFromUrl(serviceUrl);
     } 
-    if (service && service.view)
-    {
+    if (service && service.view){
      Refine.postCoreProcess
      (
       "add-column", 
       {
         baseColumnName: column.name,  
-        newColumnName: "Url of Matched entities", 
+        newColumnName: $.i18n('core-views/entity URL'), 
         columnInsertIndex: columnIndex + 1,
         onError: "set-to-blank"
       },
       { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
       { modelsChanged: true },
      );
-    }
-    else
-    {
-      alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains'));
-    }
+    } else {
+      alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains')); }
   }
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(

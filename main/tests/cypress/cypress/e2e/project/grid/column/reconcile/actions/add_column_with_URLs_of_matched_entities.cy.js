@@ -17,12 +17,13 @@ describe('Add column with URLs of matched entities', () => {
     'Add column with URLs of matched entities',
     ]);
     cy.assertNotificationContainingText(
-        'Create new column Url of Matched entities based on column Item by filling 1 rows with if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),null)',
+        'Create new column Entity URL based on column Item by filling 1 rows with if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),null)',
     );
-    cy.getCell(0, 'Url of Matched entities').should('to.contain', 'https://www.wikidata.org/wiki/Q3938');
-    cy.getCell(1, 'Url of Matched entities').should('to.contain', null);
-    cy.getCell(2, 'Url of Matched entities').should('to.contain', null);
-    cy.getCell(3, 'Url of Matched entities').should('to.contain', null);
+    cy.getCell(0, 'Entity URL').should('to.contain','https://www.wikidata.org/wiki/Q3938' );
+    cy.assertCellEquals(1,'Entity URL','null');
+    cy.assertCellEquals(2,'Entity URL','null');
+    cy.assertCellEquals(3,'Entity URL','null');
+
     });
     });
     
