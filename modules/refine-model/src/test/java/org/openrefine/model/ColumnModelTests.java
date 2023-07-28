@@ -40,26 +40,26 @@ public class ColumnModelTests {
 
     ColumnModel SUT = new ColumnModel(
             Arrays.asList(
-                    new ColumnMetadata("a", "b", null),
-                    new ColumnMetadata("c", "d", null)));
+                    new ColumnMetadata("a", "b", 1234L, null),
+                    new ColumnMetadata("c", "d", 5678L, null)));
 
     @Test
     public void serializeColumnModel() throws ModelException {
-        ColumnModel model = new ColumnModel(
-                Arrays.asList(new ColumnMetadata("a"), new ColumnMetadata("b")));
         String json = "{\n" +
                 "       \"columns\" : [ {\n" +
-                "         \"name\" : \"a\",\n" +
+                "         \"name\" : \"b\",\n" +
+                "         \"lastModified\" : 1234,\n" +
                 "         \"originalName\" : \"a\"\n" +
                 "       }, {\n" +
-                "         \"name\" : \"b\",\n" +
-                "         \"originalName\" : \"b\"\n" +
+                "         \"name\" : \"d\",\n" +
+                "         \"lastModified\" : 5678,\n" +
+                "         \"originalName\" : \"c\"\n" +
                 "       } ],\n" +
                 "       \"keyCellIndex\" : 0,\n" +
-                "       \"keyColumnName\" : \"a\",\n" +
+                "       \"keyColumnName\" : \"b\",\n" +
                 "       \"hasRecords\": false\n" +
                 "     }";
-        TestUtils.isSerializedTo(model, json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(SUT, json, ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -76,12 +76,12 @@ public class ColumnModelTests {
     public void testMerge() {
         ColumnModel columnModelB = new ColumnModel(
                 Arrays.asList(
-                        new ColumnMetadata("e", "f", null),
-                        new ColumnMetadata("g", "h", null)));
+                        new ColumnMetadata("e", "f", 1234L, null),
+                        new ColumnMetadata("g", "h", 5678L, null)));
         ColumnModel expected = new ColumnModel(
                 Arrays.asList(
-                        new ColumnMetadata("a", "b", null),
-                        new ColumnMetadata("c", "d", null)));
+                        new ColumnMetadata("a", "b", 1234L, null),
+                        new ColumnMetadata("c", "d", 5678L, null)));
 
         Assert.assertEquals(SUT.merge(columnModelB), expected);
     }
@@ -89,7 +89,7 @@ public class ColumnModelTests {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMergeIncompatibleNumberOfColumns() {
         ColumnModel columnModel = new ColumnModel(
-                Arrays.asList(new ColumnMetadata("a", "b", null)));
+                Arrays.asList(new ColumnMetadata("a", "b", 1234L, null)));
         SUT.merge(columnModel);
     }
 }

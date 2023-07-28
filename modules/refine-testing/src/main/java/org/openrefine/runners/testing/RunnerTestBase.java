@@ -42,22 +42,10 @@ import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.importers.MultiFileReadingProgressStub;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
+import org.openrefine.model.*;
 import org.openrefine.model.Grid.ApproxCount;
 import org.openrefine.model.Grid.PartialAggregation;
-import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
-import org.openrefine.model.RecordFilter;
-import org.openrefine.model.RecordMapper;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowFlatMapper;
-import org.openrefine.model.RowMapper;
-import org.openrefine.model.RowScanMapper;
-import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -1028,8 +1016,27 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public String call(long rowId, Row row) {
+        public String call(long rowId, Row row, ColumnModel columnModel) {
             return row.getCellValue(1).toString() + "_concat";
+        }
+
+    };
+
+    public static RowChangeDataProducer<String> concatChangeMapperWithDependencies = new RowChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -2137895769820170019L;
+
+        @Override
+        public String call(long rowId, Row row, ColumnModel columnModel) {
+            // this mapper should only be supplied with the column it declares a dependency on
+            Assert.assertEquals(row.getCells().size(), 1);
+            Assert.assertEquals(columnModel, new ColumnModel(Arrays.asList(new ColumnMetadata("bar")), -1, false));
+            return row.getCellValue(0).toString() + "_concat";
+        }
+
+        @Override
+        public List<ColumnId> getColumnDependencies() {
+            return Collections.singletonList(new ColumnId("bar", 0L));
         }
 
     };
@@ -1037,6 +1044,14 @@ public abstract class RunnerTestBase {
     @Test
     public void testGenerateRowChangeData() {
         ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper, Optional.empty());
+
+        Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, "b_concat"));
+        Assert.assertEquals(changeData.get(1L), new IndexedData<>(1L, null)); // because it is excluded by the facet
+    }
+
+    @Test
+    public void testGenerateRowChangeDataWithDeclaredDependencies() {
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapperWithDependencies, Optional.empty());
 
         Assert.assertEquals(changeData.get(0L), new IndexedData<>(0L, "b_concat"));
         Assert.assertEquals(changeData.get(1L), new IndexedData<>(1L, null)); // because it is excluded by the facet
@@ -1095,19 +1110,19 @@ public abstract class RunnerTestBase {
     protected static RowChangeDataProducer<String> countingChangeMapper = new RowChangeDataProducer<String>() {
 
         @Override
-        public String call(long rowId, Row row) {
+        public String call(long rowId, Row row, ColumnModel columnModel) {
             if (rowId < 2L) {
                 throw new IllegalStateException("mapper called for a row that was meant to be already computed");
             }
-            return concatChangeMapper.call(rowId, row) + "_v2";
+            return concatChangeMapper.call(rowId, row, columnModel) + "_v2";
         }
 
         @Override
-        public List<String> callRowBatch(List<IndexedRow> rows) {
+        public List<String> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
             if (rows.isEmpty()) {
                 throw new IllegalStateException("Row mapper called on an empty batch");
             }
-            return RowChangeDataProducer.super.callRowBatch(rows);
+            return RowChangeDataProducer.super.callRowBatch(rows, columnModel);
         }
     };
 
@@ -1116,7 +1131,7 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> callRowBatch(List<IndexedRow> rows) {
+        public List<String> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
             String val = "";
             List<String> results = new ArrayList<>();
             for (IndexedRow ir : rows) {
@@ -1132,7 +1147,7 @@ public abstract class RunnerTestBase {
         }
 
         @Override
-        public String call(long rowId, Row row) {
+        public String call(long rowId, Row row, ColumnModel columnModel) {
             throw new NotImplementedException();
         }
 
@@ -1151,7 +1166,7 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> callRowBatch(List<IndexedRow> rows) {
+        public List<String> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
             // it is incorrect to return a list of a different size than the argument
             return Collections.emptyList();
         }
@@ -1162,7 +1177,7 @@ public abstract class RunnerTestBase {
         }
 
         @Override
-        public String call(long rowId, Row row) {
+        public String call(long rowId, Row row, ColumnModel columnModel) {
             throw new NotImplementedException();
         }
 
@@ -1196,7 +1211,7 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -3973242967552705600L;
 
         @Override
-        public String call(Record record) {
+        public String call(Record record, ColumnModel columnModel) {
             StringBuilder builder = new StringBuilder();
             for (Row row : record.getRows()) {
                 builder.append(row.getCellValue(1).toString());
@@ -1227,19 +1242,19 @@ public abstract class RunnerTestBase {
     protected static RecordChangeDataProducer<String> countingRecordChangeMapper = new RecordChangeDataProducer<String>() {
 
         @Override
-        public String call(Record record) {
+        public String call(Record record, ColumnModel columnModel) {
             if (record.getStartRowId() == 0) {
                 throw new IllegalArgumentException("calling the countingRecordChangeMapper on a previously computed record");
             }
-            return recordChangeMapper.call(record) + "_v2";
+            return recordChangeMapper.call(record, columnModel) + "_v2";
         }
 
         @Override
-        public List<String> callRecordBatch(List<Record> records) {
+        public List<String> callRecordBatch(List<Record> records, ColumnModel columnModel) {
             if (records.isEmpty()) {
                 throw new IllegalStateException("calling the record mapper on an empty batch of records");
             }
-            return RecordChangeDataProducer.super.callRecordBatch(records);
+            return RecordChangeDataProducer.super.callRecordBatch(records, columnModel);
         }
     };
 
@@ -1272,7 +1287,7 @@ public abstract class RunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> callRecordBatch(List<Record> records) {
+        public List<String> callRecordBatch(List<Record> records, ColumnModel columnModel) {
             // it is incorrect to return a list of a different size than the argument
             return Collections.emptyList();
         }
@@ -1283,7 +1298,7 @@ public abstract class RunnerTestBase {
         }
 
         @Override
-        public String call(Record record) {
+        public String call(Record record, ColumnModel columnModel) {
             throw new NotImplementedException();
         }
 

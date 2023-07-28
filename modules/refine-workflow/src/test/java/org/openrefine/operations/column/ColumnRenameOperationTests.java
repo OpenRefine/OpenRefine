@@ -97,7 +97,10 @@ public class ColumnRenameOperationTests extends RefineTest {
 
         List<IndexedRow> rows = changeResult.getGrid().collectRows();
         Assert.assertEquals(changeResult.getGrid().getColumnModel().getColumns(),
-                Arrays.asList(new ColumnMetadata("foo", "newfoo", null), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+                Arrays.asList(
+                        new ColumnMetadata("foo", "newfoo", 0L, null),
+                        new ColumnMetadata("bar"),
+                        new ColumnMetadata("hello")));
         Assert.assertEquals(rows.get(0).getRow().getCells(),
                 Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
     }

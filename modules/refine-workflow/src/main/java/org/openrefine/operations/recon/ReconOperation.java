@@ -64,6 +64,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.CellChangeDataSerializer;
@@ -261,12 +262,12 @@ public class ReconOperation extends EngineDependentOperation {
         }
 
         @Override
-        public Cell call(org.openrefine.model.Record record, long rowId, Row row) {
-            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
+        public Cell call(Record record, long rowId, Row row, ColumnModel columnModel) {
+            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row)), columnModel).get(0);
         }
 
         @Override
-        public List<Cell> callRowBatch(List<IndexedRow> rows) {
+        public List<Cell> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
             if (cache == null) {
                 initCache();
             }
@@ -276,7 +277,7 @@ public class ReconOperation extends EngineDependentOperation {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
                     reconJobs.add(reconConfig.createJob(
-                            columnModel,
+                            this.columnModel,
                             indexedRow.getIndex(),
                             row,
                             columnName,

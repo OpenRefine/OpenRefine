@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.exceptions.MissingColumnException;
+import org.openrefine.util.ColumnDependencyException;
 
 /**
  * The list of columns in a project. For each column, this holds the associated {@link ColumnMetadata}.
@@ -62,8 +63,9 @@ public class ColumnModel implements Serializable {
     private final int _keyColumnIndex;
     private final boolean _hasRecords;
 
-    protected Map<String, Integer> _nameToPosition;
-    protected List<String> _columnNames;
+    protected final Map<String, Integer> _nameToPosition;
+    protected final Map<ColumnId, Integer> _idToPosition;
+    protected final List<String> _columnNames;
 
     @JsonCreator
     public ColumnModel(
@@ -74,6 +76,7 @@ public class ColumnModel implements Serializable {
         _keyColumnIndex = keyColumnIndex;
         _hasRecords = hasRecords;
         _nameToPosition = new HashMap<>();
+        _idToPosition = new HashMap<>();
         _columnNames = new ArrayList<String>();
         int index = 0;
         for (ColumnMetadata column : columns) {
@@ -82,6 +85,7 @@ public class ColumnModel implements Serializable {
                         String.format("Duplicate columns for name %1", column.getName()));
             }
             _nameToPosition.put(column.getName(), index);
+            _idToPosition.put(column.getColumnId(), index);
             _columnNames.add(column.getName());
             index++;
         }
@@ -133,11 +137,26 @@ public class ColumnModel implements Serializable {
     }
 
     /**
-     * Replaces the recon config at the given column index. It returns a modified copy of this column model.
+     * Replaces the recon config at the given column index.
+     * 
+     * @return a modified copy of this column model.
      */
     public ColumnModel withReconConfig(int index, ReconConfig config) {
         try {
             return replaceColumn(index, _columns.get(index).withReconConfig(config));
+        } catch (ModelException e) {
+            return null; // unreachable
+        }
+    }
+
+    /**
+     * Updates the last modification field of a column to a newer history entry id.
+     * 
+     * @return a modified copy of this column model
+     */
+    public ColumnModel markColumnAsModified(int index, long historyEntryId) {
+        try {
+            return replaceColumn(index, _columns.get(index).markAsModified(historyEntryId));
         } catch (ModelException e) {
             return null; // unreachable
         }
@@ -296,6 +315,20 @@ public class ColumnModel implements Serializable {
             return _nameToPosition.get(columnName);
         } else {
             throw new MissingColumnException(columnName);
+        }
+    }
+
+    /**
+     * Utility method to get a column index based on its column id (original column name and version).
+     *
+     * @throws ColumnDependencyException
+     *             if the column does not exist
+     */
+    public int getRequiredColumnIndex(ColumnId id) throws ColumnDependencyException {
+        if (_idToPosition.containsKey(id)) {
+            return _idToPosition.get(id);
+        } else {
+            throw new ColumnDependencyException(id);
         }
     }
 

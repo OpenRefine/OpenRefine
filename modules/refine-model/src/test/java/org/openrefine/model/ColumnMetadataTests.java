@@ -75,7 +75,7 @@ public class ColumnMetadataTests {
     }
 
     ReconConfig reconConfig = new MyReconConfig();
-    ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig);
+    ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", 1234L, reconConfig);
 
     @Test
     public void serializeColumn() throws Exception {
@@ -83,6 +83,7 @@ public class ColumnMetadataTests {
         String json = "{\n"
                 + "\"originalName\":\"name\","
                 + "\"name\":\"organization_name\","
+                + "\"lastModified\":1234,"
                 + "\"reconConfig\":{"
                 + "   \"mode\":\"my-recon\""
                 + "    }}";
@@ -90,18 +91,11 @@ public class ColumnMetadataTests {
     }
 
     @Test
-    public void testMerge() {
-        ColumnMetadata column2 = new ColumnMetadata("name2", "organization_name2", reconConfig);
-        ColumnMetadata expected = new ColumnMetadata("name", "organization_name", reconConfig);
-
-        Assert.assertEquals(SUT, expected);
-    }
-
-    @Test
     public void testEquals() {
         Assert.assertNotEquals(SUT, 4L);
-        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", null));
-        Assert.assertNotEquals(SUT, new ColumnMetadata("name2", "organization_name", reconConfig));
-        Assert.assertEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", 1234L, null));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name2", "organization_name", 1234L, reconConfig));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", 5678L, reconConfig));
+        Assert.assertEquals(SUT, new ColumnMetadata("name", "organization_name", 1234L, reconConfig));
     }
 }

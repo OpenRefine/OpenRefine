@@ -380,7 +380,8 @@ public class ExtendDataOperationTests extends RefineTest {
                             RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE),
                     0, RowFilter.ANY_ROW);
 
-            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGrid().collectRecords());
+            Grid currentGrid = project.getCurrentGrid();
+            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(currentGrid.collectRecords(), currentGrid.getColumnModel());
             RecordDataExtension dataExtension1 = new RecordDataExtension(
                     Collections.singletonMap(0L, new DataExtension(
                             Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
@@ -434,7 +435,7 @@ public class ExtendDataOperationTests extends RefineTest {
                             RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE),
                     1, filter);
 
-            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(state.collectRecords());
+            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(state.collectRecords(), state.getColumnModel());
             RecordDataExtension dataExtension1 = new RecordDataExtension(
                     Collections.singletonMap(0L, new DataExtension(
                             Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));

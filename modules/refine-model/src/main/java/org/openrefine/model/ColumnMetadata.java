@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.io.Writer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,19 +58,40 @@ public class ColumnMetadata implements Serializable {
     final private String _originalName;
     final private String _name;
     final private ReconConfig _reconConfig;
+    final private long _lastModified;
 
+    /**
+     * Constructor.
+     *
+     * @param name
+     *            the name of the column, displayed to the user
+     * @param reconConfig
+     *            the reconciliation settings of the column, which are set if this column has been reconciled before
+     *            (otherwise set to null)
+     * @param lastModified
+     *            the id of the history entry which last modified this column, or 0L if it has been unchanged since
+     *            project creation
+     */
     @JsonCreator
     public ColumnMetadata(
             @JsonProperty("originalName") String originalName,
             @JsonProperty("name") String name,
+            @JsonProperty("lastModified") long lastModified,
             @JsonProperty("reconConfig") ReconConfig reconConfig) {
         _originalName = originalName;
         _name = name == null ? originalName : name;
         _reconConfig = reconConfig;
+        _lastModified = lastModified;
+    }
+
+    public ColumnMetadata(
+            String name,
+            ReconConfig reconConfig) {
+        this(name, name, 0L, reconConfig);
     }
 
     public ColumnMetadata(String name) {
-        this(name, name, null);
+        this(name, name, 0L, null);
     }
 
     @JsonProperty("originalName")
@@ -78,7 +100,7 @@ public class ColumnMetadata implements Serializable {
     }
 
     public ColumnMetadata withName(String name) {
-        return new ColumnMetadata(_originalName, name, _reconConfig);
+        return new ColumnMetadata(_originalName, name, _lastModified, _reconConfig);
     }
 
     @JsonProperty("name")
@@ -87,13 +109,38 @@ public class ColumnMetadata implements Serializable {
     }
 
     public ColumnMetadata withReconConfig(ReconConfig config) {
-        return new ColumnMetadata(_originalName, _name, config);
+        return new ColumnMetadata(_originalName, _name, _lastModified, config);
     }
 
     @JsonProperty("reconConfig")
     @JsonInclude(Include.NON_NULL)
     public ReconConfig getReconConfig() {
         return _reconConfig;
+    }
+
+    public ColumnMetadata withLastModified(long historyEntryId) {
+        return new ColumnMetadata(_originalName, _name, _lastModified, _reconConfig);
+    }
+
+    public ColumnMetadata markAsModified(long historyEntryId) {
+        return new ColumnMetadata(_name, _name, _lastModified, _reconConfig);
+    }
+
+    /**
+     * The id of the history entry which last modified this column, 0L if the column has not changed since project
+     * creation.
+     */
+    @JsonProperty("lastModified")
+    public long getLastModified() {
+        return _lastModified;
+    }
+
+    /**
+     * @return the earliest point in the history where this column was present, and its original name at that point.
+     */
+    @JsonIgnore
+    public ColumnId getColumnId() {
+        return new ColumnId(_originalName, _lastModified);
     }
 
     public void save(Writer writer) {
@@ -110,7 +157,7 @@ public class ColumnMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("[ColumnMetadata: %s, %s, %s]", _name, _originalName, _reconConfig);
+        return String.format("[ColumnMetadata: %s, %s, %d, %s]", _name, _originalName, _lastModified, _reconConfig);
     }
 
     @Override
@@ -121,6 +168,7 @@ public class ColumnMetadata implements Serializable {
         ColumnMetadata metadata = (ColumnMetadata) other;
         return (_name.equals(metadata.getName()) &&
                 _originalName.equals(metadata.getOriginalHeaderLabel()) &&
+                _lastModified == metadata.getLastModified() &&
                 ((_reconConfig == null && metadata.getReconConfig() == null)
                         || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig()))));
 
@@ -128,6 +176,7 @@ public class ColumnMetadata implements Serializable {
 
     @Override
     public int hashCode() {
-        return _name.hashCode() + 87 * _originalName.hashCode();
+        return _name.hashCode() + 87 * _originalName.hashCode() + (int) _lastModified;
     }
+
 }

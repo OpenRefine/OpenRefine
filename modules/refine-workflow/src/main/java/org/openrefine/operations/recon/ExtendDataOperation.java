@@ -151,11 +151,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
         for (int i = 0; i != columnNames.size(); i++) {
             newColumnModel = newColumnModel.insertUnduplicatedColumn(
                     _columnInsertIndex + i,
-                    new ColumnMetadata(columnNames.get(i), columnNames.get(i), new DataExtensionReconConfig(
-                            _endpoint,
-                            _identifierSpace,
-                            _schemaSpace,
-                            columnTypes.get(i))));
+                    new ColumnMetadata(columnNames.get(i), columnNames.get(i), context.getHistoryEntryId(),
+                            new DataExtensionReconConfig(
+                                    _endpoint,
+                                    _identifierSpace,
+                                    _schemaSpace,
+                                    columnTypes.get(i))));
         }
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, columnNames.size());
         Grid state = projectState.join(changeData, joiner, newColumnModel);
@@ -260,12 +261,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
         }
 
         @Override
-        public RecordDataExtension call(Record record) {
-            return callRecordBatch(Collections.singletonList(record)).get(0);
+        public RecordDataExtension call(Record record, ColumnModel columnModel) {
+            return callRecordBatch(Collections.singletonList(record), columnModel).get(0);
         }
 
         @Override
-        public List<RecordDataExtension> callRecordBatch(List<Record> records) {
+        public List<RecordDataExtension> callRecordBatch(List<Record> records, ColumnModel columnModel) {
 
             Set<String> ids = new HashSet<>();
 

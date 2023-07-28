@@ -268,13 +268,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
 
         @Override
-        public RowEditingResults call(long rowId, Row row) {
-            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
+        public RowEditingResults call(long rowId, Row row, ColumnModel columnModel) {
+            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row)), columnModel).get(0);
         }
 
         @Override
-        public List<RowEditingResults> callRowBatch(List<IndexedRow> rows) {
-            List<EntityEdit> edits = schema.evaluate(columnModel, rows, null);
+        public List<RowEditingResults> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
+            List<EntityEdit> edits = schema.evaluate(this.columnModel, rows, null);
             EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, edits, library, summary,
                     maxLag, tags, batchSize, maxEditsPerMinute);
             Map<Long, List<String>> rowEditingErrors = new HashMap<>();

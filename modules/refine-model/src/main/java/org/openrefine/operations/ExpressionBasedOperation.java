@@ -7,6 +7,8 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 
@@ -18,16 +20,8 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.history.GridPreservation;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
+import org.openrefine.model.*;
 import org.openrefine.model.Record;
-import org.openrefine.model.RecordFilter;
-import org.openrefine.model.RecordMapper;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.CellChangeDataSerializer;
 import org.openrefine.model.changes.CellListChangeDataSerializer;
 import org.openrefine.model.changes.ChangeContext;
@@ -35,8 +29,10 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.model.changes.RowInRecordChangeDataProducer;
+import org.openrefine.operations.exceptions.MissingColumnException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.ColumnDependencyException;
 
 /**
  * Base class for an operation which evaluates an expression on rows or records, and then uses it to derive the new
@@ -159,7 +155,7 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     protected GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
         Validate.notNull(_eval);
         RowInRecordChangeDataJoiner joiner = changeDataJoiner(state, context);
-        PositiveRowMapper positiveMapper = new PositiveRowMapper(getChangeDataProducer(state, context), joiner);
+        PositiveRowMapper positiveMapper = new PositiveRowMapper(getChangeDataProducer(state, context), joiner, state.getColumnModel());
         NegativeRowMapper negativeMapper = new NegativeRowMapper(joiner);
         return new GridMap(
                 getNewColumnModel(state, context, _eval),
@@ -171,11 +167,13 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(Grid state, ChangeContext context)
             throws OperationException {
         ColumnModel columnModel = state.getColumnModel();
-        int baseColumnIndex = columnModel.getRequiredColumnIndex(_baseColumnName);
-        RowInRecordChangeDataProducer<Cell> producer = evaluatingChangeDataProducer(baseColumnIndex, _baseColumnName, _onError,
-                _repeatCount, _eval,
-                columnModel, state.getOverlayModels(), context.getProjectId());
-        return producer;
+        try {
+            return evaluatingChangeDataProducer(_baseColumnName, _onError,
+                    _repeatCount, _eval,
+                    columnModel, state.getOverlayModels(), context.getProjectId());
+        } catch (ColumnDependencyException e) {
+            throw new MissingColumnException(e.getId().getColumnName());
+        }
     }
 
     /**
@@ -188,16 +186,19 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
         private static final long serialVersionUID = 696902213789742840L;
         RowInRecordChangeDataProducer<Cell> producer;
         RowInRecordChangeDataJoiner joiner;
+        ColumnModel columnModel; // TODO: delete once RowMapper is migrated to a similar signature
 
-        public PositiveRowMapper(RowInRecordChangeDataProducer<Cell> producer, RowInRecordChangeDataJoiner joiner) {
+        public PositiveRowMapper(RowInRecordChangeDataProducer<Cell> producer, RowInRecordChangeDataJoiner joiner,
+                ColumnModel columnModel) {
             this.producer = producer;
             this.joiner = joiner;
+            this.columnModel = columnModel;
         }
 
         @Override
         public Row call(Record record, long rowId, Row row) {
             IndexedData<Cell> indexedData = null;
-            Cell producedCell = producer.call(record, rowId, row);
+            Cell producedCell = producer.call(record, rowId, row, columnModel);
             if (producedCell != null && producedCell.isPending()) {
                 indexedData = new IndexedData<>(rowId);
             } else {
@@ -233,7 +234,6 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     }
 
     public static RowInRecordChangeDataProducer<Cell> evaluatingChangeDataProducer(
-            int columnIndex,
             String baseColumnName,
             OnError onError,
             int repeatCount,
@@ -241,20 +241,33 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
             long projectId) {
+        Set<String> columnNames = eval.getColumnDependencies(baseColumnName);
+        List<ColumnId> dependencies = columnNames == null ? null
+                : columnNames.stream()
+                        .map(name -> columnModel.getColumnByName(name).getColumnId())
+                        .collect(Collectors.toList());
+
         return new RowInRecordChangeDataProducer<Cell>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Cell call(Record record, long rowId, Row row) {
-                Cell cell = row.getCell(columnIndex);
+            public List<ColumnId> getColumnDependencies() {
+                return dependencies;
+            }
+
+            @Override
+            public Cell call(Record translatedRecord, long rowId, Row translatedRow, ColumnModel columnModel) {
+                int columnIndex = columnModel.getColumnIndexByName(baseColumnName);
+                Cell cell = columnIndex == -1 ? null : translatedRow.getCell(columnIndex);
                 Cell newCell = null;
 
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels, projectId);
+                ExpressionUtils.bind(bindings, columnModel, translatedRow, rowId, translatedRecord,
+                        baseColumnName, cell, overlayModels, projectId);
                 // this should only happen when we are actually called by a row mapper and
                 // not within the context of change data production
-                if (ExpressionUtils.dependsOnPendingValues(eval, baseColumnName, columnModel, row, record)) {
+                if (ExpressionUtils.dependsOnPendingValues(eval, baseColumnName, columnModel, translatedRow, translatedRecord)) {
                     return Cell.PENDING_NULL;
                 }
 
@@ -279,7 +292,8 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                         }
 
                         for (int i = 0; i < repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, null, row, rowId, record, baseColumnName, newCell, overlayModels, projectId);
+                            ExpressionUtils.bind(bindings, null, translatedRow, rowId, translatedRecord, baseColumnName, newCell,
+                                    overlayModels, projectId);
 
                             v = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(v)) {

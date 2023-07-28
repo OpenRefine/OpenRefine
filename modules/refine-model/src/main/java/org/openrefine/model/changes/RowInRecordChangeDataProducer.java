@@ -4,6 +4,8 @@ package org.openrefine.model.changes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openrefine.model.ColumnId;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -24,27 +26,25 @@ public abstract class RowInRecordChangeDataProducer<T> implements RecordChangeDa
 
     /**
      * Maps a row, in the context of a record.
-     * 
-     * @param record
-     *            the record enclosing the row to map
-     * @param rowId
-     *            the global index of the row in the entire grid
-     * @param row
-     *            the row itself
+     *
+     * @param record      the record enclosing the row to map
+     * @param rowId       the global index of the row in the entire grid
+     * @param row         the row itself
+     * @param columnModel
      */
-    public abstract T call(Record record, long rowId, Row row);
+    public abstract T call(Record record, long rowId, Row row, ColumnModel columnModel);
 
     @Override
-    public T call(long rowId, Row row) {
-        return call(null, rowId, row);
+    public T call(long rowId, Row row, ColumnModel columnModel) {
+        return call(null, rowId, row, columnModel);
     }
 
     @Override
-    public List<T> call(Record record) {
+    public List<T> call(Record record, ColumnModel columnModel) {
         List<Row> rows = record.getRows();
         List<T> results = new ArrayList<>(rows.size());
         for (int i = 0; i != rows.size(); i++) {
-            results.add(call(record, record.getStartRowId() + i, rows.get(i)));
+            results.add(call(record, record.getStartRowId() + i, rows.get(i), columnModel));
         }
         return results;
     }
@@ -63,4 +63,8 @@ public abstract class RowInRecordChangeDataProducer<T> implements RecordChangeDa
         return 0;
     }
 
+    @Override
+    public List<ColumnId> getColumnDependencies() {
+        return null;
+    }
 }

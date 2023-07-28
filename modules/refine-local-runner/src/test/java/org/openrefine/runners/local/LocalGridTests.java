@@ -29,10 +29,11 @@ public class LocalGridTests {
         RowChangeDataProducer<String> rowMapper = new RowChangeDataProducer<String>() {
 
             @Override
-            public String call(long rowId, Row row) {
+            public String call(long rowId, Row row, ColumnModel columnModel) {
                 return null;
             }
         };
+        ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("column")));
         List<Tuple2<Long, Tuple2<IndexedRow, IndexedData<String>>>> batch = Arrays.asList(
                 Tuple2.of(3L, Tuple2.of(new IndexedRow(3L, new Row(Collections.singletonList(null))), new IndexedData<>(3L, "foo"))),
                 Tuple2.of(4L, Tuple2.of(new IndexedRow(4L, new Row(Collections.singletonList(null))), new IndexedData<>(4L, null))));
@@ -40,7 +41,8 @@ public class LocalGridTests {
                 Tuple2.of(3L, new IndexedData<>(3L, "foo")),
                 Tuple2.of(4L, new IndexedData<>(4L, null)));
 
-        CloseableIterator<Tuple2<Long, IndexedData<String>>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch);
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch,
+                columnModel);
 
         List<Tuple2<Long, IndexedData<String>>> collected = result.collect(Collectors.toList());
         Assert.assertEquals(collected, expected);

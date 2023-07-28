@@ -269,9 +269,9 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
         }
 
         @Override
-        public Cell call(Record record, long rowId, Row row) {
+        public Cell call(Record record, long rowId, Row row, ColumnModel columnModel) {
 
-            Cell urlCell = _evaluatingChangeDataProducer.call(record, rowId, row);
+            Cell urlCell = _evaluatingChangeDataProducer.call(record, rowId, row, columnModel);
             if (urlCell == null || urlCell.value instanceof EvalError || urlCell.value == null) {
                 return urlCell;
             }
