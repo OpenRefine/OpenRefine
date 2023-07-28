@@ -33,14 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.overlay.OverlayModel;
 
+/**
+ * An object which registers variable names available to expression languages. Extensions can implement this interface
+ * and register an instance via {@link ExpressionUtils#registerBinder(Binder)}. This will let them inject additional
+ * context in the expression context of all expressions.
+ */
 public interface Binder {
 
     public void initializeBindings(Properties bindings);
 
-    public void bind(Properties bindings, Row row, long rowIndex, String columnName, Cell cell);
+    public void bind(Properties bindings, Row row, long rowIndex, Record record, String columnName, Cell cell,
+            Map<String, OverlayModel> overlayModels, long projectId);
 }

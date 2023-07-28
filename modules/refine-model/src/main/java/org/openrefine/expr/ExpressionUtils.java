@@ -128,7 +128,7 @@ public class ExpressionUtils {
         }
 
         for (Binder binder : s_binders) {
-            binder.bind(bindings, row, rowIndex, columnName, cell);
+            binder.bind(bindings, row, rowIndex, record, columnName, cell, overlayModels, projectId);
         }
     }
 
