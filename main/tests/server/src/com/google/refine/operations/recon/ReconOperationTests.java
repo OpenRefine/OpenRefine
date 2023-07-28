@@ -131,7 +131,7 @@ public class ReconOperationTests extends RefineTest {
         List<Recon> reconList = Arrays.asList((Recon) null, (Recon) null, (Recon) null);
         ReconJob reconJob = mock(ReconJob.class);
         when(reconConfig.batchRecon(Mockito.any(), Mockito.anyLong())).thenReturn(reconList);
-        when(reconConfig.getBatchSize(project)).thenReturn(10);
+        when(reconConfig.getBatchSize(project.rows.size())).thenReturn(10);
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);
 

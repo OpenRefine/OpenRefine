@@ -98,8 +98,10 @@ abstract public class ReconConfig {
     static public ReconConfig reconstruct(String json) throws Exception {
         return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
+    
 
-    abstract public int getBatchSize(Project project);
+    @JsonIgnore
+    public abstract int getBatchSize(int rowCount);
 
     abstract public String getBriefDescription(Project project, String columnName);
 

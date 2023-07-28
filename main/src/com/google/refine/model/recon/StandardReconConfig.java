@@ -166,7 +166,7 @@ public class StandardReconConfig extends ReconConfig {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch,batchSize, columnDetails, limit);
+                autoMatch, batchSize, columnDetails, limit);
     }
 
     public StandardReconConfig(
@@ -179,7 +179,7 @@ public class StandardReconConfig extends ReconConfig {
             boolean autoMatch,
             int batchSize,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch,batchSize, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, batchSize, columnDetails, 0);
     }
 
     /**
@@ -210,7 +210,7 @@ public class StandardReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
-        this.batchSize=batchSize;
+        this.batchSize = batchSize;
         this.columnDetails = columnDetails;
         this.limit = limit;
     }
@@ -223,26 +223,22 @@ public class StandardReconConfig extends ReconConfig {
         }
         return null;
     }
-        @Override
-        @JsonIgnore
-        public int getBatchSize (Project project) {
-        if((project.rows.size()/100)>10)
-        {
-            if((project.rows.size()/100)<batchSize)
-            {
-                return (project.rows.size()/100);
-            }
-            else
-            {
-                if(batchSize!=0)
-                {
+
+    @Override
+    @JsonIgnore
+    public int getBatchSize(int rowCount) {
+        if ((rowCount / 100) > 10) {
+            if ((rowCount / 100) < batchSize) {
+                return (rowCount / 100);
+            } else {
+                if (batchSize != 0) {
                     return batchSize;
                 }
             }
 
         }
         return 10;
-        }
+    }
 
     @Override
     public String getBriefDescription(Project project, String columnName) {
