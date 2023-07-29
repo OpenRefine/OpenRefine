@@ -27,9 +27,35 @@
 
 package com.google.refine.expr.functions;
 
+import static org.testng.Assert.assertEquals;
+
+import java.util.Properties;
+
 import org.testng.annotations.Test;
 
-import com.google.refine.util.TestUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class LengthTests {
+import com.google.refine.RefineTest;
+import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
+
+public class LengthTests extends RefineTest {
+
+    static Properties bindings = new Properties();
+
+    @Test
+    public void testLength() throws JsonProcessingException {
+        Function f = new Length();
+        assertEquals(f.call(bindings, new Object[] { Long.valueOf(123) }), 3);
+        assertEquals(f.call(bindings, new Object[] { Double.valueOf(123.1) }), 5);
+        assertEquals(f.call(bindings, new Object[] { "12345" }), 5);
+
+        ArrayNode array = (ArrayNode) ParsingUtilities.mapper.readTree("[1,2,3]");
+        assertEquals(f.call(bindings, new Object[] { array }), 3);
+
+        ObjectNode dict = (ObjectNode) ParsingUtilities.mapper.readTree("{\"a\": \"b\", \"c\": \"d\"}");
+        assertEquals(f.call(bindings, new Object[] { dict }), 2);
+    }
 }
