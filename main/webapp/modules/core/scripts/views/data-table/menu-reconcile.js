@@ -536,12 +536,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n('core-views/actions'),
       submenu: [
         {
-          id: "core/Add-column-with-URLs-of-matched-entities",
-          label: $.i18n("core-views/add-column-with-URLs-of-matched-entities"),
-          tooltip: $.i18n("core-views/add-column-with-URLs-of-matched-entities-tooltip"),
-          click:  doAddColumnWithUrlOfMatchedEntities
-        },
-        {
           id: "core/match-to-best-candidate",
           label: $.i18n('core-views/best-cand'),
           tooltip: $.i18n('core-views/best-cand2'),
@@ -596,6 +590,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n('core-views/use-values-as-identifiers'),
       tooltip: $.i18n('core-views/use-values-as-identifiers2'),
       click: doUseValuesAsIdentifiers
+    },
+    {},
+    {
+      id: "core/Add-column-with-URLs-of-matched-entities",
+      label: $.i18n("core-views/add-column-with-URLs-of-matched-entities"),
+      tooltip: $.i18n("core-views/add-column-with-URLs-of-matched-entities-tooltip"),
+      click:  doAddColumnWithUrlOfMatchedEntities
     },
     {},
     {
