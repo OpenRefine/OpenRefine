@@ -66,7 +66,13 @@ public class VariableExpr implements Evaluable {
         return _name;
     }
 
+    @Override
     public boolean equals(Object other) {
         return other instanceof VariableExpr && getName().equals(((VariableExpr) other).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode();
     }
 }
