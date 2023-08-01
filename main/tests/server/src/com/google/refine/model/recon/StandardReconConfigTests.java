@@ -165,6 +165,27 @@ public class StandardReconConfigTests extends RefineTest {
     }
 
     @Test
+    public void testGetBatchSize() throws IOException {
+
+        String json = "{\"mode\":\"standard-service\","
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"type\":null,"
+                + "\"autoMatch\":true,"
+                + "\"batchSize\":50,"
+                + "\"columnDetails\":["
+                + "    {\"column\":\"_ - id\","
+                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
+                + "],"
+                + "\"limit\":0}";
+        StandardReconConfig c = StandardReconConfig.reconstruct(json);
+        assertEquals(c.getBatchSize(10), 10);
+        assertEquals(c.getBatchSize(1200), 12);
+        assertEquals(c.getBatchSize(10000), 50);
+    }
+
+    @Test
     public void testReconstructNoIdentifierSchemaSpaces() throws IOException {
         String json = "{\"mode\":\"standard-service\","
                 + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","

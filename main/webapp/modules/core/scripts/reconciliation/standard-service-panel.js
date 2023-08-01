@@ -345,7 +345,7 @@ ReconStandardServicePanel.prototype.start = function() {
         schemaSpace: this._service.schemaSpace,
         type: (type) ? { id: type.id, name: type.name } : null,
         autoMatch: this._elmts.automatchCheck[0].checked,
-        batchSize: (Number.isInteger(this._service.batchSize) && this._service.batchSize > 0) ? this._service.batchSize : null,
+        batchSize: (Number.isInteger(this._service.batchSize) && this._service.batchSize > 0) ? this._service.batchSize : 10,
         columnDetails: columnDetails,
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
       })

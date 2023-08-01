@@ -227,17 +227,9 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     @JsonIgnore
     public int getBatchSize(int rowCount) {
-        if ((rowCount / 100) > 10) {
-            if ((rowCount / 100) < batchSize) {
-                return (rowCount / 100);
-            } else {
-                if (batchSize != 0) {
-                    return batchSize;
-                }
-            }
 
-        }
-        return 10;
+        return Math.min(Math.max(rowCount / 100, 10), batchSize);
+
     }
 
     @Override
