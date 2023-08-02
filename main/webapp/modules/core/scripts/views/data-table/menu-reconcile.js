@@ -593,12 +593,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {},
     {
-      id: "core/add-id-column",
-      label: $.i18n('core-views/add-id-column'),
-      tooltip: $.i18n('core-views/add-id-column2'),
-      click: doAddIdcolumn
-    },
-    {
       id: "core/Add-column-with-URLs-of-matched-entities",
       label: $.i18n("core-views/add-column-with-URLs-of-matched-entities"),
       tooltip: $.i18n("core-views/add-column-with-URLs-of-matched-entities-tooltip"),
