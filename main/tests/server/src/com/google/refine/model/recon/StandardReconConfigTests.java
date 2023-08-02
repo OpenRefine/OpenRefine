@@ -124,6 +124,7 @@ public class StandardReconConfigTests extends RefineTest {
                 "                \"name\": \"scientific article\"\n" +
                 "        },\n" +
                 "        \"autoMatch\": true,\n" +
+                "        \"batchSize\": 10,\n" +
                 "        \"columnDetails\": [\n" +
                 "           {\n" +
                 "             \"column\": \"organization_country\",\n" +
@@ -264,6 +265,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +
@@ -370,6 +372,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +

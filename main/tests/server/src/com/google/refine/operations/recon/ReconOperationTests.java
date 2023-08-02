@@ -65,6 +65,7 @@ public class ReconOperationTests extends RefineTest {
             + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
+            + "   \"batchSize\":10,"
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
