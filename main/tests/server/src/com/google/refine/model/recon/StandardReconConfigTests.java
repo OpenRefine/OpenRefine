@@ -182,7 +182,8 @@ public class StandardReconConfigTests extends RefineTest {
                 + "\"limit\":0}";
         StandardReconConfig c = StandardReconConfig.reconstruct(json);
         assertEquals(c.getBatchSize(10), 10);
-        assertEquals(c.getBatchSize(1200), 12);
+        assertEquals(c.getBatchSize(120), 12);
+        assertEquals(c.getBatchSize(1200), 50);
         assertEquals(c.getBatchSize(10000), 50);
     }
 
