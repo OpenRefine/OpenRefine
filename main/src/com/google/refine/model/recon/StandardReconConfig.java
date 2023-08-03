@@ -227,9 +227,7 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     @JsonIgnore
     public int getBatchSize(int rowCount) {
-
         return Math.min(Math.max(rowCount / 10, 10), batchSize);
-
     }
 
     @Override
