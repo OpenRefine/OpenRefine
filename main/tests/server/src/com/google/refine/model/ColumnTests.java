@@ -55,6 +55,7 @@ public class ColumnTests {
                 + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
                 + "   \"type\":{\"id\":\"Q43229\",\"name\":\"organization\"},"
                 + "   \"autoMatch\":true,"
+                + "   \"batchSize\":10,"
                 + "   \"columnDetails\":["
                 + "      {\"column\":\"organization_country\",\"propertyName\":\"SPARQL: P17/P297\",\"propertyID\":\"P17/P297\"},"
                 + "      {\"column\":\"organization_id\",\"propertyName\":\"SPARQL: P3500|P2427\",\"propertyID\":\"P3500|P2427\"}"
