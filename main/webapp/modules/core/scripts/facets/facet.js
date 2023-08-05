@@ -32,14 +32,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 class Facet {
-  constructor(div, config, options) {
+  constructor(div, config, options, i18n) {
   	this._div = div;
   	this._config = config;
   	this._options = options || {};
   	this._minimizeState = false;
   	
-  	this._buildToolTipText();
-  	
+    this._i18n = i18n;
+    this._buildToolTipText();
   	Refine.showLeftPanel();
   };
 

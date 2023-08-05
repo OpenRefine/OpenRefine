@@ -509,7 +509,8 @@ class ListFacet extends Facet {
         "range", 
         {
           "name" : self._config.columnName,
-          "columnName" : self._config.columnName, 
+          "i18n" : "range",
+          "columnName" : self._config.columnName,
           "expression" : self._getMetaExpression(),
           "mode" : "range"
         },
