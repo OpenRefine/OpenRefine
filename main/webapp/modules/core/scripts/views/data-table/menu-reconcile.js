@@ -596,7 +596,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/Add-column-with-URLs-of-matched-entities",
       label: $.i18n("core-views/add-column-with-URLs-of-matched-entities"),
       tooltip: $.i18n("core-views/add-column-with-URLs-of-matched-entities-tooltip"),
-      click:  doAddColumnWithUrlOfMatchedEntities
+      click: doAddColumnWithUrlOfMatchedEntities
     },
     {
       id: "core/add-id-column",
