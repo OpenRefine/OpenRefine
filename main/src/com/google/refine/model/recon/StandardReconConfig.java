@@ -490,7 +490,7 @@ public class StandardReconConfig extends ReconConfig {
             }
         } catch (IOException e) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-            recon.error=e.toString();
+            recon.error = e.toString();
             recons.add(recon);
         }
 

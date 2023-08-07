@@ -132,7 +132,7 @@ public class Recon implements HasFields {
     @JsonIgnore
     public ReconCandidate match = null;
     @JsonIgnore
-    public String  error = null;
+    public String error = null;
     @JsonIgnore
     public int matchRank = -1;
 
@@ -335,11 +335,13 @@ public class Recon implements HasFields {
     public ReconCandidate getMatch() {
         return match;
     }
+
     @JsonProperty("e")
     @JsonInclude(Include.NON_NULL)
     public String getError() {
         return error;
     }
+
     @JsonProperty("c")
     // @JsonView(JsonViews.SaveMode.class)
     public List<ReconCandidate> getCandidates() {
@@ -400,7 +402,7 @@ public class Recon implements HasFields {
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
         this.error = error;
-        if(error!=null&&match!=null) {
+        if (error != null && match != null) {
             throw new IllegalArgumentException("there is a match hence no error");
         }
         this.features = features != null ? features : new Object[Feature_max];

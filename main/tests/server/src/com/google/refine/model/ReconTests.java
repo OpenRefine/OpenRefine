@@ -102,6 +102,7 @@ public class ReconTests {
         r.judgment = Judgment.None;
         TestUtils.isSerializedTo(r, json);
     }
+
     @Test
     public void testsErrorSerialization() throws Exception {
         String json = "{\"id\":1533651559492945033,"
@@ -114,9 +115,10 @@ public class ReconTests {
                 + "]"
                 + "}";
         Recon r = Recon.loadStreaming(json);
-        Assert.assertEquals(r.error,"fictional error message");
+        Assert.assertEquals(r.error, "fictional error message");
         TestUtils.isSerializedTo(r, json);
     }
+
     /**
      * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785. Generating many recon objects within a short
      * amount of time leads to collisions in id generation.
