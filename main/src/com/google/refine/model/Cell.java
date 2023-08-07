@@ -93,7 +93,6 @@ public class Cell implements HasFields {
     @JsonInclude(Include.NON_NULL)
     public String getErrorMessage() {
         if (ExpressionUtils.isError(value)) {
-
             return ((EvalError) value).message;
         }
         return null;
