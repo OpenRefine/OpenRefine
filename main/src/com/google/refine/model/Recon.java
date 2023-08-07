@@ -129,9 +129,10 @@ public class Recon implements HasFields {
     public long judgmentHistoryEntry;
     @JsonIgnore
     public int judgmentBatchSize = 0;
-
     @JsonIgnore
     public ReconCandidate match = null;
+    @JsonIgnore
+    public String  error = null;
     @JsonIgnore
     public int matchRank = -1;
 
@@ -258,6 +259,8 @@ public class Recon implements HasFields {
             return judgment == Judgment.New;
         } else if ("match".equals(name)) {
             return match;
+        } else if ("error".equals(name)) {
+            return error;
         } else if ("matchRank".equals(name)) {
             return matchRank;
         } else if ("features".equals(name)) {
@@ -332,7 +335,11 @@ public class Recon implements HasFields {
     public ReconCandidate getMatch() {
         return match;
     }
-
+    @JsonProperty("e")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        return error;
+    }
     @JsonProperty("c")
     // @JsonView(JsonViews.SaveMode.class)
     public List<ReconCandidate> getCandidates() {
@@ -379,6 +386,7 @@ public class Recon implements HasFields {
             @JsonProperty("judgmentHistoryEntry") long judgmentHistoryEntry,
             @JsonProperty("j") Judgment judgment,
             @JsonProperty("m") ReconCandidate match,
+            @JsonProperty("e") String error,
             @JsonProperty("f") Object[] features,
             @JsonProperty("c") List<ReconCandidate> candidates,
             @JsonProperty("service") String service,
@@ -391,6 +399,10 @@ public class Recon implements HasFields {
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
+        this.error = error;
+        if(error!=null&&match!=null) {
+            throw new IllegalArgumentException("there is a match hence no error");
+        }
         this.features = features != null ? features : new Object[Feature_max];
         this.candidates = candidates != null ? candidates : new ArrayList<>();
         this.service = service != null ? service : "unknown";
