@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.messages.OpenRefineMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

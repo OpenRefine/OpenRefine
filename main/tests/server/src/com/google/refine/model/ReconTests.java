@@ -102,7 +102,21 @@ public class ReconTests {
         r.judgment = Judgment.None;
         TestUtils.isSerializedTo(r, json);
     }
-
+    @Test
+    public void testsErrorSerialization() throws Exception {
+        String json = "{\"id\":1533651559492945033,"
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"j\":\"none\","
+                + "\"e\":\"fictional error message\","
+                + "\"c\":["
+                + "]"
+                + "}";
+        Recon r = Recon.loadStreaming(json);
+        Assert.assertEquals(r.error,"fictional error message");
+        TestUtils.isSerializedTo(r, json);
+    }
     /**
      * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785. Generating many recon objects within a short
      * amount of time leads to collisions in id generation.
