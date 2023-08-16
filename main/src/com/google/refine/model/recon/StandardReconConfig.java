@@ -474,12 +474,12 @@ public class StandardReconConfig extends ReconConfig {
 
                             recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
-                            // TODO: better error reporting
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                            recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                            recon.error = o2.toString();
                         }
                     } else {
-                        // TODO: better error reporting
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o.toString());
+                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                        recon.error = o.toString();
                     }
 
                     if (recon != null) {
