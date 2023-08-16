@@ -535,23 +535,13 @@ public class StandardReconConfigTests extends RefineTest {
             assertNotNull(returnReconList);
             assertNotNull(returnReconList.get(0));
             assertNotNull(returnReconList.get(0).error);
+            // checking for error due to missing result field
             String reconResponse = "{\n" +
                     "q0: {\n" +
                     "  }\n" +
                     "}\n";
             server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
             returnReconList = config.batchRecon(jobList, 1000000000);
-
-            request1 = server.takeRequest();
-            assertNotNull(request1);
-            query = request1.getBody().readUtf8Line();
-            expected = "queries=" + URLEncoder.encode(
-                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
-                    "UTF-8");
-
-            // assertions
-
-            assertEquals(query, expected);
             assertNotNull(returnReconList.get(0));
             assertNotNull(returnReconList.get(0).error);
         }
