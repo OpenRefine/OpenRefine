@@ -20,7 +20,7 @@ describe('Add entity identifiers', () => {
     // check the dialog, enter a new column name "id_column"
     cy.get('.dialog-container .dialog-header').should(
       'to.contain',
-      'Add column containing entity identifiers on species'
+      'Add column containing entity identifiers on "species"'
     );
     cy.get('.dialog-container .dialog-body input').type('id_column');
     cy.get('.dialog-container .dialog-footer input').contains('OK').click();
