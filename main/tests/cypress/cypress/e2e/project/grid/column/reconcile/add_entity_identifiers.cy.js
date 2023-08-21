@@ -23,7 +23,7 @@ describe('Add entity identifiers', () => {
       'Add column containing entity identifiers on "species"'
     );
     cy.get('.dialog-container .dialog-body input').type('id_column');
-    cy.get('.dialog-container .dialog-footer input').contains('OK').click();
+    cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
     // Check the cells content for the new column
     cy.assertCellEquals(0, 'id_column', '2253634'); // untouched
