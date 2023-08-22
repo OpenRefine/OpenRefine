@@ -191,45 +191,14 @@ Refine.DatabaseSourceUI.prototype.focus = function() {
 };
 
 Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
-     //alert("query::" + query);
      if(!query || query.length <= 0 ) {
          window.alert($.i18n('database-source/alert-query'));
          return false;
      }
-    
-     var allCapsQuery = query.toUpperCase();
-    
-     if(allCapsQuery.indexOf('DROP') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DROP");
-         return false;
-     }else if(allCapsQuery.indexOf('TRUNCATE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " TRUNCATE");
-         return false;
-     }else if(allCapsQuery.indexOf('DELETE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DELETE");
-         return false;
-     }else if(allCapsQuery.indexOf('ROLLBACK') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ROLLBACK");
-         return false;
-     }else if(allCapsQuery.indexOf('SHUTDOWN') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " SHUTDOWN");
-         return false;
-     }else if(allCapsQuery.indexOf('INSERT') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " INSERT");
-         return false;
-     }else if(allCapsQuery.indexOf('ALTER') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ALTER");
-         return false;
-     }else if(allCapsQuery.indexOf('UPDATE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " UPDATE");
-         return false;
-     }
-
-     if(!allCapsQuery.startsWith('SELECT')) {
+     if(!query.toUpperCase().startsWith('SELECT')) {
          window.alert($.i18n('database-source/alert-invalid-query-select'));
          return false;
      }
-
      return true;
 };
 

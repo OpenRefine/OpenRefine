@@ -10,7 +10,6 @@
     "database-source/alert-connection-name": "你必须指定一个连接名称",
     "database-source/alert-initial-database": "你必须指定一个初始数据库",
     "database-source/alert-query": "你必须指定一个有效的查询",
-    "database-source/alert-invalid-query-keyword": "任何数据库查询语句均不能够包含数据操作关键字：",
     "database-source/alert-invalid-query-select": "查询语句必须从 SELECT 关键字开始",
     "database-source/form-validation-failure": "无效的新建连接表！",
     "database-source/alert-connection-edit": "连接已编辑",

@@ -13,7 +13,6 @@
     "database-source/alert-host": "Debe especificar un host de base de datos",
     "database-source/alert-password": "Tienes que especificar una contraseña de base de datos",
     "database-source/alert-connection-name": "Debe especificar un nombre de conexión",
-    "database-source/alert-invalid-query-keyword": "La consulta no puede contener palabras clave de manipulación de datos:",
     "database-source/alert-initial-database": "Debe especificar una base de datos inicial",
     "database-source/alert-query": "Debe especificar una consulta válida",
     "database-source/databaseFileNameLabel": "Archivo de base de datos",

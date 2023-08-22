@@ -11,7 +11,6 @@
     "database-source/alert-connection-name": "You must specify a connection name",
     "database-source/alert-initial-database": "You must specify an initial database",
     "database-source/alert-query": "You must specify a valid query",
-    "database-source/alert-invalid-query-keyword": "Query cannot contain data manipulation keyword:",
     "database-source/alert-invalid-query-select": "Query must start with SELECT Keyword",
     "database-source/form-validation-failure": "New connection form invalid!",
     "database-source/alert-connection-edit": "Connection edited",

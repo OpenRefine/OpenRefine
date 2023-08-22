@@ -52,7 +52,6 @@
     "database-source/alert-connection-edit": "Bağlantı düzenlendi",
     "database-source/form-validation-failure": "Yeni bağlantı formu geçersiz!",
     "database-source/alert-invalid-query-select": "Sorgu, SELECT anahtar sözcüğüyle başlamalıdır",
-    "database-source/alert-invalid-query-keyword": "Sorgu, veri işleme anahtar sözcüğü içeremez:",
     "database-source/alert-query": "Geçerli bir sorgu belirtmelisiniz",
     "database-source/alert-initial-database": "Bir başlangıç veri tabanı belirtmelisiniz",
     "database-source/alert-connection-name": "Bir bağlantı adı belirtmelisiniz",
