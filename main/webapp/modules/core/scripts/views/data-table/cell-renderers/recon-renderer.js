@@ -43,9 +43,22 @@ class ReconCellRenderer {
         .on('click',function(evt) {
           self.doRematch(rowIndex, cellIndex, cell, cellUI);
         });
-      } else {
-        $('<span>').text(cell.v).appendTo(divContentRecon);
+      }else if(r.j != "matched" && r.e!=null)
+        { var divContent = document.createElement('div');
+          var cellcontent = document.createElement('span');
+          cellcontent.textContent = cell.v;
+          var lineBreak = document.createElement('br');
+          cellcontent.appendChild(lineBreak);
+          divContent.appendChild(cellcontent);
+          var errorSpan = document.createElement('span');
+          errorSpan.className = 'data-table-error';
+          errorSpan.textContent = r.e;
+          divContent.appendChild(errorSpan);
+          $('<span>').text(divContent).appendTo(divContentRecon);
+        }
 
+      else {
+        $('<span>').text(cell.v).appendTo(divContentRecon);
         if (cellUI._dataTableView._showRecon) {
           var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContentRecon);
           if ("c" in r && r.c.length > 0) {
@@ -137,9 +150,11 @@ class ReconCellRenderer {
             .appendTo(extraChoices);
           }
         }
-      }
+      }//end of else
+
       return divContent;
     }
+
   }
 
   doRematch(rowIndex, cellIndex, cell, cellUI) {
@@ -247,7 +262,6 @@ class ReconCellRenderer {
   		elmts.radioSimilar[0].setAttribute("checked", false);
   		elmts.radioOne[0].setAttribute("checked", true);
   	}
-
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() {
   	reconMatchSilimilarCellsByDefault = elmts.radioSimilar[0].checked;
