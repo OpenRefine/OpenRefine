@@ -250,7 +250,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.columnNameInput.focus();
+      var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
     var o = DataTableView.sampleVisibleRows(column);
     
