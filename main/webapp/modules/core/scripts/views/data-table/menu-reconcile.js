@@ -243,7 +243,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/add-id-col', "\"" + column.name + "\""));
+    elmts.dialogHeader.text($.i18n('core-views/add-id-col', column.name));
     
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
