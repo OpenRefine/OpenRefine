@@ -324,7 +324,10 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
     } else {
         container.html(
-            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-cluster-found')+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n('core-dialogs/try-another-method')+'</div></div>'
+            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">'+'<div>'+
+            $.i18n('core-dialogs/no-cluster-found', self._columnName)+'</div>'+'<div">' +
+            '<button>'+
+            $.i18n('core-facets/cluster')+'</button>'+'</div></div>'
         );
     }
 };
