@@ -202,7 +202,7 @@
     "core-dialogs/rows-in-cluster": "# Rows in cluster",
     "core-dialogs/choice-avg-length": "Average length of choices",
     "core-dialogs/choice-var-length": "Length variance of choices",
-    "core-dialogs/clusters-found": "<b>$1</b> {{plural:$1|cluster|clusters}} found",
+    "core-dialogs/clusters-found": "<b>$1</b>&nbsp;{{plural:$1|cluster|clusters}} found",
     "core-dialogs/clusters-filtered": "<b>$1</b> {{plural:$1|cluster|clusters}} included from <b>$2</b> total",
     "core-dialogs/cluster-row-limit-exceeded": "Exceeded limit of $1 total choices",
     "core-dialogs/cluster-rows": "($1 rows)",
