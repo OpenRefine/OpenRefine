@@ -40,8 +40,12 @@ function ClusteringDialog(columnName, expression) {
 
     this._facets = [];
 
+    let checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
     this._createDialog();
-    this._cluster();
+    this._renderTable();
+    if (checkedValue === true) {
+        this._cluster();
+    }
 }
 
 ClusteringDialog.prototype._createDialog = function() {
@@ -84,6 +88,19 @@ ClusteringDialog.prototype._createDialog = function() {
             self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
+    var addClusterMessage = function() {
+            let self = this;
+            var container = this._elmts.tableContainer;
+            container.empty().html(
+                '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
+                $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
+                '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
+                $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
+            );
+            container.find('#clusterButtonId').on('click', function () {
+                self._cluster()
+            });
+    }
 
     var changer = function() {
         self._function = $(this).find("option:selected").val();
@@ -109,6 +126,7 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
+        self._elmts.resultSummary.empty();
         if (document.getElementById("autoId").checked) {
             self._cluster();
         }
@@ -119,22 +137,18 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.ngramBlock.on('change',params_changer);
     this._elmts.autoCheckbox.on("change", function() {
         let checkbox = document.getElementById("autoId");
-        let button = document.getElementById("clusterButtonId");
-
         if (checkbox.checked) {
             Refine.setPreference("ui.clustering.auto-update", true);
-            button.disabled = true;
             self._cluster();
         } else {
             Refine.setPreference("ui.clustering.auto-update", false);
-            button.disabled = false;
         }
     });
 
     this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
-    this._elmts.clusterButton.on('click',function() { self._cluster(); });
     this._elmts.exportClusterButton.on('click',function() { self._onExportCluster(); });
+    this._elmts.clusterButton.on('click',function() { self._cluster(); });
     this._elmts.applyReClusterButton.on('click',function() { self._onApplyReCluster(); });
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
@@ -325,8 +339,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
     } else {
         container.html(
             '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">'+'<div>'+
-            $.i18n('core-dialogs/no-cluster-found', self._columnName)+'</div>'+'<div">' +
-            '<button>'+
+            $.i18n('core-dialogs/click-cluster', self._columnName)+'</div>'+'<div">' +
+            '<button class="button" bind="clusterButton" id="clusterButtonId" disabled>'+
             $.i18n('core-facets/cluster')+'</button>'+'</div></div>'
         );
     }
@@ -358,11 +372,6 @@ ClusteringDialog.prototype._cluster = function() {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
             $('#cluster-and-edit-dialog :input').prop('disabled', false);
-            let checkbox = document.getElementById("autoId");
-            let button = document.getElementById("clusterButtonId");
-            if (checkbox.checked) {
-                button.disabled = true;
-            }
         },
         "json"
     );
