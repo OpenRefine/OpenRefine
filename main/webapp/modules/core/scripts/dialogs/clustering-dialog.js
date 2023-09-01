@@ -42,9 +42,10 @@ function ClusteringDialog(columnName, expression) {
 
     let checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
     this._createDialog();
-    this._renderTable();
     if (checkedValue === true) {
         this._cluster();
+    } else {
+        this._addClusterMessage();
     }
 }
 
@@ -65,7 +66,6 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_ngramSize.html($.i18n('core-dialogs/ngram-size'));
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
-    this._elmts.clusterButton.html($.i18n('core-facets/cluster'));
     this._elmts.or_auto_update.html($.i18n('core-facets/auto-update'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
@@ -88,18 +88,23 @@ ClusteringDialog.prototype._createDialog = function() {
             self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
-    var addClusterMessage = function() {
-            let self = this;
-            var container = this._elmts.tableContainer;
-            container.empty().html(
-                '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
-                $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
-                '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
-                $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
-            );
-            container.find('#clusterButtonId').on('click', function () {
-                self._cluster()
-            });
+
+    ClusteringDialog.prototype._addClusterMessage = function () {
+        let self = this;
+        let container = self._elmts.tableContainer;
+        self._elmts.facetContainer.empty();
+        container.empty().html(
+            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
+            $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
+            '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
+            $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
+        );
+        let elmts = DOM.bind(container);
+        elmts.clusterButton.html($.i18n('core-facets/cluster'));
+
+        elmts.clusterButton.on('click', function () {
+            self._cluster()
+        });
     }
 
     var changer = function() {
@@ -129,6 +134,8 @@ ClusteringDialog.prototype._createDialog = function() {
         self._elmts.resultSummary.empty();
         if (document.getElementById("autoId").checked) {
             self._cluster();
+        } else {
+            self._addClusterMessage();
         }
     };
 
@@ -148,7 +155,6 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
     this._elmts.exportClusterButton.on('click',function() { self._onExportCluster(); });
-    this._elmts.clusterButton.on('click',function() { self._cluster(); });
     this._elmts.applyReClusterButton.on('click',function() { self._onApplyReCluster(); });
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
@@ -338,10 +344,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
     } else {
         container.html(
-            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">'+'<div>'+
-            $.i18n('core-dialogs/click-cluster', self._columnName)+'</div>'+'<div">' +
-            '<button class="button" bind="clusterButton" id="clusterButtonId" disabled>'+
-            $.i18n('core-facets/cluster')+'</button>'+'</div></div>'
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-cluster-found')+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n('core-dialogs/try-another-method')+'</div></div>'
         );
     }
 };
