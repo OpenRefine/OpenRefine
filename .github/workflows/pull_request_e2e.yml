@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3.8.1
         with:
-          node-version: '14'
+          node-version: '16'
       - id: set-matrix
         run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3.8.1
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v3
