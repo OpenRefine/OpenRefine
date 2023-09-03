@@ -29,6 +29,9 @@
 
 package com.google.refine.extension.database;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class DatabaseConfiguration {
 
     private String connectionName;
@@ -123,4 +126,17 @@ public class DatabaseConfiguration {
                 + databaseSchema + ", useSSL=" + useSSL + "]";
     }
 
+    public URI toURI() {
+        try {
+            return new URI(
+                    "jdbc:" + databaseType.toLowerCase(),
+                    databaseHost + ((databasePort == 0) ? "" : (":" + databasePort)),
+                    "/" + databaseName,
+                    useSSL ? "useSSL=true" : null,
+                    null
+            );
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }
