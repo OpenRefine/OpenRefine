@@ -45,11 +45,13 @@ public class NominalFacetChoice {
     @JsonProperty("v")
     final public DecoratedValue decoratedValue;
     @JsonProperty("c")
-    public int count;
+    final public long count;
     @JsonProperty("s")
-    public boolean selected;
+    final public boolean selected;
 
-    public NominalFacetChoice(DecoratedValue decoratedValue) {
+    public NominalFacetChoice(DecoratedValue decoratedValue, long count, boolean selected) {
         this.decoratedValue = decoratedValue;
+        this.count = count;
+        this.selected = selected;
     }
 }
