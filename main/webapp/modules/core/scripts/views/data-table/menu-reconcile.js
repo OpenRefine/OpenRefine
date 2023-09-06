@@ -117,6 +117,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           suggestOptions.formatter_url = service.view.url;
        }
     }
+    
+    var sanitizedSuggestOptions = {
+      query_param_name: suggestOptions.query_param_name,
+      access: suggestOptions.access,
+      formatter_url: suggestOptions.formatter_url,
+  };
 
     var frame = DialogSystem.createDialog();
     frame.width("400px");
@@ -129,7 +135,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
-    input.suggest(suggestOptions).on("fb-select", function(e, data) {
+    input.suggest(sanitizedSuggestOptions).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
 
         Refine.postCoreProcess(

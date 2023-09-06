@@ -1237,7 +1237,7 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   var endpoint = WikibaseManager.getSelectedWikibaseApiForEntityType('property');
   var suggestConfig = {
     mediawiki_endpoint: endpoint,
-    entity_type: 'property',
+    //entity_type: 'property',
     language: $.i18n("core-recon/wd-recon-lang"),
     view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('property')+'{{id}}'
   };

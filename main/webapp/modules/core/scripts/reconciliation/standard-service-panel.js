@@ -246,7 +246,11 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     if (this._service.ui && this._service.ui.access) {
       suggestOptions.access = this._service.ui.access;
     }
-    input.suggestT(suggestOptions);
+    var sanitizedSuggestOptions = {
+      query_param_name: suggestOptions.query_param_name,
+      access: suggestOptions.access,
+    }
+    input.suggestT(sanitizedSuggestOptions);
   }
 
   input.on("bind fb-select", function(e, data) {

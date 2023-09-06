@@ -181,9 +181,13 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
   if (this._serviceMetadata.ui && this._serviceMetadata.ui.access) {
     suggestConfig.access = this._serviceMetadata.ui.access;
   }
-    
+  var sanitizedSuggestConfig = {
+    query_param_name: suggestConfig.query_param_name,
+    access: suggestConfig.access,
 
-  this._elmts.addPropertyInput.suggestP(suggestConfig).on("fb-select", function(evt, data) {
+};
+
+  this._elmts.addPropertyInput.suggestP(sanitizedSuggestConfig).on("fb-select", function(evt, data) {
     self._addProperty({
       id : data.id,
       name: data.name,
