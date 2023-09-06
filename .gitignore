@@ -15,13 +15,7 @@ server/classes/
 main/webapp/WEB-INF/classes/
 main/tests/server/classes/
 main/test-output/
-appengine/classes/
 tools/
-broker/appengine/module/MOD-INF/classes/
-broker/core/module/MOD-INF/classes/
-broker/core/WEB-INF/lib/
-broker/core/data/
-broker/core/test-output/
 tmp/
 /test-output
 test-out/

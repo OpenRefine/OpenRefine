@@ -37,11 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.grel.Control;
-import org.openrefine.grel.ControlDescription;
-import org.openrefine.grel.ControlEvalError;
-import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.*;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
@@ -71,7 +69,7 @@ public class ForRange implements Control {
         } else if (ExpressionUtils.isError(stepO)) {
             return stepO;
         } else if (!(fromO instanceof Number) || !(toO instanceof Number) || !(stepO instanceof Number)) {
-            return ControlEvalError.for_range();
+            return new EvalError(ControlEvalError.for_range());
         }
 
         String indexName = ((VariableExpr) args[3]).getName();
@@ -85,28 +83,48 @@ public class ForRange implements Control {
                 long step = ((Number) stepO).longValue();
                 double to = ((Number) toO).doubleValue();
 
-                while (from < to) {
-                    bindings.put(indexName, from);
+                if (step == 0) {
+                    return new EvalError(EvalErrorMessage.invalid_arg());
+                }
 
-                    Object r = args[4].evaluate(bindings);
-
-                    results.add(r);
-
-                    from += step;
+                if (step > 0) {
+                    while (from < to) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
+                } else {
+                    while (from > to) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
                 }
             } else {
-                double from = ((Number) fromO).longValue();
-                double step = ((Number) stepO).longValue();
+                double from = ((Number) fromO).doubleValue();
+                double step = ((Number) stepO).doubleValue();
                 double to = ((Number) toO).doubleValue();
 
-                while (from < to) {
-                    bindings.put(indexName, from);
+                if (step == 0) {
+                    return new EvalError(EvalErrorMessage.invalid_arg());
+                }
 
-                    Object r = args[4].evaluate(bindings);
-
-                    results.add(r);
-
-                    from += step;
+                if (step > 0) {
+                    while (from < to) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
+                } else {
+                    while (from > to) {
+                        bindings.put(indexName, from);
+                        Object r = args[4].evaluate(bindings);
+                        results.add(r);
+                        from += step;
+                    }
                 }
             }
             return results.toArray();

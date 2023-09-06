@@ -172,7 +172,7 @@ class RefineServer extends Server {
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
-            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
+            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory() + " bytes");
         }
 
         HttpConfiguration httpConfig = new HttpConfiguration();
@@ -337,14 +337,6 @@ class RefineServer extends Server {
             servlet.setInitOrder(1);
             servlet.doStart();
         }
-
-        servlet = context.getServletHandler().getServlet("refine-broker");
-        if (servlet != null) {
-            servlet.setInitParameter("refine.data", getDataDir() + "/broker");
-            servlet.setInitParameter("refine.development", Configurations.get("refine.development", "false"));
-            servlet.setInitOrder(1);
-            servlet.doStart();
-        }
     }
 
     static private String getDataDir() {
@@ -452,11 +444,11 @@ class RefineClient extends JFrame implements ActionListener {
         Runtime rt = Runtime.getRuntime();
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+            rt.exec(new String[] { "rundll32 ", "url.dll,FileProtocolHandler ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_MAC_OSX) {
-            rt.exec("open " + uri);
+            rt.exec(new String[] { "open ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_LINUX) {
-            rt.exec("xdg-open " + uri);
+            rt.exec(new String[] { "xdg-open", String.valueOf(uri) });
         } else {
             logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser", uri.toString());
         }

@@ -729,7 +729,7 @@
     "core-index/license": "Licenza",
     "core-index/homepage": "Pagina web",
     "core-index/image": "Immagine",
-    "core-dialogs/record-fields": "Una o più righe raggruppate per formare un record; l'oggetto ha più campi, dettagli su <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "Una o più righe raggruppate per formare un record; l'oggetto ha più campi, dettagli su <a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-views/join-col": "Unisci colonne…",
     "core-views/column-join": "Unisci colonne",
     "core-views/column-join-before-column-picker": "Seleziona e ordina le colonne da unire",

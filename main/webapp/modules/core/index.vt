@@ -44,7 +44,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" />
+    <img alt="OpenRefine logo" src="images/logo-gem-126.png" width="30" />
+    <h1>OpenRefine</h1>
     <span id="slogan"></span>
   </div>
   
@@ -59,7 +60,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </div>
       <ul>
         <li><a href="preferences" id="or-index-pref"></a></li>
-        <li><a href="https://docs.openrefine.org" id="or-index-help" target="_blank"></a></li>
+        <li><a href="https://openrefine.org/docs" id="or-index-help" target="_blank"></a></li>
         <li><a href="about.html" id="or-index-about"></a></li>
       </ul>
     </div>

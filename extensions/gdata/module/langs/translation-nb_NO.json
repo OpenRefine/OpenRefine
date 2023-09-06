@@ -45,5 +45,6 @@
     "gdata-exporter/export-to-google-drive": "OpenRefine-prosjekt arkivert til Google Drive…",
     "gdata-exporter/google-sheets": "Google Sheets…",
     "gdata-exporter/upload-google-drive-success": "Prosjekt opplastet til Google Drive ",
-    "gdata-exporter/upload-google-sheets-success": "Prosjekt opplastet til Google Drive "
+    "gdata-exporter/upload-google-sheets-success": "Prosjekt opplastet til Google Drive ",
+    "gdata-import/re-sign-in-another": "Logg inn med en annen konto"
 }

@@ -45,7 +45,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </head>
   <body>
     <div id="header">
-      <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" /></a>
+      <a id="app-home-button" href="./">
+        <img aria-hidden="true" src="images/logo-gem-126.png" width="30" />
+        <h1>OpenRefine</h1>
+      </a>
       <div id="project-title">
         <span id="project-name-button" class="app-path-section"></span>
         <a id="project-permalink-button" href="javascript:{}" class="secondary"></a>
@@ -53,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <div id="project-controls">
         <a href="./" class="button" target="_blank"><span id="or-proj-open"></span></a>
         <a class="button" bind="exportButton" id="export-button" href="#export"><span class="button-menu" id="or-proj-export"></span></a>
-        <a href="https://docs.openrefine.org" target="_blank" class="button"><span id="or-proj-help"></span></a>
+        <a href="https://openrefine.org/docs" target="_blank" class="button"><span id="or-proj-help"></span></a>
       </div>
     </div>
     

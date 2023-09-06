@@ -80,7 +80,7 @@ public class OdsExporter implements StreamExporter {
                 table = OdfTable.newTable(odfDoc);
                 String tableName = projectMetadata.getName();
 
-                // the ODF document might already contain some other tables
+                // the ODF document might already contain some other tables
                 try {
                     table.setTableName(tableName);
                 } catch (IllegalArgumentException e) {

@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc., OpenRefine developers
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -50,10 +51,8 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +73,11 @@ import org.openrefine.util.ParsingUtilities;
 public class ExcelImporter extends InputStreamImporter {
 
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
+    static final DataFormatter dataFormatter = new DataFormatter();
+    // TODO: Positive;negative;zero;text formats & color codes e.g. $#,##0.00_);[Red]($#,##0.00)
+    // TODO: Conditional codes like currency [$K-647]
+    static final Pattern NUMERIC_FORMAT = Pattern.compile("^\\?*\\$?[#,]+(0?\\.0[0#\\?]*)?%?$");
+    ConditionalFormattingEvaluator cfEvaluator;
 
     private final TabularParserHelper tabularParserHelper;
 
@@ -86,6 +90,7 @@ public class ExcelImporter extends InputStreamImporter {
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
 
+        JSONUtilities.safePut(options, "forceText", false);
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
@@ -96,7 +101,9 @@ public class ExcelImporter extends InputStreamImporter {
                 Workbook wb = null;
                 try {
                     wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) : new HSSFWorkbook(new POIFSFileSystem(file));
-
+                    // TODO: Implement support for conditional formatting so that cells are rendered the same as in
+                    // Excel
+//                    cfEvaluator = new ConditionalFormattingEvaluator(wb,)
                     int sheetCount = wb.getNumberOfSheets();
                     for (int i = 0; i < sheetCount; i++) {
                         Sheet sheet = wb.getSheetAt(i);
@@ -133,7 +140,7 @@ public class ExcelImporter extends InputStreamImporter {
     @Override
     public Grid parseOneFile(Runner runner, ProjectMetadata metadata, ImportingJob job,
             String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
-        Workbook wb = null;
+        Workbook wb;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
         }
@@ -166,6 +173,12 @@ public class ExcelImporter extends InputStreamImporter {
                     e);
         }
 
+        final boolean forceText;
+        if (options.get("forceText") != null) {
+            forceText = options.get("forceText").asBoolean(false);
+        } else {
+            forceText = false;
+        }
         ArrayNode sheets = (ArrayNode) options.get("sheets");
         List<Grid> grids = new ArrayList<>(sheets.size());
 
@@ -200,7 +213,7 @@ public class ExcelImporter extends InputStreamImporter {
 
                             org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
                             if (sourceCell != null) {
-                                cell = extractCell(sourceCell);
+                                cell = extractCell(sourceCell, forceText);
                             }
                             cells.add(cell);
                         }
@@ -223,6 +236,14 @@ public class ExcelImporter extends InputStreamImporter {
         return mergeGrids(grids);
     }
 
+    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, boolean forceText) {
+        if (forceText) {
+            return new Cell(dataFormatter.formatCellValue(cell), null);
+        } else {
+            return extractCell(cell);
+        }
+    }
+
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.FORMULA)) {
@@ -238,18 +259,34 @@ public class ExcelImporter extends InputStreamImporter {
             value = cell.getBooleanCellValue();
         } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
-
-            if (DateUtil.isCellDateFormatted(cell)) {
-                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
-                // TODO: If we had a time datatype, we could use something like the following
-                // to distinguish times from dates (although Excel doesn't really make the distinction)
-                // Another alternative would be to look for values < 0.60
-//                String format = cell.getCellStyle().getDataFormatString();
-//                if (!format.contains("d") && !format.contains("m") && !format.contains("y") ) {
-//                    // It's just a time
-//                }
+            ExcelNumberFormat nf = ExcelNumberFormat.from(cell, null);
+            if (DateUtil.isCellDateFormatted(cell)) { // This checks range as well as format, so is more comprehensive
+                // Excel supports dates, times, intervals (via format strings), but we only have a datetime type
+                // all unsupported types (ie if it doesn't have both date & time components in the format string)
+                // are rendered to text and imported as strings
+                if (!isDatetimeFormat(nf)) {
+                    value = dataFormatter.formatCellValue(cell);
+                } else {
+                    value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
+                }
             } else {
-                value = d;
+                String format = nf.getFormat();
+                if ("General".equals(format)) {
+                    if (d % 1.0 == 0) {
+                        value = (long) d;
+                    } else {
+                        value = d;
+                    }
+                } else if (isNumberFormat(nf)) {
+                    if (format.contains(".")) { // if it's formatted with a decimal separator, always import as float
+                        value = d;
+                    } else {
+                        value = (long) d; // we could be losing a fractional piece here, but it's not visible in Excel
+                    }
+                } else {
+                    // Anything except a pure number (e.g. telephone #, postal code, SSN, etc) gets imported as string
+                    value = dataFormatter.formatCellValue(cell);
+                }
             }
         } else {
             String text = cell.getStringCellValue();
@@ -311,6 +348,93 @@ public class ExcelImporter extends InputStreamImporter {
             return new Cell(value, recon);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Checks whether a cell format is a datetime format compatible with Refine.
+     *
+     * @return true for datetimes, false for times, dates, intervals, etc
+     */
+    private static boolean isDatetimeFormat(ExcelNumberFormat format) {
+        if (isInternalDatetimeFormat(format.getIdx())) {
+            return true;
+        }
+
+        String formatString = format.getFormat();
+        // Excel supports dates, times, intervals (via format strings), but we only have a datetime type
+        // all unsupported types (ie if it doesn't have both date & time components in the format string)
+        // are rendered to text and imported as strings
+        // TODO: The check below is crude and could probably be improved
+        if (!formatString.contains("y") || !formatString.contains("d") || !formatString.toLowerCase().contains("h")
+                || !formatString.contains("mm")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * A more restrictive version of Apache POI's isInternalDateFormat which is restricted to just datetimes
+     */
+    private static boolean isInternalDatetimeFormat(int format) {
+        switch (format) {
+            case 0xe: // "m/d/yy" TODO: do we want to allow date-only formats? We currently do, continuing our tradition
+            case 0xf: // "d-mmm-yy"
+            case 0x16: // "m/d/yy h:mm"
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isNumberFormat(ExcelNumberFormat format) {
+        if (isInternalNumberFormat(format.getIdx())) {
+            return true;
+        }
+
+        String formatString = format.getFormat();
+        return NUMERIC_FORMAT.matcher(formatString).matches() || formatString.contains("0E+0");
+
+    }
+
+    private static boolean isInternalNumberFormat(int format) {
+        return isInternalIntegerFormat(format) || isInternalFloatFormat(format);
+    }
+
+    private static boolean isInternalIntegerFormat(int format) {
+        switch (format) {
+            case 0x01: // "0"
+            case 0x03: // "#,##0"
+            case 0x05: // "$#,##0_);($#,##0)"
+            case 0x06: // "$#,##0_);[Red]($#,##0)
+            case 0x25: // "#,##0_);(#,##0)"
+            case 0x26: // , "#,##0_);[Red](#,##0)"
+            case 0x29: // "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)"
+            case 0x2a: // "_($* #,##0_);_($* (#,##0);_($* \"-\"_);_(@_)"
+            case 0x30: // "##0.0E+0"
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isInternalFloatFormat(int format) {
+        switch (format) {
+            case 0x02: // "0.00"
+            case 0x04: // "#,##0.00"
+            case 0x07: // "$#,##0.00);($#,##0.00)"
+            case 0x08: // "$#,##0.00_);[Red]($#,##0.00)"
+            case 0x09: // "0%"<br>
+            case 0x0a: // "0.00%"<br>
+            case 0x0b: // "0.00E+00"<br>
+            case 0x27: // "#,##0.00_);(#,##0.00)"
+            case 0x28: // "#,##0.00_);[Red](#,##0.00)"
+            case 0x2b: // "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"
+            case 0x2c: // "_($* #,##0.00_);_($* (#,##0.00);_($* \"-\"??_);_(@_)"
+                return true;
+            default:
+                return false;
         }
     }
 }

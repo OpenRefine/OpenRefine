@@ -1,0 +1,84 @@
+/*
+
+Copyright 2019, Mathieu Saby.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+/*
+Same properties as dialogs/custom-tabular-exporter-dialog.less, applied to the class and ids of colum-join.html
+*/
+
+.dialog-header, .dialog_body, .dialog-footer, .global_selection {
+  clear: both;
+}
+
+.column-join-left-pane {
+  float: left;
+  width: 40%;
+  margin-right: 10px;
+}
+
+.column-join-inner-left-pane, .column-join-inner-right-pane {
+  border: 1px solid var(--chrome-primary);
+  height: 24em;
+  padding: var(--padding-loose);
+}
+
+.column-join-inner-left-pane-list {
+  overflow: auto;
+  height: 22em;
+}
+
+
+.column-join-global-selection {
+  margin-top: 0.5em;
+}
+
+.column-join-column {
+  border: 1px solid var(--chrome-primary);
+  background: var(--fill-secondary);
+  padding: var(--padding-tighter);
+  margin: var(--padding-tight);
+  cursor: move;
+  border-radius: var(--rounded-corners-radius);
+}
+
+.column-join-column.selected {
+  background: var(--chrome-primary);
+  font-weight: bold;
+}
+
+.column-join-inner-right-pane .option {
+  margin-top: 1em;
+}
+
+.column-join-inner-right-pane .tip, .column-join-inner-left-pane .tip {
+  font-size: 0.9em;
+}

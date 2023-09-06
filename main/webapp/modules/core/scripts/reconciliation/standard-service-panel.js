@@ -103,6 +103,10 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
 
+  this._elmts.noType.on('click', function() {
+    self._rewirePropertySuggests(null) // Clear any selected type
+  });
+
   this._guessTypes(function() {
     self._populatePanel();
     self._wireEvents();
@@ -283,7 +287,7 @@ ReconStandardServicePanel.prototype.start = function(onDone) {
   var choices = this._panel.find('input[name="type-choice"]:checked');
   var include = this._panel.find('input[name="include"]');
   if (choices !== null && choices.length > 0) {
-    if (choices[0].value == '-') {
+    if (choices[0].value == '-') { // TODO: This is the signal value for "no type", but don't think it's used anymore
       type = null;
     } else if (choices[0].value != "") {
       type = {

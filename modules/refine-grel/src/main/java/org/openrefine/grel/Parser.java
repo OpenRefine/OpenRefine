@@ -197,7 +197,11 @@ public class Parser {
             if (_token != null && _token.type == TokenType.Number) {
                 Number n = ((NumberToken) _token).value;
 
-                eval = new LiteralExpr(n instanceof Long ? -n.longValue() : -n.doubleValue());
+                if (n instanceof Long) {
+                    eval = new LiteralExpr(-n.longValue());
+                } else {
+                    eval = new LiteralExpr(-n.doubleValue());
+                }
 
                 next(false);
             } else {

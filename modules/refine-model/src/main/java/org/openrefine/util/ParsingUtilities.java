@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -83,6 +83,9 @@ public class ParsingUtilities {
         module.addSerializer(LocalDateTime.class, new SerializationFilters.LocalDateSerializer());
         module.addDeserializer(OffsetDateTime.class, new SerializationFilters.OffsetDateDeserializer());
         module.addDeserializer(LocalDateTime.class, new SerializationFilters.LocalDateDeserializer());
+
+        module.addSerializer(Instant.class, new SerializationFilters.InstantSerializer());
+        module.addDeserializer(Instant.class, new SerializationFilters.InstantDeserializer());
 
         mapper.registerModule(module);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -224,14 +227,6 @@ public class ParsingUtilities {
         }
         return parsed.withOffsetSameInstant(OffsetDateTime.now().getOffset())
                 .toLocalDateTime();
-    }
-
-    static public String instantToString(Instant instant) {
-        return OffsetDateTime.ofInstant(instant, ZoneId.of("Z")).format(ISO8601);
-    }
-
-    static public String instantToLocalDateTimeString(Instant instant) {
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(ISO8601);
     }
 
     static public OffsetDateTime calendarToOffsetDateTime(Calendar calendar) {

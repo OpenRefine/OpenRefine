@@ -30,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 
 /**
@@ -64,7 +66,7 @@ public interface WbExpression<T> {
      * error in the validation state.
      */
     public T evaluate(ExpressionContext ctxt)
-            throws SkipSchemaExpressionException, QAWarningException;
+            throws SkipSchemaExpressionException, QAWarningException, SpecialValueNoValueException, SpecialValueSomeValueException;
 
     /**
      * Check that this expression is fully formed and ready to be evaluated.

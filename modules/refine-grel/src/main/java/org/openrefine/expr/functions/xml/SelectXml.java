@@ -71,7 +71,7 @@ public class SelectXml extends PureFunction {
 
     @Override
     public String getParams() {
-        return "string s, element e";
+        return "element e, string s";
     }
 
     @Override

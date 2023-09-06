@@ -141,6 +141,19 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
     }
 
     @Test
+    public void testValidURL() {
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFilePath("https://foo.com/bar.jpg?type=blue")
+                .addFileName("my_file.jpg")
+                .addWikitext("description")
+                .addContributingRowId(123L)
+                .build();
+        scrutinizer.setEnableSlowChecks(true);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType);
+    }
+
+    @Test
     public void testInvalidFilePathFastMode() {
         MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFilePath("/this/path/does/not/exist.jpg")

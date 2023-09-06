@@ -407,7 +407,7 @@
     "core-views/smallest-first": "昇順",
     "core-views/warning-col-name": "カラム名を入力してください.",
     "core-views/match-this": "このセルだけにマッチ",
-    "core-views/one-topic": "同内容のセルの、新しい項目を1つ作成",
+    "core-views/one-topic": "同内容のセルの新しい項目を作成…",
     "core-views/sort-cell": "セル値の扱い",
     "core-views/add-col-recon-col": "照合カラムから新しいカラムを作る:",
     "core-views/create-topic-cells": "このセルと同じ全セルにマッチする新項目を作成",
@@ -572,7 +572,7 @@
     "core-views/reconcile-tooltip": "外部のデータベースの項目とこの列のセルをマッチさせる",
     "core-views/guess-cell": "セルタイプを推測",
     "core-views/enter-separator": "区切り文字を入力してください",
-    "core-views/new-topic": "各セルから新しい項目を作成",
+    "core-views/new-topic": "各セルから新しい項目を作成…",
     "core-views/add-by-urls": "URLでカラムを追加…",
     "core-views/show": "表示",
     "core-views/add-col-col": "このカラムに基づき新しいカラムを追加",
@@ -731,7 +731,7 @@
     "core-index/license": "ライセンス",
     "core-index/homepage": "ホームページ",
     "core-index/image": "写真",
-    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、<a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、<a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-views/join-col": "カラムの結合…",
     "core-views/column-join": "カラムの結合",
     "core-views/column-join-before-column-picker": "結合するカラムの選択",
@@ -842,5 +842,10 @@
     "core-views/cell-content": "セルの内容",
     "core-views/new-topic/header": "各セルから新しい項目を作成",
     "core-views/one-topic/header": "同内容のセルの、新しい項目を１つ作成",
-    "core-views/recon-mark-new-warning": "このカラムは未照合です。この操作ではセルにマークして、サービス内にそれらのエンティティが存在するかどうかのチェック無しに、新しいエンティティを作成します。"
+    "core-views/recon-mark-new-warning": "このカラムは未照合です。この操作ではセルにマークして、サービス内にそれらのエンティティが存在するかどうかのチェック無しに、新しいエンティティを作成します。",
+    "core-index-parser/row-separator-regex": "正規表現",
+    "core-index-parser/row-separator": "行の区切り文字:",
+    "core-index-parser/row-separator-newline": "新しい行（\\n or \\r\\n）",
+    "core-index-parser/force-text": "全セルをテキストとしてインポート",
+    "core-index/navigate-home": "ホーム画面へ案内"
 }

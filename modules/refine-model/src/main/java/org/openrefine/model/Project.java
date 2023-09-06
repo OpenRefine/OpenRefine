@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -60,9 +60,9 @@ public class Project {
     private final History history;
 
     // by default, the project has never been saved so far.
-    transient private LocalDateTime _lastSave = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
+    transient private Instant _lastSave = Instant.parse("1970-01-02T00:30:00Z");
 
-    final static Logger logger = LoggerFactory.getLogger("project");
+    final static Logger logger = LoggerFactory.getLogger(Project.class);
 
     /**
      * Creates a new project from an initial grid.
@@ -96,7 +96,7 @@ public class Project {
         this.history = history;
     }
 
-    public LocalDateTime getLastSave() {
+    public Instant getLastSave() {
         return this._lastSave;
     }
 
@@ -104,7 +104,7 @@ public class Project {
      * Sets the lastSave time to now
      */
     public void setLastSave() {
-        this._lastSave = LocalDateTime.now();
+        this._lastSave = Instant.now();
     }
 
     public ProjectMetadata getMetadata() {

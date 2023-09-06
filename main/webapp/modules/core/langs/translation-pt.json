@@ -90,7 +90,7 @@
     "core-recon/pick-service": "Selecione um serviço ou extensão na esquerda",
     "core-views/new-topic2": "Marque para criar um novo item para cada célula nesta coluna para todas as linhas filtradas atuais",
     "core-views/first": "primeiro",
-    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registo; O objeto possui mais campos, detalhes em <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registo; O objeto possui mais campos, detalhes em <a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-dialogs/merge": "Unir?",
     "core-facets/facet-by-count": "Faceta pelo quantidade de opções",
     "core-index/name": "Nome do projeto",

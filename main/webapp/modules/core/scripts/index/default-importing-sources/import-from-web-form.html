@@ -1,8 +1,16 @@
-<form bind="form"><div class="grid-layout layout-normal"><table style="width:80%;">
-  <tr><td colspan="2" id="or-import-enterurl"></td></tr>
-  <tr bind="urlRow"><td colspan="2"  style="white-space: nowrap"><input bind="urlInput" name="download" class="default-importing-web-url" /></td></tr>
-  <tr bind="buttons">
-    <td width="1"><button bind="addButton" class="button" type="button"></button></td>
-    <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
-  </tr>
-</table></div></form>
+<form bind="form">
+  <div class="grid-layout layout-normal">
+    <table style="width:80%;">
+      <tr>
+        <td colspan="2" id="or-import-enterurl"></td>
+      </tr>
+      <tr bind="urlRow">
+        <td colspan="2" style="white-space: nowrap"><input bind="urlInput" name="download" type="url" class="default-importing-web-url" /></td>
+      </tr>
+      <tr bind="buttons">
+        <td width="1"><button bind="addButton" class="button" type="button"></button></td>
+        <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
+      </tr>
+    </table>
+  </div>
+</form>

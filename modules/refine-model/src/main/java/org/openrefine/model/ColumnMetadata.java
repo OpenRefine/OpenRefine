@@ -123,5 +123,11 @@ public class ColumnMetadata implements Serializable {
                 _originalName.equals(metadata.getOriginalHeaderLabel()) &&
                 ((_reconConfig == null && metadata.getReconConfig() == null)
                         || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig()))));
+
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode() + 87 * _originalName.hashCode();
     }
 }

@@ -267,7 +267,7 @@ BrowsingEngine.prototype.update = function(onDone) {
     // set up waiting UI
     this._elmts.help.hide();
     this._elmts.header.show();
-    this._elmts.controls.css("visibility", "hidden");
+    this._elmts.controls.css("visibility", "none");
     this._elmts.indicator.css("display", "block");
   }
 
@@ -303,7 +303,7 @@ BrowsingEngine.prototype.update = function(onDone) {
       self._elmts.errors.css("display", "none");
       if (self._facets.length > 0) {
         self._elmts.header.show();
-        self._elmts.controls.css("visibility", "visible");
+        self._elmts.controls.css("display", "block");
 
         self.resize();
       } else {

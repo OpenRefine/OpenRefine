@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -57,6 +58,7 @@ public class HttpClient {
     private HttpHost proxy;
     private int proxyPort;
     private String proxyHost;
+    private Pattern nonProxyHosts;
     private DefaultProxyRoutePlanner routePlanner;
 
     public HttpClient() {
@@ -112,21 +114,39 @@ public class HttpClient {
                     }
                 });
 
-        if (System.getProperty("http.proxyHost") != null) {
-            proxyHost = System.getProperty("http.proxyHost");
+        // Should we use the system defined proxy
+        if ("true".equals(System.getProperty("java.net.useSystemProxies"))) {
+            logger.info("Use system defined proxy for http connections");
+            httpClient = httpClientBuilder.useSystemProperties().build();
+            return;
         }
 
-        if (System.getProperty("http.proxyPort") != null) {
-            proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
-        }
-
+        // Is a proxy defined
+        proxyHost = System.getProperty("http.proxyHost");
+        proxyPort = Integer.parseInt(System.getProperty("http.proxyPort", "0"));
         if (proxyHost != null && proxyPort != 0) {
             proxy = new HttpHost("http", proxyHost, proxyPort);
-            httpClientBuilder.setProxy(proxy);
-        }
-        if (proxy != null) {
-            routePlanner = new DefaultProxyRoutePlanner(proxy);
-            httpClientBuilder.setRoutePlanner(routePlanner);
+            logger.info("Use provided proxy " + proxy.toString() + " for http connections");
+            String strNonProxyHosts = System.getProperty("http.nonProxyHosts");
+            nonProxyHosts = fromHostsToPattern(strNonProxyHosts);
+            if (nonProxyHosts != null) {
+                logger.info("except for hosts matching " + strNonProxyHosts);
+            }
+            if (proxy != null) {
+                // Manage nonProxyHosts
+                routePlanner = new DefaultProxyRoutePlanner(proxy) {
+
+                    @Override
+                    protected HttpHost determineProxy(HttpHost target, HttpContext context) throws HttpException {
+                        String host = target.getHostName();
+                        if (nonProxyHosts != null && nonProxyHosts.matcher(host).matches()) {
+                            return null;
+                        }
+                        return proxy;
+                    }
+                };
+                httpClientBuilder.setRoutePlanner(routePlanner);
+            }
         }
 
         // TODO: Placeholder for future Basic Auth implementation
@@ -145,6 +165,28 @@ public class HttpClient {
 //        }
 
         httpClient = httpClientBuilder.build();
+    }
+
+    protected static Pattern fromHostsToPattern(final String hostsList) {
+        if (hostsList == null) {
+            return null;
+        }
+        String[] hosts = hostsList.split("\\|");
+        String[] rHosts = new String[hosts.length];
+        // Transform glob to regex using Pattern.quote() to avoid regex injections
+        for (int i = 0; i < hosts.length; i++) {
+            String p = hosts[i];
+            if (p.startsWith("*") && p.endsWith("*")) {
+                rHosts[i] = ".*" + Pattern.quote(p.substring(1, p.length() - 2)) + ".*";
+            } else if (p.startsWith("*")) {
+                rHosts[i] = ".*" + Pattern.quote(p.substring(1));
+            } else if (p.endsWith("*")) {
+                rHosts[i] = Pattern.quote(p.substring(0, p.length() - 1)) + ".*";
+            } else {
+                rHosts[i] = Pattern.quote(p);
+            }
+        }
+        return Pattern.compile(String.join("|", rHosts));
     }
 
     public String getAsString(String urlString, Header[] headers) throws IOException {

@@ -263,6 +263,21 @@ public class MediaFileUtils {
         private MediaInfoIdValue mid = null;
 
         /**
+         * Checks that the upload was successful, and if not raise an exception
+         * 
+         * @throws MediaWikiApiErrorException
+         */
+        public void checkForErrors() throws MediaWikiApiErrorException {
+            if (!"Success".equals(result)) {
+                throw new MediaWikiApiErrorException(result,
+                        "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
+            }
+            if (filename == null) {
+                throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
+            }
+        }
+
+        /**
          * Retrieves the Mid, either from the upload response or by issuing another call to obtain it from the filename
          * through the supplied connection.
          * 

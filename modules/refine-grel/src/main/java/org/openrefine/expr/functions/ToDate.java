@@ -140,7 +140,7 @@ public class ToDate extends PureFunction {
                     }
                 }
             } catch (IllformedLocaleException e) {
-                // We ignore this. It PROBABLY means we got a date format string, not a language code
+                // We ignore this. It PROBABLY means we got a date format string, not a language code,
                 // although it could be a malformed language tag like zh_TW instead of zh-TW
             }
         }

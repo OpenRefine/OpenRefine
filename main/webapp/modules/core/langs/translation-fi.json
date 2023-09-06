@@ -227,7 +227,7 @@
     "core-dialogs/ngram-size": "Ngram koko",
     "core-dialogs/ngram-radius": "Säde",
     "core-dialogs/block-chars": "Lohko merkit",
-    "core-dialogs/record-fields": "Yksi tai useampi rivi, jotka on ryhmitelty yhteen tietueeksi; objektissa on enemmän kenttiä, lisätietoja osoitteessa <a href=\"https://docs.openrefine.org/manual/expressions#record\">Tietueet</a>.",
+    "core-dialogs/record-fields": "Yksi tai useampi rivi, jotka on ryhmitelty yhteen tietueeksi; objektissa on enemmän kenttiä, lisätietoja osoitteessa <a href=\"https://openrefine.org/docs/manual/expressions#record\">Tietueet</a>.",
     "core-dialogs/returns": "palauttaa",
     "core-dialogs/from": "Osoitteesta",
     "core-dialogs/expression": "Ilmaisu",

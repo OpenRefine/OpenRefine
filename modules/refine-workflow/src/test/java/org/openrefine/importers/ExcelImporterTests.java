@@ -1,6 +1,6 @@
 /*
 
-Copyright 2011, Thomas F. Morris
+Copyright 2011, 2022 Thomas F. Morris, OpenRefine developers
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,28 +33,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.time.Month;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -71,15 +70,28 @@ public class ExcelImporterTests extends ImporterTest {
 
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
-    private static final int ROWS = 5;
-    private static final int COLUMNS = 6;
+    private static final int ROWS = 4;
+    private static final int COLUMNS = 13;
 
-    // private static final File xlsxFile = createSpreadsheet(true);
-    private static final File xlsFile = createSpreadsheet(false);
-    private static final File xlsxFile = createSpreadsheet(true);
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String LEADING_ZERO_FORMAT = "0000";
+    private static final String INTEGER_FORMAT = "#,###";
+    private static final String CURRENCY_FORMAT = "$#,###.00";
+    private static final String FLOAT_FORMAT = "###.00%";
+    // NOTE: Apache POI is limited in its number formatting to what Java DecimalFormatter supports, plus a few
+    // special implementations. The string below matches the special phone number formatter which they've implemented
+    private static final String OTHER_FORMAT = "###\\-####;\\(###\\)\\ ###\\-####";
+
+    private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final String NOW_STRING = NOW.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+
+    private static final File xlsFile = createSpreadsheet(false, NOW);
+    private static final File xlsxFile = createSpreadsheet(true, NOW);
 
     private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
     private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
+    private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance();
 
     @Override
     @BeforeTest
@@ -106,7 +118,7 @@ public class ExcelImporterTests extends ImporterTest {
 
     // ---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException, IOException {
+    public void readXls() throws IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
@@ -137,15 +149,34 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
 
+        // Skip col 2 where old Calendar test was
+        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3)), "Cell value is not a date");
+
         Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) rows.get(1).getCellValue(5));
 
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
+        assertEquals(rows.get(1).getCellValue(6), 1L);
+        assertEquals(rows.get(2).getCellValue(6), 2L);
+
+        assertEquals(rows.get(1).getCellValue(7), 1L);
+        assertEquals(rows.get(2).getCellValue(7), 2L);
+
+        assertEquals(rows.get(1).getCellValue(8), 1.0);
+        assertEquals(rows.get(2).getCellValue(8), 2.0);
+
+        assertEquals(rows.get(1).getCellValue(9), "0001");
+        assertEquals(rows.get(2).getCellValue(9), "0002");
+
+        assertEquals(rows.get(2).getCellValue(10), "(617) 235-1322");
+
+        assertEquals(rows.get(2).getCellValue(11), NOW_STRING.substring(0, 10));
+
+        assertEquals(rows.get(2).getCellValue(12), 1234.56);
+
     }
 
     @Test
-    public void readXlsx() throws FileNotFoundException, IOException {
+    public void readXlsx() throws IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
@@ -175,9 +206,29 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
-
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
+        // Skip col 2 where old Calendar test was
         assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) rows.get(1).getCellValue(3)).toMillis() < 1);
+        Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull(rows.get(1).getCellValue(5));
+
+        assertEquals(rows.get(1).getCellValue(6), 1L);
+        assertEquals(rows.get(2).getCellValue(6), 2L);
+
+        assertEquals(rows.get(1).getCellValue(7), 1L);
+        assertEquals(rows.get(2).getCellValue(7), 2L);
+
+        assertEquals(rows.get(1).getCellValue(8), 1.0);
+        assertEquals(rows.get(2).getCellValue(8), 2.0);
+
+        assertEquals(rows.get(1).getCellValue(9), "0001");
+        assertEquals(rows.get(2).getCellValue(9), "0002");
+
+        assertEquals(rows.get(2).getCellValue(10), "(617) 235-1322");
+
+        assertEquals(rows.get(2).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
+
+        assertEquals(rows.get(2).getCellValue(12), 1234.56);
 
         Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) rows.get(1).getCellValue(5));
@@ -185,10 +236,61 @@ public class ExcelImporterTests extends ImporterTest {
 
     @Test(expectedExceptions = Exception.class)
     public void readExcel95() throws Exception {
-
         InputStream stream = ClassLoader.getSystemResourceAsStream("importers/excel95.xls");
 
         parseOneFile(SUT, stream);
+    }
+
+    @Test
+    public void readXlsxAsText() throws Exception {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        options.set("sheets", sheets);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 0);
+        options.put("skipDataLines", 0);
+        options.put("limit", -1);
+        options.put("storeBlankCellsAsNulls", true);
+        options.put("forceText", true);
+
+        InputStream stream = new FileInputStream(xlsxFile);
+
+        Grid grid = parseOneFile(SUT, stream);
+        List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+
+        Assert.assertEquals(rows.size(), ROWS);
+        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((String) rows.get(1).getCellValue(0)), NUMBER_FORMAT.format(1.1));
+        Assert.assertEquals(((String) rows.get(2).getCellValue(0)), NUMBER_FORMAT.format(2.2));
+
+        assertEquals((String) rows.get(1).getCellValue(1), "FALSE");
+        assertEquals((String) rows.get(2).getCellValue(1), "TRUE");
+
+        // Skip col 2 where old Calendar test was
+        assertEquals((String) rows.get(1).getCellValue(3), NOW_STRING); // Date
+
+        assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
+        assertEquals((String) rows.get(1).getCellValue(5), "");
+
+        assertEquals((String) rows.get(1).getCellValue(6), "1");
+        assertEquals((String) rows.get(2).getCellValue(6), "2");
+
+        assertEquals(rows.get(1).getCellValue(7), "1");
+        assertEquals(rows.get(2).getCellValue(7), "2");
+
+        assertEquals(rows.get(1).getCellValue(8), String.format("%.2f", 100.0) + "%");
+        assertEquals(rows.get(2).getCellValue(8), String.format("%.2f", 200.0) + "%");
+
+        assertEquals(rows.get(1).getCellValue(9), "0001");
+        assertEquals(rows.get(2).getCellValue(9), "0002");
+
+        assertEquals(rows.get(ROWS - 1).getCellValue(10), "(617) 235-1322");
+
+        assertEquals(rows.get(ROWS - 1).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
+
+        assertEquals(rows.get(ROWS - 1).getCellValue(12), "$" + NUMBER_FORMAT.format(1234.56));
     }
 
     @Test
@@ -209,19 +311,9 @@ public class ExcelImporterTests extends ImporterTest {
 
         // The original value reads 2021-04-18 in the Excel file.
         // We make sure it is not shifted by a day because of timezone handling
-        Object cellValue = grid.getRow(0).getCellValue(0);
-        Assert.assertTrue(cellValue instanceof OffsetDateTime);
-        OffsetDateTime date = (OffsetDateTime) cellValue;
-        Assert.assertEquals(date.getYear(), 2021);
-        Assert.assertEquals(date.getMonth(), Month.APRIL);
-        Assert.assertEquals(date.getDayOfMonth(), 18);
-        // Same, with January 1st (in winter / no DST)
-        Object cellValue2 = grid.getRow(1).getCellValue(0);
-        Assert.assertTrue(cellValue instanceof OffsetDateTime);
-        OffsetDateTime date2 = (OffsetDateTime) cellValue2;
-        Assert.assertEquals(date2.getYear(), 2021);
-        Assert.assertEquals(date2.getMonth(), Month.JANUARY);
-        Assert.assertEquals(date2.getDayOfMonth(), 1);
+        assertEquals(grid.getRow(0).getCellValue(0), "2021-04-18");
+        // Same, with 2021-01-01 (in winter / no DST)
+        assertEquals(grid.getRow(1).getCellValue(0), "2021-01-01");
     }
 
     @Test
@@ -259,9 +351,9 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
-
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
+        // Skip col 2 where old Calendar test was
+        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3)), "Cell value is not a date"); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) rows.get(1).getCellValue(3)).toMillis() < 1);
 
         Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) rows.get(1).getCellValue(5));
@@ -302,30 +394,48 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean) rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean) rows.get(2).getCellValue(1));
-
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
+        // Skip col 2 where old Calendar test was
+        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3)), "Cell value is not a date"); // Date
+        assertTrue(Duration.between(NOW, (OffsetDateTime) rows.get(1).getCellValue(3)).toMillis() < 1);
 
         Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) rows.get(1).getCellValue(5));
     }
 
-    private static File createSpreadsheet(boolean xml) {
+    private static File createSpreadsheet(boolean xml, LocalDateTime date) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+        DataFormat dataFormat = wb.createDataFormat();
+
+        CellStyle dateTimeStyle = wb.createCellStyle();
+        dateTimeStyle.setDataFormat(dataFormat.getFormat(DATE_TIME_FORMAT));
 
         CellStyle dateStyle = wb.createCellStyle();
-        short dateFormat = wb.createDataFormat().getFormat("yyyy-MM-dd");
-        dateStyle.setDataFormat(dateFormat);
+        dateStyle.setDataFormat(dataFormat.getFormat(DATE_FORMAT));
+
+        CellStyle intStyle = wb.createCellStyle();
+        intStyle.setDataFormat(dataFormat.getFormat(INTEGER_FORMAT));
+
+        CellStyle floatStyle = wb.createCellStyle();
+        floatStyle.setDataFormat(dataFormat.getFormat(FLOAT_FORMAT));
+
+        CellStyle zeroStyle = wb.createCellStyle();
+        zeroStyle.setDataFormat(dataFormat.getFormat(LEADING_ZERO_FORMAT));
+
+        CellStyle otherStyle = wb.createCellStyle();
+        otherStyle.setDataFormat(dataFormat.getFormat(OTHER_FORMAT));
+
+        CellStyle currencyStyle = wb.createCellStyle();
+        currencyStyle.setDataFormat(dataFormat.getFormat(CURRENCY_FORMAT));
 
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateStyle, 0);
+                createDataRow(sheet, row, date, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, 0);
             }
         }
 
-        File file = null;
+        File file;
         try {
             file = File.createTempFile("openrefine-importer-test", xml ? ".xlsx" : ".xls");
             file.deleteOnExit();
@@ -343,19 +453,37 @@ public class ExcelImporterTests extends ImporterTest {
     private static File createSheetsWithDifferentColumns(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+        DataFormat dataFormat = wb.createDataFormat();
+
+        CellStyle dateTimeStyle = wb.createCellStyle();
+        dateTimeStyle.setDataFormat(dataFormat.getFormat(DATE_TIME_FORMAT));
 
         CellStyle dateStyle = wb.createCellStyle();
-        short dateFormat = wb.createDataFormat().getFormat("yyyy-MM-dd");
-        dateStyle.setDataFormat(dateFormat);
+        dateStyle.setDataFormat(dataFormat.getFormat(DATE_FORMAT));
+
+        CellStyle intStyle = wb.createCellStyle();
+        intStyle.setDataFormat(dataFormat.getFormat(INTEGER_FORMAT));
+
+        CellStyle floatStyle = wb.createCellStyle();
+        floatStyle.setDataFormat(dataFormat.getFormat(FLOAT_FORMAT));
+
+        CellStyle zeroStyle = wb.createCellStyle();
+        zeroStyle.setDataFormat(dataFormat.getFormat(LEADING_ZERO_FORMAT));
+
+        CellStyle otherStyle = wb.createCellStyle();
+        otherStyle.setDataFormat(dataFormat.getFormat(OTHER_FORMAT));
+
+        CellStyle currencyStyle = wb.createCellStyle();
+        currencyStyle.setDataFormat(dataFormat.getFormat(CURRENCY_FORMAT));
 
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, dateStyle, s);
+                createDataRow(sheet, row, NOW, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, s);
             }
         }
 
-        File file = null;
+        File file;
         try {
             file = File.createTempFile("openrefine-importer-test", xml ? ".xlsx" : ".xls");
             file.deleteOnExit();
@@ -370,7 +498,9 @@ public class ExcelImporterTests extends ImporterTest {
         return file;
     }
 
-    private static void createDataRow(Sheet sheet, int row, CellStyle dateCellStyle, int extra_columns) {
+    private static void createDataRow(Sheet sheet, int row, LocalDateTime date, CellStyle dateTimeStyle, CellStyle dateStyle,
+            CellStyle intStyle,
+            CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, CellStyle currencyStyle, int extra_columns) {
         int col = 0;
         org.apache.poi.ss.usermodel.Row r = sheet.createRow(row);
         Cell c;
@@ -381,19 +511,44 @@ public class ExcelImporterTests extends ImporterTest {
         c = r.createCell(col++);
         c.setCellValue(row % 2 == 0); // boolean
 
-        c = r.createCell(col++);
-        c.setCellValue(Calendar.getInstance()); // calendar
-        c.setCellStyle(dateCellStyle);
+        col++; // Placeholder for old Calendar test, so we don't have to redo column numbers. Available for reuse
 
         c = r.createCell(col++);
-        c.setCellValue(new Date()); // date
-        c.setCellStyle(dateCellStyle);
+        c.setCellValue(date); // LocalDateTime
+        c.setCellStyle(dateTimeStyle);
 
         c = r.createCell(col++);
         c.setCellValue(" Row " + row + " Col " + col); // string
 
         c = r.createCell(col++);
         c.setCellValue(""); // string
+
+        c = r.createCell(col++);
+        c.setCellValue(row); // integer
+
+        c = r.createCell(col++);
+        c.setCellValue(row * 1.1);
+        c.setCellStyle(intStyle); // integer, despite value, due to formatting
+
+        c = r.createCell(col++);
+        c.setCellValue(row);
+        c.setCellStyle(floatStyle); // float, despite value, due to formatting
+
+        c = r.createCell(col++);
+        c.setCellValue(row);
+        c.setCellStyle(zeroStyle); // should import as string due to leading zeros
+
+        c = r.createCell(col++);
+        c.setCellValue(6172351322L);
+        c.setCellStyle(otherStyle); // phone number format should import as string
+
+        c = r.createCell(col++);
+        c.setCellValue(date); // date
+        c.setCellStyle(dateStyle); // dates alone should import as strings
+
+        c = r.createCell(col++);
+        c.setCellValue(1234.56);
+        c.setCellStyle(currencyStyle); // currency should import as float
 
 //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
 //    hl.setLabel(cellData.text);

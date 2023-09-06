@@ -120,9 +120,6 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     let username = elmts.usernameInput.val();
-    if (!username.includes("@")) {
-      alert($.i18n('wikibase-account/bot-passwords-alert'));
-    }
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});
     Refine.postCSRF(
         "command/wikidata/login",

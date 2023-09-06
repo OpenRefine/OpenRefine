@@ -1,6 +1,6 @@
 /*
 
-Copyright 2011, Thomas F. Morris
+Copyright 2011, 2022 Thomas F. Morris & OpenRefine committers
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,10 @@ package org.openrefine.importers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -60,15 +57,12 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
-import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 public class OdsImporter extends InputStreamImporter {
 
-    final static Logger logger = LoggerFactory.getLogger("open office");
+    final static Logger logger = LoggerFactory.getLogger(OdsImporter.class);
 
     private final TabularParserHelper tabularParserHelper;
 
@@ -101,11 +95,7 @@ public class OdsImporter extends InputStreamImporter {
                     JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
-                    if (rows > 0) {
-                        JSONUtilities.safePut(sheetRecord, "selected", true);
-                    } else {
-                        JSONUtilities.safePut(sheetRecord, "selected", false);
-                    }
+                    JSONUtilities.safePut(sheetRecord, "selected", rows > 0);
                     JSONUtilities.append(sheetRecords, sheetRecord);
                 }
             }
@@ -150,11 +140,10 @@ public class OdsImporter extends InputStreamImporter {
         }
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
-        for (int i = 0; i < sheets.size(); i++) {
-            String[] fileNameAndSheetIndex = new String[2];
+        for (int i = 0; i < (sheets != null ? sheets.size() : 0); i++) {
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
-            fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
+            String[] fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
 
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
@@ -165,15 +154,14 @@ public class OdsImporter extends InputStreamImporter {
             TableDataReader dataReader = new TableDataReader() {
 
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
 
                 @Override
-                public List<Object> getNextRowOfCells() throws IOException {
+                public List<Object> getNextRowOfCells() {
                     if (nextRow > lastRow) {
                         return null;
                     }
 
-                    List<Object> cells = new ArrayList<Object>();
+                    List<Object> cells = new ArrayList<>();
                     OdfTableRow row = table.getRowByIndex(nextRow++);
                     int maxCol = 0;
                     if (row != null) {
@@ -183,10 +171,10 @@ public class OdsImporter extends InputStreamImporter {
 
                             OdfTableCell sourceCell = row.getCellByIndex(cellIndex);
                             if (sourceCell != null) {
-                                cell = extractCell(sourceCell, reconMap);
+                                cell = new Cell(extractCellValue(sourceCell), null);
                             }
                             cells.add(cell);
-                            if (cell != null && cellIndex > maxCol) {
+                            if (cell != null && cell.value != null && !"".equals(cell.value) && cellIndex > maxCol) {
                                 maxCol = cellIndex;
                             }
                         }
@@ -208,7 +196,7 @@ public class OdsImporter extends InputStreamImporter {
         return mergeGrids(grids);
     }
 
-    static protected Serializable extractCell(OdfTableCell cell) {
+    static protected Serializable extractCellValue(OdfTableCell cell) {
         // TODO: how can we tell if a cell contains an error?
         // String formula = cell.getFormula();
 
@@ -241,54 +229,4 @@ public class OdsImporter extends InputStreamImporter {
         return value;
     }
 
-    static protected Cell extractCell(OdfTableCell cell, Map<String, Recon> reconMap) {
-        Serializable value = extractCell(cell);
-
-        if (value != null) {
-            Recon recon = null;
-
-            String hyperlink = ""; // TODO: cell.getHyperlink();
-            if (hyperlink != null) {
-                String url = hyperlink; // TODO: hyperlink.getAddress();
-
-                if (url.startsWith("http://") ||
-                        url.startsWith("https://")) {
-
-                    final String sig = "freebase.com/view";
-
-                    int i = url.indexOf(sig);
-                    if (i > 0) {
-                        String id = url.substring(i + sig.length());
-
-                        int q = id.indexOf('?');
-                        if (q > 0) {
-                            id = id.substring(0, q);
-                        }
-                        int h = id.indexOf('#');
-                        if (h > 0) {
-                            id = id.substring(0, h);
-                        }
-
-                        if (reconMap.containsKey(id)) {
-                            recon = reconMap.get(id);
-                        } else {
-                            ReconCandidate candidate = new ReconCandidate(id, value.toString(), new String[0], 100);
-                            recon = new Recon(0, null, null)
-                                    .withService("import")
-                                    .withMatch(candidate)
-                                    .withMatchRank(0)
-                                    .withJudgment(Judgment.Matched)
-                                    .withJudgmentAction("auto")
-                                    .withCandidate(candidate);
-
-                            reconMap.put(id, recon);
-                        }
-                    }
-                }
-            }
-            return new Cell(value, recon);
-        } else {
-            return null;
-        }
-    }
 }

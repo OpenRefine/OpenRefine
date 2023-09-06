@@ -112,7 +112,7 @@
     "core-index-lang/label": "Selecione o idioma de preferência",
     "core-index-lang/send-req": "Alterar idioma",
     "core-index-lang/page-reload": "A página será atualizada para aplicar as mudanças.",
-    "core-index-lang/lang-settings": "Idioma",
+    "core-index-lang/lang-settings": "Configurações de idioma",
     "core-index-parser/parse-cell": "Tentar analisar texto de<br>células como números",
     "core-index-parser/trim": "Cortar espaços no início e no final dos textos das células",
     "core-index-parser/parse-next": "Analisar próximo",
@@ -729,7 +729,7 @@
     "core-index/license": "Licença",
     "core-index/homepage": "Página inicial",
     "core-index/image": "Imagem",
-    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registro; O objeto possui mais campos, detalhes em <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
+    "core-dialogs/record-fields": "uma ou mais linhas mescladas para formar um registro; O objeto possui mais campos, detalhes em <a href=\"https://openrefine.org/docs/manual/expressions#record\">Records</a>",
     "core-views/join-col": "Mesclar colunas…",
     "core-views/column-join": "Mesclar colunas",
     "core-views/column-join-before-column-picker": "Selecione e ordene as colunas para mesclar",
@@ -776,5 +776,11 @@
     "core-dialogs/cluster-row-limit-exceeded": "Limite excedido de $1 escolhas totais",
     "core-index-import/warning-import-file": "Você deve especificar um nome para o projeto.",
     "core-index-import/single-project": "OpenRefine só pode importar vários arquivos em um único projeto se todos os arquivos selecionados tiverem o mesmo formato de arquivo.",
-    "core-index/download-now": "Baixe $1 agora."
+    "core-index/download-now": "Baixe $1 agora.",
+    "core-index/refine-version": "Versão $1",
+    "core-about/contributors": "Contribuidores (em ordem cronológica)",
+    "core-about/thanks": "Agradecimento especial",
+    "core-index-import/invalid-url": "URL inválida",
+    "core-index-import/blank-url": "URL em branco",
+    "core-index-import/remove-row": "Remover esta linha"
 }

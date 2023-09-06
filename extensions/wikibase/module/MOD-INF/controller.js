@@ -91,16 +91,15 @@ function init() {
       "project/styles",
       module,
       [
-        "styles/theme.less",
-        "styles/schema-alignment.less",
-        "styles/dialogs/manage-account-dialog.less",
-        "styles/dialogs/import-schema-dialog.less",
-        "styles/dialogs/perform-edits.less",
-        "styles/dialogs/wikibase-dialog.less",
-        "styles/dialogs/add-wikibase-dialog.less",
-        "styles/dialogs/statement-configuration-dialog.less",
-        "styles/dialogs/save-schema-dialog.less",
-        "styles/dialogs/schema-management-dialog.less"
+        "styles/schema-alignment.css",
+        "styles/dialogs/manage-account-dialog.css",
+        "styles/dialogs/import-schema-dialog.css",
+        "styles/dialogs/perform-edits.css",
+        "styles/dialogs/wikibase-dialog.css",
+        "styles/dialogs/add-wikibase-dialog.css",
+        "styles/dialogs/statement-configuration-dialog.css",
+        "styles/dialogs/save-schema-dialog.css",
+        "styles/dialogs/schema-management-dialog.css"
       ]);
    
 }

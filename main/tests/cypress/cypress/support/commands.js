@@ -11,10 +11,6 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
-
-addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
-
 // /**
 //  * Reconcile a column
 //  * Internally using the "apply" behavior for not having to go through the whole user interface
@@ -199,7 +195,7 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
     cy.get(
-      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`
+      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content div > span`
     ).should(($cellSpan) => {
       if (value == null) {
         // weird, "null" is returned as a string in this case, bug in Chai ?
@@ -293,8 +289,14 @@ Cypress.Commands.add('waitForImportUpdate', () => {
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
 Cypress.Commands.add('typeExpression', (expression) => {
-  cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(500); // eslint-disable-line
+  if (expression.length <= 30) {
+    cy.get('textarea.expression-preview-code').type(expression);
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression);
+  } else {
+    cy.get('textarea.expression-preview-code').type(expression);
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression.substring(0,30) + ' ...');
+  }
+
 });
 
 /**
@@ -444,6 +446,6 @@ Cypress.Commands.add(
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
+    cy.waitForProjectTable();
   }
 );

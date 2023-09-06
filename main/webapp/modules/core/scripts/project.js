@@ -113,8 +113,6 @@ function resizeAll() {
 function initializeUI(uiState) {
   $("#loading-message").hide();
   $("#notification-container").hide();
-  $("#project-title").show();
-  $("#project-controls").show();
   $("#body").show();
   
   $("#or-proj-open").text($.i18n('core-project/open')+"...");
@@ -131,6 +129,8 @@ function initializeUI(uiState) {
   $('#project-permalink-button').on('mouseenter',function() {
     this.href = Refine.getPermanentLink();
   });
+
+  $('#app-home-button').attr('title', $.i18n('core-index/navigate-home'));
 
   Refine.setTitle();
 

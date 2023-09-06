@@ -188,7 +188,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
     var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
     $("<a />", {
-        href: "https://docs.openrefine.org/manual/grelfunctions",
+        href: "https://openrefine.org/docs/manual/grelfunctions",
         text: $.i18n('core-dialogs/help/grelreference'),
         target: "_blank",
       }).appendTo(elmt);

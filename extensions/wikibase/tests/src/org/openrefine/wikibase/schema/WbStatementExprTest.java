@@ -92,9 +92,13 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     private Reference reference = Datamodel.makeReference(Collections.singletonList(Datamodel.makeSnakGroup(
             Collections.singletonList(Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P43"),
                     Datamodel.makeWikidataItemIdValue("Q3434"))))));
-    private Snak qualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
+
+    private PropertyIdValue qualifierPid = Datamodel.makeWikidataPropertyIdValue("P897");
+
+    private Snak qualifier = Datamodel.makeValueSnak(qualifierPid,
             Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                     TimeValue.CM_GREGORIAN_PRO));
+
     private Snak constantQualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
             Datamodel.makeTimeValue(2018, (byte) 4, (byte) 5, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                     TimeValue.CM_GREGORIAN_PRO));
@@ -104,10 +108,31 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(qualifier))));
     public Statement fullStatement = Datamodel.makeStatement(fullClaim, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
+
+    public Statement fullStatementNoValue = Datamodel.makeStatement(Datamodel.makeClaim(subject, Datamodel.makeNoValueSnak(property),
+            Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(qualifier)))), Collections.singletonList(reference),
+            StatementRank.NORMAL, "");
+
+    public Statement fullStatementSomeValue = Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak,
+            Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(Datamodel.makeSomeValueSnak(qualifierPid))))),
+            Collections.singletonList(reference),
+            StatementRank.NORMAL, "");
+
     public StatementEdit fullStatementUpdate = new StatementEdit(
             fullStatement,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
+
+    public StatementEdit fullStatementUpdateNoValue = new StatementEdit(
+            fullStatementNoValue,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
+
+    public StatementEdit fullStatementUpdateSomeValue = new StatementEdit(
+            fullStatementSomeValue,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
+
     public Claim claimWithConstant = Datamodel.makeClaim(subject, mainsnak,
             Collections.singletonList(Datamodel.makeSnakGroup(Arrays.asList(qualifier, constantQualifier))));
     public Statement statementWithConstant = Datamodel.makeStatement(claimWithConstant, Collections.singletonList(reference),
@@ -243,6 +268,18 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
                 Collections.emptyList(), StatementRank.NORMAL, ""),
                 new PropertyOnlyStatementMerger(),
                 StatementEditingMode.DELETE), new Wrapper(statementDeleteExpr));
+    }
+
+    @Test
+    public void testEvaluateNoValueInMainSnak() {
+        setRow(recon("Q3434"), "2010-07-23", WbVariableExpr.NO_VALUE_KEYWORD);
+        evaluatesTo(fullStatementUpdateNoValue, new Wrapper(statementExpr));
+    }
+
+    @Test
+    public void testEvaluateSomeValueInQualifier() {
+        setRow(recon("Q3434"), WbVariableExpr.SOME_VALUE_KEYWORD, "3.898,4.389");
+        evaluatesTo(fullStatementUpdateSomeValue, new Wrapper(statementExpr));
     }
 
     @Test
