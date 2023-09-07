@@ -56,7 +56,7 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
@@ -149,7 +149,7 @@ public class MassEditOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
         Map<String, Serializable> fromTo = new HashMap<>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
@@ -168,7 +168,7 @@ public class MassEditOperation extends ExpressionBasedOperation {
             }
         }
         ColumnModel columnModel = grid.getColumnModel();
-        int columnIdx = columnIndex(columnModel, _baseColumnName);
+        int columnIdx = columnModel.getRequiredColumnIndex(_baseColumnName);
         return new Joiner(columnIdx, columnModel.getKeyColumnIndex(), fromTo, fromBlankTo, fromErrorTo);
     }
 

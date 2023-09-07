@@ -31,11 +31,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 
@@ -54,10 +55,10 @@ public class SaveWikibaseSchemaOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
         newModels.put(overlayModelKey, _schema);
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 projectState.withOverlayModels(newModels),
                 GridPreservation.PRESERVES_RECORDS);
     }

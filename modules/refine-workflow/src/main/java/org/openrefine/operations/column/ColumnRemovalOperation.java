@@ -50,9 +50,8 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class ColumnRemovalOperation extends RowMapOperation {
 
@@ -95,20 +94,20 @@ public class ColumnRemovalOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws OperationException {
         ColumnModel model = state.getColumnModel();
         for (String columnName : _columnNames) {
-            int columnIndex = columnIndex(model, columnName);
+            int columnIndex = model.getRequiredColumnIndex(columnName);
             model = model.removeColumn(columnIndex);
         }
         return model;
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
         List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
-            int columnIndex = columnIndex(state.getColumnModel(), columnName);
+            int columnIndex = state.getColumnModel().getRequiredColumnIndex(columnName);
             columnIndices.add(columnIndex);
         }
         columnIndices.sort(Comparator.<Integer> naturalOrder().reversed());

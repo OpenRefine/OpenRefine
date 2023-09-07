@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -52,9 +51,9 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.CloseableIterator;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {
@@ -71,15 +70,12 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel columnModel = projectState.getColumnModel();
         ColumnModel newColumns = new ColumnModel(Collections.emptyList());
         List<ColumnMetadata> oldColumns = columnModel.getColumns();
 
-        int columnIndex = columnModel.getColumnIndexByName(_columnName);
-        if (columnIndex == -1) {
-            throw new Operation.DoesNotApplyException(String.format("Column %s could not be found", _columnName));
-        }
+        int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
         int columnCount = oldColumns.size();
 
         for (int i = 0; i < columnCount; i++) {
@@ -134,7 +130,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
                 .filter(row -> !row.isEmpty())
                 .collect(Collectors.toList());
 
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 projectState.getRunner().gridFromList(newColumns, rows, projectState.getOverlayModels()),
                 GridPreservation.NO_ROW_PRESERVATION);
     }

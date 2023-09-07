@@ -43,7 +43,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -53,9 +52,9 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -79,10 +78,10 @@ public class KeyValueColumnizeOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel columnModel = projectState.getColumnModel();
-        int keyColumnIndex = columnModel.getColumnIndexByName(_keyColumnName);
-        int valueColumnIndex = columnModel.getColumnIndexByName(_valueColumnName);
+        int keyColumnIndex = columnModel.getRequiredColumnIndex(_keyColumnName);
+        int valueColumnIndex = columnModel.getRequiredColumnIndex(_valueColumnName);
         int noteColumnIndex = _noteColumnName == null ? -1 : columnModel.getColumnIndexByName(_noteColumnName);
         ColumnMetadata noteColumn = _noteColumnName == null ? null : columnModel.getColumnByName(_noteColumnName);
 
@@ -261,7 +260,7 @@ public class KeyValueColumnizeOperation implements Operation {
             }
         }
 
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 projectState.getRunner().gridFromList(finalColumnModel, finalRows, projectState.getOverlayModels()),
                 GridPreservation.NO_ROW_PRESERVATION);
     }

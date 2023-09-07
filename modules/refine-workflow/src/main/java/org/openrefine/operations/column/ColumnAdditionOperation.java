@@ -51,8 +51,8 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.DuplicateColumnException;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * Adds a new column by evaluating an expression, based on a given column.
@@ -113,17 +113,17 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws Operation.DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws OperationException {
         ColumnModel columnModel = state.getColumnModel();
         try {
             return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
         } catch (ModelException e) {
-            throw new Operation.DoesNotApplyException("Another column already named " + _newColumnName);
+            throw new DuplicateColumnException(_newColumnName);
         }
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
         return new Joiner(_columnInsertIndex, grid.getColumnModel().getKeyColumnIndex());
     }
 

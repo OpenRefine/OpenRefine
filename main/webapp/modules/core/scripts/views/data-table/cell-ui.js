@@ -198,7 +198,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         {},
         {
           onDone: function(o) {
-            self._cell = o.cell;
+            self._cell = o.changeResult.cell;
             self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
             self._render();
           }

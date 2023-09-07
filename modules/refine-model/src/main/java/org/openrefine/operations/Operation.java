@@ -33,20 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
-import org.openrefine.browsing.facets.FacetConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * An operation represents one step in a cleaning workflow in Refine. It applies to a single project by creating a
@@ -62,44 +57,6 @@ import org.openrefine.model.changes.ChangeData;
 public interface Operation {
 
     /**
-     * Bundles up various pieces of information:
-     * <ul>
-     * <li>the new grid after applying the change</li>
-     * <li>whether the rows or records of the original grid were preserved</li>
-     * <li>a representation of the dependencies of this change</li>
-     * </ul>
-     */
-    class ChangeResult {
-
-        protected final Grid grid;
-        protected final GridPreservation gridPreservation;
-
-        public ChangeResult(Grid grid, GridPreservation gridPreservation) {
-            this.grid = grid;
-            this.gridPreservation = gridPreservation;
-        }
-
-        public Grid getGrid() {
-            return grid;
-        }
-
-        public GridPreservation getGridPreservation() {
-            return gridPreservation;
-        }
-
-    }
-
-    class DoesNotApplyException extends Exception {
-
-        public DoesNotApplyException(String message) {
-            super(message);
-        }
-
-        private static final long serialVersionUID = 1L;
-
-    }
-
-    /**
      * Derives the new grid state from the current grid state. Executing this method should be quick (even on large
      * datasets) since it is expected to just derive the new grid from the existing one without actually executing any
      * expensive computation. Long-running computations should rather go in the derivation of a {@link ChangeData} which
@@ -108,10 +65,10 @@ public interface Operation {
      * @param projectState
      *            the state of the grid before the change
      * @return the state of the grid after the change
-     * @throws Operation.DoesNotApplyException
+     * @throws OperationException
      *             when the change cannot be applied to the given grid
      */
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException;
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException;
 
     /**
      * Returns true when the change is derived purely from the operation metadata and does not store any data by itself.
@@ -120,15 +77,6 @@ public interface Operation {
     @JsonIgnore
     default boolean isImmediate() {
         return true;
-    }
-
-    /**
-     * The facets that are suggested to be created after this change is applied. This is not included in the JSON
-     * serialization here, but rather in the containing HistoryEntry.
-     */
-    @JsonIgnore
-    default List<FacetConfig> getCreatedFacets() {
-        return Collections.emptyList();
     }
 
     /**

@@ -45,8 +45,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -81,10 +83,10 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconClearSimilarCells() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconClearSimilarCells() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconClearSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b");
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

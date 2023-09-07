@@ -45,10 +45,9 @@ import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class ReconDiscardJudgmentsOperation extends RowMapOperation {
 
@@ -85,11 +84,8 @@ public class ReconDiscardJudgmentsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws Operation.DoesNotApplyException {
-        int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
-        if (columnIndex == -1) {
-            throw new Operation.DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
-        }
+    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws OperationException {
+        int columnIndex = projectState.getColumnModel().getRequiredColumnIndex(_columnName);
         return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
     }
 

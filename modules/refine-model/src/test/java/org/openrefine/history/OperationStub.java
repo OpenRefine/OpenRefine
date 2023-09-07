@@ -1,15 +1,16 @@
 
 package org.openrefine.history;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class OperationStub implements Operation {
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         return null;
     }
 

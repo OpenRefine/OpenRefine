@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -16,7 +15,9 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -46,18 +47,22 @@ public class CellEditOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
-        int index = projectState.getColumnModel().getColumnIndexByName(columnName);
-        if (index == -1) {
-            throw new Operation.DoesNotApplyException(
-                    String.format("Column '%s' does not exist", columnName));
-        }
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        int index = projectState.getColumnModel().getRequiredColumnIndex(columnName);
         ColumnModel columnModel = projectState.getColumnModel();
         boolean recordsPreserved = index != columnModel.getKeyColumnIndex();
         Grid result = projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 result,
-                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS) {
+
+            // additionally pass the resulting cell to the frontend so that it can update in place without refreshing
+            // the whole grid
+            @JsonProperty("cell")
+            public Cell getCell() {
+                return result.getRow(row).getCell(index);
+            }
+        };
     }
 
     static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue, int keyColumnIndex) {

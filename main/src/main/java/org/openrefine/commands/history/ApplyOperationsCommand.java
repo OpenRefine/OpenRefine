@@ -41,7 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -50,10 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.commands.Command;
-import org.openrefine.history.HistoryEntry;
+import org.openrefine.history.OperationApplicationResult;
 import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.UnknownOperation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 
 public class ApplyOperationsCommand extends Command {
@@ -81,7 +80,7 @@ public class ApplyOperationsCommand extends Command {
 
                     OperationApplicationResult applicationResult = applyOperation(project, obj);
                     results.add(applicationResult);
-                    if ("failed".equals(applicationResult.status)) {
+                    if (!applicationResult.isSuccess()) {
                         respondJSON(response, new JsonResponse("error", results));
                     }
                 }
@@ -97,49 +96,13 @@ public class ApplyOperationsCommand extends Command {
         try {
             operation = ParsingUtilities.mapper.convertValue(operationJson, Operation.class);
         } catch (IllegalArgumentException e) {
-            return new OperationApplicationResult("Could not parse operation: " + e.getMessage());
+            return new OperationApplicationResult(new OperationException("parsing", "Could not parse operation: " + e.getMessage()));
         }
         if (operation == null) {
-            return new OperationApplicationResult("Cannot apply null operation");
-        } else if (operation instanceof UnknownOperation) {
-            UnknownOperation unknownOperation = (UnknownOperation) operation;
-            return new OperationApplicationResult("Unknown operation " + operation.getOperationId());
+            return new OperationApplicationResult(new OperationException("null", "Cannot apply null operation"));
         }
 
-        try {
-            HistoryEntry historyEntry = project.getHistory().addEntry(operation);
-            return new OperationApplicationResult(historyEntry);
-        } catch (Exception e) {
-            // TODO make catch block narrower, only catching certain expected exceptions
-            // such as DoesNotApplyException. This requires tightening the exceptions in the Process
-            // interface too.
-            e.printStackTrace();
-            logger.error("Could not apply operation", e);
-            return new OperationApplicationResult("Applying the operation failed: " + e.getMessage());
-        }
-    }
-
-    protected static class OperationApplicationResult {
-
-        @JsonProperty("status")
-        final String status; // whether the operation is "applied" or "failed"
-        @JsonProperty("historyEntry")
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        HistoryEntry historyEntry = null; // if the operation is "applied", the corresponding history entry
-        @JsonProperty("errorMessage")
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        String errorMessage = null; // any error message if applying the operation failed
-        // TODO let operations expose structured information when they fail
-
-        public OperationApplicationResult(HistoryEntry historyEntry) {
-            this.status = "applied";
-            this.historyEntry = historyEntry;
-        }
-
-        public OperationApplicationResult(String errorMessage) {
-            this.status = "failed";
-            this.errorMessage = errorMessage;
-        }
+        return project.getHistory().addEntry(operation);
     }
 
     protected static class JsonResponse {

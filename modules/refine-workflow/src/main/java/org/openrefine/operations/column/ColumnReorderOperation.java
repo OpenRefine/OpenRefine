@@ -52,9 +52,9 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.MissingColumnException;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class ColumnReorderOperation extends RowMapOperation {
 
@@ -82,13 +82,13 @@ public class ColumnReorderOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws OperationException {
         ColumnModel model = grid.getColumnModel();
         List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
             ColumnMetadata meta = model.getColumnByName(columnName);
             if (meta == null) {
-                throw new Operation.DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
+                throw new MissingColumnException(columnName);
             }
             columns.add(meta);
         }
@@ -96,11 +96,11 @@ public class ColumnReorderOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());
         for (int i = 0; i != _columnNames.size(); i++) {
-            origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
+            origIndex.add(state.getColumnModel().getRequiredColumnIndex(_columnNames.get(i)));
         }
 
         int keyColumnIndex = state.getColumnModel().getKeyColumnIndex();

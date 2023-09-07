@@ -33,8 +33,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.model.changes.RowInRecordChangeDataProducer;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 
 /**
@@ -79,12 +78,12 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
      *            the initial state of the grid
      */
     protected abstract RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context)
-            throws Operation.DoesNotApplyException;
+            throws OperationException;
 
     /**
      * Returns the new column model after the operation has run.
      */
-    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws Operation.DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws OperationException {
         return getNewColumnModel(state, context);
     }
 
@@ -92,16 +91,16 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
      * Returns the new overlay models after this change is applied.
      */
     protected Map<String, OverlayModel> getNewOverlayModels(Grid state, ChangeContext context, Evaluable evaluable)
-            throws Operation.DoesNotApplyException {
+            throws OperationException {
         return getNewOverlayModels(state, context);
     }
 
-    protected Grid postTransform(Grid state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+    protected Grid postTransform(Grid state, ChangeContext context, Evaluable eval) throws OperationException {
         return postTransform(state, context);
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         Evaluable eval = getEvaluable();
         if (eval.isLocal() && !_forceEagerEvaluation) {
             return super.apply(projectState, context);
@@ -137,21 +136,25 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                 joined = projectState.join(changeData, joiner, newColumnModel);
             }
             Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState, context, eval);
-            return new Operation.ChangeResult(
+            return new ChangeResult(
                     postTransform(joined.withOverlayModels(newOverlayModels), context),
                     joiner.preservesRecordStructure() ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
         }
     }
 
-    protected Evaluable getEvaluable() throws ParsingException {
+    protected Evaluable getEvaluable() throws OperationException {
         if (_eval == null) {
-            _eval = MetaParser.parse(_expression);
+            try {
+                _eval = MetaParser.parse(_expression);
+            } catch (ParsingException e) {
+                throw new OperationException("parsing", e.getMessage(), e);
+            }
         }
         return _eval;
     }
 
     @Override
-    protected GridMap getGridMap(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
         Validate.notNull(_eval);
         RowInRecordChangeDataJoiner joiner = changeDataJoiner(state, context);
         PositiveRowMapper positiveMapper = new PositiveRowMapper(getChangeDataProducer(state, context), joiner);
@@ -164,12 +167,9 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     }
 
     protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(Grid state, ChangeContext context)
-            throws Operation.DoesNotApplyException {
+            throws OperationException {
         ColumnModel columnModel = state.getColumnModel();
-        int baseColumnIndex = columnModel.getColumnIndexByName(_baseColumnName);
-        if (baseColumnIndex == -1) {
-            throw new Operation.DoesNotApplyException(String.format("Column '{}' not found", _baseColumnName));
-        }
+        int baseColumnIndex = columnModel.getRequiredColumnIndex(_baseColumnName);
         RowInRecordChangeDataProducer<Cell> producer = evaluatingChangeDataProducer(baseColumnIndex, _baseColumnName, _onError,
                 _repeatCount, _eval,
                 columnModel, state.getOverlayModels(), context.getProjectId());

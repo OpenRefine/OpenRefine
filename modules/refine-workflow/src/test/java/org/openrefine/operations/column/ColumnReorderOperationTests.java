@@ -49,8 +49,10 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -86,9 +88,9 @@ public class ColumnReorderOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReorder() throws Operation.DoesNotApplyException, ParsingException {
+    public void testReorder() throws OperationException, ParsingException {
         Operation SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar"));
-        Operation.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
 
@@ -104,8 +106,8 @@ public class ColumnReorderOperationTests extends RefineTest {
         new ColumnReorderOperation(Arrays.asList("bar", "bar"));
     }
 
-    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
-    public void testDoesNotExist() throws Operation.DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = OperationException.class)
+    public void testDoesNotExist() throws OperationException, ParsingException {
         Operation operation = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar"));
         operation.apply(initialState, mock(ChangeContext.class));
     }

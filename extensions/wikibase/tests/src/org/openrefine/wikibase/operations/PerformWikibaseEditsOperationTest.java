@@ -49,6 +49,7 @@ import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
@@ -126,7 +127,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any(), Mockito.any()))
                 .thenReturn(changeData);
 
-        Operation.ChangeResult changeResult = operation.apply(grid, context);
+        ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -144,7 +145,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 Mockito.any(), Mockito.any()))
                 .thenReturn(changeData);
 
-        Operation.ChangeResult changeResult = operation.apply(grid, context);
+        ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

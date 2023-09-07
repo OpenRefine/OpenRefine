@@ -51,7 +51,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.history.HistoryEntry;
+import org.openrefine.history.OperationApplicationResult;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -218,7 +218,7 @@ public class ReconOperationTests extends RefineTest {
     @Test
     public void testFullChange() throws Exception {
         ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
-        HistoryEntry historyEntry = project.getHistory().addEntry(operation);
+        OperationApplicationResult operationResults = project.getHistory().addEntry(operation);
 
         ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
                 new ColumnMetadata("column")
@@ -236,7 +236,7 @@ public class ReconOperationTests extends RefineTest {
                 .withColumnModel(reconciledColumnModel);
 
         assertGridEquals(project.getCurrentGrid(), expectedGrid);
-        Assert.assertEquals(historyEntry.getCreatedFacets().size(), 2);
+        Assert.assertEquals(operationResults.getChangeResult().getCreatedFacets().size(), 2);
     }
 
     private static class ReconConfigStub extends ReconConfig {

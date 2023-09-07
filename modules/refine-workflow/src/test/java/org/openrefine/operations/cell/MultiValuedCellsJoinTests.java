@@ -51,8 +51,10 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -95,16 +97,16 @@ public class MultiValuedCellsJoinTests extends RefineTest {
                 });
     }
 
-    @Test(expectedExceptions = Operation.DoesNotApplyException.class)
-    public void testInvalidColumn() throws Operation.DoesNotApplyException, ParsingException {
+    @Test(expectedExceptions = OperationException.class)
+    public void testInvalidColumn() throws OperationException, ParsingException {
         Operation SUT = new MultiValuedCellJoinOperation("does_not_exist", "key", ",");
         SUT.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test
-    public void testJoin() throws Operation.DoesNotApplyException, ParsingException {
+    public void testJoin() throws OperationException, ParsingException {
         Operation operation = new MultiValuedCellJoinOperation("foo", "key", ",");
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid state = changeResult.getGrid();
 
@@ -123,9 +125,9 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     }
 
     @Test
-    public void testCustomKey() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCustomKey() throws OperationException, ParsingException {
         Operation operation = new MultiValuedCellJoinOperation("bar", "foo", ",");
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
         Grid state = changeResult.getGrid();
@@ -146,7 +148,7 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     }
 
     @Test
-    public void testPendingCells() throws Operation.DoesNotApplyException, ParsingException {
+    public void testPendingCells() throws OperationException, ParsingException {
         Grid withPendingCells = createGrid(
                 new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
@@ -157,7 +159,7 @@ public class MultiValuedCellsJoinTests extends RefineTest {
                 });
 
         Operation operation = new MultiValuedCellJoinOperation("foo", "key", ",");
-        Operation.ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid state = changeResult.getGrid();
 

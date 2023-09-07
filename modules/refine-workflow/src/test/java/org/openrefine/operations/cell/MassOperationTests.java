@@ -55,9 +55,11 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MassEditOperation.Edit;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -198,9 +200,9 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testSimpleReplace() throws Operation.DoesNotApplyException, ParsingException {
+    public void testSimpleReplace() throws OperationException, ParsingException {
         Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -222,10 +224,10 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRecordsMode() throws Operation.DoesNotApplyException, ParsingException {
+    public void testRecordsMode() throws OperationException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Operation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
-        Operation.ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
 
         Grid applied = changeResult.getGrid();
@@ -247,7 +249,7 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRowsModePendingCells() throws ParsingException, Operation.DoesNotApplyException {
+    public void testRowsModePendingCells() throws ParsingException, OperationException {
         Grid grid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
                         { "v1", "b" },
@@ -256,7 +258,7 @@ public class MassOperationTests extends RefineTest {
                 });
 
         Operation operation = new MassEditOperation(EngineConfig.ALL_ROWS, "foo", "grel:value", editsWithFromBlank);
-        Operation.ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(grid, mock(ChangeContext.class));
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {

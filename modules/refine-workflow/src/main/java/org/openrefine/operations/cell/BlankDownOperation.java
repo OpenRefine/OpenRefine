@@ -44,7 +44,6 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -55,10 +54,9 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.RowScanMapper;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * Transforms a table without a record structure to blanking out values which are identical to those on the previous
@@ -77,13 +75,9 @@ public class BlankDownOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel model = projectState.getColumnModel();
-        int index = model.getColumnIndexByName(_columnName);
-        if (index == -1) {
-            throw new Operation.DoesNotApplyException(
-                    String.format("Column '%s' does not exist", _columnName));
-        }
+        int index = model.getRequiredColumnIndex(_columnName);
         Engine engine = getEngine(projectState, context.getProjectId());
         boolean recordsPreserved = index != model.getKeyColumnIndex();
         Grid result;
@@ -105,7 +99,7 @@ public class BlankDownOperation extends EngineDependentOperation {
             result = result.withColumnModel(result.getColumnModel().withHasRecords(true));
         }
 
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 result,
                 recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
     }

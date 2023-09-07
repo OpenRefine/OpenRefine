@@ -49,9 +49,10 @@ import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -90,13 +91,13 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRemoveRows() throws Operation.DoesNotApplyException, ParsingException {
+    public void testRemoveRows() throws OperationException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Operation operation = new RowRemovalOperation(engineConfig);
-        Operation.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 
@@ -111,13 +112,13 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     @Test
-    public void testRemoveRecords() throws Operation.DoesNotApplyException, ParsingException {
+    public void testRemoveRecords() throws OperationException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Operation operation = new RowRemovalOperation(engineConfig);
-        Operation.ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initial, mock(ChangeContext.class));
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
         Grid applied = changeResult.getGrid();
 

@@ -428,33 +428,33 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
       onDone: function(o) {
         // show pill notification for the last operation to have been successfully applied,
         // and compute whether all operations successfully applied preserved rows / records
-        var latestHistoryEntry = null;
+        var latestOperationResult = null;
         updateOptions.rowIdsPreserved = true;
         updateOptions.recordIdsPreserved = true;
         for (let operationResult of o.results) {
           if (operationResult.historyEntry) {
-            latestHistoryEntry = operationResult.historyEntry;
-            updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestHistoryEntry.gridPreservation !== 'no-row-preservation';
-            updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestHistoryEntry.gridPreservation === 'preserves-records'; 
+            latestOperationResult = operationResult;
+            updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestOperationResult.historyEntry.gridPreservation !== 'no-row-preservation';
+            updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestOperationResult.historyEntry.gridPreservation === 'preserves-records'; 
             updateOptions.processesChanged = true;
-            if (latestHistoryEntry.createdFacets) {
-              for (let facetConfig of latestHistoryEntry.createdFacets) {
+            if (latestOperationResult.createdFacets) {
+              for (let facetConfig of latestOperationResult.createdFacets) {
                 let facetType = facetConfig.type;
                 ui.browsingEngine.addFacet(facetType.indexOf('/') != -1 ? facetType.split('/')[1] : facetType, facetConfig, {});
               }
             }
           }
         }
-        if (latestHistoryEntry) {
-          ui.processPanel.showUndo(latestHistoryEntry);
+        if (latestOperationResult && latestOperationResult.historyEntry) {
+          ui.processPanel.showUndo(latestOperationResult.historyEntry);
         }
         if (callbacks.onDone) {
-          callbacks.onDone(latestHistoryEntry);
+          callbacks.onDone(latestOperationResult);
         }
       },
       onError: function(o) {
         var operationsApplied = o.results.length - 1;
-        var errorMessage = o.results[o.results.length - 1].errorMessage;
+        var errorMessage = o.results[o.results.length - 1].error.message;
         if (operationsApplied) {
           errorMessage = $.i18n('core-project/some-operations-applied-but-error', operationsApplied, errorMessage);
           Refine.update({ everythingChanged: true });
@@ -520,17 +520,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       }
 
       if (o.code == "ok") {
-        // TODO remove this once changes and operations are merged as it is duplicating
-        // logic from the handling of apply-operations' output
-        if ("historyEntry" in o) {
-          updateOptions.rowIdsPreserved = o.historyEntry.gridPreservation !== 'no-row-preservation';
-          updateOptions.recordIdsPreserved = o.historyEntry.gridPreservation === 'preserves-records';
-        }
         Refine.update(updateOptions, callbacks.onFinallyDone);
-
-        if ("historyEntry" in o) {
-          ui.processPanel.showUndo(o.historyEntry);
-        }
       }
     }
   }

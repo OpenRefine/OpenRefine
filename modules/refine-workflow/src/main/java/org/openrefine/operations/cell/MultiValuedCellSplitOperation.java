@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -54,10 +53,10 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.column.ColumnSplitOperation.Mode;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.operations.utils.CellValueSplitter;
 
 /**
@@ -126,23 +125,15 @@ public class MultiValuedCellSplitOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         CellValueSplitter splitter = CellValueSplitter.construct(_mode, _separator, _regex, _fieldLengths, null);
         ColumnModel columnModel = projectState.getColumnModel();
-        int columnIdx = columnModel.getColumnIndexByName(_columnName);
-        if (columnIdx == -1) {
-            throw new Operation.DoesNotApplyException(
-                    String.format("Column '%s' does not exist", _columnName));
-        }
-        int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
-        if (keyColumnIdx == -1) {
-            throw new Operation.DoesNotApplyException(
-                    String.format("Key column '%s' does not exist", _keyColumnName));
-        }
+        int columnIdx = columnModel.getRequiredColumnIndex(_columnName);
+        int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getRequiredColumnIndex(_keyColumnName);
         if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
             projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
         }
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel.withHasRecords(true)),
                 GridPreservation.NO_ROW_PRESERVATION);
     }

@@ -55,8 +55,9 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class HistoryTests {
 
@@ -68,9 +69,9 @@ public class HistoryTests {
     Grid finalState;
     Grid newState;
 
-    Operation.ChangeResult intermediateResult;
-    Operation.ChangeResult finalResult;
-    Operation.ChangeResult newResult;
+    ChangeResult intermediateResult;
+    ChangeResult finalResult;
+    ChangeResult newResult;
 
     ColumnModel columnModel;
 
@@ -81,6 +82,7 @@ public class HistoryTests {
     Operation firstOperation;
     Operation secondOperation;
     Operation newOperation;
+    Operation failingOperation;
 
     HistoryEntry firstEntry;
     HistoryEntry secondEntry;
@@ -89,7 +91,7 @@ public class HistoryTests {
     List<HistoryEntry> entries;
 
     @BeforeMethod
-    public void setUp() throws Operation.DoesNotApplyException, ParsingException {
+    public void setUp() throws OperationException, ParsingException {
         dataStore = mock(ChangeDataStore.class);
         gridStore = mock(GridCache.class);
         initialState = mock(Grid.class);
@@ -100,12 +102,13 @@ public class HistoryTests {
         firstOperation = mock(Operation.class);
         secondOperation = mock(Operation.class);
         newOperation = mock(Operation.class);
+        failingOperation = mock(Operation.class);
         firstEntry = mock(HistoryEntry.class);
         secondEntry = mock(HistoryEntry.class);
         newEntry = mock(HistoryEntry.class);
-        intermediateResult = mock(Operation.ChangeResult.class);
-        finalResult = mock(Operation.ChangeResult.class);
-        newResult = mock(Operation.ChangeResult.class);
+        intermediateResult = mock(ChangeResult.class);
+        finalResult = mock(ChangeResult.class);
+        newResult = mock(ChangeResult.class);
 
         when(firstOperation.apply(eq(initialState), any())).thenReturn(intermediateResult);
         when(intermediateResult.getGrid()).thenReturn(intermediateState);
@@ -116,6 +119,8 @@ public class HistoryTests {
         when(newOperation.apply(eq(intermediateState), any())).thenReturn(newResult);
         when(newResult.getGrid()).thenReturn(newState);
         when(newOperation.isImmediate()).thenReturn(true);
+        when(failingOperation.apply(eq(intermediateState), any()))
+                .thenThrow(new OperationException("some_error", "Some error occured"));
 
         when(initialState.getColumnModel()).thenReturn(columnModel);
         when(intermediateState.getColumnModel()).thenReturn(columnModel);
@@ -142,7 +147,7 @@ public class HistoryTests {
     }
 
     @Test(enabled = false) // TODO reenable after restoring caching
-    public void testConstruct() throws Operation.DoesNotApplyException, ParsingException {
+    public void testConstruct() throws OperationException, ParsingException {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
@@ -182,12 +187,26 @@ public class HistoryTests {
     }
 
     @Test
-    public void testConstructWithCachedGrids() throws Operation.DoesNotApplyException, IOException, ParsingException {
+    public void testApplyFailingOperation() throws OperationException {
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+
+        History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
+        Assert.assertEquals(history.getPosition(), 1);
+        Assert.assertEquals(history.getCurrentGrid(), intermediateState);
+
+        OperationApplicationResult result = history.addEntry(failingOperation);
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals(result.getException().getCode(), "some_error");
+        Assert.assertEquals(result.getException().getMessage(), "Some error occured");
+    }
+
+    @Test
+    public void testConstructWithCachedGrids() throws OperationException, IOException, ParsingException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
         Operation thirdChange = mock(Operation.class);
         Grid thirdState = mock(Grid.class);
         Grid fourthState = mock(Grid.class);
-        Operation.ChangeResult changeResult = mock(Operation.ChangeResult.class);
+        ChangeResult changeResult = mock(ChangeResult.class);
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.singleton(secondChangeId));
         when(gridStore.getCachedGrid(secondChangeId)).thenReturn(thirdState);
@@ -206,14 +225,14 @@ public class HistoryTests {
     }
 
     @Test
-    public void testCacheIntermediateGrid() throws Operation.DoesNotApplyException, IOException, ParsingException {
+    public void testCacheIntermediateGrid() throws OperationException, IOException, ParsingException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
         Operation thirdOperation = mock(Operation.class);
         Grid fourthState = mock(Grid.class);
         Grid cachedSecondState = mock(Grid.class);
         Grid rederivedThirdState = mock(Grid.class);
-        Operation.ChangeResult fourthResult = mock(Operation.ChangeResult.class);
-        Operation.ChangeResult rederivedThirdResult = mock(Operation.ChangeResult.class);
+        ChangeResult fourthResult = mock(ChangeResult.class);
+        ChangeResult rederivedThirdResult = mock(ChangeResult.class);
         long thirdEntryId = 39827L;
 
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
@@ -244,7 +263,7 @@ public class HistoryTests {
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testUnknownChangeId() throws Operation.DoesNotApplyException {
+    public void testUnknownChangeId() throws OperationException {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
@@ -253,7 +272,7 @@ public class HistoryTests {
     }
 
     @Test
-    public void testEraseUndoneChanges() throws Operation.DoesNotApplyException, ParsingException {
+    public void testEraseUndoneChanges() throws OperationException, ParsingException {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
 
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);

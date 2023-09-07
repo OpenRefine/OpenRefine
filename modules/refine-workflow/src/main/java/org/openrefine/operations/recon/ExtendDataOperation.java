@@ -50,7 +50,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -63,7 +62,6 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RecordChangeDataJoiner;
 import org.openrefine.model.changes.RecordChangeDataProducer;
@@ -74,11 +72,11 @@ import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
+import org.openrefine.operations.exceptions.IOOperationException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 
 public class ExtendDataOperation extends EngineDependentOperation {
@@ -116,7 +114,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ReconciledDataExtensionJob initialJob = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
 
         // Prefetch column names with an initial request.
@@ -124,7 +122,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         try {
             initialJob.extend(Collections.emptySet());
         } catch (Exception e) {
-            throw new ParsingException("Unable to fetch column metadata from service: " + e.getMessage());
+            throw new OperationException("network", "Unable to fetch column metadata from service: " + e.getMessage());
         }
         List<String> columnNames = new ArrayList<>();
         for (ColumnInfo info : initialJob.columns) {
@@ -148,10 +146,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         if (Engine.Mode.RowBased.equals(engine.getMode())) {
             rowFilter = engine.combinedRowFilters();
         }
-        int baseColumnId = projectState.getColumnModel().getColumnIndexByName(_baseColumnName);
-        if (baseColumnId == -1) {
-            throw new ColumnNotFoundException(_baseColumnName);
-        }
+        int baseColumnId = projectState.getColumnModel().getRequiredColumnIndex(_baseColumnName);
         ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
         DataExtensionProducer producer = new DataExtensionProducer(job, baseColumnId, rowFilter);
         Function<Optional<ChangeData<RecordDataExtension>>, ChangeData<RecordDataExtension>> changeDataCompletion = incompleteChangeData -> projectState
@@ -161,7 +156,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         try {
             changeData = context.getChangeData("extend", new DataExtensionSerializer(), changeDataCompletion);
         } catch (IOException e) {
-            throw new Operation.DoesNotApplyException(String.format("Unable to retrieve change data for data extension"));
+            throw new IOOperationException(e);
         }
 
         ColumnModel newColumnModel = projectState.getColumnModel().withHasRecords(true);
@@ -177,7 +172,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, columnNames.size());
         Grid state = projectState.join(changeData, joiner, newColumnModel);
 
-        return new Operation.ChangeResult(state, GridPreservation.NO_ROW_PRESERVATION);
+        return new ChangeResult(state, GridPreservation.NO_ROW_PRESERVATION);
     }
 
     @Override

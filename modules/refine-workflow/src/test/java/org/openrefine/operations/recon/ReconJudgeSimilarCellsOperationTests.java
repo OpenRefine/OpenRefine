@@ -53,8 +53,10 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -118,13 +120,13 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsShareTopics() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconJudgeSimilarCellsShareTopics() throws OperationException, ModelException, ParsingException {
         Operation operation = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.New, null, true);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 
@@ -154,14 +156,14 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconJudgeSimilarCellsMatch() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testReconJudgeSimilarCellsMatch() throws OperationException, ModelException, ParsingException {
         ReconCandidate match = new ReconCandidate("p", "x 1", new String[] {}, 24.);
         Operation operation = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.Matched, match, false);
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

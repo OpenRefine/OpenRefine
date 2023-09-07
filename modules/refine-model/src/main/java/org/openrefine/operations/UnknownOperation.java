@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * An operation that is unknown to the current OpenRefine instance, but might be interpretable by another instance (for
@@ -56,8 +56,8 @@ public class UnknownOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
-        throw new ParsingException("Unknown operation of type " + opCode + " cannot be applied.");
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        throw new OperationException("unknown", "Unknown operation of type " + opCode + " cannot be applied.");
     }
 
     public String getDescription() {

@@ -34,11 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.recon;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -55,10 +56,9 @@ import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class ReconCopyAcrossColumnsOperation extends RowMapOperation {
 
@@ -102,19 +102,12 @@ public class ReconCopyAcrossColumnsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws Operation.DoesNotApplyException {
-        int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
-        List<Integer> targetColumnIndices = _toColumnNames
-                .stream()
-                .map(name -> projectState.getColumnModel().getColumnIndexByName(name))
-                .collect(Collectors.toList());
-        if (columnIndex == -1) {
-            throw new Operation.DoesNotApplyException(String.format("Column '%s' does not exist", _fromColumnName));
-        }
-        for (Integer targetColumnIndex : targetColumnIndices) {
-            if (targetColumnIndex == -1) {
-                throw new Operation.DoesNotApplyException(String.format("Target column does not exist"));
-            }
+    public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws OperationException {
+        ColumnModel columnModel = projectState.getColumnModel();
+        int columnIndex = columnModel.getRequiredColumnIndex(_fromColumnName);
+        List<Integer> targetColumnIndices = new ArrayList<>();
+        for (String targetColumnName : _toColumnNames) {
+            targetColumnIndices.add(columnModel.getRequiredColumnIndex(targetColumnName));
         }
         Set<Judgment> judgments = new HashSet<>(_judgments);
 

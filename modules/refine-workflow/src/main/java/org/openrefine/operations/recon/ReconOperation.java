@@ -58,7 +58,6 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.ListFacet;
 import org.openrefine.browsing.facets.RangeFacet;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
@@ -77,10 +76,9 @@ import org.openrefine.model.changes.RowInRecordChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * Runs reconciliation on a column.
@@ -106,12 +104,9 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel columnModel = projectState.getColumnModel();
-        int baseColumnIndex = columnModel.getColumnIndexByName(_columnName);
-        if (baseColumnIndex == -1) {
-            throw new Operation.DoesNotApplyException(String.format("Column '{}' not found", _columnName));
-        }
+        int baseColumnIndex = columnModel.getRequiredColumnIndex(_columnName);
         ColumnModel newColumnModel = columnModel
                 .withReconConfig(baseColumnIndex, _reconConfig);
 
@@ -140,22 +135,12 @@ public class ReconOperation extends EngineDependentOperation {
             }
             joined = projectState.join(changeData, joiner, newColumnModel);
         }
-        return new Operation.ChangeResult(joined,
-                GridPreservation.PRESERVES_ROWS); // TODO add record preservation metadata on Joiner
-    }
 
-    @Override
-    public String getDescription() {
-        return _reconConfig.getBriefDescription(_columnName);
-    }
-
-    @Override
-    public List<FacetConfig> getCreatedFacets() {
+        // add facets after applying the operation
         ListFacet.ListFacetConfig judgmentFacet = new ListFacet.ListFacetConfig(
                 _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name(),
                 "grel:forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))",
                 _columnName);
-
         RangeFacet.RangeFacetConfig scoreFacet = new RangeFacet.RangeFacetConfig(
                 _columnName + ": " + OpenRefineMessage.recon_operation_score_facet_name(),
                 "grel:cell.recon.best.score",
@@ -166,10 +151,18 @@ public class ReconOperation extends EngineDependentOperation {
                 null,
                 null,
                 null);
-
-        return Arrays.asList(
+        List<FacetConfig> createdFacets = Arrays.asList(
                 judgmentFacet,
                 scoreFacet);
+
+        return new ChangeResult(joined,
+                GridPreservation.PRESERVES_ROWS, // TODO add record preservation metadata on Joiner
+                createdFacets);
+    }
+
+    @Override
+    public String getDescription() {
+        return _reconConfig.getBriefDescription(_columnName);
     }
 
     @JsonProperty("config")

@@ -279,7 +279,7 @@ public abstract class Command {
             Project project,
             Operation operation) throws Exception {
 
-        HistoryEntry historyEntry = project.getHistory().addEntry(operation);
+        HistoryEntry historyEntry = project.getHistory().addEntry(operation).getHistoryEntry();
         Writer w = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");

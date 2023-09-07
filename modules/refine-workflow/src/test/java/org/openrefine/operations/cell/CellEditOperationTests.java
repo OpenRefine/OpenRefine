@@ -22,8 +22,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -65,10 +67,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChange() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCellChange() throws OperationException, ParsingException {
         Operation operation = new CellEditOperation(0L, "foo", "changed", null);
 
-        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -79,10 +81,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChangeDouble() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCellChangeDouble() throws OperationException, ParsingException {
         Operation operation = new CellEditOperation(0L, "foo", 1234.34, null);
 
-        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -93,10 +95,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChangeLong() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCellChangeLong() throws OperationException, ParsingException {
         Operation operation = new CellEditOperation(0L, "foo", 987439L, null);
 
-        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -107,10 +109,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChangeDate() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCellChangeDate() throws OperationException, ParsingException {
         Operation operation = new CellEditOperation(0L, "foo", "1989-07-09T18:17:04Z", "date");
 
-        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -121,10 +123,10 @@ public class CellEditOperationTests extends RefineTest {
     }
 
     @Test
-    public void testCellChangeBoolean() throws Operation.DoesNotApplyException, ParsingException {
+    public void testCellChangeBoolean() throws OperationException, ParsingException {
         Operation operation = new CellEditOperation(0L, "foo", true, null);
 
-        Operation.ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(initialGrid, mock(ChangeContext.class));
         Grid newGrid = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);

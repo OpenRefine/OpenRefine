@@ -39,7 +39,6 @@ import java.time.ZoneId;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang.Validate;
@@ -122,12 +121,6 @@ public class HistoryEntry {
     @JsonProperty("gridPreservation")
     public GridPreservation getGridPreservation() {
         return gridPreservation;
-    }
-
-    @JsonProperty("createdFacets")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public List<FacetConfig> getCreatedFacets() {
-        return operation.getCreatedFacets();
     }
 
     /**

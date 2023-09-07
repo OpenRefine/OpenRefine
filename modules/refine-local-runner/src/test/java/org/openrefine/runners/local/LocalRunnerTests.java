@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 import org.openrefine.model.*;
 import org.openrefine.model.Record;
 import org.openrefine.model.changes.*;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.runners.local.pll.PLL;
 import org.openrefine.runners.local.pll.Tuple2;
 import org.openrefine.runners.testing.RunnerTestBase;
@@ -166,7 +166,7 @@ public class LocalRunnerTests extends RunnerTestBase {
     }
 
     @Test
-    public void testMemoryCostPrediction() throws Operation.DoesNotApplyException {
+    public void testMemoryCostPrediction() throws OperationException {
         LocalGrid smallGrid = (LocalGrid) createGrid(new String[] { "foo" }, new Serializable[][] {});
 
         // caching a small grid should always be possible

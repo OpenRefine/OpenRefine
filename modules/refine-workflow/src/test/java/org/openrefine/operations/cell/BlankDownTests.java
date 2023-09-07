@@ -49,8 +49,10 @@ import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -100,9 +102,9 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRowsNoFacets() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRowsNoFacets() throws OperationException, ParsingException {
         Operation operation = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar");
-        Operation.ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
@@ -121,9 +123,9 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRecordsNoFacets() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRecordsNoFacets() throws OperationException, ParsingException {
         Operation operation = new BlankDownOperation(EngineConfig.ALL_RECORDS, "bar");
-        Operation.ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
         Grid applied = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
@@ -141,14 +143,14 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRowsFacets() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRowsFacets() throws OperationException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("c", "c"),
                 new DecoratedValue("f", "f"),
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         BlankDownOperation operation = new BlankDownOperation(engineConfig, "bar");
-        Operation.ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
@@ -166,12 +168,12 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRecordsFacets() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRecordsFacets() throws OperationException, ParsingException {
         facet.selection = Arrays.asList(
                 new DecoratedValue("c", "c"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Operation operation = new BlankDownOperation(engineConfig, "bar");
-        Operation.ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(toBlankDown, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
@@ -190,9 +192,9 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRecordKey() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRecordKey() throws OperationException, ParsingException {
         Operation operation = new BlankDownOperation(EngineConfig.ALL_ROWS, "foo");
-        Operation.ChangeResult changeResult = operation.apply(toBlankDownRecordKey, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(toBlankDownRecordKey, mock(ChangeContext.class));
         Grid applied = changeResult.getGrid();
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
@@ -211,7 +213,7 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRowsPendingCells() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankDownRowsPendingCells() throws OperationException, ParsingException {
         Grid withPendingCells = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
@@ -221,7 +223,7 @@ public class BlankDownTests extends RefineTest {
                         { null, Cell.PENDING_NULL, "i" }
                 });
         Operation operation = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar");
-        Operation.ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
+        ChangeResult changeResult = operation.apply(withPendingCells, mock(ChangeContext.class));
 
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 

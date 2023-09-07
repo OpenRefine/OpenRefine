@@ -46,8 +46,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -85,13 +87,13 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReconMatchBestCandidatesOperation() throws ModelException, Operation.DoesNotApplyException, ParsingException {
+    public void testReconMatchBestCandidatesOperation() throws ModelException, OperationException, ParsingException {
         Operation operation = new ReconMatchBestCandidatesOperation(EngineConfig.ALL_ROWS, "bar");
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

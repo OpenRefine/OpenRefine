@@ -46,15 +46,13 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
 
@@ -121,11 +119,8 @@ public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
-        int columnIndex = grid.getColumnModel().getColumnIndexByName(_columnName);
-        if (columnIndex == -1) {
-            throw new ColumnNotFoundException(_columnName);
-        }
+    public RowInRecordMapper getPositiveRowMapper(Grid grid, ChangeContext context) throws OperationException {
+        int columnIndex = grid.getColumnModel().getRequiredColumnIndex(_columnName);
         ReconConfig reconConfig = grid.getColumnModel().getColumnByName(_columnName).getReconConfig();
         long historyEntryId = context.getHistoryEntryId();
 

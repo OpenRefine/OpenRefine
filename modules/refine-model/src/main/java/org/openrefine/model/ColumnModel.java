@@ -44,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.operations.exceptions.MissingColumnException;
 
 /**
  * The list of columns in a project. For each column, this holds the associated {@link ColumnMetadata}.
@@ -284,6 +285,17 @@ public class ColumnModel implements Serializable {
             return _nameToPosition.get(name);
         } else {
             return -1;
+        }
+    }
+
+    /**
+     * Utility method to get a column index by name and throw an exception if this column does not exist.
+     */
+    public int getRequiredColumnIndex(String columnName) throws MissingColumnException {
+        if (_nameToPosition.containsKey(columnName)) {
+            return _nameToPosition.get(columnName);
+        } else {
+            throw new MissingColumnException(columnName);
         }
     }
 

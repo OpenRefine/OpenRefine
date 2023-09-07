@@ -52,7 +52,6 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -68,10 +67,10 @@ import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.EngineDependentOperation;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.IOOperationException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.commands.ConnectionManager;
 import org.openrefine.wikibase.editing.EditBatchProcessor;
@@ -136,7 +135,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         String tag = tagTemplate;
         if (tag.contains("${version}")) {
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
@@ -203,11 +202,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 return newChangeData;
             });
         } catch (IOException e) {
-            throw new Operation.DoesNotApplyException(String.format("Unable to retrieve change data '%s'", changeDataId));
+            throw new IOOperationException(e);
         }
         NewReconRowJoiner joiner = new NewReconRowJoiner();
         Grid joined = projectState.join(changeData, joiner, projectState.getColumnModel());
-        return new Operation.ChangeResult(joined, GridPreservation.PRESERVES_RECORDS);
+        return new ChangeResult(joined, GridPreservation.PRESERVES_RECORDS);
     }
 
     @Override

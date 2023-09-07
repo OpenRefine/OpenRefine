@@ -46,8 +46,10 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -97,7 +99,7 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     }
 
     @Test
-    public void testMatchSpecificTopicOperation() throws Operation.DoesNotApplyException, ModelException, ParsingException {
+    public void testMatchSpecificTopicOperation() throws OperationException, ModelException, ParsingException {
         ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
         Operation operation = new ReconMatchSpecificTopicOperation(
                 EngineConfig.ALL_ROWS,
@@ -107,7 +109,7 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
 
-        Operation.ChangeResult changeResult = operation.apply(initialState, context);
+        ChangeResult changeResult = operation.apply(initialState, context);
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
 

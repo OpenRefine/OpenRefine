@@ -395,8 +395,7 @@ public class StandardReconConfig extends ReconConfig {
             int detailCellIndex = columnModel.getColumnIndexByName(c.columnName);
 
             Cell cell2 = row.getCell(detailCellIndex);
-            // The following is no longer possible in rows mode. Users
-            // should first fill down their columns before reconciling.
+            // TODO reactivate this by passing the enclosing record (which could be made available even in rows mode?)
 
             /*
              * if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) { int cellIndex =

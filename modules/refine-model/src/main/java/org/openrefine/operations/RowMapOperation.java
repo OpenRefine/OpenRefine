@@ -6,7 +6,6 @@ import java.util.Map;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -16,8 +15,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 
 /**
@@ -34,7 +32,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         Engine engine = getEngine(projectState, context.getProjectId());
         GridMap gridMap = getGridMap(projectState, context);
         RowInRecordMapper positiveMapper = gridMap.positiveMapper;
@@ -52,7 +50,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                     newColumnModel);
         }
         boolean recordsPreserved = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 postTransform(mappedState.withOverlayModels(newOverlayModels), context),
                 recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
     }
@@ -67,10 +65,10 @@ abstract public class RowMapOperation extends EngineDependentOperation {
      * 
      * @param state
      *            the initial column model
-     * @throws Operation.DoesNotApplyException
+     * @throws OperationException
      *             if the change does not apply to the given grid
      */
-    protected GridMap getGridMap(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
         return new GridMap(
                 getNewColumnModel(state, context),
                 getPositiveRowMapper(state, context),
@@ -86,7 +84,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
      *            the grid to which the change should be applied
      * @return the column model of the new grid
      */
-    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws OperationException {
         return state.getColumnModel();
     }
 
@@ -96,7 +94,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
      * @param state
      *            the initial state of the grid
      */
-    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
         return RowInRecordMapper.IDENTITY;
     }
 
@@ -106,14 +104,14 @@ abstract public class RowMapOperation extends EngineDependentOperation {
      * @param state
      *            the initial state of the grid
      */
-    protected RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordMapper getNegativeRowMapper(Grid state, ChangeContext context) throws OperationException {
         return RowInRecordMapper.IDENTITY;
     }
 
     /**
      * Returns the new overlay models after this change is applied.
      */
-    protected Map<String, OverlayModel> getNewOverlayModels(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected Map<String, OverlayModel> getNewOverlayModels(Grid state, ChangeContext context) throws OperationException {
         return state.getOverlayModels();
     }
 
@@ -125,17 +123,8 @@ abstract public class RowMapOperation extends EngineDependentOperation {
      *            the grid after the map operation
      * @return the grid with updated column statistics (or any other post transformation)
      */
-    protected Grid postTransform(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected Grid postTransform(Grid grid, ChangeContext context) throws OperationException {
         return grid;
-    }
-
-    protected int columnIndex(ColumnModel model, String columnName) throws Operation.DoesNotApplyException {
-        int index = model.getColumnIndexByName(columnName);
-        if (index == -1) {
-            throw new Operation.DoesNotApplyException(
-                    String.format("Column '%s' does not exist", columnName));
-        }
-        return index;
     }
 
     /**

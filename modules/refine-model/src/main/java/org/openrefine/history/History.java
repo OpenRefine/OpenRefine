@@ -45,12 +45,13 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -125,7 +126,7 @@ public class History {
      *            the list of entries of the history
      * @param position
      *            the current position in the history
-     * @throws Operation.DoesNotApplyException
+     * @throws OperationException
      *             if one step in the list of history entries failed to apply to the supplied grid
      */
     public History(
@@ -134,7 +135,7 @@ public class History {
             GridCache gridStore,
             List<HistoryEntry> entries,
             int position,
-            long projectId) throws Operation.DoesNotApplyException {
+            long projectId) throws OperationException {
         this(initialGrid, dataStore, gridStore, projectId);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
         for (HistoryEntry entry : entries) {
@@ -192,7 +193,7 @@ public class History {
      * @param refresh
      *            whether the grid should be refreshed if it depends on change data being currently fetched
      */
-    protected Grid getGrid(int position, boolean refresh) throws Operation.DoesNotApplyException {
+    protected Grid getGrid(int position, boolean refresh) throws OperationException {
         Grid grid = _states.get(position);
         if (grid != null && !(refresh && _inProgress.get(position))) {
             return grid;
@@ -206,12 +207,7 @@ public class History {
             ChangeContext context = ChangeContext.create(entry.getId(), _projectId, _dataStore, entry.getDescription());
             Operation operation = entry.getOperation();
             Grid newState;
-            try {
-                newState = operation.apply(previous, context).getGrid();
-            } catch (ParsingException e) {
-                // TODO rather add as throws?
-                throw new Operation.DoesNotApplyException(e.getMessage());
-            }
+            newState = operation.apply(previous, context).getGrid();
             _states.set(position, newState);
             _inProgress.set(position, _inProgress.get(position - 1) || _dataStore.needsRefreshing(entry.getId()));
             _cachedOnDisk.set(position, false);
@@ -244,7 +240,14 @@ public class History {
         return _gridStore;
     }
 
-    public HistoryEntry addEntry(Operation operation) throws ParsingException, Operation.DoesNotApplyException {
+    /**
+     * Applies an operation on top of the existing history. This will modify this instance. If the operation application
+     * failed, the exception will be returned in {@link OperationApplicationResult#getException()}.
+     * 
+     * @param operation
+     *            the operation to apply.
+     */
+    public OperationApplicationResult addEntry(Operation operation) {
         return addEntry(HistoryEntry.allocateID(), operation);
     }
 
@@ -252,8 +255,7 @@ public class History {
      * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
      * histories
      */
-    public HistoryEntry addEntry(long id,
-            Operation operation) throws Operation.DoesNotApplyException {
+    public OperationApplicationResult addEntry(long id, Operation operation) {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             // uncache all the grids that we are removing
@@ -277,12 +279,11 @@ public class History {
 
         // TODO refactor this so that it does not duplicate the logic of getGrid
         ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, operation.getDescription());
-        Operation.ChangeResult changeResult = null;
+        ChangeResult changeResult = null;
         try {
             changeResult = operation.apply(getCurrentGrid(), context);
-        } catch (ParsingException e) {
-            // TODO rather add as throws?
-            throw new Operation.DoesNotApplyException(e.getMessage());
+        } catch (OperationException e) {
+            return new OperationApplicationResult(e);
         }
         Grid newState = changeResult.getGrid();
         HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
@@ -292,10 +293,10 @@ public class History {
         _entries.add(entry);
         _position++;
         updateCachedPosition();
-        return entry;
+        return new OperationApplicationResult(entry, changeResult);
     }
 
-    protected void cacheIntermediateGridOnDisk(int position) throws Operation.DoesNotApplyException, IOException {
+    protected void cacheIntermediateGridOnDisk(int position) throws OperationException, IOException {
         Validate.isTrue(position > 0);
         // first, ensure that the grid is computed
         Grid grid = getGrid(position, false);
@@ -351,7 +352,7 @@ public class History {
     public void refreshCurrentGrid() {
         try {
             getGrid(_position, true);
-        } catch (Operation.DoesNotApplyException e) {
+        } catch (OperationException e) {
             throw new IllegalStateException("Recomputing the current grid failed", e);
         }
     }
@@ -372,10 +373,10 @@ public class History {
      *            the id of the last change to be performed before the desired state of the project. Use 0L for the
      *            initial state.
      * @return the degree to which the grid was preserved while changing the position in the history
-     * @throws Operation.DoesNotApplyException
+     * @throws OperationException
      *             if the application of changes required for this move did not succeed
      */
-    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws Operation.DoesNotApplyException {
+    synchronized public GridPreservation undoRedo(long lastDoneEntryID) throws OperationException {
         int oldPosition = _position;
         if (lastDoneEntryID == 0) {
             _position = 0;

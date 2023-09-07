@@ -53,15 +53,13 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.exceptions.OperationException;
 
 /**
  * Marks all filtered cells in a given column as reconciled to "new". Similar values can either be matched to the same
@@ -138,11 +136,8 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws Operation.DoesNotApplyException {
-        int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
-        if (columnIndex == -1) {
-            throw new ColumnNotFoundException(_columnName);
-        }
+    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
+        int columnIndex = state.getColumnModel().getRequiredColumnIndex(_columnName);
         ReconConfig reconConfig = getNewReconConfig(state.getColumnModel().getColumnByName(_columnName));
         long historyEntryId = context.getHistoryEntryId();
 

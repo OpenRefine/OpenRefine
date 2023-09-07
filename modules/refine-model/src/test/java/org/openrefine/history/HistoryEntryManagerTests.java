@@ -23,9 +23,10 @@ import org.openrefine.model.Runner;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.TestUtils;
@@ -44,11 +45,11 @@ public class HistoryEntryManagerTests {
 
         // Deletes the first column of the table
         @Override
-        public Operation.ChangeResult apply(Grid projectState, ChangeContext context) {
+        public ChangeResult apply(Grid projectState, ChangeContext context) {
             List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 
-            return new Operation.ChangeResult(
+            return new ChangeResult(
                     projectState.mapRows(mapper, new ColumnModel(newColumns)),
                     GridPreservation.PRESERVES_ROWS);
         }
@@ -65,7 +66,7 @@ public class HistoryEntryManagerTests {
     };
 
     @BeforeMethod
-    public void setUp() throws IOException, Operation.DoesNotApplyException {
+    public void setUp() throws IOException, OperationException {
         OperationRegistry.registerOperation("core", "my-operation", MyOperation.class);
         runner = mock(Runner.class);
         saveFuture = mock(VoidFuture.class);
@@ -89,7 +90,7 @@ public class HistoryEntryManagerTests {
     }
 
     @Test
-    public void testSaveAndLoadHistory() throws IOException, Operation.DoesNotApplyException {
+    public void testSaveAndLoadHistory() throws IOException, OperationException {
         File tempFile = TestUtils.createTempDirectory("testhistory");
         sut.save(history, tempFile, mock(ProgressReporter.class));
 

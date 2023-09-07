@@ -46,8 +46,7 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.OperationException;
 
 public class TextTransformOperation extends ExpressionBasedOperation {
 
@@ -112,9 +111,9 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws Operation.DoesNotApplyException {
+    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
         ColumnModel columnModel = grid.getColumnModel();
-        int baseColumnIndex = columnIndex(columnModel, _baseColumnName);
+        int baseColumnIndex = columnModel.getRequiredColumnIndex(_baseColumnName);
         return new Joiner(baseColumnIndex, columnModel.getKeyColumnIndex());
     }
 

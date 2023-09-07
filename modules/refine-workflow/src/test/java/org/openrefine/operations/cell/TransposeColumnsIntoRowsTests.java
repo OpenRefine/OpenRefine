@@ -15,6 +15,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -51,7 +52,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
      * rows into columns operation.
      */
     @Test
-    public void testTransposeBackToRecords() throws Operation.DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecords() throws OperationException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
@@ -75,7 +76,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeBackToRecordsNoLimit() throws Operation.DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecordsNoLimit() throws OperationException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
@@ -101,7 +102,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
     }
 
     @Test
-    public void testTransposeBackToRecordsKeyValue() throws Operation.DoesNotApplyException, ParsingException {
+    public void testTransposeBackToRecordsKeyValue() throws OperationException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
@@ -125,7 +126,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
     }
 
     @Test
-    public void testBlankValues() throws Operation.DoesNotApplyException, ParsingException {
+    public void testBlankValues() throws OperationException, ParsingException {
         Grid initialRecords = createGrid(
                 new String[] { "num1", "num2" },
                 new Serializable[][] {

@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.Validate;
 
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -56,9 +55,10 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
-import org.openrefine.operations.Operation.ChangeResult;
-import org.openrefine.operations.Operation.DoesNotApplyException;
+import org.openrefine.operations.exceptions.DuplicateColumnException;
+import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.CloseableIterator;
 
 public class TransposeColumnsIntoRowsOperation implements Operation {
@@ -168,18 +168,18 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
     }
 
     @Override
-    public Operation.ChangeResult apply(Grid projectState, ChangeContext context) throws ParsingException, Operation.DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel columnModel = projectState.getColumnModel();
         if (_combinedColumnName != null) {
             if (columnModel.getColumnByName(_combinedColumnName) != null) {
-                throw new Operation.DoesNotApplyException("Another column already named " + _combinedColumnName);
+                throw new DuplicateColumnException(_combinedColumnName);
             }
         } else {
             if (columnModel.getColumnByName(_keyColumnName) != null) {
-                throw new Operation.DoesNotApplyException("Another column already named " + _keyColumnName);
+                throw new DuplicateColumnException(_keyColumnName);
             }
             if (columnModel.getColumnByName(_valueColumnName) != null) {
-                throw new Operation.DoesNotApplyException("Another column already named " + _valueColumnName);
+                throw new DuplicateColumnException(_valueColumnName);
             }
         }
 
@@ -330,7 +330,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
                 .map(rb -> rb.build(newColumns.size()))
                 .collect(Collectors.toList());
         ColumnModel newColumnModel = new ColumnModel(newColumns);
-        return new Operation.ChangeResult(
+        return new ChangeResult(
                 projectState.getRunner().gridFromList(newColumnModel, rows, projectState.getOverlayModels()),
                 GridPreservation.NO_ROW_PRESERVATION);
     }

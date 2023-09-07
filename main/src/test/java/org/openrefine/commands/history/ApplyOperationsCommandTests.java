@@ -3,6 +3,8 @@ package org.openrefine.commands.history;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -11,7 +13,9 @@ import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
@@ -117,7 +121,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         // id
         assertEquals(jsonResponse.get("code").asText(), "ok");
         assertEquals(((ArrayNode) jsonResponse.get("results")).size(), 1);
-        assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("status").asText(), "applied");
+        assertTrue(((ArrayNode) jsonResponse.get("results")).get(0).get("success").asBoolean());
         assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("historyEntry").get("description").asText(),
                 "Mass edit cells in column bar");
     }
@@ -158,8 +162,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         // id
         assertEquals(jsonResponse.get("code").asText(), "error");
         assertEquals(((ArrayNode) jsonResponse.get("results")).size(), 1);
-        assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("status").asText(), "failed");
-        assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("errorMessage").asText(),
-                "Applying the operation failed: Column 'non_existent_column' does not exist");
+        assertFalse(((ArrayNode) jsonResponse.get("results")).get(0).get("success").asBoolean());
+        assertEquals(((ArrayNode) jsonResponse.get("results")).get(0).get("error").get("message").asText(),
+                "Column 'non_existent_column' does not exist.");
     }
 }
