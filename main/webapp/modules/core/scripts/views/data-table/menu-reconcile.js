@@ -93,7 +93,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       createReconServiceSelectionDialog(headerText, explanationText, onSelect);
     }
   };
-
+  
   var doSearchToMatch = function() {
     var serviceUrl = null;
     var service = null;
@@ -117,13 +117,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           suggestOptions.formatter_url = service.view.url;
        }
     }
-    
-    var sanitizedSuggestOptions = {
-      query_param_name: suggestOptions.query_param_name,
-      access: suggestOptions.access,
-      formatter_url: suggestOptions.formatter_url,
-  };
-
     var frame = DialogSystem.createDialog();
     frame.width("400px");
 
@@ -134,8 +127,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     $('<p></p>').text($.i18n('core-views/search-fb-topic')).appendTo(body);
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
-
-    input.suggest(sanitizedSuggestOptions).on("fb-select", function(e, data) {
+    input.suggest(sanitizeSuggestOptions(suggestOptions)).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
 
         Refine.postCoreProcess(

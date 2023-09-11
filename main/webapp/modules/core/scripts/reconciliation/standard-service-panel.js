@@ -246,11 +246,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     if (this._service.ui && this._service.ui.access) {
       suggestOptions.access = this._service.ui.access;
     }
-    var sanitizedSuggestOptions = {
-      query_param_name: suggestOptions.query_param_name,
-      access: suggestOptions.access,
-    }
-    input.suggestT(sanitizedSuggestOptions);
+    input.suggestT(sanitizeSuggestOptions(suggestOptions));
   }
 
   input.on("bind fb-select", function(e, data) {
@@ -281,7 +277,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     if (type) {
       suggestOptions.type = typeof type == "string" ? type : type.id;
     }
-    inputs.suggestP(suggestOptions);
+    inputs.suggestP(sanitizeSuggestOptions(suggestOptions));
   }
 };
 
