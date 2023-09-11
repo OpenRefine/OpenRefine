@@ -614,7 +614,7 @@
     "core-views/http-headers": "HTTP headers to be used when fetching URLs",
     "core-views/enter-col-name": "Enter new column name",
     "core-views/join-col": "Join columns…",
-    "core-views/split-col": "Split column $1 into several columns",
+    "core-views/split-col": "Split column \"$1\" into several columns",
     "core-views/how-split": "How to split column",
     "core-views/how-split-cells": "How to split multi-valued cells",
     "core-views/by-sep": "by separator",
