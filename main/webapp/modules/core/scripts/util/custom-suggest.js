@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var CustomSuggest = {};
+
 function sanitizeSuggestOptions(options) {
   return {
     query_param_name: options.query_param_name,
@@ -41,6 +42,7 @@ function sanitizeSuggestOptions(options) {
     service_path:options.service_path,
   };
 }
+
 (function() {
 
   /*
