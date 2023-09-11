@@ -131,6 +131,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     input.suggest(sanitizeSuggestOptions(suggestOptions)).on("fb-select", function(e, data) {
         var types = data.notable ? data.notable : [];
+      
         Refine.postCoreProcess(
         "recon-match-specific-topic-to-cells",
         {
