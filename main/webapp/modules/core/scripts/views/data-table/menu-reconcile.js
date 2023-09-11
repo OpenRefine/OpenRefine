@@ -117,6 +117,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           suggestOptions.formatter_url = service.view.url;
        }
     }
+    
     var frame = DialogSystem.createDialog();
     frame.width("400px");
 
