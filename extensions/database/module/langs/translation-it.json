@@ -10,7 +10,6 @@
     "database-source/alert-connection-name": "È necessario impostare un nome alla connessione",
     "database-source/alert-initial-database": "È necessario specificare un database iniziale",
     "database-source/alert-query": "È necessario impostare una query valida",
-    "database-source/alert-invalid-query-keyword": "La query non può contenere keyword di manipolazione dati:",
     "database-source/alert-invalid-query-select": "La query deve iniziare con la keyword SELECT",
     "database-source/alert-connection-edit": "Connessione modificata",
     "database-source/connectionNameLabel": "Nome",

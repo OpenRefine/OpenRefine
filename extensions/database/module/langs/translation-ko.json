@@ -10,7 +10,6 @@
     "database-source/alert-connection-name": "접속이름을 지정해야 합니다",
     "database-source/alert-initial-database": "초기 데이터베이스를 지정해야 합니다",
     "database-source/alert-query": "유효한 쿼리를 지정해야 합니다",
-    "database-source/alert-invalid-query-keyword": "쿼리는 데이터 조작 키워드를 포함할 수 없습니다:",
     "database-source/alert-invalid-query-select": "쿼리는 SELECT 키워드로 시작해야 합니다",
     "database-source/form-validation-failure": "신규 접속이 유효하지 않습니다!",
     "database-source/alert-connection-edit": "접속이 성공적으로 편집되었습니다",

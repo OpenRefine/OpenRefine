@@ -47,7 +47,6 @@
     "database-source/alert-connection-edit": "Conexão editada",
     "database-source/form-validation-failure": "Formulário de nova conexão inválido!",
     "database-source/alert-invalid-query-select": "A consulta deve começar com a palavra-chave SELECT",
-    "database-source/alert-invalid-query-keyword": "A consulta não pode conter palavra-chave de manipulação de dados:",
     "database-source/alert-query": "Você deve definir uma consulta válida",
     "database-source/alert-initial-database": "Você deve definir um banco de dados inicial",
     "database-source/alert-connection-name": "Você deve definir um nome de conexão",
