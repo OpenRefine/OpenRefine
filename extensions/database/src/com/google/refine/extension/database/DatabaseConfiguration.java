@@ -133,8 +133,7 @@ public class DatabaseConfiguration {
                     databaseHost + ((databasePort == 0) ? "" : (":" + databasePort)),
                     "/" + databaseName,
                     useSSL ? "useSSL=true" : null,
-                    null
-            );
+                    null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
