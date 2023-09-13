@@ -54,11 +54,11 @@ public class StringCriterion extends Criterion {
         super();
         collator = Collator.getInstance();
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
-        collator.setStrength(Collator.SECONDARY);
     }
 
     @Override
     public KeyMaker createKeyMaker() {
+        collator.setStrength(caseSensitive ? Collator.IDENTICAL : Collator.SECONDARY);
         return new KeyMaker() {
 
             @Override
