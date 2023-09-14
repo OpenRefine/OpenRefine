@@ -22,7 +22,6 @@
     "database-source/alert-initial-database": "Du skal angive en initial database",
     "database-source/alert-query": "Du skal angive en lovlig forespørgsel",
     "database-source/alert-password": "Du skal angive et database kodeord",
-    "database-source/alert-invalid-query-keyword": "En forespørgsel må ikke indeholde et datamanipulationsnøgleord:",
     "database-source/alert-invalid-query-select": "En forespørgsel skal starte med SELECT nøgleordet",
     "database-source/form-validation-failure": "Ny forbindelsesformular er ugyldig!",
     "database-source/connectionNameLabel": "Navn",
