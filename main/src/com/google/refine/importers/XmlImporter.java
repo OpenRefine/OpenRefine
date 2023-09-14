@@ -86,9 +86,8 @@ public class XmlImporter extends TreeImportingParserBase {
             if (fileRecords.size() > 0) {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                InputStream is = new FileInputStream(file);
 
-                try {
+                try (InputStream is = new FileInputStream(file)) {
                     XMLStreamReader parser = createXMLStreamReader(is);
                     PreviewParsingState state = new PreviewParsingState();
 
@@ -106,9 +105,8 @@ public class XmlImporter extends TreeImportingParserBase {
                         }
                     }
                 } catch (XMLStreamException e) {
-                    logger.warn("Error generating parser UI initialization data for XML file", e);
-                } finally {
-                    is.close();
+                    JSONUtilities.safePut(options, "error", e.toString());
+                    logger.error("Error generating parser UI initialization data for XML file", e);
                 }
             }
         } catch (IOException e) {
