@@ -173,12 +173,18 @@ public class EditBatchProcessor {
                 // Existing entities
                 EntityUpdate entityUpdate;
                 if (update.requiresFetchingExistingState()) {
-                    entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                    String entityId = update.getEntityId().getId();
+                    if (currentDocs.get(entityId) != null) {
+                        entityUpdate = update.toEntityUpdate(currentDocs.get(entityId));
+                    } else {
+                        logger.warn(String.format("Skipping editing of %s as it could not be retrieved", entityId));
+                        entityUpdate = null;
+                    }
                 } else {
                     entityUpdate = update.toEntityUpdate(null);
                 }
 
-                if (!entityUpdate.isEmpty()) { // skip updates which do not change anything
+                if (entityUpdate != null && !entityUpdate.isEmpty()) { // skip updates which do not change anything
                     editor.editEntityDocument(entityUpdate, false, summary, tags);
                 }
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase

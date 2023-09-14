@@ -74,7 +74,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 "http://my.recon.service/rdf/schema",
                 "type3894",
                 "octopus",
-                true,
+                true, 10,
                 Collections.emptyList(),
                 5);
         reconciled.setReconConfig(config);

@@ -11,7 +11,6 @@
     "database-source/alert-password": "Heu d'especificar una contrasenya de la base de dades",
     "database-source/alert-connection-name": "Heu d'especificar un nom per la connexió",
     "database-source/alert-initial-database": "Heu d'espacificar una base de dades incial",
-    "database-source/alert-invalid-query-keyword": "La consulta no pot contenir la paraula clau de manipulació de dades:",
     "database-source/alert-invalid-query-select": "La consulta ha de començar amb la paraula clau SELECT",
     "database-source/form-validation-failure": "Formulari de nova connexió no vàlid!",
     "database-source/alert-connection-edit": "Connexió editada",

@@ -310,7 +310,9 @@ successCallBack(columnName,dismissDialog);
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
-    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.columnNameInput.focus();
+      var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
     var o = DataTableView.sampleVisibleRows(column);
     
@@ -492,7 +494,7 @@ successCallBack(columnName,dismissDialog);
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
                 {
-                  "scroll" : false
+                  "scroll" : true
                 }
             );
           }
@@ -509,7 +511,7 @@ successCallBack(columnName,dismissDialog);
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
                 {
-                  "scroll" : false
+                  "scroll" : true
                 }
             );
           }

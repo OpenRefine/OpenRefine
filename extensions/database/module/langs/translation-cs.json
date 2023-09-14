@@ -48,7 +48,6 @@
     "database-source/alert-connection-edit": "Připojení bylo upraveno",
     "database-source/form-validation-failure": "Nová podpoba připojení není platná!",
     "database-source/alert-invalid-query-select": "Dotaz musí začínat klíčovým slovem SELECT",
-    "database-source/alert-invalid-query-keyword": "Dotaz nemůže obsahovat klíčové slovo pro manipulaci s daty:",
     "database-source/alert-query": "Musíte zadat validní dotaz",
     "database-source/alert-initial-database": "Musíte určit výchozí databázi",
     "database-source/alert-connection-name": "Musíte určit název připojení",

@@ -5,7 +5,6 @@
     "wikibase-extension/export-to-qs": "Esporta verso QuickStatements",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-extension/menu-label": "Wikidata",
-    "wikibase-schema/dialog-explanation": "Stai attualmente lavorando con <a href=\"$1\" target=\"_blank\">$2</a>. Dovresti prima di tutto riconciliare i tuoi dati tramite un servizio di riconciliazione legato a $2. Lo schema sottostante mostra come i tuoi dati verranno trasformati in modifiche su $2. Puoi trascinare i nomi delle colonne qui sotto nella maggior parte delle caselle di input: per ogni riga, le modifiche saranno generate con i valori di queste colonne.",
     "wikibase-schema/preview-explanation": "Questa pagina mostra solo una parte (su $1) delle modifiche che verranno effettuate su <a href=\"$2\" target=\"_blank\">$3</a>. Puoi usare le faccette per controllare le singole modifiche sugli elementi.",
     "wikibase-schema/schema-tab-header": "Schema",
     "wikibase-schema/warnings-tab-header": "Problemi",
