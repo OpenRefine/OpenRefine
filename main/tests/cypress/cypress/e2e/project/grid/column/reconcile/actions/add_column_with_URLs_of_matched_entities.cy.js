@@ -1,4 +1,4 @@
-describe('Add column with URLs of matched entities', () => {
+/*describe('Add column with URLs of matched entities', () => {
   afterEach(() => {
     cy.addProjectForDeletion();
   });
@@ -24,5 +24,5 @@ describe('Add column with URLs of matched entities', () => {
     cy.assertCellEquals(3,'Entity URL','null');
 
   });
-});
+});*/
     

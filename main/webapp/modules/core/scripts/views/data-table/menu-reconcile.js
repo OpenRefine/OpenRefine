@@ -55,31 +55,66 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doAddColumnWithUrlOfMatchedEntities = function() {
-    var serviceUrl = null;
-    var service = null;
-    if (column.reconConfig) {
-        serviceUrl = column.reconConfig.service;
-    }
-    if (serviceUrl) {
-        service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-    } 
-    if (service && service.view){
-     Refine.postCoreProcess
-     (
-      "add-column", 
-      {
-        baseColumnName: column.name,  
-        newColumnName: $.i18n('core-views/entity-URL'), 
-        columnInsertIndex: columnIndex + 1,
-        onError: "set-to-blank"
-      },
-      { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
-      { modelsChanged: true },
-     );
-    } else {
-      alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains')); }
-  }
+  function successCallBack(columnName,dismissDialog)
+{
+var serviceUrl = null;
+var service = null;
+if (column.reconConfig) {
+serviceUrl = column.reconConfig.service;
+}
+if (serviceUrl) {
+service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+}
+if (service && service.view){
+Refine.postCoreProcess
+(
+"add-column",
+{
+baseColumnName: column.name,
+newColumnName: columnName,
+columnInsertIndex: columnIndex + 1,
+onError: "set-to-blank"
+},
+{ expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
+{ modelsChanged: true },
+{ onDone: dismissDialog},
+);
+} else {
+alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains')); }
+}
+
+
+var doAddColumnWithUrlOfMatchedEntities = function () {
+promptForColumn(successCallBack);
+}
+
+
+function promptForColumn(successCallBack){
+var frame = $(
+DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
+var elmts = DOM.bind(frame);
+elmts.dialogHeader.text($.i18n('core-views/add-entity-URL', column.name));
+elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
+elmts.okButton.html($.i18n('core-buttons/ok'));
+elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+var level = DialogSystem.showDialog(frame);
+var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+var o = DataTableView.sampleVisibleRows(column);
+elmts.cancelButton.on('click',dismiss);
+elmts.form.on('submit',function(event) {
+event.preventDefault();
+var columnName = jQueryTrim(elmts.columnNameInput[0].value);
+if (!columnName.length) {
+alert($.i18n('core-views/warning-col-name'));
+return;
+}
+var dismissDialog=function(o) {
+dismiss();
+};
+successCallBack(columnName,dismissDialog);
+
+});
+}
   var doReconMatchBestCandidates = function() {
     Refine.postCoreProcess(
       "recon-match-best-candidates",
