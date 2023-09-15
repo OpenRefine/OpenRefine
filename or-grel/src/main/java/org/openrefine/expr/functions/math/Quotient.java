@@ -52,7 +52,7 @@ public class Quotient extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the integer portion of a division";
+        return "Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.";
     }
 
     @Override

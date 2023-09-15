@@ -51,12 +51,12 @@ public class Ceil extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the ceiling of a number";
+        return "Returns the ceiling of a number.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

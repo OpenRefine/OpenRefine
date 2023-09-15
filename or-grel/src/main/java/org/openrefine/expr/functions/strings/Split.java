@@ -76,12 +76,12 @@ public class Split extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.";
+        return "Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. If preserveTokens is true, empty segments are preserved.";
     }
 
     @Override
     public String getParams() {
-        return "string s, string or regex sep, optional boolean preserveAllTokens";
+        return "string s, string or regex sep, optional boolean preserveTokens";
     }
 
     @Override

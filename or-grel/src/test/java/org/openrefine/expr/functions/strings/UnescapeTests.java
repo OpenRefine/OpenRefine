@@ -31,18 +31,9 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.strings.Unescape;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class UnescapeTests extends FunctionTestBase {
-
-    @Test
-    public void serializeUnescape() {
-        String json = "{\"description\":\"Unescapes all escaped parts of the string depending on the given escaping mode.\",\"params\":\"string s, string mode ['html','xml','csv','url','javascript']\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Unescape(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testUnescape() {

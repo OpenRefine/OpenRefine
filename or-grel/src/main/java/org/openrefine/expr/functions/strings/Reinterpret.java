@@ -105,7 +105,7 @@ public class Reinterpret implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns s reinterpreted using a target encoding and optional source encoding.";
+        return "Returns s reinterpreted through the given character encoders. You must supply one of the supported encodings for each of the original source and the target output: https://docs.oracle.com/javase/1.5.0/docs/guide/intl/encoding.doc.html. Note that quotes are required around character encoders.";
     }
 
     @Override

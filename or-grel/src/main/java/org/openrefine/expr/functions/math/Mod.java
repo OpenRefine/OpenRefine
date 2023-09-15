@@ -56,12 +56,12 @@ public class Mod extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a modulus b";
+        return "Returns n1 modulus n2.";
     }
 
     @Override
     public String getParams() {
-        return "number a, number b";
+        return "number n1, number n2";
     }
 
     @Override

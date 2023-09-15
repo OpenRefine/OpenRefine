@@ -71,7 +71,7 @@ public class FacetCount implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the facet count corresponding to the given choice value";
+        return "Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName.";
     }
 
     @Override

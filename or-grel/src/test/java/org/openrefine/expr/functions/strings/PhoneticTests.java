@@ -31,18 +31,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.strings.Phonetic;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class PhoneticTests extends FunctionTestBase {
-
-    @Test
-    public void serializePhonetic() {
-        String json = "{\"description\":\"Returns the a phonetic encoding of s (optionally indicating which encoding to use')\",\"params\":\"string s, string encoding (optional, defaults to 'metaphone3')\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Phonetic(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testtoPhoneticInvalidParams() {

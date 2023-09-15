@@ -27,16 +27,5 @@
 
 package org.openrefine.expr.functions.xml;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class InnerXmlTests {
-
-    @Test
-    public void serializeInnerXml() {
-        String json = "{\"description\":\"The innerXml/innerHtml of an XML/HTML element\",\"params\":\"Element e\",\"returns\":\"String innerXml/innerHtml\"}";
-        TestUtils.isSerializedTo(new InnerXml(), json, ParsingUtilities.defaultWriter);
-    }
 }

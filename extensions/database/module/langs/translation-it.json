@@ -49,5 +49,16 @@
     "database-source/alert-conn-name-invalid-character": "Errore di input del nome di connessione: carattere non valido nell'input. Sono consentiti solo i caratteri [a-zA-z-0-9._-]",
     "database-source/alert-db-host-invalid-character": "Errore dell'host del database: carattere non valido nell'input. Sono consentiti solo caratteri alfanumerici",
     "database-source/alert-db-user-invalid-character": "Errore utente del database: carattere non valido nell'input. Sono consentiti solo caratteri alfanumerici",
-    "database-source/alert-db-port-invalid-character": "Errore porta database: carattere non valido nell'input. Sono consentiti solo valori numerici."
+    "database-source/alert-db-port-invalid-character": "Errore porta database: carattere non valido nell'input. Sono consentiti solo valori numerici.",
+    "database-source/new-connection-legend": "Editor della nuova connessione",
+    "database-source/connectionNameDefaultValue": "Nome_nuova_connessione",
+    "database-source/databaseSchemaPlaceholder": "Indica lo schema iniziale del database",
+    "database-source/databaseFileNamePlaceholder": "Indica il percorso completo del file del database",
+    "database-source/databaseNamePlaceholder": "Indica il nome del database",
+    "database-source/databasePasswordPlaceholder": "Indica la password del database",
+    "database-source/databaseUserPlaceholder": "Indica il nome dell'utente del database",
+    "database-source/databasePortPlaceholder": "Indica il nome della porta del database, es. 3306",
+    "database-source/databaseHostPlaceholder": "Indica il nome del dominio o l'IP del server del database",
+    "database-source/connectionNamePlaceholder": "Indica il nome della nuova connessione",
+    "database-import/importer-name": "Database"
 }

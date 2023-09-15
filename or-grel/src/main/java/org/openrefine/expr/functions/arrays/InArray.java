@@ -73,7 +73,7 @@ public class InArray extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Checks if array a contains string s";
+        return "Returns true if the array contains the desired string, and false otherwise. Will not convert data types.";
     }
 
     @Override

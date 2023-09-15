@@ -55,7 +55,7 @@ public class IndexOf extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the index of sub first ocurring in s";
+        return "Returns the first character index of sub as it first occurs in s; or, returns -1 if s does not contain sub. For example, \"internationalization\".indexOf(\"nation\") returns 5.";
     }
 
     @Override

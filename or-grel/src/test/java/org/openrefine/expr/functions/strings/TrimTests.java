@@ -31,10 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.strings.Trim;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class TrimTests extends FunctionTestBase {
 
@@ -90,11 +87,5 @@ public class TrimTests extends FunctionTestBase {
                     "Trim for whitespace char: '" + c + "' at index " + i + " failed");
         }
 
-    }
-
-    @Test
-    public void serializeTrim() {
-        String json = "{\"description\":\"Returns copy of the string, with leading and trailing whitespace omitted.\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Trim(), json, ParsingUtilities.defaultWriter);
     }
 }

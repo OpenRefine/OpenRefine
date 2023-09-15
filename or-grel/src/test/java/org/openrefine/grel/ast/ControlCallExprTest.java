@@ -11,7 +11,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.grel.Control;
-import org.openrefine.grel.ast.ControlCallExpr;
 
 public class ControlCallExprTest extends ExprTestBase {
 

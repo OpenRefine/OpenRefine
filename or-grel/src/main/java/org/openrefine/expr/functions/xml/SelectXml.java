@@ -63,12 +63,12 @@ public class SelectXml extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Selects an element from an XML or HTML elementn using selector syntax.";
+        return "Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the Jsoup selector syntax: https://jsoup.org/apidocs/org/jsoup/select/Selector.html.";
     }
 
     @Override
     public String getParams() {
-        return "Element e, String s";
+        return "string s, element e";
     }
 
     @Override

@@ -96,17 +96,36 @@ DataTableCellUI.prototype._render = function() {
       nonstringSpan.className = 'data-table-value-nonstring';
       nonstringSpan.textContent = cell.v;
       divContent.appendChild(nonstringSpan);
-    } else if (URL.looksLikeUrl(cell.v)) {
-      var url = document.createElement('a');
-      url.textContent = cell.v;
-      url.setAttribute('href', cell.v);
-      url.setAttribute('target', '_blank');
-      divContent.appendChild(url);
     } else {
-      var span = document.createElement('span');
-      span.textContent = cell.v;
-      divContent.appendChild(span);
-    }
+      var arr = cell.v.split(" ");
+      var spanArr = [];
+      for (var i=0; i<arr.length; i++){
+        if (URL.looksLikeUrl(arr[i])) {
+          if (spanArr.length != 0) {
+            var span = document.createElement('span');
+            span.textContent = spanArr.join(" ");
+            divContent.appendChild(span).appendChild(document.createTextNode('\u00A0'));
+            spanArr = [];
+          }
+          var url = document.createElement('a');
+          url.textContent = arr[i];
+          url.setAttribute('href', arr[i]);
+          url.setAttribute('target', '_blank');
+          if (i == arr.length-1){
+            divContent.appendChild(url)
+          } else {
+            divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
+          }
+        } else {
+          spanArr.push(arr[i]);
+        }
+      }
+      if (spanArr.length != 0) {
+        var span = document.createElement('span');
+        span.textContent = spanArr.join(" ");
+        divContent.appendChild(span);
+      }
+    }  
   } else {
     var divContentRecon = $(divContent);
     var r = cell.r;
@@ -472,8 +491,8 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     return; // no preview service available
   }
 
-  MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
   fakeMenu.appendTo(elmt);
+  MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
 
   var dismissMenu = function() {
      fakeMenu.remove();

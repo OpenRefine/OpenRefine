@@ -51,12 +51,12 @@ public class Cos extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the trigonometric cosine of an angle";
+        return "Returns the trigonometric cosine of an angle.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

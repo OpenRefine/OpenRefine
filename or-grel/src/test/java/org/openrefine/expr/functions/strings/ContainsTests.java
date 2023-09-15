@@ -32,10 +32,7 @@ import java.util.regex.Pattern;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.strings.Contains;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 /**
  * Test cases for find function.
@@ -56,9 +53,4 @@ public class ContainsTests extends FunctionTestBase {
         Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")), true);
     }
 
-    @Test
-    public void serializeContains() {
-        String json = "{\"description\":\"Returns whether s contains frag\",\"params\":\"string s, string frag\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Contains(), json, ParsingUtilities.defaultWriter);
-    }
 }

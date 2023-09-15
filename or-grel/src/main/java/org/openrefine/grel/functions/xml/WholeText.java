@@ -61,16 +61,16 @@ public class WholeText extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any newlines and spaces, and returns unencoded, un-normalized text";
+        return "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element.";
     }
 
     @Override
     public String getParams() {
-        return "Element e";
+        return "element e";
     }
 
     @Override
     public String getReturns() {
-        return "String text";
+        return "string";
     }
 }

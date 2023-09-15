@@ -61,16 +61,16 @@ public class OwnText extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Gets the text owned by this XML/HTML element only; does not get the combined text of all children.";
+        return "Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.";
     }
 
     @Override
     public String getParams() {
-        return "Element e";
+        return "element e";
     }
 
     @Override
     public String getReturns() {
-        return "String ownText";
+        return "string ownText";
     }
 }

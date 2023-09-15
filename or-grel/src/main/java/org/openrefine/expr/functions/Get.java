@@ -154,9 +154,9 @@ public class Get extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "If o has fields, returns the field named 'from' of o. " +
-                "If o is an array, returns o[from, to]. " +
-                "if o is a string, returns o.substring(from, to)";
+        return "If o has named fields, returns the field named 'from' of o. " +
+                "If o is an array, returns a sub-array o[from, to]. " +
+                "if o is a string, returns o.substring(from, to).";
     }
 
     @Override

@@ -55,7 +55,7 @@ public class SHA1 extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the SHA-1 hash of s";
+        return "Returns the SHA-1 hash of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string.";
     }
 
     @Override

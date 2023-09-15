@@ -51,12 +51,12 @@ public class ACos extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the arc cosine of an angle, in the range 0 through PI";
+        return "Returns the arc cosine of an angle, in the range 0 through PI.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

@@ -102,7 +102,7 @@ public class SmartSplit extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \"sep\" is not given.";
+        return "Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern.";
     }
 
     @Override

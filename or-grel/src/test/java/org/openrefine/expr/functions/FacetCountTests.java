@@ -36,12 +36,9 @@ import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.functions.FacetCount;
 import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class FacetCountTests extends FunctionTestBase {
 
@@ -75,9 +72,4 @@ public class FacetCountTests extends FunctionTestBase {
         Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Long.valueOf(2));
     }
 
-    @Test
-    public void serializeFacetCount() {
-        String json = "{\"description\":\"Returns the facet count corresponding to the given choice value\",\"params\":\"choiceValue, string facetExpression, string columnName\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new FacetCount(), json, ParsingUtilities.defaultWriter);
-    }
 }

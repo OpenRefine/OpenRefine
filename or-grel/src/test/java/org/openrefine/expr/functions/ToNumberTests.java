@@ -33,21 +33,12 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.ToNumber;
 import org.openrefine.grel.Function;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class ToNumberTests extends FunctionTestBase {
 
     private static final Double EPSILON = 0.000001;
-
-    @Test
-    public void serializeToNumber() {
-        String json = "{\"description\":\"Returns o converted to a number\",\"params\":\"o\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new ToNumber(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testConversions() {

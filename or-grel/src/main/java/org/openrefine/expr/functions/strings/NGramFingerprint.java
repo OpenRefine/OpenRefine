@@ -74,7 +74,7 @@ public class NGramFingerprint extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the n-gram fingerprint of s";
+        return "Returns the n-gram fingerprint of s.";
     }
 
     @Override

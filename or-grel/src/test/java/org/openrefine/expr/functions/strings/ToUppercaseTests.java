@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.strings;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.strings.ToUppercase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ToUppercaseTests {
-
-    @Test
-    public void serializeToUppercase() {
-        String json = "{\"description\":\"Returns s converted to uppercase\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToUppercase(), json, ParsingUtilities.defaultWriter);
-    }
 }

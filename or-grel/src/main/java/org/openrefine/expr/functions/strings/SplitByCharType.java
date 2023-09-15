@@ -57,7 +57,7 @@ public class SplitByCharType extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings obtained by splitting s grouping consecutive chars by their unicode type";
+        return "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories.";
     }
 
     @Override

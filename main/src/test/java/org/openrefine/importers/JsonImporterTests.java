@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,6 +41,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestResult;
@@ -145,6 +143,7 @@ public class JsonImporterTests extends ImporterTest {
                     metadata,
                     job,
                     "file-source",
+                    "archive-name",
                     inputStream,
                     rootColumnGroup,
                     -1L,
@@ -490,6 +489,30 @@ public class JsonImporterTests extends ImporterTest {
         Assert.assertEquals(grid.rowCount(), 63);
         Assert.assertEquals(grid.recordCount(), 8);
     }
+
+    @Test
+    public void testAddFileColumn() throws Exception {
+        final String FILE = "json-sample-format-1.json";
+        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        String fileContents = FileUtils.readFileToString(new File(filename), Charsets.UTF_8);
+
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        GridState grid = RunTest(fileContents, options);
+
+        Assert.assertNotNull(grid.getColumnModel().getColumnByName("File"));
+        Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
+    }
+
+    // ------------helper methods---------------
 
     private static String getTypicalElement(int id) {
         return "{ \"id\" : " + id + "," +

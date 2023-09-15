@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Fact;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class FactTests {
-
-    @Test
-    public void serializeFact() {
-        String json = "{\"description\":\"Returns the factorial of a number\",\"params\":\"number i\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Fact(), json, ParsingUtilities.defaultWriter);
-    }
 }

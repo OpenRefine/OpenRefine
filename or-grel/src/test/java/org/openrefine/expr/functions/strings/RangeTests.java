@@ -32,8 +32,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 /**
  * Tests for the range function.
@@ -306,12 +304,6 @@ public class RangeTests extends FunctionTestBase {
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "0"))), EMPTY_ARRAY);
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-1"))), FIVE_TO_TWO);
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-2"))), FIVE_AND_THREE);
-    }
-
-    @Test
-    public void serializeRange() {
-        String json = "{\"description\":\"Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).\",\"params\":\"A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Range(), json, ParsingUtilities.defaultWriter);
     }
 
 }

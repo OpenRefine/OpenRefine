@@ -120,6 +120,7 @@
     "wikibase-account/log-in": "Log in",
     "wikibase-account/logged-in-as": "You are logged in as:",
     "wikibase-account/log-out": "Log out",
+    "wikibase-account/logo-alt-text": "$1 Logo",
     "wikibase-preview/new-id": "new item",
     "wikibase-schema/unsaved-warning": "You have made unsaved changes to your Wikidata schema. Close anyway?",
     "wikibase-schema/incomplete-schema-could-not-be-saved": "Your schema is incomplete so it cannot be saved yet.",

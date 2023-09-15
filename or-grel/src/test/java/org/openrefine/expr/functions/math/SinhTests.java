@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Sinh;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class SinhTests {
-
-    @Test
-    public void serializeSinh() {
-        String json = "{\"description\":\"Returns the hyperbolic sine of an angle\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Sinh(), json, ParsingUtilities.defaultWriter);
-    }
 }

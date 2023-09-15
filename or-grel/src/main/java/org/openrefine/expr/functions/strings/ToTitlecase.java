@@ -63,7 +63,7 @@ public class ToTitlecase extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns s converted to titlecase";
+        return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, 'Once upon a midnight DREARY'.toTitlecase() returns the string 'Once Upon A Midnight Dreary'.";
     }
 
     @Override

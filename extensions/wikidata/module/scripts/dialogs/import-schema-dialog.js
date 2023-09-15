@@ -43,7 +43,6 @@ ImportSchemaDialog.launch = function() {
        if (!schema.siteIri || !schema.mediaWikiApiEndpoint) {
          schema.siteIri = WikidataManifestV1_0.wikibase.site_iri;
          schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
-         schema.editGroupsURLSchema = WikidataManifestV1_0.editgroups.url_schema;
        }
     } catch(e) {
        elmts.invalidSchema.text($.i18n('import-wikibase-schema/invalid-schema'));

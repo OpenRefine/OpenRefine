@@ -27,17 +27,6 @@
 
 package org.openrefine.expr.functions;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.Jsonize;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class JsonizeTests {
 
-    @Test
-    public void serializeJsonize() {
-        String json = "{\"description\":\"Quotes a value as a JSON literal value\",\"params\":\"value\",\"returns\":\"JSON literal value\"}";
-        TestUtils.isSerializedTo(new Jsonize(), json, ParsingUtilities.defaultWriter);
-    }
 }

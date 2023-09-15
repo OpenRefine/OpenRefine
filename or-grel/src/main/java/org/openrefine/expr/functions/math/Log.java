@@ -51,7 +51,7 @@ public class Log extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the base 10 log of n";
+        return "Returns the base 10 logarithm of n.";
     }
 
     @Override

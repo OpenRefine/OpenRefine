@@ -61,12 +61,12 @@ public class Multinomial extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Calculates the multinomial of a series of numbers";
+        return "Calculates the multinomial of one number or a series of numbers.";
     }
 
     @Override
     public String getParams() {
-        return "one or more numbers";
+        return "number n1, number n2, ...";
     }
 
     @Override

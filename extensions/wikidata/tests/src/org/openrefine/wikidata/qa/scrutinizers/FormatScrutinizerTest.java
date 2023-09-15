@@ -56,6 +56,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
     public static Value noMatchValue = Datamodel.makeStringValue("image");
     public static Value incompleteMatchValue = Datamodel.makeStringValue(".jpg");
     public static String regularExpression = "(?i).+\\.(jpg|jpeg|jpe|png|svg|tif|tiff|gif|xcf|pdf|djvu|webp)";
+    public static String invalidRegularExpression = "(?[A-Za-z]+)";
 
     public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(FORMAT_CONSTRAINT_QID);
     public static PropertyIdValue regularExpressionParameter = Datamodel.makeWikidataPropertyIdValue(FORMAT_REGEX_PID);
@@ -73,11 +74,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
-        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
-        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+        List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
@@ -93,11 +90,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
-        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
-        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+        List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
@@ -113,17 +106,37 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
-        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
-        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+        List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
+    }
+
+    @Test
+    public void testInvalidRegex() {
+        ItemIdValue idA = TestingData.existingId;
+        ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
+        Statement statement = new StatementImpl("P18", value, idA);
+        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+        scrutinize(updateA);
+        assertNoWarningRaised();
+    }
+
+    protected List<Statement> generateFormatConstraint(String regex) {
+        Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, Datamodel.makeStringValue(regex));
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        return constraintParameterStatementList(entityIdValue, constraintQualifiers);
     }
 
 }

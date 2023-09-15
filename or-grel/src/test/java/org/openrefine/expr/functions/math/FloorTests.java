@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Floor;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class FloorTests {
-
-    @Test
-    public void serializeFloor() {
-        String json = "{\"description\":\"Returns the floor of a number as an integer\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Floor(), json, ParsingUtilities.defaultWriter);
-    }
 }

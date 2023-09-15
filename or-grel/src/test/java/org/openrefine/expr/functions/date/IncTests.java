@@ -35,10 +35,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.date.Inc;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class IncTests extends FunctionTestBase {
 
@@ -98,12 +95,6 @@ public class IncTests extends FunctionTestBase {
         // exception
         Assert.assertTrue(invoke("inc", source, 99) instanceof EvalError);
         Assert.assertTrue(invoke("inc", source.toInstant().toEpochMilli(), 99, "h") instanceof EvalError);
-    }
-
-    @Test
-    public void serializeInc() {
-        String json = "{\"description\":\"Returns a date changed by the given amount in the given unit of time\",\"params\":\"date d, number value, string unit (default to 'hour')\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Inc(), json, ParsingUtilities.defaultWriter);
     }
 
 }

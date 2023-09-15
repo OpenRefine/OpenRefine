@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.strings;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.strings.Reinterpret;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ReinterpretTests {
-
-    @Test
-    public void serializeReinterpret() {
-        String json = "{\"description\":\"Returns s reinterpreted using a target encoding and optional source encoding.\",\"params\":\"string s, string target encoding, string source encoding\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Reinterpret(), json, ParsingUtilities.defaultWriter);
-    }
 }

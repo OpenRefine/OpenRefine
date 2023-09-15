@@ -51,12 +51,12 @@ public class Fact extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the factorial of a number";
+        return "Returns the factorial of a number, starting from 1.";
     }
 
     @Override
     public String getParams() {
-        return "number i";
+        return "number n";
     }
 
     @Override

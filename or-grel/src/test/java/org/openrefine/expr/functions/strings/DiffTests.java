@@ -37,10 +37,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.strings.Diff;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class DiffTests extends FunctionTestBase {
 
@@ -119,12 +116,6 @@ public class DiffTests extends FunctionTestBase {
         Assert.assertTrue(invoke("diff", odt4, odt5, "milis") instanceof EvalError);
         Assert.assertTrue(invoke("diff", odt4, odt5, "millis") instanceof EvalError);
         Assert.assertTrue(invoke("diff", odt4, odt5, "yars") instanceof EvalError);
-    }
-
-    @Test
-    public void serializeDiff() {
-        String json = "{\"description\":\"For strings, returns the portion where they differ. For dates, it returns the difference in given time units\",\"params\":\"o1, o2, time unit (optional)\",\"returns\":\"string for strings, number for dates\"}";
-        TestUtils.isSerializedTo(new Diff(), json, ParsingUtilities.defaultWriter);
     }
 
 }

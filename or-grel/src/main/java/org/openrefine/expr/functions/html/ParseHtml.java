@@ -55,7 +55,7 @@ public class ParseHtml extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Parses a string as HTML";
+        return "Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing ' /' at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, value.parseHtml().toString().";
     }
 
     @Override

@@ -73,7 +73,7 @@ public class Type extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the type of o as a string ('string', 'date', 'number', 'array', 'boolean' or a class name)";
+        return "Returns a string with the data type of o, such as undefined, string, number, boolean, etc.";
     }
 
     @Override

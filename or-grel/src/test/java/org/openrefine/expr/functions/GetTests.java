@@ -34,16 +34,8 @@ import org.openrefine.RefineTest;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class GetTests extends RefineTest {
-
-    @Test
-    public void serializeGet() {
-        String json = "{\"description\":\"If o has fields, returns the field named 'from' of o. If o is an array, returns o[from, to]. if o is a string, returns o.substring(from, to)\",\"params\":\"o, number or string from, optional number to\",\"returns\":\"Depends on actual arguments\"}";
-        TestUtils.isSerializedTo(new Get(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testGetJsonFieldExists() throws ParsingException {

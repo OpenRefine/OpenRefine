@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.strings;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.strings.NGram;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class NGramTests {
-
-    @Test
-    public void serializeNGram() {
-        String json = "{\"description\":\"Returns an array of the word ngrams of s\",\"params\":\"string s, number n\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new NGram(), json, ParsingUtilities.defaultWriter);
-    }
 }

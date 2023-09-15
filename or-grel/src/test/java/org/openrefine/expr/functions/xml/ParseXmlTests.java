@@ -36,8 +36,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class ParseXmlTests extends FunctionTestBase {
 
@@ -58,12 +56,6 @@ public class ParseXmlTests extends FunctionTestBase {
             "        <foaf:title/>\n" +
             "    </foaf:Person>\n" +
             "</root>";
-
-    @Test
-    public void serializeParseXml() {
-        String json = "{\"description\":\"Parses a string as XML\",\"params\":\"string s\",\"returns\":\"XML object\"}";
-        TestUtils.isSerializedTo(new ParseXml(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testParseXml() {

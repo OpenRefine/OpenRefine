@@ -88,6 +88,16 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     }
 
     @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+
+    @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbExpression.class, variable,
                 "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}");

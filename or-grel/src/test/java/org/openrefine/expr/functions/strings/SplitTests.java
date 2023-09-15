@@ -31,18 +31,9 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.strings.Split;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class SplitTests extends FunctionTestBase {
-
-    @Test
-    public void serializeSplit() {
-        String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.\",\"params\":\"string s, string or regex sep, optional boolean preserveAllTokens\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Split(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testSplit() {

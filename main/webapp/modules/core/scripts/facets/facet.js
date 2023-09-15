@@ -37,6 +37,8 @@ class Facet {
   	this._config = config;
   	this._options = options || {};
   	this._minimizeState = false;
+  	
+  	Refine.showLeftPanel();
   };
 
   _minimize() {

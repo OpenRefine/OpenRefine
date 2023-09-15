@@ -72,17 +72,17 @@ public class Match extends PureFunction {
 
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a regexp");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects regex");
     }
 
     @Override
     public String getDescription() {
-        return "Returns an array of the groups matching the given regular expression";
+        return "Attempts to match the string s in its entirety against the regex pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order).";
     }
 
     @Override
     public String getParams() {
-        return "regexp";
+        return "string s, regex p";
     }
 
     @Override

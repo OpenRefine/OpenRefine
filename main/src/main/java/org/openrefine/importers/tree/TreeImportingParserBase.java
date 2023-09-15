@@ -98,9 +98,15 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         rootColumnGroup.tabulate();
         List<Integer> columnIndexTranslation = new ArrayList<>();
         ColumnModel columnModel = new ColumnModel(Collections.emptyList());
+        boolean includeArchiveName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
+        if (includeArchiveName) {
+            columnModel = columnModel.appendUnduplicatedColumn(new ColumnMetadata("Archive"));
+            columnIndexTranslation.add(0);
+        }
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         if (includeFileSources) {
-            columnModel.appendUnduplicatedColumn(new ColumnMetadata("File"));
+            columnModel = columnModel.appendUnduplicatedColumn(new ColumnMetadata("File"));
+            columnIndexTranslation.add(includeArchiveName ? 1 : 0);
         }
         columnModel = XmlImportUtilities.createColumnsFromImport(columnModel, rootColumnGroup, columnIndexTranslation);
         List<Row> reordered = new ArrayList<>(rows.size());
@@ -124,12 +130,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             final MultiFileReadingProgress progress) throws Exception {
         final File file = fileRecord.getFile(job.getRawDataDir());
         final String fileSource = fileRecord.getFileSource();
+        final String archiveFileName = fileRecord.getArchiveFileName();
 
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
-                parseOneFile(allocator, rows, metadata, job, fileSource, inputStream,
+                parseOneFile(allocator, rows, metadata, job, fileSource, archiveFileName, inputStream,
                         rootColumnGroup, limit, options);
             } finally {
                 inputStream.close();
@@ -150,6 +157,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream inputStream,
             ImportColumnGroup rootColumnGroup,
             long limit,
@@ -167,6 +175,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             TreeReader treeParser,
             ImportColumnGroup rootColumnGroup,
             long limit,
@@ -194,9 +203,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         if (includeFileSources) {
             allocator.allocateColumnIndex();
         }
+        boolean includeArchiveName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
+        if (includeArchiveName) {
+            allocator.allocateColumnIndex();
+        }
 
         XmlImportUtilities.importTreeData(treeParser, allocator, rows, recordPath, rootColumnGroup, limit2,
                 trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
-                fileSource);
+                fileSource, includeArchiveName, archiveFileName);
     }
 }

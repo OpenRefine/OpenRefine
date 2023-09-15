@@ -74,7 +74,7 @@ public class ToNumber extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns o converted to a number";
+        return "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.";
     }
 
     @Override

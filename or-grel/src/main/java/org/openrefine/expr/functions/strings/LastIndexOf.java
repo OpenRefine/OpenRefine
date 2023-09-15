@@ -55,7 +55,7 @@ public class LastIndexOf extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the index of sub last ocurring in s";
+        return "Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, \"parallel\".lastIndexOf(\"a\") returns 3 (pointing at the second 'a').";
     }
 
     @Override

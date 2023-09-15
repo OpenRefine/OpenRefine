@@ -197,12 +197,12 @@ public class ToDate extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html";
+        return "Returns the inputted object converted to a date object. Without arguments, it returns the ISO 8601 extended format. With arguments, you can control the output format. With monthFirst: set false if the date is formatted with the day before the month. With formatN: attempt to parse the date using an ordered list of possible formats. Supply formats based on the SimpleDateFormat syntax: <a href=\"http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\">SimpleDateFormat</a>";
     }
 
     @Override
     public String getParams() {
-        return "o, boolean month_first / format1, format2, ... (all optional)";
+        return "o, boolean monthFirst, string format1, string format2, ...)";
     }
 
     @Override

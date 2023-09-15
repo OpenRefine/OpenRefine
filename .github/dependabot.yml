@@ -3,6 +3,7 @@
 
 version: 2
 updates:
+# For openrefine java deps
 - package-ecosystem: maven
   directory: "/"
   schedule:
@@ -13,11 +14,18 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
+# For documentation website
 - package-ecosystem: "npm" # For Yarn
+  directory: "docs/"
+  schedule:
+    interval: "daily"
+# For github actions
+- package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "daily"
-- package-ecosystem: "github-actions"
-  directory: "/"
+# For cypress test_suite
+- package-ecosystem: "npm"
+  directory: "main/tests/cypress"
   schedule:
     interval: "daily"

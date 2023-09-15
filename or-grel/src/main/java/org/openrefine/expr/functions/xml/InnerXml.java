@@ -71,16 +71,16 @@ public class InnerXml extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "The innerXml/innerHtml of an XML/HTML element";
+        return "Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. Use it in conjunction with parseXml() and select() to provide an element.";
     }
 
     @Override
     public String getParams() {
-        return "Element e";
+        return "element e";
     }
 
     @Override
     public String getReturns() {
-        return "String innerXml/innerHtml";
+        return "string innerXml";
     }
 }

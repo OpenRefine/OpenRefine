@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -185,6 +185,21 @@ public class XmlImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithTreeStructure());
 
         assertProjectCreated(grid, 5, 6);
+    }
+
+    @Test
+    public void testAddFileColumn() throws Exception {
+        final String FILE = "xml-sample-format-1.xml";
+        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        String fileContents = FileUtils.readFileToString(new File(filename), Charsets.UTF_8);
+
+        ObjectNode options = getOptions(job, SUT);
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        GridState grid = RunTest(fileContents, options);
+
+        Assert.assertNotNull(grid.getColumnModel().getColumnByName("File"));
+        Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
     }
 
     // ------------helper methods---------------

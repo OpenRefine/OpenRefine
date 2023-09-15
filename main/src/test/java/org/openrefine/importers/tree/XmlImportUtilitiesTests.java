@@ -212,7 +212,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[] { "library", "book" };
 
         XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1L,
-                false, true, false, false, null);
+                false, true, false, false, null, false, null);
 
         Assert.assertEquals(rows.size(), 6);
 
@@ -236,7 +236,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[] { "library", "book" };
         try {
             XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
-                    false, true, false, false, null);
+                    false, true, false, false, null, false, null);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -258,7 +258,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         String[] recordPath = new String[] { "library", "book" };
         XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
-                false, true, false, false, null);
+                false, true, false, false, null, false, null);
 
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.get(0).cells.size(), 4);
@@ -339,7 +339,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         int pathIndex = 0;
 
         XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
-                false, false, false, false, null);
+                false, false, false, false, null, false, null);
 
         Assert.assertEquals(rows.size(), 6);
 
@@ -362,7 +362,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         int pathIndex = 0;
 
         XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
-                false, false, false, false, null);
+                false, false, false, false, null, false, null);
 
         Assert.assertEquals(rows.size(), 6);
 
@@ -376,7 +376,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
@@ -394,7 +394,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 2);
@@ -416,7 +416,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
@@ -460,7 +460,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, true, false, false, false, "");
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, true, false, false, false, "", false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
@@ -481,7 +481,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail();
         }
@@ -531,7 +531,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
@@ -552,7 +552,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
@@ -573,7 +573,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
@@ -595,7 +595,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "", false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }

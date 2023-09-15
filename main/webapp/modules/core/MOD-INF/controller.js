@@ -538,6 +538,7 @@ function init() {
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/common-transform-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
@@ -638,7 +639,11 @@ function process(path, request, response) {
       var output = response.getWriter();
       try {
         var paths = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-        for each (var qualifiedPath in paths) {
+        for (var key in paths) {
+          if (!paths.hasOwnProperty(key)) {
+            continue;
+          }
+          var qualifiedPath = paths[key];
           var input = null;
           try {
             var url = qualifiedPath.module.getResource(qualifiedPath.path);
@@ -683,9 +688,12 @@ function process(path, request, response) {
         
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
-        for each (var qualifiedPath in styles) {
-          styleInjection.push(
-              '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+        for (var key in styles) {
+          if (styles.hasOwnProperty(key)) {
+            var qualifiedPath = styles[key];
+            styleInjection.push(
+                '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+          }
         }
         context.styleInjection = styleInjection.join("\n");
 
@@ -694,9 +702,12 @@ function process(path, request, response) {
         } else {
           var scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
           var scriptInjection = [];
-          for each (var qualifiedPath in scripts) {
-            scriptInjection.push(
-                '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+          for (var key in scripts) {
+            if (scripts.hasOwnProperty(key)) {
+              var qualifiedPath = scripts[key];
+              scriptInjection.push(
+                  '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+            }
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
@@ -705,11 +716,19 @@ function process(path, request, response) {
           var encodings = [];
           
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
-          for each (var code in sortedCharsetMap.keySet().toArray()) {
+          var keySetArray = sortedCharsetMap.keySet().toArray();
+          for (var key in keySetArray) {
+            if (!keySetArray.hasOwnProperty(key)) {
+              continue;
+            }
+            var code = keySetArray[key];
             var charset = sortedCharsetMap.get(code);
+            var aliasesArray = charset.aliases().toArray();
             var aliases = [];
-            for each (var alias in charset.aliases().toArray()) {
-              aliases.push(alias);
+            for (var key1 in aliasesArray) {
+              if (aliasesArray.hasOwnProperty(key1)) {
+                aliases.push(aliasesArray[key1]);
+              }
             }
             
             encodings.push({

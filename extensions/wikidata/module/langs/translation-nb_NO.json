@@ -168,5 +168,5 @@
     "wikibase-schema/label-if-new": "Etikett (ikke overstyr)",
     "wikibase-schema/label-override": "Etikett (overstyr hvis satt)",
     "wikibase-extension/wikibase-edits": "Wikibase-redigeringer…",
-    "wikibase-extension/qs-file": "QickStatements-fil"
+    "wikibase-extension/qs-file": "QuickStatements-fil"
 }

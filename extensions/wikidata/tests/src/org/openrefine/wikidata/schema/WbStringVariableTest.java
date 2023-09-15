@@ -42,6 +42,18 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
         isSkipped("");
     }
 
+    /**
+     * This should not normally happen: cell values should never be null (only whole cells can be null). But better safe
+     * than sorry!
+     */
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+
     @Test
     public void testSimpleString() {
         evaluatesTo(Datamodel.makeStringValue("apfelstrudel"), "apfelstrudel");

@@ -88,12 +88,12 @@ public class Inc extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a date changed by the given amount in the given unit of time";
+        return "Returns a date changed by the given amount in the given unit of time, in quotes. See https://docs.openrefine.org/manual/grelfunctions/#incd-n-s-timeunit for a table. The default unit is 'hour'. A positive value increases the date, and a negative value moves it back in time.";
     }
 
     @Override
     public String getParams() {
-        return "date d, number value, string unit (default to 'hour')";
+        return "date d, number n, string unit";
     }
 
     @Override

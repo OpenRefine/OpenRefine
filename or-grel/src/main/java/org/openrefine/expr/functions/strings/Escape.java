@@ -86,7 +86,7 @@ public class Escape extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Escapes a string depending on the given escaping mode.";
+        return "Escapes s in the given escaping mode. The mode can be one of: 'html', 'xml', csv', 'url', 'javascript'. Note that quotes are required around your mode.";
     }
 
     @Override

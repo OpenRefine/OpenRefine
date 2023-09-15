@@ -37,13 +37,15 @@
     "gdata-import/re-sign-in": "acceder de nuevo",
     "gdata-import/retrieving": "Recuperando los documentos de Google Docs…",
     "gdata-import/access-data": "el acceso a sus datos de Google.",
-    "gdata-import/sign-out": "finalice la sesión",
-    "gdata-import/sign-in": "acceda y autorice",
+    "gdata-import/sign-out": "Finalizar sesión",
+    "gdata-import/sign-in": "Ingrese",
     "gdata-import/please": "Rogamos que",
     "gdata-import/auth-doc": "Documentos autorizados",
     "gdata-import/next->": "Siguiente &rarr;",
     "gdata-import/import-by-url": "Importe una hoja de cálculo <em>pública</em> de Google mediante su URL:",
     "gdata-import/title": "Documentos públicos",
     "gdata-import/creating": "Creando proyecto…",
-    "gdata-import/preparing": "Preparando…"
+    "gdata-import/preparing": "Preparando…",
+    "gdata-import/re-sign-in-another": "Iniciar sesión con una cuenta diferente",
+    "gdata-import/please-signin": "Inicie sesión y autorice el acceso a sus datos de Google"
 }

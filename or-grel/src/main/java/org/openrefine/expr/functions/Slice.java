@@ -126,17 +126,17 @@ public class Slice extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "If o is an array, returns o[from, to]. " +
-                "if o is a string, returns o.substring(from, to)";
+        return "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only.";
+
     }
 
     @Override
     public String getParams() {
-        return "o, number from, optional number to";
+        return "string s or array a, number from, number to (optional)";
     }
 
     @Override
     public String getReturns() {
-        return "Depends on actual arguments";
+        return "string, array, or array item (number, string, etc.)";
     }
 }

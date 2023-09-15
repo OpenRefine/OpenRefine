@@ -29,14 +29,14 @@ package org.openrefine.expr.functions.date;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.date.DatePart;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class DatePartTests extends FunctionTestBase {
 
@@ -98,10 +98,11 @@ public class DatePartTests extends FunctionTestBase {
         Assert.assertEquals(invoke("datePart", source, "time"), 1525132544000l);
     }
 
-    @Test
-    public void serializeDatePart() {
-        String json = "{\"description\":\"Returns part of a date\",\"params\":\"date d, string part\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new DatePart(), json, ParsingUtilities.defaultWriter);
+    // Convert Date to Calendar
+    private Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.setTime(date);
+        return calendar;
     }
 
 }

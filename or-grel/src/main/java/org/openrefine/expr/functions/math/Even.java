@@ -56,12 +56,12 @@ public class Even extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Rounds the number up to the nearest even integer";
+        return "Rounds the number up to the nearest even integer.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

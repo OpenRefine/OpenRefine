@@ -45,13 +45,12 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-import').html($.i18n('gdata-import/import-by-url'));
   $('#gdata-next').html($.i18n('gdata-import/next->'));
   $('#gdata-auth-doc').text($.i18n('gdata-import/auth-doc'));
-  $('#gdata-please').text($.i18n('gdata-import/please'));
+  $('#gdata-please-signin').text($.i18n('gdata-import/please-signin'));
   $('#gdata-signin-btn').text($.i18n('gdata-import/sign-in'));
-  $('#gdata-access-data').text($.i18n('gdata-import/access-data'));
   $('#gdata-retrieving').text($.i18n('gdata-import/retrieving'));
   $('#gdata-signout').text($.i18n('gdata-import/sign-out'));
-  $('#gdata-resignin').text($.i18n('gdata-import/re-sign-in'));
-  $('#gdata-another-account').text($.i18n('gdata-import/another-account'));
+  $('#gdata-resignin').text($.i18n('gdata-import/sign-in'));
+  $('#gdata-re-signin-another').text($.i18n('gdata-import/re-sign-in-another'));
   
   var self = this;
   this._body.find('.gdata-signin.button').click(function() {
@@ -83,13 +82,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       } else {
         doc.type = 'table';
       }
-      
-      if (GdataExtension.isAuthorized()) {
-          self._controller.startImportingDocument(doc);     
-      } else {
-          var fn = self._controller.startImportingDocument;
-          GdataExtension.showAuthorizationDialog(fn.bind(self._controller, doc));
-      }
+      self._controller.startImportingDocument(doc);
     }
   });
    
@@ -128,10 +121,6 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
 Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   var self = this;
   
-  if (!o.documents) {
-    return;
-  }
-
   this._elmts.listingContainer.empty();
   
   var table = $(
@@ -186,17 +175,23 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     .appendTo(td);
   };
   
-  var docs = o.documents;
-  $.each(docs, function() {
-    this.updatedDate = (this.updated) ? new Date(this.updated) : null;
-    this.updatedDateTime = (this.updatedDate) ? this.updatedDate.getTime() : 0;
-  });
-  docs.sort(function(a, b) { return b.updatedDateTime -  a.updatedDateTime; });
-  
-  for (var i = 0; i < docs.length; i++) {
-    renderDocument(docs[i]);
+  if (o.status === 'error') {
+    // We're probably not logged in, even though we thought we were. Show signin page
+    this._body.find('.gdata-page').hide();
+    this._elmts.signinPage.show();
+  } else {
+    var docs = o.documents;
+    $.each(docs, function() {
+      this.updatedDate = (this.updated) ? new Date(this.updated) : null;
+      this.updatedDateTime = (this.updatedDate) ? this.updatedDate.getTime() : 0;
+    });
+    docs.sort(function(a, b) { return b.updatedDateTime -  a.updatedDateTime; });
+
+    for (var i = 0; i < docs.length; i++) {
+      renderDocument(docs[i]);
+    }
+
+    this._body.find('.gdata-page').hide();
+    this._elmts.listingPage.show();
   }
-  
-  this._body.find('.gdata-page').hide();
-  this._elmts.listingPage.show();
 };

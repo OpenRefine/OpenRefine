@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Odd;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class OddTests {
-
-    @Test
-    public void serializeOdd() {
-        String json = "{\"description\":\"Rounds the number up to the nearest even integer\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Odd(), json, ParsingUtilities.defaultWriter);
-    }
 }

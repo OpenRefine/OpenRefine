@@ -85,7 +85,7 @@ public class Sort extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Sorts array a";
+        return "Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second.";
     }
 
     @Override

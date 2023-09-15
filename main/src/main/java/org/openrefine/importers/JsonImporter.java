@@ -210,12 +210,13 @@ public class JsonImporter extends TreeImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream is,
             ImportColumnGroup rootColumnGroup,
             long limit,
             ObjectNode options) throws Exception {
 
-        parseOneFile(allocator, rows, metadata, job, fileSource,
+        parseOneFile(allocator, rows, metadata, job, fileSource, archiveFileName,
                 new JSONTreeReader(is), rootColumnGroup, limit, options);
     }
 

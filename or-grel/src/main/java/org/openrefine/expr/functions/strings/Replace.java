@@ -65,12 +65,12 @@ public class Replace extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing f with r in s";
+        return "Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'. Find can be a regex pattern.";
     }
 
     @Override
     public String getParams() {
-        return "string s, string or regex f, string r";
+        return "string s, string or regex find, string replace";
     }
 
     @Override

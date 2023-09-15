@@ -1,7 +1,7 @@
 
 package org.openrefine.model.local;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import org.openrefine.process.ProgressReporter;
 

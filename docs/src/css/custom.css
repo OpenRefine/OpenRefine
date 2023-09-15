@@ -15,7 +15,7 @@
     --ifm-color-primary-lighter: #2da6d1;
     --ifm-color-primary-lightest: #00dcff;
     --ifm-color-secondary: #999999;
-    --ifm-alert-border-width: 6px;
+    --ifm-alert-border-width: 0.375em;
     --ifm-alert-background-color: #ffffff;
     --ifm-panel-background-color: #ffffff;
     --ifm-panel-box-shadow-color: #999999;
@@ -37,8 +37,8 @@
   .alert {
     border-radius: 0;
     border: 0;
-    box-shadow: 0px 0px 10px 0px var(--ifm-panel-box-shadow-color);
-    border-width: 1px;
+    box-shadow: 0em 0em 0.625em 0em var(--ifm-panel-box-shadow-color);
+    border-width: 1em;
     border-left: var(--ifm-alert-border-width) solid var(--ifm-alert-border-color);
     background-color: var(--ifm-panel-background-color);
     color: var(--ifm-font-color-secondary);
@@ -53,27 +53,27 @@
   }
 
   .markdown h4{
-    margin-top: 40px;
-    font-size: 20px;
+    margin-top: 1.025em;
+    font-size: 1.25em;
   }
 
   .markdown h3{
-    margin-top: 45px;
-    font-size: 29px;
+    margin-top: 1.325em;
+    font-size: 1.8125em;
   }
 
   .markdown h2{
-    margin-top: 50px;
-    font-size: 35px;
+    margin-top: 1.525em;
+    font-size: 2.1875em;
   }
 
-  .markdown .menuItems {
+  .markdown .menuItems, .markdown .fieldLabels, .markdown .tabLabels, .markdown .buttonLabels {
     font-size: var(--ifm-code-font-size);
     display: inline-block;
-    border: 2px solid #4dc6e1;
+    border: 0.125em solid #4dc6e1;
     border-radius: var(--ifm-code-border-radius);
-    margin: 0;
-    padding: 1px var(--ifm-code-padding-horizontal);
+    margin: 0.0625em 0em;
+    padding: 0em 0.25em;
   }
 
   .markdown img {

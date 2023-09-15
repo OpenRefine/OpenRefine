@@ -55,7 +55,7 @@ public class Fingerprint extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).";
+        return "Returns the fingerprint of s, a string that is the first step in fingerprint clustering methods: it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc.";
     }
 
     @Override

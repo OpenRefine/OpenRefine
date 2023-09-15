@@ -56,12 +56,12 @@ public class Or extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "OR two or more booleans to yield a boolean";
+        return "Uses the logical operator OR on two or more booleans to output a boolean. For example, (1 < 3).or(1 > 7) returns true because at least one of the conditions (the first one) is true.";
     }
 
     @Override
     public String getParams() {
-        return "boolean a, boolean b";
+        return "boolean a, boolean b, ...";
     }
 
     @Override

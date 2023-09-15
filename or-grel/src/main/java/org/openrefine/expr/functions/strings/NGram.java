@@ -78,7 +78,7 @@ public class NGram extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of the word ngrams of s";
+        return "Returns an array of the word n-grams of s. That is, it lists all the possible consecutive combinations of n words in the string.";
     }
 
     @Override

@@ -1,5 +1,6 @@
 module.exports = {
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'error',
+  onBrokenMarkdownLinks: 'error',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
@@ -30,6 +31,11 @@ module.exports = {
           position: 'right',
         },
       ],
+    },
+    algolia: {
+	    apiKey: '591fc612419d2e5b6bee6822cc17064f',
+	    indexName: 'openrefine',
+	    contextualSearch: true,
     },
     footer: {
       logo: {
@@ -101,5 +107,12 @@ module.exports = {
         },
       },
     ],
+  ],
+  scripts: [
+    {
+      src: '/js/fix-location.js',
+      async: false,
+      defer: false,
+    },
   ],
 };

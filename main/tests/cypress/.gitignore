@@ -3,5 +3,8 @@ node_modules
 .env.local
 cypress/videos
 cypress/screenshots
+cypress/downloads
+cypress/snapshots_diffs
 npm-debug.log
 cypress.env.json
+out

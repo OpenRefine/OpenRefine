@@ -84,12 +84,12 @@ public class Combin extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the number of combinations for n elements as divided into k";
+        return "Returns the number of combinations for n2 elements as divided into n1.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n1, number n2";
     }
 
     @Override

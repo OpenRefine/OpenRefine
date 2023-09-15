@@ -133,7 +133,7 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text($.i18n('core-index/version', OpenRefineVersion.full_version));
+          $("#openrefine-version").text($.i18n('core-index/refine-version', OpenRefineVersion.full_version));
           $("#java-runtime-version").text(OpenRefineVersion.java_runtime_name + " " + OpenRefineVersion.java_runtime_version);
 
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",

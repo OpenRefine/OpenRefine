@@ -34,8 +34,11 @@ where [options] include:
   -p <port> the port that OpenRefine will listen to
      default: 3333
 
-  -i <interface> the host interface OpenRefine should bind to
+  -i <interface> the network interface OpenRefine should bind to
      default: 127.0.0.1
+	 
+  -H <host> the expected value for the Host header (set to * to disable checks)
+     default: <interface>
 
   -w <path> path to the webapp
      default: main/webapp
@@ -67,9 +70,9 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
-
+   ui_tests ............................ Run only the UI tests
+   
    broker .............................. Run OpenRefine Broker
    
    broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
@@ -154,7 +157,7 @@ check_pywin32() {
 
 check_running() {
     check_downloaders
-    URL="http://${REFINE_HOST}:${REFINE_PORT}/"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
     CHECK_STR="<title>OpenRefine</title>"
 
     if [ "$CURL" ] ; then
@@ -218,7 +221,7 @@ get_revision() {
     elif [ -d ".git" ] ; then
         INFO=`git describe`
         REVISION=`echo $INFO`
-	REVISION=${REVISION:4}
+    REVISION=${REVISION:4}
     else
         error "cannot obtain revision, exiting!"
     fi
@@ -261,7 +264,7 @@ tool_download() {
 load_data() {
     FILE=$1
     NAME=$2
-    URL="http://${REFINE_HOST}:${REFINE_PORT}/command/core/create-project-from-upload"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ] ; then
@@ -275,11 +278,11 @@ load_data() {
 display() {
     FILE=$1
     if [ "$OS" = "macosx" ] ; then
-	open $FILE
+    open $FILE
     elif [ "$OS" = "linux" ] ; then
-	gnome-open $FILE
+    gnome-open $FILE
     else
-	notepad $FILE
+    notepad $FILE
     fi  
 
 }
@@ -482,16 +485,20 @@ test() {
     $MVN test
 }
 
-ui_test() {
+
+ui_tests() {
+    download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
+    RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
+    echo "Starting reconcile-csv-0.1.2 ..."
+    $RECONCILE_SERVER_CMD 2>&1 &
+    RECONCILE_SERVER_PID="$!"
+    
     get_revision
 
-    BROWSER="$1"
-    CYPRESS_PROJECT_ID="$2"
-    CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
 
-    if [ -z "$BROWSER" ] ; then
-        BROWSER="electron"
+    if [ -z "$CYPRESS_BROWSER" ] ; then
+        CYPRESS_BROWSER="electron"
     fi
     
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
@@ -506,7 +513,7 @@ ui_test() {
     add_option "-Drefine.headless=true"
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
- 
+    
     run fork > /dev/null
     
     echo "Waiting for OpenRefine to load..."
@@ -519,11 +526,14 @@ ui_test() {
     echo ""
 
     echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST:$REFINE_PORT"
+    # Cypress needs a unique group id
+    # We're hashing the list of files to generate such Group Id
+    CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER"
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
@@ -542,6 +552,8 @@ ui_test() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
+    echo "Killing Reconciliation Server"
+    /bin/kill -9 $RECONCILE_SERVER_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
 
@@ -549,6 +561,7 @@ ui_test() {
         error "The UI test suite failed."
     fi
 }
+
 
 server_test() {
     mvn_prepare
@@ -599,6 +612,10 @@ run() {
         add_option "-Drefine.port=$REFINE_PORT"
     fi
     
+    if [ "$REFINE_INTERFACE" ] ; then
+        add_option "-Drefine.interface=$REFINE_INTERFACE"
+    fi
+    
     if [ "$REFINE_HOST" ] ; then
         add_option "-Drefine.host=$REFINE_HOST"
     fi
@@ -616,7 +633,7 @@ run() {
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "org.openrefine.Refine")
     echo "${RUN_CMD[@]}"
 
-    echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine at 'http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -661,7 +678,7 @@ broker_run() {
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting OpenRefine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine Broker at 'http://0.0.0.0:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -809,8 +826,8 @@ fi
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
-	# We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
-	# The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
+    # We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
+    # The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
         export JAVA_HOME=$(/usr/libexec/java_home)
     fi
 fi
@@ -831,9 +848,10 @@ checkJavaMajorVersion
 
 while [ $# -ne 0 ] ; do
   case "$1" in
-    -h) usage;;
+	-h) usage;;
     -p) shift; REFINE_PORT="$1"; shift; continue;;
-    -i) shift; REFINE_HOST="$1"; shift; continue;;
+    -H) shift; REFINE_HOST="$1"; shift; continue;;
+    -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
     -m) 
@@ -881,9 +899,9 @@ add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFIN
 
 freeRam=UNKNOWN
 if [ "$OS" = "macosx" ] ; then
-	freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
 elif [ "$OS" = "linux" ] ; then
-	freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
 echo You have "$freeRam"M of free memory. 
@@ -900,8 +918,23 @@ if [ -z "$REFINE_PORT" ] ; then
     REFINE_PORT="3333"
 fi
 
+if [ -z "$REFINE_INTERFACE" ] ; then
+    REFINE_INTERFACE="127.0.0.1"
+fi
+
 if [ -z "$REFINE_HOST" ] ; then
-    REFINE_HOST="127.0.0.1"
+    if [ "$REFINE_INTERFACE" = "0.0.0.0" ] ; then
+        REFINE_HOST='*'
+    else
+        REFINE_HOST="$REFINE_INTERFACE"
+    fi
+fi
+
+if [ "$REFINE_HOST" = '*' ] ; then
+    echo No host specified while binding to interface 0.0.0.0, guessing localhost.
+    REFINE_HOST_INTERNAL="localhost"
+else
+    REFINE_HOST_INTERNAL="$REFINE_HOST"
 fi
 
 if [ -z "$REFINE_WEBAPP" ] ; then
@@ -952,7 +985,9 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 if [ ! -z "$GDATA_CLIENT_ID" ] ; then
     if [ ! -z "$GDATA_CLIENT_SECRET" ] ; then
-        add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET"
+        if [ ! -z "$GDATA_API_KEY" ] ; then
+            add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET" "-Dext.gdata.apikey=$GDATA_API_KEY"
+        fi
     fi
 fi
 
@@ -964,8 +999,7 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1 $2 $3;;  
-  ui_tests) ui_test $1 $2 $3;;  
+  ui_tests) ui_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;

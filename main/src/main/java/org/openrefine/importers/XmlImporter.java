@@ -203,11 +203,12 @@ public class XmlImporter extends TreeImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveName,
             InputStream inputStream,
             ImportColumnGroup rootColumnGroup,
             long limit,
             ObjectNode options) throws Exception {
-        parseOneFile(allocator, rows, metadata, job, fileSource,
+        parseOneFile(allocator, rows, metadata, job, fileSource, archiveName,
                 new XmlParser(inputStream), rootColumnGroup, limit, options);
     }
 

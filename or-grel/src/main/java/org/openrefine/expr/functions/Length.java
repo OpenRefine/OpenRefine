@@ -72,12 +72,12 @@ public class Length extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the length of o";
+        return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
     }
 
     @Override
     public String getParams() {
-        return "array or string o";
+        return "array a or string s";
     }
 
     @Override

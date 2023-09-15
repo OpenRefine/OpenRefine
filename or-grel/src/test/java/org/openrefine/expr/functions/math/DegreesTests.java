@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Degrees;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class DegreesTests {
-
-    @Test
-    public void serializeDegrees() {
-        String json = "{\"description\":\"Converts an angle from radians to degrees.\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Degrees(), json, ParsingUtilities.defaultWriter);
-    }
 }

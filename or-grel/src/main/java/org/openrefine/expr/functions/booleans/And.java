@@ -56,12 +56,12 @@ public class And extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "AND two or more booleans to yield a boolean";
+        return "Uses the logical operator AND on two or more booleans to output a boolean. Evaluates multiple statements into booleans, then returns true if all of the statements are true. For example, (1 < 3).and(1 < 0) returns false because one condition is true and one is false.";
     }
 
     @Override
     public String getParams() {
-        return "boolean a, boolean b";
+        return "boolean a, boolean b, ...";
     }
 
     @Override

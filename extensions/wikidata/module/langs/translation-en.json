@@ -106,6 +106,7 @@
     "wikibase-account/logged-in-as": "You are logged in as:",
     "wikibase-account/log-out": "Log out",
     "wikibase-account/connecting-to-wikibase": "Connecting to Wikibase…",
+    "wikibase-account/logo-alt-text": "$1 Logo",
     "perform-wikibase-edits/dialog-header": "Upload edits to $1",
     "perform-wikibase-edits/review-your-edits": "You are about to upload $1 edits to <a href=\"$2\" target=\"_blank\">$3</a>. Please check them carefully. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
     "perform-wikibase-edits/logged-in-as": "You are logged in as",

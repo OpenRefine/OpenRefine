@@ -38,8 +38,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class CoalesceTests extends FunctionTestBase {
 
@@ -58,12 +56,6 @@ public class CoalesceTests extends FunctionTestBase {
         Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"), "string");
         Assert.assertEquals(invoke("coalesce", (Object) null, 1), 1);
         Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO), ZERO_TO_TWO);
-    }
-
-    @Test
-    public void serializeCoalesce() {
-        String json = "{\"description\":\"Returns the first non-null from a series of values\",\"params\":\"two or more objects\",\"returns\":\"object or null\"}";
-        TestUtils.isSerializedTo(new Coalesce(), json, ParsingUtilities.defaultWriter);
     }
 
 }

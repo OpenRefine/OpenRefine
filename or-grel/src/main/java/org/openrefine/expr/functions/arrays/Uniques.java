@@ -73,7 +73,7 @@ public class Uniques extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns array a with duplicates removed";
+        return "Returns the array with duplicates removed. Case-sensitive.";
     }
 
     @Override

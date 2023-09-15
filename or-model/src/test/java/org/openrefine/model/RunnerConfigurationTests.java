@@ -4,9 +4,9 @@ package org.openrefine.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class RunnerConfigurationTests {
 

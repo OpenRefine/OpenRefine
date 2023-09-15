@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.booleans;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.booleans.Not;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class NotTests {
-
-    @Test
-    public void serializeNot() {
-        String json = "{\"description\":\"Returns the opposite of b\",\"params\":\"boolean b\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Not(), json, ParsingUtilities.defaultWriter);
-    }
 }

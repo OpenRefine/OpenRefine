@@ -55,12 +55,12 @@ public class Chomp extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Removes separator from the end of str if it's there, otherwise leave it alone.";
+        return "Returns a copy of string s with string sep remoed from the end if s ends with sep; otherwies, returns s.";
     }
 
     @Override
     public String getParams() {
-        return "string str, string separator";
+        return "string s, string sep";
     }
 
     @Override

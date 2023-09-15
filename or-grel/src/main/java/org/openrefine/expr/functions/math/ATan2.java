@@ -52,12 +52,12 @@ public class ATan2 extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Converts rectangular coordinates (x, y) to polar (r, theta)";
+        return "Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.";
     }
 
     @Override
     public String getParams() {
-        return "number x, number y";
+        return "number n1, number n2";
     }
 
     @Override

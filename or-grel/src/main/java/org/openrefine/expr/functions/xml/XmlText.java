@@ -61,7 +61,7 @@ public class XmlText extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Selects the text from within an element (including all child elements)";
+        return "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element.";
     }
 
     @Override

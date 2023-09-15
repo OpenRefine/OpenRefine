@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Min;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class MinTests {
-
-    @Test
-    public void serializeMin() {
-        String json = "{\"description\":\"Returns the smaller of two numbers\",\"params\":\"number a, number b\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Min(), json, ParsingUtilities.defaultWriter);
-    }
 }

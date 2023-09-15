@@ -33,18 +33,9 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.strings.Replace;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class ReplaceTests extends FunctionTestBase {
-
-    @Test
-    public void serializeReplace() {
-        String json = "{\"description\":\"Returns the string obtained by replacing f with r in s\",\"params\":\"string s, string or regex f, string r\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Replace(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testReplace() {

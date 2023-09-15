@@ -37,22 +37,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.arrays.InArray;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class InArrayTests extends FunctionTestBase {
 
     static Properties bindings;
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
     static final String stringArray[] = { "v1", "v2", "v3" };
-
-    @Test
-    public void serializeInArray() {
-        String json = "{\"description\":\"Checks if array a contains string s\",\"params\":\"array a, string s\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new InArray(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testInArrayParameters() {

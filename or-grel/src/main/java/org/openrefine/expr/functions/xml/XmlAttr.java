@@ -63,16 +63,16 @@ public class XmlAttr extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Selects a value from an attribute on an XML or HTML Element";
+        return "Returns a string from an attribute on an XML or HTML element. Use it in conjunction with parseHtml() or parseXml() to point to an element first.";
     }
 
     @Override
     public String getParams() {
-        return "Element e, String s";
+        return "string s, element e";
     }
 
     @Override
     public String getReturns() {
-        return "String attribute Value";
+        return "string attribute value";
     }
 }

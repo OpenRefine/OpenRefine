@@ -49,7 +49,7 @@ public class Exp extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns e^n";
+        return "Returns e to the power of n.";
     }
 
     @Override

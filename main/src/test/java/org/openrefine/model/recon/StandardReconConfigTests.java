@@ -341,9 +341,8 @@ public class StandardReconConfigTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            // FIXME: Retry doesn't currently work, but should be tested
-//            server.enqueue(new MockResponse().setResponseCode(503)); // service overloaded
-            server.enqueue(new MockResponse().setBody(reconResponse));
+            server.enqueue(new MockResponse().setResponseCode(503)); // service initially overloaded
+            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
             server.enqueue(new MockResponse());
 
             String configJson = " {\n" +
@@ -370,13 +369,13 @@ public class StandardReconConfigTests extends RefineTest {
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
             try {
-                Thread.sleep(1000); // TODO: timeout will need to increase for retries
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 Assert.fail("Test interrupted");
             }
             Assert.assertFalse(process.isRunning());
 
-//          RecordedRequest scratchFirstRquest = server.takeRequest();
+            server.takeRequest(); // ignore the first request which was a 503 error
             RecordedRequest request1 = server.takeRequest();
 
             assertNotNull(request1);

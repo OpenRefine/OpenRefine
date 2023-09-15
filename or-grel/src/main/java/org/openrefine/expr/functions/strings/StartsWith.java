@@ -55,7 +55,7 @@ public class StartsWith extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns whether s starts with sub";
+        return "Returns a boolean indicating whether s starts with sub. For example, \"food\".startsWith(\"foo\") returns true, whereas \"food\".startsWith(\"bar\") returns false.";
     }
 
     @Override

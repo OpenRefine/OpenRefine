@@ -61,7 +61,7 @@ public class Jsonize extends PureFunction {
 
     @Override
     public String getParams() {
-        return "value";
+        return "o";
     }
 
     @Override

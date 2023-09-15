@@ -145,5 +145,14 @@
     "warnings-messages/invalid-entity-type/body": "Användning av {property_entity} i objekt som {example_entity} är icke giltigt.",
     "wikibase-schema/copy-reference": "kopiera",
     "wikibase-schema/paste-reference": "klistra referens",
-    "wikibase-extension/export-wikibase-schema": "Exportera Wikidata-schema"
+    "wikibase-extension/export-wikibase-schema": "Exportera Wikidata-schema",
+    "wikibase-management/close": "Stäng",
+    "wikibase-management/add-wikibase": "Lägg till Wikibase",
+    "wikibase-management/current-selected-wikibase": "För tillfället vald Wikibase: <a href=\"$1\" target=\"_blank\">$2</a>",
+    "wikibase-management/explain-select-wikibase": "Klicka på ett objekt nedan för att välja det som mål-Wikibase att arbeta mot. Detta kommer ta bort befintligt schema. Efter att du bytt till mål-Wikibase borde du förena din data mot den innan du redigerar schemat.",
+    "wikibase-management/dialog-header": "Välj en Wikibase-instans",
+    "wikibase-extension/wikibase-schema": "Wikibase-schema",
+    "wikibase-extension/wikibase-edits": "Wikibase-redigeringar…",
+    "wikibase-extension/qs-file": "QuickStatements-fil",
+    "wikibase-extension/select-wikibase-instance": "Välj en Wikibase-instans"
 }

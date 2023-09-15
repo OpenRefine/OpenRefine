@@ -27,17 +27,6 @@
 
 package org.openrefine.expr.functions;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.HasField;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class HasFieldTests {
 
-    @Test
-    public void serializeHasField() {
-        String json = "{\"description\":\"Returns whether o has field name\",\"params\":\"o, string name\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new HasField(), json, ParsingUtilities.defaultWriter);
-    }
 }

@@ -26,6 +26,7 @@ package org.openrefine.wikidata.schema;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 
 public class WbLanguageVariableTest extends WbVariableTest<String> {
@@ -47,6 +48,11 @@ public class WbLanguageVariableTest extends WbVariableTest<String> {
         isSkipped("unknown language code");
         isSkipped((String) null);
         isSkipped("");
+    }
+
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
     }
 
     @Test

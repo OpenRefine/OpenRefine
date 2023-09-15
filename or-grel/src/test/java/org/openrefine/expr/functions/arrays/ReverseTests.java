@@ -31,17 +31,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.expr.functions.arrays.Reverse;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class ReverseTests extends RefineTest {
-
-    @Test
-    public void serializeReverse() {
-        String json = "{\"description\":\"Reverses array a\",\"params\":\"array a\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Reverse(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void reverseJsonArray() throws ParsingException {

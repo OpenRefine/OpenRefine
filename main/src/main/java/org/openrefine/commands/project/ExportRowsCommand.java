@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.net.PercentEscaper;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,9 @@ public class ExportRowsCommand extends Command {
             if (!"true".equals(preview)) {
                 String path = request.getPathInfo();
                 String filename = path.substring(path.lastIndexOf('/') + 1);
-                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                PercentEscaper escaper = new PercentEscaper("", false);
+                filename = escaper.escape(filename);
+                response.setHeader("Content-Disposition", "attachment; filename=" + filename + "; filename*=utf-8' '" + filename);
             }
 
             if (exporter instanceof WriterExporter) {

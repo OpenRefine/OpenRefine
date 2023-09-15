@@ -32,17 +32,8 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.expr.functions.arrays.Sort;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class SortTests extends RefineTest {
-
-    @Test
-    public void serializeSort() {
-        String json = "{\"description\":\"Sorts array a\",\"params\":\"array a of uniform type\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Sort(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void sortJsonArray() throws ParsingException {

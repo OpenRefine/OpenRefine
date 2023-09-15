@@ -26,6 +26,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsRequestInitializer;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -35,10 +36,13 @@ import org.openrefine.preference.PreferenceStore;
 abstract public class GoogleAPIExtension {
 
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
-    // We can set the second param to a default client_id for release version
+
+    // For a production release, the second parameter (default value) can be set
+    // for the following three properties (client_id, client_secret, and API key) to
+    // the production values from the Google API console
     private static final String CLIENT_ID = System.getProperty("ext.gdata.clientid", "");
-    // We can set the second param to a default client_secret for release version
     private static final String CLIENT_SECRET = System.getProperty("ext.gdata.clientsecret", "");
+    private static final String API_KEY = System.getProperty("ext.gdata.apikey", "");
 
     /** Global instance of the HTTP transport. */
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -160,20 +164,29 @@ abstract public class GoogleAPIExtension {
      * @throws IOException
      */
     public static Sheets getSheetsService(String token) throws IOException {
-        Credential credential = new Credential.Builder(null).build().setAccessToken(token);
+        final Credential credential;
+        if (token != null) {
+            credential = new Credential.Builder(null).build().setAccessToken(token);
+        } else {
+            credential = null;
+        }
         int connectTimeout = getConnectTimeout();
         int readTimeout = getReadTimeout();
 
-        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
+        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                .setApplicationName(SERVICE_APP_NAME)
+                .setSheetsRequestInitializer(new SheetsRequestInitializer(API_KEY))
+                .setHttpRequestInitializer(new HttpRequestInitializer() {
 
-            @Override
-            public void initialize(HttpRequest httpRequest) throws IOException {
-                credential.initialize(httpRequest);
-                httpRequest.setConnectTimeout(connectTimeout);
-                httpRequest.setReadTimeout(readTimeout); // 3 minutes read timeout
-            }
-        })
-                .setApplicationName(SERVICE_APP_NAME).build();
+                    @Override
+                    public void initialize(HttpRequest httpRequest) throws IOException {
+                        if (credential != null) {
+                            credential.initialize(httpRequest);
+                        }
+                        httpRequest.setConnectTimeout(connectTimeout);
+                        httpRequest.setReadTimeout(readTimeout);
+                    }
+                }).build();
     }
 
     private static int getConnectTimeout() {

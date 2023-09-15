@@ -34,8 +34,6 @@ import java.util.Collections;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.grel.ast.LiteralExpr;
-
 public class LiteralExprTest extends ExprTestBase {
 
     @Test

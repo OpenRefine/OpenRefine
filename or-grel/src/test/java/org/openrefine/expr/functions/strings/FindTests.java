@@ -32,10 +32,7 @@ import java.util.regex.Pattern;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.strings.Find;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 /**
  * Test cases for find function.
@@ -62,9 +59,4 @@ public class FindTests extends FunctionTestBase {
         Assert.assertEquals(matches[1], "123456");
     }
 
-    @Test
-    public void serializeFind() {
-        String json = "{\"description\":\"Returns all the occurrences of match given regular expression or simple string\",\"params\":\"string or regexp\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new Find(), json, ParsingUtilities.defaultWriter);
-    }
 }

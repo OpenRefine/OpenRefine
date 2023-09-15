@@ -70,12 +70,12 @@ public class SplitByLengths extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s into substrings with the given lengths";
+        return "Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, \"internationalization\".splitByLengths(5, 6, 3) returns an array of 3 strings: [ \"inter\", \"nation\", \"ali\" ]. Excess characters are discarded.";
     }
 
     @Override
     public String getParams() {
-        return "string s, number n, ...";
+        return "string s, number n1, number n2, ...";
     }
 
     @Override

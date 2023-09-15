@@ -58,12 +58,12 @@ public class Coalesce extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the first non-null from a series of values";
+        return "Returns the first non-null from a series of objects (meaning any data type - string, date, number, boolean, etc.).";
     }
 
     @Override
     public String getParams() {
-        return "two or more objects";
+        return "o1, o2, ...";
     }
 
     @Override

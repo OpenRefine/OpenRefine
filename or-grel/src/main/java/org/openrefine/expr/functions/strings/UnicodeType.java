@@ -123,7 +123,7 @@ public class UnicodeType extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings describing each character of s in their full unicode notation";
+        return "Returns an array of strings describing each character of s by their unicode type.";
     }
 
     @Override

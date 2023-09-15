@@ -67,17 +67,17 @@ public class Find extends PureFunction {
 
             return allMatches.toArray(new String[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regexp");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regex");
     }
 
     @Override
     public String getDescription() {
-        return "Returns all the occurrences of match given regular expression or simple string";
+        return "Outputs an array of all consecutive substrings inside string s that match the substring or regex pattern p. You can supply a substring by putting it in quotes.";
     }
 
     @Override
     public String getParams() {
-        return "string or regexp";
+        return "string s, substring or regex p";
     }
 
     @Override

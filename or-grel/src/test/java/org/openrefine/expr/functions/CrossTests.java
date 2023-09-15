@@ -45,8 +45,6 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 /**
  * Test cases for cross function.
@@ -352,16 +350,5 @@ public class CrossTests extends FunctionTestBase {
     public void crossFunctionNonLiteralValue() throws Exception {
         Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message,
                 "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
-    }
-
-    @Test
-    public void serializeCross() {
-        String json = "{\"description\":\"Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. "
-                +
-                "The first argument will be interpreted as cell.value if set to cell. " +
-                "The second argument will be interpreted as the current project name if omitted or set to \\\"\\\". " +
-                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \\\"\\\"\"," +
-                "\"params\":\"cell or value, string projectName (optional), string columnName (optional)\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Cross(), json, ParsingUtilities.defaultWriter);
     }
 }

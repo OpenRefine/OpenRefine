@@ -274,7 +274,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>1.7.25</version>
+        <version>2.1.1</version>
 
             <!-- This is a clean snapshot of launch4j's master branch,
                 which includes fixes to Java discovery that we need
@@ -286,7 +286,7 @@
             <groupId>net.sf.launch4j</groupId>
             <artifactId>launch4j</artifactId>
             <classifier>core</classifier>
-            <version>3.13-SNAPSHOT</version>
+            <version>3.14</version>
           </dependency>
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -406,7 +406,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.2.3</version>
+              <version>4.2.5</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

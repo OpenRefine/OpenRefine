@@ -51,12 +51,12 @@ public class ASin extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the arc sine of an angle in the range of -PI/2 through PI/2";
+        return "Returns the arc sine of an angle in the range of -PI/2 through PI/2.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

@@ -102,6 +102,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         Date bestDate = null;
         int precision = 0; // default precision (will be overridden if successfully parsed)
         int maxLength = 0; // the maximum length parsed
+        boolean bceFlag = false; // judge whether this is a BCE year
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
 
         String trimmedDatestamp = datestamp.trim();
@@ -114,6 +115,11 @@ public class WbDateConstant implements WbExpression<TimeValue> {
                     (byte) calendar.get(Calendar.DAY_OF_MONTH),
                     (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
             return todaysDate;
+        }
+
+        if (trimmedDatestamp.startsWith("-")) {
+            trimmedDatestamp = trimmedDatestamp.substring(1);
+            bceFlag = true;
         }
 
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
@@ -152,8 +158,13 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             Calendar calendar = Calendar.getInstance();
             calendar = Calendar.getInstance();
             calendar.setTime(bestDate);
-            return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1),
-                    (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
+            long year = calendar.get(Calendar.YEAR);
+            int month = precision < 10 ? 0 : calendar.get(Calendar.MONTH) + 1;
+            int day_of_month = precision < 11 ? 0 : calendar.get(Calendar.DAY_OF_MONTH);
+            if (bceFlag)
+                year = -1 * year;
+            return Datamodel.makeTimeValue(year, (byte) month,
+                    (byte) day_of_month, (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
                     0, calendarIri);
         }

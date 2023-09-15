@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -70,6 +72,8 @@ public class LoginCommand extends Command {
     static final String ACCESS_TOKEN = "wb-access-token";
     static final String ACCESS_SECRET = "wb-access-secret";
 
+    static final Pattern cookieKeyDisallowedCharacters = Pattern.compile("[^a-zA-Z0-9\\-!#$%&'*+.?\\^_`|~]");
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -85,7 +89,7 @@ public class LoginCommand extends Command {
             CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
         }
-        String mediawikiApiEndpointPrefix = mediawikiApiEndpoint + '-';
+        String mediawikiApiEndpointPrefix = sanitizeCookieKey(mediawikiApiEndpoint + '-');
 
         if ("true".equals(request.getParameter("logout"))) {
             manager.logout(mediawikiApiEndpoint);
@@ -269,5 +273,13 @@ public class LoginCommand extends Command {
         } else {
             return str.replaceAll("[\n\r]", "");
         }
+    }
+
+    /**
+     * Removes special characters from cookie keys, replacing them by hyphens.
+     */
+    static String sanitizeCookieKey(String key) {
+        Matcher matcher = cookieKeyDisallowedCharacters.matcher(key);
+        return matcher.replaceAll("-");
     }
 }

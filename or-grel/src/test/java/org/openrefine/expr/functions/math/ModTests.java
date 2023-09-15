@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Mod;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ModTests {
-
-    @Test
-    public void serializeMod() {
-        String json = "{\"description\":\"Returns a modulus b\",\"params\":\"number a, number b\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Mod(), json, ParsingUtilities.defaultWriter);
-    }
 }

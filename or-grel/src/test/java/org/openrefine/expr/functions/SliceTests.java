@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.Slice;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class SliceTests {
-
-    @Test
-    public void serializeSlice() {
-        String json = "{\"description\":\"If o is an array, returns o[from, to]. if o is a string, returns o.substring(from, to)\",\"params\":\"o, number from, optional number to\",\"returns\":\"Depends on actual arguments\"}";
-        TestUtils.isSerializedTo(new Slice(), json, ParsingUtilities.defaultWriter);
-    }
 }

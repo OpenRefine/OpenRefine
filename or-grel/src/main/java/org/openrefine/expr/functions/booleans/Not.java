@@ -55,7 +55,7 @@ public class Not extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the opposite of b";
+        return "Uses the logical operator NOT on a boolean to output a boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false.";
     }
 
     @Override

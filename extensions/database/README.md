@@ -1,41 +1,9 @@
-This project is an extension for OpenRefine that provides a way to import database data using JDBC.
+This project is an OpenRefine extension for importing database data using JDBC.
+For exporting to a database, other code can be found under folder `OpenRefine/main/src/com/google/refine/exporters/sql`
 
+## Adding support for other database vendors
 
-INSTALL
-
-1. Before installing this extension download OpenRefine code from http://code.google.com/p/google-refine/source/checkout. 
-
-2. Pull this extension's code into folder database under folder /extensions. 
-For more information on how to write a OpenRefine extensions and where to put the files see http://code.google.com/p/google-refine/wiki/WriteAnExtension
-
-The folder structure should resemble this:
-grefine-all/
-----------/extensions
---------------/database
-------------------/module
-------------------/src
-------------------build.xml
-------------------README (this file)
-
-3. Update build.xml in folder /extensions with build and clean ant tasks for database:
-
-<project name="google-refine-extensions" default="build" basedir=".">
-    <target name="build">
-        <echo message="Building extensions" />
-        <ant dir="sample/" target="build" />
-        <ant dir="jython/" target="build" />
-        <ant dir="gdata/" target="build" />
-        <ant dir="database/" target="build" />
-    </target>
-    
-    <target name="clean">
-        <echo message="cleaning extensions" />
-        <ant dir="sample/" target="clean" />
-        <ant dir="jython/" target="clean" />
-        <ant dir="freebase/" target="clean" />
-        <ant dir="gdata/" target="clean" />
-        <ant dir="database/" target="clean" />
-    </target>
-</project>
-
-4. If using Eclipse, make sure that you build project with ant
+1. You'll want to register an additional Database Service:  https://github.com/OpenRefine/OpenRefine/blob/master/extensions/database/src/com/google/refine/extension/database/DatabaseService.java
+2. Provide the connection and service classes, look at the PostgreSQL one or MySQL one as examples: https://github.com/OpenRefine/OpenRefine/tree/master/extensions/database/src/com/google/refine/extension/database
+3. Then wire up the interface with defaults as desired: https://github.com/OpenRefine/OpenRefine/blob/master/extensions/database/module/scripts/index/database-source-ui.js#L93
+4. Add drivers manually to the classpath, or update the pom file to provide them as dependencies as other DB libraries are done: https://github.com/OpenRefine/OpenRefine/blob/master/extensions/database/pom.xml

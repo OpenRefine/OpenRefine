@@ -55,12 +55,12 @@ public class Max extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the greater of two numbers";
+        return "Returns the greater of two numbers.";
     }
 
     @Override
     public String getParams() {
-        return "number a, number b";
+        return "number n1, number n2";
     }
 
     @Override

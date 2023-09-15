@@ -79,7 +79,7 @@ public class Sum extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Sums numbers in array a";
+        return "Return the sum of the numbers in the array. Ignores non-number items. Returns 0 if the array does not contain numbers.";
     }
 
     @Override

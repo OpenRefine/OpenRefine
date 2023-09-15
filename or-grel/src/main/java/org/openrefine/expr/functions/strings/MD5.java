@@ -55,7 +55,7 @@ public class MD5 extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the MD5 hash of s";
+        return "Returns the MD5 hash of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string.";
     }
 
     @Override

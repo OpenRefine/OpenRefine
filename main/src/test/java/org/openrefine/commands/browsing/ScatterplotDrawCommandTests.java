@@ -98,6 +98,42 @@ public class ScatterplotDrawCommandTests extends RefineTest {
             + "\"to_y\":0,"
             + "\"color\":\"ff6a00\"}";
 
+    public static String configJsonWithCW = "{"
+            + "\"name\":\"b (x) vs. y (y)\","
+            + "\"cx\":\"b\","
+            + "\"cy\":\"y\","
+            + "\"l\":150,"
+            + "\"ex\":\"value\","
+            + "\"ey\":\"value\","
+            + "\"dot\":1.4,"
+            + "\"dim_x\":\"lin\","
+            + "\"dim_y\":\"lin\","
+            + "\"r\":\"cw\","
+            + "\"type\":\"scatterplot\","
+            + "\"from_x\":0,"
+            + "\"to_x\":0,"
+            + "\"from_y\":0,"
+            + "\"to_y\":0,"
+            + "\"color\":\"ff6a00\"}";
+
+    public static String configJsonWithCCW = "{"
+            + "\"name\":\"b (x) vs. y (y)\","
+            + "\"cx\":\"b\","
+            + "\"cy\":\"y\","
+            + "\"l\":150,"
+            + "\"ex\":\"value\","
+            + "\"ey\":\"value\","
+            + "\"dot\":1.4,"
+            + "\"dim_x\":\"lin\","
+            + "\"dim_y\":\"lin\","
+            + "\"r\":\"ccw\","
+            + "\"type\":\"scatterplot\","
+            + "\"from_x\":0,"
+            + "\"to_x\":0,"
+            + "\"from_y\":0,"
+            + "\"to_y\":0,"
+            + "\"color\":\"ff6a00\"}";
+
     @Test
     public void testParseConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
@@ -122,6 +158,18 @@ public class ScatterplotDrawCommandTests extends RefineTest {
     	command.doGet(request, response);
     	// Not sure how to check the resulting image - at least this test ensures that no exception was thrown
     	Assert.assertEquals(writer.toString(), "");
+    }
+
+    @Test
+    public void testParseConfigWithCW() throws JsonParseException, JsonMappingException, IOException {
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJsonWithCW, ScatterplotFacetConfig.class);
+        Assert.assertEquals(Rotation.ROTATE_CW, config.rotation);
+    }
+
+    @Test
+    public void testParseConfigWithCCW() throws JsonParseException, JsonMappingException, IOException {
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJsonWithCCW, ScatterplotFacetConfig.class);
+        Assert.assertEquals(Rotation.ROTATE_CCW, config.rotation);
     }
 
 }

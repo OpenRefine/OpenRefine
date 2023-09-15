@@ -64,12 +64,12 @@ public class Contains extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns whether s contains frag";
+        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true.";
     }
 
     @Override
     public String getParams() {
-        return "string s, string frag";
+        return "string s, string or pattern sub";
     }
 
     @Override

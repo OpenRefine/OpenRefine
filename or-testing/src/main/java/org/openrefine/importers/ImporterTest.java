@@ -149,6 +149,8 @@ public abstract class ImporterTest extends RefineTest {
         ImportingFileRecord importingRecord = mock(ImportingFileRecord.class);
         when(importingRecord.getDerivedSparkURI(Mockito.any())).thenReturn(file.getAbsolutePath());
         when(importingRecord.getFile(Mockito.any())).thenReturn(file);
+        when(importingRecord.getArchiveFileName()).thenReturn("archive-file-name");
+        when(importingRecord.getFileSource()).thenReturn("file-source");
         return parseFiles(parser, Collections.singletonList(importingRecord), options);
     }
 

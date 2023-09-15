@@ -67,7 +67,7 @@ public class ParseXml extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Parses a string as XML";
+        return "Given a cell full of XML-formatted text, parseXml() returns a full XML document and adds any missing closing tags.";
     }
 
     @Override

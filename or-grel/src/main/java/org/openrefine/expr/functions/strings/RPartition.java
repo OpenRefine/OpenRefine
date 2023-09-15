@@ -101,12 +101,12 @@ public class RPartition extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings [a,frag,b] where a is the string part before the last occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.";
+        return "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. If omitFragment is true, frag is not returned.";
     }
 
     @Override
     public String getParams() {
-        return "string s, string or regex frag, optional boolean omitFragment";
+        return "string s, string or regex fragment, optional boolean omitFragment";
     }
 
     @Override

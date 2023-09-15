@@ -33,16 +33,8 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class StartsWithTests extends FunctionTestBase {
-
-    @Test
-    public void serializeStartsWith() {
-        String json = "{\"description\":\"Returns whether s starts with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new StartsWith(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testStartsWith() {

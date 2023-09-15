@@ -95,7 +95,7 @@ public class Join extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the string obtained by joining the array a with the separator sep";
+        return "Joins the items in the array with sep, and returns it all as a string.";
     }
 
     @Override

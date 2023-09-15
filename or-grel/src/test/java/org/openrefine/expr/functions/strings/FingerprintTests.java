@@ -36,10 +36,7 @@ import java.util.Properties;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.strings.Fingerprint;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class FingerprintTests extends FunctionTestBase {
 
@@ -73,12 +70,6 @@ public class FingerprintTests extends FunctionTestBase {
             Assert.assertEquals((String) (invoke("fingerprint", ss[0])), ss[1],
                     "Fingerprint for string: " + ss[0] + " failed");
         }
-    }
-
-    @Test
-    public void serializeFingerprint() {
-        String json = "{\"description\":\"Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Fingerprint(), json, ParsingUtilities.defaultWriter);
     }
 
 }

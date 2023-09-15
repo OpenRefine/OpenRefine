@@ -61,7 +61,7 @@ public class ParseJson extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Parses a string as JSON";
+        return "Parses a string as JSON.";
     }
 
     @Override

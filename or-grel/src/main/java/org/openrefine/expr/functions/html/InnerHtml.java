@@ -60,16 +60,16 @@ public class InnerHtml extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "The innerHtml of an HTML element";
+        return "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.";
     }
 
     @Override
     public String getParams() {
-        return "Element e";
+        return "element e";
     }
 
     @Override
     public String getReturns() {
-        return "String innerHtml";
+        return "string innerHtml";
     }
 }

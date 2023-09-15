@@ -56,7 +56,7 @@ public class Degrees extends PureFunction {
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

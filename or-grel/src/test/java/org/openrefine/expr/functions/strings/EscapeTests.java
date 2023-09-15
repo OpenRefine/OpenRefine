@@ -33,16 +33,8 @@ import static org.testng.Assert.assertNull;
 import org.testng.annotations.Test;
 
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class EscapeTests extends FunctionTestBase {
-
-    @Test
-    public void serializeEscape() {
-        String json = "{\"description\":\"Escapes a string depending on the given escaping mode.\",\"params\":\"string s, string mode ['html','xml','csv','url','javascript']\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Escape(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testEscape() {

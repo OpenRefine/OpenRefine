@@ -32,10 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.html.ParseHtml;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class ParseHtmlTests extends FunctionTestBase {
 
@@ -57,12 +54,6 @@ public class ParseHtmlTests extends FunctionTestBase {
             "</div>" +
             "    </body>\n" +
             "</html>";
-
-    @Test
-    public void serializeParseHtml() {
-        String json = "{\"description\":\"Parses a string as HTML\",\"params\":\"string s\",\"returns\":\"HTML object\"}";
-        TestUtils.isSerializedTo(new ParseHtml(), json, ParsingUtilities.defaultWriter);
-    }
 
     @Test
     public void testParseHtml() {

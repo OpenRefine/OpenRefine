@@ -51,12 +51,12 @@ public class Radians extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Converts an angle in degrees to radians";
+        return "Converts an angle in degrees to radians.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override

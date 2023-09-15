@@ -142,12 +142,12 @@ public class DatePart extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns part of a date";
+        return "Returns part of a date. The data type returned depends on the unit. See https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit for a table. ";
     }
 
     @Override
     public String getParams() {
-        return "date d, string part";
+        return "date d, string timeUnit";
     }
 
     @Override

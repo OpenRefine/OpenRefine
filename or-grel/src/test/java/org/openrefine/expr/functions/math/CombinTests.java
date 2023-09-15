@@ -27,17 +27,5 @@
 
 package org.openrefine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.math.Combin;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class CombinTests {
-
-    @Test
-    public void serializeCombin() {
-        String json = "{\"description\":\"Returns the number of combinations for n elements as divided into k\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Combin(), json, ParsingUtilities.defaultWriter);
-    }
 }

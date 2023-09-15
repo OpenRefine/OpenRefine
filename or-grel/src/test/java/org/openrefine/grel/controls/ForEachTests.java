@@ -39,7 +39,6 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.grel.controls.ForEach;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

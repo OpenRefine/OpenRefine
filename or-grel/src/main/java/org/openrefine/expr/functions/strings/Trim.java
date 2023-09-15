@@ -55,7 +55,7 @@ public class Trim extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns copy of the string, with leading and trailing whitespace omitted.";
+        return "Returns a copy of string s with leading and trailing whitespace removed.";
     }
 
     @Override

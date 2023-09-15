@@ -51,12 +51,12 @@ public class Sinh extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the hyperbolic sine of an angle";
+        return "Returns the hyperbolic sine of an angle.";
     }
 
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
 
     @Override
