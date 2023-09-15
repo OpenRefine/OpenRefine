@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
+import com.google.common.io.CountingInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.testng.Assert;
@@ -215,14 +215,17 @@ public class TestingDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
-        FileReader reader = null;
+        LineNumberReader reader = null;
         try {
-            reader = new FileReader(new File(path));
-            LineNumberReader lineReader = new LineNumberReader(reader);
-            List<Row> rows = lineReader.lines()
+            File file = new File(path);
+            CountingInputStream inputStream = new CountingInputStream(new FileInputStream(file));
+            progress.readingFile(file.getName(), inputStream.getCount());
+            reader = new LineNumberReader(new InputStreamReader(inputStream));
+            List<Row> rows = reader.lines()
                     .map(line -> new Row(Collections.singletonList(new Cell(line, null))))
                     .limit(limit)
                     .collect(Collectors.toList());
+            progress.readingFile(file.getName(), inputStream.getCount());
 
             ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
             return new TestingGridState(columnModel, rows, Collections.emptyMap());

@@ -730,7 +730,7 @@ public class WikitextImporter extends ReaderImporter {
         String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
         // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
         String reconUrl = JSONUtilities.getString(options, "reconService",
-                "https://wdreconcile.toolforge.org/en/api");
+                "https://wikidata.reconci.link/en/api");
         StandardReconConfig cfg = getReconConfig(reconUrl);
 
         if (wikiUrl != null) {

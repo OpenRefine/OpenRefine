@@ -13,6 +13,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -35,11 +36,11 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for (SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(conflictsWithPropertyPid)) {
-                        pid = (PropertyIdValue) snak.getValue();
+                    if (group.getProperty().getId().equals(conflictsWithPropertyPid) && snak instanceof ValueSnak) {
+                        pid = (PropertyIdValue) ((ValueSnak) snak).getValue();
                     }
-                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)) {
-                        this.itemList.add(snak.getValue());
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid) && snak instanceof ValueSnak) {
+                        this.itemList.add(((ValueSnak) snak).getValue());
                     }
                 }
             }
@@ -62,7 +63,11 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
+            Value value = null;
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            if (mainSnak instanceof ValueSnak) {
+                value = ((ValueSnak) mainSnak).getValue();
+            }
             Set<Value> values;
             if (value != null) {
                 if (propertyIdValueValueMap.containsKey(pid)) {

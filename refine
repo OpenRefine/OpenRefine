@@ -47,8 +47,7 @@ where [options] include:
      default: OS dependent
 
   -m <memory> max memory heap size to use
-     default: 1024M
-     Values less than 256M not allowed
+     default: 1400M
 
   -r <className> class name of the runner to use
      default: org.openrefine.model.LocalDatamodelRunner
@@ -309,8 +308,8 @@ tools_prepare() {
 mvn_prepare() {
     tools_prepare
 
-    MVN_VERSION="3.6.3"
-    MVN_URL="https://www-us.apache.org/dist/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_VERSION="3.8.3"
+    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
     MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
@@ -529,7 +528,7 @@ ui_tests() {
     # Cypress needs a unique group id
     # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
@@ -854,16 +853,8 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) 
-      shift;
-      if [ $1 -le 256 ]
-      then
-        fail "Value of -m less than 256 not allowed";
-      else
-        REFINE_MEMORY="$1";
-        shift;
-        continue;
-      fi;;
+    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -r) shift; REFINE_RUNNER_CLASSNAME="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;

@@ -3,7 +3,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName, 'TestTag');
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').contains(projectName);
     cy.get('#projects-list table').contains('TestTag');
   });
@@ -13,7 +13,7 @@ describe(__filename, function () {
     cy.loadProject('food.mini', project1, 'TestTagOne');
     cy.loadProject('food.mini', project2, 'TestTagTwo');
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').contains(project1);
     cy.get('#projects-list table').contains('TestTagOne');
     cy.get('#projectTags ul').children().should('contain', 'TestTagOne');
@@ -26,7 +26,7 @@ describe(__filename, function () {
     cy.loadProject('food.mini', project1, 'TestTagOne');
     cy.loadProject('food.mini', project2, 'TestTagTwo');
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').contains(project1);
     cy.get('#projects-list table').contains('TestTagOne');
     cy.get('#projectTags ul').children().contains('TestTagOne').click();

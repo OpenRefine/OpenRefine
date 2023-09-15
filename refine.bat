@@ -40,7 +40,7 @@ echo.
 echo  "/d" enable JVM debugging (on port 8000)
 echo.
 echo  "/m <memory>" max memory heap size to use
-echo     default: 1024M
+echo     default: 1400M
 echo.
 echo  "/r <runner>" class name of the runner to use
 echo     default: org.openrefine.model.LocalDatamodelRunner
@@ -133,6 +133,7 @@ goto shift2loop
 
 :arg-m
 set REFINE_MEMORY=%2
+set REFINE_MIN_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -162,7 +163,7 @@ set JAVA_OPTIONS=
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%REFINE_MEMORY%" == "" goto gotMemory
-set REFINE_MEMORY=1024M
+set REFINE_MEMORY=1400M
 if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
 set REFINE_MIN_MEMORY=256M
 
@@ -238,7 +239,7 @@ rem --- Log for troubleshooting ------------------------------------------
 echo Getting Java Version...
 java -version 2^>^&1
 echo.=====================================================
-for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| findstr "version"') do (set JVERSION=%%a)
 echo Getting Free Ram...
 
 for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)

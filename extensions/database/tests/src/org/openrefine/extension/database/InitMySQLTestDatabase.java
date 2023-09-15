@@ -1,5 +1,5 @@
 
-package org.openrefine.extension.database;
+package com.google.refine.extension.database;
 
 import java.sql.SQLException;
 
@@ -9,7 +9,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
+import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 
 @Test(groups = { "requiresMySQL" })
 public class InitMySQLTestDatabase extends DBExtensionTests {
@@ -24,6 +24,7 @@ public class InitMySQLTestDatabase extends DBExtensionTests {
             @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable)
             throws DatabaseServiceException, SQLException {
 
+        // System.out.println("@BeforeSuite\n");
         mysqlDbConfig = new DatabaseConfiguration();
         mysqlDbConfig.setDatabaseHost(mySqlDbHost);
         mysqlDbConfig.setDatabaseName(mySqlDbName);
@@ -38,8 +39,6 @@ public class InitMySQLTestDatabase extends DBExtensionTests {
 
     @AfterSuite
     public void afterSuite() {
-        // System.out.println("@AfterSuite");
-
         DBExtensionTestUtils.cleanUpTestData(mysqlDbConfig);
     }
 }

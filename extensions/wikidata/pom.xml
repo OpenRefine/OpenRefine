@@ -16,7 +16,7 @@
 
   <properties>
     <powermock.version>2.0.2</powermock.version>
-    <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
+    <wdtk.version>0.12.1</wdtk.version>
   </properties>
   <build>
     <finalName>openrefine-wikidata</finalName>
@@ -56,8 +56,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -83,7 +83,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -138,7 +138,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies.wdtk</groupId>
+      <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
@@ -148,12 +148,12 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies.wdtk</groupId>
+      <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies.wdtk</groupId>
+      <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-util</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
@@ -195,7 +195,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>4.9.1</version>
+      <version>4.9.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

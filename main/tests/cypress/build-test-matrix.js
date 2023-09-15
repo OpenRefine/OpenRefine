@@ -24,14 +24,12 @@ const groups = [
     specs: [
       'cypress/integration/project/grid/column/edit-column/**/*.spec.js',
       'cypress/integration/project/grid/column/facet/**/*.spec.js',
-      'cypress/integration/project/grid/column/facet/reconcile/**/*.spec.js',
     ],
   },
   {
     specs: [
       'cypress/integration/project/grid/column/transpose/**/*.spec.js',
       'cypress/integration/project/grid/column/view/**/*.spec.js',
-      'cypress/integration/project/grid/column/reconcile/**/*.spec.js',
     ],
   },
   {

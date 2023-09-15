@@ -4,7 +4,7 @@
 function navigateToProjectPreview() {
   cy.visitOpenRefine();
   cy.createProjectThroughUserInterface('food.mini.csv');
-  cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+  cy.get('.create-project-ui-panel').contains('Configure parsing options');
   cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
   cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
   cy.get('table.data-table tr').eq(1).should('to.contain', 'BUTTER,WITH SALT');
@@ -15,7 +15,7 @@ describe(__filename, function () {
   it('Tests Parsing Options related to column seperation', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     cy.get('[type="radio"]').check('tab');
     cy.waitForImportUpdate();
@@ -58,21 +58,21 @@ describe(__filename, function () {
   it('Ensures navigation works from project-preview page', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
-    cy.navigateTo('Language Settings');
+    cy.navigateTo('Language settings');
     cy.get('tbody').should('to.contain', 'Select preferred language');
 
-    cy.navigateTo('Import Project');
+    cy.navigateTo('Import project');
     cy.get('tbody').should(
       'to.contain',
       'Locate an existing Refine project file (.tar or .tar.gz)'
     );
 
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('.create-project-ui-panel').should(
       'to.contain',
-      'Configure Parsing Options'
+      'Configure parsing options'
     );
   });
 
@@ -81,7 +81,7 @@ describe(__filename, function () {
     cy.createProjectThroughUserInterface('food.mini.csv');
     cy.get('.create-project-ui-panel').should(
       'to.contain',
-      'Configure Parsing Options'
+      'Configure parsing options'
     );
     cy.get('button[bind="startOverButton"]').click();
 
@@ -94,11 +94,16 @@ describe(__filename, function () {
   it('Test project renaming', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).type('this is a test');
-    cy.doCreateProjectThroughUserInterface();
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     cy.get('#project-name-button').contains('this is a test');
   });
@@ -106,7 +111,7 @@ describe(__filename, function () {
   it('Test project tagging by adding various tags', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
     const uniqueProjectName = Date.now();
     const uniqueTagName1 = 'tag1_' + Date.now();
     const uniqueTagName2 = 'tag2_' + Date.now();
@@ -118,10 +123,15 @@ describe(__filename, function () {
     cy.get('#project-tags-container .select2-input').type(uniqueTagName2);
     cy.get('body').type('{enter}');
     cy.get('#or-import-parsopt').click();
-    cy.doCreateProjectThroughUserInterface();
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list')
       .contains(uniqueProjectName)
       .parent()
@@ -133,10 +143,11 @@ describe(__filename, function () {
       .parent()
       .contains(uniqueTagName2);
   });
+
   it('Tests ignore-first of parsing options', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01001');

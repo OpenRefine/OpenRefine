@@ -24,7 +24,7 @@
     "core-index-create/min-remaining": "$1 minut pozostało",
     "core-index-create/done": "Gotowe.",
     "core-index-create/starting": "Rozpoczynam",
-    "core-index-create/create-proj": "Utwórz Projekt",
+    "core-index-create/create-proj": "Utwórz projekt",
     "core-index/creator": "Twórca:",
     "core-index/modified": "Data ostatniej modyfikacji:",
     "core-index/description": "Opis:",
@@ -166,5 +166,6 @@
     "core-index-open/subject": "Temat",
     "core-index-open/contributors": "Współtwórcy",
     "core-index-import/char-encoding": "Kodowanie&nbsp;znaków",
-    "core-index-import/sel-by-regex": "Wybierz za pomocą wyrażeń regularnych na nazwach plików"
+    "core-index-import/sel-by-regex": "Wybierz za pomocą wyrażeń regularnych na nazwach plików",
+    "core-index-import/enter-url": "Wprowadź jeden lub więcej adresów internetowych (URL) wskazujących na dane do pobrania:"
 }

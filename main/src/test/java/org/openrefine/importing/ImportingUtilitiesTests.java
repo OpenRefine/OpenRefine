@@ -127,6 +127,19 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
+    public void testAllocateFileDeduplication() throws IOException {
+        // Test for comment https://github.com/OpenRefine/OpenRefine/issues/3043#issuecomment-671057317
+        File tempDir = TestUtils.createTempDirectory("openrefine-allocate-file-test");
+        File dirA = new File(tempDir, "a");
+        dirA.mkdir();
+        File conflicting = new File(dirA, "dummy");
+        conflicting.createNewFile();
+
+        File allocated = ImportingUtilities.allocateFile(dirA, ".././a/dummy");
+        Assert.assertEquals(allocated, new File(dirA, "dummy-2"));
+    }
+
+    @Test
     public void urlImporting() throws IOException {
 
         String RESPONSE_BODY = "{code:401,message:Unauthorised}";

@@ -41,6 +41,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
 
@@ -121,8 +122,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-        if (snak.getValue() instanceof StringValue) {
-            String value = ((StringValue) snak.getValue()).getString();
+        if (snak instanceof ValueSnak && ((ValueSnak) snak).getValue() instanceof StringValue) {
+            String value = ((StringValue) ((ValueSnak) snak).getValue()).getString();
             PropertyIdValue pid = snak.getPropertyId();
             Set<Pattern> patterns = getPattern(pid);
             for (Pattern pattern : patterns) {

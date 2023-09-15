@@ -3,7 +3,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.get('h1').contains('Project metadata');
     cy.get(
@@ -15,7 +15,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.get('#metadata-body tbody>tr').eq(3).contains('Project name');
     cy.get('#metadata-body tbody>tr').eq(3).contains(projectName);
@@ -28,7 +28,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('testProject');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Project name:')
       .siblings()
@@ -45,7 +45,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('tagTest');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Tags:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(4).contains('Tags');
@@ -59,7 +59,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('testCreator');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Creator:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(5).contains('Creator');
@@ -73,7 +73,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('testcontributor');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Contributors:')
       .siblings()
@@ -90,7 +90,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('testSubject');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Subject:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(7).contains('Subject');
@@ -104,7 +104,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('GPL-3');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'License:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(12).contains('License');
@@ -118,7 +118,7 @@ describe(__filename, function () {
         cy.stub(win, 'prompt').returns('openrefine.org');
       },
     });
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.contains('td', 'Homepage:')
       .siblings()

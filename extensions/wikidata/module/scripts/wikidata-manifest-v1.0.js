@@ -84,7 +84,7 @@ const WikidataManifestV1_0 = {
     "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
   },
   "reconciliation": {
-    "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
+    "endpoint": "https://wikidata.reconci.link/${lang}/api"
   },
   "editgroups": {
     "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"

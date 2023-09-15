@@ -6,8 +6,8 @@
     "gdata-import/next->": "הבא &laquo;",
     "gdata-import/auth-doc": "מסמכים מאושרים",
     "gdata-import/please": "בבקשה",
-    "gdata-import/sign-in": "להיכנס ולאשר",
-    "gdata-import/sign-out": "לצאת",
+    "gdata-import/sign-in": "כניסה",
+    "gdata-import/sign-out": "יציאה",
     "gdata-import/access-data": "גישה לנתונים שלך ב־Google.",
     "gdata-import/retrieving": "מתקבלים מסמכים מ־Google Docs…",
     "gdata-import/re-sign-in": "להיכנס מחדש",
@@ -45,5 +45,7 @@
     "gdata-exporter/upload-google-sheets-success": "המיזם הועלה ל־Google Drive ",
     "gdata-exporter/upload-google-drive-success": "המיזם הועלה ל־Google Drive ",
     "gdata-exporter/google-sheets": "Google Sheets",
-    "gdata-exporter/export-to-google-drive": "מיזם OpenRefine שומר בארכיון ל־Google Drive…"
+    "gdata-exporter/export-to-google-drive": "מיזם OpenRefine שומר בארכיון ל־Google Drive…",
+    "gdata-import/re-sign-in-another": "כניסה עם חשבון אחר",
+    "gdata-import/please-signin": "נא להיכנס כדי לאשר את הגישה לנתונים שלך ב־Google"
 }

@@ -183,7 +183,9 @@ public class PairPLLTests extends PLLTestsBase {
         PairPLL<Long, Integer> indexed = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4, 5))
                 .zipWithIndex();
         List<Optional<Long>> expectedFirstKeys = ((RangePartitioner<Long>) indexed.getPartitioner().get()).getFirstKeys();
-        indexed = indexed.withPartitioner(Optional.empty());
+        // remove the partitioner and the cached count by adding a (spurious) filter
+        indexed = indexed.withPartitioner(Optional.empty())
+                .filter(x -> true);
 
         PairPLL<Long, Integer> doublyIndexed = PairPLL.assumeIndexed(indexed, -1);
         Assert.assertTrue(doublyIndexed.getPartitioner().get() instanceof RangePartitioner<?>);

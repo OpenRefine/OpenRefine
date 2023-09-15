@@ -3,9 +3,9 @@
 describe(__filename, function () {
   it('Create your first OpenRefine project (using provided data)', function () {
     // For sake of the tutorial we have already downloaded the data into fixtures
-    // Step-1:Once OpenRefine is launched in your browser, click Create Project from the left hand menu and select Get data from This Computer
+    // Step-1:Once OpenRefine is launched in your browser, click Create project from the left hand menu and select Get data from This Computer
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('This Computer')
       .click();
@@ -28,7 +28,7 @@ describe(__filename, function () {
       .click();
 
     // then ensure we are on the preview page
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
     // Step-3 Click in the Character encoding box and set it to UTF-8
 
     cy.get('input[bind="encodingInput"]').should('have.value', 'UTF-8');
@@ -37,7 +37,12 @@ describe(__filename, function () {
     cy.get('input[bind="trimStringsCheckbox"]').check();
 
     // create the project and ensure its successful
-    cy.doCreateProjectThroughUserInterface();
+    // wait until the grid appear, this ensure the job is ready
+    cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     // ensure that the project data is loaded completely
     cy.get('#summary-bar').should('to.contain', '1001 rows');

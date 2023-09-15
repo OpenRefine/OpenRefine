@@ -7,10 +7,12 @@ import java.util.Map;
 
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -61,9 +63,12 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     public void scrutinize(ItemUpdate update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
-            propertyIdValueValueMap.put(pid, value);
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            if (mainSnak instanceof ValueSnak) {
+                PropertyIdValue pid = mainSnak.getPropertyId();
+                Value value = ((ValueSnak) mainSnak).getValue();
+                propertyIdValueValueMap.put(pid, value);
+            }
         }
 
         for (PropertyIdValue propertyId : propertyIdValueValueMap.keySet()) {

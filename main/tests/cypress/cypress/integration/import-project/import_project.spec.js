@@ -1,13 +1,13 @@
 describe(__filename, function () {
   it('Check the layout for importing a project', function () {
     cy.visitOpenRefine();
-    cy.navigateTo('Import Project');
+    cy.navigateTo('Import project');
     cy.get('.grid-layout').contains('Locate an existing Refine project file');
   });
 
   it('Import a project', function () {
     cy.visitOpenRefine();
-    cy.navigateTo('Import Project');
+    cy.navigateTo('Import project');
     // make sure the dataset was loaded properly
     const projectFile = {
       filePath: 'food-small-csv.openrefine.tar.zip',
@@ -24,7 +24,7 @@ describe(__filename, function () {
 
   it('Import a project, test the renaming', function () {
     cy.visitOpenRefine();
-    cy.navigateTo('Import Project');
+    cy.navigateTo('Import project');
     // make sure the dataset was loaded properly
     const projectFile = {
       filePath: 'food-small-csv.openrefine.tar.zip',

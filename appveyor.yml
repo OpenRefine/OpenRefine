@@ -14,7 +14,7 @@ skip_commits:
     - docs/
 
 environment:
-  JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+  JAVA_HOME: C:\Program Files\Java\jdk11
   MAVEN_HOME: C:\Program Files (x86)\Apache\Maven
 
 matrix:

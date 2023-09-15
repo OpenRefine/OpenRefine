@@ -22,7 +22,7 @@ describe(__filename, function () {
     cy.getFacetContainer('Water').should('exist');
   });
 
-  it('Test the Remove All button', function () {
+  it('Test the Remove all button', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
@@ -31,7 +31,7 @@ describe(__filename, function () {
       2
     );
 
-    cy.get('#refine-tabs-facets a').contains('Remove All').click();
+    cy.get('#refine-tabs-facets a').contains('Remove all').click();
     cy.get('#refine-tabs-facets .facets-container .facet-container').should(
       'have.length',
       0
@@ -41,7 +41,7 @@ describe(__filename, function () {
       .contains('Using facets and filters');
   });
 
-  it('Test the Reset All button', function () {
+  it('Test the Reset all button', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.columnActionClick('Energ_Kcal', ['Facet', 'Text facet']);
@@ -66,7 +66,7 @@ describe(__filename, function () {
       .find('.facet-choice:first-child')
       .should('have.class', 'facet-choice-selected');
 
-    cy.get('#refine-tabs-facets a').contains('Reset All').click();
+    cy.get('#refine-tabs-facets a').contains('Reset all').click();
 
     // all facets selections should be gone
     cy.getFacetContainer('Water')
@@ -104,7 +104,7 @@ describe(__filename, function () {
       .contains('change');
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
     cy.get('.dialog-container .dialog-header').contains(
-      `Edit Facet's Expression`
+      `Edit facet's Expression`
     );
   });
 

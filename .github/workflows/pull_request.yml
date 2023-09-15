@@ -11,7 +11,7 @@ jobs:
   server_tests:
     strategy:
       matrix:
-        java: [ 8, 14 ]
+        java: [ 11, 14 ]
 
     runs-on: ubuntu-latest
 
@@ -118,11 +118,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up Java 8
+      - name: Set up Java 11
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: 8
+          java-version: 11
 
       - name: Build OpenRefine
         run: ./refine build
@@ -131,16 +131,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '12'
-
-      - name: Install Edge
-        if: matrix.browser == 'edge'
-        run: |
-          sudo curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-          sudo rm microsoft.gpg
-          sudo apt-get update
-          sudo apt-get install microsoft-edge-dev
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v2.1.6

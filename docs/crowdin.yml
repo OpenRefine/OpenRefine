@@ -1,0 +1,16 @@
+project_id: '455186'
+api_token_env: 'CROWDIN_PERSONAL_TOKEN'
+preserve_hierarchy: true
+files: [
+    # Markdown files for the user manual
+    {
+      source: '/docs/manual/**/*',
+      translation: '/i18n/%two_letters_code%/docusaurus-plugin-content-docs/current/**/%original_file_name%',
+    },
+    # Docs home page
+    {
+      source: '/docs/index.md',
+      translation: '/i18n/%two_letters_code%/docusaurus-plugin-content-docs/current/%original_file_name%',
+    },
+
+  ]

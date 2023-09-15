@@ -36,6 +36,7 @@ package org.openrefine.expr.functions.xml;
 import org.jsoup.nodes.Element;
 
 import org.openrefine.expr.EvalError;
+import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 
@@ -52,11 +53,12 @@ public class XmlText extends PureFunction {
                 return e1.text();
 
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                        + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                + "' and expects a single XML or HTML element as an argument");
     }
 
     @Override

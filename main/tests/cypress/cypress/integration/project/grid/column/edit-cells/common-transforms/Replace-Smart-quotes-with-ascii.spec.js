@@ -11,7 +11,7 @@ describe(__filename, function () {
     cy.columnActionClick('Smartquotes', [
       'Edit cells',
       'Common transforms',
-      'Replace Smart quotes with ascii',
+      'Replace smart quotes with ASCII',
     ]);
 
     //  Check notification and cell content
@@ -24,7 +24,7 @@ describe(__filename, function () {
     cy.columnActionClick('ascii', [
       'Edit cells',
       'Common transforms',
-      'Replace Smart quotes with ascii',
+      'Replace smart quotes with ASCII',
     ]);
 
     //  Check notification and cell content

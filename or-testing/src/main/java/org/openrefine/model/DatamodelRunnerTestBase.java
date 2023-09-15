@@ -1191,10 +1191,11 @@ public abstract class DatamodelRunnerTestBase {
         MultiFileReadingProgressStub progress = new MultiFileReadingProgressStub();
         GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress);
 
-        Assert.assertTrue(progress.bytesRead <= 0L);
         // read the whole file
         textGrid.collectRows();
-        Assert.assertTrue(progress.bytesRead >= 30);
+        // Depending on the implementation, at least one pass was done on the whole file
+        // so the progress must be at least the number of bytes in the file
+        Assert.assertTrue(progress.bytesRead >= 35);
     }
 
     @Test

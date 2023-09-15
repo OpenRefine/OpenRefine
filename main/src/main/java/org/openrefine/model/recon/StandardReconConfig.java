@@ -510,14 +510,8 @@ public class StandardReconConfig extends ReconConfig {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
-        // TODO: This code prevents the retry mechanism in ReconOperation from working
         while (recons.size() < jobs.size()) {
-            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
-                    .withService(service)
-                    .withIdentifierSpace(identifierSpace)
-                    .withSchemaSpace(schemaSpace);
-
-            recons.add(recon);
+            recons.add(null);
         }
 
         return recons;

@@ -121,16 +121,8 @@ Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
             $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
                             .appendTo(li);
     });
-
-    self._addTagsListAnimation();
 };
 
-Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
-    $("#tagsUl").lavalamp({
-            setOnClick : true,
-            duration : 300
-    });
-};
 
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
     var self = this;

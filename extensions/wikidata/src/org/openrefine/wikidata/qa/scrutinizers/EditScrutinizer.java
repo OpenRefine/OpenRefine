@@ -30,6 +30,7 @@ import java.util.List;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -156,7 +157,9 @@ public abstract class EditScrutinizer {
         for (SnakGroup group : groups) {
             if (group.getProperty().getId().equals(pid)) {
                 for (Snak snak : group.getSnaks())
-                    results.add(snak.getValue());
+                    if (snak instanceof ValueSnak) {
+                        results.add(((ValueSnak) snak).getValue());
+                    }
             }
         }
         return results;

@@ -274,10 +274,10 @@ public class StandardReconConfigTests extends RefineTest {
             // We won't have gotten a result, but we want to make sure things didn't die
             Row row = project.getCurrentGridState().getRow(0L);
             Cell cell = row.cells.get(1);
-            assertNotNull(cell.recon);
-            assertEquals(cell.recon.service, url.toString());
-            ReconCandidate candidate = cell.recon.getBestCandidate();
-            assertNull(candidate);
+            assertNotNull(cell.value);
+            assertNull(cell.recon);
+            // the recon object is left null, so that it can be told apart from
+            // empty recon objects (the service legitimally did not return any candidate)
         }
     }
 

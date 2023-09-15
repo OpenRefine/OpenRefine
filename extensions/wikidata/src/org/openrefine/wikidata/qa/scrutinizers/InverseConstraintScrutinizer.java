@@ -34,9 +34,11 @@ import java.util.Set;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
 
@@ -118,9 +120,13 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
             return; // TODO support for deleted statements
         }
 
-        Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
+        Snak mainSnak = statement.getClaim().getMainSnak();
+        if (!(mainSnak instanceof ValueSnak)) {
+            return;
+        }
+        Value mainSnakValue = ((ValueSnak) mainSnak).getValue();
         if (mainSnakValue instanceof ItemIdValue) {
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            PropertyIdValue pid = mainSnak.getPropertyId();
             PropertyIdValue inversePid = getInverseConstraint(pid);
             if (inversePid != null) {
                 EntityIdValue targetEntityId = (EntityIdValue) mainSnakValue;
