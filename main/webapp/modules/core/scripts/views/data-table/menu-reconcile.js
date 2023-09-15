@@ -87,17 +87,17 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doAddColumnWithUrlOfMatchedEntities = function () {
 
-    promptForColumn(successCallBack);
+    promptForColumn(successCallBack,'core-views/add-entity-URL-col');
 
   }
 
 
-  function promptForColumn(successCallBack){
+  function promptForColumn(successCallBack,dialogName){
     var frame = $(
       DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/add-column-name', column.name));
+    elmts.dialogHeader.text($.i18n(dialogName, column.name));
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
@@ -326,7 +326,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doAddIdcolumn = function() {
     
-   promptForColumn(successCallBackForAddingIdColumn);
+   promptForColumn(successCallBackForAddingIdColumn,'core-views/add-id-col');
 
       
   };
