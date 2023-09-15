@@ -7,14 +7,14 @@
                bind="or_dialog_findMore"></a>
         </div>
         <div class="clustering-dialog-control-row">
-            <div>
+            <div  class="clustering-dialog-control-group">
                 <label for="methodSelectorId" bind="or_dialog_method"></label>
                 <select bind="methodSelector" id="methodSelectorId">
                 <option selected="true" bind="or_dialog_keyCollision"></option>
                 <option bind="or_dialog_neighbor"></option>
             </select>
             </div>
-            <div>
+            <div  class="clustering-dialog-control-group">
                 <div class="binning-controls"><label for="keyingFunctionSelectorId" bind="or_dialog_keying"></label>
                     <select bind="keyingFunctionSelector" id="keyingFunctionSelectorId"></select>
                 </div>
@@ -22,7 +22,7 @@
                     <select bind="distanceFunctionSelector" id="distanceFunctionSelectorId"></select>
                 </div>
             </div>
-            <div>
+            <div  class="clustering-dialog-control-group">
                 <div id="ngram-fingerprint-params" class="function-params hidden">
                     <label for="ngramSizeId" bind="or_dialog_ngramSize"></label>
                     <input spellcheck="false" type="text" value="2" bind="ngramSize" id="ngramSizeId" name="ngram-size" size="2"
@@ -41,7 +41,11 @@
                     </span>
                 </div>
             </div>
-            <div bind="resultSummary" id="resultSummaryId" style="text-align:right;">
+            <div class="clustering-dialog-control-group">
+                <input type="checkbox" bind="autoCheckbox" id="autoId" checked/><label for="autoId" bind="or_auto_update"></label>
+                <button class="button" bind="clusterButton" id="clusterButtonId" disabled="true"></button>
+            </div>
+            <div class="control-group" bind="resultSummary" id="resultSummaryId" style="text-align:right;">
             </div>
         </div>
         <div class="clustering-dialog-facet-row">

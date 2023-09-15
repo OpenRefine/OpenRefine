@@ -169,6 +169,9 @@ public class FileProjectManager extends ProjectManager {
 
         while ((tarEntry = tin.getNextTarEntry()) != null) {
             File destEntry = new File(destDir, tarEntry.getName());
+            if (!destEntry.toPath().normalize().startsWith(destDir.toPath().normalize())) {
+                throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+            }
             File parent = destEntry.getParentFile();
 
             if (!parent.exists()) {

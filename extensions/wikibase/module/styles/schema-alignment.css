@@ -17,8 +17,8 @@
   height: 100%;
 }
 
-#schema-alignment-tab {
-  overflow: hidden;
+.schema-alignment-tab-content {
+  max-width: 70em;
 }
 
 .main-view-panel-tab-header {
@@ -44,12 +44,8 @@
 }
 
 .schema-alignment-dialog-canvas {
-  background: var(--background-primary);
   overflow-y: auto;
-}
-
-.schema-alignment-dialog-entity-edits-area {
-  max-width: 70em;
+  margin-bottom: 3em;
 }
 
 .schema-alignment-dialog-statements-area {
@@ -66,45 +62,37 @@
   margin: 1em;
 }
 
-.schema-alignment-save-buttons{
-  display:flex; 
-  flex-direction: row; 
-  float: right; 
-  padding: 12px;
+.schema-alignment-header {
+  position: sticky;
+  top: 0;
+  padding-top: 1em;
+  background-color: var(--background-primary);
+  z-index: 1;
 }
 
-.schema-alignment-save {
-  padding-right: 10px; 
+.schema-alignment-header .panel-explanation:first-child {
+  margin-top: 0;
 }
 
-#schema-alignment-entity-add-buttons .wbs-toolbar{
-  float: left;
-  padding: 1em;  
+.float-apart {
+  display: flex;
+  justify-content: space-between;
 }
 
-.schema-alignment-save button:disabled {
-  color: gray;
+.schema-alignment-footer {
+  padding: 1em;
 }
 
-.schema-alignment-save button {
-  font-weight: normal;
-  width: 100%;
-}
-
-.schema-alignment-discard button:disabled {
-  color: gray;
-}
-
-.schema-alignment-discard button {
-  font-weight: normal;
-  width: 100%;
+.schema-alignment-footer button:disabled {
+  color: grey;
+  cursor: not-allowed;
 }
 
 .schema-alignment-dialog-columns-area {
   border: 1px solid #bcf;
   border-left: 0;
   border-right: 0;
-  padding: 5px;
+  padding: 5px 1em;
   max-height: 100px;
   overflow-y: auto;
 }

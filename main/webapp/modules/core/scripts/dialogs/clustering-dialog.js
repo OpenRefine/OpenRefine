@@ -61,6 +61,8 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_ngramSize.html($.i18n('core-dialogs/ngram-size'));
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
+    this._elmts.clusterButton.html($.i18n('core-facets/cluster'));
+    this._elmts.or_auto_update.html($.i18n('core-facets/auto-update'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
     this._elmts.exportClusterButton.html($.i18n('core-buttons/export-cluster'));
@@ -107,15 +109,29 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
-        self._cluster();
+        if(document.getElementById("autoId").checked) {
+            self._cluster();
+        }
     };
 
     this._elmts.ngramSize.on('change',params_changer);
     this._elmts.radius.on('change',params_changer);
     this._elmts.ngramBlock.on('change',params_changer);
+    this._elmts.autoCheckbox.on("change", function() {
+        let checkbox = document.getElementById("autoId");
+        let button = document.getElementById("clusterButtonId");
+
+        if (checkbox.checked) {
+            button.disabled = true;
+            self._cluster();
+        } else {
+            button.disabled = false;
+        }
+    });
 
     this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
+    this._elmts.clusterButton.on('click',function() { self._cluster(); });
     this._elmts.exportClusterButton.on('click',function() { self._onExportCluster(); });
     this._elmts.applyReClusterButton.on('click',function() { self._onApplyReCluster(); });
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
@@ -335,6 +351,11 @@ ClusteringDialog.prototype._cluster = function() {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
             $('#cluster-and-edit-dialog :input').prop('disabled', false);
+            let checkbox = document.getElementById("autoId");
+            let button = document.getElementById("clusterButtonId");
+            if (checkbox.checked) {
+                button.disabled = true;
+            }
         },
         "json"
     );

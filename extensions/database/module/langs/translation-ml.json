@@ -21,7 +21,6 @@
     "database-source/alert-query": "താങ്കൾ സാധുവായ ഒരു ചോദ്യം വ്യക്തമാക്കണം",
     "database-source/alert-connection-edit": "കണക്ഷൻ തിരുത്തി",
     "database-source/alert-password": "താങ്കൾ ഒരു ഡാറ്റാബേസ് രഹസ്യ കോഡ്‌ സൂചിപ്പിക്കണം",
-    "database-source/alert-invalid-query-keyword": "അന്വേഷണത്തിൽ ഡാറ്റ കൃത്രിമത്വ കീവേഡ് അടങ്ങിയിരിക്കരുത്:",
     "database-source/alert-initial-database": "താങ്കൾ ഒരു പ്രാരംഭ ഡാറ്റാബേസ് വ്യക്തമാക്കണം",
     "database-source/alert-invalid-query-select": "ക്വറി SELECT എന്ന വാക്ക് വച്ച് തുടങ്ങണം",
     "database-source/form-validation-failure": "പുതിയ കണക്ഷൻ ഫോം അസാധുവാണ്!",
