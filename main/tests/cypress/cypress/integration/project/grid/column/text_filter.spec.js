@@ -57,6 +57,16 @@ describe('Checks Text-filter + Case Sensitive + Regex', () => {
     );
   });
 
+  it('check multiple regex option', () => {
+    cy.loadAndVisitProject('food.mini');
+    cy.columnActionClick('Shrt_Desc', ['Text filter']);
+    cy.columnActionClick('Shrt_Desc', ['Text filter']);
+    cy.get('#regexCheckbox0').should('be.visible');
+    cy.get('#regexCheckbox1').should('be.visible').click();
+    cy.get('#regexCheckbox0').should('not.be.checked');
+    cy.get('#regexCheckbox1').should('be.checked');
+  });
+
   it('check Invert option and Reset Option', () => {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Text filter']);

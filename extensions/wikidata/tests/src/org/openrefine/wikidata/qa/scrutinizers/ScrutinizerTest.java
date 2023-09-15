@@ -55,7 +55,7 @@ import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public abstract class ScrutinizerTest {
 
@@ -84,9 +84,9 @@ public abstract class ScrutinizerTest {
         scrutinizer.prepareDependencies();
     }
 
-    public void scrutinize(ItemUpdate... updates) {
+    public void scrutinize(TermedStatementEntityUpdate... updates) {
         scrutinizer.batchIsBeginning();
-        for (ItemUpdate update : Arrays.asList(updates)) {
+        for (TermedStatementEntityUpdate update : Arrays.asList(updates)) {
             if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }

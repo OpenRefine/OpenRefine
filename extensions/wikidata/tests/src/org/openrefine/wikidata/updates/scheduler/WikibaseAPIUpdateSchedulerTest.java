@@ -31,38 +31,38 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
 
     @Test
     public void testOrderPreserved()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
-        ItemUpdate updateB = new ItemUpdateBuilder(existingIdB).addStatement(sBtoA).build();
-        List<ItemUpdate> scheduled = schedule(updateA, updateB);
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
+        TermedStatementEntityUpdate updateB = new ItemUpdateBuilder(existingIdB).addStatement(sBtoA).build();
+        List<TermedStatementEntityUpdate> scheduled = schedule(updateA, updateB);
         assertEquals(Arrays.asList(updateA, updateB), scheduled);
     }
 
     @Test
     public void testUpdateIsNotSplit()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
-        ItemUpdate newUpdateA = new ItemUpdateBuilder(newIdA).build();
-        ItemUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
-        List<ItemUpdate> scheduled = schedule(updateA);
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
+        TermedStatementEntityUpdate newUpdateA = new ItemUpdateBuilder(newIdA).build();
+        TermedStatementEntityUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
+        List<TermedStatementEntityUpdate> scheduled = schedule(updateA);
         assertSetEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
     }
 
     @Test
     public void testMixedUpdate()
             throws ImpossibleSchedulingException {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB)
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB)
                 .addStatement(sAtoB).build();
-        ItemUpdate newUpdateA = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
-        ItemUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
-        List<ItemUpdate> scheduled = schedule(updateA, newUpdateA);
+        TermedStatementEntityUpdate newUpdateA = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
+        TermedStatementEntityUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
+        List<TermedStatementEntityUpdate> scheduled = schedule(updateA, newUpdateA);
         assertEquals(Arrays.asList(newUpdateA, newUpdateB, updateA), scheduled);
     }
 

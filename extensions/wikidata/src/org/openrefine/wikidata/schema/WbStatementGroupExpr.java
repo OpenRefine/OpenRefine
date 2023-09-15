@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
@@ -56,7 +56,7 @@ public class WbStatementGroupExpr {
         this.statementExprs = claimExprs;
     }
 
-    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject)
+    public StatementGroup evaluate(ExpressionContext ctxt, EntityIdValue subject)
             throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
         List<Statement> statements = new ArrayList<Statement>(statementExprs.size());

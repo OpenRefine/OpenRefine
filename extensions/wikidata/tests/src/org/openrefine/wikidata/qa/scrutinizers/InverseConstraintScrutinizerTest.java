@@ -41,8 +41,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
 
@@ -70,7 +70,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, propertyValue);
         Statement statement = new StatementImpl("P25", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -90,7 +90,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricPropertyValue);
         Statement statement = new StatementImpl("P3373", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -110,7 +110,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyId);
         Statement statement = new StatementImpl("P25", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

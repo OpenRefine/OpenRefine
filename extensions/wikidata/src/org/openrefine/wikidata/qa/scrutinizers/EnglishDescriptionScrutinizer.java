@@ -2,7 +2,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * @author Lu Liu
@@ -16,7 +16,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
     private static final String LANG = "en";
 
     @Override
-    public void scrutinize(ItemUpdate update, String descText, String lang) {
+    public void scrutinize(TermedStatementEntityUpdate update, String descText, String lang) {
         if (!LANG.equalsIgnoreCase(lang)) {
             return;
         }
@@ -27,7 +27,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
     }
 
     // Description are not sentences, so the punctuation sign at the end should be avoided.
-    protected void checkPunctuationSign(ItemUpdate update, String descText) {
+    protected void checkPunctuationSign(TermedStatementEntityUpdate update, String descText) {
         assert descText.length() > 0;
         final String punctuationSigns = ".?!;:,'\"";
 
@@ -43,7 +43,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
     }
 
     // Descriptions begin with a lowercase letter except when uppercase would normally be required or expected.
-    protected void checkUppercase(ItemUpdate update, String descText) {
+    protected void checkUppercase(TermedStatementEntityUpdate update, String descText) {
         assert descText.length() > 0;
 
         char first = descText.charAt(0);
@@ -58,7 +58,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
     }
 
     // Descriptions should not normally begin with initial articles ("a", "an", "the").
-    protected void checkArticle(ItemUpdate update, String descText) {
+    protected void checkArticle(TermedStatementEntityUpdate update, String descText) {
         assert descText.length() > 0;
 
         String firstWord = descText.split("\\s")[0].toLowerCase();

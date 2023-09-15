@@ -85,31 +85,31 @@ public class ItemUpdateTest {
 
     @Test
     public void testIsNull() {
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertTrue(update.isNull());
-        ItemUpdate update2 = new ItemUpdateBuilder(newSubject).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(newSubject).build();
         assertFalse(update2.isNull());
     }
 
     @Test
     public void testIsEmpty() {
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertTrue(update.isEmpty());
-        ItemUpdate update2 = new ItemUpdateBuilder(newSubject).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(newSubject).build();
         assertTrue(update2.isEmpty());
     }
 
     @Test
     public void testIsNew() {
-        ItemUpdate newUpdate = new ItemUpdateBuilder(newSubject).build();
+        TermedStatementEntityUpdate newUpdate = new ItemUpdateBuilder(newSubject).build();
         assertTrue(newUpdate.isNew());
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertFalse(update.isNew());
     }
 
     @Test
     public void testAddStatements() {
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
                 .build();
         assertFalse(update.isNull());
         assertEquals(Arrays.asList(statement1, statement2), update.getAddedStatements());
@@ -126,14 +126,14 @@ public class ItemUpdateTest {
      */
     @Test(enabled = false)
     public void testSerializeStatements() throws IOException {
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
                 .build();
         TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"), ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testDeleteStatements() {
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject).deleteStatement(statement1)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject).deleteStatement(statement1)
                 .deleteStatement(statement2).build();
         assertEquals(Arrays.asList(statement1, statement2).stream().collect(Collectors.toSet()),
                 update.getDeletedStatements());
@@ -141,24 +141,24 @@ public class ItemUpdateTest {
 
     @Test
     public void testMerge() {
-        ItemUpdate updateA = new ItemUpdateBuilder(existingSubject).addStatement(statement1).build();
-        ItemUpdate updateB = new ItemUpdateBuilder(existingSubject).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingSubject).addStatement(statement1).build();
+        TermedStatementEntityUpdate updateB = new ItemUpdateBuilder(existingSubject).addStatement(statement2).build();
         assertNotEquals(updateA, updateB);
-        ItemUpdate merged = updateA.merge(updateB);
+        TermedStatementEntityUpdate merged = updateA.merge(updateB);
         assertEquals(statementGroups, merged.getAddedStatementGroups().stream().collect(Collectors.toSet()));
     }
 
     @Test
     public void testGroupBySubject() {
-        ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addStatement(statement1).build();
-        ItemUpdate updateB = new ItemUpdateBuilder(sameNewSubject).addStatement(statement2).build();
-        ItemUpdate updateC = new ItemUpdateBuilder(existingSubject).addLabel(label, true).build();
-        ItemUpdate updateD = new ItemUpdateBuilder(matchedSubject).build();
-        Map<EntityIdValue, ItemUpdate> grouped = ItemUpdate
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(newSubject).addStatement(statement1).build();
+        TermedStatementEntityUpdate updateB = new ItemUpdateBuilder(sameNewSubject).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateC = new ItemUpdateBuilder(existingSubject).addLabel(label, true).build();
+        TermedStatementEntityUpdate updateD = new ItemUpdateBuilder(matchedSubject).build();
+        Map<EntityIdValue, TermedStatementEntityUpdate> grouped = TermedStatementEntityUpdate
                 .groupBySubject(Arrays.asList(updateA, updateB, updateC, updateD));
-        ItemUpdate mergedUpdate = new ItemUpdateBuilder(newSubject).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityUpdate mergedUpdate = new ItemUpdateBuilder(newSubject).addStatement(statement1).addStatement(statement2)
                 .build();
-        Map<EntityIdValue, ItemUpdate> expected = new HashMap<>();
+        Map<EntityIdValue, TermedStatementEntityUpdate> expected = new HashMap<>();
         expected.put(newSubject, mergedUpdate);
         expected.put(existingSubject, updateC);
         assertEquals(expected, grouped);
@@ -168,11 +168,11 @@ public class ItemUpdateTest {
     public void testNormalizeTerms() {
         MonolingualTextValue aliasEn = Datamodel.makeMonolingualTextValue("alias", "en");
         MonolingualTextValue aliasFr = Datamodel.makeMonolingualTextValue("coucou", "fr");
-        ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn).addAlias(aliasFr)
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn).addAlias(aliasFr)
                 .build();
         assertFalse(updateA.isNull());
-        ItemUpdate normalized = updateA.normalizeLabelsAndAliases();
-        ItemUpdate expectedUpdate = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
+        TermedStatementEntityUpdate normalized = updateA.normalizeLabelsAndAliases();
+        TermedStatementEntityUpdate expectedUpdate = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
                 .addLabel(aliasFr, true).build();
         assertEquals(expectedUpdate, normalized);
     }
@@ -181,9 +181,9 @@ public class ItemUpdateTest {
     public void testMergeLabels() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
     }
 
@@ -191,9 +191,9 @@ public class ItemUpdateTest {
     public void testMergeLabelsIfNew() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label1), merged.getLabelsIfNew());
         assertEquals(Collections.emptySet(), merged.getLabels());
     }
@@ -202,9 +202,9 @@ public class ItemUpdateTest {
     public void testMergeLabelsIfNewOverriding() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label1), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
@@ -213,9 +213,9 @@ public class ItemUpdateTest {
     public void testMergeLabelsIfNewOverriding2() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
@@ -224,9 +224,9 @@ public class ItemUpdateTest {
     public void testMergeDescriptionsIfNew() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(description1), merged.getDescriptionsIfNew());
         assertEquals(Collections.emptySet(), merged.getDescriptions());
         assertFalse(merged.isEmpty());
@@ -236,9 +236,9 @@ public class ItemUpdateTest {
     public void testMergeDescriptionsIfNewOverriding() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, true).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, true).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(description1), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
@@ -247,9 +247,9 @@ public class ItemUpdateTest {
     public void testMergeDescriptionsIfNewOverriding2() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, true).build();
-        ItemUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, true).build();
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(description2), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
@@ -258,7 +258,7 @@ public class ItemUpdateTest {
     public void testConstructOverridingLabels() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update = new ItemUpdateBuilder(existingSubject)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(existingSubject)
                 .addLabel(label1, false)
                 .addLabel(label2, true)
                 .build();

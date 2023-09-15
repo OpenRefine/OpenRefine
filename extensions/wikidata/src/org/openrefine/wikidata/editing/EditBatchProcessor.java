@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
@@ -43,7 +44,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 /**
@@ -59,12 +60,12 @@ public class EditBatchProcessor {
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
     private NewItemLibrary library;
-    private List<ItemUpdate> scheduled;
+    private List<TermedStatementEntityUpdate> scheduled;
     private String summary;
     private List<String> tags;
 
-    private List<ItemUpdate> remainingUpdates;
-    private List<ItemUpdate> currentBatch;
+    private List<TermedStatementEntityUpdate> remainingUpdates;
+    private List<TermedStatementEntityUpdate> currentBatch;
     private int batchCursor;
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
@@ -89,7 +90,7 @@ public class EditBatchProcessor {
      * @param batchSize
      *            the number of items that should be retrieved in one go from the API
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityUpdate> updates,
             NewItemLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
         this.fetcher = fetcher;
         this.editor = editor;
@@ -131,7 +132,7 @@ public class EditBatchProcessor {
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
         }
-        ItemUpdate update = currentBatch.get(batchCursor);
+        TermedStatementEntityUpdate update = currentBatch.get(batchCursor);
 
         // Rewrite mentions to new items
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getItemId());
@@ -150,7 +151,7 @@ public class EditBatchProcessor {
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getItemId();
                 update = update.normalizeLabelsAndAliases();
 
-                ItemDocument itemDocument = Datamodel.makeItemDocument(update.getItemId(),
+                ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getItemId(),
                         update.getLabels().stream().collect(Collectors.toList()),
                         update.getDescriptions().stream().collect(Collectors.toList()),
                         update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),

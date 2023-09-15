@@ -14,7 +14,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
@@ -58,7 +58,7 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             Map<PropertyIdValue, List<Value>> qualifiersMap = new HashMap<>();

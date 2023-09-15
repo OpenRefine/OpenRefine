@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jsoup.helper.Validate;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -42,7 +42,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  */
 public class ItemUpdateBuilder {
 
-    private ItemIdValue qid;
+    private EntityIdValue qid;
     private List<Statement> addedStatements;
     private Set<Statement> deletedStatements;
     private Set<MonolingualTextValue> labels;
@@ -58,7 +58,7 @@ public class ItemUpdateBuilder {
      * @param qid
      *            the subject of the document. It can be a reconciled item value for new items.
      */
-    public ItemUpdateBuilder(ItemIdValue qid) {
+    public ItemUpdateBuilder(EntityIdValue qid) {
         Validate.notNull(qid);
         this.qid = qid;
         this.addedStatements = new ArrayList<>();
@@ -220,9 +220,10 @@ public class ItemUpdateBuilder {
      * 
      * @return
      */
-    public ItemUpdate build() {
+    public TermedStatementEntityUpdate build() {
         built = true;
-        return new ItemUpdate(qid, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+        return new TermedStatementEntityUpdate(qid, addedStatements, deletedStatements, labels, labelsIfNew, descriptions,
+                descriptionsIfNew, aliases);
     }
 
 }

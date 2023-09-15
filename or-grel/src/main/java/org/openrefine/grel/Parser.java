@@ -255,7 +255,9 @@ public class Parser {
         }
 
         while (_token != null) {
-            if (_token.type == TokenType.Operator && _token.text.equals(".")) {
+            if (_token.type == TokenType.Error) {
+                throw makeException("Unknown function or control named" + _token.text);
+            } else if (_token.type == TokenType.Operator && _token.text.equals(".")) {
                 next(false); // swallow .
 
                 if (_token == null || _token.type != TokenType.Identifier) {

@@ -13,7 +13,7 @@
     "database-source/alert-conn-name-invalid-character": "שגיאת קלט שם חיבור: תו שגוי בקלט. מותר רק [a-zA-Z0-9._-‎]",
     "database-parsing/store-cell": "לאחסן תאים ריקים כ־null (ריק)",
     "database-parsing/store-row": "לאחסן שורות ריקות",
-    "database-parsing/preview-button": "עדכון התצוגה המקדימה",
+    "database-parsing/preview-button": "עדכון תצוגה מקדימה",
     "database-parsing/option": "אפשרויות",
     "database-parsing/worksheet": "גיליונות עבודה",
     "database-parsing/updating-preview": "התצוגה המקדימה מעודכנת…",
@@ -60,5 +60,6 @@
     "database-import/checking": "השאילתה מתוקפת…",
     "database-import/preparing": "התוצאות בהכנות…",
     "database-import/title": "שרתי מסדי נתונים",
-    "database-import/importer-name": "מסד נתונים"
+    "database-import/importer-name": "מסד נתונים",
+    "database-parsing/disable-auto-preview": "השבתת תצוגה מקדימה אוטומטית"
 }

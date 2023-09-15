@@ -34,8 +34,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.
@@ -65,13 +65,13 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     private PointerExtractor extractor = new PointerExtractor();
 
     @Override
-    public List<ItemUpdate> schedule(List<ItemUpdate> updates) {
-        List<ItemUpdate> result = new ArrayList<>();
+    public List<TermedStatementEntityUpdate> schedule(List<TermedStatementEntityUpdate> updates) {
+        List<TermedStatementEntityUpdate> result = new ArrayList<>();
         pointerFreeUpdates = new UpdateSequence();
         pointerFullUpdates = new UpdateSequence();
         allPointers = new HashSet<>();
 
-        for (ItemUpdate update : updates) {
+        for (TermedStatementEntityUpdate update : updates) {
             splitUpdate(update);
         }
 
@@ -95,7 +95,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * 
      * @param update
      */
-    protected void splitUpdate(ItemUpdate update) {
+    protected void splitUpdate(TermedStatementEntityUpdate update) {
         ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId())
                 .addLabels(update.getLabels(), true)
                 .addLabels(update.getLabelsIfNew(), false)
@@ -118,11 +118,11 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         if (update.isNew()) {
             // If the update is new, we might need to split it
             // in two (if it refers to any other new entity).
-            ItemUpdate pointerFree = pointerFreeBuilder.build();
+            TermedStatementEntityUpdate pointerFree = pointerFreeBuilder.build();
             if (!pointerFree.isNull()) {
                 pointerFreeUpdates.add(pointerFree);
             }
-            ItemUpdate pointerFull = pointerFullBuilder.build();
+            TermedStatementEntityUpdate pointerFull = pointerFullBuilder.build();
             if (!pointerFull.isEmpty()) {
                 pointerFullUpdates.add(pointerFull);
             }

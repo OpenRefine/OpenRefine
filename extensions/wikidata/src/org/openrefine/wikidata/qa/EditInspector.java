@@ -61,7 +61,7 @@ import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 
@@ -141,7 +141,7 @@ public class EditInspector {
      * 
      * @param editBatch
      */
-    public void inspect(List<ItemUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
+    public void inspect(List<TermedStatementEntityUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
         SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
@@ -153,14 +153,14 @@ public class EditInspector {
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
 
-        Map<EntityIdValue, ItemUpdate> updates = ItemUpdate.groupBySubject(editBatch);
-        List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+        Map<EntityIdValue, TermedStatementEntityUpdate> updates = TermedStatementEntityUpdate.groupBySubject(editBatch);
+        List<TermedStatementEntityUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
 
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsBeginning();
         }
 
-        for (ItemUpdate update : mergedUpdates) {
+        for (TermedStatementEntityUpdate update : mergedUpdates) {
             if (!update.isNull()) {
                 for (EditScrutinizer scrutinizer : scrutinizers.values()) {
                     scrutinizer.scrutinize(update);

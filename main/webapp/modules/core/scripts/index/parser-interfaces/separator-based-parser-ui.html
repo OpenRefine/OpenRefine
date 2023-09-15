@@ -6,13 +6,20 @@
         <td><input bind="encodingInput"></input></td>
       </tr>
     </table></div></td>
+
     <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
       <tr>
         <td style="text-align: right;">&nbsp;</td>
         <td width="1%"><button class="button" bind="previewButton"></button></td>
       </tr>
+      <tr>
+        <td style="text-align: right;">&nbsp;</td>
+        <td width="1%"><input type="checkbox" bind="disableAutoPreviewCheckbox" id="$disable" />
+          <label for="$disable" id="or-disable-auto-preview"></label></td>
+      </tr>
     </table></div></td>
   </tr>
+
   <tr>
     <td><div class="grid-layout layout-tightest"><table>
       <tr><td colspan="2" id="or-import-colsep"></td></tr>

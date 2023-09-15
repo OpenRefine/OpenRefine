@@ -15,7 +15,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
@@ -60,7 +60,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
             Snak mainSnak = statement.getClaim().getMainSnak();

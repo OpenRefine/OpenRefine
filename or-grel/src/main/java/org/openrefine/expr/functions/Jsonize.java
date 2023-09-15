@@ -35,6 +35,8 @@ package org.openrefine.expr.functions;
 
 import java.io.IOException;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 import org.openrefine.util.ParsingUtilities;
 
@@ -46,12 +48,13 @@ public class Jsonize extends PureFunction {
     public Object call(Object[] args) {
         if (args.length >= 1) {
             try {
-                return ParsingUtilities.mapper.writeValueAsString(args[0]);
+                return ParsingUtilities.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(args[0]);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return null;
+        String errorMessage = " accepts a single argument";
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + errorMessage);
     }
 
     @Override

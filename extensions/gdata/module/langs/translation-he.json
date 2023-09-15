@@ -47,5 +47,6 @@
     "gdata-exporter/google-sheets": "Google Sheets",
     "gdata-exporter/export-to-google-drive": "מיזם OpenRefine שומר בארכיון ל־Google Drive…",
     "gdata-import/re-sign-in-another": "כניסה עם חשבון אחר",
-    "gdata-import/please-signin": "נא להיכנס כדי לאשר את הגישה לנתונים שלך ב־Google"
+    "gdata-import/please-signin": "נא להיכנס כדי לאשר את הגישה לנתונים שלך ב־Google",
+    "gdata-parsing/disable-auto-preview": "השבתת תצוגה מקדימה אוטומטית"
 }

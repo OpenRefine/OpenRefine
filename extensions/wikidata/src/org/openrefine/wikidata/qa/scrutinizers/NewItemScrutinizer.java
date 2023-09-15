@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * A scrutinizer that inspects new items.
@@ -48,7 +48,7 @@ public class NewItemScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         if (update.isNew()) {
             info(newItemType);
 

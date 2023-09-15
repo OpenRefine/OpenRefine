@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'master'
+      - '4.0'
     paths-ignore:
       - 'docs/**'
 
@@ -37,7 +38,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -59,7 +60,7 @@ jobs:
           node-version: '12'
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: |
             ~/cache
@@ -125,7 +126,7 @@ jobs:
         fetch-depth: 0 # This is wasteful, but needed for git describe
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -137,6 +138,9 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: 11
+        server-id: ossrh
+        server-username: OSSRH_USER
+        server-password: OSSRH_PASS
 
     - name: Install genisoimage and jq
       run: sudo apt-get install genisoimage jq
@@ -162,71 +166,12 @@ jobs:
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
 
-    - name: Get the OpenRefine snapshot version
-      run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-
     - name: Generate dist files
-      run: ./refine dist ${{ env.OR_VERSION }}
+      run: mvn package -DskipTests=true
 
-    - name: Create Release
-      if: github.repository == 'OpenRefine/OpenRefine'
-      id: create_release
-      run: echo ::set-env name=API_RELEASE::$(./.github/workflows/release_manager.sh)
+    - name: Upload snapshot releases to OSSRH
+      run: mvn deploy -DskipTests=true
       env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        OR_VERSION: ${{ env.OR_VERSION }}
-        RELEASE_REPO_OWNER: OpenRefine
-        RELEASE_REPO_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
-
-    - name: Upload Release Asset Windows
-      id: upload-release-asset-win
-      if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
-      with:
-        upload_url: ${{ env.API_RELEASE }}
-        asset_path: ./packaging/target/openrefine-win-${{ env.OR_VERSION }}.zip
-        asset_name: openrefine-win-${{ env.OR_VERSION }}.zip
-        asset_content_type: application/zip
-
-    - name: Upload Release Asset Linux
-      id: upload-release-asset-linux
-      if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
-      with:
-        upload_url: ${{ env.API_RELEASE }}
-        asset_path: ./packaging/target/openrefine-linux-${{ env.OR_VERSION }}.tar.gz
-        asset_name: openrefine-linux-${{ env.OR_VERSION }}.tar.gz
-        asset_content_type: application/tar+gzip
-
-    - name: Upload Release Asset Mac
-      id: upload-release-asset-mac
-      if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
-      with:
-        upload_url: ${{ env.API_RELEASE }}
-        asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
-        asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
-        asset_content_type: application/x-apple-diskimage
-
-    - name: Delete older releases
-      id: delete-older-releases
-      if: github.repository == 'OpenRefine/OpenRefine'
-      uses: dev-drprasad/delete-older-releases@v0.2.0
-      with:
-        repo: OpenRefine/OpenRefine-snapshot-releases
-        # Specifies number of latest releases (sorted by created_at) to keep. Pass 0 if you want to delete all releases
-        keep_latest: 10
-        # Specifies whether to delete tags associated to older releases or not.
-        # Older tags without any associated releases will not be deleted
-        delete_tags: true  
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+        OSSRH_USER: ${{ secrets.OSSRH_USER }}
+        OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
 

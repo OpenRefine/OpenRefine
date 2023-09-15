@@ -43,8 +43,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
 
@@ -74,7 +74,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P172", mainSnak, id);
-        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -92,7 +92,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(referenceSnak);
         List<Statement> itemStatementList = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         Statement statement = itemStatementList.get(0);
-        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);

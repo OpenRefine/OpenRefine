@@ -33,16 +33,20 @@ import org.wikidata.wdtk.datamodel.helpers.DatamodelConverter;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
- * A class that rewrites an {@link ItemUpdate}, replacing reconciled entity id values by their concrete values after
- * creation of all the new items involved.
+ * A class that rewrites an {@link TermedStatementEntityUpdate}, replacing reconciled entity id values by their concrete
+ * values after creation of all the new items involved.
  *
  * If an item has not been created yet, an {@link IllegalArgumentException} will be raised.
  *
@@ -56,7 +60,7 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 public class ReconEntityRewriter extends DatamodelConverter {
 
     private final NewItemLibrary library;
-    private final ItemIdValue subject;
+    private final EntityIdValue subject;
 
     protected static final String notCreatedYetMessage = "Trying to rewrite an update where a new item was not created yet.";
 
@@ -68,7 +72,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
      * @param subject
      *            the subject id of the entity to rewrite
      */
-    public ReconEntityRewriter(NewItemLibrary library, ItemIdValue subject) {
+    public ReconEntityRewriter(NewItemLibrary library, EntityIdValue subject) {
         super(new DataObjectFactoryImpl());
         this.library = library;
         this.subject = subject;
@@ -82,7 +86,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
                 String newId = library.getQid(recon.getReconInternalId());
                 if (newId == null) {
                     if (subject.equals(recon)) {
-                        return subject;
+                        return (ItemIdValue) subject;
                     } else {
                         throw new MissingEntityIdFound(recon);
                     }
@@ -91,6 +95,43 @@ public class ReconEntityRewriter extends DatamodelConverter {
             }
         }
         return super.copy(value);
+    }
+
+    public MediaInfoIdValue copy(MediaInfoIdValue value) {
+        if (value instanceof ReconMediaInfoIdValue) {
+            ReconMediaInfoIdValue recon = (ReconMediaInfoIdValue) value;
+            if (recon.isNew()) {
+                String newId = library.getQid(recon.getReconInternalId());
+                if (newId == null) {
+                    if (subject.equals(recon)) {
+                        return (MediaInfoIdValue) subject;
+                    } else {
+                        throw new MissingEntityIdFound(recon);
+                    }
+                }
+                return Datamodel.makeMediaInfoIdValue(newId, recon.getRecon().identifierSpace);
+            }
+        }
+        return (MediaInfoIdValue) super.copy((ItemIdValue) value);
+    }
+
+    @Override
+    public PropertyIdValue copy(PropertyIdValue value) {
+        if (value instanceof ReconPropertyIdValue) {
+            ReconPropertyIdValue recon = (ReconPropertyIdValue) value;
+            if (recon.isNew()) {
+                String newId = library.getQid(recon.getReconInternalId());
+                if (newId == null) {
+                    if (subject.equals(recon)) {
+                        return (PropertyIdValue) subject;
+                    } else {
+                        throw new MissingEntityIdFound(recon);
+                    }
+                }
+                return Datamodel.makePropertyIdValue(newId, recon.getRecon().identifierSpace);
+            }
+        }
+        return super.copy((PropertyIdValue) value);
     }
 
     /**
@@ -104,9 +145,9 @@ public class ReconEntityRewriter extends DatamodelConverter {
      * @throws NewItemNotCreatedYetException
      *             if any non-subject entity had not been created yet
      */
-    public ItemUpdate rewrite(ItemUpdate update) throws NewItemNotCreatedYetException {
+    public TermedStatementEntityUpdate rewrite(TermedStatementEntityUpdate update) throws NewItemNotCreatedYetException {
         try {
-            ItemIdValue subject = copy(update.getItemId());
+            EntityIdValue subject = (EntityIdValue) copyValue(update.getItemId());
             Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
             Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
             Set<MonolingualTextValue> descriptions = update.getDescriptions().stream().map(l -> copy(l))
@@ -118,8 +159,8 @@ public class ReconEntityRewriter extends DatamodelConverter {
                     .collect(Collectors.toList());
             Set<Statement> deletedStatements = update.getDeletedStatements().stream().map(l -> copy(l))
                     .collect(Collectors.toSet());
-            return new ItemUpdate(subject, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew,
-                    aliases);
+            return new TermedStatementEntityUpdate(subject, addedStatements, deletedStatements, labels, labelsIfNew, descriptions,
+                    descriptionsIfNew, aliases);
         } catch (MissingEntityIdFound e) {
             throw new NewItemNotCreatedYetException(e.value);
         }

@@ -27,13 +27,13 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public abstract class StatementScrutinizerTest extends ScrutinizerTest {
 
     public void scrutinize(Statement statement) {
-        ItemUpdate update = new ItemUpdateBuilder((ItemIdValue) statement.getClaim().getSubject())
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder((ItemIdValue) statement.getClaim().getSubject())
                 .addStatement(statement).build();
         scrutinize(update);
     }

@@ -28,18 +28,18 @@ import java.util.Collections;
 
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
-public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
+public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
 
     public WbItemDocumentExpr expr;
-    ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
+    EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     MonolingualTextValue alias = Datamodel.makeMonolingualTextValue("my alias", "en");
     Statement fullStatement;
 
@@ -63,7 +63,7 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("Q23"));
-        ItemUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement).build();
+        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
 
@@ -76,14 +76,14 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
     @Test
     public void testStatementSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid4.389", "my alias", recon("Q23"));
-        ItemUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).build();
+        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).build();
         evaluatesTo(result, expr);
     }
 
     @Test
     public void testAliasSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "", recon("Q23"));
-        ItemUpdate result = new ItemUpdateBuilder(subject).addStatement(fullStatement).build();
+        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
 

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -91,7 +91,7 @@ public class WbStatementExpr {
                 .collect(Collectors.toList());
     }
 
-    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId)
+    public Statement evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
             throws SkipSchemaExpressionException {
         Value mainSnakValue = getMainsnak().evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);

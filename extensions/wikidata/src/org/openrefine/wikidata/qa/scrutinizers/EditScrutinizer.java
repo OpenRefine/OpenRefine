@@ -37,7 +37,7 @@ import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * Inspects an edit batch and emits warnings.
@@ -91,7 +91,7 @@ public abstract class EditScrutinizer {
      * @param edit:
      *            the list of ItemUpdates to scrutinize
      */
-    public abstract void scrutinize(ItemUpdate edit);
+    public abstract void scrutinize(TermedStatementEntityUpdate edit);
 
     /**
      * Method called once the edit batch has been read entirely

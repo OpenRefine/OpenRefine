@@ -16,7 +16,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class ConflictsWithScrutinizer extends EditScrutinizer {
 
@@ -59,7 +59,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();

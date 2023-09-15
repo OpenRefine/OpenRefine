@@ -33,8 +33,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class NewItemScrutinizerTest extends ScrutinizerTest {
 
@@ -50,7 +50,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testTrigger() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA).build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
                 NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
@@ -58,7 +58,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testEmptyItem() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.existingId).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -66,7 +66,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
 
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .build();
@@ -76,7 +76,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testDeletedStatements() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .deleteStatement(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)).build();

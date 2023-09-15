@@ -45,7 +45,7 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * Main class representing a skeleton of Wikibase edits with OpenRefine columns as variables.
@@ -115,8 +115,8 @@ public class WikibaseSchema implements OverlayModel {
      *            the context in which the schema should be evaluated.
      * @return
      */
-    public List<ItemUpdate> evaluateItemDocuments(ExpressionContext ctxt) {
-        List<ItemUpdate> result = new ArrayList<>();
+    public List<TermedStatementEntityUpdate> evaluateItemDocuments(ExpressionContext ctxt) {
+        List<TermedStatementEntityUpdate> result = new ArrayList<>();
         for (WbItemDocumentExpr expr : itemDocumentExprs) {
 
             try {
@@ -143,8 +143,8 @@ public class WikibaseSchema implements OverlayModel {
      *            a store in which issues will be emitted
      * @return item updates are stored in their generating order (not merged yet).
      */
-    public List<ItemUpdate> evaluate(GridState grid, Engine engine, QAWarningStore warningStore) {
-        List<ItemUpdate> result = new ArrayList<>();
+    public List<TermedStatementEntityUpdate> evaluate(GridState grid, Engine engine, QAWarningStore warningStore) {
+        List<TermedStatementEntityUpdate> result = new ArrayList<>();
         for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
             ExpressionContext ctxt = new ExpressionContext(
                     siteIri,
@@ -161,7 +161,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * Same as above, ignoring any warnings.
      */
-    public List<ItemUpdate> evaluate(GridState grid, Engine engine) {
+    public List<TermedStatementEntityUpdate> evaluate(GridState grid, Engine engine) {
         return evaluate(grid, engine, null);
     }
 

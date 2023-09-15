@@ -52,8 +52,8 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import org.openrefine.RefineTest;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class EditBatchProcessorTest extends RefineTest {
 
@@ -76,7 +76,7 @@ public class EditBatchProcessorTest extends RefineTest {
     @Test
     public void testNewItem()
             throws InterruptedException, MediaWikiApiErrorException, IOException {
-        List<ItemUpdate> batch = new ArrayList<>();
+        List<TermedStatementEntityUpdate> batch = new ArrayList<>();
         batch.add(new ItemUpdateBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
                 .addStatement(TestingData.generateStatement(TestingData.existingId, TestingData.newIdA)).build());
@@ -124,7 +124,7 @@ public class EditBatchProcessorTest extends RefineTest {
         }
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
-        List<ItemUpdate> batch = qids.stream()
+        List<TermedStatementEntityUpdate> batch = qids.stream()
                 .map(qid -> new ItemUpdateBuilder(qid).addDescription(description, true).build())
                 .collect(Collectors.toList());
 

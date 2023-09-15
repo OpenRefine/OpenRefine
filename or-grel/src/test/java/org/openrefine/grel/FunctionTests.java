@@ -73,7 +73,7 @@ public class FunctionTests extends FunctionTestBase {
         Set<String> valid0args = new HashSet<>(Arrays.asList("now")); // valid 0-arg returns datetype
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
-                "fingerprint", "get", "jsonize", "parseJson", "partition", "pow", "rpartition",
+                "fingerprint", "get", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));

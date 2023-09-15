@@ -32,12 +32,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jsoup.helper.Validate;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * The representation of an item document, which can contain variables both for its own id and in its contents.
@@ -47,14 +47,14 @@ import org.openrefine.wikidata.updates.ItemUpdateBuilder;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbItemDocumentExpr implements WbExpression<ItemUpdate> {
+public class WbItemDocumentExpr implements WbExpression<TermedStatementEntityUpdate> {
 
-    private WbExpression<? extends ItemIdValue> subject;
+    private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
 
     @JsonCreator
-    public WbItemDocumentExpr(@JsonProperty("subject") WbExpression<? extends ItemIdValue> subjectExpr,
+    public WbItemDocumentExpr(@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         Validate.notNull(subjectExpr);
@@ -70,9 +70,9 @@ public class WbItemDocumentExpr implements WbExpression<ItemUpdate> {
     }
 
     @Override
-    public ItemUpdate evaluate(ExpressionContext ctxt)
+    public TermedStatementEntityUpdate evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        ItemIdValue subjectId = getSubject().evaluate(ctxt);
+        EntityIdValue subjectId = getSubject().evaluate(ctxt);
         ItemUpdateBuilder update = new ItemUpdateBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
@@ -90,7 +90,7 @@ public class WbItemDocumentExpr implements WbExpression<ItemUpdate> {
     }
 
     @JsonProperty("subject")
-    public WbExpression<? extends ItemIdValue> getSubject() {
+    public WbExpression<? extends EntityIdValue> getSubject() {
         return subject;
     }
 

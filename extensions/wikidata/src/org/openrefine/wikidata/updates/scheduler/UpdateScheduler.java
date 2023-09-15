@@ -26,7 +26,7 @@ package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.List;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * A scheduling strategy for item updates. Given a list of initial updates, the scheduler reorganizes these updates
@@ -47,6 +47,6 @@ public interface UpdateScheduler {
      * @throws ImpossibleSchedulingException
      *             when the scheduler cannot cope with a particular edit plan.
      */
-    public List<ItemUpdate> schedule(List<ItemUpdate> updates)
+    public List<TermedStatementEntityUpdate> schedule(List<TermedStatementEntityUpdate> updates)
             throws ImpossibleSchedulingException;
 }

@@ -109,6 +109,8 @@ Refine.PCAxisParserUI.prototype.getOptions = function() {
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
   options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
+  options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;
+
   return options;
 };
 
@@ -143,8 +145,15 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
 
+  if (this._config.disableAutoPreview) {
+    this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
+  }
+
   var onChange = function() {
-    self._scheduleUpdatePreview();
+    if (!self._optionContainerElmts.disableAutoPreviewCheckbox[0].checked)
+    {
+      self._scheduleUpdatePreview();
+    }
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);

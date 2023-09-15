@@ -32,7 +32,7 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
  * For now this scrutinizer only checks for uniqueness at the item level (it ignores qualifiers and references).
@@ -56,7 +56,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         Set<PropertyIdValue> seenSingleProperties = new HashSet<>();
 
         for (Statement statement : update.getAddedStatements()) {

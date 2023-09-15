@@ -9,7 +9,7 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class MultiValueScrutinizer extends EditScrutinizer {
 
@@ -24,7 +24,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         Map<PropertyIdValue, Integer> propertyCount = new HashMap<>();
 
         for (Statement statement : update.getAddedStatements()) {

@@ -27,6 +27,30 @@
 
 package org.openrefine.expr.functions;
 
-public class JsonizeTests {
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import org.testng.annotations.Test;
+
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.util.CalendarParserException;
+import org.openrefine.grel.FunctionTestBase;
+
+public class JsonizeTests extends FunctionTestBase {
+
+    @Test
+    public void testToString() throws CalendarParserException {
+
+        assertTrue(invoke("jsonize") instanceof EvalError);
+
+        Object[] emptyArray = {};
+        assertEquals(invoke("jsonize", (Object) emptyArray), "[ ]");
+
+        Object[] objArray = { 4, "hello", true, 0.01, null };
+        assertEquals(invoke("jsonize", (Object) objArray), "[ 4, \"hello\", true, 0.01, null ]");
+
+        Object[][] multiArray = { { "OpenRefine", 12 }, { 13, 4.6 }, { "data", "mining" } };
+        assertEquals(invoke("jsonize", (Object) multiArray), "[ [ \"OpenRefine\", 12 ], [ 13, 4.6 ], [ \"data\", \"mining\" ] ]");
+
+    }
 }
