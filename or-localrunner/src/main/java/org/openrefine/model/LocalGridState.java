@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.openrefine.browsing.facets.RecordAggregator;
@@ -40,6 +41,7 @@ import org.openrefine.util.ParsingUtilities;
  * @author Antonin Delpeuch
  *
  */
+@JsonIgnoreType
 public class LocalGridState implements GridState {
 
     protected final LocalDatamodelRunner runner;

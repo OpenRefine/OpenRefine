@@ -164,7 +164,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-spark</artifactId>
+      <artifactId>or-localrunner</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope> <!-- To ensure that we do not rely on any Spark-specific feature unless dynamically loaded -->
     </dependency>
@@ -371,6 +371,11 @@
       <groupId>com.github.albfernandez</groupId>
       <artifactId>juniversalchardet</artifactId>
       <version>2.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>${jetty.version}</version>
     </dependency>
 
     <!-- test dependencies -->

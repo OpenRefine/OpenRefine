@@ -22,7 +22,7 @@
 	
 	<filter>
       <filter-name>GzipFilter</filter-name>
-      <filter-class>org.mortbay.servlet.GzipFilter</filter-class>
+      <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
       <init-param>
         <param-name>mimeTypes</param-name>
         <param-value>text/html,text/plain,text/xml,application/xhtml+xml,text/css,text/javascript,application/javascript,application/json,image/svg+xml</param-value>

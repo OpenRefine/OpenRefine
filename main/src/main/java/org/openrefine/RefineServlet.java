@@ -110,7 +110,7 @@ public class RefineServlet extends Butterfly {
         }
 
         try {
-            Class<?> runnerClass = this.getClass().getClassLoader().loadClass("org.openrefine.model.SparkDatamodelRunner");
+            Class<?> runnerClass = this.getClass().getClassLoader().loadClass("org.openrefine.model.LocalDatamodelRunner");
             s_runner = (DatamodelRunner) runnerClass.getConstructor(Integer.class).newInstance(Integer.valueOf(defaultParallelism));
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {

@@ -220,6 +220,7 @@ public class ImportingJob {
         metadata = new ProjectMetadata();
     }
 
+    @JsonIgnore
     public Project getProject() {
         return project;
     }
