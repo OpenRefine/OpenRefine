@@ -23,8 +23,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
@@ -62,7 +62,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P2002", value1, idA);
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
         Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
@@ -89,7 +90,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         Statement statement = new StatementImpl("P2002", value, id);
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
         Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
@@ -118,7 +119,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P2002", value1, idA);
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
         Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
@@ -145,7 +147,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         Statement statement = new StatementImpl("P31", valueSnak, idA);
 
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = new ArrayList<>();
 
@@ -169,7 +171,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement2 = new StatementImpl("P31", value2, idA);
         Statement statement3 = new StatementImpl("P553", value3, idA);
 
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
                 .addStatement(statement3).build();
 
         Snak propertySnak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);

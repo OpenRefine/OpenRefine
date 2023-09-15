@@ -27,6 +27,21 @@
 
 package org.openrefine.expr.functions.html;
 
-public class InnerHtmlTests {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.FunctionTestBase;
+
+public class InnerHtmlTests extends FunctionTestBase {
+
+    @Test
+    public void testInnerHtml() {
+        Assert.assertTrue(invoke("innerHtml") instanceof EvalError);
+        Assert.assertTrue(invoke("innerHtml", "test") instanceof EvalError);
+
+        EvalError evalError = (EvalError) invoke("innerHtml", "test");
+        Assert.assertEquals(evalError.toString(),
+                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+    }
 }

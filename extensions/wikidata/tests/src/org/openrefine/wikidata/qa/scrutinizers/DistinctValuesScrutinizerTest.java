@@ -42,8 +42,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
@@ -67,7 +67,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", mainSnak, idA);
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
@@ -88,7 +89,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", snak1, idA);
         Statement statement2 = new StatementImpl("P163", snak2, idA);
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);

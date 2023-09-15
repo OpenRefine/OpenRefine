@@ -44,7 +44,6 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -67,12 +66,14 @@ import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.util.TestUtils;
 
 /**
  * A base class containing various utilities to help testing Refine.
  */
-public class RefineTest extends PowerMockTestCase {
+public class RefineTest {
 
     protected static Properties bindings = null;
 
@@ -329,6 +330,21 @@ public class RefineTest extends PowerMockTestCase {
     @AfterMethod
     public void TearDown() throws Exception {
         bindings = null;
+    }
+
+    protected void runAndWait(ProcessManager processManager, Process process, int timeout) {
+        process.startPerforming(processManager);
+        Assert.assertTrue(process.isRunning());
+        int time = 0;
+        try {
+            while (process.isRunning() && time < timeout) {
+                Thread.sleep(200);
+                time += 200;
+            }
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
+        }
+        Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
     }
 
 }

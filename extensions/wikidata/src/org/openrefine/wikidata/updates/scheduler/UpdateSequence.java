@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
@@ -49,7 +48,7 @@ public class UpdateSequence {
     /**
      * An index to keep track of where each item is touched in the sequence
      */
-    private Map<ItemIdValue, Integer> index = new HashMap<>();
+    private Map<EntityIdValue, Integer> index = new HashMap<>();
 
     /**
      * Adds a new update to the list, merging it with any existing one with the same subject.
@@ -63,7 +62,7 @@ public class UpdateSequence {
             TermedStatementEntityUpdate oldUpdate = updates.get(i);
             updates.set(i, oldUpdate.merge(update));
         } else {
-            index.put((ItemIdValue) subject, updates.size());
+            index.put(subject, updates.size());
             updates.add(update);
         }
     }
@@ -78,7 +77,7 @@ public class UpdateSequence {
     /**
      * @return the set of touched subjects
      */
-    public Set<ItemIdValue> getSubjects() {
+    public Set<EntityIdValue> getSubjects() {
         return index.keySet();
     }
 }

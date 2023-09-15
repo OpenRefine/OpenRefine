@@ -70,7 +70,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     schema = WikibaseSchema.reconstruct(schemaJson);
                 } catch (IOException e) {
-                    respondError(response, "Wikibase schema could not be parsed.");
+                    respondError(response, "Wikibase schema could not be parsed. Error message: " + e.getMessage());
                     return;
                 }
             } else {

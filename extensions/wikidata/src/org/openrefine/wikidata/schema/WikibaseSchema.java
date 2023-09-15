@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -64,14 +65,19 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("siteIri")
     protected String siteIri;
 
+    @JsonProperty("entityTypeSiteIRI")
+    protected Map<String, String> entityTypeSiteIri;
+
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
 
     /**
      * Constructor.
+     * 
+     * @todo remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
-
+        entityTypeSiteIri = Collections.emptyMap();
     }
 
     /**
@@ -80,9 +86,11 @@ public class WikibaseSchema implements OverlayModel {
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
             @JsonProperty("siteIri") String siteIri,
+            @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
             @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.itemDocumentExprs = exprs;
         this.siteIri = siteIri;
+        this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
     }
 
@@ -92,6 +100,14 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("siteIri")
     public String getSiteIri() {
         return siteIri;
+    }
+
+    /**
+     * @return the site IRI of the Wikibase instance referenced by this schema
+     */
+    @JsonProperty("entityTypeSiteIRI")
+    public Map<String, String> getEntityTypeSiteIri() {
+        return entityTypeSiteIri;
     }
 
     /**
@@ -148,6 +164,7 @@ public class WikibaseSchema implements OverlayModel {
         for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
             ExpressionContext ctxt = new ExpressionContext(
                     siteIri,
+                    entityTypeSiteIri,
                     mediaWikiApiEndpoint,
                     indexedRow.getIndex(),
                     indexedRow.getRow(),

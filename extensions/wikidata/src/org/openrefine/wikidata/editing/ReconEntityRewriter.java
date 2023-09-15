@@ -112,7 +112,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
                 return Datamodel.makeMediaInfoIdValue(newId, recon.getRecon().identifierSpace);
             }
         }
-        return (MediaInfoIdValue) super.copy((ItemIdValue) value);
+        return super.copy((MediaInfoIdValue) value);
     }
 
     @Override

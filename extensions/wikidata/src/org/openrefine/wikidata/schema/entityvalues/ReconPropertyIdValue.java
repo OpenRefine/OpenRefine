@@ -35,6 +35,11 @@ public class ReconPropertyIdValue extends ReconEntityIdValue implements Property
     }
 
     @Override
+    public boolean isPlaceholder() {
+        return isNew();
+    }
+
+    @Override
     public String getEntityType() {
         return ET_PROPERTY;
     }

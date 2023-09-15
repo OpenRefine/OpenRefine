@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,10 +49,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -85,7 +85,6 @@ import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-@PrepareForTest(ReconciledDataExtensionJob.class)
 public class ExtendDataOperationTests extends RefineTest {
 
     private static final String emptyQueryP297 = "{\"ids\":[],\"properties\":[{\"id\":\"P297\"}]}";
@@ -186,6 +185,9 @@ public class ExtendDataOperationTests extends RefineTest {
     EngineConfig engine_config;
     Engine engine;
 
+    // HTTP mocking
+    Dispatcher dispatcher;
+
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         OperationRegistry.registerOperation("core", "extend-reconciled-data", ExtendDataOperation.class);
@@ -201,6 +203,27 @@ public class ExtendDataOperationTests extends RefineTest {
         options = mock(Properties.class);
         engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
         engine = new Engine(project.getCurrentGridState(), engine_config);
+
+        dispatcher = new Dispatcher() {
+
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                String json = URLDecoder.decode(request.getBody().readUtf8().split("=")[1], StandardCharsets.UTF_8);
+                JsonNode parsedQuery;
+                try {
+                    parsedQuery = ParsingUtilities.mapper.readTree(json);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("HTTP call with invalid JSON payload: " + json);
+                }
+                if (mockedResponses.containsKey(parsedQuery)) {
+                    return new MockResponse().setResponseCode(200).setBody(mockedResponses.get(parsedQuery));
+                } else {
+                    throw new IllegalArgumentException("HTTP call not mocked for query: " + json);
+                }
+            }
+
+        };
+
     }
 
     @Test
@@ -255,25 +278,6 @@ public class ExtendDataOperationTests extends RefineTest {
         return new Cell(name, rec);
     }
 
-    /**
-     * Test to fetch simple strings
-     * 
-     * @throws Exception
-     */
-    @BeforeMethod
-    public void mockHttpCalls() throws Exception {
-        mockStatic(ReconciledDataExtensionJob.class);
-        PowerMockito.spy(ReconciledDataExtensionJob.class);
-        Answer<String> mockedResponse = new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
-            }
-        };
-        PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "postExtendQuery", anyString(), anyString());
-    }
-
     @AfterMethod
     public void cleanupHttpMocks() {
         mockedResponses.clear();
@@ -286,23 +290,30 @@ public class ExtendDataOperationTests extends RefineTest {
 
         mockHttpCall(queryP297, responseP297);
 
-        DataExtensionProducer producer = new DataExtensionProducer(
-                new ReconciledDataExtensionJob(extension, RECON_SERVICE, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE), 0, RowFilter.ANY_ROW);
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGridState().collectRecords());
-        RecordDataExtension dataExtension1 = new RecordDataExtension(
-                Collections.singletonMap(0L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
-        RecordDataExtension dataExtension2 = new RecordDataExtension(
-                Collections.singletonMap(1L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
-        RecordDataExtension dataExtension3 = new RecordDataExtension(
-                Collections.singletonMap(2L, new DataExtension(
-                        Collections.emptyList())));
-        RecordDataExtension dataExtension4 = new RecordDataExtension(
-                Collections.singletonMap(3L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
-        Assert.assertEquals(dataExtensions, Arrays.asList(dataExtension1, dataExtension2, dataExtension3, dataExtension4));
+            DataExtensionProducer producer = new DataExtensionProducer(
+                    new ReconciledDataExtensionJob(extension, server.url("/reconcile").url().toString(),
+                            RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE),
+                    0, RowFilter.ANY_ROW);
+
+            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGridState().collectRecords());
+            RecordDataExtension dataExtension1 = new RecordDataExtension(
+                    Collections.singletonMap(0L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
+            RecordDataExtension dataExtension2 = new RecordDataExtension(
+                    Collections.singletonMap(1L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
+            RecordDataExtension dataExtension3 = new RecordDataExtension(
+                    Collections.singletonMap(2L, new DataExtension(
+                            Collections.emptyList())));
+            RecordDataExtension dataExtension4 = new RecordDataExtension(
+                    Collections.singletonMap(3L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
+            Assert.assertEquals(dataExtensions, Arrays.asList(dataExtension1, dataExtension2, dataExtension3, dataExtension4));
+        }
     }
 
     @Test
@@ -333,23 +344,30 @@ public class ExtendDataOperationTests extends RefineTest {
 
         };
 
-        DataExtensionProducer producer = new DataExtensionProducer(
-                new ReconciledDataExtensionJob(extension, RECON_SERVICE, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE), 1, filter);
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        List<RecordDataExtension> dataExtensions = producer.callRecordBatch(state.collectRecords());
-        RecordDataExtension dataExtension1 = new RecordDataExtension(
-                Collections.singletonMap(0L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
-        RecordDataExtension dataExtension2 = new RecordDataExtension(
-                Collections.singletonMap(2L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
-        RecordDataExtension dataExtension3 = new RecordDataExtension(
-                Collections.singletonMap(4L, new DataExtension(
-                        Collections.emptyList())));
-        RecordDataExtension dataExtension4 = new RecordDataExtension(
-                Collections.singletonMap(5L, new DataExtension(
-                        Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
-        Assert.assertEquals(dataExtensions, Arrays.asList(dataExtension1, dataExtension2, dataExtension3, dataExtension4));
+            DataExtensionProducer producer = new DataExtensionProducer(
+                    new ReconciledDataExtensionJob(extension, server.url("/reconcile").url().toString(),
+                            RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE),
+                    1, filter);
+
+            List<RecordDataExtension> dataExtensions = producer.callRecordBatch(state.collectRecords());
+            RecordDataExtension dataExtension1 = new RecordDataExtension(
+                    Collections.singletonMap(0L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
+            RecordDataExtension dataExtension2 = new RecordDataExtension(
+                    Collections.singletonMap(2L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
+            RecordDataExtension dataExtension3 = new RecordDataExtension(
+                    Collections.singletonMap(4L, new DataExtension(
+                            Collections.emptyList())));
+            RecordDataExtension dataExtension4 = new RecordDataExtension(
+                    Collections.singletonMap(5L, new DataExtension(
+                            Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
+            Assert.assertEquals(dataExtensions, Arrays.asList(dataExtension1, dataExtension2, dataExtension3, dataExtension4));
+        }
     }
 
     @Test
@@ -358,30 +376,35 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig
                 .reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
 
-        mockHttpCall(emptyQueryP297, emptyResponseP297);
-        mockHttpCall(queryP297, responseP297);
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-        process.run();
+            mockHttpCall(emptyQueryP297, emptyResponseP297);
+            mockHttpCall(queryP297, responseP297);
 
-        // Inspect rows
-        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-        Assert.assertTrue("IR".equals(rows.get(0).getRow().getCellValue(1)), "Bad country code for Iran.");
-        Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertNull(rows.get(2).getRow().getCell(1), "Expected a null country code.");
-        Assert.assertTrue("US".equals(rows.get(3).getRow().getCellValue(1)), "Bad country code for United States.");
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
+            process.run();
 
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-        Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
-        Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconConfig() == null);
+            // Inspect rows
+            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            Assert.assertTrue("IR".equals(rows.get(0).getRow().getCellValue(1)), "Bad country code for Iran.");
+            Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
+            Assert.assertNull(rows.get(2).getRow().getCell(1), "Expected a null country code.");
+            Assert.assertTrue("US".equals(rows.get(3).getRow().getCellValue(1)), "Bad country code for United States.");
+
+            // Make sure we did not create any recon stats for that column (no reconciled value)
+            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
+            Assert.assertTrue(columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconConfig() == null);
+        }
     }
 
     /**
@@ -412,28 +435,33 @@ public class ExtendDataOperationTests extends RefineTest {
                         + "    {\"settings\": {\"count\": \"on\", \"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
                         + "]}");
 
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-        process.run();
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
 
-        // Test to be updated as countries change currencies!
-        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-        Assert.assertTrue(Math.round((double) rows.get(2).getRow().getCellValue(1)) == 2,
-                "Incorrect number of currencies returned for Tajikistan.");
-        Assert.assertTrue(Math.round((double) rows.get(3).getRow().getCellValue(1)) == 1,
-                "Incorrect number of currencies returned for United States.");
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
+            process.run();
 
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-        Assert.assertNull(columnModel.getColumnByName("currency").getReconStats());
-        Assert.assertNull(columnModel.getColumnByName("currency").getReconConfig());
+            // Test to be updated as countries change currencies!
+            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            Assert.assertTrue(Math.round((double) rows.get(2).getRow().getCellValue(1)) == 2,
+                    "Incorrect number of currencies returned for Tajikistan.");
+            Assert.assertTrue(Math.round((double) rows.get(3).getRow().getCellValue(1)) == 1,
+                    "Incorrect number of currencies returned for United States.");
+
+            // Make sure we did not create any recon stats for that column (no reconciled value)
+            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            Assert.assertNull(columnModel.getColumnByName("currency").getReconStats());
+            Assert.assertNull(columnModel.getColumnByName("currency").getReconConfig());
+        }
     }
 
     /**
@@ -458,29 +486,35 @@ public class ExtendDataOperationTests extends RefineTest {
                         + "     {\"settings\": {\"rank\": \"best\"}, \"name\": \"currency\", \"id\": \"P38\"}"
                         + "]}");
 
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-        process.run();
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        /*
-         * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). But thanks to our
-         * setting in the extension configuration, we only fetch the current one, so the one just after it is the one
-         * for the US (USD).
-         */
-        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "Tajikistani somoni");
-        Assert.assertEquals(rows.get(3).getRow().getCellValue(1), "United States dollar");
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
 
-        // Make sure all the values are reconciled
-        ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-        Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 4L);
-        Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
+            process.run();
+
+            /*
+             * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). But thanks to
+             * our setting in the extension configuration, we only fetch the current one, so the one just after it is
+             * the one for the US (USD).
+             */
+            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "Tajikistani somoni");
+            Assert.assertEquals(rows.get(3).getRow().getCellValue(1), "United States dollar");
+
+            // Make sure all the values are reconciled
+            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 4L);
+            Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
+        }
     }
 
     /**
@@ -507,29 +541,35 @@ public class ExtendDataOperationTests extends RefineTest {
                         + "    {\"settings\": {\"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
                         + "]}");
 
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
-        process.run();
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
 
-        /*
-         * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second
-         * currency is fetched as well, which creates a record (the cell to the left of it is left blank).
-         */
-        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-        Assert.assertTrue("Tajikistani somoni".equals(rows.get(2).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertTrue("Tajikistani ruble".equals(rows.get(3).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertNull(rows.get(3).getRow().getCellValue(0));
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
 
-        // Make sure all the values are reconciled
-        ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
-        Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 5L);
-        Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
+            process.run();
+
+            /*
+             * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second
+             * currency is fetched as well, which creates a record (the cell to the left of it is left blank).
+             */
+            List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+            Assert.assertTrue("Tajikistani somoni".equals(rows.get(2).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
+            Assert.assertTrue("Tajikistani ruble".equals(rows.get(3).getRow().getCellValue(1)), "Bad currency name for Tajikistan");
+            Assert.assertNull(rows.get(3).getRow().getCellValue(0));
+
+            // Make sure all the values are reconciled
+            ColumnModel columnModel = project.getCurrentGridState().getColumnModel();
+            Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 5L);
+            Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
+        }
     }
 
     private void mockHttpCall(String query, String response) throws IOException {

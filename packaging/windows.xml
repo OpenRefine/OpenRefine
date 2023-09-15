@@ -31,16 +31,17 @@
 	<exclude>**/pom.xml</exclude>
 	<exclude>**/.settings/**</exclude>
 	<exclude>**/.project</exclude>
+	<exclude>licenses/**</exclude> <!-- added separately below -->
       </excludes>
     </fileSet>
-    <fileSet>
-      <directory>${rootdir}/licenses</directory>
+    <fileSet> <!-- licenses for the frontend -->
+      <directory>${rootdir}/main/webapp/licenses</directory>
       <outputDirectory>licenses</outputDirectory>
     </fileSet>
-    <fileSet>
-      <directory>${rootdir}/licenses</directory>
-      <outputDirectory>licenses</outputDirectory>
-    </fileSet>    
+    <fileSet> <!-- licenses for the backend -->
+      <directory>${project.build.directory}/generated-resources</directory>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
   </fileSets>
   <!-- TODO replace $VERSION by ${project.version} in WEB-INF/web.xml -->
   <files>

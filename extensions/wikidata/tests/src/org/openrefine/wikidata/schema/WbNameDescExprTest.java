@@ -35,7 +35,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
@@ -51,7 +51,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testContributeToLabel() {
         WbNameDescExpr labelExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.LABEL,
                 TestingData.getTestMonolingualExpr("fr", "français", "le croissant magnifique"));
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subject);
         labelExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("le croissant magnifique", "fr")),
                 update.build().getLabels());
@@ -61,7 +61,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testContributeToDescription() {
         WbNameDescExpr descriptionExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.DESCRIPTION,
                 TestingData.getTestMonolingualExpr("de", "Deutsch", "wunderschön"));
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subject);
         descriptionExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("wunderschön", "de")),
                 update.build().getDescriptions());
@@ -71,7 +71,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testContributeToAlias() {
         WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 TestingData.getTestMonolingualExpr("en", "English", "snack"));
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subject);
         aliasExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("snack", "en")),
                 update.build().getAliases());
@@ -79,10 +79,10 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
     @Test
     public void testSkipped() {
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subject);
         setRow("");
         expr.contributeTo(update, ctxt);
-        assertEquals(new ItemUpdateBuilder(subject).build(), update.build());
+        assertEquals(new TermedStatementEntityUpdateBuilder(subject).build(), update.build());
     }
 
     @Test

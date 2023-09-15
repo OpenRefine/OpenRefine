@@ -35,6 +35,12 @@ public final class ManifestParser {
         // support only v1.x for now
         if ("1".equals(majorVersion)) {
             return new ManifestV1(root);
+        } else if ("2".equals(majorVersion)) {
+            try {
+                return new ManifestV2(root);
+            } catch (IOException e) {
+                throw new ManifestException("invalid manifest format: " + e.getMessage());
+            }
         } else {
             throw new ManifestException("unsupported manifest version: " + version);
         }

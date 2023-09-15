@@ -4,6 +4,9 @@ on:
   pull_request_target:
     paths-ignore:
       - 'docs/**'
+    branches:
+      - master
+      - '4.0'
 
 permissions: read-all
 
@@ -11,7 +14,7 @@ jobs:
   server_tests:
     strategy:
       matrix:
-        java: [ 11, 14 ]
+        java: [ 11, 17 ]
 
     runs-on: ubuntu-latest
 

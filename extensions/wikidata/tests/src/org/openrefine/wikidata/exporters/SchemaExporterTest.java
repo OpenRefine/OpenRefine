@@ -29,7 +29,8 @@ public class SchemaExporterTest extends RefineTest {
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
-        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null}", writer.toString());
+        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}",
+                writer.toString());
     }
 
 }

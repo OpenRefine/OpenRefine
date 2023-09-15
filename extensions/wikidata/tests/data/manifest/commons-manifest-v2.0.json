@@ -1,0 +1,46 @@
+{
+  "version": "2.0",
+  "mediawiki": {
+    "name": "Wikimedia Commons",
+    "root": "https://commons.wikimedia.org/wiki/",
+    "main_page": "https://commons.wikimedia.org/wiki/Main_Page",
+    "api": "https://commons.wikimedia.org/w/api.php"
+  },
+  "wikibase": {
+    "site_iri": "https://commons.wikimedia.org/entity/",
+    "maxlag": 5,
+    "properties": {
+      "instance_of": "P31",
+      "subclass_of": "P279"
+    },
+    "constraints": {
+      "property_constraint_pid": "P2302",
+      "exception_to_constraint_pid": "P2303",
+      "constraint_status_pid": "P2316",
+      "mandatory_constraint_qid": "Q21502408",
+      "suggestion_constraint_qid": "Q62026391",
+      "distinct_values_constraint_qid": "Q21502410"
+    }
+  },
+  "oauth": {
+    "registration_page": "https://commons.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+  },
+  "entity_types": {
+    "item": {
+       "site_iri": "http://www.wikidata.org/entity/",
+       "reconciliation_endpoint": "https://wikidata.reconci.link/${lang}/api",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
+    },
+    "property": {
+       "site_iri": "http://www.wikidata.org/entity/",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
+    },
+    "mediainfo": {
+       "site_iri": "https://commons.wikimedia.org/entity/",
+       "reconciliation_endpoint": "https://commonsreconcile.toolforge.org/${lang}/api"
+    }
+  },
+  "editgroups": {
+    "url_schema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])"
+  }
+}

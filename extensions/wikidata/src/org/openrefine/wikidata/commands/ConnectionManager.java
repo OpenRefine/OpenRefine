@@ -180,7 +180,7 @@ public class ConnectionManager {
      * 
      * @throws IOException
      */
-    static BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws IOException {
+    BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
         return mapper.readValue(json, BasicApiConnection.class);

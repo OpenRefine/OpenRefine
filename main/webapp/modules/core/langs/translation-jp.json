@@ -34,12 +34,12 @@
     "core-index/value": "値",
     "core-index/delete": "削除",
     "core-index-create/almost-done": "ほぼ完了 …",
-    "core-index-create/min-remaining": "分程度かかります",
+    "core-index-create/min-remaining": "$1 分程度かかります",
     "core-index-create/create-proj": "プロジェクトを作成する",
     "core-index-create/from": "データを取得する",
     "core-index-create/memory-usage": "メモリ使用量:",
     "core-index-create/question": "インポートしたデータからプロジェクトをつくります。",
-    "core-index-create/sec-remaining": "秒程度かかります",
+    "core-index-create/sec-remaining": "$1 秒程度かかります",
     "core-index-create/done": "完了.",
     "core-index-create/formats": "TSV、CSV、*SV、Excel(xls/xlsx)、JSON、XML、RDF as XML、OpenDocument(ods)とGoogle Dataがサポートされています。他のフォーマットも、拡張機能（エクステンション）として追加できます。",
     "core-index-create/starting": "開始",
@@ -619,7 +619,7 @@
     "core-views/what-separator": "どんな区切り文字で値を分けますか？",
     "core-views/new-col-name": "新しいカラム名",
     "core-views/split-cells": "多値のセルを分割",
-    "core-views/titlecase": "頭だけ大文字に",
+    "core-views/titlecase": "語頭だけ大文字に",
     "core-views/fill-down": "下方向の空白を埋める",
     "core-views/spec-col-name": "新しいカラム名を指定してください。",
     "core-views/search-for": "検索内容",
@@ -801,5 +801,8 @@
     "core-views/edit-all-columns": "全カラム編集",
     "core-views/warn-of-pending-sort": "実行待ちソートがあります。表示データは結果を反映していません。",
     "core-dialogs/missing-bad-template": "テンプレートが不正・不存在",
-    "core-views/warning": "注意"
+    "core-views/warning": "注意",
+    "core-views/expand-left": "カラムを左側に展開",
+    "core-views/expand-right": "カラムを右側に展開",
+    "core-index-parser/disable-auto-preview": "自動プレビューしない"
 }

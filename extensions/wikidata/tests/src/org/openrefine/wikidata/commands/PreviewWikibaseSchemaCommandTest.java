@@ -34,32 +34,31 @@ import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.wikidata.qa.ConstraintFetcher;
-import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.openrefine.wikidata.utils.EntityCacheStub;
 
-@PrepareForTest({ EditInspector.class, EntityCache.class })
 public class PreviewWikibaseSchemaCommandTest extends CommandTest {
 
     @BeforeMethod
     public void SetUp() {
         command = new PreviewWikibaseSchemaCommand();
+        EntityCacheStub entityCacheStub = new EntityCacheStub();
+        EntityCache.setEntityCache("http://www.wikidata.org/entity/", entityCacheStub);
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        EntityCache.removeEntityCache("http://www.wikidata.org/entity/");
     }
 
     @Test
     public void testValidSchema() throws Exception {
-        EntityCacheStub entityCacheStub = new EntityCacheStub();
-        ConstraintFetcher fetcher = new ConstraintFetcher(entityCacheStub, "P2302");
-        PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
-        PowerMockito.whenNew(EntityCache.class).withAnyArguments().thenReturn(entityCacheStub);
 
         String schemaJson = jsonFromFile("schema/inception.json");
         String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");

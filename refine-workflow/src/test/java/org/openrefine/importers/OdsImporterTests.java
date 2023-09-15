@@ -86,8 +86,7 @@ public class OdsImporterTests extends ImporterTest {
         Row row = rows.get(0);
         assertEquals(row.cells.size(), 9); // should be 8, but is currently 9 as of odfdom-java:0.9.0
         assertEquals((String) row.getCellValue(1), "2 Days In New York");
-        // TODO day not taken into account because of timezone dependency issues
-        assertEquals(((OffsetDateTime) row.getCellValue(3)).toString().substring(0, 7), "2012-03");
+        assertEquals(((OffsetDateTime) row.getCellValue(3)).toString().substring(0, 10), "2012-03-28");
         assertEquals(((Number) row.getCellValue(5)).doubleValue(), 4.5, 0.0000001);
 
         assertFalse((Boolean) row.getCellValue(7));

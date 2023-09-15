@@ -36,8 +36,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 
@@ -65,14 +65,14 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
      */
     protected void splitUpdate(TermedStatementEntityUpdate update)
             throws ImpossibleSchedulingException {
-        ItemUpdateBuilder remainingUpdateBuilder = new ItemUpdateBuilder(update.getItemId())
+        TermedStatementEntityUpdateBuilder remainingUpdateBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId())
                 .addLabels(update.getLabels(), true)
                 .addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
                 .addDescriptions(update.getDescriptionsIfNew(), false)
                 .addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
-        Map<ItemIdValue, ItemUpdateBuilder> referencingUpdates = new HashMap<>();
+        Map<ItemIdValue, TermedStatementEntityUpdateBuilder> referencingUpdates = new HashMap<>();
 
         for (Statement statement : update.getAddedStatements()) {
             Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);
@@ -80,9 +80,9 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
                 remainingUpdateBuilder.addStatement(statement);
             } else if (pointers.size() == 1 && !update.isNew()) {
                 ItemIdValue pointer = pointers.stream().findFirst().get();
-                ItemUpdateBuilder referencingBuilder = referencingUpdates.get(pointer);
+                TermedStatementEntityUpdateBuilder referencingBuilder = referencingUpdates.get(pointer);
                 if (referencingBuilder == null) {
-                    referencingBuilder = new ItemUpdateBuilder(update.getItemId());
+                    referencingBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId());
                 }
                 referencingBuilder.addStatement(statement);
                 referencingUpdates.put(pointer, referencingBuilder);
@@ -99,7 +99,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
             pointerFreeUpdates.add(pointerFree);
         }
         // Add the other updates to the map
-        for (Entry<ItemIdValue, ItemUpdateBuilder> entry : referencingUpdates.entrySet()) {
+        for (Entry<ItemIdValue, TermedStatementEntityUpdateBuilder> entry : referencingUpdates.entrySet()) {
             TermedStatementEntityUpdate pointerUpdate = entry.getValue().build();
             UpdateSequence pointerUpdatesForKey = pointerUpdates.get(entry.getKey());
             if (pointerUpdatesForKey == null) {
@@ -136,7 +136,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
         // (this is just for the sake of correctness, it would be bad to do that
         // as the items would remain blank in this batch).
         for (ItemIdValue missingId : mentionedNewEntities) {
-            fullSchedule.add(new ItemUpdateBuilder(missingId).build());
+            fullSchedule.add(new TermedStatementEntityUpdateBuilder(missingId).build());
             fullSchedule.addAll(pointerUpdates.get(missingId).getUpdates());
         }
         return fullSchedule;

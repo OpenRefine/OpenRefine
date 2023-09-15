@@ -38,6 +38,7 @@ public class ParseHtmlTests extends FunctionTestBase {
 
     static String h = "<html>\n" +
             "<head>\n" +
+            "<script type=\"application/json\">One Two</script>" +
             "</head>\n" +
             "    <body>\n" +
             "        <h1>head1</h1>\n" +
@@ -52,6 +53,7 @@ public class ParseHtmlTests extends FunctionTestBase {
             " <br>Dev : REMASTER !!!!\n" +
             " <br>" +
             "</div>" +
+            "<div><p type=\"child\">childtext</p></div>" +
             "    </body>\n" +
             "</html>";
 
@@ -68,5 +70,10 @@ public class ParseHtmlTests extends FunctionTestBase {
         Assert.assertTrue(invoke("wholeText", Jsoup.parse(h).select("div.commentthread_comment_text").first()) instanceof String);
         Assert.assertEquals(invoke("wholeText", Jsoup.parse(h).select("div.commentthread_comment_text").first()),
                 "\n  Me : Make a 2nd game ?\n Dev : Nah man , too much work.\n Me : So what's it gonna be ?\n Dev : REMASTER !!!!\n ");
+        Assert.assertEquals(invoke("parent", Jsoup.parse(h).select("p[type*=child]").first()).toString(),
+                "<div>\n <p type=\"child\">childtext</p>\n</div>");
+        Assert.assertEquals(invoke("scriptText", Jsoup.parse(h).select("script").first()), "One Two");
+        Assert.assertEquals(invoke("scriptText", Jsoup.parse(h).select("h1").first()), "");
+        Assert.assertTrue(invoke("scriptText", Jsoup.parse(h).select("p")) instanceof EvalError);
     }
 }

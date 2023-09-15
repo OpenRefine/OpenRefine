@@ -6,7 +6,7 @@
     "wikibase-extension/export-to-qs": "Exporter vers QuickStatements",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-schema/dialog-header": "Aligner sur la Wikibase",
-    "wikibase-schema/dialog-explanation": "Vous travaillez actuellement contre <a href=\"$1\" target=\"_blank\">$2</a>. D'abord, vous devriez réconcilier vos données avec les services de réconciliation associés à $2 (tels que <a href=\"$3\" target=\"_blank\">$3</a>). Le schéma ci-dessous spécifie comment vos données tabulaires seront transformées en $2 modifications. Vous pouvez glisser-déposer les noms des colonnes ci-dessous dans la plupart des champs de saisie : pour chaque ligne, des modifications seront générées avec les valeurs dans ces colonnes.",
+    "wikibase-schema/dialog-explanation": "Vous travaillez actuellement contre <a href=\"$1\" target=\"_blank\">$2</a>. D'abord, vous devriez réconcilier vos données avec les services de réconciliation associés à $2. Le schéma ci-dessous spécifie comment vos données tabulaires seront transformées en $2 modifications. Vous pouvez glisser-déposer les noms des colonnes ci-dessous dans la plupart des champs de saisie : pour chaque ligne, des modifications seront générées avec les valeurs dans ces colonnes.",
     "wikibase-schema/preview-explanation": "Cet onglet affiche les premières modifications (sur $1) qui seront effectuées une fois que vous aurez importé les modifications dans <a href=\"$2\" target=\"_blank\">$3</a>. Vous pouvez utiliser des facettes pour inspecter les modifications sur des éléments particuliers.",
     "wikibase-schema/schema-tab-header": "Schéma",
     "wikibase-schema/warnings-tab-header": "Problèmes",

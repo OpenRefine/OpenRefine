@@ -29,15 +29,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -149,34 +159,62 @@ public class EditBatchProcessor {
             // New item
             if (update.isNew()) {
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getItemId();
-                update = update.normalizeLabelsAndAliases();
+                if (newCell instanceof ItemIdValue) {
+                    update = update.normalizeLabelsAndAliases();
+                    ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getItemId(),
+                            update.getLabels().stream().collect(Collectors.toList()),
+                            update.getDescriptions().stream().collect(Collectors.toList()),
+                            update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
+                            Collections.emptyMap());
 
-                ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getItemId(),
-                        update.getLabels().stream().collect(Collectors.toList()),
-                        update.getDescriptions().stream().collect(Collectors.toList()),
-                        update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
-                        Collections.emptyMap());
-
-                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
-                library.setQid(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
+                    ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
+                    library.setQid(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
+                } else if (newCell instanceof MediaInfoIdValue) {
+                    update = update.normalizeLabelsAndAliases();
+                    throw new NotImplementedException();
+                }
             } else {
                 // Existing item
-                ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
-                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
-                labels.addAll(update.getLabelsIfNew().stream()
-                        .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
-                List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
-                descriptions.addAll(update.getDescriptionsIfNew().stream()
-                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode()))
-                        .collect(Collectors.toList()));
-                editor.updateTermsStatements(currentDocument,
-                        labels,
-                        descriptions,
-                        update.getAliases().stream().collect(Collectors.toList()),
-                        new ArrayList<MonolingualTextValue>(),
-                        update.getAddedStatements().stream().collect(Collectors.toList()),
-                        update.getDeletedStatements().stream().collect(Collectors.toList()),
-                        summary, tags);
+                EntityIdValue newCell = (EntityIdValue) update.getItemId();
+                if (newCell instanceof ItemIdValue) {
+                    ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
+                    List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
+                    labels.addAll(update.getLabelsIfNew().stream()
+                            .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode()))
+                            .collect(Collectors.toList()));
+                    List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
+                    descriptions.addAll(update.getDescriptionsIfNew().stream()
+                            .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode()))
+                            .collect(Collectors.toList()));
+                    Set<MonolingualTextValue> aliases = update.getAliases();
+                    Map<String, List<MonolingualTextValue>> aliasesMap = aliases.stream()
+                            .collect(Collectors.groupingBy(MonolingualTextValue::getLanguageCode));
+                    Map<String, AliasUpdate> aliasMap = aliasesMap.entrySet().stream()
+                            .collect(
+                                    Collectors.toMap(Entry::getKey, e -> Datamodel.makeAliasUpdate(e.getValue(), Collections.emptyList())));
+                    editor.editEntityDocument(Datamodel.makeItemUpdate((ItemIdValue) update.getItemId(),
+                            currentDocument.getRevisionId(),
+                            Datamodel.makeTermUpdate(labels, Collections.emptyList()),
+                            Datamodel.makeTermUpdate(descriptions, Collections.emptyList()),
+                            aliasMap,
+                            Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(),
+                                    Collections.emptyList()),
+                            Collections.emptyList(), Collections.emptyList()),
+                            false, summary, tags);
+                } else if (newCell instanceof MediaInfoIdValue) {
+                    MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getItemId().getId());
+                    List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
+                    labels.addAll(update.getLabelsIfNew().stream()
+                            .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode()))
+                            .collect(Collectors.toList()));
+                    TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
+                    StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(update.getAddedStatements(),
+                            update.getDeletedStatements(),
+                            Collections.emptyList());
+                    MediaInfoUpdate updatesCollection = Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) update.getItemId(),
+                            currentDocument.getRevisionId(), labelUpdate, statementUpdate);
+                    editor.editEntityDocument(updatesCollection, false, summary, tags);
+                }
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way

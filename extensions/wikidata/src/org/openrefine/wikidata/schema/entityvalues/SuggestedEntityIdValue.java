@@ -29,6 +29,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Hash;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
+import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
@@ -48,6 +50,26 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
         _id = id;
         _siteIRI = siteIRI;
         _label = label;
+    }
+
+    public static SuggestedEntityIdValue build(String id, String siteIRI, String label) {
+        String entityType = EntityIdValueImpl.guessEntityTypeFromId(id);
+        if (DatatypeIdValue.DT_ITEM.equals(entityType)) {
+            return new SuggestedItemIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_PROPERTY.equals(entityType)) {
+            return new SuggestedPropertyIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_MEDIA_INFO.equals(entityType)) {
+            return new SuggestedMediaInfoIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_LEXEME.equals(entityType)) {
+            return new SuggestedLexemeIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_FORM.equals(entityType)) {
+            return new SuggestedFormIdValue(id, siteIRI, label);
+        } else if (DatatypeIdValue.DT_SENSE.equals(entityType)) {
+            return new SuggestedSenseIdValue(id, siteIRI, label);
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Unsupported datatype for suggested entity values: %s", entityType));
+        }
     }
 
     @Override
@@ -81,6 +103,11 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     }
 
     @Override
+    public boolean isPlaceholder() {
+        return false;
+    }
+
+    @Override
     public <T> T accept(ValueVisitor<T> valueVisitor) {
         return valueVisitor.visit(this);
     }
@@ -97,6 +124,11 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     @Override
     public int hashCode() {
         return Hash.hashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return getIri();
     }
 
 }

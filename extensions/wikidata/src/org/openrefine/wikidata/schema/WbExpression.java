@@ -47,6 +47,7 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
         @Type(value = WbDateVariable.class, name = "wbdatevariable"),
         @Type(value = WbMonolingualExpr.class, name = "wbmonolingualexpr"),
         @Type(value = WbPropConstant.class, name = "wbpropconstant"),
+        @Type(value = WbEntityIdValueConstant.class, name = "wbentityidvalueconstant"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
         @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"), })

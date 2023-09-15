@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>sample</artifactId>
   <packaging>jar</packaging>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.6-SNAPSHOT</version>
 
   <name>OpenRefine - Sample extension</name>
   <description>Example extension provided for demonstration purposes</description>

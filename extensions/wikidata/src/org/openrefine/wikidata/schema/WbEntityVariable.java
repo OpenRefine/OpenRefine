@@ -31,9 +31,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon.Judgment;
-
+import org.openrefine.model.Cell;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
@@ -67,23 +66,33 @@ public class WbEntityVariable extends WbVariableExpr<EntityIdValue> {
             throws SkipSchemaExpressionException {
         if (cell.recon != null
                 && (Judgment.Matched.equals(cell.recon.judgment) || Judgment.New.equals(cell.recon.judgment))) {
-            if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRI())) {
-                QAWarning warning = new QAWarning("invalid-identifier-space", null, QAWarning.Severity.INFO, 1);
-                warning.setProperty("example_cell", cell.value.toString());
-                ctxt.addWarning(warning);
-                throw new SkipSchemaExpressionException();
-            }
             if (Judgment.New.equals(cell.recon.judgment)) {
                 return new ReconItemIdValue(cell.recon, cell.value.toString());
             }
             EntityIdValue entityIdValue = EntityIdValueImpl.fromId(cell.recon.match.id, cell.recon.identifierSpace);
+            EntityIdValue reconEntityIdValue = null;
+            String entityType = null;
             if (entityIdValue instanceof ItemIdValue) {
-                return new ReconItemIdValue(cell.recon, cell.value.toString());
+                reconEntityIdValue = new ReconItemIdValue(cell.recon, cell.value.toString());
+                entityType = "item";
             } else if (entityIdValue instanceof MediaInfoIdValue) {
-                return new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
+                reconEntityIdValue = new ReconMediaInfoIdValue(cell.recon, cell.value.toString());
+                entityType = "mediainfo";
             } else if (entityIdValue instanceof PropertyIdValue) {
-                return new ReconPropertyIdValue(cell.recon, cell.value.toString());
+                reconEntityIdValue = new ReconPropertyIdValue(cell.recon, cell.value.toString());
+                entityType = "property";
             }
+            if (reconEntityIdValue == null) {
+                throw new SkipSchemaExpressionException();
+            }
+            if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRIForEntityType(entityType))) {
+                QAWarning warning = new QAWarning("invalid-identifier-space", null, QAWarning.Severity.INFO, 1);
+                warning.setProperty("example_cell", cell.value.toString());
+                warning.setProperty("expected_site_iri", ctxt.getBaseIRIForEntityType(entityType));
+                ctxt.addWarning(warning);
+                throw new SkipSchemaExpressionException();
+            }
+            return reconEntityIdValue;
         }
         throw new SkipSchemaExpressionException();
     }

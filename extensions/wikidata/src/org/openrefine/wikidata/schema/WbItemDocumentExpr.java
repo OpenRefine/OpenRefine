@@ -36,8 +36,8 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 /**
  * The representation of an item document, which can contain variables both for its own id and in its contents.
@@ -73,7 +73,7 @@ public class WbItemDocumentExpr implements WbExpression<TermedStatementEntityUpd
     public TermedStatementEntityUpdate evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subjectId);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
                 for (Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {

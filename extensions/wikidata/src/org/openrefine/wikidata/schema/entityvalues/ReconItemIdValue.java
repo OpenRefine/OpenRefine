@@ -35,6 +35,11 @@ public class ReconItemIdValue extends ReconEntityIdValue implements ItemIdValue 
     }
 
     @Override
+    public boolean isPlaceholder() {
+        return isNew();
+    }
+
+    @Override
     public String getEntityType() {
         return ET_ITEM;
     }

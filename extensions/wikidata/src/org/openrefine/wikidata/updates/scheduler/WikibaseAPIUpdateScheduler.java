@@ -34,8 +34,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.
@@ -82,7 +82,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         Set<ItemIdValue> unseenPointers = new HashSet<>(allPointers);
         unseenPointers.removeAll(pointerFreeUpdates.getSubjects());
 
-        result.addAll(unseenPointers.stream().map(e -> new ItemUpdateBuilder(e).build()).collect(Collectors.toList()));
+        result.addAll(unseenPointers.stream().map(e -> new TermedStatementEntityUpdateBuilder(e).build()).collect(Collectors.toList()));
 
         // Part 2: add all the pointer full updates
         result.addAll(pointerFullUpdates.getUpdates());
@@ -96,14 +96,14 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * @param update
      */
     protected void splitUpdate(TermedStatementEntityUpdate update) {
-        ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId())
+        TermedStatementEntityUpdateBuilder pointerFreeBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId())
                 .addLabels(update.getLabels(), true)
                 .addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
                 .addDescriptions(update.getDescriptionsIfNew(), false)
                 .addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
-        ItemUpdateBuilder pointerFullBuilder = new ItemUpdateBuilder(update.getItemId());
+        TermedStatementEntityUpdateBuilder pointerFullBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId());
 
         for (Statement statement : update.getAddedStatements()) {
             Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);

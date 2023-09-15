@@ -33,8 +33,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class NewItemScrutinizerTest extends ScrutinizerTest {
 
@@ -50,7 +50,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testTrigger() {
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA).build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
                 NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
@@ -58,7 +58,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testEmptyItem() {
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.existingId).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -66,7 +66,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .build();
@@ -76,7 +76,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testDeletedStatements() {
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .deleteStatement(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)).build();

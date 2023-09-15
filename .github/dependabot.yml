@@ -14,16 +14,30 @@ updates:
     versions:
     - "> 1.4.12"
     - "< 2"
+    
+# Same, on 4.0 branch
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.thoughtworks.xstream:xstream
+    versions:
+    - "> 1.4.12"
+    - "< 2"
+  target-branch: 4.0
+    
 # For documentation website
 - package-ecosystem: "npm" # For Yarn
   directory: "docs/"
   schedule:
-    interval: "daily"
+    interval: "monthly"
 # For github actions
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-    interval: "daily"
+    interval: "monthly"
 # For cypress test_suite
 - package-ecosystem: "npm"
   directory: "main/tests/cypress"

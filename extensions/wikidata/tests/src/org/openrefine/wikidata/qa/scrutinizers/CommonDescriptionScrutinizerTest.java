@@ -5,8 +5,8 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
 
@@ -18,7 +18,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodDesc() {
         String description = "good description";
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
         scrutinize(update);
@@ -31,7 +31,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
                 + "long description long description long description long description "
                 + "long description long description long description long description "
                 + "long description long description long description long description";
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
         scrutinize(update);
@@ -41,7 +41,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testIdenticalWithLabel() {
         String description = "identical with label";
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
@@ -52,7 +52,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testIdenticalWithLabel1() {
         String description = "identical with label";
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), true)
                 .build();
@@ -66,7 +66,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
                 + "long description long description long description long description "
                 + "long description long description long description long description "
                 + "long description long description long description long description";
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();

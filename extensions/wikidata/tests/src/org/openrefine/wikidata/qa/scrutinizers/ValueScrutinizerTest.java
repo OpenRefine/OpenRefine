@@ -30,7 +30,7 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
 
@@ -45,6 +45,6 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     }
 
     public void scrutinizeLabel(MonolingualTextValue text) {
-        scrutinize(new ItemUpdateBuilder(TestingData.existingId).addLabel(text, true).build());
+        scrutinize(new TermedStatementEntityUpdateBuilder(TestingData.existingId).addLabel(text, true).build());
     }
 }

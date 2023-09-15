@@ -34,8 +34,8 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class ReconEntityRewriterTest {
 
@@ -88,14 +88,14 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, newlyCreated))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
@@ -109,11 +109,11 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(TestingData.newIdB)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdB)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new ItemUpdateBuilder(newlyCreated)
+        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(newlyCreated)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         assertEquals(rewritten, expected);
@@ -124,14 +124,14 @@ public class ReconEntityRewriterTest {
         ItemIdValue subject = TestingData.matchedId;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, newlyCreated))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
@@ -145,14 +145,14 @@ public class ReconEntityRewriterTest {
         PropertyIdValue subject = TestingData.matchedPropertyID;
         rewriter = new ReconEntityRewriter(library, subject);
         library.setQid(7654L, "P1234");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, TestingData.newPropertyIdB))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new ItemUpdateBuilder(subject)
+        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, newlyCreatedProperty))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)

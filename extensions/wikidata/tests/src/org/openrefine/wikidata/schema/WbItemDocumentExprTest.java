@@ -33,8 +33,8 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
 
@@ -63,7 +63,8 @@ public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEnti
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("Q23"));
-        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement).build();
+        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement)
+                .build();
         evaluatesTo(result, expr);
     }
 
@@ -76,14 +77,14 @@ public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEnti
     @Test
     public void testStatementSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid4.389", "my alias", recon("Q23"));
-        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).build();
+        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).build();
         evaluatesTo(result, expr);
     }
 
     @Test
     public void testAliasSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "", recon("Q23"));
-        TermedStatementEntityUpdate result = new ItemUpdateBuilder(subject).addStatement(fullStatement).build();
+        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
 

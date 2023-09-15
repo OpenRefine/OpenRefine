@@ -27,12 +27,17 @@ package org.openrefine.wikidata.schema.entityvalues;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
-import com.google.refine.model.Recon;
+import org.openrefine.model.recon.Recon;
 
 public class ReconMediaInfoIdValue extends ReconEntityIdValue implements MediaInfoIdValue {
 
     public ReconMediaInfoIdValue(Recon recon, String cellValue) {
         super(recon, cellValue);
+    }
+
+    @Override
+    public boolean isPlaceholder() {
+        return isNew();
     }
 
     @Override

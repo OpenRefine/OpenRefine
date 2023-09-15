@@ -1,6 +1,7 @@
 
 package org.openrefine.util.logging;
 
+import java.nio.charset.Charset;
 /*
  * Copyright (c) Massachusetts Institute of Technology, 2007 
  *
@@ -34,15 +35,30 @@ package org.openrefine.util.logging;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Layout;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.config.Node;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.apache.logging.log4j.core.layout.AbstractStringLayout;
 
 /**
  * This is a special Log4j log formatter that is capable of reacting on special log messages and 'indent' the logs
  * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are ">
  * method()" and "< method()" where > and < are used to indicate respectively "entering" and "exiting".
  */
-public class IndentingLayout extends Layout {
+@Plugin(name = "IndentingLayout", elementType = Layout.ELEMENT_TYPE, category = Node.CATEGORY, printObject = true)
+public class IndentingLayout extends AbstractStringLayout {
+
+    protected IndentingLayout(Charset charset) {
+        super(charset);
+    }
+
+    @PluginFactory
+    public static IndentingLayout createLayout(@PluginAttribute(value = "charset", defaultString = "UTF-8") Charset charset) {
+        return new IndentingLayout(charset);
+    }
 
     protected static final int CONTEXT_SIZE = 25;
     protected static final long MAX_DELTA = 10000;
@@ -52,13 +68,8 @@ public class IndentingLayout extends Layout {
     protected int indentation = 0;
 
     @Override
-    public void activateOptions() {
-        // no options at this time
-    }
-
-    @Override
-    public String format(LoggingEvent event) {
-        String message = event.getRenderedMessage();
+    public String toSerializable(LogEvent event) {
+        String message = event.getMessage().getFormattedMessage();
         if (message == null) {
             return "";
         }
@@ -122,7 +133,7 @@ public class IndentingLayout extends Layout {
         buf.append(millis);
 
         buf.append(" [");
-        String context = ((String) event.getMDC("LogEvent"));
+        String context = event.getLoggerName();
         if (context == null) {
             context = event.getLoggerName();
         }
@@ -156,8 +167,4 @@ public class IndentingLayout extends Layout {
         }
     }
 
-    @Override
-    public boolean ignoresThrowable() {
-        return true;
-    }
 }

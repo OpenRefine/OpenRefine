@@ -135,8 +135,11 @@ import org.openrefine.expr.functions.strings.Unicode;
 import org.openrefine.expr.functions.strings.UnicodeType;
 import org.openrefine.expr.functions.xml.InnerXml;
 import org.openrefine.expr.functions.xml.OwnText;
+import org.openrefine.expr.functions.xml.Parent;
 import org.openrefine.expr.functions.xml.ParseXml;
+import org.openrefine.expr.functions.xml.ScriptText;
 import org.openrefine.expr.functions.xml.SelectXml;
+import org.openrefine.expr.functions.xml.WholeText;
 import org.openrefine.expr.functions.xml.XmlAttr;
 import org.openrefine.expr.functions.xml.XmlText;
 import org.openrefine.grel.controls.Filter;
@@ -153,7 +156,6 @@ import org.openrefine.grel.controls.IsNotNull;
 import org.openrefine.grel.controls.IsNull;
 import org.openrefine.grel.controls.IsNumeric;
 import org.openrefine.grel.controls.With;
-import org.openrefine.grel.functions.xml.WholeText;
 
 public class ControlFunctionRegistry {
 
@@ -264,6 +266,8 @@ public class ControlFunctionRegistry {
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
         registerFunction("wholeText", new WholeText());
+        registerFunction("parent", new Parent());
+        registerFunction("scriptText", new ScriptText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

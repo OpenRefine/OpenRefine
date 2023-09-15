@@ -16,8 +16,8 @@
   </organization>
   <licenses>
     <license>
-      <name>BSD 3-Clause "New" or "Revised" License</name>
-      <url>https://github.com/OpenRefine/OpenRefine/blob/master/LICENSE.txt</url>
+      <name>BSD-3-Clause</name>
+      <url>https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -62,7 +62,7 @@
 
   <properties>
     <java.minversion>11</java.minversion>
-    <java.maxversion>15</java.maxversion>
+    <java.maxversion>17</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
@@ -72,16 +72,13 @@
     <jackson.version>2.12.3</jackson.version> <!-- to match Spark's dependencies -->
     <guava.version>30.1.1-jre</guava.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.2.0</butterfly.version>
-    <servlet-api.version>4.0.1</servlet-api.version>
-    <slf4j.version>1.7.32</slf4j.version>
-    <hadoop.version>3.3.1</hadoop.version>
-    <paranamer.version>2.8</paranamer.version>
+    <butterfly.version>1.2.3</butterfly.version>
+    <slf4j.version>1.7.35</slf4j.version>
+    <log4j.version>2.17.1</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
-    <jena.version>4.2.0</jena.version>
-    <poi.version>5.1.0</poi.version>
-    <powermock.version>2.0.9</powermock.version>
+    <jena.version>4.3.2</jena.version>
+    <poi.version>5.2.0</poi.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
@@ -93,13 +90,12 @@
     <velocity.version>1.5</velocity.version>
     <marc4j.version>2.9.2</marc4j.version>
     <jsoup.version>1.14.2</jsoup.version>
-    <odfdom-java.version>0.10.0</odfdom-java.version>
+    <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
-    <signpost.version>2.1.1</signpost.version>
     <clojure.version>1.10.3</clojure.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpclient5.version>5.1.2</httpclient5.version>
-    <httpcore.version>4.4.14</httpcore.version>
+    <httpcore.version>4.4.15</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
     <commons-io.version>2.11.0</commons-io.version>
@@ -110,21 +106,22 @@
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>3.7.7</mockito.version>
+    <mockito.version>4.3.1</mockito.version>
 
     <!-- plugin versions -->
-    <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+    <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>2.22.2</surefire.version>
-    <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+    <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <maven-deploy-plugin.version>3.0.0-M2</maven-deploy-plugin.version>
+    <license-plugin.version>2.0.0</license-plugin.version>
   </properties>
 
 

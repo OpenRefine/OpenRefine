@@ -29,10 +29,9 @@ import java.util.Collections;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
-
+import org.openrefine.model.Cell;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
@@ -47,55 +46,57 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
 
     @Test
     public void testReconciledItemCell() {
-        Recon recon = Recon.makeWikidataRecon(3782378L);
-        recon.judgment = Recon.Judgment.Matched;
-        recon.match = new ReconCandidate("Q123", "some item", null, 100.0);
+        Recon recon = Recon.makeWikidataRecon(3782378L)
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("Q123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
 
     @Test
     public void testReconciledMediaInfoCell() {
-        Recon recon = Recon.makeWikidataRecon(3782378L);
-        recon.judgment = Recon.Judgment.Matched;
-        recon.match = new ReconCandidate("M123", "some item", null, 100.0);
+        Recon recon = Recon.makeWikidataRecon(3782378L)
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("M123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconMediaInfoIdValue(recon, "some value"), cell);
     }
 
     @Test
     public void testReconciledPropertyCell() {
-        Recon recon = Recon.makeWikidataRecon(3782378L);
-        recon.judgment = Recon.Judgment.Matched;
-        recon.match = new ReconCandidate("P123", "some item", null, 100.0);
+        Recon recon = Recon.makeWikidataRecon(3782378L)
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(new ReconCandidate("P123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconPropertyIdValue(recon, "some value"), cell);
     }
 
     @Test
     public void testNewItemCell() {
-        Recon recon = Recon.makeWikidataRecon(3782378L);
-        recon.judgment = Recon.Judgment.New;
-        recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
+        Recon recon = Recon.makeWikidataRecon(3782378L)
+                .withJudgment(Recon.Judgment.New)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
 
     @Test
     public void testUnmatchedCell() {
-        Recon recon = Recon.makeWikidataRecon(3782378L);
-        recon.judgment = Recon.Judgment.None;
-        recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
+        Recon recon = Recon.makeWikidataRecon(3782378L)
+                .withJudgment(Recon.Judgment.None)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
 
     @Test
     public void testInvalidSpace() {
-        Recon recon = Recon.makeWikidataRecon(34989L);
-        recon.identifierSpace = "http://my.own.wikiba.se/";
-        recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
-        recon.judgment = Recon.Judgment.Matched;
+        ReconCandidate reconCandidate = new ReconCandidate("Q123", "some item", null, 100.0);
+        Recon recon = Recon.makeWikidataRecon(34989L)
+                .withIdentifierSpace("http://my.own.wikiba.se/")
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)))
+                .withJudgment(Recon.Judgment.Matched)
+                .withMatch(reconCandidate);
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }

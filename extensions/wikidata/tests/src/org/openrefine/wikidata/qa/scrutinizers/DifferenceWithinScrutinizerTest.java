@@ -22,8 +22,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
 
@@ -58,7 +58,8 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
         Snak minValueQualifier = Datamodel.makeValueSnak(minimumValuePID, minValue);
@@ -85,7 +86,8 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
         Snak minValueQualifier = Datamodel.makeValueSnak(minimumValuePID, minValue);

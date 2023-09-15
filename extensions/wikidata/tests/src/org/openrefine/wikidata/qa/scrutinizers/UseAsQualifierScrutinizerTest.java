@@ -19,8 +19,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 
 public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
 
@@ -48,7 +48,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         List<SnakGroup> qualifierList = makeSnakGroupList(statementQualifier);
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, qualifierList);
         Statement statement = statementList.get(0);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);
@@ -69,7 +69,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         List<SnakGroup> qualifierList = makeSnakGroupList(statementQualifier);
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, qualifierList);
         Statement statement = statementList.get(0);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);
@@ -88,7 +88,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, new ArrayList<>());
         Statement statement = statementList.get(0);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);
