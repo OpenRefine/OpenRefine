@@ -50,6 +50,7 @@
         <module>or-util</module>
         <module>or-testing</module>
         <module>or-spark</module>
+        <module>or-localrunner</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>
@@ -67,7 +68,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.6.7</jackson.version>
     <powermock.version>2.0.9</powermock.version>
-    <guava.version>15.0</guava.version>
+    <guava.version>30.1-jre</guava.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <butterfly.version>1.0.3</butterfly.version>
     <slf4j.version>1.7.30</slf4j.version>

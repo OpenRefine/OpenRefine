@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Iterators;
 import org.apache.spark.Partition;
 import org.apache.spark.Partitioner;
 import org.apache.spark.TaskContext;
@@ -23,6 +24,7 @@ import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassManifestFactory$;
 import scala.reflect.ClassTag;
 
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -130,59 +132,16 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
     public Iterator<Tuple2<Long, Record>> compute(Partition partition, TaskContext context) {
         RecordRDDPartition recordPartition = (RecordRDDPartition) partition;
         Iterator<Tuple2<Long, Row>> parentIter = this.firstParent(classTag).iterator(recordPartition.prev, context);
-        return new Iterator<Tuple2<Long, Record>>() {
-
-            Tuple2<Long, Row> fetchedRowTuple = null;
-            Record nextRecord = null;
-            boolean additionalRowsConsumed = false;
-            boolean firstRowsIgnored = recordPartition.index() == 0;
-
-            @Override
-            public boolean hasNext() {
-                if (nextRecord != null) {
-                    return true;
-                }
-                buildNextRecord();
-                if (firstRowsIgnored && nextRecord != null) {
-                    return true;
-                }
-                firstRowsIgnored = true;
-                buildNextRecord();
-                return nextRecord != null;
-            }
-
-            @Override
-            public Tuple2<Long, Record> next() {
-                Tuple2<Long, Record> tuple = new Tuple2<Long, Record>(nextRecord.getStartRowId(), nextRecord);
-                nextRecord = null;
-                return tuple;
-            }
-
-            private void buildNextRecord() {
-                List<Row> rows = new ArrayList<>();
-                long startRowId = 0;
-                if (fetchedRowTuple != null) {
-                    rows.add(fetchedRowTuple._2);
-                    startRowId = fetchedRowTuple._1;
-                    fetchedRowTuple = null;
-                }
-                while (parentIter.hasNext()) {
-                    fetchedRowTuple = parentIter.next();
-                    Row row = fetchedRowTuple._2;
-                    if (Record.isRecordStart(row, keyCellIndex)) {
-                        break;
-                    }
-                    rows.add(row);
-                    fetchedRowTuple = null;
-                }
-                if (!parentIter.hasNext() && fetchedRowTuple == null && !additionalRowsConsumed) {
-                    rows.addAll(recordPartition.additionalRows);
-                    additionalRowsConsumed = true;
-                }
-                nextRecord = rows.isEmpty() ? null : new Record(startRowId, rows);
-            }
-
-        };
+        java.util.Iterator<IndexedRow> indexedRows = Iterators.transform(
+                JavaConverters.asJavaIterator(parentIter),
+                tuple -> new IndexedRow(tuple._1, tuple._2));
+        java.util.Iterator<Record> records = Record.groupIntoRecords(
+                indexedRows,
+                keyCellIndex,
+                recordPartition.index() != 0,
+                recordPartition.additionalRows);
+        return JavaConverters.asScalaIterator(
+                Iterators.transform(records, record -> new Tuple2<Long, Record>(record.getStartRowId(), record)));
     }
 
     @Override
@@ -192,7 +151,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
 
         for (int i = 0; i != origPartitions.length; i++) {
             List<Row> additionalRows = Collections.emptyList();
-            if (i < origPartitions.length - 1) {
+            if (i < origPartitions.length - 1 && !(i > 0 && firstRows[i - 1].firstRecordStart == null)) {
                 if (firstRows[i].firstRecordStart != null) {
                     additionalRows = firstRows[i].rows;
                 } else {

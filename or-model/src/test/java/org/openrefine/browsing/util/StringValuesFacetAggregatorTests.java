@@ -86,4 +86,11 @@ public class StringValuesFacetAggregatorTests {
         Assert.assertEquals(first.getErrorCount(), 1L);
         Assert.assertNull(first.getCounts().get("foo"));
     }
+
+    @Test
+    public void testNoColumn() {
+        StringValuesFacetAggregator aggregator = new StringValuesFacetAggregator(
+                cm, -1, dummy, Collections.singleton("foo"), false, false, false);
+        Assert.assertTrue(aggregator.getRowFilter().filterRow(3L, new Row(Arrays.asList(new Cell("foo", null)))));
+    }
 }

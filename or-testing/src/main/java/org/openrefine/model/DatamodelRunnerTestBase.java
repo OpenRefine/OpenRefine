@@ -60,7 +60,7 @@ public abstract class DatamodelRunnerTestBase {
 
     protected DatamodelRunner SUT;
 
-    protected GridState simpleGrid, gridToSort;
+    protected GridState simpleGrid, longerGrid, gridToSort;
     protected ChangeData<String> simpleChangeData;
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
@@ -69,7 +69,7 @@ public abstract class DatamodelRunnerTestBase {
 
     protected File tempDir;
 
-    public abstract DatamodelRunner getDatamodelRunner();
+    public abstract DatamodelRunner getDatamodelRunner() throws IOException;
 
     @BeforeTest
     public void setUp() throws IOException {
@@ -123,6 +123,15 @@ public abstract class DatamodelRunnerTestBase {
                         { "a", "b" },
                         { "", 1 },
                         { "c", true },
+                        { null, 123123123123L }
+                });
+        longerGrid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "", "d" },
+                        { "", 1 },
+                        { "c", true },
+                        { "e", "f" },
                         { null, 123123123123L }
                 });
         gridToSort = createGrid(new String[] { "foo", "bar" },
@@ -340,6 +349,24 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
+    public void testRecordGroupingNoRecordStart() {
+        GridState noRecordStart = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { null, "a" },
+                        { "", "b" },
+                        { null, "c" },
+                        { null, "d" },
+                        { null, "e" },
+                        { null, "f" }
+                });
+
+        List<Record> records = noRecordStart.collectRecords();
+        Assert.assertEquals(records.size(), 1);
+        Assert.assertEquals(records.get(0).getRows(),
+                noRecordStart.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList()));
+    }
+
+    @Test
     public void testAccessSortedRecords() {
         GridState state = gridToSort;
 
@@ -428,9 +455,9 @@ public abstract class DatamodelRunnerTestBase {
         GridState loaded = SUT.loadGridState(tempFile);
 
         Assert.assertEquals(loaded.rowCount(), 4L);
+        List<Row> actualRows = loaded.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(actualRows, expectedRows);
         Assert.assertEquals(loaded.recordCount(), 2L);
-        Assert.assertEquals(loaded.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList()),
-                expectedRows);
         Assert.assertEquals(loaded.collectRecords(), expectedRecords);
     }
 
@@ -630,13 +657,16 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testStatefullyMapRows() {
-        GridState mapped = simpleGrid.mapRows(
+        GridState mapped = longerGrid.mapRows(
                 statefulRowMapper, simpleGrid.getColumnModel());
 
         List<IndexedRow> rows = mapped.collectRows();
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b");
-        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "b1");
-        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "b1true");
+        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "bd");
+        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "bd1");
+        Assert.assertEquals(rows.get(3).getRow().getCellValue(1), "bd1true");
+        Assert.assertEquals(rows.get(4).getRow().getCellValue(1), "bd1truef");
+        Assert.assertEquals(rows.get(5).getRow().getCellValue(1), "bd1truef123123123123");
     }
 
     public static RecordMapper concatRecordMapper = RecordMapper.rowWiseRecordMapper(concatRowMapper);
@@ -874,8 +904,9 @@ public abstract class DatamodelRunnerTestBase {
 
     // TODO: require a more specific exception
     @Test(expectedExceptions = Exception.class)
-    public void testGenerateFaultyChangeData() {
-        simpleGrid.mapRows(myRowFilter, faultyBatchedChangeMapper).get(1L);
+    public void testGenerateFaultyRowChangeData() {
+        ChangeData<String> changeData = simpleGrid.mapRows(RowFilter.ANY_ROW, faultyBatchedChangeMapper);
+        changeData.get(1L);
     }
 
     public static RowChangeDataJoiner<String> joiner = new RowChangeDataJoiner<String>() {
@@ -911,6 +942,34 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(changeData.get(0L), "b1");
         Assert.assertNull(changeData.get(1L)); // because it is not a record start position
         Assert.assertEquals(changeData.get(2L), "true123123123123");
+    }
+
+    public static RecordChangeDataProducer<String> faultyBatchedRecordChangeMapper = new RecordChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -2137895769820170019L;
+
+        @Override
+        public List<String> call(List<Record> records) {
+            // it is incorrect to return a list of a different size than the argument
+            return Collections.emptyList();
+        }
+
+        @Override
+        public int getBatchSize() {
+            return 2;
+        }
+
+        @Override
+        public String call(Record record) {
+            throw new NotImplementedException();
+        }
+
+    };
+
+    // TODO: require a more specific exception
+    @Test(expectedExceptions = Exception.class)
+    public void testGenerateFaultyRecordChangeData() {
+        simpleGrid.mapRecords(RecordFilter.ANY_RECORD, faultyBatchedRecordChangeMapper).get(0L);
     }
 
     @Test

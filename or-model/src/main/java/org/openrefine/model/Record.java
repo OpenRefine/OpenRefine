@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,6 +119,80 @@ public class Record implements Serializable {
     public static boolean isRecordStart(Row row, int keyCellIndex) {
         return ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))
                 || row.getCells().stream().allMatch(c -> c == null || !ExpressionUtils.isNonBlankData(c.getValue()));
+    }
+
+    /**
+     * Groups a stream of indexed rows into a stream of records.
+     * 
+     * @param parentIter
+     *            the iterator of rows
+     * @param keyCellIndex
+     *            the index of the column used to group rows into records
+     * @param ignoreFirstRows
+     *            whether the first rows with blank record key should be ignored
+     * @param additionalRows
+     *            additional rows to read once the stream is consumed
+     * @return a stream of records
+     */
+    public static Iterator<Record> groupIntoRecords(
+            Iterator<IndexedRow> parentIter,
+            int keyCellIndex,
+            boolean ignoreFirstRows,
+            List<Row> additionalRows) {
+
+        return new Iterator<Record>() {
+
+            IndexedRow fetchedRowTuple = null;
+            Record nextRecord = null;
+            boolean additionalRowsConsumed = false;
+            boolean firstRowsIgnored = !ignoreFirstRows;
+
+            @Override
+            public boolean hasNext() {
+                if (nextRecord != null) {
+                    return true;
+                }
+                buildNextRecord();
+                if (firstRowsIgnored && nextRecord != null) {
+                    return true;
+                }
+                firstRowsIgnored = true;
+                buildNextRecord();
+                return nextRecord != null;
+            }
+
+            @Override
+            public Record next() {
+                Record result = nextRecord;
+                nextRecord = null;
+                return result;
+            }
+
+            private void buildNextRecord() {
+                List<Row> rows = new ArrayList<>();
+                long startRowId = 0;
+                if (fetchedRowTuple != null) {
+                    rows.add(fetchedRowTuple.getRow());
+                    startRowId = fetchedRowTuple.getIndex();
+                    fetchedRowTuple = null;
+                }
+                while (parentIter.hasNext()) {
+                    fetchedRowTuple = parentIter.next();
+                    Row row = fetchedRowTuple.getRow();
+                    if (Record.isRecordStart(row, keyCellIndex)) {
+                        break;
+                    }
+                    rows.add(row);
+                    fetchedRowTuple = null;
+                }
+                if (!parentIter.hasNext() && fetchedRowTuple == null && !additionalRowsConsumed) {
+                    rows.addAll(additionalRows);
+                    additionalRowsConsumed = true;
+                }
+                nextRecord = rows.isEmpty() ? null : new Record(startRowId, rows);
+            }
+
+        };
     }
 
 }

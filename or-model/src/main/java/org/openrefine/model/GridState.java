@@ -421,14 +421,14 @@ public interface GridState {
      *            the type of change data that is serialized to disk for each row
      * @param filter
      *            a filter to select which rows to map
-     * @param rowMapper
-     *            produces the change data for each row
+     * @param recordMapper
+     *            produces the change data for each record
      * @return
      * @throws IllegalStateException
-     *             if the row mapper returns a batch of results with a different size than the batch of rows it was
-     *             called on
+     *             if the record mapper returns a batch of results with a different size than the batch of records it
+     *             was called on
      */
-    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> rowMapper);
+    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper);
 
     /**
      * Joins pre-computed change data with the current grid data, row by row.

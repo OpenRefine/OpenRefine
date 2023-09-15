@@ -28,6 +28,14 @@ public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
     private final JavaPairRDD<Long, T> data;
     private final SparkDatamodelRunner runner;
 
+    /**
+     * Constructs a change data.
+     * 
+     * The RDD is expected not to contain any null value (they should be filtered out first).
+     * 
+     * @param data
+     * @param runner
+     */
     public SparkChangeData(JavaPairRDD<Long, T> data, SparkDatamodelRunner runner) {
         this.data = data;
         this.runner = runner;

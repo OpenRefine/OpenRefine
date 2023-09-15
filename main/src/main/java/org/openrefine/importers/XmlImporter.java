@@ -241,7 +241,7 @@ public class XmlImporter extends TreeImportingParserBase {
             // Updates the token if the text value is a whitespace
             if (currentToken == XMLStreamConstants.CHARACTERS) {
                 String text = parser.getText();
-                if (!text.isEmpty() && CharMatcher.WHITESPACE.matchesAllOf(text)) {
+                if (!text.isEmpty() && CharMatcher.whitespace().matchesAllOf(text)) {
                     currentToken = WHITESPACE_CHARACTERS_TOKEN;
                 }
             }
