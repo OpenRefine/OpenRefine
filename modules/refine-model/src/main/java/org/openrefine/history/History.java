@@ -51,6 +51,7 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
+import org.openrefine.operations.Operation;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -192,7 +193,7 @@ public class History {
             HistoryEntry entry = _entries.get(position - 1);
             ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
             Change change = entry.getChange();
-            Grid newState = change.apply(previous, context);
+            Grid newState = change.apply(previous, context).getGrid();
             _states.set(position, newState);
             _cachedOnDisk.set(position, false);
             /*
@@ -224,7 +225,7 @@ public class History {
     }
 
     @JsonIgnore
-    public GridCache getCachedGridStore() {
+    public GridCache getGridCache() {
         return _gridStore;
     }
 
@@ -232,7 +233,10 @@ public class History {
      * Adds a {@link HistoryEntry} to the list of past histories. Adding a new entry clears all currently held future
      * histories
      */
-    public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
+    public HistoryEntry addEntry(long id,
+            String description,
+            Operation operation,
+            Change change) throws DoesNotApplyException, Operation.NotImmediateOperationException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
 
@@ -254,13 +258,16 @@ public class History {
             _cachedOnDisk = _cachedOnDisk.subList(0, _position + 1);
         }
 
-        ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
-        Grid newState = entry.getChange().apply(getCurrentGrid(), context);
+        ChangeContext context = ChangeContext.create(id, _dataStore);
+        Change.ChangeResult changeResult = change.apply(getCurrentGrid(), context);
+        Grid newState = changeResult.getGrid();
+        HistoryEntry entry = new HistoryEntry(id, description, operation, change, changeResult.getGridPreservation());
         _states.add(newState);
         _cachedOnDisk.add(false);
         _entries.add(entry);
         _position++;
         updateCachedPosition();
+        return entry;
     }
 
     protected void cacheIntermediateGridOnDisk(int position) throws DoesNotApplyException, IOException {

@@ -31,6 +31,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -41,6 +42,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
@@ -100,7 +102,9 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2).createChange();
 
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },
@@ -125,7 +129,9 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 "newcolumn",
                 2).createChange();
 
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(
                 new String[] { "foo", "bar", "newcolumn", "hello" },

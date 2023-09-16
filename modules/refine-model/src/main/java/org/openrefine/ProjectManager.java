@@ -159,7 +159,7 @@ public abstract class ProjectManager {
     /**
      * Return the cached grid store for a given project
      */
-    public abstract GridCache getCachedGridStore(long projectId);
+    public abstract GridCache getGridCache(long projectId);
 
     /**
      * Load project metadata from data storage

@@ -45,6 +45,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
@@ -101,7 +102,10 @@ public class KeyValueColumnizeTests extends RefineTest {
 
         Change change = new KeyValueColumnizeOperation(
                 "Cat", "Val", null).createChange();
-        Grid applied = change.apply(grid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+
+        Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 5);
@@ -153,7 +157,10 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        Grid applied = change.apply(grid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+
+        Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");
@@ -190,7 +197,10 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 "Notes").createChange();
-        Grid applied = change.apply(grid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+
+        Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumnNames(),
@@ -229,7 +239,10 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        Grid applied = change.apply(grid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(
                 new String[] { "wd", "merchant", "fruit", "price" },
@@ -259,7 +272,10 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        Grid applied = change.apply(grid, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(grid, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+
+        Grid applied = changeResult.getGrid();
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");

@@ -199,7 +199,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                         Optional.of(_reporter));
 
                 if (!_canceled) {
-                    HistoryEntry historyEntry = new HistoryEntry(
+                    _history.addEntry(
                             _historyEntryID,
                             _description,
                             ExtendDataOperation.this,
@@ -212,8 +212,6 @@ public class ExtendDataOperation extends EngineDependentOperation {
                                     _columnInsertIndex,
                                     columnNames,
                                     columnTypes));
-
-                    _history.addEntry(historyEntry);
                     _processManager.onDoneProcess(this);
                 }
             } catch (Exception e) {

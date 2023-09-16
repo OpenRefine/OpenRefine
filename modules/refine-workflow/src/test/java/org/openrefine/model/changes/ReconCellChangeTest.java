@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
@@ -65,8 +66,10 @@ public class ReconCellChangeTest extends RefineTest {
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(5432L);
-        Grid newGrid = change.apply(initialGrid, context);
+        Change.ChangeResult changeResult = change.apply(initialGrid, context);
+        Grid newGrid = changeResult.getGrid();
 
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Assert.assertEquals(newGrid.getRow(0L),
                 new Row(Arrays.asList(new Cell("a", null), new Cell("b", newRecon.withJudgmentHistoryEntry(5432L)))));
         Assert.assertEquals(newGrid.getRow(1L),

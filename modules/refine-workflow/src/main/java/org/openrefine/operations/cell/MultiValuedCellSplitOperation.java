@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ParsingException;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -174,7 +175,7 @@ public class MultiValuedCellSplitOperation implements Operation {
         }
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int columnIdx = columnModel.getColumnIndexByName(_columnName);
             if (columnIdx == -1) {
@@ -189,7 +190,9 @@ public class MultiValuedCellSplitOperation implements Operation {
             if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
                 projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
             }
-            return projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel);
+            return new ChangeResult(
+                    projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel),
+                    GridPreservation.NO_ROW_PRESERVATION);
         }
 
         @Override

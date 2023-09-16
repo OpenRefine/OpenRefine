@@ -44,6 +44,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
@@ -102,7 +103,9 @@ public class ColumnRemovalOperationTests extends RefineTest {
     @Test
     public void testRemoval() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnRemovalOperation(Collections.singletonList("foo")).createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("hello")));
@@ -113,7 +116,9 @@ public class ColumnRemovalOperationTests extends RefineTest {
     @Test
     public void testMultipleColumns() throws DoesNotApplyException {
         Change SUT = new ColumnRemovalOperation(Arrays.asList("foo", "bar")).createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Grid applied = changeResult.getGrid();
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("hello")));

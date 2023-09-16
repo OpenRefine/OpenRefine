@@ -124,7 +124,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public GridCache getCachedGridStore(long projectId) {
+    public GridCache getGridCache(long projectId) {
         return new LazyGridCache();
     }
 

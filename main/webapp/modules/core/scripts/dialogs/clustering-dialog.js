@@ -423,7 +423,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
                 expression: this._expression,
                 edits: edits
             },
-            { cellsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+            { cellsChanged: true },
             {
                 onDone: onDone
             }

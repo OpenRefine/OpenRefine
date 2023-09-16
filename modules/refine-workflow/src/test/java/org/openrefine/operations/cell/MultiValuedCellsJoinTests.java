@@ -46,6 +46,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
@@ -103,7 +104,9 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test
     public void testJoin() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
-        Grid state = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid state = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
@@ -122,8 +125,10 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test
     public void testCustomKey() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
-        Grid state = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
 
+        Grid state = changeResult.getGrid();
         Grid expected = createGrid(
                 new String[] { "key", "foo", "bar" },
                 new Serializable[][] {

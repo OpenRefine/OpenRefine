@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -104,7 +105,7 @@ public class KeyValueColumnizeOperation implements Operation {
     public class KeyValueColumnizeChange implements Change {
 
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int keyColumnIndex = columnModel.getColumnIndexByName(_keyColumnName);
             int valueColumnIndex = columnModel.getColumnIndexByName(_valueColumnName);
@@ -283,7 +284,9 @@ public class KeyValueColumnizeOperation implements Operation {
                 }
             }
 
-            return projectState.getDatamodelRunner().create(finalColumnModel, finalRows, projectState.getOverlayModels());
+            return new ChangeResult(
+                    projectState.getDatamodelRunner().create(finalColumnModel, finalRows, projectState.getOverlayModels()),
+                    GridPreservation.NO_ROW_PRESERVATION);
         }
 
         private List<Cell> getAvailableRow(List<List<Cell>> currentRows, List<List<Cell>> currentNotes, int index) {

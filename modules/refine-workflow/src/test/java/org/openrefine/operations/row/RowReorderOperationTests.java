@@ -40,6 +40,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
@@ -75,7 +76,9 @@ public class RowReorderOperationTests extends RefineTest {
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
 
         Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
-        Grid applied = change.apply(initial, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
 
         Assert.assertEquals("h", rows.get(0).cells.get(1).value);

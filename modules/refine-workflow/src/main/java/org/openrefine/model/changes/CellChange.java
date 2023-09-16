@@ -38,6 +38,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.*;
 
 /**
@@ -66,7 +67,7 @@ public class CellChange implements Change {
     }
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         int index = projectState.getColumnModel().getColumnIndexByName(columnName);
         if (index == -1) {
             throw new DoesNotApplyException(
@@ -74,7 +75,11 @@ public class CellChange implements Change {
         }
         // set judgment id on recon if changed
         ColumnModel columnModel = projectState.getColumnModel();
-        return projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
+        boolean recordsPreserved = index != columnModel.getKeyColumnIndex();
+        Grid result = projectState.mapRows(mapFunction(index, row, newCellValue, columnModel.getKeyColumnIndex()), columnModel);
+        return new ChangeResult(
+                result,
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
     }
 
     static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue, int keyColumnIndex) {

@@ -93,7 +93,7 @@ ColumnReorderingDialog.prototype._commit = function() {
           op: "core/column-reorder",
           "columnNames" : columnNames
         }, 
-        { modelsChanged: true, rowIdsPreserved: true, includeEngine: false } // TODO could add recordIdsPreserved: true if the record key column did not change
+        { modelsChanged: true, includeEngine: false }
     );
     
     this._dismiss();

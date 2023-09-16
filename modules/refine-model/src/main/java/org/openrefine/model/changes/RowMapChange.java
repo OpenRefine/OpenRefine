@@ -6,6 +6,7 @@ import java.util.Map;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.RecordFilter;
@@ -138,7 +139,7 @@ public abstract class RowMapChange extends EngineDependentChange {
     }
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         Engine engine = getEngine(projectState);
         GridMap gridMap = getGridMap(projectState, context);
         RowInRecordMapper positiveMapper = gridMap.positiveMapper;
@@ -155,7 +156,10 @@ public abstract class RowMapChange extends EngineDependentChange {
                     RecordMapper.conditionalMapper(recordFilter, positiveMapper, negativeMapper),
                     newColumnModel);
         }
-        return postTransform(mappedState.withOverlayModels(newOverlayModels), context);
+        boolean recordsPreserved = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
+        return new ChangeResult(
+                postTransform(mappedState.withOverlayModels(newOverlayModels), context),
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
     }
 
     /**

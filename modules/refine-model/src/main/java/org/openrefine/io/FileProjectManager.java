@@ -524,8 +524,8 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public GridCache getCachedGridStore(long projectId) {
-        return _historyEntryManager.getCachedGridStore(_runner, getProjectDir(projectId));
+    public GridCache getGridCache(long projectId) {
+        return _historyEntryManager.getGridCache(_runner, getProjectDir(projectId));
     }
 
     @Override

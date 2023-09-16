@@ -344,7 +344,7 @@ public class GDataImportingController implements ImportingController {
                     } else {
                         long projectId = Project.generateID();
                         ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-                        GridCache gridCache = ProjectManager.singleton.getCachedGridStore(projectId);
+                        GridCache gridCache = ProjectManager.singleton.getGridCache(projectId);
                         Project project = new Project(projectId, grid, changeDataStore, gridCache);
                         job.setProject(project);
 

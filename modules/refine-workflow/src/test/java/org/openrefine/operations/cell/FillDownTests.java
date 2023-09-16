@@ -32,6 +32,7 @@ import static org.mockito.Mockito.mock;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -43,6 +44,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -90,7 +92,11 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRowsNoFacets() throws DoesNotApplyException {
         Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
 
         Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -109,8 +115,10 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
         Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+        Grid applied = changeResult.getGrid();
 
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
@@ -130,7 +138,10 @@ public class FillDownTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -150,7 +161,9 @@ public class FillDownTests extends RefineTest {
                 new DecoratedValue("c", "c"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new FillDownOperation(engineConfig, "bar").createChange();
-        Grid applied = change.apply(toFillDown, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(toFillDown, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {

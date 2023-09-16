@@ -402,18 +402,24 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
     "apply-operations",
     {},
     { operations: JSON.stringify(operations) },
-    { everythingChanged: true },
+    updateOptions,
     {
       onDone: function(o) {
         if (o.code == "pending") {
           // Something might have already been done and so it's good to update
           Refine.update({ everythingChanged: true });
         }
-        // show pill notification for the last operation to have been successfully applied
+
+        // show pill notification for the last operation to have been successfully applied,
+        // and compute whether all operations successfully applied preserved rows / records
         var latestHistoryEntry = null;
+        updateOptions.rowIdsPreserved = true;
+        updateOptions.recordIdsPreserved = true;
         for (let operationResult of o.results) {
           if (operationResult.historyEntry) {
             latestHistoryEntry = operationResult.historyEntry;
+            updateOptions.rowIdsPreserved = updateOptions.rowIdsPreserved && latestHistoryEntry.gridPreservation !== 'no-row-preservation';
+            updateOptions.recordIdsPreserved = updateOptions.recordIdsPreserved && latestHistoryEntry.gridPreservation === 'preserves-records'; 
           }
         }
         if (latestHistoryEntry) {
@@ -427,8 +433,8 @@ Refine.postOperations = function(operations, updateOptions, callbacks) {
         var operationsApplied = o.results.length - 1;
         var errorMessage = o.results[o.results.length - 1].errorMessage;
         if (operationsApplied) {
-            errorMessage = $.i18n('core-project/some-operations-applied-but-error', operationsApplied, errorMessage);
-            Refine.update({ everythingChanged: true });
+          errorMessage = $.i18n('core-project/some-operations-applied-but-error', operationsApplied, errorMessage);
+          Refine.update({ everythingChanged: true });
         }
         if (callbacks.onError) {
           callbacks.onError(errorMessage);
@@ -491,6 +497,10 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       }
 
       if (o.code == "ok") {
+        if ("historyEntry" in o) {
+          updateOptions.rowIdsPreserved = o.historyEntry.gridPreservation !== 'no-row-preservation';
+          updateOptions.recordIdsPreserved = o.historyEntry.gridPreservation === 'preserves-records';
+        }
         Refine.update(updateOptions, callbacks.onFinallyDone);
 
         if ("historyEntry" in o) {

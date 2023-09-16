@@ -75,7 +75,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "11", null }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "9" }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 
     @Test
@@ -127,6 +127,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
                         { null, "b 2", "11", null }
                 });
 
-        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)).getGrid(), expected);
     }
 }

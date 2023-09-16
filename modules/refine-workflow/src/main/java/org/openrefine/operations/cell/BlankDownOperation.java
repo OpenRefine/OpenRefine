@@ -44,6 +44,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -95,7 +96,7 @@ public class BlankDownOperation extends EngineDependentOperation {
         }
 
         @Override
-        public Grid apply(Grid state, ChangeContext context) throws DoesNotApplyException {
+        public ChangeResult apply(Grid state, ChangeContext context) throws DoesNotApplyException {
             ColumnModel model = state.getColumnModel();
             int index = model.getColumnIndexByName(_columnName);
             if (index == -1) {
@@ -103,19 +104,24 @@ public class BlankDownOperation extends EngineDependentOperation {
                         String.format("Column '%s' does not exist", _columnName));
             }
             Engine engine = getEngine(state);
+            boolean recordsPreserved = index != model.getKeyColumnIndex();
+            Grid result;
             if (Mode.RecordBased.equals(_engineConfig.getMode())) {
                 // Simple map of records
-                return state.mapRecords(
+                result = state.mapRecords(
                         RecordMapper.conditionalMapper(engine.combinedRecordFilters(), recordMapper(index), RecordMapper.IDENTITY),
                         model);
 
             } else {
                 // We need to remember the cell from the previous row, so we use a scan map
-                return state.mapRows(
+                result = state.mapRows(
                         RowScanMapper.conditionalMapper(engine.combinedRowFilters(), rowScanMapper(index, model.getKeyColumnIndex()),
                                 RowMapper.IDENTITY),
                         model);
             }
+            return new ChangeResult(
+                    result,
+                    recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
         }
 
         @Override

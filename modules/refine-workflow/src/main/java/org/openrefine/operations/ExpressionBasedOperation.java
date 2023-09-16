@@ -226,13 +226,11 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 if (!_canceled) {
                     Change change = getChangeForNonLocalExpression("eval", _eval, columnIndex, _engine.getMode());
 
-                    HistoryEntry historyEntry = new HistoryEntry(
+                    _history.addEntry(
                             _historyEntryID,
                             _description,
                             ExpressionBasedOperation.this,
                             change);
-
-                    _history.addEntry(historyEntry);
                     _manager.onDoneProcess(this);
                 }
             } catch (Exception e) {

@@ -43,7 +43,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 	        repeatCount: repeatCount,
                 expression
 	      }].concat(furtherOperations),
-	      { cellsChanged: true, rowIdsPreserved: true }
+	      { cellsChanged: true }
 	    );
 	  };
 	  
@@ -94,7 +94,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value,
           expression: previewWidget.getExpression(true)
         },
-        { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+        { modelsChanged: true },
         {
           onDone: function(o) {
             dismiss();
@@ -175,7 +175,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
           httpHeaders: elmts.setHttpHeadersContainer.find("input").serializeArray()
         },
-        { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+        { modelsChanged: true }
       );
       dismiss();
     });
@@ -213,7 +213,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         op: "core/column-removal", 
         columnName: column.name
       },
-      { modelsChanged: true, rowIdsPreserved: true }
+      { modelsChanged: true } 
     );
   };
 
@@ -246,7 +246,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           oldColumnName: column.name,
           newColumnName: newColumnName
         },
-            {modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true},
+            {modelsChanged: true },
             {
               onDone: function () {
                 dismiss();
@@ -266,7 +266,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnName: column.name,
         index: index
       },
-      { modelsChanged: true, rowIdsPreserved: true }
+      { modelsChanged: true }
     );
   };
 
@@ -279,7 +279,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             columnName: column.name,
             index: newidx
           },
-          { modelsChanged: true, rowIdsPreserved: true }
+          { modelsChanged: true }
       );
     }
   };
@@ -463,7 +463,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError: onError,
             expression
           }].concat(deleteColumns()),
-          { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+          { modelsChanged: true }
         );
       } 
       else {

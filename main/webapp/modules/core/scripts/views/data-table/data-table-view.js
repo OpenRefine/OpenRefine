@@ -795,7 +795,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                   op: "core/row-star",
                   "starred" : "true"
                 },
-                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+                { rowMetadataChanged: true });
           }
         },
         {
@@ -807,7 +807,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                   op: "core/row-star",
                   "starred" : "false"
                 },
-                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+                { rowMetadataChanged: true });
           }
         },
         {},
@@ -820,7 +820,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                   op: "core/row-flag",
                   "flagged" : "true"
                 },
-                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+                { rowMetadataChanged: true });
           }
         },
         {
@@ -832,7 +832,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                   op: "core/row-flag",
                   "flagged" : "false"
                 },
-                { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+                { rowMetadataChanged: true });
           }
         },
         {},

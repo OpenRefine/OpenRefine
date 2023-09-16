@@ -4,6 +4,7 @@ package org.openrefine.model.changes;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -31,7 +32,7 @@ public class ReconCellChange implements Change {
     }
 
     @Override
-    public Grid apply(Grid state, ChangeContext context) throws DoesNotApplyException {
+    public ChangeResult apply(Grid state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(columnName);
@@ -40,7 +41,9 @@ public class ReconCellChange implements Change {
         ColumnModel newColumnModel = columnModel;
         // set judgment id on recon if changed
         Recon finalRecon = newRecon == null ? null : newRecon.withJudgmentHistoryEntry(context.getHistoryEntryId());
-        return state.mapRows(mapFunction(columnIndex, row, finalRecon), newColumnModel);
+        return new ChangeResult(
+                state.mapRows(mapFunction(columnIndex, row, finalRecon), newColumnModel),
+                GridPreservation.PRESERVES_RECORDS);
     }
 
     static protected RowMapper mapFunction(int cellIndex, long rowId, Recon newRecon) {

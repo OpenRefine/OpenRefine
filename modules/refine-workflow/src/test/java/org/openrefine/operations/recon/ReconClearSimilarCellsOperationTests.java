@@ -31,12 +31,14 @@ import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
@@ -82,7 +84,9 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
     public void testReconClearSimilarCells() throws DoesNotApplyException, ModelException {
         Change change = new ReconClearSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b").createChange();
 
-        Grid applied = change.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(
                 new String[] { "foo", "bar" },

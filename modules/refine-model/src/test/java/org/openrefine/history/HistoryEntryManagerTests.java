@@ -42,18 +42,19 @@ public class HistoryEntryManagerTests {
 
         // Deletes the first column of the table
         @Override
-        public Grid apply(Grid projectState, ChangeContext context) {
+        public ChangeResult apply(Grid projectState, ChangeContext context) {
             List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 
-            return projectState.mapRows(mapper, new ColumnModel(newColumns));
+            return new ChangeResult(
+                    projectState.mapRows(mapper, new ColumnModel(newColumns)),
+                    GridPreservation.PRESERVES_ROWS);
         }
 
         @Override
         public boolean isImmediate() {
             return false;
         }
-
     };
 
     @BeforeMethod
@@ -70,12 +71,10 @@ public class HistoryEntryManagerTests {
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
         when(grid.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
         Change change = new MyChange();
-        HistoryEntry entry = new HistoryEntry(1234L, "some description",
-                new UnknownOperation("my-op", "some desc"), change);
         gridStore = mock(GridCache.class);
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         history = new History(grid, mock(ChangeDataStore.class), gridStore);
-        history.addEntry(entry);
+        history.addEntry(1234L, "some description", new UnknownOperation("my-op", "some desc"), change);
         sut = new HistoryEntryManager();
     }
 

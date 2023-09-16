@@ -127,6 +127,7 @@ public class ApplyOperationsCommand extends Command {
             // TODO make catch block narrower, only catching certain expected exceptions
             // such as DoesNotApplyException. This requires tightening the exceptions in the Process
             // interface too.
+            e.printStackTrace();
             logger.error("Could not apply operation", e);
             return new OperationApplicationResult("Applying the operation failed: " + e.getMessage());
         }

@@ -101,7 +101,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         op: "core/fill-down",
         columnName: column.name
       },
-      { modelsChanged: true, rowIdsPreserved: true }
+      { modelsChanged: true }
     );
   };
 
@@ -111,7 +111,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         op: "core/blank-down",
         columnName: column.name
       },
-      { modelsChanged: true, rowIdsPreserved: true }
+      { modelsChanged: true }
     );
   };
 

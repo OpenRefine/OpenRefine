@@ -43,6 +43,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
@@ -91,10 +92,11 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void testRename() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnRenameOperation("foo", "newfoo").createChange();
-        Grid applied = SUT.apply(initialState, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
 
-        List<IndexedRow> rows = applied.collectRows();
-        Assert.assertEquals(applied.getColumnModel().getColumns(),
+        List<IndexedRow> rows = changeResult.getGrid().collectRows();
+        Assert.assertEquals(changeResult.getGrid().getColumnModel().getColumns(),
                 Arrays.asList(new ColumnMetadata("foo", "newfoo", null), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
         Assert.assertEquals(rows.get(0).getRow().getCells(),
                 Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));

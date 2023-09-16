@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -62,7 +63,7 @@ public class DataExtensionChange extends EngineDependentChange {
     }
 
     @Override
-    public Grid apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws DoesNotApplyException {
         ChangeData<RecordDataExtension> changeData;
         try {
             changeData = context.getChangeData("extend", new DataExtensionSerializer());
@@ -86,7 +87,7 @@ public class DataExtensionChange extends EngineDependentChange {
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, _columnNames.size());
         Grid state = projectState.join(changeData, joiner, newColumnModel);
 
-        return state;
+        return new ChangeResult(state, GridPreservation.NO_ROW_PRESERVATION);
     }
 
     @Override

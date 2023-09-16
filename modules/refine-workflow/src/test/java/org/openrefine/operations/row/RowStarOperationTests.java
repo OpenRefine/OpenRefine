@@ -46,6 +46,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -98,7 +99,9 @@ public class RowStarOperationTests extends RefineTest {
                 new DecoratedValue("d", "d"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new RowStarOperation(engineConfig, true).createChange();
-        Grid applied = change.apply(initial, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
 
         List<Boolean> flagged = applied.collectRows().stream().map(ir -> ir.getRow().starred).collect(Collectors.toList());
         Assert.assertEquals(flagged, Arrays.asList(false, true, false, true, false));

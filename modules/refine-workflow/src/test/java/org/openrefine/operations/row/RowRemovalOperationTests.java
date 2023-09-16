@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -44,6 +45,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -95,7 +97,9 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        Grid applied = change.apply(initial, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -114,7 +118,9 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        Grid applied = change.apply(initial, mock(ChangeContext.class));
+        Change.ChangeResult changeResult = change.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
 
         Grid expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
